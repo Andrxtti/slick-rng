@@ -1,0 +1,10 @@
+{
+  "players": [
+    {"name": "OOP", "stack": 100, "range": "QQ"},
+    {"name": "IP",  "stack": 100, "range": "KK,54s,64s"}
+  ],
+  "pot": 10,
+  "board": "KsJd7c3h2d",
+  "sizes": {"river": {"bet": "100%", "raise": ""}},
+  "solve": {"iterations": 3000000, "seconds": 60}
+}

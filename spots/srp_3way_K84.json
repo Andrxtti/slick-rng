@@ -1,0 +1,16 @@
+{
+  "players": [
+    {"name": "BB",  "stack": 97.5, "range": "22-99,A2s-ATs,K2s+,Q5s+,J7s+,T7s+,96s+,85s+,75s+,64s+,53s+,43s,A2o-AJo,K9o+,Q9o+,J9o+,T9o,98o"},
+    {"name": "CO",  "stack": 97.5, "range": "22+,A2s+,K6s+,Q8s+,J8s+,T8s+,97s+,86s+,76s,65s,54s,ATo+,KJo+,QJo"},
+    {"name": "BTN", "stack": 97.5, "range": "22-JJ,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo-ATo,KQo,KJo,QJo"}
+  ],
+  "pot": 8,
+  "board": "Kh8d4c",
+  "sizes": {
+    "flop":  {"bet": "33%,75%", "raise": "3x"},
+    "turn":  {"bet": "66%", "raise": "3x"},
+    "river": {"bet": "75%", "raise": "3x"}
+  },
+  "raise_cap": 1,
+  "solve": {"iterations": 100000000, "seconds": 90, "memory_gb": 5}
+}
