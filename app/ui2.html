@@ -66,7 +66,15 @@ header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; pad
 .seat.pass small { color: #5cc285; font-weight: 600; }
 .seat.now { border-color: var(--brass); box-shadow: 0 0 0 1px var(--brass) inset; }
 .seat.now small { color: var(--brass); }
-.prompt { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.prompt { display: grid; gap: 8px; }
+.prow, .pfoot, .phead { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.prow .label { width: 92px; }
+.pfoot { border-top: 1px solid var(--line); padding-top: 8px; }
+.who.small { font-size: 16px; }
+button.seat { cursor: pointer; font: inherit; color: inherit; }
+.seat.sel { border-color: var(--fg); background: #22303a; }
+.seat.fold.sel { opacity: .8; }
+.prompt button.cur { background: var(--fg); color: #111; border-color: var(--fg); font-weight: 600; }
 .prompt .who { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
 .prompt button { min-width: 84px; font-weight: 500; }
 .prompt .b-fold { color: #9cb6c9; }
@@ -152,7 +160,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.1</span>
+  <span class="ver">ALPHA 1.2</span>
 </header>
 
 <div class="bar">
@@ -265,10 +273,43 @@ function callFor(pos, table) {
 const S = { game: 'cash', table: 9, stack: 100, left: 9, seats: [], board: [], sizing: 'simple', overrides: {} };
 function openSize() { return S.game === 'cash' ? (S.table === 6 ? 2.5 : 3) : 2.2; }
 
-function resetSeats() {
-  S.seats = POS[S.table].map((p) => ({ pos: p, put: p === 'SB' ? 0.5 : p === 'BB' ? 1 : 0, status: 'wait', line: null, label: '' }));
-  S.overrides = {};
-  render();
+function freshSeats() {
+  S.seats = POS[S.table].map((p) => ({ pos: p, put: p === 'SB' ? 0.5 : p === 'BB' ? 1 : 0, status: 'wait', line: null, label: '', acts: [] }));
+}
+function resetSeats() { S.hist = []; S.overrides = {}; replay(); S.sel = null; render(); markStale(); }
+const ALT = { open: ['3bet', 'call'], '3bet': ['open', 'call'], call: ['limp', 'check'], limp: ['call', 'check'], check: ['call'], fold: [] };
+// rebuild the table from the action history, keeping each action that still makes sense
+function replay() {
+  freshSeats();
+  const kept = []; S.decisions = [];
+  for (const e of S.hist || []) {
+    const st = preflop();
+    if (st.done || st.next.pos !== e.pos) break;
+    const opts = options(st.next, st);
+    const o = opts.find((x) => x.k === e.k) || ALT[e.k].map((k) => opts.find((x) => x.k === k)).find(Boolean);
+    if (!o) break;
+    S.decisions.push({ idx: kept.length, pos: e.pos, k: o.k, opts });
+    kept.push({ pos: e.pos, k: o.k });
+    act(st.next, o, st);
+  }
+  S.hist = kept;
+}
+// options a seat would have if everyone before it folded
+function foldToOptions(pos) {
+  const save = S.hist.slice(); const folds = [];
+  let guard = 0;
+  for (;;) {
+    const st = preflop();
+    if (st.done || guard++ > 20) { S.hist = save; replay(); return null; }
+    if (st.next.pos === pos) { const opts = options(st.next, st); S.hist = save; replay(); return { folds, opts }; }
+    folds.push({ pos: st.next.pos, k: 'fold' });
+    act(st.next, { k: 'fold' }, st);
+  }
+}
+function choose(newHist) {
+  S.hist = newHist; replay();
+  const st = preflop(); S.sel = st.done ? null : st.next.pos;
+  render(); markStale();
 }
 function preflop() {
   // derive table state from seats
@@ -333,7 +374,7 @@ function act(seat, opt, st) {
     // everyone still in must act again
     for (const s of S.seats) if (s !== seat && s.status !== 'fold' && s.status !== 'wait') s.status = 'pass';
   }
-  render();
+  seat.acts.push(seat.label);
 }
 function rangeFor(seat) {
   if (S.overrides[seat.pos]) return S.overrides[seat.pos];
@@ -389,29 +430,59 @@ function applySizing() {
 // ---------------------------------------------------------------- render setup
 function render() {
   const st = preflop();
+  if (S.sel === undefined || (S.sel === null && !st.done)) S.sel = st.done ? null : st.next.pos;
   const seats = $('seats'); seats.style.setProperty('--n', S.seats.length); seats.innerHTML = '';
   for (const s of S.seats) {
-    const d = document.createElement('div');
-    const isNow = st.next === s && !st.done;
-    d.className = `seat ${s.status === 'fold' ? 'fold' : s.status === 'agg' ? 'agg' : s.status === 'pass' ? 'pass' : ''} ${isNow ? 'now' : ''}`;
-    d.innerHTML = `<b>${s.pos}</b><small>${isNow ? 'to act' : s.label || (s.pos === 'SB' ? 'SB 0.5' : s.pos === 'BB' ? 'BB 1' : '–')}</small>`;
-    seats.appendChild(d);
+    const b = document.createElement('button');
+    const isNow = !st.done && st.next === s;
+    b.className = `seat ${s.status === 'fold' ? 'fold' : s.status === 'agg' ? 'agg' : s.status === 'pass' ? 'pass' : ''} ${isNow ? 'now' : ''} ${S.sel === s.pos ? 'sel' : ''}`;
+    const txt = s.acts.length ? s.acts.join(' · ') : isNow ? 'to act' : s.pos === 'SB' ? 'SB 0.5' : s.pos === 'BB' ? 'BB 1' : '–';
+    b.innerHTML = `<b>${s.pos}</b><small>${txt}</small>`;
+    b.setAttribute('aria-pressed', S.sel === s.pos);
+    b.onclick = () => { S.sel = S.sel === s.pos ? null : s.pos; render(); };
+    seats.appendChild(b);
   }
   const pr = $('prompt'); pr.innerHTML = '';
-  if (!st.done) {
-    const who = document.createElement('span'); who.className = 'who'; who.textContent = st.next.pos; pr.appendChild(who);
-    for (const o of options(st.next, st)) {
-      const b = document.createElement('button'); b.className = `b-${o.cls}`; b.textContent = o.t;
-      b.onclick = () => act(st.next, o, st); pr.appendChild(b);
+  const addBtn = (row, o, current, onPick) => {
+    const b = document.createElement('button'); b.className = `b-${o.cls}${current ? ' cur' : ''}`; b.textContent = o.t;
+    b.setAttribute('aria-pressed', !!current); b.onclick = onPick; row.appendChild(b);
+  };
+  const sel = S.sel && S.seats.find((x) => x.pos === S.sel);
+  if (sel) {
+    const mine = S.decisions.filter((d) => d.pos === sel.pos);
+    const head = document.createElement('div'); head.className = 'phead';
+    head.innerHTML = `<span class="who">${sel.pos}</span>`;
+    pr.appendChild(head);
+    mine.forEach((d, n) => {
+      const row = document.createElement('div'); row.className = 'prow';
+      row.innerHTML = `<span class="label">${n === 0 ? 'First action' : d.opts.some((o) => o.k === 'fold') && n > 0 ? 'Facing raise' : 'Next action'}</span>`;
+      for (const o of d.opts) addBtn(row, o, o.k === d.k, () => choose([...S.hist.slice(0, d.idx), { pos: sel.pos, k: o.k }, ...S.hist.slice(d.idx + 1)]));
+      pr.appendChild(row);
+    });
+    if (!st.done && st.next === sel) {
+      const row = document.createElement('div'); row.className = 'prow';
+      row.innerHTML = `<span class="label">${mine.length ? 'Facing raise' : 'To act'}</span>`;
+      for (const o of options(sel, st)) addBtn(row, o, false, () => choose([...S.hist, { pos: sel.pos, k: o.k }]));
+      pr.appendChild(row);
+    } else if (!mine.length && sel.status !== 'fold') {
+      const f = st.done ? null : foldToOptions(sel.pos);
+      const row = document.createElement('div'); row.className = 'prow';
+      if (f) {
+        row.innerHTML = `<span class="label">${f.folds.length ? `Fold to ${sel.pos}` : 'To act'}</span>`;
+        for (const o of f.opts) addBtn(row, o, false, () => choose([...S.hist, ...f.folds, { pos: sel.pos, k: o.k }]));
+      } else row.innerHTML = '<span class="muted">This seat does not act again preflop.</span>';
+      pr.appendChild(row);
+    } else if (!mine.length) {
+      const row = document.createElement('div'); row.className = 'prow'; row.innerHTML = '<span class="muted">Folded. Tap an earlier seat to change the line.</span>'; pr.appendChild(row);
     }
-    // shortcut: fold everyone to a seat
-    const sp = document.createElement('span'); sp.className = 'grow'; pr.appendChild(sp);
-  } else {
-    const n = st.live.length;
-    const pot = S.seats.reduce((a, s) => a + s.put, 0) + (S.game === 'cash' ? 0 : 1);
-    pr.innerHTML = `<span class="who">${n >= 2 ? `${n} players to the flop` : 'Hand over preflop'}</span><span class="muted mono">pot ${fmt(pot)} bb</span><span class="grow"></span>`;
   }
-  const reset = document.createElement('button'); reset.textContent = 'Reset action'; reset.onclick = resetSeats; pr.appendChild(reset);
+  const foot = document.createElement('div'); foot.className = 'pfoot';
+  const pot = S.seats.reduce((a, s) => a + s.put, 0) + (S.game === 'cash' ? 0 : 1);
+  foot.innerHTML = st.done
+    ? `<span class="who small">${st.live.length >= 2 ? `${st.live.length} players to the flop` : 'Hand over preflop'}</span><span class="muted mono">pot ${fmt(pot)} bb</span><span class="muted">· tap any seat to change its action</span><span class="grow"></span>`
+    : `<span class="muted">Next to act: <b>${st.next.pos}</b></span><span class="muted mono">pot ${fmt(pot)} bb</span><span class="grow"></span>`;
+  const reset = document.createElement('button'); reset.textContent = 'Clear'; reset.onclick = resetSeats; foot.appendChild(reset);
+  pr.appendChild(foot);
   renderBoard(); renderInHand();
 }
 let activeSlot = null;
@@ -437,7 +508,7 @@ function renderBoard() {
     const c = r * 4 + s, b = document.createElement('button');
     b.className = `card s-${SUITS[s]}`; b.textContent = RANKS[r] + SYM[SUITS[s]]; b.setAttribute('aria-label', Engine.cardStr(c));
     b.disabled = S.board.includes(c) && S.board[activeSlot] !== c;
-    b.onclick = () => { S.board[activeSlot] = c; activeSlot = S.board.length < 3 ? S.board.length : null; renderBoard(); };
+    b.onclick = () => { S.board[activeSlot] = c; activeSlot = S.board.length < 3 ? S.board.length : null; renderBoard(); markStale(); };
     pk.appendChild(b);
   }
 }
@@ -509,7 +580,10 @@ worker.onmessage = (ev) => {
   if (m.type === 'report' && m.reqId === reqId) { report = m.report; renderNode(); }
   if (m.type === 'ev') { evData = m.ev; renderEVs(); }
 };
-function endSolve() { solving = false; $('solveBtn').hidden = false; $('stopBtn').hidden = true; $('meter').style.width = '100%'; clearInterval(timer); }
+let solvedOnce = false;
+function markStale() { if (solvedOnce && !solving) { $('status').textContent = 'Spot changed · press Solve to update'; $('meter').style.width = '0'; } }
+function endSolve() { solvedOnce = true; endSolve2(); }
+function endSolve2() { solving = false; $('solveBtn').hidden = false; $('stopBtn').hidden = true; $('meter').style.width = '100%'; clearInterval(timer); }
 function startSolve(seconds) {
   $('err').textContent = '';
   let spot; try { spot = buildSpot(); Engine.makeSpot(spot); } catch (e) { $('err').textContent = e.message; return; }
@@ -604,7 +678,7 @@ function detail(k) {
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
   $('leftWrap').hidden = S.game !== 'icm';
-  fillStacks(); resetSeats();
+  fillStacks(); replay(); render(); markStale();
 }));
 document.querySelectorAll('[data-table]').forEach((b) => (b.onclick = () => {
   S.table = +b.dataset.table; document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x === b)); resetSeats();
@@ -614,16 +688,16 @@ function fillStacks() {
   if (!opts.includes(S.stack)) S.stack = S.game === 'cash' ? 100 : 25;
   $('stack').innerHTML = opts.map((x) => `<option value="${x}" ${x === S.stack ? 'selected' : ''}>${x} bb</option>`).join('');
 }
-$('stack').onchange = (e) => { S.stack = +e.target.value; render(); };
+$('stack').onchange = (e) => { S.stack = +e.target.value; replay(); render(); markStale(); };
 $('left').innerHTML = [2, 3, 4, 5, 6, 7, 8, 9].map((x) => `<option ${x === 9 ? 'selected' : ''}>${x}</option>`).join('');
 $('left').onchange = (e) => { S.left = +e.target.value; };
 $('sizing').onchange = (e) => { S.sizing = e.target.value; applySizing(); };
-$('randomFlop').onclick = () => { const d = []; while (d.length < 3) { const c = (Math.random() * 52) | 0; if (!d.includes(c)) d.push(c); } S.board = d; activeSlot = null; renderBoard(); };
+$('randomFlop').onclick = () => { const d = []; while (d.length < 3) { const c = (Math.random() * 52) | 0; if (!d.includes(c)) d.push(c); } S.board = d; activeSlot = null; renderBoard(); markStale(); };
 
 // ---------------------------------------------------------------- start: CO opens, BTN and BB call on K84, quick solve
 fillStacks(); applySizing(); resetSeats();
-const script = [['fold'], ['fold'], ['fold'], ['fold'], ['fold'], ['open'], ['call'], ['fold'], ['call']];
-for (const [k] of script) { const st = preflop(); if (st.done) break; const o = options(st.next, st).find((x) => x.k === k); act(st.next, o, st); }
+S.hist = [{ pos: 'UTG', k: 'fold' }, { pos: 'UTG+1', k: 'fold' }, { pos: 'UTG+2', k: 'fold' }, { pos: 'LJ', k: 'fold' }, { pos: 'HJ', k: 'fold' }, { pos: 'CO', k: 'open' }, { pos: 'BTN', k: 'call' }, { pos: 'SB', k: 'fold' }, { pos: 'BB', k: 'call' }];
+replay(); S.sel = null; render();
 S.board = Engine.parseCards('Kh8d4c'); renderBoard();
 startSolve(10);
 })();
