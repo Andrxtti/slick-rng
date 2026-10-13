@@ -600,8 +600,8 @@ function makeSpot(j) {
   }
   const start = board.length - 3, multi = names.length > 2;
   const ab = j.abstraction || {};
-  const turnBuckets = ab.turnBuckets ?? (start === 0 && multi ? 30 : 0);
-  const riverBuckets = ab.riverBuckets ?? (start === 0 && multi ? 100 : start === 1 && names.length > 3 ? 100 : 0);
+  const turnBuckets = ab.turnBuckets ?? (start === 0 ? (multi ? 30 : 50) : 0);
+  const riverBuckets = ab.riverBuckets ?? (start === 0 ? (multi ? 100 : 200) : start === 1 && names.length > 3 ? 100 : 0);
   return { names, stacks, ranges, board, pot, sizes, raiseCap: j.raiseCap ?? 2, allinThreshold: j.allinThreshold ?? 0.15, mergeThreshold: j.mergeThreshold ?? 0.1, payoff, turnBuckets, riverBuckets };
 }
 

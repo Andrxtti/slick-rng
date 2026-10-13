@@ -1,0 +1,1271 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0d1214"></head><body>
+<title>Slick RNG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one-column study flow — format bar, preflop line, board, then the strategy browser. Single dark card-room look. */
+:root {
+  color-scheme: dark;
+  --bg: #0d1214;
+  --panel: #141b1e;
+  --panel-2: #1a2327;
+  --line: #26333a;
+  --fg: #e6ece9;
+  --muted: #8a9a97;
+  --faint: #5a6b68;
+  --brass: #d6a649;
+  --brass-ink: #1b1406;
+  --danger: #e2685a;
+  --a-fold: #4f7590;
+  --a-pass: #3fa56b;
+  --a-allin: #7b2443;
+  --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --r: 6px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); color: var(--fg); }
+body { font-family: var(--font-body); font-size: 14px; line-height: 1.45; padding-inline: 16px; padding-block: 0 40px; max-width: 1280px; margin-inline: auto; }
+button, input, select { font: inherit; color: inherit; }
+select { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 8px; min-width: 0; }
+input[type="range"] { accent-color: var(--brass); }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
+button { cursor: pointer; border-radius: var(--r); border: 1px solid var(--line); background: var(--panel-2); padding: 7px 12px; }
+button:hover:not(:disabled) { border-color: var(--faint); }
+button.primary { background: var(--brass); color: var(--brass-ink); border-color: var(--brass); font-weight: 600; }
+button:disabled { opacity: .4; cursor: default; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.grow { flex: 1; min-width: 0; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 20px; letter-spacing: .03em; margin: 0; }
+
+header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-block: 14px; }
+.wordmark { font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: .04em; line-height: 1; }
+.wordmark span { color: var(--brass); }
+.ver { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--brass); color: var(--brass); padding: 2px 6px; border-radius: 3px; }
+
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--panel-2); }
+.seg button { border: 0; border-radius: 0; background: transparent; padding: 7px 13px; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--brass); color: var(--brass-ink); font-weight: 600; }
+
+.bar { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 12px; margin-bottom: 12px; }
+
+/* preflop seats */
+.seats { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 6px; }
+@media (max-width: 700px) { .seats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.seat { border: 1px solid var(--line); background: var(--panel-2); border-radius: 8px; padding: 8px 6px; text-align: center; display: grid; gap: 2px; min-width: 0; }
+.seat b { font-family: var(--font-display); font-size: 17px; letter-spacing: .03em; font-weight: 600; }
+.seat small { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seat.fold { opacity: .38; }
+.seat.agg small { color: #e88a55; font-weight: 600; }
+.seat.pass small { color: #5cc285; font-weight: 600; }
+.seat.now { border-color: var(--brass); box-shadow: 0 0 0 1px var(--brass) inset; }
+.seat.now small { color: var(--brass); }
+.prompt { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.prompt .who { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
+.prompt button { min-width: 84px; font-weight: 500; }
+.prompt .b-fold { color: #9cb6c9; }
+.prompt .b-pass { color: #6fd39a; }
+.prompt .b-agg { color: #f0a06e; }
+
+/* board */
+.board { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.slot { width: 46px; height: 62px; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 600; font-size: 18px; line-height: 1; padding: 0; }
+.slot.filled { background: #eef1ef; color: #111; border-color: #eef1ef; }
+.slot.empty { background: transparent; border: 1px dashed var(--faint); color: var(--faint); font-size: 12px; font-weight: 400; }
+.slot.s-h { color: #b2281a; } .slot.s-d { color: #1b4f8f; } .slot.s-c { color: #16683a; }
+.slot.active { outline: 2px solid var(--brass); outline-offset: 2px; }
+.sep { width: 1px; align-self: stretch; background: var(--line); margin-inline: 4px; }
+.picker { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 3px; }
+.card { aspect-ratio: 3 / 4; border-radius: 4px; border: 1px solid var(--line); background: var(--bg); font-family: var(--font-mono); font-size: 12px; display: grid; place-items: center; padding: 0; line-height: 1; max-width: 100%; }
+.card.s-c { color: #6fc08a; } .card.s-d { color: #69a8e8; } .card.s-h { color: #ee7a6b; } .card.s-s { color: #c9d1cf; }
+.card:disabled { opacity: .15; }
+
+.solverow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.meter { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; flex: 1; min-width: 120px; }
+.meter i { display: block; height: 100%; width: 0; background: var(--brass); transition: width .25s linear; }
+.status { font-size: 12px; color: var(--muted); }
+.error { color: var(--danger); font-size: 13px; }
+details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; width: max-content; }
+.advgrid { display: grid; grid-template-columns: 56px repeat(2, minmax(0, 1fr)); gap: 6px; align-items: center; margin-top: 8px; max-width: 520px; }
+.advgrid input { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); padding: 5px 8px; font-family: var(--font-mono); font-size: 12px; width: 100%; min-width: 0; }
+
+/* in-hand players */
+.inhand { display: flex; gap: 6px; flex-wrap: wrap; }
+.pchip { display: inline-flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 6px 4px 12px; font-size: 13px; }
+.pchip b { font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .03em; }
+.pchip button { padding: 2px 9px; font-size: 12px; border-radius: 999px; }
+
+/* results */
+.results { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.res-head { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.evs { display: flex; gap: 6px; flex-wrap: wrap; }
+.ev { background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 9px; font-size: 12px; }
+.ev b { font-family: var(--font-mono); font-weight: 500; }
+.crumbs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.crumb { font-size: 12px; padding: 3px 8px; border-radius: 4px; background: var(--panel-2); border: 1px solid var(--line); }
+.crumb.cardcrumb { font-family: var(--font-mono); font-weight: 600; }
+.arrow { color: var(--faint); font-size: 11px; }
+.node { padding: 14px; display: grid; gap: 12px; }
+.nodetitle { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.nodetitle h2 { font-size: 26px; }
+.actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.act { display: grid; grid-template-columns: 10px auto; column-gap: 8px; align-items: center; text-align: left; padding: 8px 12px; }
+.act i { width: 10px; height: 10px; border-radius: 2px; grid-row: span 2; }
+.act strong { font-weight: 600; font-size: 14px; }
+.act small { font-family: var(--font-mono); color: var(--muted); font-size: 12px; }
+.freqbar { display: flex; height: 10px; border-radius: 3px; overflow: hidden; background: var(--bg); }
+.freqbar i { display: block; height: 100%; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 280px); gap: 14px; align-items: start; }
+@media (max-width: 1000px) { .split { grid-template-columns: minmax(0, 1fr); } }
+.gridwrap { overflow-x: auto; }
+.hgrid { display: grid; grid-template-columns: repeat(13, minmax(26px, 1fr)); gap: 2px; min-width: 360px; }
+.cell { position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: #0a0e10; border: 0; padding: 0; cursor: pointer; }
+.cell .mix { position: absolute; inset: 0; display: flex; }
+.cell .mix i { display: block; height: 100%; }
+.cell .fill { position: absolute; left: 0; right: 0; top: 0; background: #0a0e10; }
+.cell .lab { position: absolute; left: 3px; top: 2px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; color: #fff; text-shadow: 0 0 2px #000, 0 0 2px #000; }
+.cell.none .lab { color: var(--faint); text-shadow: none; }
+.cell.sel { outline: 2px solid var(--brass); outline-offset: -2px; }
+.detail { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: grid; gap: 8px; min-width: 0; }
+.detail table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.detail td, .detail th { padding: 3px 4px; text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.detail th { font-family: var(--font-body); font-weight: 500; font-size: 11px; }
+.detail td:first-child, .detail th:first-child { text-align: left; }
+.empty-state { padding: 40px 14px; text-align: center; color: var(--muted); }
+
+/* modals */
+.modal { position: fixed; inset: 0; background: rgba(5, 8, 9, .8); display: grid; place-items: center; padding: 16px; z-index: 50; }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; width: min(640px, 100%); max-height: 100%; overflow: auto; display: grid; gap: 12px; }
+.rgrid { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 2px; user-select: none; touch-action: none; }
+.rcell { aspect-ratio: 1; border-radius: 3px; font-family: var(--font-mono); font-size: 10px; display: grid; place-items: center; background: #0a0e10; color: var(--muted); position: relative; overflow: hidden; }
+.rcell .w { position: absolute; left: 0; right: 0; bottom: 0; background: var(--brass); opacity: .85; }
+.rcell span { position: relative; }
+.rcell.on span { color: var(--brass-ink); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
+</style>
+
+<header class="top">
+  <div class="wordmark">SLICK <span>RNG</span></div>
+  <span class="ver">ALPHA 1.1</span>
+</header>
+
+<div class="bar">
+  <div class="row">
+    <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button></div>
+    <div class="seg" role="group" aria-label="Table size"><button data-table="6" aria-pressed="false">6-max</button><button data-table="9" aria-pressed="true">9-max</button></div>
+    <label class="row"><span class="label">Stack</span><select id="stack" aria-label="Starting stack"></select></label>
+    <label class="row" id="leftWrap" hidden><span class="label">Players left</span><select id="left" aria-label="Players left in tournament"></select></label>
+  </div>
+  <div class="seats" id="seats"></div>
+  <div class="prompt" id="prompt"></div>
+</div>
+
+<div class="bar">
+  <div class="board">
+    <span class="label">Board</span>
+    <div class="row" id="slots"></div>
+    <button id="randomFlop">Random flop</button>
+    <span class="sep"></span>
+    <label class="row"><span class="label">Sizes</span>
+      <select id="sizing"><option value="simple">Simple</option><option value="standard">Standard</option><option value="complex">Complex</option></select></label>
+    <label class="row"><span class="label">Depth</span>
+      <select id="depth"><option value="20">Quick · 20s</option><option value="60" selected>Normal · 1 min</option><option value="180">Deep · 3 min</option><option value="600">Overnight-lite · 10 min</option></select></label>
+    <div class="grow"></div>
+    <button id="stopBtn" hidden>Stop</button>
+    <button id="solveBtn" class="primary">Solve</button>
+  </div>
+  <div class="picker" id="picker" hidden></div>
+  <div class="solverow"><div class="meter"><i id="meter"></i></div><span class="status mono" id="status">Ready</span></div>
+  <div class="error" id="err" role="alert"></div>
+  <details class="adv">
+    <summary>Custom bet sizes</summary>
+    <div class="advgrid">
+      <span></span><span class="label">Bets</span><span class="label">Raises</span>
+      <span class="label">Flop</span><input id="fb" aria-label="Flop bets"><input id="fr" aria-label="Flop raises">
+      <span class="label">Turn</span><input id="tb" aria-label="Turn bets"><input id="tr" aria-label="Turn raises">
+      <span class="label">River</span><input id="rb" aria-label="River bets"><input id="rr" aria-label="River raises">
+    </div>
+  </details>
+</div>
+
+<div class="results">
+  <div class="res-head">
+    <div class="inhand grow" id="inhand"></div>
+    <div class="evs" id="evs"></div>
+  </div>
+  <div class="crumbs" id="crumbs"></div>
+  <div id="nodeView"><div class="empty-state">Set the preflop action, then press Solve.</div></div>
+</div>
+
+<div class="modal" id="rangeModal" hidden>
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+    <div class="row"><h2 id="rmTitle" class="grow">Range</h2><span id="rmCount" class="mono muted"></span></div>
+    <label class="row"><span class="label">Paint weight</span><input id="rmWeight" type="range" min="0" max="100" value="100" class="grow"><span id="rmWeightVal" class="mono" style="width:44px">100%</span></label>
+    <div class="rgrid" id="rmGrid"></div>
+    <div class="row"><button id="rmReset">Default</button><button id="rmClear">Clear</button><div class="grow"></div><button id="rmCancel">Cancel</button><button id="rmDone" class="primary">Use range</button></div>
+  </div>
+</div>
+
+<script type="text/plain" id="engine-src">// Slick RNG engine (JavaScript port of the Rust engine).
+// Multiway Monte Carlo CFR: external sampling, regret-matching+, quadratic averaging.
+// Runs inside a Web Worker (browser) or under Node for tests.
+'use strict';
+
+// ---------------------------------------------------------------- cards
+const RANKS = '23456789TJQKA', SUITS = 'cdhs';
+const NUM_COMBOS = 1326;
+const COMBO_A = new Uint8Array(NUM_COMBOS), COMBO_B = new Uint8Array(NUM_COMBOS);
+(function () { let i = 0; for (let a = 0; a < 52; a++) for (let b = 0; b < a; b++) { COMBO_A[i] = a; COMBO_B[i] = b; i++; } })();
+function comboIndex(a, b) { if (a < b) { const t = a; a = b; b = t; } return (a * (a - 1)) / 2 + b; }
+function parseCard(s) {
+  const r = RANKS.indexOf(s[0].toUpperCase()), su = SUITS.indexOf(s[1].toLowerCase());
+  if (r < 0 || su < 0 || s.length !== 2) throw new Error(`bad card "${s}"`);
+  return r * 4 + su;
+}
+function parseCards(s) {
+  const t = s.replace(/[\s,]/g, '');
+  if (t.length % 2) throw new Error(`bad board "${s}"`);
+  const out = [];
+  for (let i = 0; i < t.length; i += 2) { const c = parseCard(t.slice(i, i + 2)); if (out.includes(c)) throw new Error('duplicate card on board'); out.push(c); }
+  return out;
+}
+function cardStr(c) { return RANKS[c >> 2] + SUITS[c & 3]; }
+function comboStr(i) { return cardStr(COMBO_A[i]) + cardStr(COMBO_B[i]); }
+function comboClass(i) {
+  const a = COMBO_A[i], b = COMBO_B[i], ra = Math.max(a >> 2, b >> 2), rb = Math.min(a >> 2, b >> 2);
+  if (ra === rb) return RANKS[ra] + RANKS[rb];
+  return RANKS[ra] + RANKS[rb] + ((a & 3) === (b & 3) ? 's' : 'o');
+}
+
+// ---------------------------------------------------------------- evaluator
+// returns category<<20 | kickers; higher is better
+function topBits(mask, n) {
+  let out = 0, m = mask, k = 0;
+  while (k < n && m) { const r = 31 - Math.clz32(m); out = (out << 4) | r; m &= ~(1 << r); k++; }
+  return out << (4 * (5 - n));
+}
+function straightHigh(mask) {
+  const m = (mask << 1) | ((mask >> 12) & 1);
+  const s = m & (m >> 1) & (m >> 2) & (m >> 3) & (m >> 4);
+  return s ? (31 - Math.clz32(s)) + 3 : -1;
+}
+const _cnt = new Uint8Array(13), _sm = new Int32Array(4);
+function evaluate(cards, n) {
+  _cnt.fill(0); _sm.fill(0); let all = 0;
+  for (let i = 0; i < n; i++) { const c = cards[i], r = c >> 2; _sm[c & 3] |= 1 << r; _cnt[r]++; all |= 1 << r; }
+  for (let s = 0; s < 4; s++) {
+    const sm = _sm[s];
+    let bits = sm; bits = bits - ((bits >> 1) & 0x55555555); bits = (bits & 0x33333333) + ((bits >> 2) & 0x33333333);
+    const pc = (((bits + (bits >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+    if (pc >= 5) { const h = straightHigh(sm); return h >= 0 ? (8 << 20) | (h << 16) : (5 << 20) | topBits(sm, 5); }
+  }
+  let quads = 0, trips = 0, pairs = 0, npairs = 0;
+  for (let r = 0; r < 13; r++) { const c = _cnt[r]; if (c === 4) quads |= 1 << r; else if (c === 3) trips |= 1 << r; else if (c === 2) { pairs |= 1 << r; npairs++; } }
+  if (quads) { const q = 31 - Math.clz32(quads); return (7 << 20) | (q << 16) | (topBits(all & ~(1 << q), 1) >> 12); }
+  if (trips) {
+    const t = 31 - Math.clz32(trips), rp = (pairs | trips) & ~(1 << t);
+    if (rp) return (6 << 20) | (t << 16) | ((31 - Math.clz32(rp)) << 12);
+  }
+  const sh = straightHigh(all);
+  if (sh >= 0) return (4 << 20) | (sh << 16);
+  if (trips) { const t = 31 - Math.clz32(trips); return (3 << 20) | (t << 16) | (topBits(all & ~(1 << t), 2) >> 8); }
+  if (npairs >= 2) {
+    const p1 = 31 - Math.clz32(pairs), p2 = 31 - Math.clz32(pairs & ~(1 << p1));
+    return (2 << 20) | (p1 << 16) | (p2 << 12) | (topBits(all & ~(1 << p1) & ~(1 << p2), 1) >> 8);
+  }
+  if (pairs) { const p = 31 - Math.clz32(pairs); return (1 << 20) | (p << 16) | (topBits(all & ~(1 << p), 3) >> 4); }
+  return topBits(all, 5);
+}
+
+// ---------------------------------------------------------------- ranges
+function classCombos(hi, lo, kind) {
+  const v = [];
+  for (let s1 = 0; s1 < 4; s1++) for (let s2 = 0; s2 < 4; s2++) {
+    const a = hi * 4 + s1, b = lo * 4 + s2; if (a === b) continue;
+    const ok = kind === 'p' ? (hi === lo && s1 < s2) : kind === 's' ? (hi !== lo && s1 === s2) : kind === 'o' ? (hi !== lo && s1 !== s2) : (hi !== lo || s1 < s2);
+    if (ok) v.push(comboIndex(a, b));
+  }
+  return v;
+}
+function parseClass(t) {
+  if (t.length < 2 || t.length > 3) throw new Error(`bad hand "${t}"`);
+  const r1 = RANKS.indexOf(t[0].toUpperCase()), r2 = RANKS.indexOf(t[1].toUpperCase());
+  if (r1 < 0 || r2 < 0) throw new Error(`bad hand "${t}"`);
+  const hi = Math.max(r1, r2), lo = Math.min(r1, r2);
+  let kind;
+  if (hi === lo) { if (t.length === 3) throw new Error(`bad pair "${t}"`); kind = 'p'; }
+  else if (t.length === 3) { kind = t[2].toLowerCase(); if (kind !== 's' && kind !== 'o') throw new Error(`bad hand "${t}"`); }
+  else kind = 'a';
+  return [hi, lo, kind];
+}
+function expandToken(t) {
+  if (t.length === 4 && /^[2-9TJQKA][cdhs][2-9TJQKA][cdhs]$/i.test(t)) {
+    const a = parseCard(t.slice(0, 2)), b = parseCard(t.slice(2)); if (a === b) throw new Error(`bad combo "${t}"`);
+    return [comboIndex(a, b)];
+  }
+  const out = [];
+  if (t.endsWith('+')) {
+    const [hi, lo, kind] = parseClass(t.slice(0, -1));
+    if (kind === 'p') for (let r = hi; r < 13; r++) out.push(...classCombos(r, r, 'p'));
+    else for (let r = lo; r < hi; r++) out.push(...classCombos(hi, r, kind));
+  } else if (t.includes('-')) {
+    const [a, b] = t.split('-'); const [h1, l1, k1] = parseClass(a), [h2, l2, k2] = parseClass(b);
+    if (k1 !== k2) throw new Error(`bad span "${t}"`);
+    if (k1 === 'p') for (let r = Math.min(h1, h2); r <= Math.max(h1, h2); r++) out.push(...classCombos(r, r, 'p'));
+    else { if (h1 !== h2) throw new Error(`span must keep its top card: "${t}"`); for (let r = Math.min(l1, l2); r <= Math.max(l1, l2); r++) out.push(...classCombos(h1, r, k1)); }
+  } else { const [hi, lo, kind] = parseClass(t); out.push(...classCombos(hi, lo, kind)); }
+  return out;
+}
+function parseRange(s) {
+  const w = new Float32Array(NUM_COMBOS);
+  for (const raw of s.split(',')) {
+    const tok = raw.trim(); if (!tok) continue;
+    let hand = tok, weight = 1;
+    if (tok.includes(':')) { const [h, x] = tok.split(':'); hand = h.trim(); weight = parseFloat(x); if (!(weight >= 0 && weight <= 1)) throw new Error(`bad weight in "${tok}"`); }
+    for (const c of expandToken(hand)) w[c] = weight;
+  }
+  return w;
+}
+
+// ---------------------------------------------------------------- tree
+// sizes: "33%, 75%, a" (bets) / "3x, 50%, a" (raises)
+function parseSizes(s, isRaise) {
+  const v = [];
+  for (let t of (s || '').split(',')) {
+    t = t.trim().toLowerCase(); if (!t) continue;
+    if (t === 'a' || t === 'allin' || t === 'all-in') v.push({ k: 'a' });
+    else if (t.endsWith('%')) { const x = parseFloat(t); if (!(x > 0)) throw new Error(`bad size "${t}"`); v.push({ k: 'p', x: x / 100 }); }
+    else if (t.endsWith('x')) { if (!isRaise) throw new Error(`"${t}": x-sizes are for raises`); const x = parseFloat(t); if (!(x > 1)) throw new Error(`bad size "${t}"`); v.push({ k: 'm', x }); }
+    else throw new Error(`bad size "${t}" (use 50%, 3x or a)`);
+  }
+  return v;
+}
+
+const K_ACTION = 0, K_CHANCE = 1, K_FOLD = 2, K_SHOW = 3;
+
+function buildTree(cfg) {
+  const n = cfg.stacks.length, nodes = [];
+  const canAct = (st, q) => !st.folded[q] && !st.allin[q];
+  const nextActor = (st, p) => { for (let k = 1; k <= n; k++) { const q = (p + k) % n; if (canAct(st, q) && st.needs[q]) return q; } return -1; };
+  const active = (st) => st.folded.reduce((a, f) => a + (f ? 0 : 1), 0);
+  const clone = (st) => ({ street: st.street, pot: st.pot, sb: st.sb.slice(), inv: st.inv.slice(), folded: st.folded.slice(), allin: st.allin.slice(), needs: st.needs.slice(), toAct: st.toAct, raises: st.raises, lastRaise: st.lastRaise });
+  const push = (st, node) => { node.street = st.street; node.inv = Float64Array.from(st.inv); node.folded = st.folded.slice(); node.pot = st.pot; nodes.push(node); if (nodes.length > 3e6) throw new Error('Tree too large. Use fewer bet sizes or a lower raise cap.'); return nodes.length - 1; };
+
+  function pushSized(acts, targets, allinTo, pot) {
+    targets.sort((a, b) => a - b);
+    const chosen = []; let hasAllin = false;
+    for (let t of targets) {
+      t = Math.round(t * 100) / 100;
+      if (t >= allinTo * (1 - 1e-9)) { hasAllin = true; continue; }
+      if (chosen.length && (t - chosen[chosen.length - 1]) / Math.max(pot, 1e-9) < cfg.mergeThreshold) continue;
+      chosen.push(t);
+    }
+    if (chosen.length) { const last = chosen[chosen.length - 1]; if (allinTo - last <= cfg.allinThreshold * (pot + 2 * last)) hasAllin = true; }
+    for (const t of chosen) acts.push({ t: 'bet', to: t });
+    if (hasAllin) acts.push({ t: 'allin', to: allinTo });
+  }
+
+  function genActions(st, p) {
+    const maxBet = Math.max(...st.sb), toCall = maxBet - st.sb[p], rem = cfg.stacks[p] - st.inv[p], allinTo = st.sb[p] + rem;
+    const sizes = cfg.sizes[st.street], acts = [];
+    let others = false; for (let q = 0; q < n; q++) if (q !== p && canAct(st, q)) others = true;
+    if (toCall > 1e-9) {
+      acts.push({ t: 'fold' });
+      if (rem <= toCall + 1e-9) { acts.push({ t: 'allin', to: allinTo }); return acts; }
+      acts.push({ t: 'call' });
+      if (!others || st.raises >= cfg.raiseCap) return acts;
+      const potAfter = st.pot + toCall, minTo = maxBet + Math.max(st.lastRaise, toCall);
+      const targets = sizes.raises.map((s) => Math.max(s.k === 'p' ? maxBet + s.x * potAfter : s.k === 'm' ? maxBet * s.x : allinTo, minTo));
+      pushSized(acts, targets, allinTo, st.pot + toCall);
+    } else {
+      acts.push({ t: 'check' });
+      if (!others) return acts;
+      const targets = sizes.bets.filter((s) => s.k !== 'm').map((s) => Math.max(s.k === 'p' ? s.x * st.pot : allinTo, Math.min(1, allinTo)));
+      pushSized(acts, targets, allinTo, st.pot);
+    }
+    return acts;
+  }
+
+  function apply(st, p, a) {
+    const s = clone(st), maxBet = Math.max(...st.sb);
+    s.needs[p] = false;
+    const putTo = (total) => { const add = total - s.sb[p]; s.sb[p] = total; s.inv[p] += add; s.pot += add; if (cfg.stacks[p] - s.inv[p] <= 1e-9) s.allin[p] = true; };
+    if (a.t === 'fold') s.folded[p] = true;
+    else if (a.t === 'call') putTo(maxBet);
+    else if (a.t === 'bet' || a.t === 'allin') {
+      putTo(a.to);
+      if (a.to > maxBet + 1e-9) {
+        const raise = a.to - maxBet, full = raise >= Math.max(st.lastRaise, 1e-9) - 1e-9;
+        if (maxBet > 0) s.raises++;
+        if (full || maxBet === 0) s.lastRaise = raise;
+        for (let q = 0; q < n; q++) if (q !== p && !s.folded[q] && !s.allin[q]) s.needs[q] = true;
+      }
+    }
+    s.toAct = p;
+    return s;
+  }
+
+  function afterAction(st) {
+    if (active(st) === 1) return push(st, { kind: K_FOLD });
+    const q = nextActor(st, st.toAct);
+    if (q >= 0) { st.toAct = q; return build(st); }
+    let canBet = 0; for (let i = 0; i < n; i++) if (canAct(st, i)) canBet++;
+    if (st.street === 2 || canBet <= 1) return push(st, { kind: K_SHOW });
+    const s = clone(st); s.street++; s.sb.fill(0); s.raises = 0; s.lastRaise = 0;
+    for (let i = 0; i < n; i++) s.needs[i] = !s.folded[i] && !s.allin[i];
+    s.toAct = nextActor(s, n - 1);
+    const id = push(s, { kind: K_CHANCE, child: -1 });
+    nodes[id].child = build(s);
+    return id;
+  }
+
+  function build(st) {
+    if (active(st) === 1) return push(st, { kind: K_FOLD });
+    const p = st.toAct, acts = genActions(st, p);
+    const id = push(st, { kind: K_ACTION, player: p, actions: acts, children: [] });
+    const ch = acts.map((a) => afterAction(apply(st, p, a)));
+    nodes[id].children = ch;
+    return id;
+  }
+
+  const st0 = { street: cfg.startStreet, pot: cfg.pot, sb: new Array(n).fill(0), inv: new Array(n).fill(0), folded: new Array(n).fill(false), allin: cfg.stacks.map((s) => s <= 0), needs: new Array(n).fill(true), toAct: 0, raises: 0, lastRaise: 0 };
+  st0.toAct = nextActor(st0, n - 1);
+  build(st0);
+  // precompute side pots for terminals
+  for (const nd of nodes) {
+    if (nd.kind === K_FOLD) nd.winner = nd.folded.indexOf(false);
+    if (nd.kind === K_SHOW) {
+      const alive = []; for (let i = 0; i < n; i++) if (!nd.folded[i]) alive.push(i);
+      const levels = [...new Set(alive.map((i) => Math.round(nd.inv[i] * 1e6) / 1e6))].sort((a, b) => a - b);
+      let prev = 0, dist = 0; nd.layers = [];
+      levels.forEach((lv, li) => {
+        let amt = 0; for (let i = 0; i < n; i++) amt += Math.min(nd.inv[i], lv) - Math.min(nd.inv[i], prev);
+        if (li === 0) amt += cfg.pot;
+        if (li === levels.length - 1) amt = nd.pot - dist;
+        nd.layers.push({ amount: amt, elig: alive.filter((i) => nd.inv[i] >= lv - 1e-9) });
+        dist += amt; prev = lv;
+      });
+    }
+  }
+  return nodes;
+}
+
+function actionLabel(a) {
+  const f = (x) => (Math.abs(x - Math.round(x)) < 1e-6 ? String(Math.round(x)) : x.toFixed(1));
+  return a.t === 'fold' ? 'Fold' : a.t === 'check' ? 'Check' : a.t === 'call' ? 'Call' : a.t === 'bet' ? `Bet ${f(a.to)}` : `All-in ${f(a.to)}`;
+}
+
+// ---------------------------------------------------------------- ICM
+function icmEquity(stacks, start, payouts) {
+  const n = stacks.length, eq = new Float64Array(n);
+  const alive = [], busted = [];
+  for (let i = 0; i < n; i++) (stacks[i] > 1e-9 ? alive : busted).push(i);
+  busted.sort((x, y) => start[y] - start[x]);
+  busted.forEach((i, k) => { const pl = alive.length + k; if (pl < payouts.length) eq[i] = payouts[pl]; });
+  const a = alive.length, paid = Math.min(payouts.length, a);
+  if (!a || !paid) return eq;
+  const total = alive.reduce((s, i) => s + stacks[i], 0), size = 1 << a;
+  const prob = new Float64Array(size), sumS = new Float64Array(size), pc = new Uint8Array(size);
+  for (let m = 1; m < size; m++) { const low = 31 - Math.clz32(m & -m); sumS[m] = sumS[m & (m - 1)] + stacks[alive[low]]; pc[m] = pc[m & (m - 1)] + 1; }
+  prob[0] = 1;
+  for (let m = 0; m < size; m++) {
+    const p = prob[m]; if (p === 0 || pc[m] >= paid) continue;
+    const rem = total - sumS[m]; if (rem <= 0) continue;
+    for (let j = 0; j < a; j++) { if (m & (1 << j)) continue; const pj = (p * stacks[alive[j]]) / rem; eq[alive[j]] += pj * payouts[pc[m]]; prob[m | (1 << j)] += pj; }
+  }
+  return eq;
+}
+
+// ---------------------------------------------------------------- abstraction
+const VOL_LEVELS = 4, VOL_CUTS = [0.06, 0.13, 0.21];
+function riverPercentiles(board5) {
+  const arr = [], cards = new Uint8Array(7); for (let i = 0; i < 5; i++) cards[i] = board5[i];
+  for (let c = 0; c < NUM_COMBOS; c++) {
+    const a = COMBO_A[c], b = COMBO_B[c]; if (board5.includes(a) || board5.includes(b)) continue;
+    cards[5] = a; cards[6] = b; arr.push(evaluate(cards, 7) * 2048 + c);
+  }
+  arr.sort((x, y) => x - y);
+  const out = new Float32Array(NUM_COMBOS).fill(-1), n = arr.length;
+  let i = 0;
+  while (i < n) {
+    const s = Math.floor(arr[i] / 2048); let j = i;
+    while (j < n && Math.floor(arr[j] / 2048) === s) j++;
+    const pct = (i + (j - i) * 0.5) / n;
+    for (let k = i; k < j; k++) out[arr[k] % 2048] = pct;
+    i = j;
+  }
+  return out;
+}
+function boardKey(extra) { const v = extra.slice().sort((a, b) => a - b); let k = 0; for (const c of v) k = k * 53 + c + 1; return k; }
+function quantize(pct, B) { const o = new Uint16Array(NUM_COMBOS); for (let i = 0; i < NUM_COMBOS; i++) o[i] = pct[i] < 0 ? 65535 : Math.min(B - 1, Math.floor(pct[i] * B)); return o; }
+function buildAbstraction(board, turnB, riverB) {
+  const abs = { turnB, riverB, river: new Map(), turn: new Map() };
+  const deck = []; for (let c = 0; c < 52; c++) if (!board.includes(c)) deck.push(c);
+  if (board.length === 3 && (turnB > 0 || riverB > 0)) {
+    const rp = new Map();
+    for (let i = 0; i < deck.length; i++) for (let j = i + 1; j < deck.length; j++) {
+      const t = deck[i], r = deck[j];
+      rp.set(boardKey([t, r]), riverPercentiles([board[0], board[1], board[2], t, r]));
+    }
+    if (riverB > 0) for (const [k, p] of rp) abs.river.set(k, quantize(p, riverB));
+    if (turnB > 0) for (const t of deck) {
+      const sum = new Float64Array(NUM_COMBOS), sq = new Float64Array(NUM_COMBOS), cnt = new Uint16Array(NUM_COMBOS);
+      for (const r of deck) { if (r === t) continue; const p = rp.get(boardKey([t, r])); for (let c = 0; c < NUM_COMBOS; c++) { const x = p[c]; if (x >= 0) { sum[c] += x; sq[c] += x * x; cnt[c]++; } } }
+      const b = new Uint16Array(NUM_COMBOS).fill(65535);
+      for (let c = 0; c < NUM_COMBOS; c++) {
+        if (!cnt[c] || COMBO_A[c] === t || COMBO_B[c] === t) continue;
+        const m = sum[c] / cnt[c], sd = Math.sqrt(Math.max(0, sq[c] / cnt[c] - m * m));
+        const h = Math.min(turnB - 1, Math.floor(m * turnB)); let v = 0; for (const cut of VOL_CUTS) if (sd > cut) v++;
+        b[c] = h * VOL_LEVELS + v;
+      }
+      abs.turn.set(t, b);
+    }
+  } else if (board.length === 4 && riverB > 0) {
+    for (const r of deck) abs.river.set(boardKey([r]), quantize(riverPercentiles([...board, r]), riverB));
+  }
+  return abs;
+}
+
+// ---------------------------------------------------------------- solver
+const KEY_MUL = 4194304; // 2^22
+class Solver {
+  constructor(spot) {
+    this.spot = spot;
+    this.n = spot.stacks.length;
+    this.board = spot.board;
+    this.start = spot.board.length - 3;
+    this.nodes = buildTree({ stacks: spot.stacks, pot: spot.pot, startStreet: this.start, sizes: spot.sizes, raiseCap: spot.raiseCap, allinThreshold: spot.allinThreshold, mergeThreshold: spot.mergeThreshold });
+    this.ranges = spot.ranges;
+    this.pr = this.ranges.map((w, p) => {
+      const combos = [], cum = []; let acc = 0;
+      for (let c = 0; c < NUM_COMBOS; c++) if (w[c] > 0 && !this.board.includes(COMBO_A[c]) && !this.board.includes(COMBO_B[c])) { acc += w[c]; combos.push(c); cum.push(acc); }
+      if (!combos.length) throw new Error(`${spot.names[p]}'s range is empty on this board.`);
+      return { combos, cum: Float64Array.from(cum) };
+    });
+    this.abs = spot.turnBuckets > 0 || spot.riverBuckets > 0 ? buildAbstraction(this.board, spot.turnBuckets, spot.riverBuckets) : null;
+    this.index = new Map();
+    this.T = new Float32Array(1 << 20);
+    this.used = 0;
+    this.iters = 0;
+    this.icmCache = new Map();
+    this.sig = []; this.val = [];
+    for (let d = 0; d < 200; d++) { this.sig.push(new Float64Array(16)); this.val.push(new Float64Array(16)); }
+    // per-deal scratch
+    this.combo = new Int32Array(this.n); this.strength = new Int32Array(this.n);
+    this.key = []; for (let p = 0; p < this.n; p++) this.key.push(new Int32Array(3));
+    this.full = new Uint8Array(5); this.used52 = new Uint8Array(52); this.c7 = new Uint8Array(7);
+    this.decisionPoints = this.nodes.filter((x) => x.kind === K_ACTION).length;
+    this.count = 0;
+    for (const nd of this.nodes) {
+      if (nd.kind !== K_ACTION) continue;
+      if (nd.street === this.start) nd.keyRange = NUM_COMBOS;
+      else if (nd.street === 1 && this.abs && this.abs.turnB > 0) nd.keyRange = this.abs.turnB * VOL_LEVELS;
+      else if (nd.street === 2 && this.abs && this.abs.riverB > 0) nd.keyRange = this.abs.riverB;
+      else nd.keyRange = 0;
+    }
+  }
+
+  // dense per-node index when the key space is small (starting street, buckets)
+  slotNode(nd, id, hk, na, create) {
+    if (nd.keyRange) {
+      let idx = nd.idx;
+      if (!idx) { if (!create) return -1; idx = nd.idx = new Int32Array(nd.keyRange).fill(-1); }
+      let o = idx[hk];
+      if (o >= 0) return o;
+      if (!create) return -1;
+      o = this.alloc(na); idx[hk] = o; this.count++;
+      return o;
+    }
+    return this.slot(id * KEY_MUL + hk, na, create);
+  }
+
+  alloc(na) {
+    const o = this.used; this.used += 2 * na;
+    if (this.used > this.T.length) {
+      const bigger = new Float32Array(Math.max(this.T.length * 2, this.used));
+      bigger.set(this.T); this.T = bigger;
+    }
+    return o;
+  }
+
+  slot(key, na, create) {
+    let o = this.index.get(key);
+    if (o !== undefined) return o;
+    if (!create) return -1;
+    o = this.alloc(na);
+    this.index.set(key, o); this.count++;
+    return o;
+  }
+
+  handKey(combo, street, full) {
+    if (street === this.start) return combo;
+    const abs = this.abs, flop = this.start === 0;
+    if (street === 1) {
+      if (abs && abs.turnB > 0) return abs.turn.get(full[3])[combo];
+      return combo + NUM_COMBOS * (full[3] + 1);
+    }
+    if (abs && abs.riverB > 0) return abs.river.get(flop ? boardKey([full[3], full[4]]) : boardKey([full[4]]))[combo];
+    const path = flop ? 53 + full[3] * 52 + full[4] : full[4] + 1;
+    return combo + NUM_COMBOS * path;
+  }
+
+  sampleDeal() {
+    const n = this.n, used = this.used52;
+    for (;;) {
+      used.fill(0); for (const c of this.board) used[c] = 1;
+      let ok = true;
+      for (let p = 0; p < n && ok; p++) {
+        const pr = this.pr[p], cum = pr.cum, x = Math.random() * cum[cum.length - 1];
+        let lo = 0, hi = cum.length - 1;
+        while (lo < hi) { const mid = (lo + hi) >> 1; if (cum[mid] <= x) lo = mid + 1; else hi = mid; }
+        const c = pr.combos[lo], a = COMBO_A[c], b = COMBO_B[c];
+        if (used[a] || used[b]) { ok = false; break; }
+        used[a] = used[b] = 1; this.combo[p] = c;
+      }
+      if (ok) break;
+    }
+    const full = this.full;
+    for (let i = 0; i < this.board.length; i++) full[i] = this.board[i];
+    for (let s = this.board.length; s < 5; s++) { let c; do c = (Math.random() * 52) | 0; while (used[c]); used[c] = 1; full[s] = c; }
+    const c7 = this.c7; for (let i = 0; i < 5; i++) c7[i] = full[i];
+    for (let p = 0; p < n; p++) {
+      const c = this.combo[p]; c7[5] = COMBO_A[c]; c7[6] = COMBO_B[c];
+      this.strength[p] = evaluate(c7, 7);
+      for (let st = this.start; st < 3; st++) this.key[p][st] = this.handKey(c, st, full);
+    }
+  }
+
+  // payoff for player p at a terminal node under the current deal
+  utility(nd, p) {
+    if (this.spot.payoff.type === 'icm') return this.icmUtility(nd)[p];
+    let won = 0;
+    if (nd.kind === K_FOLD) won = nd.winner === p ? nd.pot : 0;
+    else for (const L of nd.layers) {
+      if (!L.elig.includes(p)) continue;
+      let best = -1, cnt = 0;
+      for (const i of L.elig) { const s = this.strength[i]; if (s > best) { best = s; cnt = 1; } else if (s === best) cnt++; }
+      if (this.strength[p] === best) won += L.amount / cnt;
+    }
+    return won - nd.inv[p];
+  }
+
+  finalStacks(nd) {
+    const n = this.n, fin = new Float64Array(n);
+    for (let i = 0; i < n; i++) fin[i] = this.spot.stacks[i] - nd.inv[i];
+    if (nd.kind === K_FOLD) { fin[nd.winner] += nd.pot; return fin; }
+    for (const L of nd.layers) {
+      let best = -1; const w = [];
+      for (const i of L.elig) { const s = this.strength[i]; if (s > best) { best = s; w.length = 0; w.push(i); } else if (s === best) w.push(i); }
+      for (const i of w) fin[i] += L.amount / w.length;
+    }
+    return fin;
+  }
+
+  icmUtility(nd) {
+    const fin = this.finalStacks(nd);
+    let k = ''; for (let i = 0; i < fin.length; i++) k += Math.round(fin[i] * 1000) + ',';
+    let v = this.icmCache.get(k);
+    if (v) return v;
+    const { payouts, others } = this.spot.payoff;
+    const all = [...fin, ...others], start = [...this.spot.stacks, ...others];
+    v = icmEquity(all, start, payouts).slice(0, this.n);
+    if (this.icmCache.size < 300000) this.icmCache.set(k, v);
+    return v;
+  }
+
+  traverse(id, p, w, wa, depth) {
+    const nd = this.nodes[id];
+    if (nd.kind === K_FOLD || nd.kind === K_SHOW) return this.utility(nd, p);
+    if (nd.kind === K_CHANCE) return this.traverse(nd.child, p, w, wa, depth);
+    const q = nd.player, na = nd.actions.length, T = this.T;
+    const off = this.slotNode(nd, id, this.key[q][nd.street], na, true);
+    const sig = this.sig[depth];
+    let sum = 0;
+    for (let a = 0; a < na; a++) { const r = T[off + a]; const x = r > 0 ? r : 0; sig[a] = x; sum += x; }
+    if (sum > 0) for (let a = 0; a < na; a++) sig[a] /= sum; else for (let a = 0; a < na; a++) sig[a] = 1 / na;
+    if (q === p) {
+      const val = this.val[depth]; let v = 0;
+      for (let a = 0; a < na; a++) { val[a] = this.traverse(nd.children[a], p, w, wa, depth + 1); v += sig[a] * val[a]; }
+      const T2 = this.T; // table may have grown during recursion
+      for (let a = 0; a < na; a++) { const r = T2[off + a] + w * (val[a] - v); T2[off + a] = r > 0 ? r : 0; }
+      return v;
+    }
+    for (let a = 0; a < na; a++) T[off + na + a] += wa * sig[a];
+    let x = Math.random(), pick = na - 1;
+    for (let a = 0; a < na; a++) { x -= sig[a]; if (x < 0) { pick = a; break; } }
+    return this.traverse(nd.children[pick], p, w, wa, depth + 1);
+  }
+
+  run(ms) {
+    const t0 = Date.now(); let k = 0;
+    while (Date.now() - t0 < ms) {
+      for (let j = 0; j < 50; j++) {
+        const w = Math.floor(this.iters / 1000) + 1, wa = w * w;
+        this.sampleDeal();
+        for (let p = 0; p < this.n; p++) this.traverse(0, p, w, wa, 0);
+        this.iters++; k++;
+      }
+    }
+    return k;
+  }
+
+  avgStrategy(id, handKey, na) {
+    const out = new Float64Array(na), off = this.slotNode(this.nodes[id], id, handKey, na, false);
+    if (off < 0) { out.fill(1 / na); return out; }
+    let s = 0; for (let a = 0; a < na; a++) { out[a] = this.T[off + na + a]; s += out[a]; }
+    if (s > 0) { for (let a = 0; a < na; a++) out[a] /= s; return out; }
+    for (let a = 0; a < na; a++) { const r = Math.max(0, this.T[off + a]); out[a] = r; s += r; }
+    if (s > 0) for (let a = 0; a < na; a++) out[a] /= s; else out.fill(1 / na);
+    return out;
+  }
+
+  estimateEV(samples) {
+    const n = this.n, sum = new Float64Array(n), sq = new Float64Array(n);
+    for (let i = 0; i < samples; i++) {
+      this.sampleDeal();
+      let id = 0;
+      for (;;) {
+        const nd = this.nodes[id];
+        if (nd.kind === K_FOLD || nd.kind === K_SHOW) {
+          for (let p = 0; p < n; p++) { const u = this.utility(nd, p); sum[p] += u; sq[p] += u * u; }
+          break;
+        }
+        if (nd.kind === K_CHANCE) { id = nd.child; continue; }
+        const s = this.avgStrategy(id, this.key[nd.player][nd.street], nd.actions.length);
+        let x = Math.random(), pick = s.length - 1;
+        for (let a = 0; a < s.length; a++) { x -= s[a]; if (x < 0) { pick = a; break; } }
+        id = nd.children[pick];
+      }
+    }
+    return Array.from({ length: n }, (_, p) => { const m = sum[p] / samples; return { ev: m, se: Math.sqrt(Math.max(0, sq[p] / samples - m * m) / samples) }; });
+  }
+
+  // path: array of {a: actionIndex} or {card: c}
+  report(path) {
+    let id = 0; const board = this.board.slice(); const steps = []; const history = [];
+    for (const s of path) {
+      const nd = this.nodes[id];
+      if (nd.kind === K_ACTION) {
+        if (s.a === undefined || s.a >= nd.children.length) throw new Error('Invalid action in path.');
+        steps.push({ id, player: nd.player, street: nd.street, a: s.a, na: nd.actions.length });
+        history.push({ type: 'action', player: nd.player, label: actionLabel(nd.actions[s.a]) });
+        id = nd.children[s.a];
+      } else if (nd.kind === K_CHANCE) {
+        if (s.card === undefined || board.includes(s.card)) throw new Error('Pick a card that is not on the board.');
+        board.push(s.card); history.push({ type: 'card', card: s.card });
+        id = nd.child;
+      } else throw new Error('The hand is over at this point.');
+    }
+    const nd = this.nodes[id];
+    const base = { history, board: board.slice(), pot: nd.pot, street: nd.street };
+    if (nd.kind === K_CHANCE) return { ...base, kind: 'chance', street: nd.street };
+    if (nd.kind !== K_ACTION) return { ...base, kind: 'terminal', folded: nd.folded.slice() };
+    const full = new Uint8Array(5); board.forEach((c, i) => (full[i] = c));
+    const keyFor = (c, st) => this.handKey(c, st, full);
+    const p = nd.player, na = nd.actions.length, combos = [];
+    for (const c of this.pr[p].combos) {
+      if (board.includes(COMBO_A[c]) || board.includes(COMBO_B[c])) continue;
+      let reach = this.ranges[p][c];
+      for (const s of steps) if (s.player === p) { reach *= this.avgStrategy(s.id, keyFor(c, s.street), s.na)[s.a]; }
+      combos.push({ c, reach, s: Array.from(this.avgStrategy(id, keyFor(c, nd.street), na)) });
+    }
+    const total = combos.reduce((a, x) => a + x.reach, 0);
+    const overall = new Array(na).fill(0);
+    if (total > 0) for (const x of combos) for (let a = 0; a < na; a++) overall[a] += (x.reach * x.s[a]) / total;
+    const classes = {};
+    for (const x of combos) {
+      const k = comboClass(x.c); const e = classes[k] || (classes[k] = { w: 0, s: new Array(na).fill(0), combos: [] });
+      e.w += x.reach; for (let a = 0; a < na; a++) e.s[a] += x.reach * x.s[a];
+      e.combos.push({ name: comboStr(x.c), reach: x.reach, s: x.s });
+    }
+    for (const k in classes) { const e = classes[k]; if (e.w > 0) for (let a = 0; a < na; a++) e.s[a] /= e.w; }
+    return { ...base, kind: 'action', player: p, actions: nd.actions.map(actionLabel), actionTypes: nd.actions.map((a) => a.t), overall, classes, totalReach: total };
+  }
+
+  stats() { return { iters: this.iters, infosets: this.count, bytes: this.used * 4 + this.index.size * 40 }; }
+}
+
+function makeSpot(j) {
+  if (!j.players || j.players.length < 2 || j.players.length > 9) throw new Error('Use 2 to 9 players.');
+  const names = j.players.map((p, i) => p.name || `P${i + 1}`);
+  const stacks = j.players.map((p, i) => { const s = Number(p.stack); if (!(s > 0)) throw new Error(`${names[i]}: stack must be above 0.`); return s; });
+  const ranges = j.players.map((p, i) => { try { return parseRange(p.range || ''); } catch (e) { throw new Error(`${names[i]} range: ${e.message}`); } });
+  const board = parseCards(j.board || '');
+  if (board.length < 3 || board.length > 5) throw new Error('The board needs 3, 4 or 5 cards.');
+  const pot = Number(j.pot); if (!(pot > 0)) throw new Error('Pot must be above 0.');
+  const sz = j.sizes || {};
+  const sizes = ['flop', 'turn', 'river'].map((s) => {
+    try { return { bets: parseSizes((sz[s] || {}).bet, false), raises: parseSizes((sz[s] || {}).raise, true) }; }
+    catch (e) { throw new Error(`${s} sizes: ${e.message}`); }
+  });
+  let payoff = { type: 'chips' };
+  if (j.payoff && j.payoff.type === 'icm') {
+    const payouts = (j.payoff.payouts || []).map(Number).filter((x) => x >= 0);
+    const others = (j.payoff.others || []).map(Number).filter((x) => x > 0);
+    if (!payouts.length) throw new Error('ICM needs at least one payout.');
+    if (names.length + others.length > 20) throw new Error('ICM supports up to 20 players left.');
+    payoff = { type: 'icm', payouts, others };
+  }
+  const start = board.length - 3, multi = names.length > 2;
+  const ab = j.abstraction || {};
+  const turnBuckets = ab.turnBuckets ?? (start === 0 ? (multi ? 30 : 50) : 0);
+  const riverBuckets = ab.riverBuckets ?? (start === 0 ? (multi ? 100 : 200) : start === 1 && names.length > 3 ? 100 : 0);
+  return { names, stacks, ranges, board, pot, sizes, raiseCap: j.raiseCap ?? 2, allinThreshold: j.allinThreshold ?? 0.15, mergeThreshold: j.mergeThreshold ?? 0.1, payoff, turnBuckets, riverBuckets };
+}
+
+const SlickEngine = { Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
+
+// ---------------------------------------------------------------- worker protocol
+if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typeof window === 'undefined') {
+  let solver = null, running = false, deadline = 0, maxIters = Infinity;
+  const loop = () => {
+    if (!running || !solver) return;
+    try { solver.run(150); } catch (e) { running = false; self.postMessage({ type: 'error', message: e.message }); return; }
+    const st = solver.stats();
+    const done = Date.now() >= deadline || st.iters >= maxIters || st.bytes > 1.8e9;
+    self.postMessage({ type: 'progress', ...st, done, memoryCapped: st.bytes > 1.8e9 });
+    if (done) { running = false; return; }
+    setTimeout(loop, 0);
+  };
+  self.onmessage = (ev) => {
+    const m = ev.data;
+    try {
+      if (m.cmd === 'build') {
+        running = false;
+        const t0 = Date.now();
+        solver = new Solver(makeSpot(m.spot));
+        self.postMessage({ type: 'built', nodes: solver.nodes.length, decisionPoints: solver.decisionPoints, buckets: [solver.spot.turnBuckets, solver.spot.riverBuckets], names: solver.spot.names, board: solver.board, ms: Date.now() - t0 });
+      } else if (m.cmd === 'solve') {
+        if (!solver) throw new Error('Build the spot first.');
+        deadline = Date.now() + m.seconds * 1000; maxIters = m.iterations || Infinity; running = true; loop();
+      } else if (m.cmd === 'stop') { running = false; self.postMessage({ type: 'progress', ...solver.stats(), done: true }); }
+      else if (m.cmd === 'report') self.postMessage({ type: 'report', reqId: m.reqId, report: solver.report(m.path) });
+      else if (m.cmd === 'ev') self.postMessage({ type: 'ev', ev: solver.estimateEV(m.samples || 30000) });
+    } catch (e) { self.postMessage({ type: 'error', message: e.message, reqId: m.reqId }); }
+  };
+}
+if (typeof module !== 'undefined') module.exports = SlickEngine;
+</script>
+<script>
+(() => {
+'use strict';
+const RANKS = '23456789TJQKA', SUITS = 'cdhs', SYM = { c: '♣', d: '♦', h: '♥', s: '♠' };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const src = $('engine-src').textContent;
+const Engine = new Function(src + '\nreturn SlickEngine;')();
+
+// ---------------------------------------------------------------- default ranges (Slick RNG starting estimates)
+const RFI = {
+  'UTG9': '66+,A9s+,KTs+,QTs+,JTs,T9s,AJo+,KQo',
+  'UTG+1': '55+,A8s+,KTs+,QTs+,JTs,T9s,98s,ATo+,KQo',
+  'UTG+2': '44+,A5s+,K9s+,Q9s+,J9s+,T9s,98s,87s,ATo+,KJo+',
+  'LJ': '33+,A2s+,K9s+,Q9s+,J9s+,T8s+,98s,87s,76s,ATo+,KJo+,QJo',
+  'HJ': '22+,A2s+,K8s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,A9o+,KTo+,QJo',
+  'CO': '22+,A2s+,K5s+,Q8s+,J8s+,T7s+,97s+,86s+,75s+,65s,54s,A8o+,A5o,KTo+,QTo+,JTo',
+  'BTN': '22+,A2s+,K2s+,Q4s+,J6s+,T6s+,95s+,85s+,74s+,64s+,53s+,43s,A2o+,K8o+,Q9o+,J9o+,T8o+,98o,87o',
+  'SB': '22+,A2s+,K4s+,Q6s+,J7s+,T7s+,96s+,86s+,75s+,65s,54s,A5o+,K9o+,QTo+,JTo',
+};
+const CALL_OPEN = {
+  early: '22-JJ,ATs-AQs,KJs+,QJs,JTs,T9s,98s,AQo',
+  mid: '22-JJ,A9s-AQs,KTs+,QTs+,JTs,T9s,98s,87s,AJo-AQo,KQo',
+  BTN: '22-JJ,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo-ATo,KQo,KJo,QJo',
+  SB: '22-TT,ATs-AJs,KTs+,QTs+,JTs,T9s,98s,AQo',
+  BB: '22-99,A2s-AJs,K2s+,Q5s+,J7s+,T7s+,96s+,85s+,75s+,64s+,53s+,43s,A2o-AJo,K9o+,Q9o+,J9o+,T9o,98o,87o,76o',
+};
+const THREEBET = 'TT+,AJs+,KQs,AQo+,A5s-A3s,K9s,76s,65s';
+const CALL_3B = 'QQ-77,AQs-ATs,KQs-KJs,QJs,JTs,T9s,98s,AQo,AKo:0.5';
+const COLD_3B = 'QQ-JJ,AKs,AQs';
+const LIMP = '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,86s+,75s+,65s,54s,A9o-AJo,KJo,QJo,JTo';
+const SB_COMPLETE = '22-99,A2s-AJs,K2s+,Q5s+,J7s+,T7s+,96s+,85s+,75s+,64s+,54s,A2o-AJo,K8o+,Q9o+,J9o+,T9o,98o';
+const BB_CHECK = '22-99,A2s-AJs,K2s+,Q2s+,J2s+,T2s+,92s+,82s+,72s+,62s+,52s+,42s+,32s,A2o-AJo,K2o+,Q2o+,J2o+,T2o+,92o+,82o+,72o+,62o+,52o+,42o+,32o';
+const POS = { 6: ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'], 9: ['UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB'] };
+const FT_PAY = [26.2, 18.0, 13.2, 10.2, 8.0, 6.6, 5.4, 4.6, 3.8];
+const SIZES = {
+  simple: { flop: ['33%', '3x'], turn: ['66%', '3x'], river: ['75%', '3x'], cap: 1 },
+  standard: { flop: ['33%,75%', '3x'], turn: ['50%,100%', '3x'], river: ['50%,100%', '3x'], cap: 1 },
+  complex: { flop: ['25%,50%,100%', '2.5x,a'], turn: ['33%,75%,125%', '2.5x,a'], river: ['33%,75%,125%,a', '2.5x,a'], cap: 2 },
+};
+
+function rfiFor(pos, table) { return pos === 'UTG' ? (table === 6 ? RFI.LJ : RFI.UTG9) : RFI[pos]; }
+function callFor(pos, table) {
+  if (pos === 'BB' || pos === 'SB' || pos === 'BTN') return CALL_OPEN[pos];
+  const early = table === 9 ? ['UTG', 'UTG+1', 'UTG+2', 'LJ'] : ['UTG', 'HJ'];
+  return early.includes(pos) ? CALL_OPEN.early : CALL_OPEN.mid;
+}
+
+// ---------------------------------------------------------------- state
+const S = { game: 'cash', table: 9, stack: 100, left: 9, seats: [], board: [], sizing: 'simple', overrides: {} };
+function openSize() { return S.game === 'cash' ? (S.table === 6 ? 2.5 : 3) : 2.2; }
+
+function resetSeats() {
+  S.seats = POS[S.table].map((p) => ({ pos: p, put: p === 'SB' ? 0.5 : p === 'BB' ? 1 : 0, status: 'wait', line: null, label: '' }));
+  S.overrides = {};
+  render();
+}
+function preflop() {
+  // derive table state from seats
+  const live = S.seats.filter((s) => s.status !== 'fold');
+  const bet = Math.max(...S.seats.map((s) => s.put));
+  const threeBet = S.seats.some((s) => s.line === '3bet');
+  const opened = threeBet || S.seats.some((s) => s.line === 'open' || s.line === 'open_call3b');
+  const raises = threeBet ? 2 : opened ? 1 : 0;
+  // next to act: first seat in order that hasn't acted, or must respond to a raise
+  let next = null;
+  const order = S.seats;
+  const lastAggIdx = order.map((s) => s.line === 'open' || s.line === '3bet').lastIndexOf(true);
+  // walk from the seat after the last aggressor (or from UTG) around the table
+  const start = lastAggIdx >= 0 ? lastAggIdx + 1 : 0;
+  for (let k = 0; k < order.length; k++) {
+    const s = order[(start + k) % order.length];
+    if (s.status === 'fold' || s.status === 'agg' && order.indexOf(s) === lastAggIdx) continue;
+    const owes = s.put < bet - 1e-9;
+    if (s.status === 'wait' || owes) { next = s; break; }
+  }
+  return { live, bet, raises, next, done: !next || live.length < 2 };
+}
+function options(seat, st) {
+  const o = [];
+  const isBB = seat.pos === 'BB', isSB = seat.pos === 'SB';
+  if (st.raises === 0) {
+    if (isBB) { o.push({ k: 'check', t: 'Check', cls: 'pass' }); }
+    else { o.push({ k: 'fold', t: 'Fold', cls: 'fold' }); o.push({ k: 'limp', t: isSB ? 'Complete' : 'Limp', cls: 'pass' }); }
+    const anyLimp = S.seats.some((s) => s.line === 'limp' || s.line === 'complete');
+    const size = openSize() + (anyLimp ? S.seats.filter((s) => s.line === 'limp' || s.line === 'complete').length : 0);
+    if (!isBB || !anyLimp) o.push({ k: 'open', t: `Raise ${fmt(size)}`, to: size, cls: 'agg' });
+  } else if (st.raises === 1) {
+    o.push({ k: 'fold', t: 'Fold', cls: 'fold' });
+    o.push({ k: 'call', t: `Call ${fmt(st.bet)}`, cls: 'pass' });
+    const opener = S.seats.find((s) => s.line === 'open');
+    if (seat !== opener && !S.seats.some((s) => s.line === '3bet')) {
+      const ipOfOpener = S.seats.indexOf(seat) > S.seats.indexOf(opener) && !isSB && !isBB;
+      const to = Math.min(S.stack, Math.round(st.bet * (ipOfOpener ? 3 : 4) * 10) / 10);
+      o.push({ k: '3bet', t: `3-Bet ${fmt(to)}`, to, cls: 'agg' });
+    }
+  } else {
+    o.push({ k: 'fold', t: 'Fold', cls: 'fold' });
+    o.push({ k: 'call', t: `Call ${fmt(st.bet)}`, cls: 'pass' });
+  }
+  return o;
+}
+function fmt(x) { return Math.abs(x - Math.round(x)) < 1e-9 ? String(Math.round(x)) : x.toFixed(1); }
+function act(seat, opt, st) {
+  const facing = st.raises;
+  if (opt.k === 'fold') { seat.status = 'fold'; seat.label = 'Fold'; }
+  else if (opt.k === 'check') { seat.status = 'pass'; seat.line = 'check'; seat.label = 'Check'; }
+  else if (opt.k === 'limp') { seat.status = 'pass'; seat.line = seat.pos === 'SB' ? 'complete' : 'limp'; seat.put = 1; seat.label = seat.pos === 'SB' ? 'Complete' : 'Limp'; }
+  else if (opt.k === 'open') { seat.status = 'agg'; seat.line = 'open'; seat.put = opt.to; seat.label = `Raise ${fmt(opt.to)}`; }
+  else if (opt.k === '3bet') { seat.status = 'agg'; seat.line = '3bet'; seat.put = opt.to; seat.label = `3-Bet ${fmt(opt.to)}`; }
+  else if (opt.k === 'call') {
+    const prev = seat.line;
+    seat.put = st.bet; seat.status = 'pass'; seat.label = `Call ${fmt(st.bet)}`;
+    if (facing >= 2) seat.line = prev === 'open' ? 'open_call3b' : prev === 'call' ? 'call_call3b' : 'cold3b';
+    else seat.line = prev === 'limp' || prev === 'complete' ? 'limp_call' : 'call';
+  }
+  if (opt.k === 'open' || opt.k === '3bet') {
+    // everyone still in must act again
+    for (const s of S.seats) if (s !== seat && s.status !== 'fold' && s.status !== 'wait') s.status = 'pass';
+  }
+  render();
+}
+function rangeFor(seat) {
+  if (S.overrides[seat.pos]) return S.overrides[seat.pos];
+  const t = S.table, p = seat.pos;
+  switch (seat.line) {
+    case 'open': return rfiFor(p, t);
+    case 'call': return callFor(p, t);
+    case '3bet': return THREEBET;
+    case 'open_call3b': return CALL_3B;
+    case 'call_call3b': return 'QQ-88,AQs-AJs,KQs,AQo';
+    case 'cold3b': return COLD_3B;
+    case 'limp': return LIMP;
+    case 'limp_call': return '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo,KQo';
+    case 'complete': return SB_COMPLETE;
+    case 'check': return BB_CHECK;
+    default: return '';
+  }
+}
+function postflopOrder() {
+  const inH = S.seats.filter((s) => s.status !== 'fold');
+  const blinds = inH.filter((s) => s.pos === 'SB' || s.pos === 'BB').sort((a, b) => (a.pos === 'SB' ? -1 : 1));
+  const rest = inH.filter((s) => s.pos !== 'SB' && s.pos !== 'BB');
+  return [...blinds, ...rest];
+}
+function buildSpot() {
+  const st = preflop();
+  if (!st.done) throw new Error('Finish the preflop action first.');
+  const players = postflopOrder();
+  if (players.length < 2) throw new Error('At least two players need to see the flop.');
+  if (S.board.length < 3) throw new Error('Pick a flop (or press Random flop).');
+  const ante = S.game === 'cash' ? 0 : 1; // big-blind ante
+  const pot = S.seats.reduce((a, s) => a + s.put, 0) + ante;
+  const sz = currentSizes();
+  const spot = {
+    players: players.map((s) => ({ name: s.pos, stack: Math.max(0.01, S.stack - s.put), range: rangeFor(s) })),
+    pot, board: S.board.map(Engine.cardStr).join(''),
+    sizes: { flop: { bet: sz.fb, raise: sz.fr }, turn: { bet: sz.tb, raise: sz.tr }, river: { bet: sz.rb, raise: sz.rr } },
+    raiseCap: players.length > 2 ? Math.min(1, SIZES[S.sizing].cap) : SIZES[S.sizing].cap, allinThreshold: 0.15,
+  };
+  if (S.game === 'icm') {
+    const left = Math.max(S.left, players.length);
+    const others = []; for (let i = 0; i < left - players.length; i++) others.push(S.stack);
+    spot.payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others };
+  }
+  return spot;
+}
+function currentSizes() { return { fb: $('fb').value, fr: $('fr').value, tb: $('tb').value, tr: $('tr').value, rb: $('rb').value, rr: $('rr').value }; }
+function applySizing() {
+  const z = SIZES[S.sizing];
+  $('fb').value = z.flop[0]; $('fr').value = z.flop[1]; $('tb').value = z.turn[0]; $('tr').value = z.turn[1]; $('rb').value = z.river[0]; $('rr').value = z.river[1];
+}
+
+// ---------------------------------------------------------------- render setup
+function render() {
+  const st = preflop();
+  const seats = $('seats'); seats.style.setProperty('--n', S.seats.length); seats.innerHTML = '';
+  for (const s of S.seats) {
+    const d = document.createElement('div');
+    const isNow = st.next === s && !st.done;
+    d.className = `seat ${s.status === 'fold' ? 'fold' : s.status === 'agg' ? 'agg' : s.status === 'pass' ? 'pass' : ''} ${isNow ? 'now' : ''}`;
+    d.innerHTML = `<b>${s.pos}</b><small>${isNow ? 'to act' : s.label || (s.pos === 'SB' ? 'SB 0.5' : s.pos === 'BB' ? 'BB 1' : '–')}</small>`;
+    seats.appendChild(d);
+  }
+  const pr = $('prompt'); pr.innerHTML = '';
+  if (!st.done) {
+    const who = document.createElement('span'); who.className = 'who'; who.textContent = st.next.pos; pr.appendChild(who);
+    for (const o of options(st.next, st)) {
+      const b = document.createElement('button'); b.className = `b-${o.cls}`; b.textContent = o.t;
+      b.onclick = () => act(st.next, o, st); pr.appendChild(b);
+    }
+    // shortcut: fold everyone to a seat
+    const sp = document.createElement('span'); sp.className = 'grow'; pr.appendChild(sp);
+  } else {
+    const n = st.live.length;
+    const pot = S.seats.reduce((a, s) => a + s.put, 0) + (S.game === 'cash' ? 0 : 1);
+    pr.innerHTML = `<span class="who">${n >= 2 ? `${n} players to the flop` : 'Hand over preflop'}</span><span class="muted mono">pot ${fmt(pot)} bb</span><span class="grow"></span>`;
+  }
+  const reset = document.createElement('button'); reset.textContent = 'Reset action'; reset.onclick = resetSeats; pr.appendChild(reset);
+  renderBoard(); renderInHand();
+}
+let activeSlot = null;
+function renderBoard() {
+  const box = $('slots'); box.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const c = S.board[i], b = document.createElement('button');
+    if (c !== undefined) { const s = SUITS[c & 3]; b.className = `slot filled s-${s}`; b.textContent = RANKS[c >> 2] + SYM[s]; b.title = 'Change or remove this card'; }
+    else { b.className = 'slot empty'; b.textContent = i < 3 ? 'Flop' : i === 3 ? 'Turn' : 'River'; }
+    if (activeSlot === i) b.classList.add('active');
+    b.disabled = i > S.board.length;
+    b.onclick = () => { activeSlot = activeSlot === i ? null : i; renderBoard(); };
+    box.appendChild(b);
+  }
+  const pk = $('picker'); pk.hidden = activeSlot === null; pk.innerHTML = '';
+  if (activeSlot === null) return;
+  if (S.board[activeSlot] !== undefined) {
+    const rm = document.createElement('button'); rm.textContent = 'Remove'; rm.style.gridColumn = 'span 3'; rm.style.fontSize = '12px';
+    rm.onclick = () => { S.board = S.board.slice(0, activeSlot); activeSlot = null; renderBoard(); }; pk.appendChild(rm);
+    for (let i = 0; i < 10; i++) pk.appendChild(document.createElement('span'));
+  }
+  for (let s = 3; s >= 0; s--) for (let r = 12; r >= 0; r--) {
+    const c = r * 4 + s, b = document.createElement('button');
+    b.className = `card s-${SUITS[s]}`; b.textContent = RANKS[r] + SYM[SUITS[s]]; b.setAttribute('aria-label', Engine.cardStr(c));
+    b.disabled = S.board.includes(c) && S.board[activeSlot] !== c;
+    b.onclick = () => { S.board[activeSlot] = c; activeSlot = S.board.length < 3 ? S.board.length : null; renderBoard(); };
+    pk.appendChild(b);
+  }
+}
+function renderInHand() {
+  const box = $('inhand'); box.innerHTML = '';
+  const st = preflop();
+  if (!st.done) { box.innerHTML = '<span class="muted">Ranges appear once the preflop action is set.</span>'; return; }
+  for (const s of postflopOrder()) {
+    const w = Engine.parseRange(rangeFor(s)); let n = 0; for (const x of w) n += x;
+    const d = document.createElement('span'); d.className = 'pchip';
+    d.innerHTML = `<b>${s.pos}</b><span class="muted mono">${fmt(S.stack - s.put)}bb · ${(n / 13.26).toFixed(0)}%</span>`;
+    const b = document.createElement('button'); b.textContent = S.overrides[s.pos] ? 'Range ✎' : 'Range'; b.onclick = () => openRange(s);
+    d.appendChild(b); box.appendChild(d);
+  }
+}
+
+// ---------------------------------------------------------------- range modal
+const CLASS_N = (c) => (c.length === 2 ? 6 : c[2] === 's' ? 4 : 12);
+function classAt(i, j) { const r1 = 12 - i, r2 = 12 - j; return i === j ? RANKS[r1] + RANKS[r2] : i < j ? RANKS[r1] + RANKS[r2] + 's' : RANKS[r2] + RANKS[r1] + 'o'; }
+function classWeights(text) {
+  const w = Engine.parseRange(text), acc = {};
+  for (let c = 0; c < 1326; c++) { const k = Engine.comboClass(c); (acc[k] = acc[k] || [0, 0]); acc[k][0] += w[c]; acc[k][1]++; }
+  const r = {}; for (const k in acc) r[k] = acc[k][0] / acc[k][1]; return r;
+}
+let rm = null;
+function openRange(seat) {
+  rm = { seat, weights: classWeights(rangeFor(seat)), painting: false, value: 1 };
+  $('rmTitle').textContent = `${seat.pos} range`;
+  const g = $('rmGrid'); g.innerHTML = '';
+  for (let r = 0; r < 13; r++) for (let c = 0; c < 13; c++) { const k = classAt(r, c), d = document.createElement('div'); d.className = 'rcell'; d.dataset.k = k; d.innerHTML = `<div class="w"></div><span>${k}</span>`; g.appendChild(d); }
+  drawRange(); $('rangeModal').hidden = false;
+}
+function drawRange() {
+  let n = 0;
+  $('rmGrid').querySelectorAll('.rcell').forEach((d) => { const w = rm.weights[d.dataset.k] || 0; n += w * CLASS_N(d.dataset.k); d.querySelector('.w').style.height = `${w * 100}%`; d.classList.toggle('on', w >= 0.5); });
+  $('rmCount').textContent = `${n.toFixed(0)} combos · ${(n / 13.26).toFixed(1)}%`;
+}
+function paintAt(x, y) { const el = document.elementFromPoint(x, y)?.closest('.rcell'); if (el) { rm.weights[el.dataset.k] = rm.value; drawRange(); } }
+$('rmGrid').addEventListener('pointerdown', (e) => { const el = e.target.closest('.rcell'); if (!el) return; const w = +$('rmWeight').value / 100, cur = rm.weights[el.dataset.k] || 0; rm.value = Math.abs(cur - w) < 1e-6 ? 0 : w; rm.painting = true; paintAt(e.clientX, e.clientY); });
+window.addEventListener('pointermove', (e) => { if (rm && rm.painting) paintAt(e.clientX, e.clientY); });
+window.addEventListener('pointerup', () => { if (rm) rm.painting = false; });
+$('rmWeight').addEventListener('input', (e) => { $('rmWeightVal').textContent = `${e.target.value}%`; });
+$('rmReset').onclick = () => { const o = S.overrides[rm.seat.pos]; delete S.overrides[rm.seat.pos]; rm.weights = classWeights(rangeFor(rm.seat)); if (o) S.overrides[rm.seat.pos] = o; rm.reset = true; drawRange(); };
+$('rmClear').onclick = () => { rm.weights = {}; drawRange(); };
+$('rmCancel').onclick = () => { $('rangeModal').hidden = true; rm = null; };
+$('rmDone').onclick = () => {
+  const parts = [];
+  for (let r = 0; r < 13; r++) for (let c = 0; c < 13; c++) { const k = classAt(r, c), w = rm.weights[k] || 0; if (w > 0) parts.push(w >= 0.999 ? k : `${k}:${+w.toFixed(2)}`); }
+  if (rm.reset && !parts.length) delete S.overrides[rm.seat.pos]; else S.overrides[rm.seat.pos] = parts.join(',');
+  $('rangeModal').hidden = true; rm = null; renderInHand();
+};
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('rangeModal').hidden) $('rmCancel').click(); });
+
+// ---------------------------------------------------------------- solver worker
+const worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+let solving = false, t0 = 0, secs = 60, built = null, path = [], selected = null, reqId = 0, report = null, evData = null, timer = null, lastIt = { t: 0, n: 0 }, rate = 0, spotGame = 'cash';
+worker.onmessage = (ev) => {
+  const m = ev.data;
+  if (m.type === 'error') { $('err').textContent = m.message; if (m.reqId === undefined) endSolve(); return; }
+  if (m.type === 'built') { built = m; path = []; selected = null; evData = null; renderEVs(); t0 = performance.now(); lastIt = { t: t0, n: 0 }; worker.postMessage({ cmd: 'solve', seconds: secs }); requestReport(); }
+  if (m.type === 'progress') {
+    const now = performance.now();
+    if (now - lastIt.t > 900) { rate = (m.iters - lastIt.n) / ((now - lastIt.t) / 1000); lastIt = { t: now, n: m.iters }; }
+    $('meter').style.width = `${Math.min(100, ((now - t0) / 1000 / secs) * 100)}%`;
+    $('status').textContent = `${m.iters.toLocaleString()} hands dealt · ${Math.round(rate).toLocaleString()}/s · ${(m.bytes / 1e6).toFixed(m.bytes < 1e7 ? 1 : 0)} MB`;
+    if (m.memoryCapped) $('err').textContent = 'Memory limit reached. Try Simple sizes.';
+    if (m.done) { endSolve(); requestReport(); worker.postMessage({ cmd: 'ev', samples: 40000 }); }
+  }
+  if (m.type === 'report' && m.reqId === reqId) { report = m.report; renderNode(); }
+  if (m.type === 'ev') { evData = m.ev; renderEVs(); }
+};
+function endSolve() { solving = false; $('solveBtn').hidden = false; $('stopBtn').hidden = true; $('meter').style.width = '100%'; clearInterval(timer); }
+function startSolve(seconds) {
+  $('err').textContent = '';
+  let spot; try { spot = buildSpot(); Engine.makeSpot(spot); } catch (e) { $('err').textContent = e.message; return; }
+  solving = true; secs = seconds || +$('depth').value; spotGame = S.game;
+  $('solveBtn').hidden = true; $('stopBtn').hidden = false; $('meter').style.width = '0'; $('status').textContent = 'Building the game tree…';
+  worker.postMessage({ cmd: 'build', spot });
+  clearInterval(timer); timer = setInterval(() => { if (solving) requestReport(); }, 2500);
+}
+$('solveBtn').onclick = () => startSolve();
+$('stopBtn').onclick = () => worker.postMessage({ cmd: 'stop' });
+function requestReport() { if (!built) return; reqId++; worker.postMessage({ cmd: 'report', path, reqId }); }
+
+// ---------------------------------------------------------------- strategy view
+function colors(types) {
+  const bets = types.map((t, i) => (t === 'bet' ? i : -1)).filter((i) => i >= 0), ramp = ['#e3a83f', '#e07a37', '#d24f3c', '#b13447'];
+  return types.map((t, i) => t === 'fold' ? 'var(--a-fold)' : t === 'check' || t === 'call' ? 'var(--a-pass)' : t === 'allin' ? 'var(--a-allin)' : ramp[bets.length === 1 ? 1 : Math.round((bets.indexOf(i) / (bets.length - 1)) * 3)]);
+}
+function cardHTML(c) { const s = SUITS[c & 3]; return `<span class="crumb cardcrumb" style="color:${s === 'h' ? '#ee7a6b' : s === 'd' ? '#69a8e8' : s === 'c' ? '#6fc08a' : 'var(--fg)'}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
+function renderEVs() {
+  const box = $('evs'); box.innerHTML = '';
+  if (!evData || !built) return;
+  evData.forEach((e, i) => { const d = document.createElement('div'); d.className = 'ev'; d.title = 'Expected value under the solved strategy';
+    d.innerHTML = `${esc(built.names[i])} <b>${spotGame === 'icm' ? `${e.ev.toFixed(2)}%` : `${e.ev >= 0 ? '+' : ''}${e.ev.toFixed(2)} bb`}</b>`; box.appendChild(d); });
+}
+function renderCrumbs(r) {
+  const box = $('crumbs'); box.innerHTML = '';
+  if (!built) { box.hidden = true; return; } box.hidden = false;
+  const root = document.createElement('button'); root.className = 'crumb'; root.textContent = 'Flop start'; root.onclick = () => { path = []; selected = null; requestReport(); }; box.appendChild(root);
+  (r ? r.history : []).forEach((h, i) => {
+    box.insertAdjacentHTML('beforeend', '<span class="arrow">›</span>');
+    if (h.type === 'card') { box.insertAdjacentHTML('beforeend', cardHTML(h.card)); return; }
+    const b = document.createElement('button'); b.className = 'crumb'; b.textContent = `${built.names[h.player]} ${h.label}`;
+    b.onclick = () => { path = path.slice(0, i); selected = null; requestReport(); }; box.appendChild(b);
+  });
+}
+function renderNode() {
+  const r = report; renderCrumbs(r);
+  const v = $('nodeView');
+  if (!r) return;
+  const boardStr = r.board.map(cardHTML).join(' ');
+  if (r.kind === 'chance') {
+    v.innerHTML = `<div class="node"><div class="nodetitle"><h2>Pick the ${r.street === 1 ? 'turn' : 'river'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="picker" id="deal"></div></div>`;
+    for (let s = 3; s >= 0; s--) for (let k = 12; k >= 0; k--) {
+      const c = k * 4 + s, b = document.createElement('button'); b.className = `card s-${SUITS[s]}`; b.textContent = RANKS[k] + SYM[SUITS[s]]; b.disabled = r.board.includes(c);
+      b.onclick = () => { path.push({ card: c }); requestReport(); }; $('deal').appendChild(b);
+    }
+    return;
+  }
+  if (r.kind === 'terminal') {
+    const left = r.folded.map((f, i) => (f ? null : built.names[i])).filter(Boolean);
+    v.innerHTML = `<div class="node"><div class="nodetitle"><h2>${left.length === 1 ? `${esc(left[0])} wins` : 'Showdown'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="muted">End of the hand. Tap the trail above to go back.</div></div>`;
+    return;
+  }
+  const col = colors(r.actionTypes), name = built.names[r.player];
+  v.innerHTML = `<div class="node">
+    <div class="nodetitle"><h2>${esc(name)}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div>
+    <div class="actions">${r.actions.map((a, i) => `<button class="act" data-a="${i}"><i style="background:${col[i]}"></i><strong>${esc(a)}</strong><small>${(r.overall[i] * 100).toFixed(1)}%</small></button>`).join('')}</div>
+    <div class="freqbar">${r.overall.map((f, i) => `<i style="width:${f * 100}%;background:${col[i]}"></i>`).join('')}</div>
+    <div class="split"><div class="gridwrap"><div class="hgrid" id="hgrid"></div></div><div class="detail" id="detail"></div></div>
+  </div>`;
+  v.querySelectorAll('.act').forEach((b) => (b.onclick = () => { path.push({ a: +b.dataset.a }); selected = null; requestReport(); }));
+  const g = $('hgrid');
+  for (let i = 0; i < 13; i++) for (let j = 0; j < 13; j++) {
+    const k = classAt(i, j), e = r.classes[k], cell = document.createElement('button');
+    cell.className = 'cell' + (k === selected ? ' sel' : ''); cell.setAttribute('aria-label', k);
+    const frac = e ? Math.min(1, e.w / CLASS_N(k)) : 0;
+    if (e && e.w > 1e-9) cell.innerHTML = `<div class="mix">${e.s.map((f, a) => `<i style="width:${f * 100}%;background:${col[a]}"></i>`).join('')}</div><div class="fill" style="height:${(1 - frac) * 100}%"></div><span class="lab">${k}</span>`;
+    else { cell.classList.add('none'); cell.innerHTML = `<span class="lab">${k}</span>`; }
+    cell.onmouseenter = () => detail(k); cell.onfocus = () => detail(k);
+    cell.onclick = () => { selected = selected === k ? null : k; g.querySelectorAll('.cell').forEach((c) => c.classList.toggle('sel', c.getAttribute('aria-label') === selected)); detail(k); };
+    g.appendChild(cell);
+  }
+  g.onmouseleave = () => detail(selected);
+  detail(selected);
+}
+function detail(k) {
+  const r = report, d = $('detail'); if (!d || !r || r.kind !== 'action') return;
+  const col = colors(r.actionTypes);
+  if (!k || !r.classes[k] || r.classes[k].w <= 1e-9) {
+    d.innerHTML = `<div class="label">${esc(built.names[r.player])}'s range here</div><div class="mono" style="font-size:22px">${r.totalReach.toFixed(1)} combos</div><div class="muted" style="font-size:12px">Hover or tap a hand for every combo.</div>`;
+    return;
+  }
+  const e = r.classes[k];
+  d.innerHTML = `<div class="row"><div class="grow"><div class="label">Hand</div><div class="mono" style="font-size:22px">${k}</div></div><span class="mono muted">${e.w.toFixed(2)} combos</span></div>
+    <div class="freqbar">${e.s.map((f, a) => `<i style="width:${f * 100}%;background:${col[a]}"></i>`).join('')}</div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Combo</th>${r.actions.map((a, i) => `<th style="color:${col[i]}">${esc(a.replace('All-in', 'AI'))}</th>`).join('')}</tr></thead>
+    <tbody><tr><td><b>All</b></td>${e.s.map((f) => `<td><b>${(f * 100).toFixed(0)}%</b></td>`).join('')}</tr>
+    ${e.combos.filter((c) => c.reach > 1e-9).map((c) => `<tr><td>${c.name}</td>${c.s.map((f) => `<td>${(f * 100).toFixed(0)}%</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
+// ---------------------------------------------------------------- controls
+document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
+  S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
+  $('leftWrap').hidden = S.game !== 'icm';
+  fillStacks(); resetSeats();
+}));
+document.querySelectorAll('[data-table]').forEach((b) => (b.onclick = () => {
+  S.table = +b.dataset.table; document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x === b)); resetSeats();
+}));
+function fillStacks() {
+  const opts = S.game === 'cash' ? [40, 60, 100, 150, 200, 300] : [10, 15, 20, 25, 30, 40, 50, 60, 100];
+  if (!opts.includes(S.stack)) S.stack = S.game === 'cash' ? 100 : 25;
+  $('stack').innerHTML = opts.map((x) => `<option value="${x}" ${x === S.stack ? 'selected' : ''}>${x} bb</option>`).join('');
+}
+$('stack').onchange = (e) => { S.stack = +e.target.value; render(); };
+$('left').innerHTML = [2, 3, 4, 5, 6, 7, 8, 9].map((x) => `<option ${x === 9 ? 'selected' : ''}>${x}</option>`).join('');
+$('left').onchange = (e) => { S.left = +e.target.value; };
+$('sizing').onchange = (e) => { S.sizing = e.target.value; applySizing(); };
+$('randomFlop').onclick = () => { const d = []; while (d.length < 3) { const c = (Math.random() * 52) | 0; if (!d.includes(c)) d.push(c); } S.board = d; activeSlot = null; renderBoard(); };
+
+// ---------------------------------------------------------------- start: CO opens, BTN and BB call on K84, quick solve
+fillStacks(); applySizing(); resetSeats();
+const script = [['fold'], ['fold'], ['fold'], ['fold'], ['fold'], ['open'], ['call'], ['fold'], ['call']];
+for (const [k] of script) { const st = preflop(); if (st.done) break; const o = options(st.next, st).find((x) => x.k === k); act(st.next, o, st); }
+S.board = Engine.parseCards('Kh8d4c'); renderBoard();
+startSolve(10);
+})();
+</script>
+</body></html>
