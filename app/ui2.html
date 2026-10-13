@@ -74,6 +74,7 @@ header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; pad
 button.seat { cursor: pointer; font: inherit; color: inherit; }
 .seat.sel { border-color: var(--fg); background: #22303a; }
 .seat.fold.sel { opacity: .8; }
+.act.cur { border-color: var(--fg); }
 .prompt button.cur { background: var(--fg); color: #111; border-color: var(--fg); font-weight: 600; }
 .prompt .who { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
 .prompt button { min-width: 84px; font-weight: 500; }
@@ -160,7 +161,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.2</span>
+  <span class="ver">ALPHA 1.3</span>
 </header>
 
 <div class="bar">
@@ -204,6 +205,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <div class="results">
   <div class="res-head">
+    <div class="seg" role="group" aria-label="Street"><button id="tabPre" aria-pressed="true">Preflop</button><button id="tabPost" aria-pressed="false">Postflop</button></div>
     <div class="inhand grow" id="inhand"></div>
     <div class="evs" id="evs"></div>
   </div>
@@ -306,7 +308,68 @@ function foldToOptions(pos) {
     act(st.next, { k: 'fold' }, st);
   }
 }
+// ---------------------------------------------------------------- preflop charts (built-in starting ranges)
+const RCACHE = new Map();
+function rw(text) { if (text === 'ANY') { const w = new Float32Array(1326).fill(1); return w; } let w = RCACHE.get(text); if (!w) { w = text ? Engine.parseRange(text) : new Float32Array(1326); RCACHE.set(text, w); } return w; }
+function withHist(h, fn) { const save = S.hist; S.hist = h; replay(); const out = fn(); S.hist = save; replay(); return out; }
+function preflopContext() {
+  const st = preflop();
+  let pos = S.sel || (st.done ? null : st.next.pos);
+  if (!pos && S.decisions.length) pos = S.decisions[S.decisions.length - 1].pos;
+  if (!pos) return null;
+  const seat = S.seats.find((x) => x.pos === pos);
+  const mine = S.decisions.filter((d) => d.pos === pos);
+  if (!st.done && st.next === seat) return { pos, base: S.hist.slice(), opts: options(seat, st), mode: 'next', cur: null };
+  if (mine.length) { const d = mine[mine.length - 1]; return { pos, base: S.hist.slice(0, d.idx), opts: d.opts, mode: 'edit', cur: d.k, idx: d.idx }; }
+  if (seat.status === 'fold' || st.done) return null;
+  const f = foldToOptions(pos); if (!f) return null;
+  return { pos, base: [...S.hist, ...f.folds], opts: f.opts, mode: 'foldto', cur: null };
+}
+function preflopReport() {
+  const ctx = preflopContext(); if (!ctx) return null;
+  return withHist(ctx.base, () => {
+    const st = preflop(), seat = S.seats.find((x) => x.pos === ctx.pos);
+    const limpers = S.seats.filter((x) => x.line === 'limp' || x.line === 'complete').length;
+    const opener = S.seats.find((x) => x.line === 'open'), threeBettor = S.seats.find((x) => x.line === '3bet');
+    const reachText = seat.line ? rangeFor(seat) : 'ANY';
+    const rangeOf = (k) => {
+      if (k === 'open') return limpers ? 'TT+,AJs+,KQs,AQo+' : (seat.pos === 'BB' ? '' : rfiFor(seat.pos, S.table));
+      if (k === 'limp') return limpers ? (seat.pos === 'SB' ? SB_COMPLETE : LIMP) : '';
+      if (k === 'check') return 'ANY';
+      if (k === '3bet') return THREEBET;
+      if (k === 'call') {
+        if (st.raises >= 2) return seat.line === 'open' ? CALL_3B : seat.line === 'call' ? 'QQ-88,AQs-AJs,KQs,AQo' : COLD_3B;
+        return seat.line === 'limp' || seat.line === 'complete' ? '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo,KQo' : callFor(seat.pos, S.table);
+      }
+      return '';
+    };
+    const order = ['3bet', 'open', 'call', 'limp', 'check', 'fold'];
+    const opts = ctx.opts, na = opts.length;
+    const reach = rw(reachText), wts = opts.map((o) => (o.k === 'fold' ? null : rw(rangeOf(o.k))));
+    const pri = opts.map((o, i) => i).sort((a, b) => order.indexOf(opts[a].k) - order.indexOf(opts[b].k));
+    const classes = {}, overall = new Array(na).fill(0); let total = 0;
+    for (let c = 0; c < 1326; c++) {
+      const r = reach[c]; if (r <= 0) continue;
+      const sv = new Array(na).fill(0); let left = 1;
+      for (const i of pri) { if (!wts[i]) continue; const x = Math.min(left, wts[i][c]); sv[i] = x; left -= x; }
+      const fi = opts.findIndex((o) => o.k === 'fold'); if (fi >= 0) sv[fi] += left; else { const ci = pri[pri.length - 1]; sv[ci] += left; }
+      const k = Engine.comboClass(c), e = classes[k] || (classes[k] = { w: 0, s: new Array(na).fill(0), combos: [] });
+      e.w += r; for (let a = 0; a < na; a++) { e.s[a] += r * sv[a]; overall[a] += r * sv[a]; }
+      e.combos.push({ name: Engine.comboStr(c), reach: r, s: sv }); total += r;
+    }
+    for (const k in classes) { const e = classes[k]; for (let a = 0; a < na; a++) e.s[a] /= e.w; }
+    for (let a = 0; a < na; a++) overall[a] /= total || 1;
+    const pot = S.seats.reduce((a, x) => a + x.put, 0) + (S.game === 'cash' ? 0 : 1);
+    const vs = st.raises >= 2 ? `vs ${threeBettor ? threeBettor.pos : ''} 3-bet` : st.raises === 1 ? `vs ${opener ? opener.pos : ''} raise` : limpers ? `vs ${limpers} limp${limpers > 1 ? 's' : ''}` : 'first in';
+    return { kind: 'action', preflop: true, name: ctx.pos, sub: vs, board: [], pot, history: [], actions: opts.map((o) => o.t), actionTypes: opts.map((o) => (o.k === 'fold' ? 'fold' : o.k === 'open' || o.k === '3bet' ? 'bet' : 'call')),
+      overall, classes, totalReach: total, cur: ctx.cur, curIndex: opts.findIndex((o) => o.k === ctx.cur),
+      pick: (i) => { const o = opts[i]; choose(ctx.mode === 'edit' ? [...S.hist.slice(0, ctx.idx), { pos: ctx.pos, k: o.k }, ...S.hist.slice(ctx.idx + 1)] : [...ctx.base, { pos: ctx.pos, k: o.k }]); } };
+  });
+}
+let view = 'pre', preReport = null;
+function setView(v) { view = v; $('tabPre').setAttribute('aria-pressed', v === 'pre'); $('tabPost').setAttribute('aria-pressed', v === 'post'); renderNode(); }
 function choose(newHist) {
+  view = 'pre';
   S.hist = newHist; replay();
   const st = preflop(); S.sel = st.done ? null : st.next.pos;
   render(); markStale();
@@ -439,7 +502,7 @@ function render() {
     const txt = s.acts.length ? s.acts.join(' · ') : isNow ? 'to act' : s.pos === 'SB' ? 'SB 0.5' : s.pos === 'BB' ? 'BB 1' : '–';
     b.innerHTML = `<b>${s.pos}</b><small>${txt}</small>`;
     b.setAttribute('aria-pressed', S.sel === s.pos);
-    b.onclick = () => { S.sel = S.sel === s.pos ? null : s.pos; render(); };
+    b.onclick = () => { S.sel = S.sel === s.pos ? null : s.pos; view = 'pre'; render(); };
     seats.appendChild(b);
   }
   const pr = $('prompt'); pr.innerHTML = '';
@@ -484,6 +547,8 @@ function render() {
   const reset = document.createElement('button'); reset.textContent = 'Clear'; reset.onclick = resetSeats; foot.appendChild(reset);
   pr.appendChild(foot);
   renderBoard(); renderInHand();
+  preReport = preflopReport();
+  if (typeof setView === 'function' && $('tabPre')) setView(view);
 }
 let activeSlot = null;
 function renderBoard() {
@@ -577,7 +642,7 @@ worker.onmessage = (ev) => {
     if (m.memoryCapped) $('err').textContent = 'Memory limit reached. Try Simple sizes.';
     if (m.done) { endSolve(); requestReport(); worker.postMessage({ cmd: 'ev', samples: 40000 }); }
   }
-  if (m.type === 'report' && m.reqId === reqId) { report = m.report; renderNode(); }
+  if (m.type === 'report' && m.reqId === reqId) { report = m.report; if (view === 'post') renderNode(); }
   if (m.type === 'ev') { evData = m.ev; renderEVs(); }
 };
 let solvedOnce = false;
@@ -587,12 +652,14 @@ function endSolve2() { solving = false; $('solveBtn').hidden = false; $('stopBtn
 function startSolve(seconds) {
   $('err').textContent = '';
   let spot; try { spot = buildSpot(); Engine.makeSpot(spot); } catch (e) { $('err').textContent = e.message; return; }
-  solving = true; secs = seconds || +$('depth').value; spotGame = S.game;
+  solving = true; secs = seconds || +$('depth').value; spotGame = S.game; setView('post');
   $('solveBtn').hidden = true; $('stopBtn').hidden = false; $('meter').style.width = '0'; $('status').textContent = 'Building the game tree…';
   worker.postMessage({ cmd: 'build', spot });
   clearInterval(timer); timer = setInterval(() => { if (solving) requestReport(); }, 2500);
 }
 $('solveBtn').onclick = () => startSolve();
+$('tabPre').onclick = () => setView('pre');
+$('tabPost').onclick = () => setView('post');
 $('stopBtn').onclick = () => worker.postMessage({ cmd: 'stop' });
 function requestReport() { if (!built) return; reqId++; worker.postMessage({ cmd: 'report', path, reqId }); }
 
@@ -620,9 +687,10 @@ function renderCrumbs(r) {
   });
 }
 function renderNode() {
-  const r = report; renderCrumbs(r);
+  const r = view === 'pre' ? preReport : report;
   const v = $('nodeView');
-  if (!r) return;
+  if (view === 'pre') { $('crumbs').hidden = true; } else renderCrumbs(r);
+  if (!r) { v.innerHTML = `<div class="empty-state">${view === 'pre' ? 'Tap a seat to see its preflop chart.' : 'Press Solve to see the postflop strategy.'}</div>`; return; }
   const boardStr = r.board.map(cardHTML).join(' ');
   if (r.kind === 'chance') {
     v.innerHTML = `<div class="node"><div class="nodetitle"><h2>Pick the ${r.street === 1 ? 'turn' : 'river'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="picker" id="deal"></div></div>`;
@@ -637,14 +705,14 @@ function renderNode() {
     v.innerHTML = `<div class="node"><div class="nodetitle"><h2>${left.length === 1 ? `${esc(left[0])} wins` : 'Showdown'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="muted">End of the hand. Tap the trail above to go back.</div></div>`;
     return;
   }
-  const col = colors(r.actionTypes), name = built.names[r.player];
+  const col = colors(r.actionTypes), name = r.preflop ? r.name : built.names[r.player];
   v.innerHTML = `<div class="node">
-    <div class="nodetitle"><h2>${esc(name)}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div>
-    <div class="actions">${r.actions.map((a, i) => `<button class="act" data-a="${i}"><i style="background:${col[i]}"></i><strong>${esc(a)}</strong><small>${(r.overall[i] * 100).toFixed(1)}%</small></button>`).join('')}</div>
+    <div class="nodetitle"><h2>${esc(name)}</h2>${r.preflop ? `<span class="muted">${esc(r.sub)}</span>` : ''}<span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}${r.preflop ? '<span class="grow"></span><span class="muted" style="font-size:12px">Preflop: Slick RNG starting ranges (not solved yet)</span>' : ''}</div>
+    <div class="actions">${r.actions.map((a, i) => `<button class="act${r.cur && r.preflop && ctxKind(r, i) ? ' cur' : ''}" data-a="${i}"><i style="background:${col[i]}"></i><strong>${esc(a)}</strong><small>${(r.overall[i] * 100).toFixed(1)}%</small></button>`).join('')}</div>
     <div class="freqbar">${r.overall.map((f, i) => `<i style="width:${f * 100}%;background:${col[i]}"></i>`).join('')}</div>
     <div class="split"><div class="gridwrap"><div class="hgrid" id="hgrid"></div></div><div class="detail" id="detail"></div></div>
   </div>`;
-  v.querySelectorAll('.act').forEach((b) => (b.onclick = () => { path.push({ a: +b.dataset.a }); selected = null; requestReport(); }));
+  v.querySelectorAll('.act').forEach((b) => (b.onclick = () => { if (r.preflop) { r.pick(+b.dataset.a); return; } path.push({ a: +b.dataset.a }); selected = null; requestReport(); }));
   const g = $('hgrid');
   for (let i = 0; i < 13; i++) for (let j = 0; j < 13; j++) {
     const k = classAt(i, j), e = r.classes[k], cell = document.createElement('button');
@@ -659,11 +727,12 @@ function renderNode() {
   g.onmouseleave = () => detail(selected);
   detail(selected);
 }
+function ctxKind(r, i) { return r.cur && r.actions[i] && r.actionTypes && r.curIndex === i; }
 function detail(k) {
-  const r = report, d = $('detail'); if (!d || !r || r.kind !== 'action') return;
+  const r = view === 'pre' ? preReport : report, d = $('detail'); if (!d || !r || r.kind !== 'action') return;
   const col = colors(r.actionTypes);
   if (!k || !r.classes[k] || r.classes[k].w <= 1e-9) {
-    d.innerHTML = `<div class="label">${esc(built.names[r.player])}'s range here</div><div class="mono" style="font-size:22px">${r.totalReach.toFixed(1)} combos</div><div class="muted" style="font-size:12px">Hover or tap a hand for every combo.</div>`;
+    d.innerHTML = `<div class="label">${esc(r.preflop ? r.name : built.names[r.player])}'s range here</div><div class="mono" style="font-size:22px">${r.totalReach.toFixed(1)} combos</div><div class="muted" style="font-size:12px">Hover or tap a hand for every combo.</div>`;
     return;
   }
   const e = r.classes[k];
