@@ -1,25 +1,27 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0d1214"></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0a1120"></head><body>
 <title>Slick RNG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: one-column study flow — format bar, preflop line, board, then the strategy browser. Single dark card-room look. */
+/* Layout: solver workstation — table bar (format, seats, preflop actions), board + solve bar, then strategy panel with preflop/postflop tabs. Night-navy ground; Carolina blue for focus and selection, seafoam for passive actions, powder purple for aggression. */
 :root {
   color-scheme: dark;
-  --bg: #0d1214;
-  --panel: #141b1e;
-  --panel-2: #1a2327;
-  --line: #26333a;
-  --fg: #e6ece9;
-  --muted: #8a9a97;
-  --faint: #5a6b68;
-  --brass: #d6a649;
-  --brass-ink: #1b1406;
-  --danger: #e2685a;
-  --a-fold: #4f7590;
-  --a-pass: #3fa56b;
-  --a-allin: #7b2443;
+  --bg: #0a1120;
+  --panel: #101a2c;
+  --panel-2: #16233a;
+  --line: #233452;
+  --fg: #e8eef8;
+  --muted: #95a6c2;
+  --faint: #5c6d8c;
+  --carolina: #4b9cd3;
+  --carolina-ink: #04111e;
+  --seafoam: #6fd8b0;
+  --powder: #b9a7e3;
+  --danger: #ef7b7b;
+  --a-fold: #5d6f8f;
+  --a-pass: #5fcfa3;
+  --a-allin: #6a4bb0;
   --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
   --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
@@ -28,14 +30,15 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { background: var(--bg); color: var(--fg); }
-body { font-family: var(--font-body); font-size: 14px; line-height: 1.45; padding-inline: 16px; padding-block: 0 40px; max-width: 1280px; margin-inline: auto; }
+body { font-family: var(--font-body); font-size: 14px; line-height: 1.45; padding-inline: 16px; padding-block: 0 40px; max-width: 1320px; margin-inline: auto; }
 button, input, select { font: inherit; color: inherit; }
-select { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 8px; min-width: 0; }
-input[type="range"] { accent-color: var(--brass); }
-:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
+select, input[type="number"] { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 8px; min-width: 0; }
+input[type="number"] { font-family: var(--font-mono); width: 76px; }
+input[type="range"] { accent-color: var(--carolina); }
+:focus-visible { outline: 2px solid var(--carolina); outline-offset: 1px; }
 button { cursor: pointer; border-radius: var(--r); border: 1px solid var(--line); background: var(--panel-2); padding: 7px 12px; }
 button:hover:not(:disabled) { border-color: var(--faint); }
-button.primary { background: var(--brass); color: var(--brass-ink); border-color: var(--brass); font-weight: 600; }
+button.primary { background: var(--carolina); color: var(--carolina-ink); border-color: var(--carolina); font-weight: 600; }
 button:disabled { opacity: .4; cursor: default; }
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }
@@ -46,72 +49,73 @@ h2 { font-family: var(--font-display); font-weight: 600; font-size: 20px; letter
 
 header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-block: 14px; }
 .wordmark { font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: .04em; line-height: 1; }
-.wordmark span { color: var(--brass); }
-.ver { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--brass); color: var(--brass); padding: 2px 6px; border-radius: 3px; }
+.wordmark span { color: var(--carolina); }
+.ver { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--powder); color: var(--powder); padding: 2px 6px; border-radius: 3px; }
 
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--panel-2); }
 .seg button { border: 0; border-radius: 0; background: transparent; padding: 7px 13px; }
 .seg button + button { border-left: 1px solid var(--line); }
-.seg button[aria-pressed="true"] { background: var(--brass); color: var(--brass-ink); font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--carolina); color: var(--carolina-ink); font-weight: 600; }
 
 .bar { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 12px; margin-bottom: 12px; }
 
-/* preflop seats */
+/* seats */
 .seats { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 6px; }
-@media (max-width: 700px) { .seats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.seat { border: 1px solid var(--line); background: var(--panel-2); border-radius: 8px; padding: 8px 6px; text-align: center; display: grid; gap: 2px; min-width: 0; }
+@media (max-width: 760px) { .seats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.seat { border: 1px solid var(--line); background: var(--panel-2); border-radius: 8px; padding: 8px 6px; text-align: center; display: grid; gap: 2px; min-width: 0; cursor: pointer; user-select: none; -webkit-touch-callout: none; }
 .seat b { font-family: var(--font-display); font-size: 17px; letter-spacing: .03em; font-weight: 600; }
 .seat small { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.seat.fold { opacity: .38; }
-.seat.agg small { color: #e88a55; font-weight: 600; }
-.seat.pass small { color: #5cc285; font-weight: 600; }
-.seat.now { border-color: var(--brass); box-shadow: 0 0 0 1px var(--brass) inset; }
-.seat.now small { color: var(--brass); }
+.seat.fold { opacity: .4; }
+.seat.agg small { color: var(--powder); font-weight: 600; }
+.seat.pass small { color: var(--seafoam); font-weight: 600; }
+.seat.now { border-color: var(--carolina); box-shadow: 0 0 0 1px var(--carolina) inset; }
+.seat.now small { color: var(--carolina); }
+.seat.sel { background: #1d3150; border-color: var(--fg); }
+.seat.out { border-style: dashed; background: transparent; opacity: .45; }
+.seat.out b { text-decoration: line-through; color: var(--faint); }
+.hint { font-size: 12px; color: var(--muted); }
+
 .prompt { display: grid; gap: 8px; }
 .prow, .pfoot, .phead { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.prow .label { width: 92px; }
+.prow .label { width: 104px; }
 .pfoot { border-top: 1px solid var(--line); padding-top: 8px; }
-.who.small { font-size: 16px; }
-button.seat { cursor: pointer; font: inherit; color: inherit; }
-.seat.sel { border-color: var(--fg); background: #22303a; }
-.seat.fold.sel { opacity: .8; }
-.act.cur { border-color: var(--fg); }
-.prompt button.cur { background: var(--fg); color: #111; border-color: var(--fg); font-weight: 600; }
-.prompt .who { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
-.prompt button { min-width: 84px; font-weight: 500; }
-.prompt .b-fold { color: #9cb6c9; }
-.prompt .b-pass { color: #6fd39a; }
-.prompt .b-agg { color: #f0a06e; }
+.who { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
+.prompt .prow button { min-width: 78px; font-weight: 500; }
+.prompt .b-fold { color: #a9bbd6; }
+.prompt .b-pass { color: var(--seafoam); }
+.prompt .b-agg { color: var(--powder); }
+.prompt .b-jam { color: #cdb8ff; border-color: #4b3a7d; }
+.prompt button.cur { background: var(--fg); color: #0a1120; border-color: var(--fg); font-weight: 600; }
+.custom { display: inline-flex; gap: 6px; align-items: center; }
+.sizes { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.sizes label { display: inline-flex; gap: 6px; align-items: center; }
 
 /* board */
 .board { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .slot { width: 46px; height: 62px; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 600; font-size: 18px; line-height: 1; padding: 0; }
-.slot.filled { background: #eef1ef; color: #111; border-color: #eef1ef; }
+.slot.filled { background: #eef2f8; color: #111; border-color: #eef2f8; }
 .slot.empty { background: transparent; border: 1px dashed var(--faint); color: var(--faint); font-size: 12px; font-weight: 400; }
-.slot.s-h { color: #b2281a; } .slot.s-d { color: #1b4f8f; } .slot.s-c { color: #16683a; }
-.slot.active { outline: 2px solid var(--brass); outline-offset: 2px; }
+.slot.s-h { color: #c2362a; } .slot.s-d { color: #1f62b0; } .slot.s-c { color: #17805a; }
+.slot.active { outline: 2px solid var(--carolina); outline-offset: 2px; }
 .sep { width: 1px; align-self: stretch; background: var(--line); margin-inline: 4px; }
 .picker { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 3px; }
 .card { aspect-ratio: 3 / 4; border-radius: 4px; border: 1px solid var(--line); background: var(--bg); font-family: var(--font-mono); font-size: 12px; display: grid; place-items: center; padding: 0; line-height: 1; max-width: 100%; }
-.card.s-c { color: #6fc08a; } .card.s-d { color: #69a8e8; } .card.s-h { color: #ee7a6b; } .card.s-s { color: #c9d1cf; }
+.card.s-c { color: #6fd8b0; } .card.s-d { color: #76b7ea; } .card.s-h { color: #f08d86; } .card.s-s { color: #d3dbe8; }
 .card:disabled { opacity: .15; }
-
 .solverow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .meter { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; flex: 1; min-width: 120px; }
-.meter i { display: block; height: 100%; width: 0; background: var(--brass); transition: width .25s linear; }
+.meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--carolina), var(--powder)); transition: width .25s linear; }
 .status { font-size: 12px; color: var(--muted); }
 .error { color: var(--danger); font-size: 13px; }
 details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; width: max-content; }
 .advgrid { display: grid; grid-template-columns: 56px repeat(2, minmax(0, 1fr)); gap: 6px; align-items: center; margin-top: 8px; max-width: 520px; }
 .advgrid input { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); padding: 5px 8px; font-family: var(--font-mono); font-size: 12px; width: 100%; min-width: 0; }
 
-/* in-hand players */
+/* results */
 .inhand { display: flex; gap: 6px; flex-wrap: wrap; }
 .pchip { display: inline-flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 6px 4px 12px; font-size: 13px; }
 .pchip b { font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .03em; }
 .pchip button { padding: 2px 9px; font-size: 12px; border-radius: 999px; }
-
-/* results */
 .results { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
 .res-head { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 12px 14px; border-bottom: 1px solid var(--line); }
 .evs { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -129,19 +133,20 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 .act i { width: 10px; height: 10px; border-radius: 2px; grid-row: span 2; }
 .act strong { font-weight: 600; font-size: 14px; }
 .act small { font-family: var(--font-mono); color: var(--muted); font-size: 12px; }
+.act.cur { border-color: var(--fg); }
 .freqbar { display: flex; height: 10px; border-radius: 3px; overflow: hidden; background: var(--bg); }
 .freqbar i { display: block; height: 100%; }
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 280px); gap: 14px; align-items: start; }
 @media (max-width: 1000px) { .split { grid-template-columns: minmax(0, 1fr); } }
 .gridwrap { overflow-x: auto; }
 .hgrid { display: grid; grid-template-columns: repeat(13, minmax(26px, 1fr)); gap: 2px; min-width: 360px; }
-.cell { position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: #0a0e10; border: 0; padding: 0; cursor: pointer; }
+.cell { position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: #070c17; border: 0; padding: 0; cursor: pointer; }
 .cell .mix { position: absolute; inset: 0; display: flex; }
 .cell .mix i { display: block; height: 100%; }
-.cell .fill { position: absolute; left: 0; right: 0; top: 0; background: #0a0e10; }
+.cell .fill { position: absolute; left: 0; right: 0; top: 0; background: #070c17; }
 .cell .lab { position: absolute; left: 3px; top: 2px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; color: #fff; text-shadow: 0 0 2px #000, 0 0 2px #000; }
 .cell.none .lab { color: var(--faint); text-shadow: none; }
-.cell.sel { outline: 2px solid var(--brass); outline-offset: -2px; }
+.cell.sel { outline: 2px solid var(--carolina); outline-offset: -2px; }
 .detail { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: grid; gap: 8px; min-width: 0; }
 .detail table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .detail td, .detail th { padding: 3px 4px; text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -149,52 +154,60 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 .detail td:first-child, .detail th:first-child { text-align: left; }
 .empty-state { padding: 40px 14px; text-align: center; color: var(--muted); }
 
-/* modals */
-.modal { position: fixed; inset: 0; background: rgba(5, 8, 9, .8); display: grid; place-items: center; padding: 16px; z-index: 50; }
+.modal { position: fixed; inset: 0; background: rgba(4, 8, 16, .8); display: grid; place-items: center; padding: 16px; z-index: 50; }
 .box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; width: min(640px, 100%); max-height: 100%; overflow: auto; display: grid; gap: 12px; }
 .rgrid { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 2px; user-select: none; touch-action: none; }
-.rcell { aspect-ratio: 1; border-radius: 3px; font-family: var(--font-mono); font-size: 10px; display: grid; place-items: center; background: #0a0e10; color: var(--muted); position: relative; overflow: hidden; }
-.rcell .w { position: absolute; left: 0; right: 0; bottom: 0; background: var(--brass); opacity: .85; }
+.rcell { aspect-ratio: 1; border-radius: 3px; font-family: var(--font-mono); font-size: 10px; display: grid; place-items: center; background: #070c17; color: var(--muted); position: relative; overflow: hidden; }
+.rcell .w { position: absolute; left: 0; right: 0; bottom: 0; background: var(--carolina); opacity: .85; }
 .rcell span { position: relative; }
-.rcell.on span { color: var(--brass-ink); font-weight: 600; }
+.rcell.on span { color: var(--carolina-ink); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
 </style>
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.3</span>
+  <span class="ver">ALPHA 1.4 · SOLVER</span>
+  <span class="grow"></span>
+  <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button></div>
+  <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
+  <label class="row"><span class="label">Stack</span><select id="stack" aria-label="Starting stack"></select></label>
+  <label class="row" id="leftWrap" hidden><span class="label">Players left</span><select id="left" aria-label="Players left in tournament"></select></label>
 </header>
 
 <div class="bar">
-  <div class="row">
-    <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button></div>
-    <div class="seg" role="group" aria-label="Table size"><button data-table="6" aria-pressed="false">6-max</button><button data-table="9" aria-pressed="true">9-max</button></div>
-    <label class="row"><span class="label">Stack</span><select id="stack" aria-label="Starting stack"></select></label>
-    <label class="row" id="leftWrap" hidden><span class="label">Players left</span><select id="left" aria-label="Players left in tournament"></select></label>
-  </div>
   <div class="seats" id="seats"></div>
+  <div class="hint" id="seatHint" hidden>Right-click a seat (or press and hold on touch) to sit it out or bring it back.</div>
   <div class="prompt" id="prompt"></div>
+  <details class="adv" id="pfSizes">
+    <summary>Preflop sizes</summary>
+    <div class="sizes" style="margin-top:8px">
+      <label><span class="label">Open</span><input id="szOpen" type="number" step="0.1" min="1"></label>
+      <label><span class="label">3-Bet</span><input id="sz3" type="number" step="0.5" min="1"></label>
+      <label><span class="label">4-Bet</span><input id="sz4" type="number" step="0.5" min="1"></label>
+      <label><span class="label">5-Bet</span><input id="sz5" type="number" step="0.5" min="1"></label>
+      <span class="muted" style="font-size:12px">Raise-to amounts in bb. Each limper adds 1 bb to the open.</span>
+    </div>
+  </details>
 </div>
 
 <div class="bar">
   <div class="board">
     <span class="label">Board</span>
     <div class="row" id="slots"></div>
-    <button id="randomFlop">Random flop</button>
     <span class="sep"></span>
-    <label class="row"><span class="label">Sizes</span>
+    <label class="row"><span class="label">Postflop sizes</span>
       <select id="sizing"><option value="simple">Simple</option><option value="standard">Standard</option><option value="complex">Complex</option></select></label>
     <label class="row"><span class="label">Depth</span>
-      <select id="depth"><option value="20">Quick · 20s</option><option value="60" selected>Normal · 1 min</option><option value="180">Deep · 3 min</option><option value="600">Overnight-lite · 10 min</option></select></label>
+      <select id="depth"><option value="20">Quick · 20s</option><option value="60" selected>Normal · 1 min</option><option value="180">Deep · 3 min</option><option value="600">Max · 10 min</option></select></label>
     <div class="grow"></div>
     <button id="stopBtn" hidden>Stop</button>
     <button id="solveBtn" class="primary">Solve</button>
   </div>
   <div class="picker" id="picker" hidden></div>
-  <div class="solverow"><div class="meter"><i id="meter"></i></div><span class="status mono" id="status">Ready</span></div>
+  <div class="solverow"><div class="meter"><i id="meter"></i></div><span class="status mono" id="status">Pick the flop, then Solve</span></div>
   <div class="error" id="err" role="alert"></div>
   <details class="adv">
-    <summary>Custom bet sizes</summary>
+    <summary>Custom postflop sizes</summary>
     <div class="advgrid">
       <span></span><span class="label">Bets</span><span class="label">Raises</span>
       <span class="label">Flop</span><input id="fb" aria-label="Flop bets"><input id="fr" aria-label="Flop raises">
@@ -210,8 +223,8 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
     <div class="inhand grow" id="inhand"></div>
     <div class="evs" id="evs"></div>
   </div>
-  <div class="crumbs" id="crumbs"></div>
-  <div id="nodeView"><div class="empty-state">Set the preflop action, then press Solve.</div></div>
+  <div class="crumbs" id="crumbs" hidden></div>
+  <div id="nodeView"></div>
 </div>
 
 <div class="modal" id="rangeModal" hidden>
@@ -871,32 +884,46 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const src = $('engine-src').textContent;
 const Engine = new Function(src + '\nreturn SlickEngine;')();
+const fmt = (x) => (Math.abs(x - Math.round(x)) < 1e-9 ? String(Math.round(x)) : x.toFixed(1));
 
-// ---------------------------------------------------------------- default ranges (Slick RNG starting estimates)
-const RFI = {
-  'UTG9': '66+,A9s+,KTs+,QTs+,JTs,T9s,AJo+,KQo',
-  'UTG+1': '55+,A8s+,KTs+,QTs+,JTs,T9s,98s,ATo+,KQo',
-  'UTG+2': '44+,A5s+,K9s+,Q9s+,J9s+,T9s,98s,87s,ATo+,KJo+',
-  'LJ': '33+,A2s+,K9s+,Q9s+,J9s+,T8s+,98s,87s,76s,ATo+,KJo+,QJo',
-  'HJ': '22+,A2s+,K8s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,A9o+,KTo+,QJo',
-  'CO': '22+,A2s+,K5s+,Q8s+,J8s+,T7s+,97s+,86s+,75s+,65s,54s,A8o+,A5o,KTo+,QTo+,JTo',
-  'BTN': '22+,A2s+,K2s+,Q4s+,J6s+,T6s+,95s+,85s+,74s+,64s+,53s+,43s,A2o+,K8o+,Q9o+,J9o+,T8o+,98o,87o',
-  'SB': '22+,A2s+,K4s+,Q6s+,J7s+,T7s+,96s+,86s+,75s+,65s,54s,A5o+,K9o+,QTo+,JTo',
-};
-const CALL_OPEN = {
+// ---------------------------------------------------------------- starting ranges (Slick RNG estimates, editable)
+// open-raise by distance from the button: 0 BTN, 1 CO, 2 HJ, 3 LJ, 4, 5, 6 = earliest seat at a full table
+const RFI_D = [
+  '22+,A2s+,K2s+,Q4s+,J6s+,T6s+,95s+,85s+,74s+,64s+,53s+,43s,A2o+,K8o+,Q9o+,J9o+,T8o+,98o,87o',
+  '22+,A2s+,K5s+,Q8s+,J8s+,T7s+,97s+,86s+,75s+,65s,54s,A8o+,A5o,KTo+,QTo+,JTo',
+  '22+,A2s+,K8s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,A9o+,KTo+,QJo',
+  '33+,A2s+,K9s+,Q9s+,J9s+,T8s+,98s,87s,76s,ATo+,KJo+,QJo',
+  '44+,A5s+,K9s+,Q9s+,J9s+,T9s,98s,87s,ATo+,KJo+',
+  '55+,A8s+,KTs+,QTs+,JTs,T9s,98s,ATo+,KQo',
+  '66+,A9s+,KTs+,QTs+,JTs,T9s,AJo+,KQo',
+];
+const RFI_SB = '22+,A2s+,K4s+,Q6s+,J7s+,T7s+,96s+,86s+,75s+,65s,54s,A5o+,K9o+,QTo+,JTo';
+const RFI_HU_SB = '22+,A2s+,K2s+,Q2s+,J3s+,T5s+,95s+,85s+,74s+,64s+,53s+,43s,A2o+,K5o+,Q7o+,J8o+,T8o+,97o+,87o,76o';
+const CALL = {
   early: '22-JJ,ATs-AQs,KJs+,QJs,JTs,T9s,98s,AQo',
   mid: '22-JJ,A9s-AQs,KTs+,QTs+,JTs,T9s,98s,87s,AJo-AQo,KQo',
-  BTN: '22-JJ,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo-ATo,KQo,KJo,QJo',
-  SB: '22-TT,ATs-AJs,KTs+,QTs+,JTs,T9s,98s,AQo',
-  BB: '22-99,A2s-AJs,K2s+,Q5s+,J7s+,T7s+,96s+,85s+,75s+,64s+,53s+,43s,A2o-AJo,K9o+,Q9o+,J9o+,T9o,98o,87o,76o',
+  btn: '22-JJ,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo-ATo,KQo,KJo,QJo',
+  sb: '22-TT,ATs-AJs,KTs+,QTs+,JTs,T9s,98s,AQo',
+  bb: '22-99,A2s-AJs,K2s+,Q5s+,J7s+,T7s+,96s+,85s+,75s+,64s+,53s+,43s,A2o-AJo,K9o+,Q9o+,J9o+,T9o,98o,87o,76o',
 };
+const ISO = 'TT+,AJs+,KQs,AQo+';
 const THREEBET = 'TT+,AJs+,KQs,AQo+,A5s-A3s,K9s,76s,65s';
+const FOURBET = 'QQ+,AKs,AKo,A5s:0.5,A4s:0.5';
+const FIVEBET = 'KK+,AKs';
 const CALL_3B = 'QQ-77,AQs-ATs,KQs-KJs,QJs,JTs,T9s,98s,AQo,AKo:0.5';
 const COLD_3B = 'QQ-JJ,AKs,AQs';
+const CALL_4B = 'QQ-TT,AKo,AKs:0.5,AQs';
+const CALL_5B = 'QQ+,AKs,AKo';
 const LIMP = '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,86s+,75s+,65s,54s,A9o-AJo,KJo,QJo,JTo';
+const LIMP_CALL = '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo,KQo';
 const SB_COMPLETE = '22-99,A2s-AJs,K2s+,Q5s+,J7s+,T7s+,96s+,85s+,75s+,64s+,54s,A2o-AJo,K8o+,Q9o+,J9o+,T9o,98o';
-const BB_CHECK = '22-99,A2s-AJs,K2s+,Q2s+,J2s+,T2s+,92s+,82s+,72s+,62s+,52s+,42s+,32s,A2o-AJo,K2o+,Q2o+,J2o+,T2o+,92o+,82o+,72o+,62o+,52o+,42o+,32o';
-const POS = { 6: ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'], 9: ['UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB'] };
+function jamRange(level, stack, d) {
+  if (stack <= 12) return level <= 1 ? (d >= 4 ? '55+,A7s+,KTs+,QJs,A9o+,KQo' : '22+,A2s+,K7s+,Q9s+,J9s+,T9s,A5o+,KTo+,QJo') : '55+,A8s+,KTs+,AJo+,KQo';
+  if (stack <= 25) return level <= 1 ? '77+,ATs+,KQs,AQo+' : level === 2 ? '88+,AJs+,KQs,AQo+,A5s' : 'TT+,AQs+,AKo';
+  return level <= 3 ? '' : 'QQ+,AKs,AKo';
+}
+function callJamRange(stack) { return stack <= 12 ? '22+,A2s+,K8s+,QTs+,A7o+,KTo+' : stack <= 25 ? '66+,ATs+,KQs,AJo+' : 'QQ+,AKs,AKo'; }
+const BB_CHECK = 'ANY';
 const FT_PAY = [26.2, 18.0, 13.2, 10.2, 8.0, 6.6, 5.4, 4.6, 3.8];
 const SIZES = {
   simple: { flop: ['33%', '3x'], turn: ['66%', '3x'], river: ['75%', '3x'], cap: 1 },
@@ -904,292 +931,325 @@ const SIZES = {
   complex: { flop: ['25%,50%,100%', '2.5x,a'], turn: ['33%,75%,125%', '2.5x,a'], river: ['33%,75%,125%,a', '2.5x,a'], cap: 2 },
 };
 
-function rfiFor(pos, table) { return pos === 'UTG' ? (table === 6 ? RFI.LJ : RFI.UTG9) : RFI[pos]; }
-function callFor(pos, table) {
-  if (pos === 'BB' || pos === 'SB' || pos === 'BTN') return CALL_OPEN[pos];
-  const early = table === 9 ? ['UTG', 'UTG+1', 'UTG+2', 'LJ'] : ['UTG', 'HJ'];
-  return early.includes(pos) ? CALL_OPEN.early : CALL_OPEN.mid;
+// ---------------------------------------------------------------- table model
+const S = { game: 'cash', table: '6', slots: [], stack: 100, left: 9, sz: { open: 2, b3: 6, b4: 14, b5: 30 }, board: [], sizing: 'simple', overrides: {}, hist: [], sel: null };
+function slotCount() { return S.table === '6' ? 6 : S.table === '8' ? 8 : 9; }
+function makeSlots() { S.slots = Array.from({ length: slotCount() }, (_, i) => ({ id: i, active: true })); }
+function namesFor(n) {
+  if (n === 2) return ['SB', 'BB'];
+  const m = n - 2, base = ['UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN'];
+  const last = base.slice(7 - m);
+  const early = last.filter((x) => x.startsWith('UTG')).length;
+  if (early) for (let i = 0; i < early; i++) last[i] = i === 0 ? 'UTG' : `UTG+${i}`;
+  else last[0] = 'UTG';
+  return [...last, 'SB', 'BB'];
 }
-
-// ---------------------------------------------------------------- state
-const S = { game: 'cash', table: 9, stack: 100, left: 9, seats: [], board: [], sizing: 'simple', overrides: {} };
-function openSize() { return S.game === 'cash' ? (S.table === 6 ? 2.5 : 3) : 2.2; }
-
-function freshSeats() {
-  S.seats = POS[S.table].map((p) => ({ pos: p, put: p === 'SB' ? 0.5 : p === 'BB' ? 1 : 0, status: 'wait', line: null, label: '', acts: [] }));
+let T = null; // live table state built by replay()
+function freshTable() {
+  const act = S.slots.filter((s) => s.active), names = namesFor(act.length), m = act.length - 2;
+  const seats = act.map((s, i) => ({ id: s.id, pos: names[i], d: names[i] === 'SB' || names[i] === 'BB' ? -1 : m - 1 - i,
+    put: names[i] === 'SB' ? 0.5 : names[i] === 'BB' ? 1 : 0, folded: false, allin: false, needs: true, acts: [] }));
+  T = { seats, bet: 1, level: 0, lastRaise: 1, cur: -1, hu: act.length === 2 };
 }
-function resetSeats() { S.hist = []; S.overrides = {}; replay(); S.sel = null; render(); markStale(); }
-const ALT = { open: ['3bet', 'call'], '3bet': ['open', 'call'], call: ['limp', 'check'], limp: ['call', 'check'], check: ['call'], fold: [] };
-// rebuild the table from the action history, keeping each action that still makes sense
+function live() { return T.seats.filter((s) => !s.folded); }
+function nextActor() {
+  if (live().length < 2) return null;
+  const n = T.seats.length;
+  for (let k = 1; k <= n; k++) {
+    const s = T.seats[(T.cur + k + n) % n];
+    if (!s.folded && !s.allin && s.needs) {
+      // everyone else all-in and nothing to call -> nothing to decide
+      const others = live().filter((x) => x !== s && !x.allin).length;
+      if (!others && s.put >= T.bet - 1e-9) return null;
+      return s;
+    }
+  }
+  return null;
+}
+const limperCount = () => T.seats.filter((s) => s.acts.some((a) => a.k === 'call' && a.facing === 0) && s.pos !== 'BB').length;
+function raiseName(L) { return L === 1 ? 'Raise' : `${L + 1}-Bet`; }
+function jamName(L) { return L === 1 ? 'Jam' : `${L + 1}B Jam`; }
+function defaultRaise(L) {
+  let to = L === 1 ? S.sz.open + limperCount() : L === 2 ? S.sz.b3 : L === 3 ? S.sz.b4 : L === 4 ? S.sz.b5 : T.bet * 2.2;
+  const minTo = T.bet + T.lastRaise;
+  if (to < minTo) to = Math.max(minTo, T.bet * 2.2);
+  return Math.round(to * 10) / 10;
+}
+function minRaiseTo() { return T.bet + T.lastRaise; }
+function options(seat) {
+  const o = [], toCall = T.bet - seat.put, left = S.stack - seat.put;
+  const othersCanAct = live().some((x) => x !== seat && !x.allin);
+  if (toCall > 1e-9) {
+    o.push({ k: 'fold', t: 'Fold', cls: 'fold' });
+    if (left <= toCall + 1e-9) { o.push({ k: 'call', t: `Call all-in ${fmt(S.stack)}`, cls: 'pass' }); return o; }
+    o.push({ k: 'call', t: T.level === 0 ? (seat.pos === 'SB' ? 'Complete' : 'Limp') : `Call ${fmt(T.bet)}`, cls: 'pass' });
+  } else o.push({ k: 'check', t: 'Check', cls: 'pass' });
+  if (!othersCanAct) return o;
+  const L = T.level + 1, to = defaultRaise(L);
+  if (to < S.stack - 1e-9) o.push({ k: 'raise', to, t: `${raiseName(L)} ${fmt(to)}`, cls: 'agg', L });
+  o.push({ k: 'allin', to: S.stack, t: `${jamName(L)} ${fmt(S.stack)}`, cls: 'jam', L });
+  return o;
+}
+function apply(seat, o) {
+  const facing = T.level, vsAllin = T.seats.some((x) => x.allin && x.put >= T.bet - 1e-9 && x !== seat);
+  if (o.k === 'fold') { seat.folded = true; seat.acts.push({ k: 'fold', label: 'Fold' }); }
+  else if (o.k === 'check') seat.acts.push({ k: 'check', label: 'Check' });
+  else if (o.k === 'call') {
+    seat.put = Math.min(T.bet, S.stack); if (seat.put >= S.stack - 1e-9) seat.allin = true;
+    seat.acts.push({ k: 'call', facing, vsAllin, label: o.t.replace(/ all-in.*/, ' AI') });
+  } else {
+    const to = Math.min(o.to, S.stack), raise = to - T.bet;
+    seat.put = to; if (to >= S.stack - 1e-9) seat.allin = true;
+    if (raise > 1e-9) {
+      T.level++; if (raise >= T.lastRaise - 1e-9) T.lastRaise = raise; T.bet = to;
+      for (const x of T.seats) if (x !== seat && !x.folded && !x.allin) x.needs = true;
+    }
+    seat.acts.push({ k: o.k, L: T.level, to, label: o.k === 'allin' ? `${jamName(T.level)} ${fmt(to)}` : `${raiseName(T.level)} ${fmt(to)}` });
+  }
+  seat.needs = false;
+  T.cur = T.seats.indexOf(seat);
+}
+function pickOption(opts, e) {
+  const by = (k) => opts.find((x) => x.k === k);
+  if (e.k === 'raise') {
+    if (e.to !== undefined) {
+      if (e.to >= minRaiseTo() - 1e-9 && e.to < S.stack - 1e-9 && by('raise')) { const L = T.level + 1; return { k: 'raise', to: e.to, t: `${raiseName(L)} ${fmt(e.to)}`, cls: 'agg', L, custom: true }; }
+    }
+    return by('raise') || by('allin') || by('call') || by('check');
+  }
+  if (e.k === 'allin') return by('allin') || by('call');
+  if (e.k === 'call') return by('call') || by('check');
+  if (e.k === 'check') return by('check') || by('call');
+  return by('fold') || by('check');
+}
+// rebuild the table from the history, keeping every action that still applies
 function replay() {
-  freshSeats();
-  const kept = []; S.decisions = [];
-  for (const e of S.hist || []) {
-    const st = preflop();
-    if (st.done || st.next.pos !== e.pos) break;
-    const opts = options(st.next, st);
-    const o = opts.find((x) => x.k === e.k) || ALT[e.k].map((k) => opts.find((x) => x.k === k)).find(Boolean);
+  freshTable(); const kept = []; S.decisions = [];
+  for (const e of S.hist) {
+    const nx = nextActor();
+    if (!nx || nx.id !== e.id) break;
+    const opts = options(nx), o = pickOption(opts, e);
     if (!o) break;
-    S.decisions.push({ idx: kept.length, pos: e.pos, k: o.k, opts });
-    kept.push({ pos: e.pos, k: o.k });
-    act(st.next, o, st);
+    S.decisions.push({ idx: kept.length, id: e.id, k: o.k, to: o.to, custom: !!o.custom, opts });
+    kept.push(o.custom ? { id: e.id, k: o.k, to: o.to } : { id: e.id, k: o.k });
+    apply(nx, o);
   }
   S.hist = kept;
 }
-// options a seat would have if everyone before it folded
-function foldToOptions(pos) {
-  const save = S.hist.slice(); const folds = [];
-  let guard = 0;
-  for (;;) {
-    const st = preflop();
-    if (st.done || guard++ > 20) { S.hist = save; replay(); return null; }
-    if (st.next.pos === pos) { const opts = options(st.next, st); S.hist = save; replay(); return { folds, opts }; }
-    folds.push({ pos: st.next.pos, k: 'fold' });
-    act(st.next, { k: 'fold' }, st);
-  }
-}
-// ---------------------------------------------------------------- preflop charts (built-in starting ranges)
-const RCACHE = new Map();
-function rw(text) { if (text === 'ANY') { const w = new Float32Array(1326).fill(1); return w; } let w = RCACHE.get(text); if (!w) { w = text ? Engine.parseRange(text) : new Float32Array(1326); RCACHE.set(text, w); } return w; }
 function withHist(h, fn) { const save = S.hist; S.hist = h; replay(); const out = fn(); S.hist = save; replay(); return out; }
+function foldsTo(id) {
+  return withHist(S.hist.slice(), () => {
+    const folds = [];
+    for (let g = 0; g < 20; g++) {
+      const nx = nextActor(); if (!nx) return null;
+      if (nx.id === id) return folds;
+      folds.push({ id: nx.id, k: 'fold' }); apply(nx, { k: 'fold' });
+    }
+    return null;
+  });
+}
+const seatById = (id) => T.seats.find((s) => s.id === id);
+
+// ---------------------------------------------------------------- ranges from the action line
+function rfiFor(seat) { if (T.hu && seat.pos === 'SB') return RFI_HU_SB; if (seat.pos === 'SB') return RFI_SB; return RFI_D[Math.min(6, Math.max(0, seat.d))]; }
+function callFor(seat) { if (seat.pos === 'BB') return CALL.bb; if (seat.pos === 'SB') return CALL.sb; if (seat.d === 0) return CALL.btn; return seat.d <= 2 ? CALL.mid : CALL.early; }
+function raiseRange(seat, L, limpers) { return L === 1 ? (limpers ? ISO : rfiFor(seat)) : L === 2 ? THREEBET : L === 3 ? FOURBET : FIVEBET; }
+function callRange(seat, facing, vsAllin, prior) {
+  if (vsAllin) return callJamRange(S.stack);
+  if (facing === 0) return seat.pos === 'SB' ? SB_COMPLETE : LIMP;
+  if (facing === 1) return prior.some((a) => a.k === 'call' && a.facing === 0) ? LIMP_CALL : callFor(seat);
+  if (facing === 2) return prior.some((a) => a.k === 'raise' && a.L === 1) ? CALL_3B : COLD_3B;
+  return facing === 3 ? CALL_4B : CALL_5B;
+}
+function rangeFor(seat) {
+  if (S.overrides[seat.id]) return S.overrides[seat.id];
+  const acts = seat.acts.filter((a) => a.k !== 'fold');
+  if (!acts.length) return seat.pos === 'BB' ? BB_CHECK : 'ANY';
+  const last = acts[acts.length - 1], prior = acts.slice(0, -1);
+  if (last.k === 'check') return BB_CHECK;
+  if (last.k === 'call') return callRange(seat, last.facing, last.vsAllin, prior);
+  if (last.k === 'allin') return jamRange(last.L, S.stack, seat.d);
+  return raiseRange(seat, last.L, last.L === 1 && limperCount() > 0);
+}
+const RCACHE = new Map();
+function rw(text) {
+  if (text === 'ANY') return new Float32Array(1326).fill(1);
+  let w = RCACHE.get(text); if (!w) { w = text ? Engine.parseRange(text) : new Float32Array(1326); RCACHE.set(text, w); } return w;
+}
+
+// ---------------------------------------------------------------- spot for the solver
+function postflopOrder() {
+  const inH = live();
+  if (T.hu) return [...inH].sort((a) => (a.pos === 'BB' ? -1 : 1));
+  const blinds = inH.filter((s) => s.pos === 'SB' || s.pos === 'BB').sort((a) => (a.pos === 'SB' ? -1 : 1));
+  return [...blinds, ...inH.filter((s) => s.pos !== 'SB' && s.pos !== 'BB')];
+}
+function potNow() { return T.seats.reduce((a, s) => a + s.put, 0) + (S.game === 'cash' ? 0 : 1); }
+function buildSpot() {
+  if (nextActor()) throw new Error('Finish the preflop action first.');
+  const players = postflopOrder();
+  if (players.length < 2) throw new Error('At least two players need to see the flop.');
+  if (S.board.length < 3) throw new Error('Pick the flop cards first.');
+  const sz = { fb: $('fb').value, fr: $('fr').value, tb: $('tb').value, tr: $('tr').value, rb: $('rb').value, rr: $('rr').value };
+  const spot = {
+    players: players.map((s) => ({ name: s.pos, stack: Math.max(0.01, S.stack - s.put), range: rangeFor(s) })),
+    pot: potNow(), board: S.board.map(Engine.cardStr).join(''),
+    sizes: { flop: { bet: sz.fb, raise: sz.fr }, turn: { bet: sz.tb, raise: sz.tr }, river: { bet: sz.rb, raise: sz.rr } },
+    raiseCap: players.length > 2 ? Math.min(1, SIZES[S.sizing].cap) : SIZES[S.sizing].cap, allinThreshold: 0.15,
+  };
+  if (S.game === 'icm') {
+    const left = Math.max(S.left, players.length), others = [];
+    for (let i = 0; i < left - players.length; i++) others.push(S.stack);
+    spot.payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others };
+  }
+  return spot;
+}
+
+// ---------------------------------------------------------------- preflop chart for the selected seat
 function preflopContext() {
-  const st = preflop();
-  let pos = S.sel || (st.done ? null : st.next.pos);
-  if (!pos && S.decisions.length) pos = S.decisions[S.decisions.length - 1].pos;
-  if (!pos) return null;
-  const seat = S.seats.find((x) => x.pos === pos);
-  const mine = S.decisions.filter((d) => d.pos === pos);
-  if (!st.done && st.next === seat) return { pos, base: S.hist.slice(), opts: options(seat, st), mode: 'next', cur: null };
-  if (mine.length) { const d = mine[mine.length - 1]; return { pos, base: S.hist.slice(0, d.idx), opts: d.opts, mode: 'edit', cur: d.k, idx: d.idx }; }
-  if (seat.status === 'fold' || st.done) return null;
-  const f = foldToOptions(pos); if (!f) return null;
-  return { pos, base: [...S.hist, ...f.folds], opts: f.opts, mode: 'foldto', cur: null };
+  const nx = nextActor();
+  let id = S.sel;
+  if (id === null || id === undefined) id = nx ? nx.id : (S.decisions.length ? S.decisions[S.decisions.length - 1].id : null);
+  if (id === null || !seatById(id)) return null;
+  const mine = S.decisions.filter((d) => d.id === id);
+  if (nx && nx.id === id) return { id, base: S.hist.slice(), mode: 'next' };
+  if (mine.length) { const d = mine[mine.length - 1]; return { id, base: S.hist.slice(0, d.idx), mode: 'edit', idx: d.idx, cur: d }; }
+  const f = nx ? foldsTo(id) : null;
+  return f ? { id, base: [...S.hist, ...f], mode: 'foldto' } : null;
 }
 function preflopReport() {
   const ctx = preflopContext(); if (!ctx) return null;
   return withHist(ctx.base, () => {
-    const st = preflop(), seat = S.seats.find((x) => x.pos === ctx.pos);
-    const limpers = S.seats.filter((x) => x.line === 'limp' || x.line === 'complete').length;
-    const opener = S.seats.find((x) => x.line === 'open'), threeBettor = S.seats.find((x) => x.line === '3bet');
-    const reachText = seat.line ? rangeFor(seat) : 'ANY';
-    const rangeOf = (k) => {
-      if (k === 'open') return limpers ? 'TT+,AJs+,KQs,AQo+' : (seat.pos === 'BB' ? '' : rfiFor(seat.pos, S.table));
-      if (k === 'limp') return limpers ? (seat.pos === 'SB' ? SB_COMPLETE : LIMP) : '';
-      if (k === 'check') return 'ANY';
-      if (k === '3bet') return THREEBET;
-      if (k === 'call') {
-        if (st.raises >= 2) return seat.line === 'open' ? CALL_3B : seat.line === 'call' ? 'QQ-88,AQs-AJs,KQs,AQo' : COLD_3B;
-        return seat.line === 'limp' || seat.line === 'complete' ? '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo,KQo' : callFor(seat.pos, S.table);
-      }
-      return '';
+    const seat = seatById(ctx.id), opts = options(seat), na = opts.length;
+    const limpers = limperCount(), raiser = [...T.seats].reverse().find((x) => x.acts.some((a) => (a.k === 'raise' || a.k === 'allin') && a.L === T.level));
+    const vsAllin = T.seats.some((x) => x.allin && x !== seat);
+    const reach = rw(seat.acts.some((a) => a.k !== 'fold') ? rangeFor(seat) : 'ANY');
+    const rangeOf = (o) => {
+      if (o.k === 'fold') return null;
+      if (o.k === 'check') return 'ANY';
+      if (o.k === 'allin') return jamRange(o.L, S.stack, seat.d);
+      if (o.k === 'raise') return S.stack <= 15 ? '' : raiseRange(seat, o.L, o.L === 1 && limpers > 0);
+      if (T.level === 0) return limpers ? (seat.pos === 'SB' ? SB_COMPLETE : LIMP) : '';
+      return callRange(seat, T.level, vsAllin, seat.acts);
     };
-    const order = ['3bet', 'open', 'call', 'limp', 'check', 'fold'];
-    const opts = ctx.opts, na = opts.length;
-    const reach = rw(reachText), wts = opts.map((o) => (o.k === 'fold' ? null : rw(rangeOf(o.k))));
-    const pri = opts.map((o, i) => i).sort((a, b) => order.indexOf(opts[a].k) - order.indexOf(opts[b].k));
+    const order = ['allin', 'raise', 'call', 'check', 'fold'];
+    const wts = opts.map((o) => { const r = rangeOf(o); return r === null ? null : rw(r); });
+    const pri = opts.map((_, i) => i).sort((a, b) => order.indexOf(opts[a].k) - order.indexOf(opts[b].k));
     const classes = {}, overall = new Array(na).fill(0); let total = 0;
     for (let c = 0; c < 1326; c++) {
       const r = reach[c]; if (r <= 0) continue;
-      const sv = new Array(na).fill(0); let left = 1;
-      for (const i of pri) { if (!wts[i]) continue; const x = Math.min(left, wts[i][c]); sv[i] = x; left -= x; }
-      const fi = opts.findIndex((o) => o.k === 'fold'); if (fi >= 0) sv[fi] += left; else { const ci = pri[pri.length - 1]; sv[ci] += left; }
+      const sv = new Array(na).fill(0); let rest = 1;
+      for (const i of pri) { if (!wts[i]) continue; const x = Math.min(rest, wts[i][c]); sv[i] = x; rest -= x; }
+      const fi = opts.findIndex((o) => o.k === 'fold'); sv[fi >= 0 ? fi : pri[pri.length - 1]] += rest;
       const k = Engine.comboClass(c), e = classes[k] || (classes[k] = { w: 0, s: new Array(na).fill(0), combos: [] });
       e.w += r; for (let a = 0; a < na; a++) { e.s[a] += r * sv[a]; overall[a] += r * sv[a]; }
       e.combos.push({ name: Engine.comboStr(c), reach: r, s: sv }); total += r;
     }
     for (const k in classes) { const e = classes[k]; for (let a = 0; a < na; a++) e.s[a] /= e.w; }
     for (let a = 0; a < na; a++) overall[a] /= total || 1;
-    const pot = S.seats.reduce((a, x) => a + x.put, 0) + (S.game === 'cash' ? 0 : 1);
-    const vs = st.raises >= 2 ? `vs ${threeBettor ? threeBettor.pos : ''} 3-bet` : st.raises === 1 ? `vs ${opener ? opener.pos : ''} raise` : limpers ? `vs ${limpers} limp${limpers > 1 ? 's' : ''}` : 'first in';
-    return { kind: 'action', preflop: true, name: ctx.pos, sub: vs, board: [], pot, history: [], actions: opts.map((o) => o.t), actionTypes: opts.map((o) => (o.k === 'fold' ? 'fold' : o.k === 'open' || o.k === '3bet' ? 'bet' : 'call')),
-      overall, classes, totalReach: total, cur: ctx.cur, curIndex: opts.findIndex((o) => o.k === ctx.cur),
-      pick: (i) => { const o = opts[i]; choose(ctx.mode === 'edit' ? [...S.hist.slice(0, ctx.idx), { pos: ctx.pos, k: o.k }, ...S.hist.slice(ctx.idx + 1)] : [...ctx.base, { pos: ctx.pos, k: o.k }]); } };
+    const sub = T.level === 0 ? (limpers ? `vs ${limpers} limp${limpers > 1 ? 's' : ''}` : 'first in')
+      : `vs ${raiser ? raiser.pos : ''} ${T.level === 1 ? 'raise' : `${T.level + 1}-bet`}${vsAllin ? ' (all-in)' : ''}`;
+    const curIndex = ctx.cur ? opts.findIndex((o) => o.k === ctx.cur.k) : -1;
+    return { kind: 'action', preflop: true, name: seat.pos, sub, board: [], pot: potNow(), history: [],
+      actions: opts.map((o) => o.t), actionTypes: opts.map((o) => (o.k === 'fold' ? 'fold' : o.k === 'raise' ? 'bet' : o.k === 'allin' ? 'allin' : 'call')),
+      overall, classes, totalReach: total, cur: ctx.cur ? ctx.cur.k : null, curIndex,
+      pick: (i) => { const o = opts[i], e = { id: ctx.id, k: o.k }; choose(ctx.mode === 'edit' ? [...S.hist.slice(0, ctx.idx), e, ...S.hist.slice(ctx.idx + 1)] : [...ctx.base, e]); } };
   });
 }
-let view = 'pre', preReport = null;
-function setView(v) { view = v; $('tabPre').setAttribute('aria-pressed', v === 'pre'); $('tabPost').setAttribute('aria-pressed', v === 'post'); renderNode(); }
 function choose(newHist) {
-  view = 'pre';
-  S.hist = newHist; replay();
-  const st = preflop(); S.sel = st.done ? null : st.next.pos;
+  view = 'pre'; S.hist = newHist; replay();
+  const nx = nextActor(); S.sel = nx ? nx.id : null;
   render(); markStale();
 }
-function preflop() {
-  // derive table state from seats
-  const live = S.seats.filter((s) => s.status !== 'fold');
-  const bet = Math.max(...S.seats.map((s) => s.put));
-  const threeBet = S.seats.some((s) => s.line === '3bet');
-  const opened = threeBet || S.seats.some((s) => s.line === 'open' || s.line === 'open_call3b');
-  const raises = threeBet ? 2 : opened ? 1 : 0;
-  // next to act: first seat in order that hasn't acted, or must respond to a raise
-  let next = null;
-  const order = S.seats;
-  const lastAggIdx = order.map((s) => s.line === 'open' || s.line === '3bet').lastIndexOf(true);
-  // walk from the seat after the last aggressor (or from UTG) around the table
-  const start = lastAggIdx >= 0 ? lastAggIdx + 1 : 0;
-  for (let k = 0; k < order.length; k++) {
-    const s = order[(start + k) % order.length];
-    if (s.status === 'fold' || s.status === 'agg' && order.indexOf(s) === lastAggIdx) continue;
-    const owes = s.put < bet - 1e-9;
-    if (s.status === 'wait' || owes) { next = s; break; }
-  }
-  return { live, bet, raises, next, done: !next || live.length < 2 };
-}
-function options(seat, st) {
-  const o = [];
-  const isBB = seat.pos === 'BB', isSB = seat.pos === 'SB';
-  if (st.raises === 0) {
-    if (isBB) { o.push({ k: 'check', t: 'Check', cls: 'pass' }); }
-    else { o.push({ k: 'fold', t: 'Fold', cls: 'fold' }); o.push({ k: 'limp', t: isSB ? 'Complete' : 'Limp', cls: 'pass' }); }
-    const anyLimp = S.seats.some((s) => s.line === 'limp' || s.line === 'complete');
-    const size = openSize() + (anyLimp ? S.seats.filter((s) => s.line === 'limp' || s.line === 'complete').length : 0);
-    if (!isBB || !anyLimp) o.push({ k: 'open', t: `Raise ${fmt(size)}`, to: size, cls: 'agg' });
-  } else if (st.raises === 1) {
-    o.push({ k: 'fold', t: 'Fold', cls: 'fold' });
-    o.push({ k: 'call', t: `Call ${fmt(st.bet)}`, cls: 'pass' });
-    const opener = S.seats.find((s) => s.line === 'open');
-    if (seat !== opener && !S.seats.some((s) => s.line === '3bet')) {
-      const ipOfOpener = S.seats.indexOf(seat) > S.seats.indexOf(opener) && !isSB && !isBB;
-      const to = Math.min(S.stack, Math.round(st.bet * (ipOfOpener ? 3 : 4) * 10) / 10);
-      o.push({ k: '3bet', t: `3-Bet ${fmt(to)}`, to, cls: 'agg' });
-    }
-  } else {
-    o.push({ k: 'fold', t: 'Fold', cls: 'fold' });
-    o.push({ k: 'call', t: `Call ${fmt(st.bet)}`, cls: 'pass' });
-  }
-  return o;
-}
-function fmt(x) { return Math.abs(x - Math.round(x)) < 1e-9 ? String(Math.round(x)) : x.toFixed(1); }
-function act(seat, opt, st) {
-  const facing = st.raises;
-  if (opt.k === 'fold') { seat.status = 'fold'; seat.label = 'Fold'; }
-  else if (opt.k === 'check') { seat.status = 'pass'; seat.line = 'check'; seat.label = 'Check'; }
-  else if (opt.k === 'limp') { seat.status = 'pass'; seat.line = seat.pos === 'SB' ? 'complete' : 'limp'; seat.put = 1; seat.label = seat.pos === 'SB' ? 'Complete' : 'Limp'; }
-  else if (opt.k === 'open') { seat.status = 'agg'; seat.line = 'open'; seat.put = opt.to; seat.label = `Raise ${fmt(opt.to)}`; }
-  else if (opt.k === '3bet') { seat.status = 'agg'; seat.line = '3bet'; seat.put = opt.to; seat.label = `3-Bet ${fmt(opt.to)}`; }
-  else if (opt.k === 'call') {
-    const prev = seat.line;
-    seat.put = st.bet; seat.status = 'pass'; seat.label = `Call ${fmt(st.bet)}`;
-    if (facing >= 2) seat.line = prev === 'open' ? 'open_call3b' : prev === 'call' ? 'call_call3b' : 'cold3b';
-    else seat.line = prev === 'limp' || prev === 'complete' ? 'limp_call' : 'call';
-  }
-  if (opt.k === 'open' || opt.k === '3bet') {
-    // everyone still in must act again
-    for (const s of S.seats) if (s !== seat && s.status !== 'fold' && s.status !== 'wait') s.status = 'pass';
-  }
-  seat.acts.push(seat.label);
-}
-function rangeFor(seat) {
-  if (S.overrides[seat.pos]) return S.overrides[seat.pos];
-  const t = S.table, p = seat.pos;
-  switch (seat.line) {
-    case 'open': return rfiFor(p, t);
-    case 'call': return callFor(p, t);
-    case '3bet': return THREEBET;
-    case 'open_call3b': return CALL_3B;
-    case 'call_call3b': return 'QQ-88,AQs-AJs,KQs,AQo';
-    case 'cold3b': return COLD_3B;
-    case 'limp': return LIMP;
-    case 'limp_call': return '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo,KQo';
-    case 'complete': return SB_COMPLETE;
-    case 'check': return BB_CHECK;
-    default: return '';
-  }
-}
-function postflopOrder() {
-  const inH = S.seats.filter((s) => s.status !== 'fold');
-  const blinds = inH.filter((s) => s.pos === 'SB' || s.pos === 'BB').sort((a, b) => (a.pos === 'SB' ? -1 : 1));
-  const rest = inH.filter((s) => s.pos !== 'SB' && s.pos !== 'BB');
-  return [...blinds, ...rest];
-}
-function buildSpot() {
-  const st = preflop();
-  if (!st.done) throw new Error('Finish the preflop action first.');
-  const players = postflopOrder();
-  if (players.length < 2) throw new Error('At least two players need to see the flop.');
-  if (S.board.length < 3) throw new Error('Pick a flop (or press Random flop).');
-  const ante = S.game === 'cash' ? 0 : 1; // big-blind ante
-  const pot = S.seats.reduce((a, s) => a + s.put, 0) + ante;
-  const sz = currentSizes();
-  const spot = {
-    players: players.map((s) => ({ name: s.pos, stack: Math.max(0.01, S.stack - s.put), range: rangeFor(s) })),
-    pot, board: S.board.map(Engine.cardStr).join(''),
-    sizes: { flop: { bet: sz.fb, raise: sz.fr }, turn: { bet: sz.tb, raise: sz.tr }, river: { bet: sz.rb, raise: sz.rr } },
-    raiseCap: players.length > 2 ? Math.min(1, SIZES[S.sizing].cap) : SIZES[S.sizing].cap, allinThreshold: 0.15,
-  };
-  if (S.game === 'icm') {
-    const left = Math.max(S.left, players.length);
-    const others = []; for (let i = 0; i < left - players.length; i++) others.push(S.stack);
-    spot.payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others };
-  }
-  return spot;
-}
-function currentSizes() { return { fb: $('fb').value, fr: $('fr').value, tb: $('tb').value, tr: $('tr').value, rb: $('rb').value, rr: $('rr').value }; }
-function applySizing() {
-  const z = SIZES[S.sizing];
-  $('fb').value = z.flop[0]; $('fr').value = z.flop[1]; $('tb').value = z.turn[0]; $('tr').value = z.turn[1]; $('rb').value = z.river[0]; $('rr').value = z.river[1];
-}
 
-// ---------------------------------------------------------------- render setup
+// ---------------------------------------------------------------- render: seats and action rows
+let view = 'pre', preReport = null, customFor = null;
 function render() {
-  const st = preflop();
-  if (S.sel === undefined || (S.sel === null && !st.done)) S.sel = st.done ? null : st.next.pos;
-  const seats = $('seats'); seats.style.setProperty('--n', S.seats.length); seats.innerHTML = '';
-  for (const s of S.seats) {
-    const b = document.createElement('button');
-    const isNow = !st.done && st.next === s;
-    b.className = `seat ${s.status === 'fold' ? 'fold' : s.status === 'agg' ? 'agg' : s.status === 'pass' ? 'pass' : ''} ${isNow ? 'now' : ''} ${S.sel === s.pos ? 'sel' : ''}`;
-    const txt = s.acts.length ? s.acts.join(' · ') : isNow ? 'to act' : s.pos === 'SB' ? 'SB 0.5' : s.pos === 'BB' ? 'BB 1' : '–';
-    b.innerHTML = `<b>${s.pos}</b><small>${txt}</small>`;
-    b.setAttribute('aria-pressed', S.sel === s.pos);
-    b.onclick = () => { S.sel = S.sel === s.pos ? null : s.pos; view = 'pre'; render(); };
-    seats.appendChild(b);
+  const nx = nextActor();
+  const box = $('seats'); box.style.setProperty('--n', S.slots.length); box.innerHTML = '';
+  for (const slot of S.slots) {
+    const seat = slot.active ? seatById(slot.id) : null, b = document.createElement('button');
+    if (!seat) {
+      b.className = 'seat out'; b.innerHTML = '<b>Empty</b><small>sitting out</small>';
+    } else {
+      const isNow = nx === seat, lastAgg = seat.acts.some((a) => a.k === 'raise' || a.k === 'allin');
+      b.className = `seat ${seat.folded ? 'fold' : lastAgg ? 'agg' : seat.acts.length ? 'pass' : ''} ${isNow ? 'now' : ''} ${S.sel === seat.id ? 'sel' : ''}`;
+      const txt = seat.acts.length ? seat.acts.map((a) => a.label).join(' · ') : isNow ? 'to act' : seat.pos === 'SB' ? 'SB 0.5' : seat.pos === 'BB' ? 'BB 1' : '–';
+      b.innerHTML = `<b>${seat.pos}</b><small>${txt}</small>`;
+      b.setAttribute('aria-pressed', S.sel === seat.id);
+      b.onclick = () => { if (b.dataset.lp) { delete b.dataset.lp; return; } S.sel = S.sel === seat.id ? null : seat.id; customFor = null; view = 'pre'; render(); };
+    }
+    // sit out / sit back in: right-click or long-press (custom table)
+    const toggle = () => {
+      if (S.table !== 'custom') return;
+      const activeN = S.slots.filter((x) => x.active).length;
+      if (slot.active && activeN <= 2) return;
+      slot.active = !slot.active; if (S.sel === slot.id) S.sel = null;
+      replay(); render(); markStale();
+    };
+    b.addEventListener('contextmenu', (e) => { e.preventDefault(); toggle(); });
+    let lp = null;
+    b.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') lp = setTimeout(() => { b.dataset.lp = '1'; toggle(); }, 550); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => b.addEventListener(ev, () => clearTimeout(lp)));
+    if (!seat) b.onclick = () => {};
+    box.appendChild(b);
   }
+  $('seatHint').hidden = S.table !== 'custom';
+
   const pr = $('prompt'); pr.innerHTML = '';
-  const addBtn = (row, o, current, onPick) => {
-    const b = document.createElement('button'); b.className = `b-${o.cls}${current ? ' cur' : ''}`; b.textContent = o.t;
-    b.setAttribute('aria-pressed', !!current); b.onclick = onPick; row.appendChild(b);
+  const seat = S.sel !== null && S.sel !== undefined ? seatById(S.sel) : null;
+  const addRow = (label, opts, curK, onPick, rowKey) => {
+    const row = document.createElement('div'); row.className = 'prow';
+    row.innerHTML = `<span class="label">${label}</span>`;
+    for (const o of opts) {
+      const b = document.createElement('button'); b.className = `b-${o.cls}${curK === o.k ? ' cur' : ''}`; b.textContent = o.t;
+      b.setAttribute('aria-pressed', curK === o.k); b.onclick = () => onPick(o); row.appendChild(b);
+    }
+    if (opts.some((o) => o.k === 'raise' || o.k === 'allin')) {
+      const cb = document.createElement('button'); cb.className = 'b-agg'; cb.textContent = 'Custom…';
+      cb.onclick = () => { customFor = customFor === rowKey ? null : rowKey; render(); }; row.appendChild(cb);
+      if (customFor === rowKey) {
+        const w = document.createElement('span'); w.className = 'custom';
+        const minTo = withHistMin(rowKey);
+        w.innerHTML = `<span class="muted">Raise to</span><input id="customTo" type="number" step="0.5" min="${minTo}" value="${fmt(minTo)}" aria-label="Custom raise size in bb"><span class="muted">bb</span>`;
+        const ok = document.createElement('button'); ok.className = 'primary'; ok.textContent = 'Set';
+        ok.onclick = () => { const v = parseFloat($('customTo').value); if (!(v > 0)) return; customFor = null; onPick({ k: v >= S.stack - 1e-9 ? 'allin' : 'raise', to: v, custom: true }); };
+        w.appendChild(ok); row.appendChild(w);
+      }
+    }
+    pr.appendChild(row);
   };
-  const sel = S.sel && S.seats.find((x) => x.pos === S.sel);
-  if (sel) {
-    const mine = S.decisions.filter((d) => d.pos === sel.pos);
-    const head = document.createElement('div'); head.className = 'phead';
-    head.innerHTML = `<span class="who">${sel.pos}</span>`;
+  if (seat) {
+    const head = document.createElement('div'); head.className = 'phead'; head.innerHTML = `<span class="who">${seat.pos}</span><span class="muted mono">${fmt(S.stack - seat.put)} bb behind</span>`;
     pr.appendChild(head);
-    mine.forEach((d, n) => {
-      const row = document.createElement('div'); row.className = 'prow';
-      row.innerHTML = `<span class="label">${n === 0 ? 'First action' : d.opts.some((o) => o.k === 'fold') && n > 0 ? 'Facing raise' : 'Next action'}</span>`;
-      for (const o of d.opts) addBtn(row, o, o.k === d.k, () => choose([...S.hist.slice(0, d.idx), { pos: sel.pos, k: o.k }, ...S.hist.slice(d.idx + 1)]));
-      pr.appendChild(row);
-    });
-    if (!st.done && st.next === sel) {
-      const row = document.createElement('div'); row.className = 'prow';
-      row.innerHTML = `<span class="label">${mine.length ? 'Facing raise' : 'To act'}</span>`;
-      for (const o of options(sel, st)) addBtn(row, o, false, () => choose([...S.hist, { pos: sel.pos, k: o.k }]));
-      pr.appendChild(row);
-    } else if (!mine.length && sel.status !== 'fold') {
-      const f = st.done ? null : foldToOptions(sel.pos);
-      const row = document.createElement('div'); row.className = 'prow';
-      if (f) {
-        row.innerHTML = `<span class="label">${f.folds.length ? `Fold to ${sel.pos}` : 'To act'}</span>`;
-        for (const o of f.opts) addBtn(row, o, false, () => choose([...S.hist, ...f.folds, { pos: sel.pos, k: o.k }]));
-      } else row.innerHTML = '<span class="muted">This seat does not act again preflop.</span>';
-      pr.appendChild(row);
-    } else if (!mine.length) {
-      const row = document.createElement('div'); row.className = 'prow'; row.innerHTML = '<span class="muted">Folded. Tap an earlier seat to change the line.</span>'; pr.appendChild(row);
+    const mine = S.decisions.filter((d) => d.id === seat.id);
+    mine.forEach((d, n) => addRow(n === 0 ? 'First action' : `Decision ${n + 1}`, d.opts, d.k,
+      (o) => choose([...S.hist.slice(0, d.idx), entry(seat.id, o), ...S.hist.slice(d.idx + 1)]), `d${d.idx}`));
+    if (nx === seat) addRow(mine.length ? `Decision ${mine.length + 1}` : 'To act', options(seat), null, (o) => choose([...S.hist, entry(seat.id, o)]), 'next');
+    else if (!mine.length && !seat.folded) {
+      const f = nx ? foldsTo(seat.id) : null;
+      if (f) { const opts = withHist([...S.hist, ...f], () => options(seatById(seat.id))); addRow(f.length ? 'Folds to you' : 'To act', opts, null, (o) => choose([...S.hist, ...f, entry(seat.id, o)]), 'foldto'); }
+      else pr.insertAdjacentHTML('beforeend', '<div class="prow muted">This seat does not act again preflop.</div>');
     }
   }
   const foot = document.createElement('div'); foot.className = 'pfoot';
-  const pot = S.seats.reduce((a, s) => a + s.put, 0) + (S.game === 'cash' ? 0 : 1);
-  foot.innerHTML = st.done
-    ? `<span class="who small">${st.live.length >= 2 ? `${st.live.length} players to the flop` : 'Hand over preflop'}</span><span class="muted mono">pot ${fmt(pot)} bb</span><span class="muted">· tap any seat to change its action</span><span class="grow"></span>`
-    : `<span class="muted">Next to act: <b>${st.next.pos}</b></span><span class="muted mono">pot ${fmt(pot)} bb</span><span class="grow"></span>`;
-  const reset = document.createElement('button'); reset.textContent = 'Clear'; reset.onclick = resetSeats; foot.appendChild(reset);
-  pr.appendChild(foot);
+  foot.innerHTML = nx
+    ? `<span class="muted">Next to act: <b>${nx.pos}</b></span><span class="muted mono">pot ${fmt(potNow())} bb</span><span class="grow"></span>`
+    : `<span class="who" style="font-size:16px">${live().length >= 2 ? `${live().length} players to the flop` : 'Hand over preflop'}</span><span class="muted mono">pot ${fmt(potNow())} bb</span><span class="grow"></span>`;
+  const clr = document.createElement('button'); clr.textContent = 'Clear action'; clr.onclick = () => { S.hist = []; S.overrides = {}; replay(); const n2 = nextActor(); S.sel = n2 ? n2.id : null; render(); markStale(); };
+  foot.appendChild(clr); pr.appendChild(foot);
   renderBoard(); renderInHand();
   preReport = preflopReport();
-  if (typeof setView === 'function' && $('tabPre')) setView(view);
+  setView(view);
 }
+function entry(id, o) { return o.custom ? { id, k: o.k, to: o.to } : { id, k: o.k }; }
+function withHistMin(rowKey) {
+  if (rowKey.startsWith('d')) { const idx = +rowKey.slice(1); return withHist(S.hist.slice(0, idx), () => Math.max(minRaiseTo(), 1)); }
+  if (rowKey === 'foldto') { const f = foldsTo(S.sel) || []; return withHist([...S.hist, ...f], () => minRaiseTo()); }
+  return minRaiseTo();
+}
+
+// ---------------------------------------------------------------- board (exact cards only)
 let activeSlot = null;
 function renderBoard() {
   const box = $('slots'); box.innerHTML = '';
@@ -1205,8 +1265,8 @@ function renderBoard() {
   const pk = $('picker'); pk.hidden = activeSlot === null; pk.innerHTML = '';
   if (activeSlot === null) return;
   if (S.board[activeSlot] !== undefined) {
-    const rm = document.createElement('button'); rm.textContent = 'Remove'; rm.style.gridColumn = 'span 3'; rm.style.fontSize = '12px';
-    rm.onclick = () => { S.board = S.board.slice(0, activeSlot); activeSlot = null; renderBoard(); }; pk.appendChild(rm);
+    const rmb = document.createElement('button'); rmb.textContent = 'Remove'; rmb.style.gridColumn = 'span 3'; rmb.style.fontSize = '12px';
+    rmb.onclick = () => { S.board = S.board.slice(0, activeSlot); activeSlot = null; renderBoard(); markStale(); }; pk.appendChild(rmb);
     for (let i = 0; i < 10; i++) pk.appendChild(document.createElement('span'));
   }
   for (let s = 3; s >= 0; s--) for (let r = 12; r >= 0; r--) {
@@ -1219,28 +1279,27 @@ function renderBoard() {
 }
 function renderInHand() {
   const box = $('inhand'); box.innerHTML = '';
-  const st = preflop();
-  if (!st.done) { box.innerHTML = '<span class="muted">Ranges appear once the preflop action is set.</span>'; return; }
+  if (nextActor()) return;
   for (const s of postflopOrder()) {
-    const w = Engine.parseRange(rangeFor(s)); let n = 0; for (const x of w) n += x;
+    const w = rw(rangeFor(s)); let n = 0; for (const x of w) n += x;
     const d = document.createElement('span'); d.className = 'pchip';
     d.innerHTML = `<b>${s.pos}</b><span class="muted mono">${fmt(S.stack - s.put)}bb · ${(n / 13.26).toFixed(0)}%</span>`;
-    const b = document.createElement('button'); b.textContent = S.overrides[s.pos] ? 'Range ✎' : 'Range'; b.onclick = () => openRange(s);
+    const b = document.createElement('button'); b.textContent = S.overrides[s.id] ? 'Range ✎' : 'Range'; b.onclick = () => openRange(s);
     d.appendChild(b); box.appendChild(d);
   }
 }
 
-// ---------------------------------------------------------------- range modal
+// ---------------------------------------------------------------- range editor
 const CLASS_N = (c) => (c.length === 2 ? 6 : c[2] === 's' ? 4 : 12);
 function classAt(i, j) { const r1 = 12 - i, r2 = 12 - j; return i === j ? RANKS[r1] + RANKS[r2] : i < j ? RANKS[r1] + RANKS[r2] + 's' : RANKS[r2] + RANKS[r1] + 'o'; }
 function classWeights(text) {
-  const w = Engine.parseRange(text), acc = {};
+  const w = rw(text), acc = {};
   for (let c = 0; c < 1326; c++) { const k = Engine.comboClass(c); (acc[k] = acc[k] || [0, 0]); acc[k][0] += w[c]; acc[k][1]++; }
   const r = {}; for (const k in acc) r[k] = acc[k][0] / acc[k][1]; return r;
 }
 let rm = null;
 function openRange(seat) {
-  rm = { seat, weights: classWeights(rangeFor(seat)), painting: false, value: 1 };
+  rm = { id: seat.id, pos: seat.pos, weights: classWeights(rangeFor(seat)), painting: false, value: 1 };
   $('rmTitle').textContent = `${seat.pos} range`;
   const g = $('rmGrid'); g.innerHTML = '';
   for (let r = 0; r < 13; r++) for (let c = 0; c < 13; c++) { const k = classAt(r, c), d = document.createElement('div'); d.className = 'rcell'; d.dataset.k = k; d.innerHTML = `<div class="w"></div><span>${k}</span>`; g.appendChild(d); }
@@ -1256,16 +1315,17 @@ $('rmGrid').addEventListener('pointerdown', (e) => { const el = e.target.closest
 window.addEventListener('pointermove', (e) => { if (rm && rm.painting) paintAt(e.clientX, e.clientY); });
 window.addEventListener('pointerup', () => { if (rm) rm.painting = false; });
 $('rmWeight').addEventListener('input', (e) => { $('rmWeightVal').textContent = `${e.target.value}%`; });
-$('rmReset').onclick = () => { const o = S.overrides[rm.seat.pos]; delete S.overrides[rm.seat.pos]; rm.weights = classWeights(rangeFor(rm.seat)); if (o) S.overrides[rm.seat.pos] = o; rm.reset = true; drawRange(); };
+$('rmReset').onclick = () => { const o = S.overrides[rm.id]; delete S.overrides[rm.id]; rm.weights = classWeights(rangeFor(seatById(rm.id))); if (o) S.overrides[rm.id] = o; rm.reset = true; drawRange(); };
 $('rmClear').onclick = () => { rm.weights = {}; drawRange(); };
 $('rmCancel').onclick = () => { $('rangeModal').hidden = true; rm = null; };
 $('rmDone').onclick = () => {
   const parts = [];
   for (let r = 0; r < 13; r++) for (let c = 0; c < 13; c++) { const k = classAt(r, c), w = rm.weights[k] || 0; if (w > 0) parts.push(w >= 0.999 ? k : `${k}:${+w.toFixed(2)}`); }
-  if (rm.reset && !parts.length) delete S.overrides[rm.seat.pos]; else S.overrides[rm.seat.pos] = parts.join(',');
-  $('rangeModal').hidden = true; rm = null; renderInHand();
+  if (rm.reset && !parts.length) delete S.overrides[rm.id]; else S.overrides[rm.id] = parts.join(',');
+  $('rangeModal').hidden = true; rm = null; renderInHand(); markStale();
 };
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('rangeModal').hidden) $('rmCancel').click(); });
+function setView(v) { view = v; $('tabPre').setAttribute('aria-pressed', v === 'pre'); $('tabPost').setAttribute('aria-pressed', v === 'post'); renderNode(); }
 
 // ---------------------------------------------------------------- solver worker
 const worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
@@ -1305,10 +1365,10 @@ function requestReport() { if (!built) return; reqId++; worker.postMessage({ cmd
 
 // ---------------------------------------------------------------- strategy view
 function colors(types) {
-  const bets = types.map((t, i) => (t === 'bet' ? i : -1)).filter((i) => i >= 0), ramp = ['#e3a83f', '#e07a37', '#d24f3c', '#b13447'];
+  const bets = types.map((t, i) => (t === 'bet' ? i : -1)).filter((i) => i >= 0), ramp = ['#d6c9f3', '#b9a7e3', '#9b84d5', '#7f63c2'];
   return types.map((t, i) => t === 'fold' ? 'var(--a-fold)' : t === 'check' || t === 'call' ? 'var(--a-pass)' : t === 'allin' ? 'var(--a-allin)' : ramp[bets.length === 1 ? 1 : Math.round((bets.indexOf(i) / (bets.length - 1)) * 3)]);
 }
-function cardHTML(c) { const s = SUITS[c & 3]; return `<span class="crumb cardcrumb" style="color:${s === 'h' ? '#ee7a6b' : s === 'd' ? '#69a8e8' : s === 'c' ? '#6fc08a' : 'var(--fg)'}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
+function cardHTML(c) { const s = SUITS[c & 3]; return `<span class="crumb cardcrumb" style="color:${s === 'h' ? '#f08d86' : s === 'd' ? '#76b7ea' : s === 'c' ? '#6fd8b0' : 'var(--fg)'}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
 function renderEVs() {
   const box = $('evs'); box.innerHTML = '';
   if (!evData || !built) return;
@@ -1383,14 +1443,15 @@ function detail(k) {
     ${e.combos.filter((c) => c.reach > 1e-9).map((c) => `<tr><td>${c.name}</td>${c.s.map((f) => `<td>${(f * 100).toFixed(0)}%</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 
+
 // ---------------------------------------------------------------- controls
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  $('leftWrap').hidden = S.game !== 'icm';
-  fillStacks(); replay(); render(); markStale();
+  $('leftWrap').hidden = S.game !== 'icm'; fillStacks(); replay(); render(); markStale();
 }));
 document.querySelectorAll('[data-table]').forEach((b) => (b.onclick = () => {
-  S.table = +b.dataset.table; document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x === b)); resetSeats();
+  S.table = b.dataset.table; document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x === b));
+  makeSlots(); S.hist = []; S.overrides = {}; replay(); const n = nextActor(); S.sel = n ? n.id : null; view = 'pre'; render(); markStale();
 }));
 function fillStacks() {
   const opts = S.game === 'cash' ? [40, 60, 100, 150, 200, 300] : [10, 15, 20, 25, 30, 40, 50, 60, 100];
@@ -1399,16 +1460,21 @@ function fillStacks() {
 }
 $('stack').onchange = (e) => { S.stack = +e.target.value; replay(); render(); markStale(); };
 $('left').innerHTML = [2, 3, 4, 5, 6, 7, 8, 9].map((x) => `<option ${x === 9 ? 'selected' : ''}>${x}</option>`).join('');
-$('left').onchange = (e) => { S.left = +e.target.value; };
-$('sizing').onchange = (e) => { S.sizing = e.target.value; applySizing(); };
-$('randomFlop').onclick = () => { const d = []; while (d.length < 3) { const c = (Math.random() * 52) | 0; if (!d.includes(c)) d.push(c); } S.board = d; activeSlot = null; renderBoard(); markStale(); };
+$('left').onchange = (e) => { S.left = +e.target.value; markStale(); };
+function applySizing() {
+  const z = SIZES[S.sizing];
+  $('fb').value = z.flop[0]; $('fr').value = z.flop[1]; $('tb').value = z.turn[0]; $('tr').value = z.turn[1]; $('rb').value = z.river[0]; $('rr').value = z.river[1];
+}
+$('sizing').onchange = (e) => { S.sizing = e.target.value; applySizing(); markStale(); };
+[['szOpen', 'open'], ['sz3', 'b3'], ['sz4', 'b4'], ['sz5', 'b5']].forEach(([id, k]) => {
+  $(id).value = S.sz[k];
+  $(id).addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { S.sz[k] = v; replay(); render(); markStale(); } else e.target.value = S.sz[k]; });
+});
 
-// ---------------------------------------------------------------- start: CO opens, BTN and BB call on K84, quick solve
-fillStacks(); applySizing(); resetSeats();
-S.hist = [{ pos: 'UTG', k: 'fold' }, { pos: 'UTG+1', k: 'fold' }, { pos: 'UTG+2', k: 'fold' }, { pos: 'LJ', k: 'fold' }, { pos: 'HJ', k: 'fold' }, { pos: 'CO', k: 'open' }, { pos: 'BTN', k: 'call' }, { pos: 'SB', k: 'fold' }, { pos: 'BB', k: 'call' }];
-replay(); S.sel = null; render();
-S.board = Engine.parseCards('Kh8d4c'); renderBoard();
-startSolve(10);
+// ---------------------------------------------------------------- launch: empty board, UTG to act
+fillStacks(); applySizing(); makeSlots(); replay();
+S.sel = nextActor().id; view = 'pre';
+render();
 })();
 </script>
 </body></html>
