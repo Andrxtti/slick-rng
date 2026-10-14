@@ -74,6 +74,11 @@ header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; pad
 .seat.out { border-style: dashed; background: transparent; opacity: .45; }
 .seat.out b { text-decoration: line-through; color: var(--faint); }
 .hint { font-size: 12px; color: var(--muted); }
+.t222 { display: grid; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.t222 input[type="number"] { width: 72px; }
+.t222 input:not([type]) { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 8px; font-family: var(--font-mono); }
+.stk { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
+.stk span { font-family: var(--font-display); font-size: 15px; font-weight: 600; min-width: 34px; text-align: right; }
 
 .prompt { display: grid; gap: 8px; }
 .prow, .pfoot, .phead { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -166,15 +171,26 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.4 · SOLVER</span>
+  <span class="ver">ALPHA 1.5 · SOLVER</span>
   <span class="grow"></span>
-  <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button></div>
+  <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
-  <label class="row"><span class="label">Stack</span><select id="stack" aria-label="Starting stack"></select></label>
+  <label class="row" id="stackWrap"><span class="label">Stack</span><select id="stack" aria-label="Starting stack"></select></label>
   <label class="row" id="leftWrap" hidden><span class="label">Players left</span><select id="left" aria-label="Players left in tournament"></select></label>
 </header>
 
 <div class="bar">
+  <div class="t222" id="t222" hidden>
+    <div class="row">
+      <label class="row"><span class="label">Players left</span><input id="tLeft" type="number" min="2" max="20" step="1"></label>
+      <label class="row"><span class="label">Places paid</span><input id="tPaid" type="number" min="1" max="20" step="1"></label>
+      <label class="row grow"><span class="label">Payouts, 1st first</span><input id="tPay" class="mono grow" style="min-width:160px" placeholder="50,30,20"></label>
+      <button id="tPayAuto" title="Fill a standard payout curve for the paid places">Auto payouts</button>
+    </div>
+    <div class="row"><span class="label" style="width:120px">Table stacks (bb)</span><div class="row grow" id="tSeats"></div></div>
+    <div class="row" id="tOthersRow"><span class="label" style="width:120px">Other players (bb)</span><div class="row grow" id="tOthers"></div></div>
+    <div class="hint" id="tNote"></div>
+  </div>
   <div class="seats" id="seats"></div>
   <div class="hint" id="seatHint" hidden>Right-click a seat (or press and hold on touch) to sit it out or bring it back.</div>
   <div class="prompt" id="prompt"></div>
@@ -460,7 +476,9 @@ function buildTree(cfg) {
 
   const st0 = { street: cfg.startStreet, pot: cfg.pot, sb: new Array(n).fill(0), inv: new Array(n).fill(0), folded: new Array(n).fill(false), allin: cfg.stacks.map((s) => s <= 0), needs: new Array(n).fill(true), toAct: 0, raises: 0, lastRaise: 0 };
   st0.toAct = nextActor(st0, n - 1);
-  build(st0);
+  let canStart = 0; for (let i = 0; i < n; i++) if (!st0.allin[i]) canStart++;
+  if (canStart <= 1 || st0.toAct < 0) push(st0, { kind: K_SHOW }); // all-in before the flop: just run it out
+  else build(st0);
   // precompute side pots for terminals
   for (const nd of nodes) {
     if (nd.kind === K_FOLD) nd.winner = nd.folded.indexOf(false);
@@ -818,7 +836,8 @@ class Solver {
 function makeSpot(j) {
   if (!j.players || j.players.length < 2 || j.players.length > 9) throw new Error('Use 2 to 9 players.');
   const names = j.players.map((p, i) => p.name || `P${i + 1}`);
-  const stacks = j.players.map((p, i) => { const s = Number(p.stack); if (!(s > 0)) throw new Error(`${names[i]}: stack must be above 0.`); return s; });
+  const stacks = j.players.map((p, i) => { const s = Number(p.stack); if (!(s >= 0)) throw new Error(`${names[i]}: stack can't be negative.`); return s; });
+  if (stacks.filter((s) => s > 0).length === 0 && stacks.length > 0) { /* everyone all-in: straight to showdown */ }
   const ranges = j.players.map((p, i) => { try { return parseRange(p.range || ''); } catch (e) { throw new Error(`${names[i]} range: ${e.message}`); } });
   const board = parseCards(j.board || '');
   if (board.length < 3 || board.length > 5) throw new Error('The board needs 3, 4 or 5 cards.');
@@ -932,7 +951,13 @@ const SIZES = {
 };
 
 // ---------------------------------------------------------------- table model
-const S = { game: 'cash', table: '6', slots: [], stack: 100, left: 9, sz: { open: 2, b3: 6, b4: 14, b5: 30 }, board: [], sizing: 'simple', overrides: {}, hist: [], sel: null };
+const S = { t222: load222(), game: 'cash', table: '6', slots: [], stack: 100, left: 9, sz: { open: 2, b3: 6, b4: 14, b5: 30 }, board: [], sizing: 'simple', overrides: {}, hist: [], sel: null };
+function load222() {
+  const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, others: [] };
+  try { const v = JSON.parse(localStorage.getItem('slick222') || 'null'); return v ? { ...def, ...v } : def; } catch { return def; }
+}
+function save222() { try { localStorage.setItem('slick222', JSON.stringify(S.t222)); } catch { /* storage unavailable */ } }
+function stackOf(seat) { if (S.game !== '222') return S.stack; const v = S.t222.stacks[seat.id]; return v > 0 ? v : 25; }
 function slotCount() { return S.table === '6' ? 6 : S.table === '8' ? 8 : 9; }
 function makeSlots() { S.slots = Array.from({ length: slotCount() }, (_, i) => ({ id: i, active: true })); }
 function namesFor(n) {
@@ -977,17 +1002,17 @@ function defaultRaise(L) {
 }
 function minRaiseTo() { return T.bet + T.lastRaise; }
 function options(seat) {
-  const o = [], toCall = T.bet - seat.put, left = S.stack - seat.put;
+  const st = stackOf(seat), o = [], toCall = T.bet - seat.put, left = st - seat.put;
   const othersCanAct = live().some((x) => x !== seat && !x.allin);
   if (toCall > 1e-9) {
     o.push({ k: 'fold', t: 'Fold', cls: 'fold' });
-    if (left <= toCall + 1e-9) { o.push({ k: 'call', t: `Call all-in ${fmt(S.stack)}`, cls: 'pass' }); return o; }
+    if (left <= toCall + 1e-9) { o.push({ k: 'call', t: `Call all-in ${fmt(st)}`, cls: 'pass' }); return o; }
     o.push({ k: 'call', t: T.level === 0 ? (seat.pos === 'SB' ? 'Complete' : 'Limp') : `Call ${fmt(T.bet)}`, cls: 'pass' });
   } else o.push({ k: 'check', t: 'Check', cls: 'pass' });
   if (!othersCanAct) return o;
   const L = T.level + 1, to = defaultRaise(L);
-  if (to < S.stack - 1e-9) o.push({ k: 'raise', to, t: `${raiseName(L)} ${fmt(to)}`, cls: 'agg', L });
-  o.push({ k: 'allin', to: S.stack, t: `${jamName(L)} ${fmt(S.stack)}`, cls: 'jam', L });
+  if (to < st - 1e-9) o.push({ k: 'raise', to, t: `${raiseName(L)} ${fmt(to)}`, cls: 'agg', L });
+  o.push({ k: 'allin', to: st, t: `${jamName(L)} ${fmt(st)}`, cls: 'jam', L });
   return o;
 }
 function apply(seat, o) {
@@ -995,11 +1020,11 @@ function apply(seat, o) {
   if (o.k === 'fold') { seat.folded = true; seat.acts.push({ k: 'fold', label: 'Fold' }); }
   else if (o.k === 'check') seat.acts.push({ k: 'check', label: 'Check' });
   else if (o.k === 'call') {
-    seat.put = Math.min(T.bet, S.stack); if (seat.put >= S.stack - 1e-9) seat.allin = true;
+    seat.put = Math.min(T.bet, stackOf(seat)); if (seat.put >= stackOf(seat) - 1e-9) seat.allin = true;
     seat.acts.push({ k: 'call', facing, vsAllin, label: o.t.replace(/ all-in.*/, ' AI') });
   } else {
-    const to = Math.min(o.to, S.stack), raise = to - T.bet;
-    seat.put = to; if (to >= S.stack - 1e-9) seat.allin = true;
+    const to = Math.min(o.to, stackOf(seat)), raise = to - T.bet;
+    seat.put = to; if (to >= stackOf(seat) - 1e-9) seat.allin = true;
     if (raise > 1e-9) {
       T.level++; if (raise >= T.lastRaise - 1e-9) T.lastRaise = raise; T.bet = to;
       for (const x of T.seats) if (x !== seat && !x.folded && !x.allin) x.needs = true;
@@ -1013,7 +1038,7 @@ function pickOption(opts, e) {
   const by = (k) => opts.find((x) => x.k === k);
   if (e.k === 'raise') {
     if (e.to !== undefined) {
-      if (e.to >= minRaiseTo() - 1e-9 && e.to < S.stack - 1e-9 && by('raise')) { const L = T.level + 1; return { k: 'raise', to: e.to, t: `${raiseName(L)} ${fmt(e.to)}`, cls: 'agg', L, custom: true }; }
+      if (e.to >= minRaiseTo() - 1e-9 && e.to < (by('allin') ? by('allin').to : 0) - 1e-9 && by('raise')) { const L = T.level + 1; return { k: 'raise', to: e.to, t: `${raiseName(L)} ${fmt(e.to)}`, cls: 'agg', L, custom: true }; }
     }
     return by('raise') || by('allin') || by('call') || by('check');
   }
@@ -1055,7 +1080,7 @@ function rfiFor(seat) { if (T.hu && seat.pos === 'SB') return RFI_HU_SB; if (sea
 function callFor(seat) { if (seat.pos === 'BB') return CALL.bb; if (seat.pos === 'SB') return CALL.sb; if (seat.d === 0) return CALL.btn; return seat.d <= 2 ? CALL.mid : CALL.early; }
 function raiseRange(seat, L, limpers) { return L === 1 ? (limpers ? ISO : rfiFor(seat)) : L === 2 ? THREEBET : L === 3 ? FOURBET : FIVEBET; }
 function callRange(seat, facing, vsAllin, prior) {
-  if (vsAllin) return callJamRange(S.stack);
+  if (vsAllin) return callJamRange(stackOf(seat));
   if (facing === 0) return seat.pos === 'SB' ? SB_COMPLETE : LIMP;
   if (facing === 1) return prior.some((a) => a.k === 'call' && a.facing === 0) ? LIMP_CALL : callFor(seat);
   if (facing === 2) return prior.some((a) => a.k === 'raise' && a.L === 1) ? CALL_3B : COLD_3B;
@@ -1068,7 +1093,7 @@ function rangeFor(seat) {
   const last = acts[acts.length - 1], prior = acts.slice(0, -1);
   if (last.k === 'check') return BB_CHECK;
   if (last.k === 'call') return callRange(seat, last.facing, last.vsAllin, prior);
-  if (last.k === 'allin') return jamRange(last.L, S.stack, seat.d);
+  if (last.k === 'allin') return jamRange(last.L, stackOf(seat), seat.d);
   return raiseRange(seat, last.L, last.L === 1 && limperCount() > 0);
 }
 const RCACHE = new Map();
@@ -1085,6 +1110,15 @@ function postflopOrder() {
   return [...blinds, ...inH.filter((s) => s.pos !== 'SB' && s.pos !== 'BB')];
 }
 function potNow() { return T.seats.reduce((a, s) => a + s.put, 0) + (S.game === 'cash' ? 0 : 1); }
+function parsePayouts() {
+  const t = S.t222, raw = t.payouts.split(/[,\s]+/).map(Number).filter((x) => x > 0).slice(0, t.paid);
+  const sum = raw.reduce((a, b) => a + b, 0);
+  return sum > 0 ? raw.map((x) => (x / sum) * 100) : [];
+}
+function defaultPayouts(paid) {
+  const w = Array.from({ length: paid }, (_, i) => 1 / Math.pow(i + 1, 0.85)), sum = w.reduce((a, b) => a + b, 0);
+  return w.map((x) => Math.round((x / sum) * 1000) / 10).join(',');
+}
 function buildSpot() {
   if (nextActor()) throw new Error('Finish the preflop action first.');
   const players = postflopOrder();
@@ -1092,12 +1126,22 @@ function buildSpot() {
   if (S.board.length < 3) throw new Error('Pick the flop cards first.');
   const sz = { fb: $('fb').value, fr: $('fr').value, tb: $('tb').value, tr: $('tr').value, rb: $('rb').value, rr: $('rr').value };
   const spot = {
-    players: players.map((s) => ({ name: s.pos, stack: Math.max(0.01, S.stack - s.put), range: rangeFor(s) })),
+    players: players.map((s) => ({ name: s.pos, stack: Math.max(0, stackOf(s) - s.put), range: rangeFor(s) })),
     pot: potNow(), board: S.board.map(Engine.cardStr).join(''),
     sizes: { flop: { bet: sz.fb, raise: sz.fr }, turn: { bet: sz.tb, raise: sz.tr }, river: { bet: sz.rb, raise: sz.rr } },
     raiseCap: players.length > 2 ? Math.min(1, SIZES[S.sizing].cap) : SIZES[S.sizing].cap, allinThreshold: 0.15,
   };
-  if (S.game === 'icm') {
+  if (S.game === '222') {
+    const t = S.t222, act = T.seats.length, need = t.left - act;
+    if (need < 0) throw new Error(`Players left (${t.left}) is less than the ${act} players seated. Raise players left or sit some seats out.`);
+    const others = t.others.slice(0, need).map((x) => (x > 0 ? x : 25));
+    while (others.length < need) others.push(25);
+    // folded table players keep their chips (minus blinds/antes they posted)
+    for (const s of T.seats) if (s.folded) others.push(Math.max(0.01, stackOf(s) - s.put));
+    const pays = parsePayouts();
+    if (!pays.length) throw new Error('Enter the payouts for the paid places.');
+    spot.payoff = { type: 'icm', payouts: pays, others };
+  } else if (S.game === 'icm') {
     const left = Math.max(S.left, players.length), others = [];
     for (let i = 0; i < left - players.length; i++) others.push(S.stack);
     spot.payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others };
@@ -1127,8 +1171,8 @@ function preflopReport() {
     const rangeOf = (o) => {
       if (o.k === 'fold') return null;
       if (o.k === 'check') return 'ANY';
-      if (o.k === 'allin') return jamRange(o.L, S.stack, seat.d);
-      if (o.k === 'raise') return S.stack <= 15 ? '' : raiseRange(seat, o.L, o.L === 1 && limpers > 0);
+      if (o.k === 'allin') return jamRange(o.L, stackOf(seat), seat.d);
+      if (o.k === 'raise') return stackOf(seat) <= 15 ? '' : raiseRange(seat, o.L, o.L === 1 && limpers > 0);
       if (T.level === 0) return limpers ? (seat.pos === 'SB' ? SB_COMPLETE : LIMP) : '';
       return callRange(seat, T.level, vsAllin, seat.acts);
     };
@@ -1175,7 +1219,7 @@ function render() {
       const isNow = nx === seat, lastAgg = seat.acts.some((a) => a.k === 'raise' || a.k === 'allin');
       b.className = `seat ${seat.folded ? 'fold' : lastAgg ? 'agg' : seat.acts.length ? 'pass' : ''} ${isNow ? 'now' : ''} ${S.sel === seat.id ? 'sel' : ''}`;
       const txt = seat.acts.length ? seat.acts.map((a) => a.label).join(' · ') : isNow ? 'to act' : seat.pos === 'SB' ? 'SB 0.5' : seat.pos === 'BB' ? 'BB 1' : '–';
-      b.innerHTML = `<b>${seat.pos}</b><small>${txt}</small>`;
+      b.innerHTML = `<b>${seat.pos}</b>${S.game === '222' ? `<small class="mono">${fmt(stackOf(seat))} bb</small>` : ''}<small>${txt}</small>`;
       b.setAttribute('aria-pressed', S.sel === seat.id);
       b.onclick = () => { if (b.dataset.lp) { delete b.dataset.lp; return; } S.sel = S.sel === seat.id ? null : seat.id; customFor = null; view = 'pre'; render(); };
     }
@@ -1195,6 +1239,7 @@ function render() {
     box.appendChild(b);
   }
   $('seatHint').hidden = S.table !== 'custom';
+  if (S.game === '222') render222();
 
   const pr = $('prompt'); pr.innerHTML = '';
   const seat = S.sel !== null && S.sel !== undefined ? seatById(S.sel) : null;
@@ -1213,14 +1258,14 @@ function render() {
         const minTo = withHistMin(rowKey);
         w.innerHTML = `<span class="muted">Raise to</span><input id="customTo" type="number" step="0.5" min="${minTo}" value="${fmt(minTo)}" aria-label="Custom raise size in bb"><span class="muted">bb</span>`;
         const ok = document.createElement('button'); ok.className = 'primary'; ok.textContent = 'Set';
-        ok.onclick = () => { const v = parseFloat($('customTo').value); if (!(v > 0)) return; customFor = null; onPick({ k: v >= S.stack - 1e-9 ? 'allin' : 'raise', to: v, custom: true }); };
+        ok.onclick = () => { const v = parseFloat($('customTo').value); if (!(v > 0)) return; customFor = null; onPick({ k: v >= stackOf(seatById(S.sel) || { id: -1 }) - 1e-9 ? 'allin' : 'raise', to: v, custom: true }); };
         w.appendChild(ok); row.appendChild(w);
       }
     }
     pr.appendChild(row);
   };
   if (seat) {
-    const head = document.createElement('div'); head.className = 'phead'; head.innerHTML = `<span class="who">${seat.pos}</span><span class="muted mono">${fmt(S.stack - seat.put)} bb behind</span>`;
+    const head = document.createElement('div'); head.className = 'phead'; head.innerHTML = `<span class="who">${seat.pos}</span><span class="muted mono">${fmt(stackOf(seat) - seat.put)} bb behind</span>`;
     pr.appendChild(head);
     const mine = S.decisions.filter((d) => d.id === seat.id);
     mine.forEach((d, n) => addRow(n === 0 ? 'First action' : `Decision ${n + 1}`, d.opts, d.k,
@@ -1247,6 +1292,43 @@ function withHistMin(rowKey) {
   if (rowKey.startsWith('d')) { const idx = +rowKey.slice(1); return withHist(S.hist.slice(0, idx), () => Math.max(minRaiseTo(), 1)); }
   if (rowKey === 'foldto') { const f = foldsTo(S.sel) || []; return withHist([...S.hist, ...f], () => minRaiseTo()); }
   return minRaiseTo();
+}
+
+// ---------------------------------------------------------------- MTT · 222: players left, paid places and every stack
+function render222() {
+  const t = S.t222;
+  if (document.activeElement?.closest?.('#t222')) return; // don't rebuild while typing
+  $('tLeft').value = t.left; $('tPaid').value = t.paid; $('tPay').value = t.payouts;
+  const ts = $('tSeats'); ts.innerHTML = '';
+  for (const seat of T.seats) {
+    const l = document.createElement('label'); l.className = 'stk';
+    l.innerHTML = `<span>${seat.pos}</span><input type="number" min="0.5" step="0.5" value="${stackOf(seat)}" aria-label="${seat.pos} stack">`;
+    l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.stacks[seat.id] = v; save222(); replay(); render222b(); render(); markStale(); } });
+    ts.appendChild(l);
+  }
+  render222b();
+}
+function render222b() {
+  const t = S.t222, need = t.left - T.seats.length, box = $('tOthers'); box.innerHTML = '';
+  $('tOthersRow').hidden = need <= 0;
+  for (let i = 0; i < Math.max(0, need); i++) {
+    const l = document.createElement('label'); l.className = 'stk';
+    l.innerHTML = `<span>#${i + 1}</span><input type="number" min="0.5" step="0.5" value="${t.others[i] > 0 ? t.others[i] : 25}" aria-label="Other player ${i + 1} stack">`;
+    l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.others[i] = v; save222(); markStale(); } });
+    box.appendChild(l);
+  }
+  const pays = parsePayouts(), total = T.seats.reduce((a, s) => a + stackOf(s), 0) + Array.from({ length: Math.max(0, need) }, (_, i) => (t.others[i] > 0 ? t.others[i] : 25)).reduce((a, b) => a + b, 0);
+  $('tNote').textContent = need < 0 ? `Players left must be at least ${T.seats.length} (players seated).`
+    : `${t.left} left · ${t.paid} paid${t.left > t.paid ? ` · ${t.left - t.paid} from the money` : ' · in the money'} · ${fmt(total)} bb in play · payouts ${pays.map((p) => p.toFixed(1) + '%').join(' / ')}`;
+  $('tNote').className = need < 0 || !pays.length ? 'hint error' : 'hint';
+}
+function bind222() {
+  const t = S.t222;
+  $('tLeft').addEventListener('change', (e) => { const v = Math.max(2, Math.min(20, parseInt(e.target.value, 10) || 2)); t.left = v; if (t.paid > v) t.paid = v; save222(); e.target.value = v; render222b(); markStale(); });
+  $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(t.left, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
+    if (t.payouts.split(',').filter(Boolean).length < v || was !== v) { t.payouts = defaultPayouts(v); $('tPay').value = t.payouts; } save222(); render222b(); markStale(); });
+  $('tPay').addEventListener('change', (e) => { t.payouts = e.target.value; save222(); render222b(); markStale(); });
+  $('tPayAuto').onclick = () => { t.payouts = defaultPayouts(t.paid); $('tPay').value = t.payouts; save222(); render222b(); markStale(); };
 }
 
 // ---------------------------------------------------------------- board (exact cards only)
@@ -1283,7 +1365,7 @@ function renderInHand() {
   for (const s of postflopOrder()) {
     const w = rw(rangeFor(s)); let n = 0; for (const x of w) n += x;
     const d = document.createElement('span'); d.className = 'pchip';
-    d.innerHTML = `<b>${s.pos}</b><span class="muted mono">${fmt(S.stack - s.put)}bb · ${(n / 13.26).toFixed(0)}%</span>`;
+    d.innerHTML = `<b>${s.pos}</b><span class="muted mono">${fmt(stackOf(s) - s.put)}bb · ${(n / 13.26).toFixed(0)}%</span>`;
     const b = document.createElement('button'); b.textContent = S.overrides[s.id] ? 'Range ✎' : 'Range'; b.onclick = () => openRange(s);
     d.appendChild(b); box.appendChild(d);
   }
@@ -1373,7 +1455,7 @@ function renderEVs() {
   const box = $('evs'); box.innerHTML = '';
   if (!evData || !built) return;
   evData.forEach((e, i) => { const d = document.createElement('div'); d.className = 'ev'; d.title = 'Expected value under the solved strategy';
-    d.innerHTML = `${esc(built.names[i])} <b>${spotGame === 'icm' ? `${e.ev.toFixed(2)}%` : `${e.ev >= 0 ? '+' : ''}${e.ev.toFixed(2)} bb`}</b>`; box.appendChild(d); });
+    d.innerHTML = `${esc(built.names[i])} <b>${(spotGame === 'icm' || spotGame === '222') ? `${e.ev.toFixed(2)}%` : `${e.ev >= 0 ? '+' : ''}${e.ev.toFixed(2)} bb`}</b>`; box.appendChild(d); });
 }
 function renderCrumbs(r) {
   const box = $('crumbs'); box.innerHTML = '';
@@ -1402,7 +1484,7 @@ function renderNode() {
   }
   if (r.kind === 'terminal') {
     const left = r.folded.map((f, i) => (f ? null : built.names[i])).filter(Boolean);
-    v.innerHTML = `<div class="node"><div class="nodetitle"><h2>${left.length === 1 ? `${esc(left[0])} wins` : 'Showdown'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="muted">End of the hand. Tap the trail above to go back.</div></div>`;
+    v.innerHTML = `<div class="node"><div class="nodetitle"><h2>${left.length === 1 ? `${esc(left[0])} wins` : 'Showdown'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="muted">${r.history.length ? 'End of the hand. Tap the trail above to go back.' : 'All-in before the flop: no decisions left, the board is run out. EVs above show each player\'s result.'}</div></div>`;
     return;
   }
   const col = colors(r.actionTypes), name = r.preflop ? r.name : built.names[r.player];
@@ -1447,7 +1529,8 @@ function detail(k) {
 // ---------------------------------------------------------------- controls
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  $('leftWrap').hidden = S.game !== 'icm'; fillStacks(); replay(); render(); markStale();
+  $('leftWrap').hidden = S.game !== 'icm'; $('stackWrap').hidden = S.game === '222'; $('t222').hidden = S.game !== '222';
+  fillStacks(); replay(); render(); markStale();
 }));
 document.querySelectorAll('[data-table]').forEach((b) => (b.onclick = () => {
   S.table = b.dataset.table; document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x === b));
@@ -1471,6 +1554,7 @@ $('sizing').onchange = (e) => { S.sizing = e.target.value; applySizing(); markSt
   $(id).addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { S.sz[k] = v; replay(); render(); markStale(); } else e.target.value = S.sz[k]; });
 });
 
+bind222();
 // ---------------------------------------------------------------- launch: empty board, UTG to act
 fillStacks(); applySizing(); makeSlots(); replay();
 S.sel = nextActor().id; view = 'pre';

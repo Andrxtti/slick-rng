@@ -222,7 +222,9 @@ function buildTree(cfg) {
 
   const st0 = { street: cfg.startStreet, pot: cfg.pot, sb: new Array(n).fill(0), inv: new Array(n).fill(0), folded: new Array(n).fill(false), allin: cfg.stacks.map((s) => s <= 0), needs: new Array(n).fill(true), toAct: 0, raises: 0, lastRaise: 0 };
   st0.toAct = nextActor(st0, n - 1);
-  build(st0);
+  let canStart = 0; for (let i = 0; i < n; i++) if (!st0.allin[i]) canStart++;
+  if (canStart <= 1 || st0.toAct < 0) push(st0, { kind: K_SHOW }); // all-in before the flop: just run it out
+  else build(st0);
   // precompute side pots for terminals
   for (const nd of nodes) {
     if (nd.kind === K_FOLD) nd.winner = nd.folded.indexOf(false);
@@ -580,7 +582,8 @@ class Solver {
 function makeSpot(j) {
   if (!j.players || j.players.length < 2 || j.players.length > 9) throw new Error('Use 2 to 9 players.');
   const names = j.players.map((p, i) => p.name || `P${i + 1}`);
-  const stacks = j.players.map((p, i) => { const s = Number(p.stack); if (!(s > 0)) throw new Error(`${names[i]}: stack must be above 0.`); return s; });
+  const stacks = j.players.map((p, i) => { const s = Number(p.stack); if (!(s >= 0)) throw new Error(`${names[i]}: stack can't be negative.`); return s; });
+  if (stacks.filter((s) => s > 0).length === 0 && stacks.length > 0) { /* everyone all-in: straight to showdown */ }
   const ranges = j.players.map((p, i) => { try { return parseRange(p.range || ''); } catch (e) { throw new Error(`${names[i]} range: ${e.message}`); } });
   const board = parseCards(j.board || '');
   if (board.length < 3 || board.length > 5) throw new Error('The board needs 3, 4 or 5 cards.');
