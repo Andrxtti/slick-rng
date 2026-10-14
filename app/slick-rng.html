@@ -170,7 +170,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.5 · SOLVER</span>
+  <span class="ver">ALPHA 1.6 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -181,8 +181,8 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 <div class="bar">
   <div class="t222" id="t222" hidden>
     <div class="row">
-      <label class="row"><span class="label">Players left</span><input id="tLeft" type="number" min="2" max="20" step="1"></label>
-      <label class="row"><span class="label">Places paid</span><input id="tPaid" type="number" min="1" max="20" step="1"></label>
+      <label class="row"><span class="label">Players left</span><input id="tLeft" type="number" min="2" max="75" step="1"></label>
+      <label class="row"><span class="label">Places paid</span><input id="tPaid" type="number" min="1" max="50" step="1"></label>
       <label class="row grow"><span class="label">Payouts, 1st first</span><input id="tPay" class="mono grow" style="min-width:160px" placeholder="50,30,20"></label>
       <button id="tPayAuto" title="Fill a standard payout curve for the paid places">Auto payouts</button>
     </div>
@@ -523,6 +523,50 @@ function icmEquity(stacks, start, payouts) {
   return eq;
 }
 
+// Large fields: Malmuth-Harville finishing orders sampled with exponential races
+// (player j's key = Exp(1) / stack; sorting keys gives an exact MH order). The same
+// samples are reused for every evaluation, so equity differences between outcomes are
+// smooth and consistent for the solver. Only the stacks of players in the hand change.
+class IcmModel {
+  constructor(nIn, others, payouts, samples) {
+    this.nIn = nIn; this.payouts = payouts; this.paid = payouts.length; this.samples = samples;
+    const nO = others.length;
+    this.eIn = new Float64Array(samples * nIn);
+    this.oKeys = []; // sorted keys of the other players, per sample
+    let seed = 0x9e3779b9;
+    const rnd = () => { seed ^= seed << 13; seed >>>= 0; seed ^= seed >>> 17; seed ^= seed << 5; seed >>>= 0; return (seed + 0.5) / 4294967296; };
+    for (let k = 0; k < samples; k++) {
+      for (let i = 0; i < nIn; i++) this.eIn[k * nIn + i] = -Math.log(rnd());
+      const ks = new Float64Array(nO);
+      for (let j = 0; j < nO; j++) ks[j] = -Math.log(rnd()) / others[j];
+      ks.sort(); this.oKeys.push(ks);
+    }
+    this.nOthers = nO;
+  }
+  // fin: final stacks of the players in the hand; start: their stacks before the hand
+  equity(fin, start) {
+    const n = this.nIn, eq = new Float64Array(n), pay = this.payouts, paid = this.paid;
+    const alive = [], busted = [];
+    for (let i = 0; i < n; i++) (fin[i] > 1e-9 ? alive : busted).push(i);
+    const aliveTotal = this.nOthers + alive.length;
+    busted.sort((x, y) => start[y] - start[x]).forEach((i, k) => { const pl = aliveTotal + k; if (pl < paid) eq[i] = pay[pl]; });
+    if (!alive.length) return eq;
+    const key = new Float64Array(n);
+    for (let k = 0; k < this.samples; k++) {
+      const ok = this.oKeys[k], base = k * n;
+      for (const i of alive) key[i] = this.eIn[base + i] / fin[i];
+      for (const i of alive) {
+        const ki = key[i];
+        let lo = 0, hi = ok.length; while (lo < hi) { const m = (lo + hi) >> 1; if (ok[m] < ki) lo = m + 1; else hi = m; }
+        let place = lo; for (const j of alive) if (j !== i && key[j] < ki) place++;
+        if (place < paid) eq[i] += pay[place];
+      }
+    }
+    for (const i of alive) eq[i] /= this.samples;
+    return eq;
+  }
+}
+
 // ---------------------------------------------------------------- abstraction
 const VOL_LEVELS = 4, VOL_CUTS = [0.06, 0.13, 0.21];
 function riverPercentiles(board5) {
@@ -714,8 +758,13 @@ class Solver {
     let v = this.icmCache.get(k);
     if (v) return v;
     const { payouts, others } = this.spot.payoff;
-    const all = [...fin, ...others], start = [...this.spot.stacks, ...others];
-    v = icmEquity(all, start, payouts).slice(0, this.n);
+    if (this.n + others.length <= 14) {
+      const all = [...fin, ...others], start = [...this.spot.stacks, ...others];
+      v = icmEquity(all, start, payouts).slice(0, this.n);
+    } else {
+      if (!this.icmModel) this.icmModel = new IcmModel(this.n, others, payouts, 6000);
+      v = this.icmModel.equity(fin, this.spot.stacks);
+    }
     if (this.icmCache.size < 300000) this.icmCache.set(k, v);
     return v;
   }
@@ -851,7 +900,7 @@ function makeSpot(j) {
     const payouts = (j.payoff.payouts || []).map(Number).filter((x) => x >= 0);
     const others = (j.payoff.others || []).map(Number).filter((x) => x > 0);
     if (!payouts.length) throw new Error('ICM needs at least one payout.');
-    if (names.length + others.length > 20) throw new Error('ICM supports up to 20 players left.');
+    if (names.length + others.length > 200) throw new Error('ICM supports up to 200 players left.');
     payoff = { type: 'icm', payouts, others };
   }
   const start = board.length - 3, multi = names.length > 2;
@@ -861,7 +910,7 @@ function makeSpot(j) {
   return { names, stacks, ranges, board, pot, sizes, raiseCap: j.raiseCap ?? 2, allinThreshold: j.allinThreshold ?? 0.15, mergeThreshold: j.mergeThreshold ?? 0.1, payoff, turnBuckets, riverBuckets };
 }
 
-const SlickEngine = { Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
+const SlickEngine = { IcmModel, Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
 
 // ---------------------------------------------------------------- worker protocol
 if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typeof window === 'undefined') {
@@ -1310,21 +1359,40 @@ function render222() {
 function render222b() {
   const t = S.t222, need = t.left - T.seats.length, box = $('tOthers'); box.innerHTML = '';
   $('tOthersRow').hidden = need <= 0;
-  for (let i = 0; i < Math.max(0, need); i++) {
-    const l = document.createElement('label'); l.className = 'stk';
-    l.innerHTML = `<span>#${i + 1}</span><input type="number" min="0.5" step="0.5" value="${t.others[i] > 0 ? t.others[i] : 25}" aria-label="Other player ${i + 1} stack">`;
-    l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.others[i] = v; save222(); markStale(); } });
-    box.appendChild(l);
+  const otherVal = (i) => (t.others[i] > 0 ? t.others[i] : 25);
+  if (need > 0 && need <= 16) {
+    for (let i = 0; i < need; i++) {
+      const l = document.createElement('label'); l.className = 'stk';
+      l.innerHTML = `<span>#${i + 1}</span><input type="number" min="0.5" step="0.5" value="${otherVal(i)}" aria-label="Other player ${i + 1} stack">`;
+      l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.others[i] = v; save222(); render222b(); markStale(); } });
+      box.appendChild(l);
+    }
+  } else if (need > 16) {
+    // big fields: one list, pasted or typed, plus a fill helper
+    const inp = document.createElement('input'); inp.id = 'tOthersList'; inp.className = 'mono grow'; inp.style.minWidth = '220px';
+    inp.setAttribute('aria-label', 'Stacks of the other players, comma separated');
+    inp.value = Array.from({ length: need }, (_, i) => fmt(otherVal(i))).join(', ');
+    inp.addEventListener('change', (e) => {
+      const vals = e.target.value.split(/[,\s]+/).map(Number).filter((x) => x > 0);
+      t.others = vals.slice(0, need); save222(); render222b(); markStale();
+    });
+    const cnt = t.others.filter((x) => x > 0).length;
+    const lab = document.createElement('span'); lab.className = 'muted'; lab.style.fontSize = '12px';
+    lab.textContent = `${need} players · ${Math.min(cnt, need)} entered${cnt < need ? ', the rest count as 25 bb' : ''}`;
+    const fillV = document.createElement('input'); fillV.type = 'number'; fillV.min = '0.5'; fillV.step = '0.5'; fillV.value = '25'; fillV.setAttribute('aria-label', 'Fill value');
+    const fill = document.createElement('button'); fill.textContent = 'Set all';
+    fill.onclick = () => { const v = parseFloat(fillV.value); if (v > 0) { t.others = Array(need).fill(v); save222(); render222b(); markStale(); } };
+    box.append(inp, lab, fillV, fill);
   }
-  const pays = parsePayouts(), total = T.seats.reduce((a, s) => a + stackOf(s), 0) + Array.from({ length: Math.max(0, need) }, (_, i) => (t.others[i] > 0 ? t.others[i] : 25)).reduce((a, b) => a + b, 0);
+  const pays = parsePayouts(), total = T.seats.reduce((a, s) => a + stackOf(s), 0) + Array.from({ length: Math.max(0, need) }, (_, i) => otherVal(i)).reduce((a, b) => a + b, 0);
   $('tNote').textContent = need < 0 ? `Players left must be at least ${T.seats.length} (players seated).`
-    : `${t.left} left · ${t.paid} paid${t.left > t.paid ? ` · ${t.left - t.paid} from the money` : ' · in the money'} · ${fmt(total)} bb in play · payouts ${pays.map((p) => p.toFixed(1) + '%').join(' / ')}`;
+    : `${t.left} left · ${t.paid} paid${t.left > t.paid ? ` · ${t.left - t.paid} from the money` : ' · in the money'} · ${fmt(total)} bb in play · payouts ${pays.slice(0, 6).map((p) => p.toFixed(1) + '%').join(' / ')}${pays.length > 6 ? ` / … / ${pays[pays.length - 1].toFixed(2)}% (min cash)` : ''}`;
   $('tNote').className = need < 0 || !pays.length ? 'hint error' : 'hint';
 }
 function bind222() {
   const t = S.t222;
-  $('tLeft').addEventListener('change', (e) => { const v = Math.max(2, Math.min(20, parseInt(e.target.value, 10) || 2)); t.left = v; if (t.paid > v) t.paid = v; save222(); e.target.value = v; render222b(); markStale(); });
-  $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(t.left, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
+  $('tLeft').addEventListener('change', (e) => { const v = Math.max(2, Math.min(75, parseInt(e.target.value, 10) || 2)); t.left = v; if (t.paid > Math.min(50, v)) { t.paid = Math.min(50, v); $('tPaid').value = t.paid; t.payouts = defaultPayouts(t.paid); $('tPay').value = t.payouts; } save222(); e.target.value = v; render222b(); markStale(); });
+  $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(50, t.left, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
     if (t.payouts.split(',').filter(Boolean).length < v || was !== v) { t.payouts = defaultPayouts(v); $('tPay').value = t.payouts; } save222(); render222b(); markStale(); });
   $('tPay').addEventListener('change', (e) => { t.payouts = e.target.value; save222(); render222b(); markStale(); });
   $('tPayAuto').onclick = () => { t.payouts = defaultPayouts(t.paid); $('tPay').value = t.payouts; save222(); render222b(); markStale(); };

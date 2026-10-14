@@ -270,6 +270,50 @@ function icmEquity(stacks, start, payouts) {
   return eq;
 }
 
+// Large fields: Malmuth-Harville finishing orders sampled with exponential races
+// (player j's key = Exp(1) / stack; sorting keys gives an exact MH order). The same
+// samples are reused for every evaluation, so equity differences between outcomes are
+// smooth and consistent for the solver. Only the stacks of players in the hand change.
+class IcmModel {
+  constructor(nIn, others, payouts, samples) {
+    this.nIn = nIn; this.payouts = payouts; this.paid = payouts.length; this.samples = samples;
+    const nO = others.length;
+    this.eIn = new Float64Array(samples * nIn);
+    this.oKeys = []; // sorted keys of the other players, per sample
+    let seed = 0x9e3779b9;
+    const rnd = () => { seed ^= seed << 13; seed >>>= 0; seed ^= seed >>> 17; seed ^= seed << 5; seed >>>= 0; return (seed + 0.5) / 4294967296; };
+    for (let k = 0; k < samples; k++) {
+      for (let i = 0; i < nIn; i++) this.eIn[k * nIn + i] = -Math.log(rnd());
+      const ks = new Float64Array(nO);
+      for (let j = 0; j < nO; j++) ks[j] = -Math.log(rnd()) / others[j];
+      ks.sort(); this.oKeys.push(ks);
+    }
+    this.nOthers = nO;
+  }
+  // fin: final stacks of the players in the hand; start: their stacks before the hand
+  equity(fin, start) {
+    const n = this.nIn, eq = new Float64Array(n), pay = this.payouts, paid = this.paid;
+    const alive = [], busted = [];
+    for (let i = 0; i < n; i++) (fin[i] > 1e-9 ? alive : busted).push(i);
+    const aliveTotal = this.nOthers + alive.length;
+    busted.sort((x, y) => start[y] - start[x]).forEach((i, k) => { const pl = aliveTotal + k; if (pl < paid) eq[i] = pay[pl]; });
+    if (!alive.length) return eq;
+    const key = new Float64Array(n);
+    for (let k = 0; k < this.samples; k++) {
+      const ok = this.oKeys[k], base = k * n;
+      for (const i of alive) key[i] = this.eIn[base + i] / fin[i];
+      for (const i of alive) {
+        const ki = key[i];
+        let lo = 0, hi = ok.length; while (lo < hi) { const m = (lo + hi) >> 1; if (ok[m] < ki) lo = m + 1; else hi = m; }
+        let place = lo; for (const j of alive) if (j !== i && key[j] < ki) place++;
+        if (place < paid) eq[i] += pay[place];
+      }
+    }
+    for (const i of alive) eq[i] /= this.samples;
+    return eq;
+  }
+}
+
 // ---------------------------------------------------------------- abstraction
 const VOL_LEVELS = 4, VOL_CUTS = [0.06, 0.13, 0.21];
 function riverPercentiles(board5) {
@@ -461,8 +505,13 @@ class Solver {
     let v = this.icmCache.get(k);
     if (v) return v;
     const { payouts, others } = this.spot.payoff;
-    const all = [...fin, ...others], start = [...this.spot.stacks, ...others];
-    v = icmEquity(all, start, payouts).slice(0, this.n);
+    if (this.n + others.length <= 14) {
+      const all = [...fin, ...others], start = [...this.spot.stacks, ...others];
+      v = icmEquity(all, start, payouts).slice(0, this.n);
+    } else {
+      if (!this.icmModel) this.icmModel = new IcmModel(this.n, others, payouts, 6000);
+      v = this.icmModel.equity(fin, this.spot.stacks);
+    }
     if (this.icmCache.size < 300000) this.icmCache.set(k, v);
     return v;
   }
@@ -598,7 +647,7 @@ function makeSpot(j) {
     const payouts = (j.payoff.payouts || []).map(Number).filter((x) => x >= 0);
     const others = (j.payoff.others || []).map(Number).filter((x) => x > 0);
     if (!payouts.length) throw new Error('ICM needs at least one payout.');
-    if (names.length + others.length > 20) throw new Error('ICM supports up to 20 players left.');
+    if (names.length + others.length > 200) throw new Error('ICM supports up to 200 players left.');
     payoff = { type: 'icm', payouts, others };
   }
   const start = board.length - 3, multi = names.length > 2;
@@ -608,7 +657,7 @@ function makeSpot(j) {
   return { names, stacks, ranges, board, pot, sizes, raiseCap: j.raiseCap ?? 2, allinThreshold: j.allinThreshold ?? 0.15, mergeThreshold: j.mergeThreshold ?? 0.1, payoff, turnBuckets, riverBuckets };
 }
 
-const SlickEngine = { Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
+const SlickEngine = { IcmModel, Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
 
 // ---------------------------------------------------------------- worker protocol
 if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typeof window === 'undefined') {
