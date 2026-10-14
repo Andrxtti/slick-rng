@@ -170,7 +170,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.6 · SOLVER</span>
+  <span class="ver">ALPHA 1.7 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -557,9 +557,20 @@ function preflopReport() {
       pick: (i) => { const o = opts[i], e = { id: ctx.id, k: o.k }; choose(ctx.mode === 'edit' ? [...S.hist.slice(0, ctx.idx), e, ...S.hist.slice(ctx.idx + 1)] : [...ctx.base, e]); } };
   });
 }
+// once preflop is closed and the flop is in, solve straight away
+function readyToSolve() { return !nextActor() && live().length >= 2 && S.board.length >= 3; }
+function boardChanged() {
+  if (readyToSolve()) { startSolve(); return; }
+  markStale();
+  if (!nextActor() && live().length >= 2 && S.board.length < 3) { view = 'post'; renderNode(); }
+}
 function choose(newHist) {
   view = 'pre'; S.hist = newHist; replay();
   const nx = nextActor(); S.sel = nx ? nx.id : null;
+  if (!nx && live().length >= 2) {
+    if (S.board.length < 3) { activeSlot = S.board.length; view = 'post'; }
+    else { render(); startSolve(); return; }
+  }
   render(); markStale();
 }
 
@@ -724,14 +735,14 @@ function renderBoard() {
   if (activeSlot === null) return;
   if (S.board[activeSlot] !== undefined) {
     const rmb = document.createElement('button'); rmb.textContent = 'Remove'; rmb.style.gridColumn = 'span 3'; rmb.style.fontSize = '12px';
-    rmb.onclick = () => { S.board = S.board.slice(0, activeSlot); activeSlot = null; renderBoard(); markStale(); }; pk.appendChild(rmb);
+    rmb.onclick = () => { S.board = S.board.slice(0, activeSlot); activeSlot = S.board.length < 3 ? S.board.length : null; renderBoard(); boardChanged(); }; pk.appendChild(rmb);
     for (let i = 0; i < 10; i++) pk.appendChild(document.createElement('span'));
   }
   for (let s = 3; s >= 0; s--) for (let r = 12; r >= 0; r--) {
     const c = r * 4 + s, b = document.createElement('button');
     b.className = `card s-${SUITS[s]}`; b.textContent = RANKS[r] + SYM[SUITS[s]]; b.setAttribute('aria-label', Engine.cardStr(c));
     b.disabled = S.board.includes(c) && S.board[activeSlot] !== c;
-    b.onclick = () => { S.board[activeSlot] = c; activeSlot = S.board.length < 3 ? S.board.length : null; renderBoard(); markStale(); };
+    b.onclick = () => { S.board[activeSlot] = c; activeSlot = S.board.length < 3 ? S.board.length : null; renderBoard(); boardChanged(); };
     pk.appendChild(b);
   }
 }
@@ -808,6 +819,7 @@ function markStale() { if (solvedOnce && !solving) { $('status').textContent = '
 function endSolve() { solvedOnce = true; endSolve2(); }
 function endSolve2() { solving = false; $('solveBtn').hidden = false; $('stopBtn').hidden = true; $('meter').style.width = '100%'; clearInterval(timer); }
 function startSolve(seconds) {
+  report = null; built = null; path = []; selected = null; evData = null; renderEVs();
   $('err').textContent = '';
   let spot; try { spot = buildSpot(); Engine.makeSpot(spot); } catch (e) { $('err').textContent = e.message; return; }
   solving = true; secs = seconds || +$('depth').value; spotGame = S.game; setView('post');
@@ -848,7 +860,16 @@ function renderNode() {
   const r = view === 'pre' ? preReport : report;
   const v = $('nodeView');
   if (view === 'pre') { $('crumbs').hidden = true; } else renderCrumbs(r);
-  if (!r) { v.innerHTML = `<div class="empty-state">${view === 'pre' ? 'Tap a seat to see its preflop chart.' : 'Press Solve to see the postflop strategy.'}</div>`; return; }
+  if (!r) {
+    if (view === 'pre') { v.innerHTML = '<div class="empty-state">Tap a seat to see its preflop chart.</div>'; return; }
+    const pfDone = !nextActor() && live().length >= 2;
+    const msg = !pfDone ? 'Finish the preflop action first. The next player to act is highlighted above.'
+      : S.board.length < 3 ? `Pick the flop: ${3 - S.board.length} card${S.board.length === 2 ? '' : 's'} to go. Solving starts as soon as the flop is in.`
+      : solving ? 'Solving…' : 'Ready to solve.';
+    v.innerHTML = `<div class="empty-state"><div style="font-size:16px;color:var(--fg);margin-bottom:10px">${msg}</div>${pfDone && S.board.length >= 3 && !solving ? '<button class="primary" id="ctaSolve">Solve</button>' : ''}</div>`;
+    if ($('ctaSolve')) $('ctaSolve').onclick = () => startSolve();
+    return;
+  }
   const boardStr = r.board.map(cardHTML).join(' ');
   if (r.kind === 'chance') {
     v.innerHTML = `<div class="node"><div class="nodetitle"><h2>Pick the ${r.street === 1 ? 'turn' : 'river'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="picker" id="deal"></div></div>`;
@@ -860,7 +881,7 @@ function renderNode() {
   }
   if (r.kind === 'terminal') {
     const left = r.folded.map((f, i) => (f ? null : built.names[i])).filter(Boolean);
-    v.innerHTML = `<div class="node"><div class="nodetitle"><h2>${left.length === 1 ? `${esc(left[0])} wins` : 'Showdown'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="muted">${r.history.length ? 'End of the hand. Tap the trail above to go back.' : 'All-in before the flop: no decisions left, the board is run out. EVs above show each player\'s result.'}</div></div>`;
+    v.innerHTML = `<div class="node"><div class="nodetitle"><h2>${left.length === 1 ? `${esc(left[0])} wins` : 'Showdown'}</h2><span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}</div><div class="row"><button id="backBtn">Back one step</button><button id="restartBtn">Back to flop</button></div><div class="muted">${r.history.length ? 'End of the hand. Tap the trail above to go back.' : 'All-in before the flop: no decisions left, the board is run out. EVs above show each player\'s result.'}</div></div>`;
     return;
   }
   const col = colors(r.actionTypes), name = r.preflop ? r.name : built.names[r.player];
@@ -886,6 +907,10 @@ function renderNode() {
   detail(selected);
 }
 function ctxKind(r, i) { return r.cur && r.actions[i] && r.actionTypes && r.curIndex === i; }
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'backBtn') { path = path.slice(0, -1); selected = null; requestReport(); }
+  if (e.target.id === 'restartBtn') { path = []; selected = null; requestReport(); }
+});
 function detail(k) {
   const r = view === 'pre' ? preReport : report, d = $('detail'); if (!d || !r || r.kind !== 'action') return;
   const col = colors(r.actionTypes);
