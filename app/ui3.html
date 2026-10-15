@@ -284,7 +284,8 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .stk { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
 .stk span { font-family: var(--font-display); font-size: 15px; font-weight: 600; min-width: 40px; text-align: right; display: grid; line-height: 1.05; }
 .stk span em { font-style: normal; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
-.stkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 8px; }
+.stkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 8px; }
+.stk span { white-space: nowrap; }
 
 /* action rows */
 .prompt { display: grid; gap: 10px; }
@@ -392,6 +393,31 @@ details.adv summary:hover { color: var(--fg); }
 .rcell .w { position: absolute; left: 0; right: 0; bottom: 0; background: var(--carolina); opacity: .85; }
 .rcell span { position: relative; }
 .rcell.on span { color: var(--carolina-ink); font-weight: 600; }
+/* ICM section: one switch; when off the settings stay visible under a shaded veil */
+.icmsec { border: 1px solid var(--line); border-radius: 14px; background: var(--bg-2); overflow: hidden; transition: border-color .2s; }
+.icmsec.on { border-color: rgba(90, 169, 222, .45); box-shadow: 0 0 0 1px rgba(90, 169, 222, .12), 0 16px 40px -24px rgba(90, 169, 222, .45); }
+.icmhead { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; border-bottom: 1px solid var(--line); background: linear-gradient(90deg, rgba(90, 169, 222, .08), transparent 60%); }
+.icmsec:not(.on) .icmhead { background: transparent; }
+.icmhead .grow { display: grid; gap: 1px; }
+.icmhead b { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: .08em; }
+.icmsec.on .icmhead b { color: var(--hero); }
+.switch { position: relative; width: 44px; height: 26px; flex: none; }
+.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; width: 100%; height: 100%; cursor: pointer; }
+.switch i { position: absolute; inset: 0; border-radius: 999px; background: var(--panel-3); border: 1px solid var(--line-2); transition: background-color .2s, border-color .2s; pointer-events: none; }
+.switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform .2s, background-color .2s; box-shadow: 0 2px 6px rgba(0, 0, 0, .6); }
+.switch input:checked + i { background: var(--hero); border-color: var(--hero); }
+.switch input:checked + i::after { transform: translateX(18px); background: #fff; }
+.switch input:focus-visible + i { outline: 2px solid var(--carolina); outline-offset: 2px; }
+.icmbody { position: relative; padding: 14px; display: grid; gap: 14px; }
+.icmbody > :not(.icmveil) { transition: opacity .25s, filter .25s; }
+.icmsec:not(.on) .icmbody > :not(.icmveil) { opacity: .28; filter: grayscale(1) blur(1px); pointer-events: none; user-select: none; }
+.icmveil { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 4px; text-align: center; padding: 16px;
+  background: repeating-linear-gradient(135deg, rgba(9, 9, 8, .55) 0 10px, rgba(9, 9, 8, .35) 10px 20px); opacity: 0; pointer-events: none; transition: opacity .25s; }
+.icmveil span { font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: .06em; }
+.icmveil small { color: var(--muted); font-size: 12px; }
+.icmsec:not(.on) .icmveil { opacity: 1; pointer-events: auto; cursor: pointer; }
+.sumchip.chips { border-color: var(--line-2); color: var(--muted); }
+.sumchip.icm { border-color: rgba(90, 169, 222, .5); color: var(--hero); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 
@@ -400,12 +426,12 @@ details.adv summary:hover { color: var(--fg); }
     <div class="brand">
       <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#efe4c8"/><g fill="#0d0c0a"><rect x="18" y="1.5" width="4" height="6" rx="1"/><rect x="18" y="32.5" width="4" height="6" rx="1"/><rect x="1.5" y="18" width="6" height="4" rx="1"/><rect x="32.5" y="18" width="6" height="4" rx="1"/><rect x="18" y="1.5" width="4" height="6" rx="1" transform="rotate(45 20 20)"/><rect x="18" y="32.5" width="4" height="6" rx="1" transform="rotate(45 20 20)"/><rect x="1.5" y="18" width="6" height="4" rx="1" transform="rotate(45 20 20)"/><rect x="32.5" y="18" width="6" height="4" rx="1" transform="rotate(45 20 20)"/></g><circle cx="20" cy="20" r="11" fill="#0d0c0a"/><circle cx="20" cy="20" r="11" fill="none" stroke="#5aa9de" stroke-width="1.5" stroke-dasharray="2.2 2.2"/><path d="M16.2 23.6c.9.9 2.1 1.4 3.6 1.4 2 0 3.3-1 3.3-2.5 0-3.4-6.6-2-6.6-5.6 0-1.4 1.3-2.5 3.2-2.5 1.3 0 2.4.4 3.2 1.2" fill="none" stroke="#efe4c8" stroke-width="1.9" stroke-linecap="round"/></svg>
       <div class="wordmark">SLICK <span>RNG</span></div>
-      <span class="ver">ALPHA 3.2</span>
+      <span class="ver">ALPHA 3.3</span>
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
       <div class="seg mode" role="group" aria-label="Mode"><button id="modeSolver" aria-pressed="true">Solver</button><button id="modeTrainer" aria-pressed="false">Trainer</button></div>
-      <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
+      <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="222" aria-pressed="false">MTT</button></div>
       <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
       <label class="row" id="stackWrap"><span class="label">Stack</span><select id="stack" aria-label="Starting stack"></select></label>
       <label class="row" id="leftWrap" hidden><span class="label">Left</span><select id="left" aria-label="Players left in tournament"></select></label>
@@ -416,43 +442,58 @@ details.adv summary:hover { color: var(--fg); }
 <main class="app">
   <section class="panel tourney t222" id="t222" hidden>
     <details id="t222d" open>
-      <summary><span class="eyebrow">Tournament · 222</span><span class="sumchips" id="t222sum"></span><span class="chev" aria-hidden="true">▾</span></summary>
+      <summary><span class="eyebrow">Tournament</span><span class="sumchips" id="t222sum"></span><span class="chev" aria-hidden="true">▾</span></summary>
       <div class="t222in">
         <div class="groups">
-          <div class="group">
-            <span class="label">Field and payouts</span>
-            <div class="fields">
-              <label class="field"><span class="label">Entrants</span><input id="tEnt" type="number" min="2" step="1" placeholder="e.g. 180"></label>
-              <label class="field"><span class="label">Buy-in ($)</span><input id="tBuy" type="number" min="0" step="0.01" placeholder="e.g. 10"></label>
-              <label class="field"><span class="label">Guarantee ($)</span><input id="tGtd" type="number" min="0" step="1" placeholder="optional"></label>
-            </div>
-            <div class="fields">
-              <label class="field"><span class="label">Players left</span><input id="tLeft" type="number" min="2" max="75" step="1"></label>
-              <label class="field"><span class="label">Places paid</span><input id="tPaid" type="number" min="1" max="5000" step="1"></label>
-            </div>
-            <label class="field"><span class="label">Payouts, 1st first (% or amounts)</span><input id="tPay" placeholder="50,30,20"></label>
-            <div class="hint" id="tPayInfo"></div>
-            <div class="row"><button id="tPayAuto" title="Fill a typical payout structure from entrants and buy-in (or a standard curve for the paid places)">Auto payouts</button><button id="tSat" title="Every paid place pays the same (satellite)">Satellite</button></div>
-          </div>
           <div class="group">
             <span class="label">Table stacks (bb)</span>
             <div class="stkgrid" id="tSeats"></div>
             <div class="row"><label class="field"><span class="label">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select></label>
-              <div class="field"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
+              <div class="field" id="tOthersWrap"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
           </div>
           <div class="group">
             <span class="label">What if</span>
             <div class="whatif">
               <label class="wi"><span>Hero stack <b id="wiHeroV"></b></span><input type="range" id="wiHero" min="1" max="150" step="0.5"></label>
               <label class="wi" id="wiSelWrap"><span><span id="wiSelL">Selected seat</span> <b id="wiSelV"></b></span><input type="range" id="wiSel" min="1" max="150" step="0.5"></label>
-              <label class="wi"><span>Players left <b id="wiLeftV"></b></span><input type="range" id="wiLeft" min="2" max="75" step="1"></label>
+              <label class="wi" id="wiLeftWrap"><span>Players left <b id="wiLeftV"></b></span><input type="range" id="wiLeft" min="2" max="75" step="1"></label>
             </div>
-            <label class="row"><input type="checkbox" id="pkoOn"><span class="label">PKO bounties</span></label>
-            <div class="stkgrid" id="pkoRow"></div>
+            <div class="hint" id="wiHint">Tap a seat on the table to get a slider for its stack too.</div>
           </div>
         </div>
-        <div class="hint" id="tNote"></div>
-        <div class="icmbox" id="icmBox"></div>
+
+        <div class="icmsec" id="icmSec">
+          <label class="icmhead" for="icmOn">
+            <span class="switch"><input type="checkbox" id="icmOn" role="switch"><i aria-hidden="true"></i></span>
+            <span class="grow"><b>ICM</b><span class="hint" id="icmState">Play for the prize pool: players left, payouts, bubble pressure.</span></span>
+          </label>
+          <div class="icmbody">
+            <div class="groups">
+              <div class="group">
+                <span class="label">Field and payouts</span>
+                <div class="fields">
+                  <label class="field"><span class="label">Entrants</span><input id="tEnt" type="number" min="2" step="1" placeholder="e.g. 180"></label>
+                  <label class="field"><span class="label">Buy-in ($)</span><input id="tBuy" type="number" min="0" step="0.01" placeholder="e.g. 10"></label>
+                  <label class="field"><span class="label">Guarantee ($)</span><input id="tGtd" type="number" min="0" step="1" placeholder="optional"></label>
+                </div>
+                <div class="fields">
+                  <label class="field"><span class="label">Players left</span><input id="tLeft" type="number" min="2" max="75" step="1"></label>
+                  <label class="field"><span class="label">Places paid</span><input id="tPaid" type="number" min="1" max="5000" step="1"></label>
+                </div>
+                <label class="field"><span class="label">Payouts, 1st first (% or amounts)</span><input id="tPay" placeholder="50,30,20"></label>
+                <div class="hint" id="tPayInfo"></div>
+                <div class="row"><button id="tPayAuto" title="Fill a typical payout structure from entrants and buy-in (or a standard curve for the paid places)">Auto payouts</button><button id="tSat" title="Every paid place pays the same (satellite)">Satellite</button></div>
+              </div>
+              <div class="group">
+                <label class="row"><input type="checkbox" id="pkoOn"><span class="label">PKO bounties</span></label>
+                <div class="stkgrid" id="pkoRow"></div>
+              </div>
+            </div>
+            <div class="hint" id="tNote"></div>
+            <div class="icmbox" id="icmBox"></div>
+            <div class="icmveil" aria-hidden="true"><span>ICM is off · solving for chips</span><small>Turn it on to play for the prize pool</small></div>
+          </div>
+        </div>
       </div>
     </details>
   </section>
@@ -636,7 +677,7 @@ const SIZES = {
 // ---------------------------------------------------------------- table model
 const S = { t222: load222(), game: 'cash', table: '6', slots: [], stack: 100, left: 9, sz: { open: 2, b3: 6, b4: 14, b5: 30 }, board: [], sizing: 'simple', overrides: {}, hist: [], sel: null };
 function load222() {
-  const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 }, entrants: 0, buyin: 0, gtd: 0 };
+  const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 }, entrants: 0, buyin: 0, gtd: 0, icm: true };
   try { const v = JSON.parse(localStorage.getItem('slick222') || 'null'); return v ? { ...def, ...v } : def; } catch { return def; }
 }
 function save222() { try { localStorage.setItem('slick222', JSON.stringify(S.t222)); } catch { /* storage unavailable */ } }
@@ -933,7 +974,8 @@ function parsePayouts() {
 }
 // PKO: bounties are entered in the same money as the payouts; convert to % of the prize pool
 function rawPaySum() { const t = S.t222; return t.payouts.split(/[,\s]+/).map(Number).filter((x) => x > 0).slice(0, t.paid).reduce((a, b) => a + b, 0); }
-function pkoOn() { return S.game === '222' && S.t222.pko && S.t222.pko.on; }
+function icmOn() { return S.game === '222' && S.t222.icm !== false; }
+function pkoOn() { return icmOn() && S.t222.pko && S.t222.pko.on; }
 function bountyPct(seat) { const t = S.t222, raw = rawPaySum(), b = t.pko.b[seat.id]; return raw > 0 && b > 0 ? (b / raw) * 100 : 0; }
 function bountyFrac() { const f = S.t222.pko.frac; return (f >= 0 && f <= 100 ? f : 75) / 100; }
 // Typical online MTT payout structure: about 15% of the field paid, a final-table ladder like the
@@ -998,7 +1040,7 @@ function buildSpot() {
     sizes: { flop: { bet: sz.fb, raise: sz.fr }, turn: { bet: sz.tb, raise: sz.tr }, river: { bet: sz.rb, raise: sz.rr } },
     raiseCap: players.length > 2 ? Math.min(1, SIZES[S.sizing].cap) : SIZES[S.sizing].cap, allinThreshold: 0.15,
   };
-  if (S.game === '222') {
+  if (icmOn()) {
     const t = S.t222, act = T.seats.length, need = t.left - act;
     if (need < 0) throw new Error(`Players left (${t.left}) is less than the ${act} players seated. Raise players left or sit some seats out.`);
     const others = Array(need).fill(t.avg > 0 ? t.avg : 25);
@@ -1193,7 +1235,7 @@ function render() {
     $('feltPot').textContent = `pot ${fmt(potNow())} bb`;
   }
   $('seatHint').hidden = S.table !== 'custom';
-  if (S.game === '222') { render222(); renderIcmBox(); renderPko(); renderWhatIf(); }
+  if (S.game === '222') { render222(); renderWhatIf(); renderIcmSec(); if (icmOn()) { renderIcmBox(); renderPko(); } }
 
   const pr = $('prompt'); pr.innerHTML = '';
   const seat = S.sel !== null && S.sel !== undefined ? seatById(S.sel) : null;
@@ -1255,7 +1297,8 @@ function withHistMin(rowKey) {
 function render222Sum() {
   const t = S.t222, hero = seatById(0), out = Math.max(0, t.left - t.paid);
   const chip = (txt, c = '') => `<span class="sumchip ${c}">${esc(txt)}</span>`;
-  $('t222sum').innerHTML = chip(`${t.left} left`) + chip(`${t.paid} paid`) +
+  if (!icmOn()) { $('t222sum').innerHTML = chip('Chip EV', 'chips') + (hero ? chip(`Hero ${fmt(baseStack(hero))} bb`, 'hero') : ''); return; }
+  $('t222sum').innerHTML = chip('ICM', 'icm') + chip(`${t.left} left`) + chip(`${t.paid} paid`) +
     (out > 0 ? chip(out === 1 ? 'on the bubble' : `${out} from the money`, out <= 3 ? 'bubble' : '') : chip('in the money', 'money')) +
     (hero ? chip(`Hero ${fmt(baseStack(hero))} bb`, 'hero') : '') + (prizePool() ? chip(`${money(prizePool())} pool`) : '') + (t.pko && t.pko.on ? chip('PKO') : '');
 }
@@ -1297,7 +1340,12 @@ function renderWhatIf() {
   const sel = S.sel !== null && S.sel !== undefined && S.sel !== 0 ? seatById(S.sel) : null;
   $('wiSelWrap').hidden = !sel;
   if (sel) { $('wiSelL').textContent = `${seatLabel(sel.id)} stack`; $('wiSel').value = baseStack(sel); $('wiSelV').textContent = `${fmt(baseStack(sel))} bb`; }
-  $('wiLeft').value = t.left; $('wiLeftV').textContent = t.left;
+  $('wiLeft').value = t.left; $('wiLeftV').textContent = t.left; $('wiLeftWrap').hidden = !icmOn(); $('wiHint').hidden = !!sel;
+}
+function renderIcmSec() {
+  const on = icmOn(); $('icmOn').checked = on; $('icmSec').classList.toggle('on', on); $('tOthersWrap').hidden = !on;
+  $('icmState').textContent = on ? 'On · every decision is valued in prize-pool equity.' : 'Off · decisions are valued in chips. Turn on to play for the prize pool.';
+  if (!on) $('icmBox').innerHTML = '';
 }
 function render222b() {
   const t = S.t222, need = t.left - T.seats.length, box = $('tOthers'); box.innerHTML = '';
@@ -1355,6 +1403,8 @@ function renderIcmBox() {
 function bind222() {
   const t = S.t222;
   $('tSat').onclick = () => { t.payouts = Array(t.paid).fill(1).join(','); $('tPay').value = t.payouts; save222(); render222b(); render(); markStale(); };
+  $('icmOn').addEventListener('change', (e) => { t.icm = e.target.checked; save222(); render(); markStale(); });
+  document.querySelector('.icmveil').addEventListener('click', () => { t.icm = true; save222(); render(); markStale(); });
   $('pkoOn').addEventListener('change', (e) => { t.pko.on = e.target.checked; save222(); render(); markStale(); });
   // what-if: values update live while dragging; the solver restarts when you let go
   const live = (id, fn) => { $(id).addEventListener('input', fn); $(id).addEventListener('change', () => { save222(); replay(); render(); markStale(); }); };
@@ -1473,7 +1523,7 @@ function pfConfig() {
     const postOrder = T.hu ? [idx('BB'), idx('SB')] : [...blinds, ...rest];
     let payoff = { type: 'chips' };
     if (S.game === 'icm') { const left = Math.max(S.left, n); payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others: Array(left - n).fill(S.stack) }; }
-    if (S.game === '222') { const t = S.t222, pays = remainingPayouts(); if (t.left >= n && pays.length) { payoff = { type: 'icm', payouts: pays, others: Array(t.left - n).fill(t.avg > 0 ? t.avg : 25) }; if (pkoOn()) { payoff.bounties = seats.map((x) => bountyPct(x)); payoff.bountyFrac = bountyFrac(); } } }
+    if (icmOn()) { const t = S.t222, pays = remainingPayouts(); if (t.left >= n && pays.length) { payoff = { type: 'icm', payouts: pays, others: Array(t.left - n).fill(t.avg > 0 ? t.avg : 25) }; if (pkoOn()) { payoff.bounties = seats.map((x) => bountyPct(x)); payoff.bountyFrac = bountyFrac(); } } }
     return { names: seats.map((x) => x.pos), stacks: seats.map((x) => stackOf(x)), posts: seats.map((x) => Math.min(x.put, stackOf(x))),
       ante: seats.reduce((a, x) => a + deadOf(x), 0), sizes: { ...S.sz }, hu: T.hu, payoff, postOrder, allowLimps: S.game === '222', leave1: S.game !== 'cash' };
   });
@@ -1587,7 +1637,7 @@ function startSolve(seconds) {
   report = null; built = null; path = []; selected = null; evData = null; renderEVs();
   $('err').textContent = '';
   let spot; try { spot = buildSpot(); Engine.makeSpot(spot); } catch (e) { $('err').textContent = e.message; return; }
-  solving = true; secs = seconds || +$('depth').value; spotGame = S.game; setView('post');
+  solving = true; secs = seconds || +$('depth').value; spotGame = icmOn() ? 'icm' : 'chips'; setView('post');
   $('solveBtn').hidden = true; $('stopBtn').hidden = false; $('meter').style.width = '0'; $('status').textContent = 'Building the game tree…';
   worker.postMessage({ cmd: 'build', spot });
   clearInterval(timer); timer = setInterval(() => { if (solving) requestReport(); }, 2500);
@@ -1608,7 +1658,7 @@ function renderEVs() {
   const box = $('evs'); box.innerHTML = '';
   if (!evData || !built) return;
   evData.forEach((e, i) => { const d = document.createElement('div'); d.className = 'ev'; d.title = 'Expected value under the solved strategy';
-    d.innerHTML = `${esc(built.names[i])} <b>${(spotGame === 'icm' || spotGame === '222') ? `${e.ev.toFixed(2)}%` : `${e.ev >= 0 ? '+' : ''}${e.ev.toFixed(2)} bb`}</b>`; box.appendChild(d); });
+    d.innerHTML = `${esc(built.names[i])} <b>${spotGame === 'icm' ? `${e.ev.toFixed(2)}%` : `${e.ev >= 0 ? '+' : ''}${e.ev.toFixed(2)} bb`}</b>`; box.appendChild(d); });
 }
 function renderCrumbs(r) {
   const box = $('crumbs'); box.innerHTML = '';
@@ -1803,7 +1853,7 @@ function trAnswer(kind) {
 function trCardHTML(c) { const s = SUITS[c & 3]; return `<span class="trcard s-${s}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
 function trRender() {
   if (S.mode !== 'trainer') return;
-  $('trSetup').textContent = `${S.game === '222' ? `MTT · 222 · ${S.t222.left} left · ${S.t222.paid} paid` : S.game.toUpperCase()} · ${S.table === 'custom' ? 'custom table' : S.table + '-max'}`;
+  $('trSetup').textContent = `${S.game === '222' ? (icmOn() ? `MTT · ICM · ${S.t222.left} left · ${S.t222.paid} paid` : 'MTT · chip EV') : 'Cash'} · ${S.table === 'custom' ? 'custom table' : S.table + '-max'}`;
   $('trSeatWrap').hidden = S.game !== '222';
   const st = trStats;
   $('trStats').innerHTML = `<div class="trstat"><b>${st.n}</b><span>spots</span></div><div class="trstat"><b>${st.n ? Math.round((st.good / st.n) * 100) : 0}%</b><span>correct</span></div><div class="trstat"><b>${st.n ? (st.loss / st.n).toFixed(3) : '0'}</b><span>avg loss / spot</span></div>
@@ -1837,7 +1887,7 @@ document.addEventListener('keydown', (e) => {
 // ---------------------------------------------------------------- controls
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  $('leftWrap').hidden = S.game !== 'icm'; $('stackWrap').hidden = S.game === '222'; $('t222').hidden = S.game !== '222';
+  $('leftWrap').hidden = true; $('stackWrap').hidden = S.game === '222'; $('t222').hidden = S.game !== '222';
   fillStacks(); replay(); render(); markStale();
 }));
 document.querySelectorAll('[data-table]').forEach((b) => (b.onclick = () => {
