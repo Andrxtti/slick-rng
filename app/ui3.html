@@ -466,7 +466,7 @@ header.top.hide { transform: translateY(-110%); }
           <div class="group">
             <span class="label">Table stacks (bb)</span>
             <div class="stkgrid" id="tSeats"></div>
-            <div class="row"><button id="tClearStk" class="mini" title="Keep only the hero's stack, blank the rest, and reset to 9 seats: a general chip EV sim">Clear stacks</button><span class="hint">Type / in a stack box to remove that seat.</span></div>
+            <div class="row"><button id="tClearStk" class="mini" title="Keep only the hero's stack, blank the rest, and reset to 9 seats: a general chip EV sim">Clear stacks</button><span class="hint">Click a seat name to take it out of the sim.</span></div>
             <div class="row"><label class="field"><span class="label">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select></label>
               <div class="field" id="tOthersWrap"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
           </div>
@@ -1331,30 +1331,30 @@ function render222() {
   const ts = $('tSeats'); ts.innerHTML = '';
   for (const slot of S.slots) {
     const seat = { id: slot.id };
-    const l = document.createElement('label'); l.className = 'stk' + (slot.active ? '' : ' off');
-    const val = slot.active ? (t.stacks[seat.id] > 0 ? t.stacks[seat.id] : '') : '/';
-    l.innerHTML = `<span>${seatLabel(seat.id)}</span><input type="text" inputmode="decimal" value="${val}" placeholder="${slot.active ? baseStack(seat) : '/'}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
-    l.querySelector('input').addEventListener('change', (e) => setSeatInput(seat.id, e.target.value));
+    const l = document.createElement('label'); l.className = 'stk' + (slot.active ? '' : ' off') + (isHero(seat.id) ? ' hero' : '');
+    const val = slot.active && t.stacks[seat.id] > 0 ? t.stacks[seat.id] : '';
+    l.innerHTML = `<button type="button" class="seatpick" aria-pressed="${slot.active}"${isHero(seat.id) ? ' disabled' : ''} title="${isHero(seat.id) ? 'Hero always plays' : slot.active ? 'Click to take this seat out of the sim' : 'Click to seat a player here'}">${seatLabel(seat.id)}</button><input type="number" min="0.5" step="0.5" value="${val}" placeholder="${slot.active ? baseStack(seat) : 'out'}" aria-label="${seatLabel(seat.id)} stack"${slot.active ? '' : ' disabled'}>`;
+    l.querySelector('.seatpick').addEventListener('click', () => toggleSeat(seat.id));
+    l.querySelector('input').addEventListener('change', (e) => setStack(seat.id, e.target.value));
     ts.appendChild(l);
   }
   render222b();
 }
-// a stack box takes a number (seat in), blank (stack unspecified, seat stays) or / (seat removed from the sim)
-function setSeatInput(id, raw) {
-  const t = S.t222, slot = S.slots.find((x) => x.id === id), s = String(raw || '').trim();
-  if (!slot) return;
-  if (s === '/') {
-    if (isHero(id)) return; // hero always plays
-    if (slot.active && S.slots.filter((x) => x.active).length <= 2) return;
-    slot.active = false; delete t.stacks[id]; if (S.sel === id) S.sel = null;
-  } else if (s === '') {
-    delete t.stacks[id];
-  } else {
-    const v = parseFloat(s);
-    if (!(v > 0)) return;
-    slot.active = true; t.stacks[id] = v;
-  }
+// click a seat name to take it out of the sim (or seat it again); the table is then custom-sized
+function toggleSeat(id) {
+  const t = S.t222, slot = S.slots.find((x) => x.id === id);
+  if (!slot || isHero(id)) return;
+  if (slot.active && S.slots.filter((x) => x.active).length <= 2) return;
+  slot.active = !slot.active;
+  if (!slot.active) { delete t.stacks[id]; if (S.sel === id) S.sel = null; }
   S.table = 'custom';
+  save222(); replay(); render222(); render(); markStale();
+}
+// blank means the stack is unspecified and the seat stays in
+function setStack(id, raw) {
+  const t = S.t222, s = String(raw || '').trim();
+  if (s === '') delete t.stacks[id];
+  else { const v = parseFloat(s); if (!(v > 0)) return; t.stacks[id] = v; }
   save222(); replay(); render222b(); render(); markStale();
 }
 function renderPko() {
