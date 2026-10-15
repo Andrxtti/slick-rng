@@ -810,7 +810,7 @@ class PreflopSolver {
         if (left <= toCall + 1e-9) { if (s.level <= 1 || inVol || s.level === 2) o.push({ k: 'call' }); return o; }
         if (s.level === 0) {
           const limpers = s.vol.filter((v, j) => v && !s.folded[j]).length;
-          if (cfg.names[p] === 'SB' || (cfg.allowLimps && limpers < 1 && (cfg.names[p] === 'BTN' || cfg.names[p] === 'CO'))) o.push({ k: 'call' });
+          if (cfg.names[p] === 'SB' || (cfg.allowLimps && limpers < 1 && (st[p] <= 30 || cfg.names[p] === 'BTN' || cfg.names[p] === 'CO'))) o.push({ k: 'call' }); // short stacks may open-limp from any seat
         }
         else if (s.level === 1) { if (callers < 2 || cfg.names[p] === 'BB') o.push({ k: 'call' }); }
         else if (inVol) o.push({ k: 'call' });
