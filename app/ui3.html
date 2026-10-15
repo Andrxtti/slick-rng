@@ -73,6 +73,8 @@ header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; pad
 .seat.out { border-style: dashed; background: transparent; opacity: .45; }
 .seat.out b { text-decoration: line-through; color: var(--faint); }
 .hint { font-size: 12px; color: var(--muted); }
+.pfnote { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+.pfnote.ok { color: var(--seafoam); border-color: #2c5a4c; }
 .dealer { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--fg); color: #0a1120; font-family: var(--font-body); font-size: 10px; font-weight: 700; vertical-align: 2px; margin-left: 2px; }
 button.next { border-color: var(--seafoam); color: var(--seafoam); font-weight: 600; }
 .t222 { display: grid; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
@@ -173,7 +175,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.9 · SOLVER</span>
+  <span class="ver">ALPHA 2.0 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -503,6 +505,12 @@ function callRange(seat, facing, vsAllin, prior, risk) {
 }
 function rangeFor(seat) {
   if (S.overrides[seat.id]) return S.overrides[seat.id];
+  const line = pfLookup(S.hist);
+  if (line && line.ok && seat.acts.some((a) => a.k !== 'fold')) {
+    const r = line.reach[T.seats.indexOf(seat)], parts = [];
+    for (let c = 0; c < 169; c++) if (r[c] > 0.002) parts.push(r[c] > 0.998 ? Engine.CLASS_NAMES[c] : `${Engine.CLASS_NAMES[c]}:${r[c].toFixed(3)}`);
+    if (parts.length) return parts.join(',');
+  }
   const acts = seat.acts.filter((a) => a.k !== 'fold');
   if (!acts.length) return seat.pos === 'BB' ? BB_CHECK : 'ANY';
   const last = acts[acts.length - 1], prior = acts.slice(0, -1);
@@ -592,15 +600,24 @@ function preflopReport() {
       if (T.level === 0) return limpers ? (seat.pos === 'SB' ? SB_COMPLETE : LIMP) : '';
       return callRange(seat, T.level, vsAllin, seat.acts);
     };
+    const pfr = pfLookup(ctx.base), pIdx = T.seats.indexOf(seat);
+    const solved = pfr && pfr.ok && !pfr.terminal && pfr.player === pIdx ? pfr : null;
     const order = ['allin', 'raise', 'call', 'check', 'fold'];
-    const wts = opts.map((o) => { const r = rangeOf(o); return r === null ? null : rw(r); });
+    const wts = solved ? opts.map(() => null) : opts.map((o) => { const r = rangeOf(o); return r === null ? null : rw(r); });
+    const map = solved ? opts.map((o) => solved.actions.findIndex((x) => x.k === o.k)) : null;
+    const solvedReach = solved ? solved.reach[pIdx] : null;
     const pri = opts.map((_, i) => i).sort((a, b) => order.indexOf(opts[a].k) - order.indexOf(opts[b].k));
     const classes = {}, overall = new Array(na).fill(0); let total = 0;
     for (let c = 0; c < 1326; c++) {
-      const r = reach[c]; if (r <= 0) continue;
-      const sv = new Array(na).fill(0); let rest = 1;
-      for (const i of pri) { if (!wts[i]) continue; const x = Math.min(rest, wts[i][c]); sv[i] = x; rest -= x; }
-      const fi = opts.findIndex((o) => o.k === 'fold'); sv[fi >= 0 ? fi : pri[pri.length - 1]] += rest;
+      const cls = Engine.CLASS_OF[c];
+      const r = solved ? (S.overrides[seat.id] ? reach[c] : solvedReach[cls]) : reach[c]; if (r <= 1e-6) continue;
+      const sv = new Array(na).fill(0);
+      if (solved) { const st = solved.strat[cls]; for (let i = 0; i < na; i++) sv[i] = map[i] >= 0 ? st[map[i]] : 0; }
+      else {
+        let rest = 1;
+        for (const i of pri) { if (!wts[i]) continue; const x = Math.min(rest, wts[i][c]); sv[i] = x; rest -= x; }
+        const fi = opts.findIndex((o) => o.k === 'fold'); sv[fi >= 0 ? fi : pri[pri.length - 1]] += rest;
+      }
       const k = Engine.comboClass(c), e = classes[k] || (classes[k] = { w: 0, s: new Array(na).fill(0), combos: [] });
       e.w += r; for (let a = 0; a < na; a++) { e.s[a] += r * sv[a]; overall[a] += r * sv[a]; }
       e.combos.push({ name: Engine.comboStr(c), reach: r, s: sv }); total += r;
@@ -612,7 +629,7 @@ function preflopReport() {
     const curIndex = ctx.cur ? opts.findIndex((o) => o.k === ctx.cur.k) : -1;
     return { kind: 'action', preflop: true, name: seat.pos, sub, board: [], pot: potNow(), history: [],
       actions: opts.map((o) => o.t), actionTypes: opts.map((o) => (o.k === 'fold' ? 'fold' : o.k === 'raise' ? 'bet' : o.k === 'allin' ? 'allin' : 'call')),
-      overall, classes, totalReach: total, cur: ctx.cur ? ctx.cur.k : null, curIndex,
+      overall, classes, totalReach: total, cur: ctx.cur ? ctx.cur.k : null, curIndex, solved: !!solved,
       pick: (i) => { const o = opts[i], e = { id: ctx.id, k: o.k }; choose(ctx.mode === 'edit' ? [...S.hist.slice(0, ctx.idx), e, ...S.hist.slice(ctx.idx + 1)] : [...ctx.base, e]); } };
   });
 }
@@ -713,6 +730,7 @@ function render() {
   nh.onclick = nextHand;
   foot.append(clr, nh); pr.appendChild(foot);
   renderBoard(); renderInHand();
+  pfEnsure();
   preReport = preflopReport();
   setView(view);
 }
@@ -849,6 +867,84 @@ function setView(v) { view = v; $('tabPre').setAttribute('aria-pressed', v === '
 
 // ---------------------------------------------------------------- solver worker
 const worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+
+// ---------------------------------------------------------------- GTO preflop solver (parallel workers)
+// Several workers solve the same tree independently; their average strategies are
+// averaged, which multiplies the samples per second by the number of cores.
+const PF_SECONDS = 120, PF_DEEP = 30;
+const PF_N = Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 1));
+const pfWorkers = Array.from({ length: PF_N }, () => new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' }))));
+let pfGen = 0, pfKey = null, pfTimer = null, pfState = { iters: 0, done: false, solving: false, t0: 0, error: null, deep: false };
+const pfCache = new Map(), pfAsked = new Set(), pfParts = new Map(), pfIters = new Array(PF_N).fill(0), pfDoneW = new Array(PF_N).fill(false);
+function pfConfig() {
+  return withHist([], () => {
+    const seats = T.seats, n = seats.length, idx = (pos) => seats.findIndex((x) => x.pos === pos);
+    const blinds = [idx('SB'), idx('BB')].filter((i) => i >= 0), rest = seats.map((_, i) => i).filter((i) => !blinds.includes(i));
+    const postOrder = T.hu ? [idx('BB'), idx('SB')] : [...blinds, ...rest];
+    let payoff = { type: 'chips' };
+    if (S.game === 'icm') { const left = Math.max(S.left, n); payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others: Array(left - n).fill(S.stack) }; }
+    if (S.game === '222') { const t = S.t222, pays = parsePayouts(); if (t.left >= n && pays.length) payoff = { type: 'icm', payouts: pays, others: Array(t.left - n).fill(t.avg > 0 ? t.avg : 25) }; }
+    return { names: seats.map((x) => x.pos), stacks: seats.map((x) => stackOf(x)), posts: seats.map((x) => Math.min(x.put, stackOf(x))),
+      ante: S.game === 'cash' ? 0 : 1, sizes: { ...S.sz }, hu: T.hu, payoff, postOrder };
+  });
+}
+// Deep stacks need postflop play solved inside the preflop solve; until the native build
+// can do that, only stacks where pots are mostly all-in get the GTO preflop solver.
+function pfIsDeep(cfg) { const st = [...cfg.stacks].sort((a, b) => b - a); return (st[1] || st[0]) > PF_DEEP; }
+function pfEnsure() {
+  const cfg = pfConfig(), key = JSON.stringify(cfg);
+  if (key === pfKey) return;
+  pfKey = key; pfCache.clear(); pfAsked.clear(); pfParts.clear(); pfIters.fill(0); pfDoneW.fill(false);
+  const deep = pfIsDeep(cfg);
+  pfState = { iters: 0, done: false, solving: !deep, t0: performance.now(), error: null, deep };
+  clearTimeout(pfTimer);
+  pfWorkers.forEach((w) => w.postMessage({ cmd: 'pfStop' }));
+  if (deep) return;
+  pfTimer = setTimeout(() => pfWorkers.forEach((w) => { w.postMessage({ cmd: 'pfBuild', cfg, key }); w.postMessage({ cmd: 'pfSolve', seconds: PF_SECONDS }); }), 350);
+}
+function pfLookup(hist) {
+  if (!pfKey || pfState.deep) return null;
+  const path = hist.map((e) => (e.to !== undefined ? { k: e.k, to: e.to } : { k: e.k })), ck = pfKey + '|' + JSON.stringify(path);
+  const hit = pfCache.get(ck);
+  if ((!hit || hit.gen !== pfGen) && !pfAsked.has(ck + '#' + pfGen)) {
+    pfAsked.add(ck + '#' + pfGen); pfParts.set(ck, { gen: pfGen, list: [] });
+    pfWorkers.forEach((w) => w.postMessage({ cmd: 'pfQuery', key: pfKey, path, reqId: ck }));
+  }
+  return hit || null;
+}
+function pfMerge(parts) {
+  const ok = parts.filter((r) => r.ok);
+  if (!ok.length) return { ok: false };
+  const base = ok[0], k = ok.length, avgArr = (arrs) => arrs[0].map((_, i) => arrs.reduce((a, x) => a + x[i], 0) / k);
+  const reach = base.reach.map((_, p) => avgArr(ok.map((r) => r.reach[p])));
+  if (base.terminal) return { ok: true, terminal: true, reach };
+  const strat = base.strat.map((_, c) => avgArr(ok.map((r) => r.strat[c])));
+  return { ok: true, player: base.player, actions: base.actions, strat, reach };
+}
+let pfRerender = null;
+function pfRefresh() { clearTimeout(pfRerender); pfRerender = setTimeout(() => { if (view === 'pre') render(); else renderInHand(); }, 60); }
+pfWorkers.forEach((w, wi) => (w.onmessage = (ev) => {
+  const m = ev.data;
+  if (m.type === 'error') { pfState.error = m.message; pfState.solving = false; pfRefresh(); return; }
+  if (m.type === 'pfProgress' && m.key === pfKey) {
+    pfIters[wi] = m.iters; pfDoneW[wi] = m.done;
+    pfState.iters = pfIters.reduce((a, b) => a + b, 0); pfState.done = pfDoneW.every(Boolean); pfState.solving = !pfState.done;
+    const now = performance.now();
+    if (wi === 0 && (m.done || now - (pfState.lastPull || 0) > 2500)) { pfState.lastPull = now; pfGen++; pfRefresh(); }
+    else if (pfState.done) { pfGen++; pfRefresh(); }
+  }
+  if (m.type === 'pfResult' && m.reqId.startsWith(pfKey + '|') && pfParts.has(m.reqId)) {
+    const slot = pfParts.get(m.reqId); slot.list.push(m);
+    if (slot.list.length === PF_N) { const r = pfMerge(slot.list); r.gen = slot.gen; pfCache.set(m.reqId, r); pfParts.delete(m.reqId); pfRefresh(); }
+  }
+}));
+function pfNote(solved) {
+  if (pfState.error) return `GTO preflop unavailable: ${esc(pfState.error)}`;
+  if (pfState.deep) return `Starting estimate · GTO preflop solving covers stacks up to ${PF_DEEP} bb for now`;
+  if (!solved) return pfState.solving ? 'Starting estimate · GTO preflop solving…' : 'Starting estimate · this line is outside the solved tree';
+  const pct = Math.min(100, Math.round(((performance.now() - pfState.t0) / 1000 / PF_SECONDS) * 100));
+  return pfState.done ? `GTO preflop · solved · ${pfState.iters.toLocaleString()} deals` : `GTO preflop · solving ${pct}% · ${pfState.iters.toLocaleString()} deals`;
+}
 let solving = false, t0 = 0, secs = 60, built = null, path = [], selected = null, reqId = 0, report = null, evData = null, timer = null, lastIt = { t: 0, n: 0 }, rate = 0, spotGame = 'cash';
 worker.onmessage = (ev) => {
   const m = ev.data;
@@ -937,7 +1033,7 @@ function renderNode() {
   }
   const col = colors(r.actionTypes), name = r.preflop ? r.name : built.names[r.player];
   v.innerHTML = `<div class="node">
-    <div class="nodetitle"><h2>${esc(name)}</h2>${r.preflop ? `<span class="muted">${esc(r.sub)}</span>` : ''}<span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}${r.preflop ? '<span class="grow"></span><span class="muted" style="font-size:12px">Preflop: Slick RNG starting ranges (not solved yet)</span>' : ''}</div>
+    <div class="nodetitle"><h2>${esc(name)}</h2>${r.preflop ? `<span class="muted">${esc(r.sub)}</span>` : ''}<span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}${r.preflop ? `<span class="grow"></span><span class="pfnote ${r.solved ? 'ok' : ''}">${pfNote(r.solved)}</span>` : ''}</div>
     <div class="actions">${r.actions.map((a, i) => `<button class="act${r.cur && r.preflop && ctxKind(r, i) ? ' cur' : ''}" data-a="${i}"><i style="background:${col[i]}"></i><strong>${esc(a)}</strong><small>${(r.overall[i] * 100).toFixed(1)}%</small></button>`).join('')}</div>
     <div class="freqbar">${r.overall.map((f, i) => `<i style="width:${f * 100}%;background:${col[i]}"></i>`).join('')}</div>
     <div class="split"><div class="gridwrap"><div class="hgrid" id="hgrid"></div></div><div class="detail" id="detail"></div></div>
