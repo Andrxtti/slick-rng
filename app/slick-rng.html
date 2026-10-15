@@ -183,7 +183,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 2.2 · SOLVER</span>
+  <span class="ver">ALPHA 2.3 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -1654,6 +1654,8 @@ function postflopOrder() {
   return [...blinds, ...inH.filter((s) => s.pos !== 'SB' && s.pos !== 'BB')];
 }
 function potNow() { return T.seats.reduce((a, s) => a + s.put, 0) + T.seats.reduce((a, s) => a + deadOf(s), 0); }
+// prize money still to be won: places 1 .. players left (lower places are already paid out)
+function remainingPayouts() { return parsePayouts().slice(0, S.t222.left); }
 function parsePayouts() {
   const t = S.t222, raw = t.payouts.split(/[,\s]+/).map(Number).filter((x) => x > 0).slice(0, t.paid);
   const sum = raw.reduce((a, b) => a + b, 0);
@@ -1681,7 +1683,7 @@ function buildSpot() {
     const others = Array(need).fill(t.avg > 0 ? t.avg : 25);
     // folded table players keep their chips (minus blinds/antes they posted)
     for (const s of T.seats) if (s.folded) others.push(Math.max(0.01, stackOf(s) - s.put));
-    const pays = parsePayouts();
+    const pays = remainingPayouts();
     if (!pays.length) throw new Error('Enter the payouts for the paid places.');
     spot.payoff = { type: 'icm', payouts: pays, others };
   } else if (S.game === 'icm') {
@@ -1890,9 +1892,14 @@ function render222b() {
     l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.avg = v; save222(); render222b(); markStale(); } else e.target.value = avg; });
     box.appendChild(l);
   }
-  const pays = parsePayouts(), total = T.seats.reduce((a, s) => a + baseStack(s), 0) + Math.max(0, need) * avg;
+  const all = parsePayouts(), pays = all.slice(0, t.left), total = T.seats.reduce((a, s) => a + baseStack(s), 0) + Math.max(0, need) * avg;
+  const itm = t.left <= t.paid;
+  const stage = itm
+    ? ` · in the money · next bust earns ${all[t.left - 1].toFixed(2)}%${t.left >= 2 ? `, next pay jump ${all[t.left - 1].toFixed(2)}% → ${all[t.left - 2].toFixed(2)}%` : ''}`
+    : ` · ${t.left - t.paid} from the money${t.left - t.paid === 1 ? ' (bubble)' : ''}`;
+  const left$ = pays.reduce((a, b) => a + b, 0);
   $('tNote').textContent = need < 0 ? `Players left must be at least ${T.seats.length} (players seated).`
-    : `${t.left} left · ${t.paid} paid${t.left > t.paid ? ` · ${t.left - t.paid} from the money` : ' · in the money'} · ${fmt(total)} bb in play · payouts ${pays.slice(0, 6).map((p) => p.toFixed(1) + '%').join(' / ')}${pays.length > 6 ? ` / … / ${pays[pays.length - 1].toFixed(2)}% (min cash)` : ''}`;
+    : `${t.left} left · ${t.paid} paid${stage} · ${fmt(total)} bb in play · ${left$.toFixed(1)}% of the prize pool still to win · top ${Math.min(6, pays.length)}: ${pays.slice(0, 6).map((p) => p.toFixed(1) + '%').join(' / ')}`;
   $('tNote').className = need < 0 || !pays.length ? 'hint error' : 'hint';
   renderIcmBox();
 }
@@ -1900,7 +1907,7 @@ function render222b() {
 // selected seat, the bubble factor against every other seat (how much more a chip lost
 // costs than a chip won when those two get all-in against each other).
 function renderIcmBox() {
-  const box = $('icmBox'), t = S.t222, need = t.left - T.seats.length, pays = parsePayouts();
+  const box = $('icmBox'), t = S.t222, need = t.left - T.seats.length, pays = remainingPayouts();
   if (need < 0 || !pays.length) { box.innerHTML = ''; return; }
   const seats = S.slots.filter((x) => x.active).map((x) => seatById(x.id));
   const st = seats.map((x) => baseStack(x)), g = t.avg > 0 ? t.avg : 25;
@@ -1928,8 +1935,8 @@ function renderIcmBox() {
 function bind222() {
   const t = S.t222;
   $('tAnte').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v >= 0) { t.ante = v; save222(); replay(); render(); markStale(); } else e.target.value = anteNow(); });
-  $('tLeft').addEventListener('change', (e) => { const v = Math.max(2, Math.min(75, parseInt(e.target.value, 10) || 2)); t.left = v; if (t.paid > Math.min(50, v)) { t.paid = Math.min(50, v); $('tPaid').value = t.paid; t.payouts = defaultPayouts(t.paid); $('tPay').value = t.payouts; } save222(); e.target.value = v; render222b(); markStale(); });
-  $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(50, t.left, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
+  $('tLeft').addEventListener('change', (e) => { const v = Math.max(2, Math.min(75, parseInt(e.target.value, 10) || 2)); t.left = v; save222(); e.target.value = v; render222b(); markStale(); });
+  $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(50, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
     if (t.payouts.split(',').filter(Boolean).length < v || was !== v) { t.payouts = defaultPayouts(v); $('tPay').value = t.payouts; } save222(); render222b(); markStale(); });
   $('tPay').addEventListener('change', (e) => { t.payouts = e.target.value; save222(); render222b(); markStale(); });
   $('tButton').addEventListener('change', (e) => {
@@ -2035,7 +2042,7 @@ function pfConfig() {
     const postOrder = T.hu ? [idx('BB'), idx('SB')] : [...blinds, ...rest];
     let payoff = { type: 'chips' };
     if (S.game === 'icm') { const left = Math.max(S.left, n); payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others: Array(left - n).fill(S.stack) }; }
-    if (S.game === '222') { const t = S.t222, pays = parsePayouts(); if (t.left >= n && pays.length) payoff = { type: 'icm', payouts: pays, others: Array(t.left - n).fill(t.avg > 0 ? t.avg : 25) }; }
+    if (S.game === '222') { const t = S.t222, pays = remainingPayouts(); if (t.left >= n && pays.length) payoff = { type: 'icm', payouts: pays, others: Array(t.left - n).fill(t.avg > 0 ? t.avg : 25) }; }
     return { names: seats.map((x) => x.pos), stacks: seats.map((x) => stackOf(x)), posts: seats.map((x) => Math.min(x.put, stackOf(x))),
       ante: seats.reduce((a, x) => a + deadOf(x), 0), sizes: { ...S.sz }, hu: T.hu, payoff, postOrder, allowLimps: S.game === '222' };
   });
