@@ -465,6 +465,7 @@ header.top.hide { transform: translateY(-110%); }
           <div class="group">
             <span class="label">Table stacks (bb)</span>
             <div class="stkgrid" id="tSeats"></div>
+            <div class="row"><button id="tClearStk" class="mini" title="Blank every stack, turn ICM off and set 9 players: a 9-handed chip EV sim with villain stacks unspecified">Clear stacks</button></div>
             <div class="row"><label class="field"><span class="label">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select></label>
               <div class="field" id="tOthersWrap"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
           </div>
@@ -1331,7 +1332,7 @@ function render222() {
     if (!slot.active) continue;
     const seat = seatById(slot.id);
     const l = document.createElement('label'); l.className = 'stk';
-    l.innerHTML = `<span>${seatLabel(seat.id)}</span><input type="number" min="0.5" step="0.5" value="${baseStack(seat)}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
+    l.innerHTML = `<span>${seatLabel(seat.id)}</span><input type="number" min="0.5" step="0.5" value="${t.stacks[seat.id] > 0 ? t.stacks[seat.id] : ''}" placeholder="${baseStack(seat)}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
     l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.stacks[seat.id] = v; save222(); replay(); render222b(); render(); markStale(); } });
     ts.appendChild(l);
   }
@@ -1423,6 +1424,8 @@ function bind222() {
   const t = S.t222;
   $('tSat').onclick = () => { t.payouts = Array(t.paid).fill(1).join(','); $('tPay').value = t.payouts; save222(); render222b(); render(); markStale(); };
   $('icmOn').addEventListener('change', (e) => { t.icm = e.target.checked; save222(); render(); markStale(); });
+  // clear stacks: every seat goes blank, ICM off, 9 players left, so the sim is a 9-handed chip EV with villain stacks unspecified
+  $('tClearStk').addEventListener('click', () => { t.stacks = {}; t.icm = false; t.left = 9; save222(); replay(); render(); markStale(); });
   document.querySelector('.icmveil').addEventListener('click', () => { t.icm = true; save222(); render(); markStale(); });
   $('pkoOn').addEventListener('change', (e) => { t.pko.on = e.target.checked; save222(); render(); markStale(); });
   // what-if: values update live while dragging; the solver restarts when you let go
