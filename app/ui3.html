@@ -203,6 +203,7 @@ header.top {
 .seat b { font-family: var(--font-display); font-size: 18px; letter-spacing: .04em; font-weight: 600; line-height: 1.1; }
 .seat small { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .seat .stack { font-family: var(--font-mono); color: var(--fg); font-size: 12px; }
+.stk.off { opacity: .5; }
 .seat.fold { opacity: .38; }
 .seat.agg small:last-of-type { color: #ff9a7a; font-weight: 600; }
 .seat.pass small:last-of-type { color: var(--seafoam); font-weight: 600; }
@@ -465,7 +466,7 @@ header.top.hide { transform: translateY(-110%); }
           <div class="group">
             <span class="label">Table stacks (bb)</span>
             <div class="stkgrid" id="tSeats"></div>
-            <div class="row"><button id="tClearStk" class="mini" title="Blank every stack, turn ICM off and set 9 players: a 9-handed chip EV sim with villain stacks unspecified">Clear stacks</button></div>
+            <div class="row"><button id="tClearStk" class="mini" title="Keep only the hero's stack, blank the rest, and reset to 9 seats: a general chip EV sim">Clear stacks</button><span class="hint">Type / in a stack box to remove that seat.</span></div>
             <div class="row"><label class="field"><span class="label">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select></label>
               <div class="field" id="tOthersWrap"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
           </div>
@@ -1329,14 +1330,32 @@ function render222() {
   $('tEnt').value = t.entrants || ''; $('tBuy').value = t.buyin || ''; $('tGtd').value = t.gtd || '';
   const ts = $('tSeats'); ts.innerHTML = '';
   for (const slot of S.slots) {
-    if (!slot.active) continue;
-    const seat = seatById(slot.id);
-    const l = document.createElement('label'); l.className = 'stk';
-    l.innerHTML = `<span>${seatLabel(seat.id)}</span><input type="number" min="0.5" step="0.5" value="${t.stacks[seat.id] > 0 ? t.stacks[seat.id] : ''}" placeholder="${baseStack(seat)}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
-    l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.stacks[seat.id] = v; save222(); replay(); render222b(); render(); markStale(); } });
+    const seat = { id: slot.id };
+    const l = document.createElement('label'); l.className = 'stk' + (slot.active ? '' : ' off');
+    const val = slot.active ? (t.stacks[seat.id] > 0 ? t.stacks[seat.id] : '') : '/';
+    l.innerHTML = `<span>${seatLabel(seat.id)}</span><input type="text" inputmode="decimal" value="${val}" placeholder="${slot.active ? baseStack(seat) : '/'}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
+    l.querySelector('input').addEventListener('change', (e) => setSeatInput(seat.id, e.target.value));
     ts.appendChild(l);
   }
   render222b();
+}
+// a stack box takes a number (seat in), blank (stack unspecified, seat stays) or / (seat removed from the sim)
+function setSeatInput(id, raw) {
+  const t = S.t222, slot = S.slots.find((x) => x.id === id), s = String(raw || '').trim();
+  if (!slot) return;
+  if (s === '/') {
+    if (isHero(id)) return; // hero always plays
+    if (slot.active && S.slots.filter((x) => x.active).length <= 2) return;
+    slot.active = false; delete t.stacks[id]; if (S.sel === id) S.sel = null;
+  } else if (s === '') {
+    delete t.stacks[id];
+  } else {
+    const v = parseFloat(s);
+    if (!(v > 0)) return;
+    slot.active = true; t.stacks[id] = v;
+  }
+  S.table = 'custom';
+  save222(); replay(); render222b(); render(); markStale();
 }
 function renderPko() {
   const t = S.t222, row = $('pkoRow'); $('pkoOn').checked = !!t.pko.on; row.innerHTML = '';
@@ -1425,7 +1444,7 @@ function bind222() {
   $('tSat').onclick = () => { t.payouts = Array(t.paid).fill(1).join(','); $('tPay').value = t.payouts; save222(); render222b(); render(); markStale(); };
   $('icmOn').addEventListener('change', (e) => { t.icm = e.target.checked; save222(); render(); markStale(); });
   // clear stacks: every seat goes blank, ICM off, 9 players left, so the sim is a 9-handed chip EV with villain stacks unspecified
-  $('tClearStk').addEventListener('click', () => { t.stacks = {}; t.icm = false; t.left = 9; save222(); replay(); render(); markStale(); });
+  $('tClearStk').addEventListener('click', () => { const hero = t.stacks[0]; t.stacks = hero > 0 ? { 0: hero } : {}; S.table = 'custom'; makeSlots(); t.icm = false; t.left = 9; save222(); replay(); render(); markStale(); });
   document.querySelector('.icmveil').addEventListener('click', () => { t.icm = true; save222(); render(); markStale(); });
   $('pkoOn').addEventListener('change', (e) => { t.pko.on = e.target.checked; save222(); render(); markStale(); });
   // what-if: values update live while dragging; the solver restarts when you let go
