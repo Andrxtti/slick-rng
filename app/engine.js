@@ -270,6 +270,54 @@ function icmEquity(stacks, start, payouts) {
   return eq;
 }
 
+// Exact Malmuth-Harville ICM for big fields where the players away from the table share
+// one (average) stack. Identical players are interchangeable, so the finishing-order
+// recursion only has to track WHICH table players are placed and HOW MANY of the others:
+// states = 2^(table players) x (others + 1). Exact, no sampling.
+//   dist: stacks of the distinct players (table), startDist: their stacks before the hand
+//   g: the shared stack of the others, m: how many others
+function icmEquityGrouped(dist, startDist, g, m, payouts) {
+  const n = dist.length, eq = new Float64Array(n), paid = payouts.length;
+  const alive = [], busted = [];
+  for (let i = 0; i < n; i++) (dist[i] > 1e-9 ? alive : busted).push(i);
+  const aliveTotal = alive.length + (g > 0 ? m : 0);
+  busted.sort((x, y) => startDist[y] - startDist[x]).forEach((i, k) => { const pl = aliveTotal + k; if (pl < paid) eq[i] = payouts[pl]; });
+  const a = alive.length, M = g > 0 ? m : 0;
+  if (!a || !paid) return eq;
+  const size = 1 << a, st = alive.map((i) => dist[i]);
+  const sumS = new Float64Array(size), pc = new Uint8Array(size);
+  for (let s = 1; s < size; s++) { const low = 31 - Math.clz32(s & -s); sumS[s] = sumS[s & (s - 1)] + st[low]; pc[s] = pc[s & (s - 1)] + 1; }
+  const total = sumS[size - 1] + M * g;
+  // prob[s * (M+1) + j]: chance that exactly table-set s and j others hold the top places
+  const W = M + 1, prob = new Float64Array(size * W);
+  prob[0] = 1;
+  // process states in order of places filled (|s| + j)
+  for (let place = 0; place < Math.min(paid, a + M); place++) {
+    for (let s = 0; s < size; s++) {
+      const j = place - pc[s]; if (j < 0 || j > M) continue;
+      const p = prob[s * W + j]; if (p === 0) continue;
+      const rem = total - sumS[s] - j * g; if (rem <= 1e-12) continue;
+      const pay = payouts[place];
+      for (let t = 0; t < a; t++) {
+        if (s & (1 << t)) continue;
+        const q = (p * st[t]) / rem;
+        eq[alive[t]] += q * pay;
+        prob[(s | (1 << t)) * W + j] += q;
+      }
+      if (j < M) prob[s * W + j + 1] += (p * (M - j) * g) / rem;
+    }
+  }
+  return eq;
+}
+// split "others" into one shared stack (the most common value) and the rest
+function groupOthers(others) {
+  const cnt = new Map(); for (const x of others) cnt.set(x, (cnt.get(x) || 0) + 1);
+  let g = 0, m = 0; for (const [v, c] of cnt) if (c > m) { g = v; m = c; }
+  const rest = []; let skipped = 0;
+  for (const x of others) { if (x === g && skipped < m) { skipped++; continue; } rest.push(x); }
+  return { g, m, rest };
+}
+
 // Large fields: Malmuth-Harville finishing orders sampled with exponential races
 // (player j's key = Exp(1) / stack; sorting keys gives an exact MH order). The same
 // samples are reused for every evaluation, so equity differences between outcomes are
@@ -505,9 +553,12 @@ class Solver {
     let v = this.icmCache.get(k);
     if (v) return v;
     const { payouts, others } = this.spot.payoff;
-    if (this.n + others.length <= 14) {
-      const all = [...fin, ...others], start = [...this.spot.stacks, ...others];
-      v = icmEquity(all, start, payouts).slice(0, this.n);
+    if (!this.icmGroup) this.icmGroup = groupOthers(others);
+    const G = this.icmGroup;
+    if (this.n + G.rest.length <= 13) {
+      // exact: distinct players = players in the hand + the non-average others
+      const dist = [...fin, ...G.rest], start = [...this.spot.stacks, ...G.rest];
+      v = icmEquityGrouped(dist, start, G.g, G.m, payouts).slice(0, this.n);
     } else {
       if (!this.icmModel) this.icmModel = new IcmModel(this.n, others, payouts, 6000);
       v = this.icmModel.equity(fin, this.spot.stacks);
@@ -696,7 +747,7 @@ class PreflopSolver {
     this.c7 = new Uint8Array(7); this.sig = []; this.val = [];
     for (let d = 0; d < 64; d++) { this.sig.push(new Float64Array(8)); this.val.push(new Float64Array(8)); }
     const p = cfg.payoff || { type: 'chips' };
-    if (p.type === 'icm' && this.n + p.others.length > 14) this.icmModel = new IcmModel(this.n, p.others, p.payouts, 4000);
+    if (p.type === 'icm' && this.n + groupOthers(p.others).rest.length > 13) this.icmModel = new IcmModel(this.n, p.others, p.payouts, 6000);
   }
 
   buildTree() {
@@ -718,7 +769,8 @@ class PreflopSolver {
       return -1;
     };
     const sizeFor = (s, L) => {
-      let to = L === 1 ? cfg.sizes.open : L === 2 ? cfg.sizes.b3 : L === 3 ? cfg.sizes.b4 : cfg.sizes.b5;
+      const limpers = L === 1 ? s.vol.filter((v, j) => v && !s.folded[j] && cfg.names[j] !== 'BB').length : 0;
+      let to = L === 1 ? cfg.sizes.open + limpers : L === 2 ? cfg.sizes.b3 : L === 3 ? cfg.sizes.b4 : cfg.sizes.b5;
       const minTo = s.bet + s.lastRaise; if (to < minTo) to = Math.max(minTo, s.bet * 2.2);
       return Math.round(to * 10) / 10;
     };
@@ -734,7 +786,10 @@ class PreflopSolver {
       if (toCall > 1e-9) {
         o.push({ k: 'fold' });
         if (left <= toCall + 1e-9) { if (s.level <= 1 || inVol || s.level === 2) o.push({ k: 'call' }); return o; }
-        if (s.level === 0) { if (cfg.names[p] === 'SB') o.push({ k: 'call' }); }
+        if (s.level === 0) {
+          const limpers = s.vol.filter((v, j) => v && !s.folded[j]).length;
+          if (cfg.names[p] === 'SB' || (cfg.allowLimps && limpers < 1 && (cfg.names[p] === 'BTN' || cfg.names[p] === 'CO'))) o.push({ k: 'call' });
+        }
         else if (s.level === 1) { if (callers < 2 || cfg.names[p] === 'BB') o.push({ k: 'call' }); }
         else if (inVol) o.push({ k: 'call' });
       } else o.push({ k: 'check' });
@@ -821,7 +876,10 @@ class PreflopSolver {
     if (p.type !== 'icm') { const u = new Float64Array(this.n); for (let i = 0; i < this.n; i++) u[i] = fin[i] - this.cfg.stacks[i]; return u; }
     let k = ''; for (let i = 0; i < fin.length; i++) k += Math.round(fin[i] * 100) + ',';
     let v = this.icmCache.get(k); if (v) return v;
-    if (this.icmModel) v = this.icmModel.equity(fin, this.cfg.stacks);
+    if (!this.icmGroup) this.icmGroup = groupOthers(p.others);
+    const G = this.icmGroup;
+    if (this.n + G.rest.length <= 13) v = icmEquityGrouped([...fin, ...G.rest], [...this.cfg.stacks, ...G.rest], G.g, G.m, p.payouts).slice(0, this.n);
+    else if (this.icmModel) v = this.icmModel.equity(fin, this.cfg.stacks);
     else v = icmEquity([...fin, ...p.others], [...this.cfg.stacks, ...p.others], p.payouts).slice(0, this.n);
     if (this.icmCache.size < 400000) this.icmCache.set(k, v);
     return v;
@@ -988,7 +1046,7 @@ class PreflopSolver {
   stats() { return { iters: this.iters, nodes: this.nodes.length, bytes: this.T.length * 4 }; }
 }
 
-const SlickEngine = { PreflopSolver, CLASS_NAMES, CLASS_OF, IcmModel, Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
+const SlickEngine = { icmEquityGrouped, groupOthers, PreflopSolver, CLASS_NAMES, CLASS_OF, IcmModel, Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
 
 // ---------------------------------------------------------------- worker protocol
 if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typeof window === 'undefined') {
