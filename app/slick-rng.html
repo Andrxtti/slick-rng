@@ -2945,6 +2945,7 @@ function render222() {
     l.innerHTML = `<button type="button" class="seatpick" aria-pressed="${!!seat}"${id === 0 ? ' disabled' : ''} title="${id === 0 ? 'Hero always plays' : seat ? 'Click to empty this seat' : 'Click to seat a player here'}">${seatLabel(id)}${seat ? (seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`) : '<em>empty</em>'}</button><input type="number" min="0" step="0.5" value="${!unknown && seat ? baseStack(seat) : ''}" placeholder="${unknown ? '?' : seat ? '' : 'empty'}" aria-label="${seatLabel(id)} stack (blank = empty seat)">`; if (isHero(id)) l.classList.add('hero');
     l.querySelector('.seatpick').addEventListener('click', () => toggleSeat(id));
     l.querySelector('input').addEventListener('change', (e) => {
+      e.target.blur(); // leave the box first, or render222 skips rebuilding the seat grid while it is focused
       const v = parseFloat(e.target.value), filled = S.slots.filter((x) => x.active).length;
       if (!(v > 0)) {
         if (id === 0 || (slot.active && filled <= 2)) { e.target.value = seat ? baseStack(seat) : ''; return; } // Hero and at least two players stay seated
