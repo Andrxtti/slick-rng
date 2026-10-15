@@ -368,6 +368,8 @@ details.adv summary:hover { color: var(--fg); }
 .act i { position: absolute; left: 0; top: 0; right: 0; height: 3px; border-radius: 0; width: auto; }
 .act strong { font-weight: 600; font-size: 14px; }
 .act small { font-family: var(--font-mono); color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.act small em { font-style: normal; }
+.act small em::before { content: " · "; }
 .act.cur { border-color: var(--fg); background: var(--panel-3); }
 .freqbar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--bg-2); border: 1px solid var(--line); }
 .freqbar i { display: block; height: 100%; transition: width .3s; }
@@ -475,7 +477,13 @@ details.adv summary:hover { color: var(--fg); }
   .act { min-width: 0; grid-template-columns: auto minmax(0, 1fr); column-gap: 9px; align-items: center; padding: 10px 10px 10px 12px; border-radius: 12px; }
   .act i { position: static; width: 10px; height: 10px; border-radius: 50%; grid-row: span 2; }
   .act strong { line-height: 1.2; overflow-wrap: anywhere; }
-  .act small { font-size: 12.5px; color: var(--fg); line-height: 1.3; }
+  .act small { font-size: 13px; color: var(--fg); line-height: 1.3; }
+  .act small em { display: block; font-size: 11px; color: var(--muted); }
+  .act small em::before { content: none; }
+  .node .detail.idle { display: none; }
+  body:not(.to-flop) #postBar { display: none; }
+  #spTypeT { display: none; }
+  .felt .feltc { padding-top: 4px; }
   .hgrid { gap: 3px; padding: 3px; border-radius: 12px; }
   .cell { border-radius: 4px; }
   .cell .lab { left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; font-size: min(2.7vw, 13px); font-weight: 600; letter-spacing: -.04em; }
@@ -485,9 +493,8 @@ details.adv summary:hover { color: var(--fg); }
   /* spot tiles */
   .tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
   .tile { grid-column: span 2; }
-  #spPosT, #spMore { grid-column: span 3; }
-  #spAction { grid-column: 1 / -1; min-height: 52px; }
-  .training #spMore { grid-column: 1 / -1; }
+  #spAction { grid-column: span 4; }
+  .training #spMore { grid-column: span 2; }
   .tile { position: relative; display: grid; gap: 1px; align-content: center; min-height: 60px; padding: 8px 10px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--bg-2); text-align: left; min-width: 0; color: var(--fg); }
   .tile .tl { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tile select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; padding: 0 14px 0 0; border-radius: 0; font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: .01em; width: 100%; color: var(--fg); cursor: pointer; text-overflow: ellipsis; }
@@ -499,24 +506,99 @@ details.adv summary:hover { color: var(--fg); }
   button.tile .tv { padding-right: 10px; }
 
   /* bottom tab bar */
-  .tabbar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  .tabbar { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
     padding: 6px max(12px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
     background: rgba(14, 13, 11, .94); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); border-top: 1px solid var(--line); }
-  .tabbar button { border: 0; background: transparent; display: grid; justify-items: center; gap: 2px; padding: 4px 0; color: var(--faint); font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; box-shadow: none; }
+  .tabbar button { border: 0; background: transparent; display: grid; justify-items: center; gap: 2px; padding: 4px 0; color: var(--faint); font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; box-shadow: none; }
   .tabbar button:hover:not(:disabled) { background: transparent; border: 0; color: var(--muted); }
-  .tabbar svg { width: 24px; height: 24px; padding: 6px 14px; box-sizing: content-box; border-radius: 12px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .tabbar svg { width: 22px; height: 22px; padding: 6px 12px; box-sizing: content-box; border-radius: 12px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .tabbar button[aria-current="page"], .tabbar button[aria-current="page"]:hover:not(:disabled) { color: var(--hero); }
+  /* MTT: Details page and Chart page */
+  body.pg-details .results, body.pg-details .spotbar, body.pg-details #tableBar, body.pg-details #postBar { display: none !important; }
+  body.pg-mtt:not(.pg-details) .tourney { display: none !important; }
+  body.pg-details .tourney > details > summary { pointer-events: none; }
+  body.pg-details .tourney > details > summary .chev { display: none; }
   .tabbar button[aria-current="page"] svg { background: var(--hero-bg); box-shadow: 0 0 0 1px rgba(90, 169, 222, .35); }
 }
+/* ---------- launch: two split screens (Solver | Trainer, then Cash | MTT) */
+.brand { cursor: pointer; border-radius: 10px; }
+body.launching { overflow: hidden; }
+.launch { position: fixed; inset: 0; z-index: 60; background: var(--bg); display: grid; }
+.lscreen { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); gap: 14px; animation: ls-in .35s ease both; }
+@keyframes ls-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.lhead { display: grid; justify-items: center; gap: 4px; position: relative; padding-top: 6px; }
+.lhead .wordmark { font-size: clamp(22px, 6.4vw, 34px); text-align: center; }
+.lback { position: absolute; left: 0; top: 2px; border-radius: 999px; padding: 6px 13px; font-size: 13px; }
+.lsplit { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 0; }
+.half { position: relative; overflow: hidden; display: grid; align-content: center; justify-items: center; gap: 10px; padding: 18px 10px; border-radius: 20px; border: 1px solid var(--line-2); text-align: center; min-height: 0;
+  background: radial-gradient(120% 70% at 50% 38%, var(--glow), transparent 70%), linear-gradient(180deg, var(--panel), #0c0b09);
+  box-shadow: inset 0 1px 0 rgba(255, 244, 220, .05), 0 20px 50px -30px var(--glow-2); transition: transform .15s, border-color .2s, box-shadow .2s; }
+.half::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, rgba(255, 246, 224, .07) 50%, transparent 65%); transform: translateX(-120%); animation: sheen 4.5s ease-in-out 1s infinite; pointer-events: none; }
+@keyframes sheen { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+.half:hover:not(:disabled) { background: radial-gradient(120% 70% at 50% 38%, var(--glow), transparent 70%), linear-gradient(180deg, var(--panel-2), #0c0b09); border-color: var(--edge); }
+.half:active:not(:disabled) { transform: scale(.98); }
+.half .px { width: min(94%, 280px); height: auto; image-rendering: pixelated; filter: drop-shadow(0 12px 18px rgba(0, 0, 0, .7)) drop-shadow(0 0 22px var(--glow-2)); animation: bob 3.2s ease-in-out infinite; }
+.h-trainer .px, .h-mtt .px { animation-delay: -1.6s; }
+@keyframes bob { 50% { transform: translateY(-5px); } }
+.half b { font-family: var(--font-display); font-size: clamp(26px, 7.5vw, 44px); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--edge); line-height: 1; }
+.half small { color: var(--muted); font-size: 12px; letter-spacing: .04em; }
+.h-solver { --glow: rgba(90, 169, 222, .22); --glow-2: rgba(90, 169, 222, .55); --edge: #8cc6ec; }
+.h-trainer { --glow: rgba(217, 67, 79, .2); --glow-2: rgba(217, 67, 79, .5); --edge: #ff8f86; }
+.h-cash { --glow: rgba(240, 195, 90, .18); --glow-2: rgba(240, 195, 90, .45); --edge: #f3cf7a; }
+.h-mtt { --glow: rgba(232, 112, 79, .2); --glow-2: rgba(232, 112, 79, .5); --edge: #ffab8f; }
+@media (min-width: 761px) { .lscreen { max-width: 1100px; width: 100%; margin-inline: auto; padding-block: 28px; } .lsplit { gap: 18px; } }
+
+/* ---------- solve mode: Chip EV → Tournament → ICM spot */
+.modecard { display: grid; gap: 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line-2); background: var(--bg-2); transition: border-color .3s, box-shadow .3s; }
+.modesteps { display: flex; align-items: center; gap: 6px; }
+.modesteps span { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; }
+.modesteps i { flex: 1; height: 1px; background: var(--line-2); min-width: 8px; }
+.modesteps span.on { color: var(--fg); border-color: var(--carolina); }
+.modecard[data-m="tourney"] .modesteps span.on { color: var(--hero); border-color: var(--hero); background: var(--hero-bg); }
+.modecard[data-m="icm"] .modesteps span.on { color: #fff; border-color: var(--hero); background: var(--hero); color: var(--hero-ink); font-weight: 600; }
+.modetext { display: grid; gap: 2px; }
+.modetext b { font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: .05em; }
+.modecard[data-m="tourney"] { border-color: rgba(90, 169, 222, .4); }
+.modecard[data-m="tourney"] .modetext b { color: var(--hero); }
+.modecard[data-m="icm"] { border-color: rgba(90, 169, 222, .7); animation: icmGlow 3s ease-in-out infinite; }
+.modecard[data-m="icm"] .modetext b { color: var(--hero); }
+.fields.f4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 761px) { .fields.f4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* ---------- ICM flag + glowing chart in ICM spots */
+.icmflag { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--line); border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 9px 14px; background: var(--bg-2); font-size: 12px; color: var(--muted); }
+.icmflag:hover:not(:disabled) { background: var(--panel-2); border-color: var(--line); }
+.icmflag b { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg); white-space: nowrap; }
+.icmflag .grow { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); }
+.icmflag .fgo { color: var(--faint); font-size: 16px; }
+.fdot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
+.icmflag.tourney .fdot { background: var(--hero); }
+.icmflag.tourney b { color: var(--hero); }
+.icmflag.icm { background: linear-gradient(90deg, rgba(90, 169, 222, .22), rgba(90, 169, 222, .05) 70%), var(--bg-2); color: #cfe6f7; position: relative; overflow: hidden; }
+.icmflag.icm::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .12) 50%, transparent 70%); transform: translateX(-100%); animation: sheen 3.5s ease-in-out infinite; pointer-events: none; }
+.icmflag.icm b { color: #fff; }
+.icmflag.icm .fdot { background: #fff; box-shadow: 0 0 0 3px rgba(90, 169, 222, .5), 0 0 12px var(--hero); animation: blink 1.6s ease-in-out infinite; }
+.icmflag.icm.l2 { background: linear-gradient(90deg, rgba(90, 169, 222, .38), rgba(232, 112, 79, .12) 80%), var(--bg-2); }
+.results.icm-t { border-color: rgba(90, 169, 222, .3); }
+.results.icm-l1, .results.icm-l2 { border-color: rgba(90, 169, 222, .65); animation: icmGlow 3s ease-in-out infinite; }
+.results.icm-l2 { animation-duration: 2.2s; }
+.results.icm-l1 .hgrid, .results.icm-l2 .hgrid { border-color: rgba(90, 169, 222, .55); box-shadow: 0 0 0 1px rgba(90, 169, 222, .2), 0 0 26px -6px rgba(90, 169, 222, .55); }
+.results.icm-l2 .hgrid { box-shadow: 0 0 0 1px rgba(90, 169, 222, .35), 0 0 34px -4px rgba(90, 169, 222, .7); }
+@keyframes icmGlow {
+  0%, 100% { box-shadow: var(--shadow), 0 0 0 1px rgba(90, 169, 222, .18), 0 0 22px -8px rgba(90, 169, 222, .45); }
+  50% { box-shadow: var(--shadow), 0 0 0 1px rgba(90, 169, 222, .45), 0 0 40px -6px rgba(90, 169, 222, .75); }
+}
+@media (max-width: 760px) { .icmflag { order: 0; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 
 <header class="top">
   <div class="topin">
-    <div class="brand">
+    <div class="brand" id="brandHome" role="button" tabindex="0" title="Home">
       <span class="brandmark" aria-hidden="true"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABgAGADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDyWiiivCPqyG4SIRszIM44xWNe6jZWZAubhIyegJ5NT65fNFC5hjaVlBKovU1yyQXMTR3A0tJ5yoMkksw37u+B0FdVGjzq7OHFYtUnaOrN651ext5BHLIysRnG09KdPqVssCSR+a+9gqnYeCfUVXuvOt7Nbl45lBAbYmGb6YqOWSYXESJCXRsl5C2Ao/qa6Y0ILc4J46rLbQn0+bUZNRaK58gW5+4yHk+xFaskTqQVww53ZOCP8axpZo4EMsjhAoyT9O9Vr+a/keC4snS4iOfMUuBvB6EGh0YPoKOMqp6s3qWsW18+O8W68x0iaMK8Dc4PrkHGa145EkGUYNjr7Vxyi4uzPXp1FUjdD6KKKk0K7eLNCAJF3I3sIHyf0qebWLObSpL61nDwIDvbaQRgdMHmvaD8ffDu3C+D/FHmYzte0jRemTli2B9a+fPE/iTU/G9xqWs30wiW5uvkt0QBY0BBC8Dk4711Qw8Gzy6mNqxWqWpnQ3V1LG0zlo5JSWIJzj0H4DHFRbr1HUx37mRj910DK34dql6mptM2S3GeflXdggj6V2WSR5rbbuyR9RuovLi1S3YIhyksWWQH3HUVq6U9pODP58bov3cMCD9agZ1TBZwuSFGTjJPQVFYQi5ZoorR0ieR0cBNuPVj7Htj1qRlXXWiivob5onKI5CsmflB55A7Ui30RtlNgqhWJPK4A5549etTL9keSbT7Pf5Nthd45AP8Adz3NUzA3nR208hgklLGMphsheeT06UxGhZytMGdm+78pUYxnrn1qTRreK3vbl0DhpnLNubOfp7U2OKK2RzFEeTlgoyWNUtUu5rKVmiffK6gQLszsbvj6+9Z1Ic6sjehVVKXM1c6wW52qzSRpu6BmxR5C4b/SIvl+98w4+vpXT/DnWPgdq+lmfxboekaVqqjbcRTibazA/eUg856kdQc/U7/9hfsxvlvtmkDPb+0bkfpurm+r23f4Hesc3qo/j/wDz7xtrcNpCqB5JHWTYsUZ5dyOn0Gc/lXBwW09t5xl2BJZTIgRiV59j0rT16Czt9cm1FVeSdn2nJ+VGxyfas7UrmT7NLMzZKqdvHStsNBRhdHNj6sp1LPoMe4t45RHLMFY4+XBJ59AK3LMLNbs1t8yx8MnRgfQqeQa9P8Ahl8O9FsfD1tf3sH2vU7pBK1y/wB5ARkBPT69TVzxF4Ct7phJHbR3WOAd3lSqPZgRn86wnjoKVkdVPKKjhzSep5NcWzLJiby2IbdEcZ28Yz9etEbypB5DSsd67XYDG716dK7W/wDhn5mxpodTk8skoPtZfH5HNYV74Du7CNjp1zNbEnOy4Qsh/PkfgaqOMg9yKmWVY7HNefbWqrBBBhVOAEGAPrVG5aabUYLklQkOSBnqTWnc+HfECzsksPmqzA+fbKPl5GQVP9Ky9Skisp4wyyrHLnErqQjY7qf4h7iuqNSEtmcE6FSCvJWLN1qBwRGdpVS20EFjWz4c8Fa74j8N6jq0c5gvYAstnZsozOgznceoz0A9fqKwNHsZdd8QadpOmbBdXr7RPgfu4+dzfgAT+Fe7eG/hnr58eWOvWaxW2l6XEYjP9p/eXq7eFKdFAyckk/4c+Jr+z0Ts9/69TswOEVa8pJtXt/wflueHeELq3u/tEEsK72bc8bjcDwBnBHtXR/ZrP/nwsv8AwHT/AArk45oV8dXVxYDdaXGoyRR4HBUsSMfpXWwzRytKI23GKVon9mHUVnXTUr9zowcoyhyvpoUvFWmxXUM11buS88OCAflY9mx69BmuQaf7ZZPaxNi4CgMr8Z9f1rvyNwIPIPXNY2p+HbS8cSKxhkDbt6AAk+5qqFbkVpE4rCOo+aG5698Ddbm1bwLDFOrGXTz9lbPX5RwPyxXe186eC9Y1fwDe3c1nZS6vaXsYEsRl2lZFPD8D0JB4710kvxm1K3Zf7R8OR2kcnAaK4EzqeOq8frXDVw0pTbhsz08PjoU6SjWdmvJ/mej+LfGXh3wun/E21BEnIylug3yt6fKOg9zXOeF/F/jHxTdC507wtaWmiecFM99K4eRM4JUDqe/AI7Zrz2TX/CEOoz6iJxcXdyTNJdtG0s4duw3LgADjrx0xWoPip4u1i7j0/wAF+G3uPKUYVbWS6mYAddqfdHFaQwr5bRjr5mVTMIqd5Tsuy1fzf9ep6J4q1O30zTjOmhWd3qFze/Y9Pt1cE3LZxuOBkY5LDkjHXmug1TwcdYsbmLWvD1jLo8KRvCXwHZzncwAwVUfKAeCcntXkEPxb8UeC3Oj6n4KtLLVIUYvFdrLCY/NG8MIzyhIfPUfe7dKXw38XfH2tta+GtFj0TTLCCEIsMdsSRCpUbd7liTjv1OTmk8HUir7W63GsyoTla979Lf1f/gGzoHg208GfFuyl0y1aXT9Us7hI9z5a0dAGbk9QRgevzGu4+KPj+HSvCC+DtHWSTxDqtrLEgUELBGdwaQn3GQPeteCTzYxLs2bux6gVl3Hh3TbjxVa+JXic6ha27QIQflKnuRjkjJx9fpXP7XmkpT6I7fq/JBwpaJv7k97HytpUxthptzGjNJa3aloscsQckY9cV2N9eFPEt+sAjNpKVuEIQhiWUKeenVc0/wCIWg2+jePdT097dfsl+fttrkf3vvgH1DZ+lZ8SeXCke4tsULk9TivSqVFUtJdjxKFGVK8W9n+Rt1R1qOaayWGGcwNJMiGQHG1SeeavU11V0ZHUMrDDKRkEelYRdnc7Jx5otG78B/Bnwx13xG2h/ErVNfj1a+1KK10e1s2IW4DkgvIwVsAnAPIIBz71m/tHfB2f4Xa2bmG/02XSdQvrhNPtoroy3MEK4aPzcgclT1GenWse7sIfsYVVndoRmIrITInpsbORjsM1l6LomhXGpLa3FzcGecZgWeN4y3tnAya7o4hct2ePUwUlJJPfuafwa8BDxzdXtpcrPDbKF8u6jIGyUHlc4PVWzjGOK9Y0jQvF/wAINcvNR8FeJFS6uVij1JLvyWVoA24EfKQrHBAJHRmrO+HHiDw18Jb3UV1ZLuXT9Rihube4giMgjlUMrxMP4TnBGe1M8SfEnxP8WNIv9F8L+D7WHTmlEMl9d3CsUU9CVOBnGTgbsVySq1ZVOeOkfwPQp4ehGl7Oorz10W/4fmR/tC/ETw38UYLiTQPhTqGna9PdxSTazOFM0kUasgQgDjIIzg/wrnOOOb+DHg29t9VGrX0M9tPEWRI2I2lSBkkD8a9R0zw9c6dDZW7Xi6qqZF1Ne5EzZ53Kw44PAUjp/FxW9HDb2yFlVI1AyT0ArKtjnOLikdGFymNOanJ7EqjCgVwXxa1d4brw3otnMftV5rNuZI1yGMatnr9SK39Z8SW1vE6WbLLIAcyH7ie+e/8AKvNfh3HJ4z+J83iNneXTNFG23dgcSzNnB5/FvwWuahCzc3sv6R24qrdKlHeT/Dr+B1Hx08MXOteHBrWmRF77Rd9zgDO6DrIPwwG/A147ZXsdykWVeKWWPzFjdSMr0yueoyDyK+qba9urHd9ltrW584pFLHckhDEXXzOnU7N2B3OK8NudB0Hxbq994X8FTPbnw7M/9nXly++OdXZi0bcZA3ZA6/zrqwfvwcX0OHMn7Gqprrv/AF/XQZ5ceMbF/Kq0to2SYyCPQ1brPXVUnYR2FjqN9KW2qsVq4BOcfeYAVMYylsi5zhBXk7DZI2jOHHWqt/bxXNq6TNsC/MJAcGMjkMD2IxXU6b4A8ea+iSzf2b4ftGyQZX+0T/XC8D8xVfxH4X8NeFNQis/EV7q2uziFZwHHl27sWIWNUU/MxwTjJ4HOK6YUJbtnDVxtOzSVzO8O6u2v2V/YatBDc2sarE11EG8u4Jzn6N0PH+FQaf4o1+wWbRvA3h02AEo8yaWBQCBkZyf6k1yHjLXdU1zUJWk26faWYVLe1tzhEPYDGMn3/KtG61OaG1s7PUL28txIAJLmBtvzdwT2B56VU8Py6pXXYzpY1z0k7Pv19L9Dur2fxWi20uu/Ey1sroAOLSyjRB/wJjtB+hBFaMviI+J4p4LfU5HS3Ko00KYTd1O04wxwOfTNcXa2HguytHur+FbgkDfNcyNISM8d+O3Sptb8cNeabb6P4R0hbeGMFYmSAxxRA9W56k+p/WuV0+bZfgkj0I1vZr3nv0u22Hj3VzeWNzo2lyO948yW+yLG52PLKOegHU+9es/C3QYfD3gyysowPMcedMw/jdup/T8q8q8H6FHpFpNdtF9r1FhiSbJ3HewzgnOMDn869vuLuy0jQjeXMiwWdpbhmbsqKo6fyFZV5JJU4bfmdGEg3J1qmjt9y/rc4/43eKj4f8Lmws3I1PU8wwAdUTo7+3BwPc+1eIaDdaz4dhMugajJb3UjxrIm1WWU5wvUdsmn63rV34q8S3XiG9yEclLWInIijHQD/PUmpobXc9uJY2MYkEr4OPu/dX8Sc/hXqYaj7GFnv1Pn8divrNVyWy2P/9k=" alt=""></span>
       <div class="namestack"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver</div></div>
-      <span class="ver">BETA 3.6</span>
+      <span class="ver">BETA 3.7</span>
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
@@ -532,7 +614,7 @@ details.adv summary:hover { color: var(--fg); }
 <main class="app">
   <section class="panel spotbar" id="spotBar" aria-label="Spot">
     <div class="tiles">
-      <label class="tile"><span class="tl">Type</span><select id="spType" aria-label="Game type"><option value="cash">Cash</option><option value="222">MTT</option></select></label>
+      <label class="tile" id="spTypeT"><span class="tl">Type</span><select id="spType" aria-label="Game type"><option value="cash">Cash</option><option value="222">MTT</option></select></label>
       <label class="tile"><span class="tl">Format</span><select id="spFormat" aria-label="Table size"><option value="6">6-Max</option><option value="8">8-Max</option><option value="custom">9 · Custom</option></select></label>
       <label class="tile"><span class="tl" id="spStackL">Stack</span><select id="spStack" aria-label="Stack in big blinds"></select></label>
       <label class="tile solver-only" id="spPosT"><span class="tl">Chart for</span><select id="spPos" aria-label="Seat whose chart is shown"></select></label>
@@ -544,9 +626,32 @@ details.adv summary:hover { color: var(--fg); }
     <details id="t222d" open>
       <summary><span class="eyebrow">Tournament</span><span class="sumchips" id="t222sum"></span><span class="chev" aria-hidden="true">▾</span></summary>
       <div class="t222in">
+        <div class="modecard" id="modeCard">
+          <div class="modesteps" aria-hidden="true"><span data-m="chip">Chip EV</span><i></i><span data-m="tourney">Tourney</span><i></i><span data-m="icm">ICM spot</span></div>
+          <div class="modetext"><b id="modeName">Chip EV</b><span class="hint" id="icmState"></span></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label grow">Tournament details</span><button class="mini" id="tClear" type="button" title="Clear the tournament details and solve in chips">Clear</button></div>
+          <div class="fields f4">
+            <label class="field"><span class="label">Entrants</span><input id="tEnt" type="number" inputmode="numeric" min="2" step="1" placeholder="e.g. 180"></label>
+            <label class="field"><span class="label">Entry cost ($)</span><input id="tBuy" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 10"></label>
+            <label class="field"><span class="label">Places paid</span><input id="tPaid" type="number" inputmode="numeric" min="1" max="100000" step="1" placeholder="e.g. 27"></label>
+            <label class="field"><span class="label">Players left</span><input id="tLeft" type="number" inputmode="numeric" min="2" max="100000" step="1" placeholder="e.g. 40"></label>
+          </div>
+          <div class="hint" id="tPayInfo"></div>
+          <details class="adv">
+            <summary>Guarantee and payout structure</summary>
+            <div style="display:grid;gap:10px;margin-top:10px">
+              <label class="field"><span class="label">Guarantee ($)</span><input id="tGtd" type="number" min="0" step="1" placeholder="optional"></label>
+              <label class="field"><span class="label">Payouts, 1st first (% or amounts)</span><input id="tPay" placeholder="50,30,20"></label>
+              <div class="row"><button id="tPayAuto" type="button" title="Fill a typical payout structure from entrants and entry cost (or a standard curve for the paid places)">Auto payouts</button><button id="tSat" type="button" title="Every paid place pays the same (satellite)">Satellite</button></div>
+            </div>
+          </details>
+        </div>
+        <div class="hint" id="tNote"></div>
         <div class="groups">
           <div class="group">
-            <span class="label">Table stacks (bb)</span>
+            <span class="label">Table stacks (bb) · change them to run what-ifs</span>
             <div class="stkgrid" id="tSeats"></div>
             <div class="row"><label class="field"><span class="label">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select></label>
               <div class="field" id="tOthersWrap"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
@@ -561,39 +666,11 @@ details.adv summary:hover { color: var(--fg); }
             <div class="hint" id="wiHint">Tap a seat on the table to get a slider for its stack too.</div>
           </div>
         </div>
-
-        <div class="icmsec" id="icmSec">
-          <label class="icmhead" for="icmOn">
-            <span class="switch"><input type="checkbox" id="icmOn" role="switch"><i aria-hidden="true"></i></span>
-            <span class="grow"><b>ICM</b><span class="hint" id="icmState">Play for the prize pool: players left, payouts, bubble pressure.</span></span>
-          </label>
-          <div class="icmbody">
-            <div class="groups">
-              <div class="group">
-                <span class="label">Field and payouts</span>
-                <div class="fields">
-                  <label class="field"><span class="label">Entrants</span><input id="tEnt" type="number" min="2" step="1" placeholder="e.g. 180"></label>
-                  <label class="field"><span class="label">Buy-in ($)</span><input id="tBuy" type="number" min="0" step="0.01" placeholder="e.g. 10"></label>
-                  <label class="field"><span class="label">Guarantee ($)</span><input id="tGtd" type="number" min="0" step="1" placeholder="optional"></label>
-                </div>
-                <div class="fields">
-                  <label class="field"><span class="label">Players left</span><input id="tLeft" type="number" min="2" max="75" step="1"></label>
-                  <label class="field"><span class="label">Places paid</span><input id="tPaid" type="number" min="1" max="5000" step="1"></label>
-                </div>
-                <label class="field"><span class="label">Payouts, 1st first (% or amounts)</span><input id="tPay" placeholder="50,30,20"></label>
-                <div class="hint" id="tPayInfo"></div>
-                <div class="row"><button id="tPayAuto" title="Fill a typical payout structure from entrants and buy-in (or a standard curve for the paid places)">Auto payouts</button><button id="tSat" title="Every paid place pays the same (satellite)">Satellite</button></div>
-              </div>
-              <div class="group">
-                <label class="row"><input type="checkbox" id="pkoOn"><span class="label">PKO bounties</span></label>
-                <div class="stkgrid" id="pkoRow"></div>
-              </div>
-            </div>
-            <div class="hint" id="tNote"></div>
-            <div class="icmbox" id="icmBox"></div>
-            <div class="icmveil" aria-hidden="true"><span>ICM is off · solving for chips</span><small>Turn it on to play for the prize pool</small></div>
-          </div>
+        <div class="group">
+          <label class="row"><input type="checkbox" id="pkoOn"><span class="label">PKO bounties</span></label>
+          <div class="stkgrid" id="pkoRow"></div>
         </div>
+        <div class="icmbox" id="icmBox"></div>
       </div>
     </details>
   </section>
@@ -648,6 +725,7 @@ details.adv summary:hover { color: var(--fg); }
 
     <div class="col">
       <section class="results solver-only">
+        <button class="icmflag" id="icmFlag" type="button" hidden></button>
         <div class="res-head">
           <span class="eyebrow">Strategy</span>
           <div class="seg" role="group" aria-label="Street"><button id="tabPre" aria-pressed="true">Preflop</button><button id="tabPost" aria-pressed="false">Postflop</button></div>
@@ -676,10 +754,28 @@ details.adv summary:hover { color: var(--fg); }
 </main>
 
 <nav class="tabbar" aria-label="Sections">
-  <button type="button" data-tab="cash"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/></svg>Cash</button>
-  <button type="button" data-tab="222"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4v3h-4z"/></svg>MTT</button>
+  <button type="button" data-tab="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"/><path d="M6.5 9.5V19h11V9.5"/><path d="M10 19v-5h4v5"/></svg>Home</button>
+  <button type="button" data-tab="details"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="16" rx="2"/><path d="M8 9h8M8 12.5h8M8 16h5"/></svg>Details</button>
+  <button type="button" data-tab="chart"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/></svg>Chart</button>
   <button type="button" data-tab="trainer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>Trainer</button>
 </nav>
+
+<div class="launch" id="launch">
+  <div class="lscreen" id="lsHome">
+    <div class="lhead"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver</div></div>
+    <div class="lsplit">
+      <button class="half h-solver" id="goSolver" type="button"><svg class="px" viewBox="0 0 24 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#efe4c8" d="M10 1h4v1h-4zM9 2h1v1h-1zM14 2h1v1h-1zM8 3h1v1h-1zM15 3h1v1h-1zM4 4h16v1h-16zM2 5h1v1h-1zM5 5h1v1h-1zM9 5h1v1h-1zM13 5h1v1h-1zM17 5h1v1h-1zM20 5h1v1h-1zM4 6h16v1h-16z"/><path fill="#5aa9de" d="M10 2h1v1h-1zM12 2h2v1h-2zM9 3h1v1h-1zM11 3h4v1h-4z"/><path fill="#fff6e0" d="M11 2h1v1h-1zM10 3h1v1h-1z"/><path fill="#7e705a" d="M3 5h1v1h-1zM6 5h2v1h-2zM10 5h2v1h-2zM14 5h2v1h-2zM18 5h2v1h-2z"/><path fill="#e8704f" d="M4 5h1v1h-1zM8 5h1v1h-1zM12 5h1v1h-1zM16 5h1v1h-1z"/><path fill="#3a342b" d="M7 7h10v1h-10z"/><path fill="#5aa9de" fill-opacity="0.33" d="M8 8h8v1h-8zM7 9h10v1h-10zM6 10h12v1h-12zM5 11h14v1h-14z"/><path fill="#ec8fab" d="M6 12h5v1h-5zM13 12h5v1h-5zM4 13h3v1h-3zM8 13h3v1h-3zM13 13h3v1h-3zM17 13h3v1h-3zM3 14h2v1h-2zM7 14h2v1h-2zM10 14h2v1h-2zM14 14h2v1h-2zM17 14h1v1h-1zM20 14h2v1h-2zM3 15h1v1h-1zM5 15h2v1h-2zM8 15h4v1h-4zM14 15h3v1h-3zM18 15h1v1h-1zM20 15h2v1h-2zM2 16h3v1h-3zM7 16h3v1h-3zM11 16h1v1h-1zM14 16h1v1h-1zM16 16h3v1h-3zM21 16h2v1h-2zM2 17h6v1h-6zM9 17h4v1h-4zM15 17h2v1h-2zM18 17h6v1h-6zM2 18h2v1h-2zM5 18h3v1h-3zM9 18h2v1h-2zM12 18h1v1h-1zM15 18h1v1h-1zM17 18h1v1h-1zM19 18h3v1h-3zM23 18h1v1h-1zM3 19h3v1h-3zM8 19h5v1h-5zM15 19h4v1h-4zM21 19h2v1h-2zM3 20h5v1h-5zM9 20h2v1h-2zM12 20h1v1h-1zM15 20h1v1h-1zM17 20h2v1h-2zM20 20h3v1h-3zM4 21h6v1h-6zM11 21h2v1h-2zM15 21h2v1h-2zM18 21h4v1h-4zM5 22h8v1h-8zM15 22h6v1h-6zM6 23h3v1h-3zM11 23h1v1h-1zM16 23h1v1h-1zM19 23h1v1h-1z"/><path fill="#f7c2d1" d="M7 13h1v1h-1zM16 13h1v1h-1zM5 14h2v1h-2zM18 14h2v1h-2zM4 15h1v1h-1zM19 15h1v1h-1zM10 16h1v1h-1zM15 16h1v1h-1zM4 18h1v1h-1zM11 18h1v1h-1zM16 18h1v1h-1zM22 18h1v1h-1zM8 20h1v1h-1zM19 20h1v1h-1z"/><path fill="#b9547a" d="M11 13h2v1h-2zM9 14h1v1h-1zM12 14h2v1h-2zM16 14h1v1h-1zM7 15h1v1h-1zM12 15h2v1h-2zM17 15h1v1h-1zM5 16h2v1h-2zM12 16h2v1h-2zM19 16h2v1h-2zM8 17h1v1h-1zM13 17h2v1h-2zM17 17h1v1h-1zM8 18h1v1h-1zM13 18h2v1h-2zM18 18h1v1h-1zM6 19h2v1h-2zM13 19h2v1h-2zM19 19h2v1h-2zM11 20h1v1h-1zM13 20h2v1h-2zM16 20h1v1h-1zM10 21h1v1h-1zM13 21h2v1h-2zM17 21h1v1h-1zM9 23h2v1h-2zM17 23h2v1h-2z"/></svg><b>Solver</b><small>Charts · ICM · postflop</small></button>
+      <button class="half h-trainer" id="goTrainer" type="button"><svg class="px" viewBox="0 0 32 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#d9434f" d="M16 2h9v1h-9zM16 3h9v1h-9zM14 4h8v1h-8zM25 4h2v1h-2zM14 5h8v1h-8zM25 5h2v1h-2zM13 6h12v1h-12zM27 6h1v1h-1zM13 7h1v1h-1zM15 7h2v1h-2zM20 7h8v1h-8zM13 8h1v1h-1zM15 8h2v1h-2zM20 8h8v1h-8zM13 9h1v1h-1zM15 9h1v1h-1zM19 9h9v1h-9zM16 10h1v1h-1zM19 10h9v1h-9zM19 11h9v1h-9zM16 12h12v1h-12zM13 13h1v1h-1zM15 13h1v1h-1zM17 13h11v1h-11zM15 14h2v1h-2zM18 14h10v1h-10zM16 15h9v1h-9zM27 15h1v1h-1zM16 16h9v1h-9zM27 16h1v1h-1zM17 17h10v1h-10z"/><path fill="#f7c2d1" d="M22 4h3v1h-3zM22 5h3v1h-3zM25 6h2v1h-2z"/><path fill="#f0c35a" d="M14 7h1v1h-1zM11 8h1v1h-1zM14 8h1v1h-1zM17 8h1v1h-1zM12 9h1v1h-1zM16 9h1v1h-1zM11 11h2v1h-2zM16 11h2v1h-2zM12 13h1v1h-1zM16 13h1v1h-1zM11 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM14 15h1v1h-1z"/><path fill="#8e1a2c" d="M17 7h3v1h-3zM18 8h2v1h-2zM17 9h2v1h-2zM17 10h2v1h-2zM18 11h1v1h-1zM25 15h2v1h-2zM25 16h2v1h-2z"/><path fill="#efe4c8" d="M28 7h4v1h-4zM28 8h4v1h-4zM30 9h2v1h-2zM28 10h4v1h-4zM28 11h4v1h-4zM30 12h2v1h-2zM0 13h2v1h-2zM30 13h2v1h-2zM0 14h1v1h-1zM28 14h4v1h-4zM0 15h2v1h-2zM0 16h1v1h-1zM0 17h2v1h-2z"/><path fill="#e8704f" d="M14 9h1v1h-1zM13 10h3v1h-3zM13 11h1v1h-1zM15 11h1v1h-1zM13 12h3v1h-3zM14 13h1v1h-1z"/><path fill="#7e705a" d="M28 9h2v1h-2zM28 12h2v1h-2zM28 13h2v1h-2zM1 14h1v1h-1zM1 16h1v1h-1z"/><path fill="#5aa9de" d="M4 10h6v1h-6zM3 11h1v1h-1zM6 11h5v1h-5zM2 12h1v1h-1zM4 12h8v1h-8zM2 13h5v1h-5zM9 13h3v1h-3zM2 14h6v1h-6zM9 14h2v1h-2zM2 15h6v1h-6zM9 15h3v1h-3zM2 16h10v1h-10zM2 17h9v1h-9zM2 18h1v1h-1zM4 18h6v1h-6zM3 19h6v1h-6z"/><path fill="#fff6e0" d="M4 11h2v1h-2zM14 11h1v1h-1zM3 12h1v1h-1z"/><path fill="#2f6f9e" d="M7 13h2v1h-2zM8 14h1v1h-1zM8 15h1v1h-1zM3 18h1v1h-1z"/></svg><b>Trainer</b><small>Drill spots · find leaks</small></button>
+    </div>
+  </div>
+  <div class="lscreen" id="lsGame" hidden>
+    <div class="lhead"><button class="lback" id="lsBack" type="button" aria-label="Back">‹ Back</button><div class="wordmark">SOLVER</div><div class="subtag">Pick your game</div></div>
+    <div class="lsplit">
+      <button class="half h-cash" id="goCash" type="button"><svg class="px" viewBox="0 0 24 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#b8862e" d="M9 1h1v1h-1zM14 1h1v1h-1zM8 2h1v1h-1zM10 2h1v1h-1zM13 2h1v1h-1zM15 2h1v1h-1zM9 3h1v1h-1zM14 3h1v1h-1zM10 4h1v1h-1zM13 4h1v1h-1zM10 6h1v1h-1zM13 6h1v1h-1zM8 7h1v1h-1zM15 7h1v1h-1zM6 8h1v1h-1zM17 8h1v1h-1zM5 9h1v1h-1zM18 9h1v1h-1zM4 10h1v1h-1zM19 10h1v1h-1zM3 11h1v1h-1zM20 11h1v1h-1zM3 12h1v1h-1zM20 12h1v1h-1zM2 13h1v1h-1zM21 13h1v1h-1zM2 14h1v1h-1zM21 14h1v1h-1zM2 15h1v1h-1zM21 15h1v1h-1zM2 16h1v1h-1zM21 16h1v1h-1zM2 17h1v1h-1zM21 17h1v1h-1zM3 18h1v1h-1zM20 18h1v1h-1zM3 19h2v1h-2zM19 19h2v1h-2zM4 20h3v1h-3zM17 20h3v1h-3zM6 21h12v1h-12z"/><path fill="#f0c35a" d="M9 2h1v1h-1zM14 2h1v1h-1zM10 3h4v1h-4zM11 4h2v1h-2zM11 6h2v1h-2zM9 7h6v1h-6zM7 8h10v1h-10zM6 9h6v1h-6zM13 9h5v1h-5zM5 10h6v1h-6zM13 10h6v1h-6zM4 11h5v1h-5zM15 11h5v1h-5zM4 12h4v1h-4zM10 12h1v1h-1zM13 12h7v1h-7zM3 13h5v1h-5zM10 13h1v1h-1zM13 13h8v1h-8zM3 14h6v1h-6zM14 14h7v1h-7zM3 15h8v1h-8zM13 15h1v1h-1zM16 15h5v1h-5zM3 16h8v1h-8zM13 16h1v1h-1zM16 16h5v1h-5zM3 17h6v1h-6zM15 17h6v1h-6zM4 18h7v1h-7zM13 18h7v1h-7zM5 19h14v1h-14zM7 20h10v1h-10z"/><path fill="#5cbf64" d="M9 5h1v1h-1zM14 5h1v1h-1z"/><path fill="#2f7a37" d="M10 5h4v1h-4zM11 10h2v1h-2zM9 11h6v1h-6zM8 12h2v1h-2zM11 12h2v1h-2zM8 13h2v1h-2zM11 13h2v1h-2zM9 14h5v1h-5zM11 15h2v1h-2zM14 15h2v1h-2zM11 16h2v1h-2zM14 16h2v1h-2zM9 17h6v1h-6zM11 18h2v1h-2z"/><path fill="#fff6e0" d="M12 9h1v1h-1z"/></svg><b>Cash</b><small>Ring games · chip EV</small></button>
+      <button class="half h-mtt" id="goMtt" type="button"><svg class="px" viewBox="0 0 24 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#e8704f" d="M6 0h1v1h-1zM12 0h1v1h-1zM18 0h1v1h-1zM5 1h1v1h-1zM7 1h1v1h-1zM11 1h1v1h-1zM13 1h1v1h-1zM17 1h1v1h-1zM19 1h1v1h-1zM4 2h1v1h-1zM7 2h1v1h-1zM10 2h1v1h-1zM14 2h1v1h-1zM17 2h1v1h-1zM20 2h1v1h-1zM4 3h1v1h-1zM8 3h2v1h-2zM15 3h2v1h-2zM20 3h1v1h-1zM5 4h1v1h-1zM19 4h1v1h-1z"/><path fill="#f0c35a" d="M6 1h1v1h-1zM12 1h1v1h-1zM18 1h1v1h-1zM5 2h2v1h-2zM11 2h3v1h-3zM18 2h2v1h-2zM5 3h3v1h-3zM10 3h5v1h-5zM17 3h3v1h-3zM6 4h5v1h-5zM12 4h7v1h-7zM6 12h3v1h-3zM10 12h3v1h-3zM14 12h3v1h-3zM8 13h1v1h-1zM12 13h1v1h-1zM16 13h1v1h-1zM6 14h3v1h-3zM10 14h3v1h-3zM14 14h3v1h-3zM6 15h1v1h-1zM10 15h1v1h-1zM14 15h1v1h-1zM6 16h3v1h-3zM10 16h3v1h-3zM14 16h3v1h-3z"/><path fill="#fff6e0" d="M11 4h1v1h-1z"/><path fill="#8e1a2c" d="M8 6h4v1h-4zM14 6h2v1h-2zM7 7h5v1h-5zM14 7h3v1h-3zM8 8h2v1h-2zM14 8h4v1h-4zM5 9h1v1h-1zM16 9h1v1h-1zM4 10h3v1h-3zM19 10h1v1h-1zM3 11h3v1h-3zM18 11h3v1h-3zM3 12h3v1h-3zM18 12h3v1h-3zM19 13h2v1h-2zM19 14h2v1h-2zM3 15h2v1h-2zM3 16h2v1h-2zM3 17h3v1h-3zM18 17h3v1h-3zM3 18h3v1h-3zM18 18h3v1h-3zM4 19h1v1h-1zM17 19h3v1h-3zM7 20h1v1h-1zM18 20h1v1h-1zM6 21h4v1h-4zM14 21h2v1h-2zM7 22h3v1h-3zM12 22h5v1h-5zM8 23h2v1h-2zM12 23h4v1h-4z"/><path fill="#efe4c8" d="M12 6h2v1h-2zM12 7h2v1h-2zM5 8h3v1h-3zM10 8h4v1h-4zM18 8h1v1h-1zM6 9h4v1h-4zM14 9h2v1h-2zM17 9h2v1h-2zM7 10h1v1h-1zM16 10h3v1h-3zM6 11h1v1h-1zM17 11h1v1h-1zM17 12h1v1h-1zM3 13h3v1h-3zM18 13h1v1h-1zM3 14h3v1h-3zM18 14h1v1h-1zM5 15h1v1h-1zM18 15h3v1h-3zM5 16h1v1h-1zM18 16h3v1h-3zM6 17h1v1h-1zM17 17h1v1h-1zM6 18h1v1h-1zM17 18h1v1h-1zM5 19h3v1h-3zM16 19h1v1h-1zM5 20h2v1h-2zM8 20h2v1h-2zM14 20h4v1h-4zM5 21h1v1h-1zM10 21h4v1h-4zM16 21h3v1h-3zM10 22h2v1h-2zM10 23h2v1h-2z"/><path fill="#1a1814" d="M10 9h4v1h-4zM8 10h8v1h-8zM7 11h10v1h-10zM9 12h1v1h-1zM13 12h1v1h-1zM6 13h2v1h-2zM9 13h3v1h-3zM13 13h3v1h-3zM17 13h1v1h-1zM9 14h1v1h-1zM13 14h1v1h-1zM17 14h1v1h-1zM7 15h3v1h-3zM11 15h3v1h-3zM15 15h3v1h-3zM9 16h1v1h-1zM13 16h1v1h-1zM17 16h1v1h-1zM7 17h10v1h-10zM7 18h10v1h-10zM8 19h8v1h-8zM10 20h4v1h-4z"/></svg><b>MTT</b><small>Tournaments · ICM</small></button>
+    </div>
+  </div>
+</div>
 
 <div class="modal" id="resultModal" hidden>
   <div class="box" role="dialog" aria-modal="true" aria-labelledby="resTitle">
@@ -1938,8 +2034,14 @@ const SIZES = {
 // ---------------------------------------------------------------- table model
 const S = { t222: load222(), game: 'cash', table: '6', slots: [], stack: 100, left: 9, sz: { open: 2, b3: 6, b4: 14, b5: 30 }, board: [], sizing: 'simple', overrides: {}, hist: [], sel: null };
 function load222() {
-  const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 }, entrants: 0, buyin: 0, gtd: 0, icm: true };
-  try { const v = JSON.parse(localStorage.getItem('slick222') || 'null'); return v ? { ...def, ...v } : def; } catch { return def; }
+  // icm is not a switch any more: it is on once players left and places paid are filled in
+  const def = { v: 2, left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 }, entrants: 0, buyin: 0, gtd: 0, leftSet: false, paidSet: false, icm: false };
+  try {
+    const v = JSON.parse(localStorage.getItem('slick222') || 'null'); if (!v) return def;
+    const t = { ...def, ...v };
+    if (v.v !== 2) { t.v = 2; t.leftSet = t.paidSet = v.entrants > 0 && v.icm !== false; }
+    t.icm = !!(t.leftSet && t.paidSet); return t;
+  } catch { return def; }
 }
 function save222() { if (window.__trRand) return; try { localStorage.setItem('slick222', JSON.stringify(S.t222)); } catch { /* storage unavailable */ } }
 // entered stack (before this hand)
@@ -2228,6 +2330,23 @@ function postflopOrder() {
 function potNow() { return T.seats.reduce((a, s) => a + s.put, 0) + T.seats.reduce((a, s) => a + deadOf(s), 0); }
 // prize money still to be won: places 1 .. players left (lower places are already paid out)
 function remainingPayouts() { return parsePayouts().slice(0, S.t222.left); }
+// The exact ICM math is run on at most ICM_CAP players. A bigger field is modelled as ICM_CAP
+// players with each modelled place standing for (left / ICM_CAP) real places and their prize
+// money: same prize pool, same distance to the money, same shape of the pay ladder.
+const ICM_CAP = 75;
+function icmModel() {
+  const t = S.t222, pays = remainingPayouts(), avg = t.avg > 0 ? t.avg : 25;
+  if (t.left <= ICM_CAP) return { left: t.left, pays, g: avg, scaled: false };
+  const k = t.left / ICM_CAP, out = [];
+  for (let i = 0; i < ICM_CAP; i++) {
+    const a = i * k, b = (i + 1) * k; let sum = 0;
+    for (let q = Math.floor(a); q < Math.ceil(b) && q < pays.length; q++) sum += pays[q] * (Math.min(b, q + 1) - Math.max(a, q));
+    if (sum <= 1e-12) break; out.push(sum);
+  }
+  // the modelled others hold all the chips of the real others, so every table stack keeps its true share
+  const seated = T.seats.length, g = Math.max(T.seats.length < ICM_CAP ? avg * (t.left - seated) / (ICM_CAP - seated) : avg, avg);
+  return { left: ICM_CAP, pays: out, g, scaled: true };
+}
 function parsePayouts() {
   const t = S.t222, raw = t.payouts.split(/[,\s]+/).map(Number).filter((x) => x > 0).slice(0, t.paid);
   const sum = raw.reduce((a, b) => a + b, 0);
@@ -2242,9 +2361,9 @@ function bountyFrac() { const f = S.t222.pko.frac; return (f >= 0 && f <= 100 ? 
 // Typical online MTT payout structure: about 15% of the field paid, a final-table ladder like the
 // big sites use, a smooth curve from 9th down to a min-cash of about 1.5–2× the buy-in,
 // and equal pay bands after the final table.
-function typicalPayouts(entrants, buyin, gtd) {
+function typicalPayouts(entrants, buyin, gtd, forceP) {
   const N = Math.max(2, Math.round(entrants)), pool = Math.max(N * buyin, gtd || 0);
-  const P = N <= 3 ? 1 : N <= 6 ? 2 : N <= 10 ? 3 : Math.max(4, Math.round(N * 0.15));
+  const P = forceP > 0 ? Math.min(Math.round(forceP), N) : N <= 3 ? 1 : N <= 6 ? 2 : N <= 10 ? 3 : Math.max(4, Math.round(N * 0.15));
   const fixed = { 1: [100], 2: [65, 35], 3: [50, 30, 20], 4: [40, 30, 20, 10] };
   const FT = [1, 0.65, 0.47, 0.36, 0.29, 0.235, 0.19, 0.155, 0.125]; // each place relative to 1st
   let amt;
@@ -2270,6 +2389,8 @@ function typicalPayouts(entrants, buyin, gtd) {
   amt[0] = Math.round((amt[0] + pool - amt.reduce((x, y) => x + y, 0)) * 100) / 100;
   return { paid: P, pool, amounts: amt };
 }
+// the typical structure for this field and entry cost, with a given number of places paid
+function typicalPaidAs(p) { const t = S.t222; return typicalPayouts(t.entrants, t.buyin, t.gtd, p).amounts.map((x) => x.toFixed(2)).join(','); }
 function prizePool() { const t = S.t222; return t.entrants > 0 && t.buyin > 0 ? Math.max(t.entrants * t.buyin, t.gtd || 0) : 0; }
 const money = (x) => '$' + (x >= 1000 ? Math.round(x).toLocaleString() : x.toFixed(2));
 function applyTypical() {
@@ -2302,12 +2423,12 @@ function buildSpot() {
     raiseCap: players.length > 2 ? Math.min(1, SIZES[S.sizing].cap) : SIZES[S.sizing].cap, allinThreshold: 0.15,
   };
   if (icmOn()) {
-    const t = S.t222, act = T.seats.length, need = t.left - act;
-    if (need < 0) throw new Error(`Players left (${t.left}) is less than the ${act} players seated. Raise players left or sit some seats out.`);
-    const others = Array(need).fill(t.avg > 0 ? t.avg : 25);
+    const t = S.t222, act = T.seats.length, mdl = icmModel(), need = mdl.left - act;
+    if (t.left < act) throw new Error(`Players left (${t.left}) is less than the ${act} players seated. Raise players left or sit some seats out.`);
+    const others = Array(need).fill(mdl.g);
     // folded table players keep their chips (minus blinds/antes they posted)
     for (const s of T.seats) if (s.folded) others.push(Math.max(0.01, stackOf(s) - s.put));
-    const pays = remainingPayouts();
+    const pays = mdl.pays;
     if (!pays.length) throw new Error('Enter the payouts for the paid places.');
     spot.payoff = { type: 'icm', payouts: pays, others };
     if (pkoOn()) { spot.payoff.bounties = players.map((x) => bountyPct(x)); spot.payoff.bountyFrac = bountyFrac(); }
@@ -2496,7 +2617,7 @@ function render() {
     $('feltPot').textContent = `pot ${fmt(potNow())} bb`;
   }
   $('seatHint').hidden = S.table !== 'custom';
-  if (S.game === '222') { render222(); renderWhatIf(); renderIcmSec(); if (icmOn()) { renderIcmBox(); renderPko(); } }
+  if (S.game === '222') { render222(); renderWhatIf(); renderIcmSec(); renderPko(); if (icmOn()) renderIcmBox(); }
 
   const pr = $('prompt'); pr.innerHTML = '';
   const seat = S.sel !== null && S.sel !== undefined ? seatById(S.sel) : null;
@@ -2546,6 +2667,7 @@ function render() {
   pfEnsure(); pfcEnsure();
   preReport = preflopReport();
   setView(view);
+  document.body.classList.toggle('to-flop', !nx && live().length >= 2);
   syncSpot();
 }
 function entry(id, o) { return o.custom ? { id, k: o.k, to: o.to } : { id, k: o.k }; }
@@ -2560,21 +2682,23 @@ function render222Sum() {
   const t = S.t222, hero = seatById(0), out = Math.max(0, t.left - t.paid);
   const chip = (txt, c = '') => `<span class="sumchip ${c}">${esc(txt)}</span>`;
   if (!icmOn()) { $('t222sum').innerHTML = chip('Chip EV', 'chips') + (hero ? chip(`Hero ${fmt(baseStack(hero))} bb`, 'hero') : ''); return; }
-  $('t222sum').innerHTML = chip('ICM', 'icm') + chip(`${t.left} left`) + chip(`${t.paid} paid`) +
+  $('t222sum').innerHTML = chip('Tournament', 'icm') + chip(`${t.left} left`) + chip(`${t.paid} paid`) +
     (out > 0 ? chip(out === 1 ? 'on the bubble' : `${out} from the money`, out <= 3 ? 'bubble' : '') : chip('in the money', 'money')) +
     (hero ? chip(`Hero ${fmt(baseStack(hero))} bb`, 'hero') : '') + (prizePool() ? chip(`${money(prizePool())} pool`) : '') + (t.pko && t.pko.on ? chip('PKO') : '');
 }
 function render222() {
   const t = S.t222; render222Sum();
   { const ae = document.activeElement; if (ae && ae.closest && ae.closest('#t222') && ae.type !== 'range' && ae.type !== 'checkbox' && ae.tagName !== 'BUTTON') return; } // don't rebuild while typing
-  $('tLeft').value = t.left; $('tPaid').value = t.paid; $('tPay').value = t.payouts;
+  $('tLeft').value = t.leftSet ? t.left : ''; $('tPaid').value = t.paidSet ? t.paid : ''; $('tPay').value = t.payouts;
+  $('wiLeft').max = Math.max(75, t.entrants || 0, t.left);
   $('tEnt').value = t.entrants || ''; $('tBuy').value = t.buyin || ''; $('tGtd').value = t.gtd || '';
   const ts = $('tSeats'); ts.innerHTML = '';
   for (const slot of S.slots) {
     if (!slot.active) continue;
     const seat = seatById(slot.id);
     const l = document.createElement('label'); l.className = 'stk';
-    l.innerHTML = `<span>${seatLabel(seat.id)}</span><input type="number" min="0.5" step="0.5" value="${baseStack(seat)}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
+    const now = stackOf(seat) - seat.put;
+    l.innerHTML = `<span>${seatLabel(seat.id)}${seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`}</span><input type="number" min="0.5" step="0.5" value="${baseStack(seat)}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
     l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.stacks[seat.id] = v; save222(); replay(); render222b(); render(); markStale(); } });
     ts.appendChild(l);
   }
@@ -2604,9 +2728,39 @@ function renderWhatIf() {
   if (sel) { $('wiSelL').textContent = `${seatLabel(sel.id)} stack`; $('wiSel').value = baseStack(sel); $('wiSelV').textContent = `${fmt(baseStack(sel))} bb`; }
   $('wiLeft').value = t.left; $('wiLeftV').textContent = t.left; $('wiLeftWrap').hidden = !icmOn(); $('wiHint').hidden = !!sel;
 }
+// How much ICM is squeezing the seat whose chart is shown: its worst bubble factor against
+// anyone at the table (chips lost vs chips won when the two get all-in). Level 1 and up is an
+// "ICM spot" and lights up the chart.
+function icmPressure() {
+  if (!icmOn()) return null;
+  const t = S.t222, mdl = icmModel(), seats = S.slots.filter((x) => x.active).map((x) => seatById(x.id)).filter(Boolean);
+  const need = mdl.left - seats.length; if (need < 0 || !mdl.pays.length || seats.length < 2) return null;
+  const st = seats.map((x) => baseStack(x)), g = mdl.g;
+  let me = seats.findIndex((x) => x.id === S.sel); if (me < 0) me = Math.max(0, seats.findIndex((x) => x.id === 0));
+  const eq = Engine.icmEquityGrouped(st, st, g, need, mdl.pays);
+  let bf = 1, vs = null;
+  seats.forEach((x, j) => {
+    if (j === me) return;
+    const e = Math.min(st[me], st[j]), lose = st.slice(), win = st.slice();
+    lose[me] -= e; lose[j] += e; win[me] += e; win[j] -= e;
+    const eL = Engine.icmEquityGrouped(lose, st, g, need, mdl.pays)[me], eW = Engine.icmEquityGrouped(win, st, g, need, mdl.pays)[me];
+    const b = (eq[me] - eL) / Math.max(1e-9, eW - eq[me]);
+    if (isFinite(b) && b > bf) { bf = b; vs = x; }
+  });
+  return { bf, vs, seat: seats[me], level: bf >= 1.35 ? 2 : bf >= 1.15 ? 1 : 0 };
+}
 function renderIcmSec() {
-  const on = icmOn(); $('icmOn').checked = on; $('icmSec').classList.toggle('on', on); $('tOthersWrap').hidden = !on;
-  $('icmState').textContent = on ? 'On · every decision is valued in prize-pool equity.' : 'Off · decisions are valued in chips. Turn on to play for the prize pool.';
+  const on = icmOn(), t = S.t222, pr = icmPressure(), m = !on ? 'chip' : pr && pr.level > 0 ? 'icm' : 'tourney';
+  $('tOthersWrap').hidden = !on;
+  const card = $('modeCard'); card.dataset.m = m;
+  card.querySelectorAll('[data-m]').forEach((x) => x.classList.toggle('on', x.dataset.m === m));
+  $('modeName').textContent = m === 'chip' ? 'Chip EV' : m === 'tourney' ? 'Tournament solve' : 'ICM spot';
+  const out = t.left - t.paid, stage = out > 0 ? `${out} from the money` : 'in the money';
+  $('icmState').textContent = m === 'chip'
+    ? (t.leftSet || t.paidSet ? `Add ${!t.leftSet ? 'players left' : 'places paid'} to solve for this tournament. Until then every chip is worth the same.` : 'No tournament details yet, so every chip is worth the same. Fill in the details below for a solve built for this tournament.')
+    : m === 'tourney'
+      ? `Solving for prize money with your field and payouts · ${stage}. Pressure is light here${pr ? ` (risk ×${pr.bf.toFixed(2)})` : ''}, so play stays close to chip EV.${icmModel().scaled ? ' Big field: modelled as 75 players with the same money line.' : ''}`
+      : `${pr.seat.pos} is under ICM pressure · ${stage}. Losing a chip costs ×${pr.bf.toFixed(2)} what winning one gains${pr.vs ? ` (vs ${pr.vs.pos})` : ''}, so calling off needs ${(pr.bf / (1 + pr.bf) * 100).toFixed(1)}% equity, not 50%.`;
   if (!on) $('icmBox').innerHTML = '';
 }
 function render222b() {
@@ -2629,7 +2783,7 @@ function render222b() {
   const left$ = pays.reduce((a, b) => a + b, 0);
   $('tNote').textContent = need < 0 ? `Players left must be at least ${T.seats.length} (players seated).`
     : `${t.left} left · ${t.paid} paid${stage} · ${fmt(total)} bb in play · ${left$.toFixed(1)}% of the prize pool still to win · top ${Math.min(6, pays.length)}: ${pays.slice(0, 6).map((p) => p.toFixed(1) + '%').join(' / ')}`;
-  $('tNote').className = need < 0 || !pays.length ? 'hint error' : 'hint';
+  $('tNote').className = need < 0 || !pays.length ? 'hint error' : 'hint'; $('tNote').hidden = !icmOn();
   if (S.bustNote) $('tNote').textContent = S.bustNote + ' · ' + $('tNote').textContent;
   renderIcmBox();
 }
@@ -2637,10 +2791,11 @@ function render222b() {
 // selected seat, the bubble factor against every other seat (how much more a chip lost
 // costs than a chip won when those two get all-in against each other).
 function renderIcmBox() {
-  const box = $('icmBox'), t = S.t222, need = t.left - T.seats.length, pays = remainingPayouts();
+  const box = $('icmBox'), t = S.t222, mdl = icmModel(), need = mdl.left - T.seats.length, pays = mdl.pays;
+  if (!icmOn()) { box.innerHTML = ''; return; }
   if (need < 0 || !pays.length) { box.innerHTML = ''; return; }
   const seats = S.slots.filter((x) => x.active).map((x) => seatById(x.id));
-  const st = seats.map((x) => baseStack(x)), g = t.avg > 0 ? t.avg : 25;
+  const st = seats.map((x) => baseStack(x)), g = mdl.g;
   const eq = Engine.icmEquityGrouped(st, st, g, need, pays);
   const chipsTotal = st.reduce((a, b) => a + b, 0) + need * g;
   const me = S.sel !== null && S.sel !== undefined ? seats.findIndex((x) => x.id === S.sel) : -1;
@@ -2665,17 +2820,21 @@ function renderIcmBox() {
 function bind222() {
   const t = S.t222;
   $('tSat').onclick = () => { t.payouts = Array(t.paid).fill(1).join(','); $('tPay').value = t.payouts; save222(); render222b(); render(); markStale(); };
-  $('icmOn').addEventListener('change', (e) => { t.icm = e.target.checked; save222(); render(); markStale(); });
-  document.querySelector('.icmveil').addEventListener('click', () => { t.icm = true; save222(); render(); markStale(); });
+  $('tClear').onclick = () => { t.leftSet = t.paidSet = t.paidAuto = false; t.icm = false; t.entrants = t.buyin = t.gtd = 0; save222(); render(); markStale(); };
   $('pkoOn').addEventListener('change', (e) => { t.pko.on = e.target.checked; save222(); render(); markStale(); });
   // what-if: values update live while dragging; the solver restarts when you let go
   const live = (id, fn) => { $(id).addEventListener('input', fn); $(id).addEventListener('change', () => { save222(); replay(); render(); markStale(); }); };
   live('wiHero', (e) => { t.stacks[0] = +e.target.value; $('wiHeroV').textContent = `${fmt(+e.target.value)} bb`; replay(); render222b(); });
   live('wiSel', (e) => { if (S.sel === null || S.sel === undefined) return; t.stacks[S.sel] = +e.target.value; $('wiSelV').textContent = `${fmt(+e.target.value)} bb`; replay(); render222b(); });
   live('wiLeft', (e) => { t.left = Math.max(T.seats.length, +e.target.value); $('wiLeftV').textContent = t.left; render222b(); });
-  $('tLeft').addEventListener('change', (e) => { const v = Math.max(2, Math.min(75, parseInt(e.target.value, 10) || 2)); t.left = v; save222(); e.target.value = v; render222b(); markStale(); });
-  $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(5000, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
-    if (t.payouts.split(',').filter(Boolean).length < v || was !== v) { t.payouts = defaultPayouts(v); $('tPay').value = t.payouts; } save222(); render222b(); markStale(); });
+  const setMode222 = () => { t.icm = !!(t.leftSet && t.paidSet); };
+  $('tLeft').addEventListener('change', (e) => {
+    if (e.target.value === '') { t.leftSet = false; setMode222(); save222(); render(); markStale(); return; }
+    const v = Math.max(T.seats.length, 2, Math.min(100000, parseInt(e.target.value, 10) || 2)); t.left = v; t.leftSet = true; setMode222(); save222(); e.target.value = v; render(); markStale(); });
+  $('tPaid').addEventListener('change', (e) => {
+    if (e.target.value === '') { t.paidSet = false; t.paidAuto = false; setMode222(); save222(); render(); markStale(); return; }
+    const v = Math.max(1, Math.min(100000, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; t.paidSet = true; t.paidAuto = false; setMode222(); e.target.value = v;
+    if (t.payouts.split(',').filter(Boolean).length < v || was !== v) { t.payouts = prizePool() ? typicalPaidAs(v) : defaultPayouts(v); $('tPay').value = t.payouts; } save222(); render(); markStale(); });
   $('tPay').addEventListener('change', (e) => { t.payouts = e.target.value; save222(); render222b(); markStale(); });
   $('tButton').addEventListener('change', (e) => {
     S.button = +e.target.value; S.hist = []; S.overrides = {}; S.board = []; activeSlot = null;
@@ -2685,7 +2844,7 @@ function bind222() {
   // entrants, buy-in or guarantee changed: rebuild the typical payout structure from them
   [['tEnt', 'entrants'], ['tBuy', 'buyin'], ['tGtd', 'gtd']].forEach(([id, k]) => $(id).addEventListener('change', (e) => {
     const v = parseFloat(e.target.value); t[k] = v > 0 ? (k === 'entrants' ? Math.round(v) : v) : 0;
-    if (prizePool()) applyTypical(); save222(); render222b(); render(); markStale();
+    if (prizePool()) { if (t.paidSet && !t.paidAuto) t.payouts = typicalPaidAs(t.paid); else { applyTypical(); t.paidSet = true; t.paidAuto = true; } setMode222(); } save222(); render222b(); render(); markStale();
   }));
 }
 
@@ -2785,7 +2944,7 @@ function pfConfig() {
     const postOrder = T.hu ? [idx('BB'), idx('SB')] : [...blinds, ...rest];
     let payoff = { type: 'chips' };
     if (S.game === 'icm') { const left = Math.max(S.left, n); payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others: Array(left - n).fill(S.stack) }; }
-    if (icmOn()) { const t = S.t222, pays = remainingPayouts(); if (t.left >= n && pays.length) { payoff = { type: 'icm', payouts: pays, others: Array(t.left - n).fill(t.avg > 0 ? t.avg : 25) }; if (pkoOn()) { payoff.bounties = seats.map((x) => bountyPct(x)); payoff.bountyFrac = bountyFrac(); } } }
+    if (icmOn()) { const t = S.t222, mdl = icmModel(), pays = mdl.pays; if (mdl.left >= n && pays.length) { payoff = { type: 'icm', payouts: pays, others: Array(mdl.left - n).fill(mdl.g) }; if (pkoOn()) { payoff.bounties = seats.map((x) => bountyPct(x)); payoff.bountyFrac = bountyFrac(); } } }
     return { names: seats.map((x) => x.pos), stacks: seats.map((x) => stackOf(x)), posts: seats.map((x) => Math.min(x.put, stackOf(x))),
       ante: seats.reduce((a, x) => a + deadOf(x), 0), sizes: { ...S.sz }, hu: T.hu, payoff, postOrder, allowLimps: S.game === '222', leave1: S.game !== 'cash' };
   });
@@ -2965,7 +3124,7 @@ function renderNode() {
   v.innerHTML = `<div class="node">
     <div class="nodetitle"><h2>${esc(name)}</h2>${r.preflop ? `<span class="muted">${esc(r.sub)}</span>` : ''}<span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}${r.preflop ? `<span class="grow"></span>${r.solved && r.evUnit === '%' ? `<button class="mini ${S.overlay ? 'on' : ''}" id="ovBtn" title="Mark hands that play differently because of ICM">ICM vs chips</button>` : ''}<span class="pfnote ${r.solved ? 'ok' : ''}">${pfNote(r.solved)}</span>` : ''}</div>
     ${r.overlay ? `<div class="hint"><span class="ovt">ICM ↓</span> ${r.icmTight} hand types play tighter than in a chip-only game · <span class="ovl">ICM ↑</span> ${r.icmLoose} looser${pfcState.done ? '' : ' (chip-only solve still running)'}</div>` : (S.overlay && r.solved ? '<div class="hint">Chip-only comparison solving…</div>' : '')}
-    <div class="actions">${r.actions.map((a, i) => `<button class="act${r.cur && r.preflop && ctxKind(r, i) ? ' cur' : ''}" data-a="${i}"><i style="background:${col[i]}"></i><strong>${esc(a)}</strong><small>${(r.overall[i] * 100).toFixed(1)}%${r.ev && r.ev[i] !== null && r.ev[r.baseIdx] !== null ? ` · EV ${fmtEv(r.ev[i] - r.ev[r.baseIdx], r.evUnit)}` : ''}</small></button>`).join('')}</div>
+    <div class="actions">${r.actions.map((a, i) => `<button class="act${r.cur && r.preflop && ctxKind(r, i) ? ' cur' : ''}" data-a="${i}"><i style="background:${col[i]}"></i><strong>${esc(a)}</strong><small>${(r.overall[i] * 100).toFixed(1)}%${r.ev && r.ev[i] !== null && r.ev[r.baseIdx] !== null ? `<em>EV ${fmtEv(r.ev[i] - r.ev[r.baseIdx], r.evUnit)}</em>` : ''}</small></button>`).join('')}</div>
     <div class="freqbar">${r.overall.map((f, i) => `<i style="width:${f * 100}%;background:${col[i]}"></i>`).join('')}</div>
     <div class="split"><div class="gridwrap"><div class="hgrid" id="hgrid"></div></div><div class="detail" id="detail"></div></div>
   </div>`;
@@ -2998,10 +3157,11 @@ function detail(k) {
   const r = view === 'pre' ? preReport : report, d = $('detail'); if (!d || !r || r.kind !== 'action') return;
   const col = colors(r.actionTypes);
   if (!k || !r.classes[k] || r.classes[k].w <= 1e-9) {
+    d.classList.add('idle');
     d.innerHTML = `<div class="label">${esc(r.preflop ? r.name : built.names[r.player])}'s range here</div><div class="mono" style="font-size:22px">${r.totalReach.toFixed(1)} combos</div><div class="muted" style="font-size:12px">Hover or tap a hand for every combo.</div>`;
     return;
   }
-  const e = r.classes[k];
+  const e = r.classes[k]; d.classList.remove('idle');
   let evHtml = '';
   if (e.ev) {
     const base = e.ev[r.baseIdx], vals = e.ev.map((x) => (x === null ? null : x - base)), best = Math.max(...vals.filter((x) => x !== null));
@@ -3200,12 +3360,35 @@ document.addEventListener('keydown', (e) => {
 // ---------------------------------------------------------------- phone: spot tiles + bottom tab bar
 // The tiles mirror the header controls (type, format, stack) plus the seat whose chart is shown,
 // the action so far and the tournament or sizing summary. They drive the same handlers as the header.
+// MTT on a phone has two pages: Details (tournament + stacks) and Chart (chart, then the hand).
+let page = 'chart';
+function setPage(p) { page = p; syncNav(); }
 function syncNav() {
-  const cur = S.mode === 'trainer' ? 'trainer' : S.game;
-  document.querySelectorAll('.tabbar [data-tab]').forEach((b) => (b.dataset.tab === cur ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
+  const mttSolver = S.mode === 'solver' && S.game === '222', det = mttSolver && page === 'details';
+  document.body.classList.toggle('pg-details', det);
+  document.body.classList.toggle('pg-mtt', mttSolver);
+  const cur = S.mode === 'trainer' ? 'trainer' : det ? 'details' : 'chart';
+  document.querySelectorAll('.tabbar [data-tab]').forEach((b) => {
+    b.hidden = b.dataset.tab === 'details' && S.game !== '222';
+    if (b.dataset.tab === cur) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+  if (det) $('t222d').open = true;
+}
+// ICM flag over the chart + glow when the spot is an ICM spot
+function updateIcmFlag() {
+  const f = $('icmFlag'), res = document.querySelector('.results');
+  res.classList.remove('icm-l1', 'icm-l2', 'icm-t');
+  if (S.game !== '222') { f.hidden = true; return; }
+  f.hidden = false;
+  const pr = icmPressure(), t = S.t222, out = t.left - t.paid, stage = out > 0 ? (out === 1 ? 'bubble' : `${out} from the money`) : 'in the money';
+  if (!icmOn()) { f.className = 'icmflag chip'; f.innerHTML = '<span class="fdot"></span><b>Chip EV</b><span class="grow">Add tournament details for a tournament solve</span><span class="fgo">›</span>'; return; }
+  if (!pr || pr.level === 0) { res.classList.add('icm-t'); f.className = 'icmflag tourney'; f.innerHTML = `<span class="fdot"></span><b>Tournament</b><span class="grow">${stage}${pr ? ` · risk ×${pr.bf.toFixed(2)}` : ''}</span><span class="fgo">›</span>`; return; }
+  res.classList.add(pr.level === 2 ? 'icm-l2' : 'icm-l1');
+  f.className = `icmflag icm l${pr.level}`;
+  f.innerHTML = `<span class="fdot"></span><b>ICM spot</b><span class="grow">${pr.seat.pos} risk ×${pr.bf.toFixed(2)}${pr.vs ? ` vs ${pr.vs.pos}` : ''} · call-offs need ${(pr.bf / (1 + pr.bf) * 100).toFixed(0)}% · ${stage}</span><span class="fgo">›</span>`;
 }
 function syncSpot() {
-  syncNav();
+  syncNav(); updateIcmFlag();
   const g = S.game, t = S.t222, hero = seatById(0);
   $('spType').value = g; $('spFormat').value = S.table;
   const curStack = g === 'cash' ? S.stack : hero ? baseStack(hero) : (t.stacks[0] || 25);
@@ -3217,13 +3400,13 @@ function syncSpot() {
   const seats = S.slots.filter((x) => x.active).map((x) => seatById(x.id)).filter(Boolean);
   const hasSel = seats.some((s) => s.id === S.sel);
   $('spPos').innerHTML = (hasSel ? '' : '<option value="" selected>Pick seat</option>') +
-    seats.map((s) => `<option value="${s.id}" ${s.id === S.sel ? 'selected' : ''}>${s.pos}${isHero(s.id) ? ' (Hero)' : ''}</option>`).join('');
+    seats.map((s) => `<option value="${s.id}" ${s.id === S.sel ? 'selected' : ''}>${s.pos}${isHero(s.id) ? ' ★' : ''}</option>`).join('');
   // action so far, then who is next
   const nx = nextActor();
   const acted = seats.filter((s) => s.acts.some((a) => a.k !== 'fold')).map((s) => `${s.pos} ${s.acts.filter((a) => a.k !== 'fold').map((a) => a.label).join('/')}`);
   $('spActionV').textContent = !S.hist.length ? (nx ? `Unopened · ${nx.pos}` : '–')
     : (acted.length ? acted.join(', ') : 'Folds') + (nx ? ` → ${nx.pos}` : ' · done');
-  if (g === '222') { $('spMoreL').textContent = 'Tourney'; $('spMoreV').textContent = `${icmOn() ? 'ICM' : 'Chips'} · ${t.left} left`; }
+  if (g === '222') { const pr = icmPressure(); $('spMoreL').textContent = !icmOn() ? 'Chip EV' : pr && pr.level ? 'ICM spot' : 'Tourney'; $('spMoreV').textContent = icmOn() ? `${t.left} left` : 'Add info'; }
   else { $('spMoreL').textContent = 'Open size'; $('spMoreV').textContent = `${fmt(S.sz.open)} bb`; }
 }
 $('spType').onchange = (e) => { const b = document.querySelector(`[data-game="${e.target.value}"]`); if (b) b.click(); };
@@ -3237,18 +3420,37 @@ $('spPos').onchange = (e) => { if (e.target.value === '') return; S.sel = +e.tar
 const goTo = (el) => el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 $('spAction').onclick = () => goTo($('tableBar'));
 $('spMore').onclick = () => {
-  if (S.game === '222') { $('t222d').open = true; goTo($('t222')); }
+  if (S.game === '222') { $('t222d').open = true; if (phoneQ.matches) { setPage('details'); scrollTo(0, 0); } else goTo($('t222')); }
   else { $('pfSizes').open = true; goTo($('pfSizes')); }
 };
+const phoneQ = matchMedia('(max-width: 760px)');
+$('icmFlag').onclick = () => { $('t222d').open = true; if (phoneQ.matches) { setPage('details'); scrollTo(0, 0); } else goTo($('t222')); };
 document.querySelectorAll('.tabbar [data-tab]').forEach((b) => (b.onclick = () => {
   const tab = b.dataset.tab;
+  if (tab === 'home') { showLaunch('home'); return; }
   if (tab === 'trainer') { if (S.mode !== 'trainer') setMode('trainer'); }
-  else {
-    if (S.mode !== 'solver') setMode('solver');
-    if (S.game !== tab) document.querySelector(`[data-game="${tab}"]`).click();
-  }
+  else { if (S.mode !== 'solver') setMode('solver'); setPage(tab); }
   syncSpot(); scrollTo({ top: 0, behavior: 'auto' });
 }));
+// ---------------------------------------------------------------- launch: Solver | Trainer, then Cash | MTT
+function showLaunch(which) {
+  $('launch').hidden = false; document.body.classList.add('launching');
+  $('lsHome').hidden = which !== 'home'; $('lsGame').hidden = which !== 'game';
+}
+function hideLaunch() { $('launch').hidden = true; document.body.classList.remove('launching'); scrollTo(0, 0); }
+function pickGame(g) {
+  if (S.mode !== 'solver') setMode('solver');
+  if (S.game !== g) document.querySelector(`[data-game="${g}"]`).click();
+  setPage(g === '222' ? 'details' : 'chart'); syncSpot(); hideLaunch();
+}
+$('goSolver').onclick = () => showLaunch('game');
+$('goTrainer').onclick = () => { setMode('trainer'); hideLaunch(); };
+$('goCash').onclick = () => pickGame('cash');
+$('goMtt').onclick = () => pickGame('222');
+$('lsBack').onclick = () => showLaunch('home');
+$('brandHome').onclick = () => showLaunch('home');
+$('brandHome').onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showLaunch('home'); } };
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('launch').hidden && !$('lsGame').hidden) showLaunch('home'); });
 // ---------------------------------------------------------------- controls
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
@@ -3285,11 +3487,12 @@ $('trRand').addEventListener('change', (e) => setRandom(e.target.checked));
 $('trEvery').addEventListener('change', () => { TR.left = 0; });
 $('trReset').onclick = () => { trStats = { n: 0, loss: 0, good: 0, cats: {} }; trSaveStats(trStats); trRender(); };
 S.mode = 'solver';
-try { if (localStorage.getItem('slickDrawer') === 'closed') $('t222d').open = false; } catch { /* storage unavailable */ }
+try { if (localStorage.getItem('slickDrawer') === 'closed' && !phoneQ.matches) $('t222d').open = false; } catch { /* storage unavailable */ }
 $('t222d').addEventListener('toggle', () => { try { localStorage.setItem('slickDrawer', $('t222d').open ? 'open' : 'closed'); } catch { /* storage unavailable */ } });
 // ---------------------------------------------------------------- launch: empty board, UTG to act
 fillStacks(); applySizing(); makeSlots(); replay();
 S.sel = nextActor().id; view = 'pre';
 render();
+showLaunch('home');
 })();
 </script>
