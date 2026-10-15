@@ -237,6 +237,10 @@ button.mini.on { background: var(--carolina); color: var(--carolina-ink); border
 .cell.ov-tight { box-shadow: inset 0 0 0 2px #ff6b5b; } .cell.ov-loose { box-shadow: inset 0 0 0 2px #5bd16a; }
 .cell .ovtag { position: absolute; right: 2px; bottom: 1px; font-family: var(--font-mono); font-size: 9px; font-weight: 600; color: #fff; text-shadow: 0 0 2px #000, 0 0 2px #000; }
 .evrows { display: grid; gap: 3px; }
+.limpplan { display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; border: 1px dashed rgba(76, 175, 80, .4); background: rgba(76, 175, 80, .05); }
+.limpplan .label { color: #8fe39a; }
+.limpnote { padding: 8px 12px; border-left: 2px solid var(--a-pass); background: rgba(76, 175, 80, .05); border-radius: 0 8px 8px 0; }
+.limpnote b { color: var(--fg); font-weight: 600; }
 .evrow { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: baseline; font-size: 13px; padding: 3px 6px; border-radius: 6px; }
 .evrow small { color: var(--muted); font-size: 11px; min-width: 88px; text-align: right; }
 .evrow.best { background: #16261a; }
@@ -477,6 +481,7 @@ details.adv summary:hover { color: var(--fg); }
   .node > .actions { order: 2; display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 6px; }
   .node > .freqbar { order: 3; height: 10px; }
   .node > .hint { order: 4; }
+  .node > .limpplan { order: 4; }
   .node .detail { order: 5; }
   .node > .picker, .node > .row, .node > .muted { order: 2; }
   .act { min-width: 0; grid-template-columns: auto minmax(0, 1fr); column-gap: 9px; align-items: center; padding: 10px 10px 10px 12px; border-radius: 12px; }
@@ -605,7 +610,7 @@ body.launching { overflow: hidden; }
     <div class="brand" id="brandHome" role="button" tabindex="0" title="Home">
       <span class="brandmark" aria-hidden="true"><img src="data:image/jpeg;base64,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" alt=""></span>
       <div class="namestack"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver</div></div>
-      <span class="ver">BETA 4.0</span>
+      <span class="ver">BETA 4.1</span>
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
@@ -1616,7 +1621,11 @@ class PreflopSolver {
         if (left <= toCall + 1e-9) { if (s.level <= 1 || inVol || s.level === 2) o.push({ k: 'call' }); return o; }
         if (s.level === 0) {
           const limpers = s.vol.filter((v, j) => v && !s.folded[j]).length;
-          if (cfg.names[p] === 'SB' || (cfg.allowLimps && limpers < 1 && (st[p] <= 30 || cfg.names[p] === 'BTN' || cfg.names[p] === 'CO'))) o.push({ k: 'call' }); // short stacks may open-limp from any seat
+          const late = cfg.names[p] === 'BTN' || cfg.names[p] === 'CO', short = st[p] <= 30;
+          // open-limp: short stacks from any seat (late seats at any depth). Over-limp behind one limper:
+          // short stacks, from any seat at 6-handed or fewer, from CO/BTN on bigger tables (keeps the tree in memory)
+          const canOpen = limpers < 1 && (short || late), canOver = limpers === 1 && short && (n <= 6 || late);
+          if (cfg.names[p] === 'SB' || (cfg.allowLimps && (canOpen || canOver))) o.push({ k: 'call' });
         }
         else if (s.level === 1) { if (callers < 2 || cfg.names[p] === 'BB') o.push({ k: 'call' }); }
         else if (inVol) o.push({ k: 'call' });
@@ -2529,8 +2538,19 @@ function preflopReport() {
     }
     for (const k in classes) { const e = classes[k]; for (let a = 0; a < na; a++) e.s[a] /= e.w; }
     for (let a = 0; a < na; a++) overall[a] /= total || 1;
-    const sub = T.level === 0 ? (limpers ? `vs ${limpers} limp${limpers > 1 ? 's' : ''}` : 'first in')
+    // limped and now facing a raise: name the lines (limp-fold / limp-call / limp-raise and limp-jam traps)
+    const limped = T.level >= 1 && seat.acts.some((a) => a.k === 'call' && a.facing === 0) && !seat.acts.some((a) => a.k === 'raise' || a.k === 'raiseB' || a.k === 'allin');
+    const labels = opts.map((o) => !limped ? o.t : o.k === 'fold' ? 'Limp-fold' : o.k === 'call' ? `Limp-call${o.t.replace(/^Call/, '')}` : o.k === 'allin' ? `Limp-jam ${fmt(o.to)} · trap` : `Limp-raise ${fmt(o.to)}${o.k === 'raiseB' ? ' · 1bb behind' : ''} · trap`);
+    const sub0 = T.level === 0 ? (limpers ? `vs ${limpers} limp${limpers > 1 ? 's' : ''}` : 'first in')
       : `vs ${raiser ? raiser.pos : ''} ${T.level === 1 ? 'raise' : `${T.level + 1}-bet`}${vsAllin ? ' (all-in)' : ''}`;
+    const sub = limped ? `after limping · ${sub0}` : sub0;
+    // limp plan: who could raise behind a limp from this seat
+    let limpPlan = null;
+    if (T.level === 0 && !seat.acts.length && opts.some((o) => o.k === 'call') && seat.pos !== 'BB') {
+      const h0 = [...ctx.base, { id: ctx.id, k: 'call' }];
+      limpPlan = withHist(h0, () => { const out = []; for (let g = 0; g < 12; g++) { const nx = nextActor(); if (!nx || nx.id === ctx.id) break; out.push({ id: nx.id, pos: nx.pos }); apply(nx, { k: 'fold' }); } return out; });
+      if (!limpPlan.length) limpPlan = null; else limpPlan.base = h0;
+    }
     const curIndex = ctx.cur ? opts.findIndex((o) => o.k === ctx.cur.k) : -1;
     const ev = evOn ? evTot.map((x, a) => (evW[a] > 0 ? x / evW[a] : null)) : null;
     const baseIdx = Math.max(0, opts.findIndex((o) => o.k === 'fold' || o.k === 'check'));
@@ -2545,8 +2565,8 @@ function preflopReport() {
     }
     const icmTight = chips ? Object.values(classes).filter((e) => e.icmDiff > 0.25).length : 0;
     const icmLoose = chips ? Object.values(classes).filter((e) => e.icmDiff < -0.25).length : 0;
-    return { kind: 'action', preflop: true, name: seat.pos, sub, board: [], pot: potNow(), history: [], ev, baseIdx, evUnit, callInfo, overlay: !!chips, icmTight, icmLoose,
-      actions: opts.map((o) => o.t), actionTypes: opts.map((o) => (o.k === 'fold' ? 'fold' : o.k === 'raise' || o.k === 'raiseB' ? 'bet' : o.k === 'allin' ? 'allin' : 'call')),
+    return { kind: 'action', preflop: true, name: seat.pos, sub, board: [], pot: potNow(), history: [], ev, baseIdx, evUnit, callInfo, overlay: !!chips, icmTight, icmLoose, limped, limpPlan, heroId: ctx.id,
+      actions: labels, actionTypes: opts.map((o) => (o.k === 'fold' ? 'fold' : o.k === 'raise' || o.k === 'raiseB' ? 'bet' : o.k === 'allin' ? 'allin' : 'call')),
       overall, classes, totalReach: total, cur: ctx.cur ? ctx.cur.k : null, curIndex, solved: !!solved,
       pick: (i) => { const o = opts[i], e = { id: ctx.id, k: o.k }; choose(ctx.mode === 'edit' ? [...S.hist.slice(0, ctx.idx), e, ...S.hist.slice(ctx.idx + 1)] : [...ctx.base, e]); } };
   });
@@ -3157,8 +3177,11 @@ function renderNode() {
     ${r.overlay ? `<div class="hint"><span class="ovt">ICM ↓</span> ${r.icmTight} hand types play tighter than in a chip-only game · <span class="ovl">ICM ↑</span> ${r.icmLoose} looser${pfcState.done ? '' : ' (chip-only solve still running)'}</div>` : (S.overlay && r.solved ? '<div class="hint">Chip-only comparison solving…</div>' : '')}
     <div class="actions">${r.actions.map((a, i) => `<button class="act${r.cur && r.preflop && ctxKind(r, i) ? ' cur' : ''}" data-a="${i}"><i style="background:${col[i]}"></i><strong>${esc(a)}</strong><small>${(r.overall[i] * 100).toFixed(1)}%${r.ev && r.ev[i] !== null && r.ev[r.baseIdx] !== null ? `<em>EV ${fmtEv(r.ev[i] - r.ev[r.baseIdx], r.evUnit)}</em>` : ''}</small></button>`).join('')}</div>
     <div class="freqbar">${r.overall.map((f, i) => `<i style="width:${f * 100}%;background:${col[i]}"></i>`).join('')}</div>
+    ${r.limpPlan ? `<div class="limpplan"><span class="label">Limp plan · if raised by</span><div class="row">${r.limpPlan.map((x) => `<button class="mini" data-lp="${x.id}">${x.pos}</button>`).join('')}</div><span class="hint">See which limps fold, call or trap (limp-raise / limp-jam) when someone raises behind.</span></div>` : ''}
+    ${r.limped ? '<div class="hint limpnote">After a limp: <b>limp-fold</b> gives up the 1bb, <b>limp-call</b> sees a flop, <b>limp-raise / limp-jam</b> are traps with hands that wanted action. Under ICM, keeping your stack often beats the trap.</div>' : ''}
     <div class="split"><div class="gridwrap"><div class="hgrid" id="hgrid"></div></div><div class="detail" id="detail"></div></div>
   </div>`;
+  v.querySelectorAll('[data-lp]').forEach((b) => (b.onclick = () => limpPlanGo(r, +b.dataset.lp)));
   v.querySelectorAll('.act').forEach((b) => (b.onclick = () => { if (r.preflop) { r.pick(+b.dataset.a); return; } path.push({ a: +b.dataset.a }); selected = null; requestReport(); }));
   const g = $('hgrid');
   for (let i = 0; i < 13; i++) for (let j = 0; j < 13; j++) {
@@ -3178,6 +3201,15 @@ function renderNode() {
   g.onmouseleave = () => detail(selected);
   if ($('ovBtn')) $('ovBtn').onclick = () => { S.overlay = !S.overlay; if (S.overlay) pfcEnsure(); render(); };
   detail(selected);
+}
+// play the limp, folds to the chosen raiser, their raise (or jam if short), folds back to the limper
+function limpPlanGo(r, rid) {
+  let h = r.limpPlan.base.slice();
+  h = [...h, ...(withHist(h, () => foldsTo(rid)) || [])];
+  const k = withHist(h, () => (options(seatById(rid)).some((o) => o.k === 'raise') ? 'raise' : 'allin'));
+  h = [...h, { id: rid, k }];
+  h = [...h, ...(withHist(h, () => foldsTo(r.heroId)) || [])];
+  choose(h);
 }
 function ctxKind(r, i) { return r.cur && r.actions[i] && r.actionTypes && r.curIndex === i; }
 document.addEventListener('click', (e) => {
