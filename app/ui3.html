@@ -73,11 +73,14 @@ header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; pad
 .seat.out { border-style: dashed; background: transparent; opacity: .45; }
 .seat.out b { text-decoration: line-through; color: var(--faint); }
 .hint { font-size: 12px; color: var(--muted); }
+.dealer { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--fg); color: #0a1120; font-family: var(--font-body); font-size: 10px; font-weight: 700; vertical-align: 2px; margin-left: 2px; }
+button.next { border-color: var(--seafoam); color: var(--seafoam); font-weight: 600; }
 .t222 { display: grid; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .t222 input[type="number"] { width: 72px; }
 .t222 input:not([type]) { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 8px; font-family: var(--font-mono); }
 .stk { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
-.stk span { font-family: var(--font-display); font-size: 15px; font-weight: 600; min-width: 34px; text-align: right; }
+.stk span { font-family: var(--font-display); font-size: 15px; font-weight: 600; min-width: 34px; text-align: right; display: grid; line-height: 1.05; }
+.stk span em { font-style: normal; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
 
 .prompt { display: grid; gap: 8px; }
 .prow, .pfoot, .phead { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -170,7 +173,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.7 · SOLVER</span>
+  <span class="ver">ALPHA 1.8 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -187,7 +190,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
       <button id="tPayAuto" title="Fill a standard payout curve for the paid places">Auto payouts</button>
     </div>
     <div class="row"><span class="label" style="width:120px">Table stacks (bb)</span><div class="row grow" id="tSeats"></div></div>
-    <div class="row" id="tOthersRow"><span class="label" style="width:120px">Other players (bb)</span><div class="row grow" id="tOthers"></div></div>
+    <div class="row" id="tOthersRow"><span class="label" style="width:120px">Other players</span><div class="row grow" id="tOthers"></div></div>
     <div class="hint" id="tNote"></div>
   </div>
   <div class="seats" id="seats"></div>
@@ -310,13 +313,29 @@ const SIZES = {
 // ---------------------------------------------------------------- table model
 const S = { t222: load222(), game: 'cash', table: '6', slots: [], stack: 100, left: 9, sz: { open: 2, b3: 6, b4: 14, b5: 30 }, board: [], sizing: 'simple', overrides: {}, hist: [], sel: null };
 function load222() {
-  const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, others: [] };
+  const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25 };
   try { const v = JSON.parse(localStorage.getItem('slick222') || 'null'); return v ? { ...def, ...v } : def; } catch { return def; }
 }
 function save222() { try { localStorage.setItem('slick222', JSON.stringify(S.t222)); } catch { /* storage unavailable */ } }
 function stackOf(seat) { if (S.game !== '222') return S.stack; const v = S.t222.stacks[seat.id]; return v > 0 ? v : 25; }
 function slotCount() { return S.table === '6' ? 6 : S.table === '8' ? 8 : 9; }
-function makeSlots() { S.slots = Array.from({ length: slotCount() }, (_, i) => ({ id: i, active: true })); }
+function makeSlots() {
+  S.slots = Array.from({ length: slotCount() }, (_, i) => ({ id: i, active: true }));
+  const n = S.slots.length; S.button = n >= 3 ? n - 3 : 0; // seat 1 starts as UTG
+}
+// the button sits on an active seat; moving it is what "next hand" does
+function buttonSeat() {
+  const n = S.slots.length;
+  for (let k = 0; k < n; k++) { const id = (S.button + k) % n; if (S.slots[id].active) return id; }
+  return 0;
+}
+function nextHand() {
+  const n = S.slots.length, b = buttonSeat();
+  for (let k = 1; k <= n; k++) { const id = (b + k) % n; if (S.slots[id].active) { S.button = id; break; } }
+  S.hist = []; S.overrides = {}; S.board = []; activeSlot = null; report = null; built = null; path = []; evData = null; renderEVs();
+  replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; view = 'pre';
+  render(); markStale();
+}
 function namesFor(n) {
   if (n === 2) return ['SB', 'BB'];
   const m = n - 2, base = ['UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN'];
@@ -328,7 +347,11 @@ function namesFor(n) {
 }
 let T = null; // live table state built by replay()
 function freshTable() {
-  const act = S.slots.filter((s) => s.active), names = namesFor(act.length), m = act.length - 2;
+  // preflop order: seat after the big blind first ... button, small blind, big blind last
+  const actAll = S.slots.filter((s) => s.active), n = actAll.length, bi = actAll.findIndex((s) => s.id === buttonSeat());
+  const startAt = n === 2 ? bi : (bi + 3) % n;
+  const act = Array.from({ length: n }, (_, k) => actAll[(startAt + k) % n]);
+  const names = namesFor(n), m = n - 2;
   const seats = act.map((s, i) => ({ id: s.id, pos: names[i], d: names[i] === 'SB' || names[i] === 'BB' ? -1 : m - 1 - i,
     put: names[i] === 'SB' ? 0.5 : names[i] === 'BB' ? 1 : 0, folded: false, allin: false, needs: true, acts: [] }));
   T = { seats, bet: 1, level: 0, lastRaise: 1, cur: -1, hu: act.length === 2 };
@@ -491,8 +514,7 @@ function buildSpot() {
   if (S.game === '222') {
     const t = S.t222, act = T.seats.length, need = t.left - act;
     if (need < 0) throw new Error(`Players left (${t.left}) is less than the ${act} players seated. Raise players left or sit some seats out.`);
-    const others = t.others.slice(0, need).map((x) => (x > 0 ? x : 25));
-    while (others.length < need) others.push(25);
+    const others = Array(need).fill(t.avg > 0 ? t.avg : 25);
     // folded table players keep their chips (minus blinds/antes they posted)
     for (const s of T.seats) if (s.folded) others.push(Math.max(0.01, stackOf(s) - s.put));
     const pays = parsePayouts();
@@ -582,12 +604,12 @@ function render() {
   for (const slot of S.slots) {
     const seat = slot.active ? seatById(slot.id) : null, b = document.createElement('button');
     if (!seat) {
-      b.className = 'seat out'; b.innerHTML = '<b>Empty</b><small>sitting out</small>';
+      b.className = 'seat out'; b.innerHTML = `<b>Seat ${slot.id + 1}</b><small>sitting out</small>`;
     } else {
       const isNow = nx === seat, lastAgg = seat.acts.some((a) => a.k === 'raise' || a.k === 'allin');
       b.className = `seat ${seat.folded ? 'fold' : lastAgg ? 'agg' : seat.acts.length ? 'pass' : ''} ${isNow ? 'now' : ''} ${S.sel === seat.id ? 'sel' : ''}`;
       const txt = seat.acts.length ? seat.acts.map((a) => a.label).join(' · ') : isNow ? 'to act' : seat.pos === 'SB' ? 'SB 0.5' : seat.pos === 'BB' ? 'BB 1' : '–';
-      b.innerHTML = `<b>${seat.pos}</b>${S.game === '222' ? `<small class="mono">${fmt(stackOf(seat))} bb</small>` : ''}<small>${txt}</small>`;
+      b.innerHTML = `<b>${seat.pos}${seat.pos === 'BTN' || (T.hu && seat.pos === 'SB') ? ' <span class="dealer" title="Dealer button">D</span>' : ''}</b><small class="mono">Seat ${seat.id + 1}${S.game === '222' ? ` · ${fmt(stackOf(seat))} bb` : ''}</small><small>${txt}</small>`;
       b.setAttribute('aria-pressed', S.sel === seat.id);
       b.onclick = () => { if (b.dataset.lp) { delete b.dataset.lp; return; } S.sel = S.sel === seat.id ? null : seat.id; customFor = null; view = 'pre'; render(); };
     }
@@ -650,7 +672,9 @@ function render() {
     ? `<span class="muted">Next to act: <b>${nx.pos}</b></span><span class="muted mono">pot ${fmt(potNow())} bb</span><span class="grow"></span>`
     : `<span class="who" style="font-size:16px">${live().length >= 2 ? `${live().length} players to the flop` : 'Hand over preflop'}</span><span class="muted mono">pot ${fmt(potNow())} bb</span><span class="grow"></span>`;
   const clr = document.createElement('button'); clr.textContent = 'Clear action'; clr.onclick = () => { S.hist = []; S.overrides = {}; replay(); const n2 = nextActor(); S.sel = n2 ? n2.id : null; render(); markStale(); };
-  foot.appendChild(clr); pr.appendChild(foot);
+  const nh = document.createElement('button'); nh.className = 'next'; nh.textContent = 'Next hand ›'; nh.title = 'Move the button one seat; stacks stay with their seats';
+  nh.onclick = nextHand;
+  foot.append(clr, nh); pr.appendChild(foot);
   renderBoard(); renderInHand();
   preReport = preflopReport();
   setView(view);
@@ -668,9 +692,11 @@ function render222() {
   if (document.activeElement?.closest?.('#t222')) return; // don't rebuild while typing
   $('tLeft').value = t.left; $('tPaid').value = t.paid; $('tPay').value = t.payouts;
   const ts = $('tSeats'); ts.innerHTML = '';
-  for (const seat of T.seats) {
+  for (const slot of S.slots) {
+    if (!slot.active) continue;
+    const seat = seatById(slot.id);
     const l = document.createElement('label'); l.className = 'stk';
-    l.innerHTML = `<span>${seat.pos}</span><input type="number" min="0.5" step="0.5" value="${stackOf(seat)}" aria-label="${seat.pos} stack">`;
+    l.innerHTML = `<span>Seat ${seat.id + 1}<em>${seat.pos}</em></span><input type="number" min="0.5" step="0.5" value="${stackOf(seat)}" aria-label="Seat ${seat.id + 1} stack">`;
     l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.stacks[seat.id] = v; save222(); replay(); render222b(); render(); markStale(); } });
     ts.appendChild(l);
   }
@@ -679,32 +705,14 @@ function render222() {
 function render222b() {
   const t = S.t222, need = t.left - T.seats.length, box = $('tOthers'); box.innerHTML = '';
   $('tOthersRow').hidden = need <= 0;
-  const otherVal = (i) => (t.others[i] > 0 ? t.others[i] : 25);
-  if (need > 0 && need <= 16) {
-    for (let i = 0; i < need; i++) {
-      const l = document.createElement('label'); l.className = 'stk';
-      l.innerHTML = `<span>#${i + 1}</span><input type="number" min="0.5" step="0.5" value="${otherVal(i)}" aria-label="Other player ${i + 1} stack">`;
-      l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.others[i] = v; save222(); render222b(); markStale(); } });
-      box.appendChild(l);
-    }
-  } else if (need > 16) {
-    // big fields: one list, pasted or typed, plus a fill helper
-    const inp = document.createElement('input'); inp.id = 'tOthersList'; inp.className = 'mono grow'; inp.style.minWidth = '220px';
-    inp.setAttribute('aria-label', 'Stacks of the other players, comma separated');
-    inp.value = Array.from({ length: need }, (_, i) => fmt(otherVal(i))).join(', ');
-    inp.addEventListener('change', (e) => {
-      const vals = e.target.value.split(/[,\s]+/).map(Number).filter((x) => x > 0);
-      t.others = vals.slice(0, need); save222(); render222b(); markStale();
-    });
-    const cnt = t.others.filter((x) => x > 0).length;
-    const lab = document.createElement('span'); lab.className = 'muted'; lab.style.fontSize = '12px';
-    lab.textContent = `${need} players · ${Math.min(cnt, need)} entered${cnt < need ? ', the rest count as 25 bb' : ''}`;
-    const fillV = document.createElement('input'); fillV.type = 'number'; fillV.min = '0.5'; fillV.step = '0.5'; fillV.value = '25'; fillV.setAttribute('aria-label', 'Fill value');
-    const fill = document.createElement('button'); fill.textContent = 'Set all';
-    fill.onclick = () => { const v = parseFloat(fillV.value); if (v > 0) { t.others = Array(need).fill(v); save222(); render222b(); markStale(); } };
-    box.append(inp, lab, fillV, fill);
+  const avg = t.avg > 0 ? t.avg : 25;
+  if (need > 0) {
+    const l = document.createElement('label'); l.className = 'stk';
+    l.innerHTML = `<input type="number" min="0.5" step="0.5" value="${avg}" aria-label="Average stack of the other players"><span class="muted" style="font-family:var(--font-body);font-size:12px;font-weight:400;text-align:left">average × ${need} player${need > 1 ? 's' : ''}</span>`;
+    l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.avg = v; save222(); render222b(); markStale(); } else e.target.value = avg; });
+    box.appendChild(l);
   }
-  const pays = parsePayouts(), total = T.seats.reduce((a, s) => a + stackOf(s), 0) + Array.from({ length: Math.max(0, need) }, (_, i) => otherVal(i)).reduce((a, b) => a + b, 0);
+  const pays = parsePayouts(), total = T.seats.reduce((a, s) => a + stackOf(s), 0) + Math.max(0, need) * avg;
   $('tNote').textContent = need < 0 ? `Players left must be at least ${T.seats.length} (players seated).`
     : `${t.left} left · ${t.paid} paid${t.left > t.paid ? ` · ${t.left - t.paid} from the money` : ' · in the money'} · ${fmt(total)} bb in play · payouts ${pays.slice(0, 6).map((p) => p.toFixed(1) + '%').join(' / ')}${pays.length > 6 ? ` / … / ${pays[pays.length - 1].toFixed(2)}% (min cash)` : ''}`;
   $('tNote').className = need < 0 || !pays.length ? 'hint error' : 'hint';
