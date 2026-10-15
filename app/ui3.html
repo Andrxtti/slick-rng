@@ -173,7 +173,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 1.8 · SOLVER</span>
+  <span class="ver">ALPHA 1.9 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -190,7 +190,8 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
       <button id="tPayAuto" title="Fill a standard payout curve for the paid places">Auto payouts</button>
     </div>
     <div class="row"><span class="label" style="width:120px">Table stacks (bb)</span><div class="row grow" id="tSeats"></div></div>
-    <div class="row" id="tOthersRow"><span class="label" style="width:120px">Other players</span><div class="row grow" id="tOthers"></div></div>
+    <div class="row"><span class="label" style="width:120px">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select>
+      <span class="sep"></span><span class="label" id="tOthersLabel">Other players</span><div class="row grow" id="tOthers"></div></div>
     <div class="hint" id="tNote"></div>
   </div>
   <div class="seats" id="seats"></div>
@@ -296,12 +297,37 @@ const CALL_5B = 'QQ+,AKs,AKo';
 const LIMP = '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,86s+,75s+,65s,54s,A9o-AJo,KJo,QJo,JTo';
 const LIMP_CALL = '22-99,A2s-AJs,K9s+,Q9s+,J9s+,T8s+,97s+,87s,76s,65s,AJo,KQo';
 const SB_COMPLETE = '22-99,A2s-AJs,K2s+,Q5s+,J7s+,T7s+,96s+,85s+,75s+,64s+,54s,A2o-AJo,K8o+,Q9o+,J9o+,T9o,98o';
-function jamRange(level, stack, d) {
-  if (stack <= 12) return level <= 1 ? (d >= 4 ? '55+,A7s+,KTs+,QJs,A9o+,KQo' : '22+,A2s+,K7s+,Q9s+,J9s+,T9s,A5o+,KTo+,QJo') : '55+,A8s+,KTs+,AJo+,KQo';
-  if (stack <= 25) return level <= 1 ? '77+,ATs+,KQs,AQo+' : level === 2 ? '88+,AJs+,KQs,AQo+,A5s' : 'TT+,AQs+,AKo';
-  return level <= 3 ? '' : 'QQ+,AKs,AKo';
+// All-in ranges by raise level and effective stack (bb). Never empty: when a player
+// jams, this is the range the solver gives them.
+function jamRange(level, eff, d) {
+  if (level <= 1) {
+    if (eff <= 8) return d >= 4 ? '22+,A2s+,K5s+,Q8s+,J9s+,T9s,A5o+,K9o+,QTo+' : '22+,A2s+,K2s+,Q5s+,J7s+,T7s+,97s+,86s+,76s,65s,A2o+,K7o+,Q9o+,J9o+,T9o';
+    if (eff <= 12) return d >= 4 ? '44+,A7s+,KTs+,QJs,A9o+,KQo' : '22+,A2s+,K7s+,Q9s+,J9s+,T9s,A5o+,KTo+,QJo';
+    if (eff <= 15) return d >= 3 ? '66+,A9s+,KJs+,ATo+,KQo' : '22+,A2s+,K9s+,QTs+,JTs,A8o+,KJo+';
+    return 'TT+,AQs+,AKo';
+  }
+  if (level === 2) {
+    if (eff <= 15) return '44+,A7s+,KTs+,QJs,A9o+,KQo,A5s-A2s';
+    if (eff <= 30) return '77+,A9s+,KTs+,QJs,ATo+,KQo,A5s-A4s';
+    if (eff <= 50) return 'TT+,AJs+,KQs,AQo+';
+    return 'QQ+,AKs,AKo';
+  }
+  if (level === 3) return eff <= 60 ? 'TT+,AQs+,AKo,A5s:0.5' : 'QQ+,AKs,AKo';
+  return eff <= 150 ? 'QQ+,AKs,AKo' : 'KK+,AKs';
 }
-function callJamRange(stack) { return stack <= 12 ? '22+,A2s+,K8s+,QTs+,A7o+,KTo+' : stack <= 25 ? '66+,ATs+,KQs,AJo+' : 'QQ+,AKs,AKo'; }
+// calling an all-in: eff = what the caller actually risks
+function callJamRange(eff) {
+  if (eff <= 10) return '22+,A2s+,K5s+,Q8s+,J9s+,A2o+,K9o+,QTo+';
+  if (eff <= 15) return '33+,A2s+,K9s+,QTs+,A7o+,KTo+';
+  if (eff <= 25) return '66+,A9s+,KQs,AJo+';
+  if (eff <= 40) return '88+,AJs+,AQo+';
+  return 'QQ+,AKs,AKo';
+}
+// when raising would commit most of the stack, the aggressive action is a jam
+function jamPreferred(level, eff, raiseTo) {
+  if (raiseTo !== undefined && raiseTo >= 0.4 * eff) return true;
+  return level <= 1 ? eff <= 12 : level === 2 ? eff <= 30 : level === 3 ? eff <= 60 : eff <= 150;
+}
 const BB_CHECK = 'ANY';
 const FT_PAY = [26.2, 18.0, 13.2, 10.2, 8.0, 6.6, 5.4, 4.6, 3.8];
 const SIZES = {
@@ -401,7 +427,7 @@ function apply(seat, o) {
   else if (o.k === 'check') seat.acts.push({ k: 'check', label: 'Check' });
   else if (o.k === 'call') {
     seat.put = Math.min(T.bet, stackOf(seat)); if (seat.put >= stackOf(seat) - 1e-9) seat.allin = true;
-    seat.acts.push({ k: 'call', facing, vsAllin, label: o.t.replace(/ all-in.*/, ' AI') });
+    seat.acts.push({ k: 'call', facing, vsAllin, risk: seat.put, label: o.t.replace(/ all-in.*/, ' AI') });
   } else {
     const to = Math.min(o.to, stackOf(seat)), raise = to - T.bet;
     seat.put = to; if (to >= stackOf(seat) - 1e-9) seat.allin = true;
@@ -409,7 +435,7 @@ function apply(seat, o) {
       T.level++; if (raise >= T.lastRaise - 1e-9) T.lastRaise = raise; T.bet = to;
       for (const x of T.seats) if (x !== seat && !x.folded && !x.allin) x.needs = true;
     }
-    seat.acts.push({ k: o.k, L: T.level, to, label: o.k === 'allin' ? `${jamName(T.level)} ${fmt(to)}` : `${raiseName(T.level)} ${fmt(to)}` });
+    seat.acts.push({ k: o.k, L: T.level, to, eff: effStack(seat), label: o.k === 'allin' ? `${jamName(T.level)} ${fmt(to)}` : `${raiseName(T.level)} ${fmt(to)}` });
   }
   seat.needs = false;
   T.cur = T.seats.indexOf(seat);
@@ -454,13 +480,22 @@ function foldsTo(id) {
   });
 }
 const seatById = (id) => T.seats.find((s) => s.id === id);
+// effective stack: your stack, capped by the biggest stack still in the hand against you
+// facing a raise: effective against the raiser; first in: against the biggest stack still to act
+function effStack(seat) {
+  const own = stackOf(seat);
+  const agg = T.level > 0 ? [...T.seats].reverse().find((x) => x !== seat && !x.folded && x.acts.some((a) => (a.k === 'raise' || a.k === 'allin') && a.L === T.level)) : null;
+  if (agg) return Math.min(own, stackOf(agg));
+  const opp = T.seats.filter((x) => x !== seat && !x.folded).map((x) => stackOf(x));
+  return Math.min(own, opp.length ? Math.max(...opp) : own);
+}
 
 // ---------------------------------------------------------------- ranges from the action line
 function rfiFor(seat) { if (T.hu && seat.pos === 'SB') return RFI_HU_SB; if (seat.pos === 'SB') return RFI_SB; return RFI_D[Math.min(6, Math.max(0, seat.d))]; }
 function callFor(seat) { if (seat.pos === 'BB') return CALL.bb; if (seat.pos === 'SB') return CALL.sb; if (seat.d === 0) return CALL.btn; return seat.d <= 2 ? CALL.mid : CALL.early; }
 function raiseRange(seat, L, limpers) { return L === 1 ? (limpers ? ISO : rfiFor(seat)) : L === 2 ? THREEBET : L === 3 ? FOURBET : FIVEBET; }
-function callRange(seat, facing, vsAllin, prior) {
-  if (vsAllin) return callJamRange(stackOf(seat));
+function callRange(seat, facing, vsAllin, prior, risk) {
+  if (vsAllin) return callJamRange(risk !== undefined ? risk : Math.min(stackOf(seat), T.bet));
   if (facing === 0) return seat.pos === 'SB' ? SB_COMPLETE : LIMP;
   if (facing === 1) return prior.some((a) => a.k === 'call' && a.facing === 0) ? LIMP_CALL : callFor(seat);
   if (facing === 2) return prior.some((a) => a.k === 'raise' && a.L === 1) ? CALL_3B : COLD_3B;
@@ -472,8 +507,8 @@ function rangeFor(seat) {
   if (!acts.length) return seat.pos === 'BB' ? BB_CHECK : 'ANY';
   const last = acts[acts.length - 1], prior = acts.slice(0, -1);
   if (last.k === 'check') return BB_CHECK;
-  if (last.k === 'call') return callRange(seat, last.facing, last.vsAllin, prior);
-  if (last.k === 'allin') return jamRange(last.L, stackOf(seat), seat.d);
+  if (last.k === 'call') return callRange(seat, last.facing, last.vsAllin, prior, last.risk);
+  if (last.k === 'allin') return jamRange(last.L, last.eff !== undefined ? last.eff : stackOf(seat), seat.d);
   return raiseRange(seat, last.L, last.L === 1 && limperCount() > 0);
 }
 const RCACHE = new Map();
@@ -550,8 +585,10 @@ function preflopReport() {
     const rangeOf = (o) => {
       if (o.k === 'fold') return null;
       if (o.k === 'check') return 'ANY';
-      if (o.k === 'allin') return jamRange(o.L, stackOf(seat), seat.d);
-      if (o.k === 'raise') return stackOf(seat) <= 15 ? '' : raiseRange(seat, o.L, o.L === 1 && limpers > 0);
+      const eff = effStack(seat), small = opts.find((x) => x.k === 'raise');
+      const jam = jamPreferred(o.L || T.level + 1, eff, small ? small.to : undefined);
+      if (o.k === 'allin') return jam ? jamRange(o.L, eff, seat.d) : '';
+      if (o.k === 'raise') return jam ? '' : raiseRange(seat, o.L, o.L === 1 && limpers > 0);
       if (T.level === 0) return limpers ? (seat.pos === 'SB' ? SB_COMPLETE : LIMP) : '';
       return callRange(seat, T.level, vsAllin, seat.acts);
     };
@@ -696,7 +733,7 @@ function render222() {
     if (!slot.active) continue;
     const seat = seatById(slot.id);
     const l = document.createElement('label'); l.className = 'stk';
-    l.innerHTML = `<span>Seat ${seat.id + 1}<em>${seat.pos}</em></span><input type="number" min="0.5" step="0.5" value="${stackOf(seat)}" aria-label="Seat ${seat.id + 1} stack">`;
+    l.innerHTML = `<span>Seat ${seat.id + 1}</span><input type="number" min="0.5" step="0.5" value="${stackOf(seat)}" aria-label="Seat ${seat.id + 1} stack">`;
     l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.stacks[seat.id] = v; save222(); replay(); render222b(); render(); markStale(); } });
     ts.appendChild(l);
   }
@@ -704,7 +741,9 @@ function render222() {
 }
 function render222b() {
   const t = S.t222, need = t.left - T.seats.length, box = $('tOthers'); box.innerHTML = '';
-  $('tOthersRow').hidden = need <= 0;
+  $('tOthersLabel').hidden = need <= 0;
+  const bs = $('tButton'), bseat = buttonSeat();
+  bs.innerHTML = S.slots.filter((x) => x.active).map((x) => `<option value="${x.id}" ${x.id === bseat ? 'selected' : ''}>Seat ${x.id + 1}</option>`).join('');
   const avg = t.avg > 0 ? t.avg : 25;
   if (need > 0) {
     const l = document.createElement('label'); l.className = 'stk';
@@ -723,6 +762,10 @@ function bind222() {
   $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(50, t.left, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
     if (t.payouts.split(',').filter(Boolean).length < v || was !== v) { t.payouts = defaultPayouts(v); $('tPay').value = t.payouts; } save222(); render222b(); markStale(); });
   $('tPay').addEventListener('change', (e) => { t.payouts = e.target.value; save222(); render222b(); markStale(); });
+  $('tButton').addEventListener('change', (e) => {
+    S.button = +e.target.value; S.hist = []; S.overrides = {}; S.board = []; activeSlot = null;
+    replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; view = 'pre'; render(); markStale();
+  });
   $('tPayAuto').onclick = () => { t.payouts = defaultPayouts(t.paid); $('tPay').value = t.payouts; save222(); render222b(); markStale(); };
 }
 
