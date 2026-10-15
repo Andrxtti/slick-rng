@@ -58,7 +58,7 @@ button, .cell, .seat, .slot { touch-action: manipulation; }
   <div class="sp-chip"><img class="sp-face" src="icons/slick-badge.jpg" alt=""><img class="dwi" src="icons/dwi.png" alt=""></div>
   <div class="sp-word">CONFIRMED <span>FIRE</span> POKER</div>
   <div class="sp-tag">Slick RNG Solver</div>
-  <div class="sp-ver">Beta 4.3</div>
+  <div class="sp-ver">Beta 4.2</div>
   <div class="sp-bar"><i></i></div>
   <div class="sp-foot"><span>Built by dreamers</span><q>People insist on calling it luck…</q></div>
 </div>
@@ -374,10 +374,6 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .stkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 8px; }
 .stk span { white-space: nowrap; }
 .stk.empty span { color: var(--faint); }
-.stk .seatpick { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-align: right; cursor: pointer; display: grid; line-height: 1.05; min-width: 40px; }
-.stk .seatpick:disabled { cursor: default; }
-.stk .seatpick em { font-style: normal; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
-.stk.empty .seatpick { color: var(--faint); }
 .stk.empty input { border-style: dashed; background: transparent; }
 
 /* action rows */
@@ -713,7 +709,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
     <div class="brand" id="brandHome" role="button" tabindex="0" title="Home">
       <span class="brandmark" aria-hidden="true"><img src="data:image/jpeg;base64,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" alt=""></span>
       <div class="namestack"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver<span class="vbadge" id="vBadge" hidden>PLO</span></div></div>
-      <span class="ver">BETA 4.3</span>
+      <span class="ver">BETA 4.2</span>
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
@@ -766,7 +762,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
         <div class="hint" id="tNote"></div>
         <div class="groups">
           <div class="group">
-            <div class="row"><span class="label grow">Table stacks (bb)</span><button class="mini" id="tClearStk" title="Keep the hero's stack, leave every other seat seated with an unknown stack, and set 9 seats: a general chip EV sim">Clear stacks</button><span class="hint mono" id="tSeatsInfo"></span></div>
+            <div class="row"><span class="label grow">Table stacks (bb)</span><span class="hint mono" id="tSeatsInfo"></span></div>
             <div class="stkgrid" id="tSeats"></div>
             <div class="row"><label class="field"><span class="label">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select></label>
               <div class="field" id="tOthersWrap"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
@@ -2328,16 +2324,8 @@ function seatsFromStacks() {
     S.table = 'custom'; S.slots = Array.from({ length: 9 }, (_, i) => ({ id: i, active: true }));
     if (!(S.button < 9)) S.button = 0;
   }
-  S.slots.forEach((sl) => (sl.active = t.stacks[sl.id] > 0 || t.stacks[sl.id] === null)); // null = seated, stack unknown
+  S.slots.forEach((sl) => (sl.active = t.stacks[sl.id] > 0));
   if (S.slots.filter((x) => x.active).length < 2) { [0, 1].forEach((i) => { if (!(t.stacks[i] > 0)) t.stacks[i] = t.avg > 0 ? t.avg : 25; S.slots[i].active = true; }); }
-}
-// click a seat name to empty it (stack 0) or seat it again with an unknown stack (null); hero always plays
-function toggleSeat(id) {
-  const t = S.t222, slot = S.slots.find((x) => x.id === id);
-  if (!slot || id === 0) return;
-  if (slot.active && S.slots.filter((x) => x.active).length <= 2) return;
-  t.stacks[id] = slot.active ? 0 : null;
-  seatsFromStacks(); S.hist = []; S.overrides = {}; save222(); replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render(); markStale();
 }
 function slotCount() { return S.table === '6' ? 6 : S.table === '8' ? 8 : 9; }
 function makeSlots() {
@@ -3019,11 +3007,8 @@ function render222() {
     const seat = slot.active ? seatById(slot.id) : null, id = slot.id;
     const l = document.createElement('label'); l.className = 'stk' + (seat ? '' : ' empty');
     const now = seat ? stackOf(seat) - seat.put : 0;
-    const unknown = seat && t.stacks[id] === null;
-    l.innerHTML = `<button type="button" class="seatpick" aria-pressed="${!!seat}"${id === 0 ? ' disabled' : ''} title="${id === 0 ? 'Hero always plays' : seat ? 'Click to empty this seat' : 'Click to seat a player here'}">${seatLabel(id)}${seat ? (seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`) : '<em>empty</em>'}</button><input type="number" min="0" step="0.5" value="${!unknown && seat ? baseStack(seat) : ''}" placeholder="${unknown ? '?' : seat ? '' : 'empty'}" aria-label="${seatLabel(id)} stack (blank = empty seat)">`; if (isHero(id)) l.classList.add('hero');
-    l.querySelector('.seatpick').addEventListener('click', () => toggleSeat(id));
+    l.innerHTML = `<span>${seatLabel(id)}${seat ? (seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`) : '<em>empty</em>'}</span><input type="number" min="0" step="0.5" value="${seat ? baseStack(seat) : ''}" placeholder="empty" aria-label="${seatLabel(id)} stack (blank = empty seat)">`; if (isHero(id)) l.classList.add('hero');
     l.querySelector('input').addEventListener('change', (e) => {
-      e.target.blur(); // leave the box first, or render222 skips rebuilding the seat grid while it is focused
       const v = parseFloat(e.target.value), filled = S.slots.filter((x) => x.active).length;
       if (!(v > 0)) {
         if (id === 0 || (slot.active && filled <= 2)) { e.target.value = seat ? baseStack(seat) : ''; return; } // Hero and at least two players stay seated
@@ -3033,7 +3018,7 @@ function render222() {
     });
     ts.appendChild(l);
   }
-  $('tSeatsInfo').textContent = `${S.slots.filter((x) => x.active).length}-handed · ? = stack unknown · blank = empty seat`;
+  $('tSeatsInfo').textContent = `${S.slots.filter((x) => x.active).length}-handed · blank = empty seat`;
   render222b();
 }
 function renderPko() {
@@ -3153,13 +3138,6 @@ function bind222() {
   const t = S.t222;
   $('tSat').onclick = () => { t.payouts = Array(t.paid).fill(1).join(','); $('tPay').value = t.payouts; save222(); render222b(); render(); markStale(); };
   $('tClear').onclick = () => { t.leftSet = t.paidSet = t.paidAuto = false; t.icm = false; t.entrants = t.buyin = t.gtd = 0; save222(); render(); markStale(); };
-  // Clear stacks: keep the hero, leave the other eight seated with unknown stacks (9-handed), chip EV
-  $('tClearStk').onclick = () => {
-    t.stacks = { 0: t.stacks[0] > 0 ? t.stacks[0] : 25 };
-    for (let i = 1; i < 9; i++) t.stacks[i] = null;
-    S.table = 'custom'; t.leftSet = t.paidSet = false; t.icm = false;
-    seatsFromStacks(); S.hist = []; S.overrides = {}; save222(); replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render(); markStale();
-  };
   $('pkoOn').addEventListener('change', (e) => { t.pko.on = e.target.checked; save222(); render(); markStale(); });
   // what-if: values update live while dragging; the solver restarts when you let go
   const live = (id, fn) => { $(id).addEventListener('input', fn); $(id).addEventListener('change', () => { save222(); replay(); render(); markStale(); }); };
