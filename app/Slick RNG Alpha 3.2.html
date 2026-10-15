@@ -401,7 +401,7 @@ details.adv summary:hover { color: var(--fg); }
     <div class="brand">
       <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#efe4c8"/><g fill="#0d0c0a"><rect x="18" y="1.5" width="4" height="6" rx="1"/><rect x="18" y="32.5" width="4" height="6" rx="1"/><rect x="1.5" y="18" width="6" height="4" rx="1"/><rect x="32.5" y="18" width="6" height="4" rx="1"/><rect x="18" y="1.5" width="4" height="6" rx="1" transform="rotate(45 20 20)"/><rect x="18" y="32.5" width="4" height="6" rx="1" transform="rotate(45 20 20)"/><rect x="1.5" y="18" width="6" height="4" rx="1" transform="rotate(45 20 20)"/><rect x="32.5" y="18" width="6" height="4" rx="1" transform="rotate(45 20 20)"/></g><circle cx="20" cy="20" r="11" fill="#0d0c0a"/><circle cx="20" cy="20" r="11" fill="none" stroke="#5aa9de" stroke-width="1.5" stroke-dasharray="2.2 2.2"/><path d="M16.2 23.6c.9.9 2.1 1.4 3.6 1.4 2 0 3.3-1 3.3-2.5 0-3.4-6.6-2-6.6-5.6 0-1.4 1.3-2.5 3.2-2.5 1.3 0 2.4.4 3.2 1.2" fill="none" stroke="#efe4c8" stroke-width="1.9" stroke-linecap="round"/></svg>
       <div class="wordmark">SLICK <span>RNG</span></div>
-      <span class="ver">ALPHA 3.1</span>
+      <span class="ver">ALPHA 3.2</span>
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
@@ -423,11 +423,17 @@ details.adv summary:hover { color: var(--fg); }
           <div class="group">
             <span class="label">Field and payouts</span>
             <div class="fields">
+              <label class="field"><span class="label">Entrants</span><input id="tEnt" type="number" min="2" step="1" placeholder="e.g. 180"></label>
+              <label class="field"><span class="label">Buy-in ($)</span><input id="tBuy" type="number" min="0" step="0.01" placeholder="e.g. 10"></label>
+              <label class="field"><span class="label">Guarantee ($)</span><input id="tGtd" type="number" min="0" step="1" placeholder="optional"></label>
+            </div>
+            <div class="fields">
               <label class="field"><span class="label">Players left</span><input id="tLeft" type="number" min="2" max="75" step="1"></label>
-              <label class="field"><span class="label">Places paid</span><input id="tPaid" type="number" min="1" max="50" step="1"></label>
+              <label class="field"><span class="label">Places paid</span><input id="tPaid" type="number" min="1" max="5000" step="1"></label>
             </div>
             <label class="field"><span class="label">Payouts, 1st first (% or amounts)</span><input id="tPay" placeholder="50,30,20"></label>
-            <div class="row"><button id="tPayAuto" title="Fill a standard payout curve for the paid places">Auto payouts</button><button id="tSat" title="Every paid place pays the same (satellite)">Satellite</button></div>
+            <div class="hint" id="tPayInfo"></div>
+            <div class="row"><button id="tPayAuto" title="Fill a typical payout structure from entrants and buy-in (or a standard curve for the paid places)">Auto payouts</button><button id="tSat" title="Every paid place pays the same (satellite)">Satellite</button></div>
           </div>
           <div class="group">
             <span class="label">Table stacks (bb)</span>
@@ -1784,7 +1790,7 @@ const SIZES = {
 // ---------------------------------------------------------------- table model
 const S = { t222: load222(), game: 'cash', table: '6', slots: [], stack: 100, left: 9, sz: { open: 2, b3: 6, b4: 14, b5: 30 }, board: [], sizing: 'simple', overrides: {}, hist: [], sel: null };
 function load222() {
-  const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 } };
+  const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 }, entrants: 0, buyin: 0, gtd: 0 };
   try { const v = JSON.parse(localStorage.getItem('slick222') || 'null'); return v ? { ...def, ...v } : def; } catch { return def; }
 }
 function save222() { try { localStorage.setItem('slick222', JSON.stringify(S.t222)); } catch { /* storage unavailable */ } }
@@ -2084,6 +2090,52 @@ function rawPaySum() { const t = S.t222; return t.payouts.split(/[,\s]+/).map(Nu
 function pkoOn() { return S.game === '222' && S.t222.pko && S.t222.pko.on; }
 function bountyPct(seat) { const t = S.t222, raw = rawPaySum(), b = t.pko.b[seat.id]; return raw > 0 && b > 0 ? (b / raw) * 100 : 0; }
 function bountyFrac() { const f = S.t222.pko.frac; return (f >= 0 && f <= 100 ? f : 75) / 100; }
+// Typical online MTT payout structure: about 15% of the field paid, a final-table ladder like the
+// big sites use, a smooth curve from 9th down to a min-cash of about 1.5–2× the buy-in,
+// and equal pay bands after the final table.
+function typicalPayouts(entrants, buyin, gtd) {
+  const N = Math.max(2, Math.round(entrants)), pool = Math.max(N * buyin, gtd || 0);
+  const P = N <= 3 ? 1 : N <= 6 ? 2 : N <= 10 ? 3 : Math.max(4, Math.round(N * 0.15));
+  const fixed = { 1: [100], 2: [65, 35], 3: [50, 30, 20], 4: [40, 30, 20, 10] };
+  const FT = [1, 0.65, 0.47, 0.36, 0.29, 0.235, 0.19, 0.155, 0.125]; // each place relative to 1st
+  let amt;
+  if (fixed[P]) amt = fixed[P].map((x) => (x / 100) * pool);
+  else if (P <= 9) { const r = FT.slice(0, P), s = r.reduce((a, b) => a + b, 0); amt = r.map((x) => (x / s) * pool); }
+  else {
+    const minCash = Math.min((N < 100 ? 2 : N < 1000 ? 1.75 : 1.5) * buyin, (pool / P) * 0.6);
+    const build = (X) => {
+      const ninth = FT[8] * X, b = Math.log(Math.max(1.0001, ninth / minCash)) / Math.log(P / 9);
+      return Array.from({ length: P }, (_, i) => (i < 9 ? FT[i] * X : Math.max(minCash, ninth * Math.pow((i + 1) / 9, -b))));
+    };
+    let lo = minCash / FT[8], hi = pool;
+    for (let k = 0; k < 80; k++) { const mid = (lo + hi) / 2; if (build(mid).reduce((a, b) => a + b, 0) > pool) hi = mid; else lo = mid; }
+    amt = build((lo + hi) / 2);
+    for (let p = 9; p < P;) { // equal pay bands after the final table
+      const size = p < 27 ? 3 : p < 99 ? 9 : p < 499 ? 25 : 50, end = Math.min(P, p + size);
+      const avg = amt.slice(p, end).reduce((x, y) => x + y, 0) / (end - p);
+      for (let i = p; i < end; i++) amt[i] = avg;
+      p = end;
+    }
+  }
+  amt = amt.map((x) => Math.floor(x * 100) / 100);
+  amt[0] = Math.round((amt[0] + pool - amt.reduce((x, y) => x + y, 0)) * 100) / 100;
+  return { paid: P, pool, amounts: amt };
+}
+function prizePool() { const t = S.t222; return t.entrants > 0 && t.buyin > 0 ? Math.max(t.entrants * t.buyin, t.gtd || 0) : 0; }
+const money = (x) => '$' + (x >= 1000 ? Math.round(x).toLocaleString() : x.toFixed(2));
+function applyTypical() {
+  const t = S.t222, r = typicalPayouts(t.entrants, t.buyin, t.gtd);
+  t.paid = r.paid; t.payouts = r.amounts.map((x) => x.toFixed(2)).join(',');
+  $('tPaid').value = t.paid; $('tPay').value = t.payouts;
+}
+function renderPayInfo() {
+  const t = S.t222, pool = prizePool(), el = $('tPayInfo');
+  if (!pool) { el.textContent = 'Enter entrants and buy-in to fill a typical payout structure automatically.'; el.className = 'hint'; return; }
+  const p = parsePayouts(), first = p.length ? (p[0] / 100) * pool : 0, last = p.length ? (p[p.length - 1] / 100) * pool : 0;
+  el.className = t.entrants < t.left ? 'hint error' : 'hint';
+  el.textContent = t.entrants < t.left ? `Entrants must be at least the ${t.left} players left.`
+    : `Prize pool ${money(pool)} · ${t.paid} paid (${((t.paid / t.entrants) * 100).toFixed(0)}% of the field) · 1st ${money(first)} · min-cash ${money(last)} (${(last / t.buyin).toFixed(2)}× buy-in)`;
+}
 function defaultPayouts(paid) {
   const w = Array.from({ length: paid }, (_, i) => 1 / Math.pow(i + 1, 0.85)), sum = w.reduce((a, b) => a + b, 0);
   return w.map((x) => Math.round((x / sum) * 1000) / 10).join(',');
@@ -2359,12 +2411,13 @@ function render222Sum() {
   const chip = (txt, c = '') => `<span class="sumchip ${c}">${esc(txt)}</span>`;
   $('t222sum').innerHTML = chip(`${t.left} left`) + chip(`${t.paid} paid`) +
     (out > 0 ? chip(out === 1 ? 'on the bubble' : `${out} from the money`, out <= 3 ? 'bubble' : '') : chip('in the money', 'money')) +
-    (hero ? chip(`Hero ${fmt(baseStack(hero))} bb`, 'hero') : '') + (t.pko && t.pko.on ? chip('PKO') : '');
+    (hero ? chip(`Hero ${fmt(baseStack(hero))} bb`, 'hero') : '') + (prizePool() ? chip(`${money(prizePool())} pool`) : '') + (t.pko && t.pko.on ? chip('PKO') : '');
 }
 function render222() {
   const t = S.t222; render222Sum();
   { const ae = document.activeElement; if (ae && ae.closest && ae.closest('#t222') && ae.type !== 'range' && ae.type !== 'checkbox' && ae.tagName !== 'BUTTON') return; } // don't rebuild while typing
   $('tLeft').value = t.left; $('tPaid').value = t.paid; $('tPay').value = t.payouts;
+  $('tEnt').value = t.entrants || ''; $('tBuy').value = t.buyin || ''; $('tGtd').value = t.gtd || '';
   const ts = $('tSeats'); ts.innerHTML = '';
   for (const slot of S.slots) {
     if (!slot.active) continue;
@@ -2402,7 +2455,7 @@ function renderWhatIf() {
 }
 function render222b() {
   const t = S.t222, need = t.left - T.seats.length, box = $('tOthers'); box.innerHTML = '';
-  $('tOthersLabel').hidden = need <= 0;
+  $('tOthersLabel').hidden = need <= 0; renderPayInfo(); render222Sum();
   const bs = $('tButton'), bseat = buttonSeat();
   bs.innerHTML = S.slots.filter((x) => x.active).map((x) => `<option value="${x.id}" ${x.id === bseat ? 'selected' : ''}>${seatLabel(x.id)}</option>`).join('');
   const avg = t.avg > 0 ? t.avg : 25;
@@ -2436,7 +2489,7 @@ function renderIcmBox() {
   const chipsTotal = st.reduce((a, b) => a + b, 0) + need * g;
   const me = S.sel !== null && S.sel !== undefined ? seats.findIndex((x) => x.id === S.sel) : -1;
   let html = '<div class="row"><span class="label" style="width:120px">ICM equity</span><div class="icmrow">';
-  seats.forEach((x, i) => { html += `<div class="icmcell ${i === me ? 'me' : ''} ${isHero(x.id) ? 'hero' : ''}"><b>${seatLabel(x.id)}</b><span>${eq[i].toFixed(2)}%</span><small>${((st[i] / chipsTotal) * 100).toFixed(2)}% of chips</small></div>`; });
+  seats.forEach((x, i) => { html += `<div class="icmcell ${i === me ? 'me' : ''} ${isHero(x.id) ? 'hero' : ''}"><b>${seatLabel(x.id)}</b><span>${eq[i].toFixed(2)}%${prizePool() ? ` · ${money((eq[i] / 100) * prizePool())}` : ''}</span><small>${((st[i] / chipsTotal) * 100).toFixed(2)}% of chips</small></div>`; });
   html += '</div></div>';
   if (me >= 0) {
     html += `<div class="row"><span class="label" style="width:120px">${seatLabel(seats[me].id)} risk</span><div class="icmrow">`;
@@ -2463,14 +2516,19 @@ function bind222() {
   live('wiSel', (e) => { if (S.sel === null || S.sel === undefined) return; t.stacks[S.sel] = +e.target.value; $('wiSelV').textContent = `${fmt(+e.target.value)} bb`; replay(); render222b(); });
   live('wiLeft', (e) => { t.left = Math.max(T.seats.length, +e.target.value); $('wiLeftV').textContent = t.left; render222b(); });
   $('tLeft').addEventListener('change', (e) => { const v = Math.max(2, Math.min(75, parseInt(e.target.value, 10) || 2)); t.left = v; save222(); e.target.value = v; render222b(); markStale(); });
-  $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(50, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
+  $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(5000, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
     if (t.payouts.split(',').filter(Boolean).length < v || was !== v) { t.payouts = defaultPayouts(v); $('tPay').value = t.payouts; } save222(); render222b(); markStale(); });
   $('tPay').addEventListener('change', (e) => { t.payouts = e.target.value; save222(); render222b(); markStale(); });
   $('tButton').addEventListener('change', (e) => {
     S.button = +e.target.value; S.hist = []; S.overrides = {}; S.board = []; activeSlot = null;
     replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; view = 'pre'; render(); markStale();
   });
-  $('tPayAuto').onclick = () => { t.payouts = defaultPayouts(t.paid); $('tPay').value = t.payouts; save222(); render222b(); markStale(); };
+  $('tPayAuto').onclick = () => { if (prizePool()) applyTypical(); else { t.payouts = defaultPayouts(t.paid); $('tPay').value = t.payouts; } save222(); render222b(); render(); markStale(); };
+  // entrants, buy-in or guarantee changed: rebuild the typical payout structure from them
+  [['tEnt', 'entrants'], ['tBuy', 'buyin'], ['tGtd', 'gtd']].forEach(([id, k]) => $(id).addEventListener('change', (e) => {
+    const v = parseFloat(e.target.value); t[k] = v > 0 ? (k === 'entrants' ? Math.round(v) : v) : 0;
+    if (prizePool()) applyTypical(); save222(); render222b(); render(); markStale();
+  }));
 }
 
 // ---------------------------------------------------------------- board (exact cards only)
