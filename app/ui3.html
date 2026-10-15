@@ -100,7 +100,7 @@ header.top {
 .wordmark span { color: var(--hero); }
 .namestack { display: grid; gap: 2px; }
 .subtag { font-family: var(--font-mono); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
-@media (max-width: 420px) { .wordmark { font-size: 21px; letter-spacing: .04em; } }
+@media (max-width: 420px) { .wordmark { font-size: 18px; letter-spacing: .03em; } }
 .ver { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; color: var(--muted); border: 1px solid var(--line-2); padding: 3px 7px; border-radius: 999px; white-space: nowrap; }
 .nav { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 @media (max-width: 760px) {
@@ -422,6 +422,19 @@ details.adv summary:hover { color: var(--fg); }
 .icmsec:not(.on) .icmveil { opacity: 1; pointer-events: auto; cursor: pointer; }
 .sumchip.chips { border-color: var(--line-2); color: var(--muted); }
 .sumchip.icm { border-color: rgba(90, 169, 222, .5); color: var(--hero); }
+/* phone: compact header that slides away while scrolling down or typing, back on scroll up */
+header.top { transition: transform .25s ease; will-change: transform; }
+header.top.hide { transform: translateY(-110%); }
+@media (pointer: coarse) { .kbdhint, .kbd, .trSpotKeys { display: none; } }
+@media (max-width: 760px) {
+  .topin { padding-block: 8px; gap: 8px; }
+  .brandmark { width: 32px; height: 32px; border-radius: 8px; }
+  .wordmark { font-size: 19px; letter-spacing: .04em; }
+  .subtag { font-size: 9px; letter-spacing: .18em; }
+  .ver { display: none; }
+  .seg button { padding: 5px 10px; }
+  header.top { margin-bottom: 12px; }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 
@@ -569,7 +582,7 @@ details.adv summary:hover { color: var(--fg); }
             <label class="row" for="trRand" title="Ignore your table setup and deal random tournament spots"><span class="switch"><input type="checkbox" id="trRand" role="switch"><i aria-hidden="true"></i></span><span class="label">Randomize</span></label>
             <label class="row" id="trEveryWrap" hidden><span class="label">New table</span><select id="trEvery"><option value="1">Every spot</option><option value="3">Every 3 spots</option><option value="5">Every 5 spots</option></select></label>
             <button class="primary" id="trDeal">Deal</button></div>
-          <div class="hint">Spots come from the table setup (stacks, players left, payouts). Change the setup to train other situations. Keys: 1–9 to answer, Enter for the next spot.</div>
+          <div class="hint">Spots come from the table setup (stacks, players left, payouts). Change the setup to train other situations.<span class="kbdhint"> Keys: 1–9 to answer, Enter for the next spot.</span></div>
           <div class="hint" id="trMsg"></div>
           <div id="trSpot"></div>
         </section>
@@ -1904,6 +1917,7 @@ function trAnswer(kind) {
   trSaveStats(trStats);
   sp.result = { j, best, loss, verdict, ev, strat, unit };
   trRender();
+  if (matchMedia('(max-width: 760px)').matches) { const v = document.querySelector('#trSpot .trverdict'); if (v) v.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
 function trCardHTML(c) { const s = SUITS[c & 3]; return `<span class="trcard s-${s}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
 function trRender() {
@@ -1926,7 +1940,7 @@ function trRender() {
     const verdictText = r.verdict === 'good' ? 'Correct' : r.verdict === 'small' ? 'Small mistake' : 'Mistake';
     html += `<div class="trverdict ${r.verdict}"><b>${verdictText}</b>${r.loss !== null ? `<span class="mono">${r.loss > 0 ? `−${r.loss.toFixed(r.unit === '%' ? 3 : 2)}${r.unit === '%' ? '% of the prize pool' : ' bb'}` : 'no equity lost'}</span>` : ''}<span class="muted">best: ${esc(label(r.best))}</span></div>
       <table class="trtab"><thead><tr><th>Option</th><th>Solver plays it</th><th>EV vs best</th></tr></thead><tbody>${sp.res.actions.map((_, i) => `<tr class="${i === r.j ? 'mine' : ''} ${i === r.best ? 'best' : ''}"><td>${esc(label(i))}${i === r.j ? ' · you' : ''}</td><td class="mono">${(r.strat[i] * 100).toFixed(0)}%</td><td class="mono">${r.ev ? fmtEv(r.ev[i] - r.ev[r.best], r.unit) : '–'}</td></tr>`).join('')}</tbody></table>
-      <div class="row"><button class="primary" id="trNext">Next spot ›</button><span class="hint">Enter or N</span></div>`;
+      <div class="row"><button class="primary" id="trNext">Next spot ›</button><span class="hint kbdhint">Enter or N</span></div>`;
   }
   box.innerHTML = html;
   box.querySelectorAll('.tropt').forEach((b) => (b.onclick = () => trAnswer(b.dataset.k)));
@@ -1939,6 +1953,24 @@ document.addEventListener('keydown', (e) => {
   else if ((e.key === 'Enter' || e.key.toLowerCase() === 'n') && (!sp || sp.result)) trDeal();
 });
 
+// phone: keep the header out of the way so it never sits on top of what you are tapping
+(() => {
+  const hd = document.querySelector('header.top'), phone = matchMedia('(max-width: 760px)');
+  let lastY = scrollY, typing = false;
+  const pad = () => { document.documentElement.style.scrollPaddingTop = (hd.offsetHeight + 12) + 'px'; };
+  const show = (on) => hd.classList.toggle('hide', !on);
+  addEventListener('scroll', () => {
+    const y = scrollY;
+    if (!phone.matches || typing) { lastY = y; return; }
+    if (y < 80 || y < lastY - 8) show(true); else if (y > lastY + 8) show(false);
+    lastY = y;
+  }, { passive: true });
+  const isField = (el) => el && el.matches && el.matches('input:not([type="range"]):not([type="checkbox"]), select, textarea');
+  document.addEventListener('focusin', (e) => { if (phone.matches && isField(e.target)) { typing = true; show(false); } });
+  document.addEventListener('focusout', () => setTimeout(() => { if (!isField(document.activeElement)) { typing = false; if (scrollY < 80) show(true); } }, 120));
+  phone.addEventListener('change', () => { if (!phone.matches) { typing = false; show(true); } });
+  if ('ResizeObserver' in window) new ResizeObserver(pad).observe(hd); pad();
+})();
 // ---------------------------------------------------------------- controls
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
