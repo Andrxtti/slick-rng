@@ -426,7 +426,7 @@ details.adv summary:hover { color: var(--fg); }
     <div class="brand">
       <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#efe4c8"/><g fill="#0d0c0a"><rect x="18" y="1.5" width="4" height="6" rx="1"/><rect x="18" y="32.5" width="4" height="6" rx="1"/><rect x="1.5" y="18" width="6" height="4" rx="1"/><rect x="32.5" y="18" width="6" height="4" rx="1"/><rect x="18" y="1.5" width="4" height="6" rx="1" transform="rotate(45 20 20)"/><rect x="18" y="32.5" width="4" height="6" rx="1" transform="rotate(45 20 20)"/><rect x="1.5" y="18" width="6" height="4" rx="1" transform="rotate(45 20 20)"/><rect x="32.5" y="18" width="6" height="4" rx="1" transform="rotate(45 20 20)"/></g><circle cx="20" cy="20" r="11" fill="#0d0c0a"/><circle cx="20" cy="20" r="11" fill="none" stroke="#5aa9de" stroke-width="1.5" stroke-dasharray="2.2 2.2"/><path d="M16.2 23.6c.9.9 2.1 1.4 3.6 1.4 2 0 3.3-1 3.3-2.5 0-3.4-6.6-2-6.6-5.6 0-1.4 1.3-2.5 3.2-2.5 1.3 0 2.4.4 3.2 1.2" fill="none" stroke="#efe4c8" stroke-width="1.9" stroke-linecap="round"/></svg>
       <div class="wordmark">SLICK <span>RNG</span></div>
-      <span class="ver">ALPHA 3.3</span>
+      <span class="ver">ALPHA 3.4</span>
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
@@ -562,6 +562,8 @@ details.adv summary:hover { color: var(--fg); }
         <section class="bar">
           <div class="phd"><span class="eyebrow">Trainer</span><span class="muted" id="trSetup"></span><span class="grow"></span>
             <label class="row" id="trSeatWrap"><span class="label">Play as</span><select id="trSeat"><option value="hero">Hero</option><option value="any">Any seat</option></select></label>
+            <label class="row" for="trRand" title="Ignore your table setup and deal random tournament spots"><span class="switch"><input type="checkbox" id="trRand" role="switch"><i aria-hidden="true"></i></span><span class="label">Randomize</span></label>
+            <label class="row" id="trEveryWrap" hidden><span class="label">New table</span><select id="trEvery"><option value="1">Every spot</option><option value="3">Every 3 spots</option><option value="5">Every 5 spots</option></select></label>
             <button class="primary" id="trDeal">Deal</button></div>
           <div class="hint">Spots come from the table setup (stacks, players left, payouts). Change the setup to train other situations. Keys: 1–9 to answer, Enter for the next spot.</div>
           <div class="hint" id="trMsg"></div>
@@ -1833,7 +1835,7 @@ function load222() {
   const def = { left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 }, entrants: 0, buyin: 0, gtd: 0, icm: true };
   try { const v = JSON.parse(localStorage.getItem('slick222') || 'null'); return v ? { ...def, ...v } : def; } catch { return def; }
 }
-function save222() { try { localStorage.setItem('slick222', JSON.stringify(S.t222)); } catch { /* storage unavailable */ } }
+function save222() { if (window.__trRand) return; try { localStorage.setItem('slick222', JSON.stringify(S.t222)); } catch { /* storage unavailable */ } }
 // entered stack (before this hand)
 function baseStack(seat) { if (S.game !== '222') return S.stack; const v = S.t222.stacks[seat.id]; return v > 0 ? v : 25; }
 // big-blind ante: dead money paid by the big blind, so it comes off the BB's playable stack
@@ -2920,7 +2922,7 @@ function detail(k) {
 // Deals spots from the current table setup. Everyone before you acts according to the
 // solved preflop strategy with randomly dealt hands; you choose, and the solver grades the
 // choice by how much tournament equity (or bb) it gives up against the best option.
-const TR = { spot: null, busy: false, answered: false, seq: 0, pending: new Map() };
+const TR = { spot: null, busy: false, answered: false, seq: 0, pending: new Map(), random: false, saved: null, left: 0 };
 function trLoadStats() { try { return JSON.parse(localStorage.getItem('slickTrainer') || 'null') || { n: 0, loss: 0, good: 0, cats: {} }; } catch { return { n: 0, loss: 0, good: 0, cats: {} }; } }
 function trSaveStats(st) { try { localStorage.setItem('slickTrainer', JSON.stringify(st)); } catch { /* storage unavailable */ } }
 let trStats = trLoadStats();
@@ -2941,11 +2943,59 @@ function setMode(m) {
   $('modeSolver').setAttribute('aria-pressed', m === 'solver'); $('modeTrainer').setAttribute('aria-pressed', m === 'trainer');
   document.querySelectorAll('.solver-only').forEach((x) => (x.hidden = m !== 'solver'));
   $('trainer').hidden = m !== 'trainer'; document.body.classList.toggle('training', m === 'trainer');
-  if (m === 'trainer') trRender();
+  if (m === 'trainer') trRender(); else if (TR.random) setRandom(false);
+}
+// ---------------------------------------------------------------- trainer: randomize
+// Random scenarios replace the table setup while Randomize is on. Your own setup is saved
+// first and put back when Randomize is turned off or you go back to the solver.
+function snapSetup() { return JSON.parse(JSON.stringify({ game: S.game, table: S.table, slots: S.slots, stack: S.stack, button: S.button, t222: S.t222 })); }
+function applySetup(x) {
+  Object.assign(S, JSON.parse(JSON.stringify(x)));
+  S.hist = []; S.overrides = {}; S.board = []; S.sel = null; activeSlot = null; view = 'pre';
+  document.querySelectorAll('[data-game]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.game === S.game));
+  document.querySelectorAll('[data-table]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.table === S.table));
+  $('stackWrap').hidden = S.game === '222'; $('t222').hidden = S.game !== '222'; fillStacks();
+  replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render();
+}
+function randomSetup() {
+  const rnd = (a, b) => a + Math.random() * (b - a), pick = (a) => a[(Math.random() * a.length) | 0];
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
+  const table = Math.random() < 0.6 ? '6' : '8', n = +table;
+  const M = Math.round(rnd(8, 40)), stacks = {};
+  for (let i = 0; i < n; i++) stacks[i] = Math.max(2, Math.min(75, Math.round(M * Math.exp(0.55 * gauss()) * 2) / 2));
+  const stage = pick(['bubble', 'bubble', 'money', 'final']);
+  let entrants, left;
+  if (stage === 'bubble') { entrants = pick([45, 90, 180, 360]); const paid = typicalPayouts(entrants, 1).paid; left = paid + 1 + ((Math.random() * Math.max(2, Math.ceil(paid * 0.12))) | 0); }
+  else if (stage === 'money') { entrants = pick([90, 180, 360, 1000]); const paid = typicalPayouts(entrants, 1).paid; left = n + ((Math.random() * (Math.min(75, paid) - n)) | 0); }
+  else { entrants = pick([45, 180, 1000]); left = n; }
+  left = Math.max(n, Math.min(75, left));
+  const buyin = pick([1, 5, 10, 22, 55, 109]), pay = typicalPayouts(entrants, buyin, 0);
+  const t222 = { left, paid: pay.paid, payouts: pay.amounts.map((x) => x.toFixed(2)).join(','), stacks, avg: Math.max(3, Math.round(M * rnd(0.7, 1.4))), ante: 0,
+    pko: { on: false, b: {}, frac: 75 }, entrants, buyin, gtd: 0, icm: Math.random() < 0.85 };
+  return { game: '222', table, slots: Array.from({ length: n }, (_, i) => ({ id: i, active: true })), stack: S.stack, button: (Math.random() * n) | 0, t222 };
+}
+function setRandom(on) {
+  if (on === TR.random) return;
+  TR.random = on; window.__trRand = on; TR.spot = null; TR.left = 0;
+  if (on) { TR.saved = snapSetup(); $('trSeat').value = 'any'; }
+  else if (TR.saved) { applySetup(TR.saved); TR.saved = null; }
+  $('trRand').checked = on; $('trEveryWrap').hidden = !on;
+  trRender();
+}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function trNewScenario() {
+  applySetup(randomSetup()); TR.left = +$('trEvery').value;
+  const t0 = performance.now(), wait = 20000;
+  while (performance.now() - t0 < wait) {
+    await sleep(400);
+    if (pfState.done || pfState.error || pfState.deep) break;
+    $('trMsg').textContent = `New random table · solving it before dealing (${Math.round((performance.now() - t0) / 1000)} of ~${wait / 1000}s)…`;
+  }
 }
 const sample = (probs) => { let x = Math.random(); for (let i = 0; i < probs.length; i++) { x -= probs[i]; if (x < 0) return i; } return probs.length - 1; };
 async function trDeal() {
   if (TR.busy) return;
+  if (TR.random && TR.left <= 0) { TR.busy = true; TR.spot = null; trRender(); try { await trNewScenario(); } finally { TR.busy = false; } }
   if (!pfKey || pfState.deep) { $('trMsg').textContent = pfState.deep ? `The trainer needs the GTO preflop solver, which covers stacks up to ${PF_DEEP} bb.` : 'The preflop solver is starting…'; return; }
   TR.busy = true; TR.answered = false; $('trMsg').textContent = 'Dealing…';
   const seats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
@@ -2965,6 +3015,7 @@ async function trDeal() {
       path.push({ k: res.actions[sample(res.strat[cls])].k });
     }
     if (res && res.ok && !res.terminal && res.player === hero) {
+      if (TR.random) TR.left--;
       TR.spot = { seats, hands, hero, path, res, cls: Engine.CLASS_OF[Engine.comboIndex(hands[hero][0], hands[hero][1])] };
       TR.busy = false; trRender(); return;
     }
@@ -3006,7 +3057,7 @@ function trAnswer(kind) {
 function trCardHTML(c) { const s = SUITS[c & 3]; return `<span class="trcard s-${s}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
 function trRender() {
   if (S.mode !== 'trainer') return;
-  $('trSetup').textContent = `${S.game === '222' ? (icmOn() ? `MTT · ICM · ${S.t222.left} left · ${S.t222.paid} paid` : 'MTT · chip EV') : 'Cash'} · ${S.table === 'custom' ? 'custom table' : S.table + '-max'}`;
+  $('trSetup').textContent = `${TR.random ? 'Random · ' : ''}${S.game === '222' ? (icmOn() ? `MTT · ICM · ${S.t222.left} left · ${S.t222.paid} paid` : 'MTT · chip EV') : 'Cash'} · ${S.table === 'custom' ? 'custom table' : S.table + '-max'}`;
   $('trSeatWrap').hidden = S.game !== '222';
   const st = trStats;
   $('trStats').innerHTML = `<div class="trstat"><b>${st.n}</b><span>spots</span></div><div class="trstat"><b>${st.n ? Math.round((st.good / st.n) * 100) : 0}%</b><span>correct</span></div><div class="trstat"><b>${st.n ? (st.loss / st.n).toFixed(3) : '0'}</b><span>avg loss / spot</span></div>
@@ -3069,6 +3120,8 @@ bind222();
 $('modeSolver').onclick = () => setMode('solver');
 $('modeTrainer').onclick = () => setMode('trainer');
 $('trDeal').onclick = trDeal;
+$('trRand').addEventListener('change', (e) => setRandom(e.target.checked));
+$('trEvery').addEventListener('change', () => { TR.left = 0; });
 $('trReset').onclick = () => { trStats = { n: 0, loss: 0, good: 0, cats: {} }; trSaveStats(trStats); trRender(); };
 S.mode = 'solver';
 try { if (localStorage.getItem('slickDrawer') === 'closed') $('t222d').open = false; } catch { /* storage unavailable */ }
