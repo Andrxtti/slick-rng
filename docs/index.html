@@ -374,6 +374,10 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .stkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 8px; }
 .stk span { white-space: nowrap; }
 .stk.empty span { color: var(--faint); }
+.stk .seatpick { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-align: right; cursor: pointer; display: grid; line-height: 1.05; min-width: 40px; }
+.stk .seatpick:disabled { cursor: default; }
+.stk .seatpick em { font-style: normal; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
+.stk.empty .seatpick { color: var(--faint); }
 .stk.empty input { border-style: dashed; background: transparent; }
 
 /* action rows */
@@ -762,7 +766,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
         <div class="hint" id="tNote"></div>
         <div class="groups">
           <div class="group">
-            <div class="row"><span class="label grow">Table stacks (bb)</span><span class="hint mono" id="tSeatsInfo"></span></div>
+            <div class="row"><span class="label grow">Table stacks (bb)</span><button class="mini" id="tClearStk" title="Keep the hero's stack, leave every other seat seated with an unknown stack, and set 9 seats: a general chip EV sim">Clear stacks</button><span class="hint mono" id="tSeatsInfo"></span></div>
             <div class="stkgrid" id="tSeats"></div>
             <div class="row"><label class="field"><span class="label">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select></label>
               <div class="field" id="tOthersWrap"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
@@ -2324,8 +2328,16 @@ function seatsFromStacks() {
     S.table = 'custom'; S.slots = Array.from({ length: 9 }, (_, i) => ({ id: i, active: true }));
     if (!(S.button < 9)) S.button = 0;
   }
-  S.slots.forEach((sl) => (sl.active = t.stacks[sl.id] > 0));
+  S.slots.forEach((sl) => (sl.active = t.stacks[sl.id] > 0 || t.stacks[sl.id] === null)); // null = seated, stack unknown
   if (S.slots.filter((x) => x.active).length < 2) { [0, 1].forEach((i) => { if (!(t.stacks[i] > 0)) t.stacks[i] = t.avg > 0 ? t.avg : 25; S.slots[i].active = true; }); }
+}
+// click a seat name to empty it (stack 0) or seat it again with an unknown stack (null); hero always plays
+function toggleSeat(id) {
+  const t = S.t222, slot = S.slots.find((x) => x.id === id);
+  if (!slot || id === 0) return;
+  if (slot.active && S.slots.filter((x) => x.active).length <= 2) return;
+  t.stacks[id] = slot.active ? 0 : null;
+  seatsFromStacks(); S.hist = []; S.overrides = {}; save222(); replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render(); markStale();
 }
 function slotCount() { return S.table === '6' ? 6 : S.table === '8' ? 8 : 9; }
 function makeSlots() {
@@ -3007,7 +3019,9 @@ function render222() {
     const seat = slot.active ? seatById(slot.id) : null, id = slot.id;
     const l = document.createElement('label'); l.className = 'stk' + (seat ? '' : ' empty');
     const now = seat ? stackOf(seat) - seat.put : 0;
-    l.innerHTML = `<span>${seatLabel(id)}${seat ? (seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`) : '<em>empty</em>'}</span><input type="number" min="0" step="0.5" value="${seat ? baseStack(seat) : ''}" placeholder="empty" aria-label="${seatLabel(id)} stack (blank = empty seat)">`; if (isHero(id)) l.classList.add('hero');
+    const unknown = seat && t.stacks[id] === null;
+    l.innerHTML = `<button type="button" class="seatpick" aria-pressed="${!!seat}"${id === 0 ? ' disabled' : ''} title="${id === 0 ? 'Hero always plays' : seat ? 'Click to empty this seat' : 'Click to seat a player here'}">${seatLabel(id)}${seat ? (seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`) : '<em>empty</em>'}</button><input type="number" min="0" step="0.5" value="${!unknown && seat ? baseStack(seat) : ''}" placeholder="${unknown ? '?' : seat ? '' : 'empty'}" aria-label="${seatLabel(id)} stack (blank = empty seat)">`; if (isHero(id)) l.classList.add('hero');
+    l.querySelector('.seatpick').addEventListener('click', () => toggleSeat(id));
     l.querySelector('input').addEventListener('change', (e) => {
       const v = parseFloat(e.target.value), filled = S.slots.filter((x) => x.active).length;
       if (!(v > 0)) {
@@ -3018,7 +3032,7 @@ function render222() {
     });
     ts.appendChild(l);
   }
-  $('tSeatsInfo').textContent = `${S.slots.filter((x) => x.active).length}-handed · blank = empty seat`;
+  $('tSeatsInfo').textContent = `${S.slots.filter((x) => x.active).length}-handed · ? = stack unknown · blank = empty seat`;
   render222b();
 }
 function renderPko() {
@@ -3138,6 +3152,13 @@ function bind222() {
   const t = S.t222;
   $('tSat').onclick = () => { t.payouts = Array(t.paid).fill(1).join(','); $('tPay').value = t.payouts; save222(); render222b(); render(); markStale(); };
   $('tClear').onclick = () => { t.leftSet = t.paidSet = t.paidAuto = false; t.icm = false; t.entrants = t.buyin = t.gtd = 0; save222(); render(); markStale(); };
+  // Clear stacks: keep the hero, leave the other eight seated with unknown stacks (9-handed), chip EV
+  $('tClearStk').onclick = () => {
+    t.stacks = { 0: t.stacks[0] > 0 ? t.stacks[0] : 25 };
+    for (let i = 1; i < 9; i++) t.stacks[i] = null;
+    S.table = 'custom'; t.leftSet = t.paidSet = false; t.icm = false;
+    seatsFromStacks(); S.hist = []; S.overrides = {}; save222(); replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render(); markStale();
+  };
   $('pkoOn').addEventListener('change', (e) => { t.pko.on = e.target.checked; save222(); render(); markStale(); });
   // what-if: values update live while dragging; the solver restarts when you let go
   const live = (id, fn) => { $(id).addEventListener('input', fn); $(id).addEventListener('change', () => { save222(); replay(); render(); markStale(); }); };
