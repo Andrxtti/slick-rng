@@ -3,24 +3,24 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: solver workstation — table bar (format, seats, preflop actions), board + solve bar, then strategy panel with preflop/postflop tabs. Night-navy ground; Carolina blue for focus and selection, seafoam for passive actions, powder purple for aggression. */
+/* Layout: solver workstation — table bar (format, seats, preflop actions), board + solve bar, then strategy panel with preflop/postflop tabs. Black ground with creme type and controls; charts use the universal solver colors (fold blue, check/call green, bets red, all-in deep red). */
 :root {
   color-scheme: dark;
-  --bg: #0a1120;
-  --panel: #101a2c;
-  --panel-2: #16233a;
-  --line: #233452;
-  --fg: #e8eef8;
-  --muted: #95a6c2;
-  --faint: #5c6d8c;
-  --carolina: #4b9cd3;
-  --carolina-ink: #04111e;
-  --seafoam: #6fd8b0;
-  --powder: #b9a7e3;
-  --danger: #ef7b7b;
-  --a-fold: #5d6f8f;
-  --a-pass: #5fcfa3;
-  --a-allin: #6a4bb0;
+  --bg: #0a0a09;
+  --panel: #141311;
+  --panel-2: #1c1a17;
+  --line: #2f2b25;
+  --fg: #f3ecdc;
+  --muted: #b5ab95;
+  --faint: #6f675a;
+  --carolina: #efe4c8;
+  --carolina-ink: #11100e;
+  --seafoam: #57b65f;
+  --powder: #e0604c;
+  --danger: #f07a6a;
+  --a-fold: #4a7fb5;
+  --a-pass: #4caf50;
+  --a-allin: #7a1424;
   --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
   --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
@@ -69,13 +69,13 @@ header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; pad
 .seat.pass small { color: var(--seafoam); font-weight: 600; }
 .seat.now { border-color: var(--carolina); box-shadow: 0 0 0 1px var(--carolina) inset; }
 .seat.now small { color: var(--carolina); }
-.seat.sel { background: #1d3150; border-color: var(--fg); }
+.seat.sel { background: #2a261f; border-color: var(--fg); }
 .seat.out { border-style: dashed; background: transparent; opacity: .45; }
 .seat.out b { text-decoration: line-through; color: var(--faint); }
 .hint { font-size: 12px; color: var(--muted); }
 .pfnote { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
-.pfnote.ok { color: var(--seafoam); border-color: #2c5a4c; }
-.dealer { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--fg); color: #0a1120; font-family: var(--font-body); font-size: 10px; font-weight: 700; vertical-align: 2px; margin-left: 2px; }
+.pfnote.ok { color: var(--seafoam); border-color: #2d4a2f; }
+.dealer { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--fg); color: #11100e; font-family: var(--font-body); font-size: 10px; font-weight: 700; vertical-align: 2px; margin-left: 2px; }
 button.next { border-color: var(--seafoam); color: var(--seafoam); font-weight: 600; }
 .t222 { display: grid; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .t222 input[type="number"] { width: 72px; }
@@ -90,11 +90,11 @@ button.next { border-color: var(--seafoam); color: var(--seafoam); font-weight: 
 .pfoot { border-top: 1px solid var(--line); padding-top: 8px; }
 .who { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
 .prompt .prow button { min-width: 78px; font-weight: 500; }
-.prompt .b-fold { color: #a9bbd6; }
+.prompt .b-fold { color: #8fb6de; }
 .prompt .b-pass { color: var(--seafoam); }
 .prompt .b-agg { color: var(--powder); }
-.prompt .b-jam { color: #cdb8ff; border-color: #4b3a7d; }
-.prompt button.cur { background: var(--fg); color: #0a1120; border-color: var(--fg); font-weight: 600; }
+.prompt .b-jam { color: #ff9a8c; border-color: #5a1a22; }
+.prompt button.cur { background: var(--fg); color: #11100e; border-color: var(--fg); font-weight: 600; }
 .custom { display: inline-flex; gap: 6px; align-items: center; }
 .sizes { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .sizes label { display: inline-flex; gap: 6px; align-items: center; }
@@ -102,18 +102,18 @@ button.next { border-color: var(--seafoam); color: var(--seafoam); font-weight: 
 /* board */
 .board { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .slot { width: 46px; height: 62px; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 600; font-size: 18px; line-height: 1; padding: 0; }
-.slot.filled { background: #eef2f8; color: #111; border-color: #eef2f8; }
+.slot.filled { background: #f3ecdc; color: #111; border-color: #f3ecdc; }
 .slot.empty { background: transparent; border: 1px dashed var(--faint); color: var(--faint); font-size: 12px; font-weight: 400; }
 .slot.s-h { color: #c2362a; } .slot.s-d { color: #1f62b0; } .slot.s-c { color: #17805a; }
 .slot.active { outline: 2px solid var(--carolina); outline-offset: 2px; }
 .sep { width: 1px; align-self: stretch; background: var(--line); margin-inline: 4px; }
 .picker { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 3px; }
 .card { aspect-ratio: 3 / 4; border-radius: 4px; border: 1px solid var(--line); background: var(--bg); font-family: var(--font-mono); font-size: 12px; display: grid; place-items: center; padding: 0; line-height: 1; max-width: 100%; }
-.card.s-c { color: #6fd8b0; } .card.s-d { color: #76b7ea; } .card.s-h { color: #f08d86; } .card.s-s { color: #d3dbe8; }
+.card.s-c { color: #6cc070; } .card.s-d { color: #6fa8dc; } .card.s-h { color: #ef7d6d; } .card.s-s { color: #e6dfcf; }
 .card:disabled { opacity: .15; }
 .solverow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .meter { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; flex: 1; min-width: 120px; }
-.meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--carolina), var(--powder)); transition: width .25s linear; }
+.meter i { display: block; height: 100%; width: 0; background: var(--carolina); transition: width .25s linear; }
 .status { font-size: 12px; color: var(--muted); }
 .error { color: var(--danger); font-size: 13px; }
 details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; width: max-content; }
@@ -149,10 +149,10 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 @media (max-width: 1000px) { .split { grid-template-columns: minmax(0, 1fr); } }
 .gridwrap { overflow-x: auto; }
 .hgrid { display: grid; grid-template-columns: repeat(13, minmax(26px, 1fr)); gap: 2px; min-width: 360px; }
-.cell { position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: #070c17; border: 0; padding: 0; cursor: pointer; }
+.cell { position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: #050504; border: 0; padding: 0; cursor: pointer; }
 .cell .mix { position: absolute; inset: 0; display: flex; }
 .cell .mix i { display: block; height: 100%; }
-.cell .fill { position: absolute; left: 0; right: 0; top: 0; background: #070c17; }
+.cell .fill { position: absolute; left: 0; right: 0; top: 0; background: #050504; }
 .cell .lab { position: absolute; left: 3px; top: 2px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; color: #fff; text-shadow: 0 0 2px #000, 0 0 2px #000; }
 .cell.none .lab { color: var(--faint); text-shadow: none; }
 .cell.sel { outline: 2px solid var(--carolina); outline-offset: -2px; }
@@ -163,10 +163,10 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 .detail td:first-child, .detail th:first-child { text-align: left; }
 .empty-state { padding: 40px 14px; text-align: center; color: var(--muted); }
 
-.modal { position: fixed; inset: 0; background: rgba(4, 8, 16, .8); display: grid; place-items: center; padding: 16px; z-index: 50; }
+.modal { position: fixed; inset: 0; background: rgba(0, 0, 0, .8); display: grid; place-items: center; padding: 16px; z-index: 50; }
 .box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; width: min(640px, 100%); max-height: 100%; overflow: auto; display: grid; gap: 12px; }
 .rgrid { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 2px; user-select: none; touch-action: none; }
-.rcell { aspect-ratio: 1; border-radius: 3px; font-family: var(--font-mono); font-size: 10px; display: grid; place-items: center; background: #070c17; color: var(--muted); position: relative; overflow: hidden; }
+.rcell { aspect-ratio: 1; border-radius: 3px; font-family: var(--font-mono); font-size: 10px; display: grid; place-items: center; background: #050504; color: var(--muted); position: relative; overflow: hidden; }
 .rcell .w { position: absolute; left: 0; right: 0; bottom: 0; background: var(--carolina); opacity: .85; }
 .rcell span { position: relative; }
 .rcell.on span { color: var(--carolina-ink); font-weight: 600; }
@@ -175,7 +175,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 2.0 · SOLVER</span>
+  <span class="ver">ALPHA 2.1 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -871,7 +871,7 @@ const worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/java
 // ---------------------------------------------------------------- GTO preflop solver (parallel workers)
 // Several workers solve the same tree independently; their average strategies are
 // averaged, which multiplies the samples per second by the number of cores.
-const PF_SECONDS = 120, PF_DEEP = 30;
+const PF_SECONDS = 150, PF_DEEP = 80, PF_EXACTISH = 30;
 const PF_N = Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 1));
 const pfWorkers = Array.from({ length: PF_N }, () => new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' }))));
 let pfGen = 0, pfKey = null, pfTimer = null, pfState = { iters: 0, done: false, solving: false, t0: 0, error: null, deep: false };
@@ -896,7 +896,8 @@ function pfEnsure() {
   if (key === pfKey) return;
   pfKey = key; pfCache.clear(); pfAsked.clear(); pfParts.clear(); pfIters.fill(0); pfDoneW.fill(false);
   const deep = pfIsDeep(cfg);
-  pfState = { iters: 0, done: false, solving: !deep, t0: performance.now(), error: null, deep };
+  const st2 = [...cfg.stacks].sort((a, b) => b - a), effTop = st2[1] || st2[0];
+  pfState = { iters: 0, done: false, solving: !deep, t0: performance.now(), error: null, deep, mid: !deep && effTop > PF_EXACTISH };
   clearTimeout(pfTimer);
   pfWorkers.forEach((w) => w.postMessage({ cmd: 'pfStop' }));
   if (deep) return;
@@ -941,9 +942,10 @@ pfWorkers.forEach((w, wi) => (w.onmessage = (ev) => {
 function pfNote(solved) {
   if (pfState.error) return `GTO preflop unavailable: ${esc(pfState.error)}`;
   if (pfState.deep) return `Starting estimate · GTO preflop solving covers stacks up to ${PF_DEEP} bb for now`;
+  const approx = pfState.mid ? ' · approximate: flop play modeled' : '';
   if (!solved) return pfState.solving ? 'Starting estimate · GTO preflop solving…' : 'Starting estimate · this line is outside the solved tree';
   const pct = Math.min(100, Math.round(((performance.now() - pfState.t0) / 1000 / PF_SECONDS) * 100));
-  return pfState.done ? `GTO preflop · solved · ${pfState.iters.toLocaleString()} deals` : `GTO preflop · solving ${pct}% · ${pfState.iters.toLocaleString()} deals`;
+  return (pfState.done ? `GTO preflop · solved · ${pfState.iters.toLocaleString()} deals` : `GTO preflop · solving ${pct}% · ${pfState.iters.toLocaleString()} deals`) + approx;
 }
 let solving = false, t0 = 0, secs = 60, built = null, path = [], selected = null, reqId = 0, report = null, evData = null, timer = null, lastIt = { t: 0, n: 0 }, rate = 0, spotGame = 'cash';
 worker.onmessage = (ev) => {
@@ -982,10 +984,10 @@ function requestReport() { if (!built) return; reqId++; worker.postMessage({ cmd
 
 // ---------------------------------------------------------------- strategy view
 function colors(types) {
-  const bets = types.map((t, i) => (t === 'bet' ? i : -1)).filter((i) => i >= 0), ramp = ['#d6c9f3', '#b9a7e3', '#9b84d5', '#7f63c2'];
+  const bets = types.map((t, i) => (t === 'bet' ? i : -1)).filter((i) => i >= 0), ramp = ['#f0a35b', '#e8724a', '#d64538', '#a8232a'];
   return types.map((t, i) => t === 'fold' ? 'var(--a-fold)' : t === 'check' || t === 'call' ? 'var(--a-pass)' : t === 'allin' ? 'var(--a-allin)' : ramp[bets.length === 1 ? 1 : Math.round((bets.indexOf(i) / (bets.length - 1)) * 3)]);
 }
-function cardHTML(c) { const s = SUITS[c & 3]; return `<span class="crumb cardcrumb" style="color:${s === 'h' ? '#f08d86' : s === 'd' ? '#76b7ea' : s === 'c' ? '#6fd8b0' : 'var(--fg)'}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
+function cardHTML(c) { const s = SUITS[c & 3]; return `<span class="crumb cardcrumb" style="color:${s === 'h' ? '#ef7d6d' : s === 'd' ? '#6fa8dc' : s === 'c' ? '#6cc070' : 'var(--fg)'}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
 function renderEVs() {
   const box = $('evs'); box.innerHTML = '';
   if (!evData || !built) return;

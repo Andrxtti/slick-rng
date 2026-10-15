@@ -790,7 +790,9 @@ class PreflopSolver {
       // realization by postflop order: first to act realizes least, last to act most
       const order = (this.cfg.postOrder || alive).filter((i) => alive.includes(i)), k = order.length;
       nd.R = new Float64Array(n);
-      order.forEach((i, r) => { nd.R[i] = k === 1 ? 1 : 0.82 + 0.18 * (r / (k - 1)); });
+      order.forEach((i, r) => { nd.R[i] = k === 1 ? 1 : (this.cfg.rLow !== undefined ? this.cfg.rLow : 0.9) + (1 - (this.cfg.rLow !== undefined ? this.cfg.rLow : 0.9)) * (r / (k - 1)); });
+      const behind = Math.min(...alive.map((i) => this.cfg.stacks[i] - nd.put[i])), spr = behind / Math.max(pot, 1e-9);
+      nd.gamma = 1 + (this.cfg.gammaK !== undefined ? this.cfg.gammaK : 0.2) * Math.log(1 + spr);
     }
   }
 
@@ -876,7 +878,12 @@ class PreflopSolver {
       const wgt = avail / (list.length * k2);
       const eq = EQ169[c * NCLASS + oc];
       let share;
-      if (nd.kind === 'flop') { const rp = nd.R[p], ro = nd.R[o]; share = rp * eq + (1 - (rp * eq + ro * (1 - eq))) / 2; }
+      if (nd.kind === 'flop') {
+        // stronger hands win more than their raw equity once there is betting left to do;
+        // the effect grows with the stack-to-pot ratio (gamma), on top of position (R)
+        const a = nd.R[p] * Math.pow(eq, nd.gamma), b = nd.R[o] * Math.pow(1 - eq, nd.gamma);
+        share = a + b > 0 ? a / (a + b) : 0.5;
+      }
       else share = eq;
       let u;
       if (icm) u = share * winU + (1 - share) * loseU;
