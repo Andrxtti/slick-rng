@@ -1,7 +1,16 @@
 # Build the installable app from the solver page: python3 build.py
 import re, pathlib
 root = pathlib.Path(__file__).parent
-app = (root / '../app/slick-rng.html').read_text()
+# keep the engine embedded in the page identical to app/engine.js
+page = root / '../app/slick-rng.html'
+app = page.read_text()
+tag = '<script type="text/plain" id="engine-src">'
+a = app.index(tag) + len(tag); b = app.index('</script>', a)
+engine = (root / '../app/engine.js').read_text()
+if app[a:b] != engine:
+    app = app[:a] + engine + app[b:]
+    page.write_text(app)
+    print('engine synced into app/slick-rng.html')
 ver = re.search(r'(?:ALPHA|BETA) ([0-9.]+)', app).group(1)
 splash = (root / 'splash.html').read_text().replace('__VER__', ver)
 startup = ''.join(
