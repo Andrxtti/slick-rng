@@ -19,6 +19,7 @@
   --seafoam: #57b65f;
   --powder: #e0604c;
   --danger: #f07a6a;
+  --hero: #4b9cd3;
   --a-fold: #4a7fb5;
   --a-pass: #4caf50;
   --a-allin: #7a1424;
@@ -71,6 +72,13 @@ header.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; pad
 .seat.now { border-color: var(--carolina); box-shadow: 0 0 0 1px var(--carolina) inset; }
 .seat.now small { color: var(--carolina); }
 .seat.sel { background: #2a261f; border-color: var(--fg); }
+.seat.hero { border-color: var(--hero); background: #0f2233; box-shadow: 0 0 0 1px var(--hero) inset; opacity: 1; }
+.seat.hero b { color: var(--hero); }
+.seat.hero.fold small { opacity: .6; }
+.stk.hero span { color: var(--hero); }
+.stk.hero input { border-color: var(--hero); }
+.icmcell.hero { border-color: var(--hero); background: #0f2233; }
+.icmcell.hero b { color: var(--hero); }
 .seat.out { border-style: dashed; background: transparent; opacity: .45; }
 .seat.out b { text-decoration: line-through; color: var(--faint); }
 .hint { font-size: 12px; color: var(--muted); }
@@ -184,7 +192,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 2.3 · SOLVER</span>
+  <span class="ver">ALPHA 2.4 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -1468,6 +1476,9 @@ function anteNow() { if (S.game === 'cash') return 0; if (S.game === '222') { co
 function deadOf(seat) { return seat && seat.pos === 'BB' ? Math.min(anteNow(), baseStack(seat)) : 0; }
 // chips the player can still put into the pot this hand
 function stackOf(seat) { return baseStack(seat) - deadOf(seat); }
+// in MTT · 222, seat 1 is you
+const isHero = (id) => S.game === '222' && id === 0;
+const seatLabel = (id) => (isHero(id) ? 'Hero' : `Seat ${id + 1}`);
 function slotCount() { return S.table === '6' ? 6 : S.table === '8' ? 8 : 9; }
 function makeSlots() {
   S.slots = Array.from({ length: slotCount() }, (_, i) => ({ id: i, active: true }));
@@ -1782,12 +1793,12 @@ function render() {
   for (const slot of S.slots) {
     const seat = slot.active ? seatById(slot.id) : null, b = document.createElement('button');
     if (!seat) {
-      b.className = 'seat out'; b.innerHTML = `<b>Seat ${slot.id + 1}</b><small>sitting out</small>`;
+      b.className = 'seat out'; b.innerHTML = `<b>${seatLabel(slot.id)}</b><small>sitting out</small>`;
     } else {
       const isNow = nx === seat, lastAgg = seat.acts.some((a) => a.k === 'raise' || a.k === 'allin');
-      b.className = `seat ${seat.folded ? 'fold' : lastAgg ? 'agg' : seat.acts.length ? 'pass' : ''} ${isNow ? 'now' : ''} ${S.sel === seat.id ? 'sel' : ''}`;
+      b.className = `seat ${seat.folded ? 'fold' : lastAgg ? 'agg' : seat.acts.length ? 'pass' : ''} ${isNow ? 'now' : ''} ${S.sel === seat.id ? 'sel' : ''} ${isHero(seat.id) ? 'hero' : ''}`;
       const txt = seat.acts.length ? seat.acts.map((a) => a.label).join(' · ') : isNow ? 'to act' : seat.pos === 'SB' ? 'SB 0.5' : seat.pos === 'BB' ? 'BB 1' : '–';
-      b.innerHTML = `<b>${seat.pos}${seat.pos === 'BTN' || (T.hu && seat.pos === 'SB') ? ' <span class="dealer" title="Dealer button">D</span>' : ''}</b><small class="mono">Seat ${seat.id + 1}${S.game === '222' ? ` · ${fmt(baseStack(seat))} bb` : ''}</small><small>${txt}</small>`;
+      b.innerHTML = `<b>${seat.pos}${seat.pos === 'BTN' || (T.hu && seat.pos === 'SB') ? ' <span class="dealer" title="Dealer button">D</span>' : ''}</b><small class="mono">${seatLabel(seat.id)}${S.game === '222' ? ` · ${fmt(baseStack(seat))} bb` : ''}</small><small>${txt}</small>`;
       b.setAttribute('aria-pressed', S.sel === seat.id);
       b.onclick = () => { if (b.dataset.lp) { delete b.dataset.lp; return; } S.sel = S.sel === seat.id ? null : seat.id; customFor = null; view = 'pre'; render(); };
     }
@@ -1875,7 +1886,7 @@ function render222() {
     if (!slot.active) continue;
     const seat = seatById(slot.id);
     const l = document.createElement('label'); l.className = 'stk';
-    l.innerHTML = `<span>Seat ${seat.id + 1}</span><input type="number" min="0.5" step="0.5" value="${baseStack(seat)}" aria-label="Seat ${seat.id + 1} stack">`;
+    l.innerHTML = `<span>${seatLabel(seat.id)}</span><input type="number" min="0.5" step="0.5" value="${baseStack(seat)}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
     l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.stacks[seat.id] = v; save222(); replay(); render222b(); render(); markStale(); } });
     ts.appendChild(l);
   }
@@ -1885,7 +1896,7 @@ function render222b() {
   const t = S.t222, need = t.left - T.seats.length, box = $('tOthers'); box.innerHTML = '';
   $('tOthersLabel').hidden = need <= 0;
   const bs = $('tButton'), bseat = buttonSeat();
-  bs.innerHTML = S.slots.filter((x) => x.active).map((x) => `<option value="${x.id}" ${x.id === bseat ? 'selected' : ''}>Seat ${x.id + 1}</option>`).join('');
+  bs.innerHTML = S.slots.filter((x) => x.active).map((x) => `<option value="${x.id}" ${x.id === bseat ? 'selected' : ''}>${seatLabel(x.id)}</option>`).join('');
   const avg = t.avg > 0 ? t.avg : 25;
   if (need > 0) {
     const l = document.createElement('label'); l.className = 'stk';
@@ -1916,10 +1927,10 @@ function renderIcmBox() {
   const chipsTotal = st.reduce((a, b) => a + b, 0) + need * g;
   const me = S.sel !== null && S.sel !== undefined ? seats.findIndex((x) => x.id === S.sel) : -1;
   let html = '<div class="row"><span class="label" style="width:120px">ICM equity</span><div class="icmrow">';
-  seats.forEach((x, i) => { html += `<div class="icmcell ${i === me ? 'me' : ''}"><b>Seat ${x.id + 1}</b><span>${eq[i].toFixed(2)}%</span><small>${((st[i] / chipsTotal) * 100).toFixed(2)}% of chips</small></div>`; });
+  seats.forEach((x, i) => { html += `<div class="icmcell ${i === me ? 'me' : ''} ${isHero(x.id) ? 'hero' : ''}"><b>${seatLabel(x.id)}</b><span>${eq[i].toFixed(2)}%</span><small>${((st[i] / chipsTotal) * 100).toFixed(2)}% of chips</small></div>`; });
   html += '</div></div>';
   if (me >= 0) {
-    html += `<div class="row"><span class="label" style="width:120px">Seat ${seats[me].id + 1} risk</span><div class="icmrow">`;
+    html += `<div class="row"><span class="label" style="width:120px">${seatLabel(seats[me].id)} risk</span><div class="icmrow">`;
     seats.forEach((x, j) => {
       if (j === me) return;
       const e = Math.min(st[me], st[j]), lose = st.slice(), win = st.slice();
@@ -1927,7 +1938,7 @@ function renderIcmBox() {
       const eL = Engine.icmEquityGrouped(lose, st, g, need, pays)[me], eW = Engine.icmEquityGrouped(win, st, g, need, pays)[me];
       const bf = (eq[me] - eL) / Math.max(1e-9, eW - eq[me]), need50 = bf / (1 + bf);
       const cls = bf >= 1.5 ? 'bf-hi' : bf >= 1.15 ? 'bf-mid' : 'bf-lo';
-      html += `<div class="icmcell"><b>vs Seat ${x.id + 1}</b><span class="${cls}">BF ${bf.toFixed(2)}</span><small>all-in needs ${(need50 * 100).toFixed(1)}% equity</small></div>`;
+      html += `<div class="icmcell"><b>vs ${seatLabel(x.id)}</b><span class="${cls}">BF ${bf.toFixed(2)}</span><small>all-in needs ${(need50 * 100).toFixed(1)}% equity</small></div>`;
     });
     html += '</div></div>';
   } else html += '<div class="hint">Tap a seat to see its bubble factor against every other seat.</div>';
