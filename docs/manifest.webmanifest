@@ -1,7 +1,7 @@
 {
-  "name": "Slick RNG",
-  "short_name": "Slick RNG",
-  "description": "Free multiway poker solver with strict tournament ICM and a bubble trainer.",
+  "name": "Confirmed Fire Poker",
+  "short_name": "CF Poker",
+  "description": "Slick RNG Solver: free multiway poker solver with strict tournament ICM and a bubble trainer.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

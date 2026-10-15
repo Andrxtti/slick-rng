@@ -13,13 +13,12 @@ head = f'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#090908">
-<meta name="description" content="Free multiway poker solver with strict tournament ICM and a bubble trainer.">
+<meta name="description" content="Confirmed Fire Poker · Slick RNG Solver. Free multiway poker solver with strict tournament ICM and a bubble trainer.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Slick RNG">
+<meta name="apple-mobile-web-app-title" content="CF Poker">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/svg+xml" href="icons/eric.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 {startup}<style>html,body{{background:#090908;color-scheme:dark}}</style>
