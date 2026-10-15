@@ -290,6 +290,8 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .stk span em { font-style: normal; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
 .stkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 8px; }
 .stk span { white-space: nowrap; }
+.stk.empty span { color: var(--faint); }
+.stk.empty input { border-style: dashed; background: transparent; }
 
 /* action rows */
 .prompt { display: grid; gap: 10px; }
@@ -516,6 +518,8 @@ details.adv summary:hover { color: var(--fg); }
   /* MTT: Details page and Chart page */
   body.pg-details .results, body.pg-details .spotbar, body.pg-details #tableBar, body.pg-details #postBar { display: none !important; }
   body.pg-mtt:not(.pg-details) .tourney { display: none !important; }
+  body.pg-mtt .spotbar { display: none !important; }
+  body.pg-mtt .felt .seat.out { display: none; }
   body.pg-details .tourney > details > summary { pointer-events: none; }
   body.pg-details .tourney > details > summary .chev { display: none; }
   .tabbar button[aria-current="page"] svg { background: var(--hero-bg); box-shadow: 0 0 0 1px rgba(90, 169, 222, .35); }
@@ -598,13 +602,13 @@ body.launching { overflow: hidden; }
     <div class="brand" id="brandHome" role="button" tabindex="0" title="Home">
       <span class="brandmark" aria-hidden="true"><img src="data:image/jpeg;base64,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" alt=""></span>
       <div class="namestack"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver</div></div>
-      <span class="ver">BETA 3.7</span>
+      <span class="ver">BETA 3.8</span>
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
       <div class="seg mode" role="group" aria-label="Mode"><button id="modeSolver" aria-pressed="true">Solver</button><button id="modeTrainer" aria-pressed="false">Trainer</button></div>
       <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="222" aria-pressed="false">MTT</button></div>
-      <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
+      <div class="seg" id="tableSeg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
       <label class="row" id="stackWrap"><span class="label">Stack</span><select id="stack" aria-label="Starting stack"></select></label>
       <label class="row" id="leftWrap" hidden><span class="label">Left</span><select id="left" aria-label="Players left in tournament"></select></label>
     </nav>
@@ -651,7 +655,7 @@ body.launching { overflow: hidden; }
         <div class="hint" id="tNote"></div>
         <div class="groups">
           <div class="group">
-            <span class="label">Table stacks (bb) · change them to run what-ifs</span>
+            <div class="row"><span class="label grow">Table stacks (bb)</span><span class="hint mono" id="tSeatsInfo"></span></div>
             <div class="stkgrid" id="tSeats"></div>
             <div class="row"><label class="field"><span class="label">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select></label>
               <div class="field" id="tOthersWrap"><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div></div>
@@ -2035,12 +2039,14 @@ const SIZES = {
 const S = { t222: load222(), game: 'cash', table: '6', slots: [], stack: 100, left: 9, sz: { open: 2, b3: 6, b4: 14, b5: 30 }, board: [], sizing: 'simple', overrides: {}, hist: [], sel: null };
 function load222() {
   // icm is not a switch any more: it is on once players left and places paid are filled in
-  const def = { v: 2, left: 9, paid: 3, payouts: '50,30,20', stacks: {}, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 }, entrants: 0, buyin: 0, gtd: 0, leftSet: false, paidSet: false, icm: false };
+  const def = { v: 2, seats9: true, left: 9, paid: 3, payouts: '50,30,20', stacks: { 0: 25, 1: 25, 2: 25, 3: 25, 4: 25, 5: 25, 6: 0, 7: 0, 8: 0 }, avg: 25, ante: 0, pko: { on: false, b: {}, frac: 75 }, entrants: 0, buyin: 0, gtd: 0, leftSet: false, paidSet: false, icm: false };
   try {
     const v = JSON.parse(localStorage.getItem('slick222') || 'null'); if (!v) return def;
     const t = { ...def, ...v };
     if (v.v !== 2) { t.v = 2; t.leftSet = t.paidSet = v.entrants > 0 && v.icm !== false; }
-    t.icm = !!(t.leftSet && t.paidSet); return t;
+    t.icm = !!(t.leftSet && t.paidSet);
+    if (!t.seats9) { t.seats9 = true; for (let i = 0; i < 9; i++) t.stacks[i] = i < 6 ? (t.stacks[i] > 0 ? t.stacks[i] : 25) : 0; }
+    return t;
   } catch { return def; }
 }
 function save222() { if (window.__trRand) return; try { localStorage.setItem('slick222', JSON.stringify(S.t222)); } catch { /* storage unavailable */ } }
@@ -2054,6 +2060,19 @@ function stackOf(seat) { return baseStack(seat) - deadOf(seat); }
 // in MTT · 222, seat 1 is you
 const isHero = (id) => S.game === '222' && id === 0;
 const seatLabel = (id) => (isHero(id) ? 'Hero' : `Seat ${id + 1}`);
+// MTT: the table is always 9 seats; a seat with a stack is a player, a blank stack an empty seat.
+// The table size and every position follow from which stacks are filled in on the Details page.
+function seatsFromStacks() {
+  if (S.game !== '222' || TR.random) return;
+  const t = S.t222;
+  if (S.table !== 'custom' || S.slots.length !== 9) {
+    if (S.table !== 'custom') S.cashTable = S.table;
+    S.table = 'custom'; S.slots = Array.from({ length: 9 }, (_, i) => ({ id: i, active: true }));
+    if (!(S.button < 9)) S.button = 0;
+  }
+  S.slots.forEach((sl) => (sl.active = t.stacks[sl.id] > 0));
+  if (S.slots.filter((x) => x.active).length < 2) { [0, 1].forEach((i) => { if (!(t.stacks[i] > 0)) t.stacks[i] = t.avg > 0 ? t.avg : 25; S.slots[i].active = true; }); }
+}
 function slotCount() { return S.table === '6' ? 6 : S.table === '8' ? 8 : 9; }
 function makeSlots() {
   S.slots = Array.from({ length: slotCount() }, (_, i) => ({ id: i, active: true }));
@@ -2586,7 +2605,7 @@ function render() {
   for (const slot of S.slots) {
     const seat = slot.active ? seatById(slot.id) : null, b = document.createElement('button');
     if (!seat) {
-      b.className = 'seat out'; b.innerHTML = `<b>${seatLabel(slot.id)}</b><small>sitting out</small>`;
+      b.className = 'seat out'; b.innerHTML = `<b>${seatLabel(slot.id)}</b><small>${S.game === '222' ? 'empty seat' : 'sitting out'}</small>`;
     } else {
       const isNow = nx === seat, lastAgg = seat.acts.some((a) => a.k === 'raise' || a.k === 'raiseB' || a.k === 'allin');
       b.className = `seat ${seat.folded ? 'fold' : lastAgg ? 'agg' : seat.acts.length ? 'pass' : ''} ${isNow ? 'now' : ''} ${S.sel === seat.id ? 'sel' : ''} ${isHero(seat.id) ? 'hero' : ''}`;
@@ -2597,7 +2616,7 @@ function render() {
     }
     // sit out / sit back in: right-click or long-press (custom table)
     const toggle = () => {
-      if (S.table !== 'custom') return;
+      if (S.table !== 'custom' || S.game === '222') return; // MTT seats come from the stacks on Details
       const activeN = S.slots.filter((x) => x.active).length;
       if (slot.active && activeN <= 2) return;
       slot.active = !slot.active; if (S.sel === slot.id) S.sel = null;
@@ -2616,7 +2635,7 @@ function render() {
     box.style.setProperty('--rot', h >= 0 ? h : S.slots.findIndex((x) => x.id === 0) >= 0 ? S.slots.findIndex((x) => x.id === 0) : 0);
     $('feltPot').textContent = `pot ${fmt(potNow())} bb`;
   }
-  $('seatHint').hidden = S.table !== 'custom';
+  $('seatHint').hidden = S.table !== 'custom' || S.game === '222';
   if (S.game === '222') { render222(); renderWhatIf(); renderIcmSec(); renderPko(); if (icmOn()) renderIcmBox(); }
 
   const pr = $('prompt'); pr.innerHTML = '';
@@ -2694,14 +2713,21 @@ function render222() {
   $('tEnt').value = t.entrants || ''; $('tBuy').value = t.buyin || ''; $('tGtd').value = t.gtd || '';
   const ts = $('tSeats'); ts.innerHTML = '';
   for (const slot of S.slots) {
-    if (!slot.active) continue;
-    const seat = seatById(slot.id);
-    const l = document.createElement('label'); l.className = 'stk';
-    const now = stackOf(seat) - seat.put;
-    l.innerHTML = `<span>${seatLabel(seat.id)}${seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`}</span><input type="number" min="0.5" step="0.5" value="${baseStack(seat)}" aria-label="${seatLabel(seat.id)} stack">`; if (isHero(seat.id)) l.classList.add('hero');
-    l.querySelector('input').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) { t.stacks[seat.id] = v; save222(); replay(); render222b(); render(); markStale(); } });
+    const seat = slot.active ? seatById(slot.id) : null, id = slot.id;
+    const l = document.createElement('label'); l.className = 'stk' + (seat ? '' : ' empty');
+    const now = seat ? stackOf(seat) - seat.put : 0;
+    l.innerHTML = `<span>${seatLabel(id)}${seat ? (seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`) : '<em>empty</em>'}</span><input type="number" min="0" step="0.5" value="${seat ? baseStack(seat) : ''}" placeholder="empty" aria-label="${seatLabel(id)} stack (blank = empty seat)">`; if (isHero(id)) l.classList.add('hero');
+    l.querySelector('input').addEventListener('change', (e) => {
+      const v = parseFloat(e.target.value), filled = S.slots.filter((x) => x.active).length;
+      if (!(v > 0)) {
+        if (id === 0 || (slot.active && filled <= 2)) { e.target.value = seat ? baseStack(seat) : ''; return; } // Hero and at least two players stay seated
+        t.stacks[id] = 0;
+      } else t.stacks[id] = v;
+      seatsFromStacks(); S.hist = []; S.overrides = {}; save222(); replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render(); markStale();
+    });
     ts.appendChild(l);
   }
+  $('tSeatsInfo').textContent = `${S.slots.filter((x) => x.active).length}-handed · blank = empty seat`;
   render222b();
 }
 function renderPko() {
@@ -3071,7 +3097,7 @@ function requestReport() { if (!built) return; reqId++; worker.postMessage({ cmd
 
 // ---------------------------------------------------------------- strategy view
 function colors(types) {
-  const bets = types.map((t, i) => (t === 'bet' ? i : -1)).filter((i) => i >= 0), ramp = ['#f0a35b', '#e8724a', '#d64538', '#a8232a'];
+  const bets = types.map((t, i) => (t === 'bet' ? i : -1)).filter((i) => i >= 0), ramp = ['#f2b75c', '#ee8a4a', '#e5603f', '#e0457a'];
   return types.map((t, i) => t === 'fold' ? 'var(--a-fold)' : t === 'check' || t === 'call' ? 'var(--a-pass)' : t === 'allin' ? 'var(--a-allin)' : ramp[bets.length === 1 ? 1 : Math.round((bets.indexOf(i) / (bets.length - 1)) * 3)]);
 }
 function cardHTML(c) { const s = SUITS[c & 3]; return `<span class="crumb cardcrumb" style="color:${s === 'h' ? '#ef7d6d' : s === 'd' ? '#6fa8dc' : s === 'c' ? '#6cc070' : 'var(--fg)'}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
@@ -3239,7 +3265,8 @@ function randomSetup() {
   left = Math.max(n, Math.min(75, left));
   const buyin = pick([1, 5, 10, 22, 55, 109]), pay = typicalPayouts(entrants, buyin, 0);
   const t222 = { left, paid: pay.paid, payouts: pay.amounts.map((x) => x.toFixed(2)).join(','), stacks, avg: Math.max(3, Math.round(M * rnd(0.7, 1.4))), ante: 0,
-    pko: { on: false, b: {}, frac: 75 }, entrants, buyin, gtd: 0, icm: Math.random() < 0.85 };
+    pko: { on: false, b: {}, frac: 75 }, entrants, buyin, gtd: 0, icm: Math.random() < 0.85, v: 2, seats9: true };
+  t222.leftSet = t222.paidSet = t222.icm;
   return { game: '222', table, slots: Array.from({ length: n }, (_, i) => ({ id: i, active: true })), stack: S.stack, button: (Math.random() * n) | 0, t222 };
 }
 function setRandom(on) {
@@ -3326,7 +3353,7 @@ function trAnswer(kind) {
 function trCardHTML(c) { const s = SUITS[c & 3]; return `<span class="trcard s-${s}">${RANKS[c >> 2]}${SYM[s]}</span>`; }
 function trRender() {
   if (S.mode !== 'trainer') return;
-  $('trSetup').textContent = `${TR.random ? 'Random · ' : ''}${S.game === '222' ? (icmOn() ? `MTT · ICM · ${S.t222.left} left · ${S.t222.paid} paid` : 'MTT · chip EV') : 'Cash'} · ${S.table === 'custom' ? 'custom table' : S.table + '-max'}`;
+  $('trSetup').textContent = `${TR.random ? 'Random · ' : ''}${S.game === '222' ? (icmOn() ? `MTT · ICM · ${S.t222.left} left · ${S.t222.paid} paid` : 'MTT · chip EV') : 'Cash'} · ${S.game === '222' || S.table === 'custom' ? `${S.slots.filter((x) => x.active).length}-handed` : S.table + '-max'}`;
   $('trSeatWrap').hidden = S.game !== '222';
   const st = trStats;
   $('trStats').innerHTML = `<div class="trstat"><b>${st.n}</b><span>spots</span></div><div class="trstat"><b>${st.n ? Math.round((st.good / st.n) * 100) : 0}%</b><span>correct</span></div><div class="trstat"><b>${st.n ? (st.loss / st.n).toFixed(3) : '0'}</b><span>avg loss / spot</span></div>
@@ -3454,8 +3481,11 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('laun
 // ---------------------------------------------------------------- controls
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  $('leftWrap').hidden = true; $('stackWrap').hidden = S.game === '222'; $('t222').hidden = S.game !== '222';
-  fillStacks(); replay(); render(); markStale();
+  $('leftWrap').hidden = true; $('stackWrap').hidden = S.game === '222'; $('t222').hidden = S.game !== '222'; $('tableSeg').hidden = S.game === '222';
+  if (S.game === '222') seatsFromStacks();
+  else if (S.table === 'custom' && S.cashTable) { S.table = S.cashTable; makeSlots(); document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.table === S.table)); }
+  S.hist = []; S.overrides = {}; S.board = []; activeSlot = null;
+  fillStacks(); replay(); const n0 = nextActor(); S.sel = n0 ? n0.id : null; view = 'pre'; render(); markStale();
 }));
 document.querySelectorAll('[data-table]').forEach((b) => (b.onclick = () => {
   S.table = b.dataset.table; document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x === b));
@@ -3490,7 +3520,7 @@ S.mode = 'solver';
 try { if (localStorage.getItem('slickDrawer') === 'closed' && !phoneQ.matches) $('t222d').open = false; } catch { /* storage unavailable */ }
 $('t222d').addEventListener('toggle', () => { try { localStorage.setItem('slickDrawer', $('t222d').open ? 'open' : 'closed'); } catch { /* storage unavailable */ } });
 // ---------------------------------------------------------------- launch: empty board, UTG to act
-fillStacks(); applySizing(); makeSlots(); replay();
+fillStacks(); applySizing(); makeSlots(); seatsFromStacks(); replay();
 S.sel = nextActor().id; view = 'pre';
 render();
 showLaunch('home');
