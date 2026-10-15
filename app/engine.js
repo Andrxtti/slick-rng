@@ -651,7 +651,7 @@ class Solver {
       } else throw new Error('The hand is over at this point.');
     }
     const nd = this.nodes[id];
-    const base = { history, board: board.slice(), pot: nd.pot, street: nd.street };
+    const base = { history, board: board.slice(), pot: nd.pot, street: nd.street, invested: Array.from(nd.inv), names: this.spot.names };
     if (nd.kind === K_CHANCE) return { ...base, kind: 'chance', street: nd.street };
     if (nd.kind !== K_ACTION) return { ...base, kind: 'terminal', folded: nd.folded.slice() };
     const full = new Uint8Array(5); board.forEach((c, i) => (full[i] = c));

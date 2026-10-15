@@ -88,6 +88,10 @@ button.next { border-color: var(--seafoam); color: var(--seafoam); font-weight: 
 .t222 { display: grid; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .t222 input[type="number"] { width: 72px; }
 .icmbox { display: grid; gap: 6px; }
+.resrow { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.resrow b { font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: .03em; }
+.resrow input { width: 84px; }
+.resrow button[aria-pressed="true"], #resSide button[aria-pressed="true"] { background: var(--seafoam); color: #0b1a0c; border-color: var(--seafoam); font-weight: 600; }
 .icmrow { display: flex; gap: 6px; flex-wrap: wrap; align-items: stretch; }
 .icmcell { background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 5px 9px; min-width: 92px; display: grid; gap: 1px; }
 .icmcell b { font-family: var(--font-display); font-size: 15px; font-weight: 600; letter-spacing: .03em; }
@@ -191,7 +195,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 2.4 · SOLVER</span>
+  <span class="ver">ALPHA 2.5 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -264,6 +268,17 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
   </div>
   <div class="crumbs" id="crumbs" hidden></div>
   <div id="nodeView"></div>
+</div>
+
+<div class="modal" id="resultModal" hidden>
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="resTitle">
+    <div class="row"><h2 id="resTitle" class="grow">Hand result</h2><span id="resPot" class="mono muted"></span></div>
+    <div class="hint">Who won the pot? Tap more than one player for a split. Chips each player put in are filled from the hand; adjust them if the hand went further than you played it out here.</div>
+    <div id="resRows" style="display:grid; gap:8px"></div>
+    <div id="resSide"></div>
+    <div class="error" id="resErr"></div>
+    <div class="row"><div class="grow"></div><button id="resCancel">Cancel</button><button id="resDone" class="primary">Apply &amp; next hand</button></div>
+  </div>
 </div>
 
 <div class="modal" id="rangeModal" hidden>
@@ -384,6 +399,89 @@ function buttonSeat() {
   for (let k = 0; k < n; k++) { const id = (S.button + k) % n; if (S.slots[id].active) return id; }
   return 0;
 }
+// ---------------------------------------------------------------- settle the hand before moving the button
+// Blinds, ante and every bet come off the stacks; the pot goes to the winner(s).
+// A hand that ended preflop is settled automatically; if two or more players saw the
+// flop, the result window asks who won (chips put in after the flop are pre-filled from
+// the line walked through in the postflop view).
+let resState = null;
+function settleAndNext() {
+  S.bustNote = '';
+  if (S.game !== '222') { nextHand(); return; }
+  // unfinished preflop action: everyone still to act folds
+  let h = S.hist.slice();
+  const fin = withHist(h, () => { const add = []; for (let g = 0; g < 30; g++) { const nx = nextActor(); if (!nx) break; add.push({ id: nx.id, k: 'fold' }); apply(nx, { k: 'fold' }); } return add; });
+  h = [...h, ...fin];
+  const info = withHist(h, () => T.seats.map((x) => ({ id: x.id, pos: x.pos, put: x.put, dead: deadOf(x), folded: x.folded, base: baseStack(x) })));
+  const liveP = info.filter((x) => !x.folded);
+  if (liveP.length <= 1) { applyResult(info.map((x) => ({ ...x, total: x.put })), liveP.map((x) => x.id), null); return; }
+  const extra = {};
+  if (report && report.invested && report.names && built) report.names.forEach((nm, i) => { const x = info.find((y) => y.pos === nm && !y.folded); if (x) extra[x.id] = report.invested[i]; });
+  resState = { info, winners: new Set(), extra, side: new Set() };
+  drawResult(); $('resultModal').hidden = false;
+}
+function contribs() { return resState.info.map((x) => ({ ...x, total: Math.min(x.base - x.dead, x.put + (resState.extra[x.id] || 0)) })); }
+// split the pot into layers by contribution: [{amount, elig:[ids]}]
+function potLayers(cs) {
+  const liveC = cs.filter((x) => !x.folded), lv = [...new Set(liveC.map((x) => x.total))].sort((a, b) => a - b), dead = cs.reduce((a, x) => a + x.dead, 0);
+  let prev = 0; const layers = [];
+  lv.forEach((L, i) => { let amt = cs.reduce((a, x) => a + Math.min(x.total, L) - Math.min(x.total, prev), 0); if (i === 0) amt += dead; layers.push({ amount: amt, elig: liveC.filter((x) => x.total >= L - 1e-9).map((x) => x.id) }); prev = L; });
+  const counted = layers.reduce((a, l) => a + l.amount, 0), all = cs.reduce((a, x) => a + x.total + x.dead, 0);
+  if (layers.length) layers[layers.length - 1].amount += all - counted; // folded chips above the top level
+  return layers;
+}
+function drawResult() {
+  const cs = contribs(), layers = potLayers(cs), pot = layers.reduce((a, l) => a + l.amount, 0);
+  $('resPot').textContent = `pot ${fmt(pot)} bb`;
+  const rows = $('resRows'); rows.innerHTML = '';
+  for (const x of cs.filter((y) => !y.folded)) {
+    const r = document.createElement('div'); r.className = 'resrow';
+    r.innerHTML = `<div><b>${x.pos}</b> <span class="muted mono">${seatLabel(x.id)} · ${fmt(x.base)} bb</span></div><label class="row"><span class="label">Put in</span><input type="number" min="0" step="0.5" value="${fmt(x.total)}" aria-label="${x.pos} total chips put in"></label>`;
+    const btn = document.createElement('button'); btn.textContent = resState.winners.has(x.id) ? 'Won' : 'Lost'; btn.setAttribute('aria-pressed', resState.winners.has(x.id));
+    btn.onclick = () => { resState.winners.has(x.id) ? resState.winners.delete(x.id) : resState.winners.add(x.id); drawResult(); };
+    r.querySelector('input').addEventListener('change', (ev) => { const v = parseFloat(ev.target.value); if (v >= 0) { resState.extra[x.id] = Math.max(0, v - x.put); drawResult(); } });
+    r.appendChild(btn); rows.appendChild(r);
+  }
+  // a side pot the chosen winner can't win needs its own winner
+  const side = $('resSide'); side.innerHTML = '';
+  const W = resState.winners, orphan = layers.filter((l) => !l.elig.some((id) => W.has(id)) && l.elig.length > 1);
+  if (W.size && orphan.length) {
+    const ids = [...new Set(orphan.flatMap((l) => l.elig))];
+    side.innerHTML = `<div class="row"><span class="label">Side pot ${fmt(orphan.reduce((a, l) => a + l.amount, 0))} bb won by</span></div>`;
+    const row = document.createElement('div'); row.className = 'row';
+    ids.forEach((id) => { const x = cs.find((y) => y.id === id), b = document.createElement('button'); b.textContent = x.pos; b.setAttribute('aria-pressed', resState.side.has(id));
+      b.onclick = () => { resState.side.has(id) ? resState.side.delete(id) : resState.side.add(id); drawResult(); }; row.appendChild(b); });
+    side.appendChild(row);
+  }
+  $('resErr').textContent = '';
+}
+$('resCancel').onclick = () => { $('resultModal').hidden = true; resState = null; };
+$('resDone').onclick = () => {
+  if (!resState.winners.size) { $('resErr').textContent = 'Pick who won the pot.'; return; }
+  const cs = contribs(), layers = potLayers(cs), W = resState.winners;
+  if (layers.some((l) => !l.elig.some((id) => W.has(id)) && l.elig.length > 1 && !l.elig.some((id) => resState.side.has(id)))) { $('resErr').textContent = 'Pick who won the side pot.'; return; }
+  applyResult(cs, [...W], [...resState.side]);
+  $('resultModal').hidden = true; resState = null;
+};
+function applyResult(cs, winners, sideWinners) {
+  const t = S.t222, layers = potLayers(cs), gain = {};
+  for (const L of layers) {
+    let w = L.elig.filter((id) => winners.includes(id));
+    if (!w.length && sideWinners) w = L.elig.filter((id) => sideWinners.includes(id));
+    if (!w.length) w = L.elig.slice(0, 1); // uncalled chips go back to their owner
+    for (const id of w) gain[id] = (gain[id] || 0) + L.amount / w.length;
+  }
+  let busts = 0;
+  for (const x of cs) {
+    const after = Math.max(0, Math.round((x.base - x.dead - x.total + (gain[x.id] || 0)) * 100) / 100);
+    if (after <= 0.001) { busts++; t.stacks[x.id] = t.avg > 0 ? t.avg : 25; } // busted: a new player takes the seat
+    else t.stacks[x.id] = after;
+  }
+  if (busts) t.left = Math.max(T.seats.length, t.left - busts);
+  S.bustNote = busts ? `${busts} player${busts > 1 ? 's' : ''} busted · players left now ${t.left}; the empty seat was refilled at the average stack (edit it if needed).` : '';
+  save222(); nextHand();
+}
+
 function nextHand() {
   const n = S.slots.length, b = buttonSeat();
   for (let k = 1; k <= n; k++) { const id = (b + k) % n; if (S.slots[id].active) { S.button = id; break; } }
@@ -756,7 +854,7 @@ function render() {
     : `<span class="who" style="font-size:16px">${live().length >= 2 ? `${live().length} players to the flop` : 'Hand over preflop'}</span><span class="muted mono">pot ${fmt(potNow())} bb</span><span class="grow"></span>`;
   const clr = document.createElement('button'); clr.textContent = 'Clear action'; clr.onclick = () => { S.hist = []; S.overrides = {}; replay(); const n2 = nextActor(); S.sel = n2 ? n2.id : null; render(); markStale(); };
   const nh = document.createElement('button'); nh.className = 'next'; nh.textContent = 'Next hand ›'; nh.title = 'Move the button one seat; stacks stay with their seats';
-  nh.onclick = nextHand;
+  nh.onclick = settleAndNext;
   foot.append(clr, nh); pr.appendChild(foot);
   renderBoard(); renderInHand();
   pfEnsure();
@@ -807,6 +905,7 @@ function render222b() {
   $('tNote').textContent = need < 0 ? `Players left must be at least ${T.seats.length} (players seated).`
     : `${t.left} left · ${t.paid} paid${stage} · ${fmt(total)} bb in play · ${left$.toFixed(1)}% of the prize pool still to win · top ${Math.min(6, pays.length)}: ${pays.slice(0, 6).map((p) => p.toFixed(1) + '%').join(' / ')}`;
   $('tNote').className = need < 0 || !pays.length ? 'hint error' : 'hint';
+  if (S.bustNote) $('tNote').textContent = S.bustNote + ' · ' + $('tNote').textContent;
   renderIcmBox();
 }
 // Exact ICM read-out for the table: each seat's share of the prize pool, and for the
@@ -927,7 +1026,7 @@ $('rmDone').onclick = () => {
   if (rm.reset && !parts.length) delete S.overrides[rm.id]; else S.overrides[rm.id] = parts.join(',');
   $('rangeModal').hidden = true; rm = null; renderInHand(); markStale();
 };
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('rangeModal').hidden) $('rmCancel').click(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('rangeModal').hidden) $('rmCancel').click(); if (e.key === 'Escape' && !$('resultModal').hidden) $('resCancel').click(); });
 function setView(v) { view = v; $('tabPre').setAttribute('aria-pressed', v === 'pre'); $('tabPost').setAttribute('aria-pressed', v === 'post'); renderNode(); }
 
 // ---------------------------------------------------------------- solver worker
