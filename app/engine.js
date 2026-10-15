@@ -309,6 +309,21 @@ function icmEquityGrouped(dist, startDist, g, m, payouts) {
   }
   return eq;
 }
+// Progressive-knockout bounties: when player j busts, the player(s) who won j's last pot
+// collect j's bounty. value = bounty * frac (frac covers the cash half plus what the
+// half added to your own head is worth). Units match the payouts (% of prize pool).
+function koBonus(fin, start, layerWins, bounties, frac) {
+  const add = new Float64Array(fin.length);
+  if (!bounties || !layerWins) return add;
+  for (let j = 0; j < fin.length; j++) {
+    if (!(start[j] > 0) || fin[j] > 1e-9 || !(bounties[j] > 0)) continue;
+    let w = null; for (const L of layerWins) if (L.elig.includes(j)) w = L.w;
+    if (!w) continue;
+    const ws = w.filter((i) => i !== j); if (!ws.length) continue;
+    for (const i of ws) add[i] += (bounties[j] * frac) / ws.length;
+  }
+  return add;
+}
 // split "others" into one shared stack (the most common value) and the rest
 function groupOthers(others) {
   const cnt = new Map(); for (const x of others) cnt.set(x, (cnt.get(x) || 0) + 1);
@@ -538,18 +553,22 @@ class Solver {
   finalStacks(nd) {
     const n = this.n, fin = new Float64Array(n);
     for (let i = 0; i < n; i++) fin[i] = this.spot.stacks[i] - nd.inv[i];
+    this._lw = null;
     if (nd.kind === K_FOLD) { fin[nd.winner] += nd.pot; return fin; }
+    this._lw = [];
     for (const L of nd.layers) {
       let best = -1; const w = [];
       for (const i of L.elig) { const s = this.strength[i]; if (s > best) { best = s; w.length = 0; w.push(i); } else if (s === best) w.push(i); }
       for (const i of w) fin[i] += L.amount / w.length;
+      this._lw.push({ elig: L.elig, w: w.slice() });
     }
     return fin;
   }
 
   icmUtility(nd) {
-    const fin = this.finalStacks(nd);
+    const fin = this.finalStacks(nd), bty = this.spot.payoff.bounties;
     let k = ''; for (let i = 0; i < fin.length; i++) k += Math.round(fin[i] * 1000) + ',';
+    if (bty && this._lw) k += '|' + this._lw.map((L) => L.w.join('.')).join('/');
     let v = this.icmCache.get(k);
     if (v) return v;
     const { payouts, others } = this.spot.payoff;
@@ -563,6 +582,7 @@ class Solver {
       if (!this.icmModel) this.icmModel = new IcmModel(this.n, others, payouts, 6000);
       v = this.icmModel.equity(fin, this.spot.stacks);
     }
+    if (bty) { const add = koBonus(fin, this.spot.stacks, this._lw, bty, this.spot.payoff.bountyFrac || 0.75); v = Array.from(v, (x, i) => x + add[i]); }
     if (this.icmCache.size < 300000) this.icmCache.set(k, v);
     return v;
   }
@@ -700,6 +720,7 @@ function makeSpot(j) {
     if (!payouts.length) throw new Error('ICM needs at least one payout.');
     if (names.length + others.length > 200) throw new Error('ICM supports up to 200 players left.');
     payoff = { type: 'icm', payouts, others };
+    if (Array.isArray(j.payoff.bounties) && j.payoff.bounties.some((x) => x > 0)) { payoff.bounties = j.payoff.bounties.map(Number); payoff.bountyFrac = Number(j.payoff.bountyFrac) || 0.75; }
   }
   const start = board.length - 3, multi = names.length > 2;
   const ab = j.abstraction || {};
@@ -739,8 +760,9 @@ class PreflopSolver {
     this.cfg = cfg; this.n = cfg.names.length;
     this.nodes = []; this.buildTree();
     let off = 0;
-    for (const nd of this.nodes) if (nd.kind === 'act') { nd.off = off; off += NCLASS * 2 * nd.actions.length; }
-    this.T = new Float32Array(off);
+    let eoff = 0, woff = 0;
+    for (const nd of this.nodes) if (nd.kind === 'act') { nd.off = off; off += NCLASS * 2 * nd.actions.length; nd.evOff = eoff; eoff += NCLASS * nd.actions.length; nd.ewOff = woff; woff += NCLASS; }
+    this.T = new Float32Array(off); this.EV = new Float32Array(eoff); this.EVW = new Float32Array(woff);
     this.iters = 0; this.nextReset = 2000; this.icmCache = new Map();
     this.deck = new Uint8Array(52); for (let i = 0; i < 52; i++) this.deck[i] = i;
     this.hand = new Int32Array(this.n); this.cls = new Int32Array(this.n); this.str = new Int32Array(this.n);
@@ -796,7 +818,12 @@ class PreflopSolver {
       if (!others) return o;
       const L = s.level + 1;
       if (s.level >= 3 && !inVol) return o;
-      if (L <= 3 && (s.level < 2 || inVol)) { const to = sizeFor(s, L); if (to < st[p] * 0.95) o.push({ k: 'raise', to, L }); }
+      if (L <= 3 && (s.level < 2 || inVol)) {
+        const to = sizeFor(s, L); if (to < st[p] * 0.95) o.push({ k: 'raise', to, L });
+        // commit-but-not-all-in: raise to everything except 1bb (short stacks)
+        const keep = st[p] - 1;
+        if (cfg.leave1 && L <= 2 && st[p] <= 40 && keep > to * 1.25 && keep > s.bet + s.lastRaise) o.push({ k: 'raiseB', to: keep, L });
+      }
       if (L === 4 && inVol && st[p] > 150) { const to = sizeFor(s, L); if (to < st[p] * 0.95) o.push({ k: 'raise', to, L }); }
       o.push({ k: 'allin', to: st[p], L });
       return o;
@@ -806,7 +833,7 @@ class PreflopSolver {
       if (a.k !== 'fold' && a.k !== 'check') t.vol[p] = true;
       if (a.k === 'fold') t.folded[p] = true;
       else if (a.k === 'call') { t.put[p] = Math.min(t.bet, st[p]); if (t.put[p] >= st[p] - 1e-9) t.allin[p] = true; }
-      else if (a.k === 'raise' || a.k === 'allin') {
+      else if (a.k === 'raise' || a.k === 'raiseB' || a.k === 'allin') {
         const to = Math.min(a.to, st[p]), raise = to - t.bet; t.put[p] = to; if (to >= st[p] - 1e-9) t.allin[p] = true;
         if (raise > 1e-9) { t.level++; if (raise >= t.lastRaise - 1e-9) t.lastRaise = raise; t.bet = to; for (let j = 0; j < n; j++) if (j !== p && !t.folded[j] && !t.allin[j]) t.needs[j] = true; }
       }
@@ -854,6 +881,7 @@ class PreflopSolver {
   finalStacks(nd) {
     const n = this.n, fin = new Float64Array(n), st = this.cfg.stacks;
     for (let i = 0; i < n; i++) fin[i] = st[i] - nd.put[i];
+    this._lw = null;
     if (nd.kind === 'fold') { fin[nd.winner] += nd.pot; return fin; }
     if (nd.kind === 'flop' && nd.layers.length === 1) {
       const el = nd.layers[0].elig; let best = -1; const w = [];
@@ -863,10 +891,12 @@ class PreflopSolver {
       for (const i of el) fin[i] += nd.pot * ((w.includes(i) ? nd.R[i] / w.length : 0) + rest);
       return fin;
     }
+    this._lw = [];
     for (const L of nd.layers) {
       let best = -1; const w = [];
       for (const i of L.elig) { const s = this.str[i]; if (s > best) { best = s; w.length = 0; w.push(i); } else if (s === best) w.push(i); }
       for (const i of w) fin[i] += L.amount / w.length;
+      this._lw.push({ elig: L.elig, w: w.slice() });
     }
     return fin;
   }
@@ -875,12 +905,14 @@ class PreflopSolver {
     const fin = this.finalStacks(nd), p = this.cfg.payoff || { type: 'chips' };
     if (p.type !== 'icm') { const u = new Float64Array(this.n); for (let i = 0; i < this.n; i++) u[i] = fin[i] - this.cfg.stacks[i]; return u; }
     let k = ''; for (let i = 0; i < fin.length; i++) k += Math.round(fin[i] * 100) + ',';
+    if (p.bounties && this._lw) k += '|' + this._lw.map((L) => L.w.join('.')).join('/');
     let v = this.icmCache.get(k); if (v) return v;
     if (!this.icmGroup) this.icmGroup = groupOthers(p.others);
     const G = this.icmGroup;
     if (this.n + G.rest.length <= 13) v = icmEquityGrouped([...fin, ...G.rest], [...this.cfg.stacks, ...G.rest], G.g, G.m, p.payouts).slice(0, this.n);
     else if (this.icmModel) v = this.icmModel.equity(fin, this.cfg.stacks);
     else v = icmEquity([...fin, ...p.others], [...this.cfg.stacks, ...p.others], p.payouts).slice(0, this.n);
+    if (p.bounties) { const add = koBonus(fin, this.cfg.stacks, this._lw, p.bounties, p.bountyFrac || 0.75); v = Array.from(v, (x, i) => x + add[i]); }
     if (this.icmCache.size < 400000) this.icmCache.set(k, v);
     return v;
   }
@@ -898,28 +930,32 @@ class PreflopSolver {
 
   // strength of every hand class for the traverser on this board, using a combo of the
   // class that doesn't collide with the board or the other players' cards
-  classStrengths(p) {
-    if (!this.byClass) { this.byClass = Array.from({ length: NCLASS }, () => []); for (let c = 0; c < NUM_COMBOS; c++) this.byClass[CLASS_OF[c]].push(c); this.sv = new Int32Array(NCLASS); this.used = new Uint8Array(52); }
+  // Importance weights: the deal was drawn without knowing the traverser's class, so each
+  // class is weighted by how many of its combos fit around the cards already dealt (other
+  // players' hands and the board). The same weight is used at every terminal of a pass.
+  classWeights(p) {
+    if (!this.byClass) { this.byClass = Array.from({ length: NCLASS }, () => []); for (let c = 0; c < NUM_COMBOS; c++) this.byClass[CLASS_OF[c]].push(c); this.sv = new Int32Array(NCLASS); this.used = new Uint8Array(52); this.pick = new Int32Array(NCLASS); }
+    if (!this.cw) { this.cw = new Float64Array(NCLASS); const n7 = 2 * (this.n - 1) + 5; this.kFree = ((52 - n7) * (51 - n7)) / (52 * 51); }
     const used = this.used; used.fill(0);
     for (let b = 0; b < 5; b++) used[this.c7[b]] = 1;
     for (let q = 0; q < this.n; q++) if (q !== p) { used[COMBO_A[this.hand[q]]] = 1; used[COMBO_B[this.hand[q]]] = 1; }
-    // Importance weight: the deal was drawn without knowing this class, so weight each
-    // class by how many of its combos fit around the dealt cards (keeps card removal exact).
-    if (!this.cw) { this.cw = new Float64Array(NCLASS); const n7 = 2 * (this.n - 1) + 5; this.kFree = ((52 - n7) * (51 - n7)) / (52 * 51); }
-    const c7 = this.c7;
     for (let c = 0; c < NCLASS; c++) {
-      const list = this.byClass[c], st = (Math.random() * list.length) | 0; let s = -1, avail = 0, pick = -1;
+      const list = this.byClass[c], st = (Math.random() * list.length) | 0; let avail = 0, pick = -1;
       for (let k = 0; k < list.length; k++) { const cb = list[(st + k) % list.length]; if (!used[COMBO_A[cb]] && !used[COMBO_B[cb]]) { avail++; if (pick < 0) pick = cb; } }
-      if (pick >= 0) { c7[5] = COMBO_A[pick]; c7[6] = COMBO_B[pick]; s = evaluate(c7, 7); }
-      this.sv[c] = s; this.cw[c] = avail / (list.length * this.kFree);
+      this.pick[c] = pick; this.cw[c] = avail / (list.length * this.kFree);
     }
+    this.svFor = -1;
+  }
+  classStrengths() {
+    const c7 = this.c7;
+    for (let c = 0; c < NCLASS; c++) { const pk = this.pick[c]; if (pk < 0) { this.sv[c] = -1; continue; } c7[5] = COMBO_A[pk]; c7[6] = COMBO_B[pk]; this.sv[c] = evaluate(c7, 7); }
   }
 
   // traverser p's payoff for each class at a terminal
   // heads-up terminals: exact class-vs-class equity instead of a sampled board
   termVec2(nd, p, o, out) {
     if (!this.byClass) { this.byClass = Array.from({ length: NCLASS }, () => []); for (let c = 0; c < NUM_COMBOS; c++) this.byClass[CLASS_OF[c]].push(c); }
-    const oc = this.cls[o], oh = this.hand[o], oa = COMBO_A[oh], ob = COMBO_B[oh], k2 = (50 * 49) / (52 * 51);
+    const oc = this.cls[o];
     const icm = this.cfg.payoff && this.cfg.payoff.type === 'icm';
     let winU, loseU;
     if (icm) {
@@ -931,9 +967,7 @@ class PreflopSolver {
     let both = 0, onlyP = 0;
     if (!icm && nd.kind === 'show') for (const L of nd.layers) { if (L.elig.length === 2) both += L.amount; else if (L.elig[0] === p) onlyP += L.amount; }
     for (let c = 0; c < NCLASS; c++) {
-      const list = this.byClass[c]; let avail = 0;
-      for (const cb of list) if (COMBO_A[cb] !== oa && COMBO_A[cb] !== ob && COMBO_B[cb] !== oa && COMBO_B[cb] !== ob) avail++;
-      const wgt = avail / (list.length * k2);
+      const wgt = this.cw[c];
       const eq = EQ169[c * NCLASS + oc];
       let share;
       if (nd.kind === 'flop') {
@@ -953,7 +987,7 @@ class PreflopSolver {
 
   termVec(nd, p, out) {
     if (nd.kind !== 'fold' && nd.alive.length === 2 && nd.alive.includes(p)) { this.termVec2(nd, p, nd.alive[0] === p ? nd.alive[1] : nd.alive[0], out); return; }
-    if (this.svFor !== p) { this.classStrengths(p); this.svFor = p; }
+    if (this.svFor !== p) { this.classStrengths(); this.svFor = p; }
     const save = this.str[p], icm = this.cfg.payoff && this.cfg.payoff.type === 'icm';
     if (nd.kind === 'fold' && !icm) { const u = (nd.winner === p ? nd.pot : 0) - nd.put[p]; for (let c = 0; c < NCLASS; c++) out[c] = u * this.cw[c]; return; }
     const memo = new Map();
@@ -977,12 +1011,16 @@ class PreflopSolver {
       const kids = [];
       for (let a = 0; a < na; a++) { const v = this.traverse(nd.children[a], p, w, wa, depth + 1); kids.push(Float64Array.from(v)); }
       const sig = this.sig[depth];
+      const EV = this.EV, EW = this.EVW, eo = nd.evOff;
       for (let c = 0; c < NCLASS; c++) {
         const off = nd.off + c * 2 * na; let sum = 0;
         for (let a = 0; a < na; a++) { const r = T[off + a]; sig[a] = r > 0 ? r : 0; sum += sig[a]; }
         if (sum > 0) for (let a = 0; a < na; a++) sig[a] /= sum; else for (let a = 0; a < na; a++) sig[a] = 1 / na;
         let v = 0; for (let a = 0; a < na; a++) v += sig[a] * kids[a][c];
         for (let a = 0; a < na; a++) { const r = T[off + a] + w * (kids[a][c] - v); T[off + a] = r > 0 ? r : 0; }
+        // value of each action for this hand (same weights as the regrets, so EV = sum / weight)
+        const eb = eo + c * na; for (let a = 0; a < na; a++) EV[eb + a] += w * kids[a][c];
+        EW[nd.ewOff + c] += w * this.cw[c];
         out[c] = v;
       }
       return out;
@@ -1002,8 +1040,8 @@ class PreflopSolver {
     const t0 = Date.now();
     while (Date.now() - t0 < ms) for (let j = 0; j < 20; j++) {
       const w = Math.floor(this.iters / 500) + 1, wa = w * w;
-      this.deal(); this.svFor = -1;
-      for (let p = 0; p < this.n; p++) { this.traverse(0, p, w, wa, 0); }
+      this.deal();
+      for (let p = 0; p < this.n; p++) { this.classWeights(p); this.traverse(0, p, w, wa, 0); }
       this.iters++;
       // forget the noisy early average at 4^k checkpoints (as the postflop engine does)
       if (this.iters === this.nextReset) { this.resetAverages(); this.nextReset *= 4; }
@@ -1011,10 +1049,20 @@ class PreflopSolver {
   }
 
   resetAverages() {
+    this.EV.fill(0); this.EVW.fill(0);
     for (const nd of this.nodes) if (nd.kind === 'act') {
       const na = nd.actions.length;
       for (let c = 0; c < NCLASS; c++) { const off = nd.off + c * 2 * na; for (let a = 0; a < na; a++) this.T[off + na + a] = 0; }
     }
+  }
+
+  // expected value of each action for a hand class at a node (utility units: bb, or % of
+  // the prize pool under ICM). null when the class has not been sampled there yet.
+  evOf(id, cls) {
+    const nd = this.nodes[id], na = nd.actions.length, wsum = this.EVW[nd.ewOff + cls];
+    if (!(wsum > 0)) return null;
+    const out = new Array(na); for (let a = 0; a < na; a++) out[a] = this.EV[nd.evOff + cls * na + a] / wsum;
+    return out;
   }
 
   avg(id, cls) {
@@ -1046,7 +1094,7 @@ class PreflopSolver {
   stats() { return { iters: this.iters, nodes: this.nodes.length, bytes: this.T.length * 4 }; }
 }
 
-const SlickEngine = { icmEquityGrouped, groupOthers, PreflopSolver, CLASS_NAMES, CLASS_OF, IcmModel, Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
+const SlickEngine = { comboIndex, EQ169, koBonus, icmEquityGrouped, groupOthers, PreflopSolver, CLASS_NAMES, CLASS_OF, IcmModel, Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
 
 // ---------------------------------------------------------------- worker protocol
 if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typeof window === 'undefined') {
@@ -1096,8 +1144,8 @@ if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typ
         const reach = pf.reachByClass(f.steps).map((r) => Array.from(r));
         const nd = pf.nodes[f.id];
         if (nd.kind !== 'act') { self.postMessage({ type: 'pfResult', reqId: m.reqId, ok: true, terminal: true, reach, iters: pf.iters }); return; }
-        const strat = []; for (let c = 0; c < NCLASS; c++) strat.push(pf.avg(f.id, c));
-        self.postMessage({ type: 'pfResult', reqId: m.reqId, ok: true, player: nd.player, actions: nd.actions, strat, reach, iters: pf.iters });
+        const strat = [], ev = []; for (let c = 0; c < NCLASS; c++) { strat.push(pf.avg(f.id, c)); ev.push(pf.evOf(f.id, c)); }
+        self.postMessage({ type: 'pfResult', reqId: m.reqId, ok: true, player: nd.player, actions: nd.actions, strat, ev, reach, iters: pf.iters });
       }
     } catch (e) { self.postMessage({ type: 'error', message: e.message, reqId: m.reqId }); }
   };
