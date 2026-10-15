@@ -196,7 +196,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
 
 <header class="top">
   <div class="wordmark">SLICK <span>RNG</span></div>
-  <span class="ver">ALPHA 2.5 · SOLVER</span>
+  <span class="ver">ALPHA 2.6 · SOLVER</span>
   <span class="grow"></span>
   <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="mtt" aria-pressed="false">MTT</button><button data-game="icm" aria-pressed="false">MTT · ICM</button><button data-game="222" aria-pressed="false">MTT · 222</button></div>
   <div class="seg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
@@ -214,8 +214,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 13px; wid
     </div>
     <div class="row"><span class="label" style="width:120px">Table stacks (bb)</span><div class="row grow" id="tSeats"></div></div>
     <div class="row"><span class="label" style="width:120px">Button</span><select id="tButton" aria-label="Which seat has the dealer button"></select>
-      <span class="sep"></span><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div>
-      <span class="sep"></span><label class="row"><span class="label">BB ante</span><input id="tAnte" type="number" min="0" step="0.05" aria-label="Big blind ante in bb"></label></div>
+      <span class="sep"></span><span class="label" id="tOthersLabel">Other players</span><div class="row" id="tOthers"></div></div>
     <div class="hint" id="tNote"></div>
     <div class="icmbox" id="icmBox"></div>
   </div>
@@ -1487,7 +1486,7 @@ function save222() { try { localStorage.setItem('slick222', JSON.stringify(S.t22
 // entered stack (before this hand)
 function baseStack(seat) { if (S.game !== '222') return S.stack; const v = S.t222.stacks[seat.id]; return v > 0 ? v : 25; }
 // big-blind ante: dead money paid by the big blind, so it comes off the BB's playable stack
-function anteNow() { if (S.game === 'cash') return 0; if (S.game === '222') { const a = S.t222.ante; return a >= 0 ? a : 1; } return 1; }
+function anteNow() { return 0; } // no antes: online tournaments here play without a big-blind ante
 function deadOf(seat) { return seat && seat.pos === 'BB' ? Math.min(anteNow(), baseStack(seat)) : 0; }
 // chips the player can still put into the pot this hand
 function stackOf(seat) { return baseStack(seat) - deadOf(seat); }
@@ -1978,7 +1977,7 @@ function withHistMin(rowKey) {
 function render222() {
   const t = S.t222;
   if (document.activeElement?.closest?.('#t222')) return; // don't rebuild while typing
-  $('tLeft').value = t.left; $('tPaid').value = t.paid; $('tPay').value = t.payouts; $('tAnte').value = anteNow();
+  $('tLeft').value = t.left; $('tPaid').value = t.paid; $('tPay').value = t.payouts;
   const ts = $('tSeats'); ts.innerHTML = '';
   for (const slot of S.slots) {
     if (!slot.active) continue;
@@ -2045,7 +2044,6 @@ function renderIcmBox() {
 }
 function bind222() {
   const t = S.t222;
-  $('tAnte').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v >= 0) { t.ante = v; save222(); replay(); render(); markStale(); } else e.target.value = anteNow(); });
   $('tLeft').addEventListener('change', (e) => { const v = Math.max(2, Math.min(75, parseInt(e.target.value, 10) || 2)); t.left = v; save222(); e.target.value = v; render222b(); markStale(); });
   $('tPaid').addEventListener('change', (e) => { const v = Math.max(1, Math.min(50, parseInt(e.target.value, 10) || 1)); const was = t.paid; t.paid = v; e.target.value = v;
     if (t.payouts.split(',').filter(Boolean).length < v || was !== v) { t.payouts = defaultPayouts(v); $('tPay').value = t.payouts; } save222(); render222b(); markStale(); });
