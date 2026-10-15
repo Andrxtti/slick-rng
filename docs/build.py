@@ -2,8 +2,8 @@
 import re, pathlib
 root = pathlib.Path(__file__).parent
 app = (root / '../app/slick-rng.html').read_text()
-ver = re.search(r'ALPHA ([0-9.]+)', app).group(1)
-splash = (root / 'splash.html').read_text()
+ver = re.search(r'(?:ALPHA|BETA) ([0-9.]+)', app).group(1)
+splash = (root / 'splash.html').read_text().replace('__VER__', ver)
 startup = ''.join(
     f'<link rel="apple-touch-startup-image" media="(device-width: {w}px) and (device-height: {h}px) and (-webkit-device-pixel-ratio: {r}) and (orientation: portrait)" href="icons/splash-{w*r}x{h*r}.png">\n'
     for w, h, r in [(430, 932, 3), (393, 852, 3), (390, 844, 3), (428, 926, 3), (375, 812, 3), (414, 896, 2), (375, 667, 2)])

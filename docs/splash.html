@@ -20,7 +20,10 @@ button, .cell, .seat, .slot { touch-action: manipulation; }
 .sp-tag { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: #b0a690; animation: sp-rise .6s cubic-bezier(.2, .8, .2, 1) 1.55s both; }
 .sp-bar { width: 140px; height: 3px; border-radius: 3px; background: #1d1b16; overflow: hidden; margin-top: 18px; animation: sp-rise .5s ease 1.6s both; }
 .sp-bar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #5aa9de, #efe4c8); transform-origin: left; animation: sp-load 1s cubic-bezier(.5, 0, .2, 1) 1.6s both; }
-.sp-foot { position: absolute; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); left: 0; right: 0; text-align: center; font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 11px; color: #6c6457; letter-spacing: .06em; animation: sp-rise .6s ease 1s both; }
+.sp-foot { display: grid; justify-items: center; gap: 6px; position: absolute; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); left: 0; right: 0; text-align: center; font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 12px; color: #8a8170; letter-spacing: .06em; animation: sp-rise .6s ease 1s both; }
+.sp-foot q { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 15px; color: #efe4c8; letter-spacing: .01em; }
+.sp-foot q { quotes: "“" "”"; } .sp-foot q::before, .sp-foot q::after { color: #5aa9de; }
+.sp-ver { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #5aa9de; border: 1px solid rgba(90, 169, 222, .45); border-radius: 999px; padding: 3px 12px; animation: sp-rise .6s cubic-bezier(.2, .8, .2, 1) 1.65s both; }
 @keyframes sp-pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
 @keyframes sp-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes sp-load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
@@ -31,8 +34,9 @@ button, .cell, .seat, .slot { touch-action: manipulation; }
   <div class="sp-chip"><img class="sp-face" src="icons/slick-badge.jpg" alt=""><img class="dwi" src="icons/dwi.png" alt=""></div>
   <div class="sp-word">CONFIRMED <span>FIRE</span> POKER</div>
   <div class="sp-tag">Slick RNG Solver</div>
+  <div class="sp-ver">Beta __VER__</div>
   <div class="sp-bar"><i></i></div>
-  <div class="sp-foot">Free forever · built by players</div>
+  <div class="sp-foot"><span>Built by dreamers</span><q>People insist on calling it luck…</q></div>
 </div>
 <script>
 (() => {
