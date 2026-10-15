@@ -1,0 +1,18 @@
+{
+  "name": "Slick RNG",
+  "short_name": "Slick RNG",
+  "description": "Free multiway poker solver with strict tournament ICM and a bubble trainer.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090908",
+  "theme_color": "#090908",
+  "categories": ["games", "education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
