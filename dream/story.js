@@ -180,7 +180,7 @@ Object.assign(DR_SCENES, {
 // the first time a legend sits at your final table they say their line; who you meet is remembered
 function drMeetLine(id) {
   if (id === 'ghost') return { sp: 'ghost', t: "Heads-up for the world title. I've waited a long time for someone worth this." };
-  if (id === 'trent') return { sp: 'trent', t: "Final table of the Classic. Just you, me and Dad's money. Let's go." };
+  if (id === 'trent') return { sp: 'trent', t: DR.run && DR.run.ev.id === 'classic' ? "Final table of the Classic. Just you, me and Dad's money. Let's go." : DR.run && DR.run.ev.ch >= 5 ? "Titan final table. Look at us. Two nobodies from Riverside." : "You again. Fine. This ring is mine." };
   if (id === 'lou') return { sp: 'lou', t: "Final table, kid. Thirty years I've been trying to win this thing. Don't you dare." };
   const L = drLegend(id); return L ? { sp: 'L:' + id, t: L.line } : null;
 }

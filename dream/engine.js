@@ -276,6 +276,7 @@ function drFinish(quit) {
       else if (!ev.daily) drMoment(s, '🏅', `Won the ${ev.name}`);
       if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { if (!s.legends[run.boss]) drMoment(s, '🂡', `Beat ${drLegend(run.boss).name} heads-up`); s.legends[run.boss] = true; res.beat = run.boss; }
       if (run.boss === 'ghost') drMoment(s, '🕶️', 'Beat The Ghost for the world title');
+      if (run.boss === 'trent') { s.flags.trentW = (s.flags.trentW || 0) + 1; drMoment(s, '😏', `Beat Trent Vale heads-up (${s.flags.trentW} and counting)`); }
       if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
       const once = (id) => { if (!s.story[id] && !s.queue.includes(id)) s.queue.push(id); };
       if (ev.title === 'room' && run.boss === 'trent') once('trentbeat');
