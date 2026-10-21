@@ -254,6 +254,13 @@
 .dream .drconfetti i { position: absolute; top: -12px; left: var(--x); width: 7px; height: 12px; background: var(--c); transform: rotate(var(--r)); animation: drFall 3.2s linear var(--d) infinite; opacity: .85; }
 @keyframes drFall { to { transform: translateY(820px) rotate(calc(var(--r) + 540deg)); } }
 .dream .drres > :not(.drconfetti) { position: relative; }
+.dream .drkeys { display: grid; gap: 6px; width: min(460px, 100%); text-align: left; }
+.dream .drkey { display: flex; gap: 10px; align-items: center; background: rgba(0, 0, 0, .45); border: 1px solid var(--line2); border-left: 3px solid var(--gold); border-radius: 10px; padding: 8px 10px; }
+.dream .drkey.t-bad { border-left-color: var(--red); }
+.dream .drkey-cards { display: flex; gap: 3px; } .dream .drkey-cards span { background: #f7f3e8; color: #111; border-radius: 4px; padding: 3px 4px; font-size: 13px; font-weight: 600; }
+.dream .drkey-cards .s-h, .dream .drkey-cards .s-d { color: #c2362a; } .dream .drkey-cards .s-d { color: #1f62b0; } .dream .drkey-cards .s-c { color: #17805a; }
+.dream .drkey b { font-size: 13px; display: block; } .dream .drkey small { font-size: 12px; color: #d8cfbd; }
+.dream .drprop.title { position: absolute; inset: 0; opacity: .28; } .dream .drtitle-in { position: relative; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }

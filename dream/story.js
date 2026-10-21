@@ -137,6 +137,46 @@ const DR_SCENES = {
   ], end: 'c7' },
 };
 
+// more beats along the way, triggered by milestones
+Object.assign(DR_SCENES, {
+  trentbeat: { place: 'cardroom', title: 'Chapter 1', sub: 'The Riverside Classic', beats: [
+    { sp: 'n', t: 'The last card hits the felt. The Riverside Classic is yours.' },
+    { sp: 'trent', t: "Enjoy it. Dad says the Classic is a rounding error." },
+    { sp: 'lou', t: "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it." },
+    { sp: 'rosa', t: "Your name goes on the board by the cage. Permanent marker. Congratulations." },
+  ], end: 'hub' },
+  ring1: { place: 'casino', title: 'Chapter 2', sub: 'First ring', beats: [
+    { sp: 'n', t: 'A tournament director slides a heavy ring across the table. It barely fits. You put it on anyway.' },
+    { sp: 'L:moneybaker', t: "First ring? I still remember mine. Don't put it in a drawer. Wear it every day you play." },
+    { sp: 'slick', t: 'One ring. Now go get another one.', text: true },
+  ], end: 'hub' },
+  bracelet1: { place: 'vegas', title: 'Chapter 3', sub: 'Gold', beats: [
+    { sp: 'n', t: 'They fasten the bracelet around your wrist and the room starts clapping before you realize it is for you.\nGold. Real gold. Your name in the record book forever.' },
+    { sp: 'L:hellbent', t: "Lucky. If I had been at that final table, we'd be talking about my bracelet number eighteen." },
+    { sp: 'mom', t: 'IS THAT REAL GOLD?? YOUR AUNT SAW IT ON THE INTERNET', text: true },
+    { sp: 'slick', t: 'Nine-year-old you is screaming right now. Let him.', text: true },
+  ], end: 'hub' },
+  tour1: { place: 'tv', title: 'Chapter 4', sub: 'The interview', beats: [
+    { sp: 'host', t: "Champion! Fifty thousand people are watching on stream. How does it feel?" , choice: [
+      { t: '"People insist on calling it luck."', act: (s) => { s.flags.quote = true; }, line: { sp: 'host', t: "THERE it is. The chat is going absolutely crazy." } },
+      { t: '"I just tried to make good decisions."', act: (s) => { s.flags.humble = true; }, line: { sp: 'host', t: 'Humble AND dangerous. The worst combination for everyone else.' } },
+    ] },
+    { sp: 'L:kfoxglove', t: 'Nice result. Now everyone has a file on you. Welcome to the Tour.' },
+  ], end: 'hub' },
+  titan1: { place: 'titan', title: 'Chapter 5', sub: 'The Titan trophy', beats: [
+    { sp: 'n', t: 'A trident-shaped trophy, a wire transfer with too many zeros, and a room full of the best players alive nodding at you.' },
+    { sp: 'trent', t: "Congrats. Honestly. Turns out you can't buy what you've got." },
+    { sp: 'you', t: 'Took you long enough to figure that out.' },
+    { sp: 'trent', t: 'Ha. Rematch at the Main?' },
+  ], end: 'hub' },
+  derek: { place: 'office', title: 'Meanwhile', sub: 'Floor 34', beats: [
+    { sp: 'derek', t: "Hey buddy!! Long time. Saw your name on a poker site. Crazy! We're hiring a Senior Associate. Coffee?", text: true, choice: [
+      { t: 'Leave him on read.', line: { sp: 'n', t: 'You put the phone face down and go back to studying bubble spots.' } },
+      { t: '"Redo it yourself, Derek."', line: { sp: 'n', t: 'Three dots appear. Then disappear. Then nothing, forever.' } },
+    ] },
+  ], end: 'hub' },
+});
+
 // the first time a legend sits at your final table they say their line; who you meet is remembered
 function drMeetLine(id) {
   if (id === 'ghost') return { sp: 'ghost', t: "Heads-up for the world title. I've waited a long time for someone worth this." };

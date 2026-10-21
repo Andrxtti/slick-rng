@@ -239,7 +239,7 @@ function drLegendsHTML() {
     ${eras.map((e) => `<div class="drkicker drera">${e}</div><div class="drlegends">${DR_LEGENDS.filter((L) => L.era === e).map(card).join('')}</div>`).join('')}`;
 }
 function drStoryHTML() {
-  const s = DR.st, list = ['p_office', 'p_diner', 'p_after', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'champ', 'c7'].filter((id) => s.story[id]);
+  const s = DR.st, list = ['p_office', 'p_diner', 'p_after', 'firstwin', 'c1', 'trentbeat', 'c2', 'ring1', 'derek', 'c3', 'bracelet1', 'c4', 'tour1', 'c5', 'titan1', 'c6', 'champ', 'c7', 'broke'].filter((id) => s.story[id]);
   return `<div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
     <div class="drkicker">Money</div>
     <div class="drledger">${s.ledger.slice(-12).reverse().map((l) => `<div><span>${esc(l.why)}</span><b class="mono ${l.amt >= 0 ? 'up' : 'down'}">${l.amt >= 0 ? '+' : '−'}$${drMoney(Math.abs(l.amt))}</b></div>`).join('')}</div>
@@ -329,6 +329,7 @@ function drResultsHTML() {
     <div class="drmoney"><div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div><div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → $${drMoney(r.after)}</b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
     <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
       <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
+    ${r.keys && r.keys.length ? `<div class="drkeys"><div class="drkicker">Key hands</div>${r.keys.map((k) => { const h = k.hand; return `<div class="drkey t-${k.tier}"><div class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</div><div><b>${esc(h.pos)} · ${esc(h.bb)}bb · ${esc(h.cat)}</b><small>${k.tier === 'bad' ? `You: ${esc(h.mine)} (${h.myF}%). Solver: ${esc(h.best)} (${h.bestF}%).` : `You found ${esc(h.mine)}, a close spot the solver plays ${h.bestF}% of the time.`}</small></div></div>`; }).join('')}</div>` : ''}
     ${r.unlocked.length ? `<div class="drunlocks"><div class="drkicker">Unlocked</div>${r.unlocked.map((it) => `<div class="drunlock"><b>${esc(it.name)}</b><small>${esc(DR_SLOTS.find((x) => x[0] === it.slot)[1])} · ${esc(it.req)}</small></div>`).join('')}</div>` : ''}
     <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${drBtn('ghost', `data-dr="play" data-id="${ev.id}" ${drAfford(s, ev) && ev.id !== 'local' ? '' : 'disabled'}`, 'Play it again')}</div>
   </section>`;

@@ -165,7 +165,12 @@ function drAnswer(k) {
   const pts = ok ? Math.round(100 * rel) : -Math.round(100 * (1 - rel));
   const before = run.stack; run.stack = Math.max(0, Math.min(200, run.stack + DR_DELTA[tier]));
   run.combo = ok ? run.combo + 1 : 0;
-  run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack });
+  // remember the hand so the results screen can replay the key moments
+  const keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
+  const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
+  const best = strat.indexOf(fmax), hero = v.seats[sp.hero];
+  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
+  run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand });
   if (run.stack <= 0) run.bust = true;
   arSfx(tier === 'bad' ? 'bad' : tier); arBuzz(tier);
   run.state = 'answered'; drRender();
@@ -221,7 +226,8 @@ function drFinish(quit) {
   s.dec += n; s.perfect += counts.perfect; s.good += counts.good; s.close += counts.close; s.mistakes += counts.bad; s.played++;
   const rec = s.events[ev.id] || (s.events[ev.id] = { played: 0, cashes: 0, wins: 0, best: null, cash: 0, net: 0 });
   rec.played++;
-  const res = { ev, n, pct, counts, quit: !!quit, boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
+  const keyHands = run.results.filter((r) => r.hand).map((r) => r).sort((a, b) => a.pts - b.pts);
+  const res = { ev, n, pct, counts, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
   if (ev.kind === 'cash') {
     let net;
     if (run.bust) net = -ev.buyin;
@@ -248,10 +254,17 @@ function drFinish(quit) {
       if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); }
       if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { s.legends[run.boss] = true; res.beat = run.boss; }
       if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
+      const once = (id) => { if (!s.story[id] && !s.queue.includes(id)) s.queue.push(id); };
+      if (ev.title === 'room' && run.boss === 'trent') once('trentbeat');
+      if (ev.title === 'ring' && s.titles.ring === 1) once('ring1');
+      if (ev.title === 'bracelet' && s.titles.bracelet === 1) once('bracelet1');
+      if ((ev.title === 'tour' || ev.title === 'glo') && s.titles.tour + s.titles.glo === 1) once('tour1');
+      if (ev.title === 'titan' && s.titles.titan === 1) once('titan1');
       if (ev.id === 'main' && !s.story.champ) s.queue.push('champ');
     }
   }
   if (ev.id === 'local' && !s.story.p_after) s.queue.push('p_after');
+  if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');
   res.after = s.br;
   res.unlocked = drUnlocks(s);
   drProgress(s);

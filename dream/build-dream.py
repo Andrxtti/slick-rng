@@ -13,7 +13,8 @@ rep('family=Press+Start+2P&display=swap', 'family=Press+Start+2P&family=Bodoni+M
 css = (root / 'dream.css').read_text(encoding='utf-8')
 i = s.index('</style>'); s = s[:i] + css + '\n' + s[i:]
 rep('<div class="arena" id="arena"></div>', '<div class="dream v-title" id="dream"></div>')
-rep('<b>Trainer</b><small>Drill spots · find leaks</small>', '<b>The Dream</b><small>Cubicle to legend</small>')
+import re as _re
+s, k = _re.subn(r'(<button class="half h-trainer" id="goTrainer" type="button">)<svg.*?</svg><b>Trainer</b><small>Drill spots · find leaks</small>', lambda m: m.group(1) + (root / 'crown.svg').read_text() + '<b>The Dream</b><small>Cubicle to legend</small>', s, count=1, flags=_re.S); assert k == 1
 s, n = re.subn(r'<span class="ver">BETA ([0-9.]+)</span>', r'<span class="ver">BETA \1 · DREAM</span>', s, count=1); assert n == 1
 rep('<title>Confirmed Fire Poker</title>', '<title>Confirmed Fire Dream</title>')
 js = '\n'.join((root / f).read_text(encoding='utf-8') for f in ['data.js', 'story.js', 'avatar.js', 'props.js', 'engine.js', 'ui.js'])

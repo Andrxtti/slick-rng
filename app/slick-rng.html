@@ -1246,6 +1246,13 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 .dream .drconfetti i { position: absolute; top: -12px; left: var(--x); width: 7px; height: 12px; background: var(--c); transform: rotate(var(--r)); animation: drFall 3.2s linear var(--d) infinite; opacity: .85; }
 @keyframes drFall { to { transform: translateY(820px) rotate(calc(var(--r) + 540deg)); } }
 .dream .drres > :not(.drconfetti) { position: relative; }
+.dream .drkeys { display: grid; gap: 6px; width: min(460px, 100%); text-align: left; }
+.dream .drkey { display: flex; gap: 10px; align-items: center; background: rgba(0, 0, 0, .45); border: 1px solid var(--line2); border-left: 3px solid var(--gold); border-radius: 10px; padding: 8px 10px; }
+.dream .drkey.t-bad { border-left-color: var(--red); }
+.dream .drkey-cards { display: flex; gap: 3px; } .dream .drkey-cards span { background: #f7f3e8; color: #111; border-radius: 4px; padding: 3px 4px; font-size: 13px; font-weight: 600; }
+.dream .drkey-cards .s-h, .dream .drkey-cards .s-d { color: #c2362a; } .dream .drkey-cards .s-d { color: #1f62b0; } .dream .drkey-cards .s-c { color: #17805a; }
+.dream .drkey b { font-size: 13px; display: block; } .dream .drkey small { font-size: 12px; color: #d8cfbd; }
+.dream .drprop.title { position: absolute; inset: 0; opacity: .28; } .dream .drtitle-in { position: relative; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
@@ -1428,7 +1435,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
     <div class="lhead"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver</div></div>
     <div class="lsplit">
       <button class="half h-solver" id="goSolver" type="button"><svg class="px" viewBox="0 0 24 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#efe4c8" d="M10 1h4v1h-4zM9 2h1v1h-1zM14 2h1v1h-1zM8 3h1v1h-1zM15 3h1v1h-1zM4 4h16v1h-16zM2 5h1v1h-1zM5 5h1v1h-1zM9 5h1v1h-1zM13 5h1v1h-1zM17 5h1v1h-1zM20 5h1v1h-1zM4 6h16v1h-16z"/><path fill="#5aa9de" d="M10 2h1v1h-1zM12 2h2v1h-2zM9 3h1v1h-1zM11 3h4v1h-4z"/><path fill="#fff6e0" d="M11 2h1v1h-1zM10 3h1v1h-1z"/><path fill="#7e705a" d="M3 5h1v1h-1zM6 5h2v1h-2zM10 5h2v1h-2zM14 5h2v1h-2zM18 5h2v1h-2z"/><path fill="#e8704f" d="M4 5h1v1h-1zM8 5h1v1h-1zM12 5h1v1h-1zM16 5h1v1h-1z"/><path fill="#3a342b" d="M7 7h10v1h-10z"/><path fill="#5aa9de" fill-opacity="0.33" d="M8 8h8v1h-8zM7 9h10v1h-10zM6 10h12v1h-12zM5 11h14v1h-14z"/><path fill="#ec8fab" d="M6 12h5v1h-5zM13 12h5v1h-5zM4 13h3v1h-3zM8 13h3v1h-3zM13 13h3v1h-3zM17 13h3v1h-3zM3 14h2v1h-2zM7 14h2v1h-2zM10 14h2v1h-2zM14 14h2v1h-2zM17 14h1v1h-1zM20 14h2v1h-2zM3 15h1v1h-1zM5 15h2v1h-2zM8 15h4v1h-4zM14 15h3v1h-3zM18 15h1v1h-1zM20 15h2v1h-2zM2 16h3v1h-3zM7 16h3v1h-3zM11 16h1v1h-1zM14 16h1v1h-1zM16 16h3v1h-3zM21 16h2v1h-2zM2 17h6v1h-6zM9 17h4v1h-4zM15 17h2v1h-2zM18 17h6v1h-6zM2 18h2v1h-2zM5 18h3v1h-3zM9 18h2v1h-2zM12 18h1v1h-1zM15 18h1v1h-1zM17 18h1v1h-1zM19 18h3v1h-3zM23 18h1v1h-1zM3 19h3v1h-3zM8 19h5v1h-5zM15 19h4v1h-4zM21 19h2v1h-2zM3 20h5v1h-5zM9 20h2v1h-2zM12 20h1v1h-1zM15 20h1v1h-1zM17 20h2v1h-2zM20 20h3v1h-3zM4 21h6v1h-6zM11 21h2v1h-2zM15 21h2v1h-2zM18 21h4v1h-4zM5 22h8v1h-8zM15 22h6v1h-6zM6 23h3v1h-3zM11 23h1v1h-1zM16 23h1v1h-1zM19 23h1v1h-1z"/><path fill="#f7c2d1" d="M7 13h1v1h-1zM16 13h1v1h-1zM5 14h2v1h-2zM18 14h2v1h-2zM4 15h1v1h-1zM19 15h1v1h-1zM10 16h1v1h-1zM15 16h1v1h-1zM4 18h1v1h-1zM11 18h1v1h-1zM16 18h1v1h-1zM22 18h1v1h-1zM8 20h1v1h-1zM19 20h1v1h-1z"/><path fill="#b9547a" d="M11 13h2v1h-2zM9 14h1v1h-1zM12 14h2v1h-2zM16 14h1v1h-1zM7 15h1v1h-1zM12 15h2v1h-2zM17 15h1v1h-1zM5 16h2v1h-2zM12 16h2v1h-2zM19 16h2v1h-2zM8 17h1v1h-1zM13 17h2v1h-2zM17 17h1v1h-1zM8 18h1v1h-1zM13 18h2v1h-2zM18 18h1v1h-1zM6 19h2v1h-2zM13 19h2v1h-2zM19 19h2v1h-2zM11 20h1v1h-1zM13 20h2v1h-2zM16 20h1v1h-1zM10 21h1v1h-1zM13 21h2v1h-2zM17 21h1v1h-1zM9 23h2v1h-2zM17 23h2v1h-2z"/></svg><b>Solver</b><small>Charts · ICM · postflop</small></button>
-      <button class="half h-trainer" id="goTrainer" type="button"><svg class="px" viewBox="0 0 32 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#d9434f" d="M16 2h9v1h-9zM16 3h9v1h-9zM14 4h8v1h-8zM25 4h2v1h-2zM14 5h8v1h-8zM25 5h2v1h-2zM13 6h12v1h-12zM27 6h1v1h-1zM13 7h1v1h-1zM15 7h2v1h-2zM20 7h8v1h-8zM13 8h1v1h-1zM15 8h2v1h-2zM20 8h8v1h-8zM13 9h1v1h-1zM15 9h1v1h-1zM19 9h9v1h-9zM16 10h1v1h-1zM19 10h9v1h-9zM19 11h9v1h-9zM16 12h12v1h-12zM13 13h1v1h-1zM15 13h1v1h-1zM17 13h11v1h-11zM15 14h2v1h-2zM18 14h10v1h-10zM16 15h9v1h-9zM27 15h1v1h-1zM16 16h9v1h-9zM27 16h1v1h-1zM17 17h10v1h-10z"/><path fill="#f7c2d1" d="M22 4h3v1h-3zM22 5h3v1h-3zM25 6h2v1h-2z"/><path fill="#f0c35a" d="M14 7h1v1h-1zM11 8h1v1h-1zM14 8h1v1h-1zM17 8h1v1h-1zM12 9h1v1h-1zM16 9h1v1h-1zM11 11h2v1h-2zM16 11h2v1h-2zM12 13h1v1h-1zM16 13h1v1h-1zM11 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM14 15h1v1h-1z"/><path fill="#8e1a2c" d="M17 7h3v1h-3zM18 8h2v1h-2zM17 9h2v1h-2zM17 10h2v1h-2zM18 11h1v1h-1zM25 15h2v1h-2zM25 16h2v1h-2z"/><path fill="#efe4c8" d="M28 7h4v1h-4zM28 8h4v1h-4zM30 9h2v1h-2zM28 10h4v1h-4zM28 11h4v1h-4zM30 12h2v1h-2zM0 13h2v1h-2zM30 13h2v1h-2zM0 14h1v1h-1zM28 14h4v1h-4zM0 15h2v1h-2zM0 16h1v1h-1zM0 17h2v1h-2z"/><path fill="#e8704f" d="M14 9h1v1h-1zM13 10h3v1h-3zM13 11h1v1h-1zM15 11h1v1h-1zM13 12h3v1h-3zM14 13h1v1h-1z"/><path fill="#7e705a" d="M28 9h2v1h-2zM28 12h2v1h-2zM28 13h2v1h-2zM1 14h1v1h-1zM1 16h1v1h-1z"/><path fill="#5aa9de" d="M4 10h6v1h-6zM3 11h1v1h-1zM6 11h5v1h-5zM2 12h1v1h-1zM4 12h8v1h-8zM2 13h5v1h-5zM9 13h3v1h-3zM2 14h6v1h-6zM9 14h2v1h-2zM2 15h6v1h-6zM9 15h3v1h-3zM2 16h10v1h-10zM2 17h9v1h-9zM2 18h1v1h-1zM4 18h6v1h-6zM3 19h6v1h-6z"/><path fill="#fff6e0" d="M4 11h2v1h-2zM14 11h1v1h-1zM3 12h1v1h-1z"/><path fill="#2f6f9e" d="M7 13h2v1h-2zM8 14h1v1h-1zM8 15h1v1h-1zM3 18h1v1h-1z"/></svg><b>The Dream</b><small>Cubicle to legend</small></button>
+      <button class="half h-trainer" id="goTrainer" type="button"><svg class="px" viewBox="0 0 24 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#e3b94f" d="M11 4h1v1h-1zM12 4h1v1h-1zM10 5h1v1h-1zM13 5h1v1h-1zM3 6h1v1h-1zM11 6h1v1h-1zM12 6h1v1h-1zM20 6h1v1h-1zM2 7h1v1h-1zM4 7h1v1h-1zM11 7h1v1h-1zM12 7h1v1h-1zM19 7h1v1h-1zM21 7h1v1h-1zM3 8h1v1h-1zM11 8h1v1h-1zM12 8h1v1h-1zM20 8h1v1h-1zM3 9h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM11 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM19 9h1v1h-1zM20 9h1v1h-1zM3 10h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM9 10h1v1h-1zM10 10h1v1h-1zM11 10h1v1h-1zM12 10h1v1h-1zM13 10h1v1h-1zM14 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM20 10h1v1h-1zM3 11h1v1h-1zM4 11h1v1h-1zM5 11h1v1h-1zM6 11h1v1h-1zM8 11h1v1h-1zM9 11h1v1h-1zM10 11h1v1h-1zM11 11h1v1h-1zM12 11h1v1h-1zM13 11h1v1h-1zM14 11h1v1h-1zM15 11h1v1h-1zM17 11h1v1h-1zM18 11h1v1h-1zM19 11h1v1h-1zM20 11h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1zM10 12h1v1h-1zM11 12h1v1h-1zM12 12h1v1h-1zM13 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM16 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM19 12h1v1h-1zM20 12h1v1h-1zM3 13h1v1h-1zM4 13h1v1h-1zM5 13h1v1h-1zM6 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM10 13h1v1h-1zM11 13h1v1h-1zM12 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM16 13h1v1h-1zM17 13h1v1h-1zM18 13h1v1h-1zM20 13h1v1h-1zM3 14h1v1h-1zM4 14h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM7 14h1v1h-1zM8 14h1v1h-1zM9 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM12 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM15 14h1v1h-1zM16 14h1v1h-1zM17 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM20 14h1v1h-1zM3 16h1v1h-1zM4 16h1v1h-1zM5 16h1v1h-1zM6 16h1v1h-1zM7 16h1v1h-1zM8 16h1v1h-1zM9 16h1v1h-1zM10 16h1v1h-1zM11 16h1v1h-1zM12 16h1v1h-1zM13 16h1v1h-1zM14 16h1v1h-1zM15 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM18 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM7 18h1v1h-1zM8 18h1v1h-1zM9 18h1v1h-1zM10 18h1v1h-1zM11 18h1v1h-1zM12 18h1v1h-1zM13 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM17 18h1v1h-1zM18 18h1v1h-1zM19 18h1v1h-1zM20 18h1v1h-1zM4 19h1v1h-1zM5 19h1v1h-1zM6 19h1v1h-1zM7 19h1v1h-1zM8 19h1v1h-1zM9 19h1v1h-1zM10 19h1v1h-1zM11 19h1v1h-1zM12 19h1v1h-1zM13 19h1v1h-1zM14 19h1v1h-1zM15 19h1v1h-1zM16 19h1v1h-1zM17 19h1v1h-1zM18 19h1v1h-1zM19 19h1v1h-1z"/><path fill="#fff3c4" d="M11 5h1v1h-1zM12 5h1v1h-1zM3 7h1v1h-1zM20 7h1v1h-1zM3 15h1v1h-1zM4 15h1v1h-1zM5 15h1v1h-1zM6 15h1v1h-1zM7 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM10 15h1v1h-1zM11 15h1v1h-1zM12 15h1v1h-1zM13 15h1v1h-1zM14 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM19 15h1v1h-1zM20 15h1v1h-1zM3 17h1v1h-1zM5 17h1v1h-1zM7 17h1v1h-1zM9 17h1v1h-1zM11 17h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1z"/><path fill="#e8705a" d="M8 13h1v1h-1z"/><path fill="#5aa9de" d="M13 13h1v1h-1z"/><path fill="#5cbf64" d="M19 13h1v1h-1z"/><path fill="#ffffff" d="M4 17h1v1h-1zM6 17h1v1h-1zM8 17h1v1h-1zM10 17h1v1h-1zM12 17h1v1h-1zM14 17h1v1h-1zM16 17h1v1h-1zM18 17h1v1h-1zM20 17h1v1h-1z"/></svg><b>The Dream</b><small>Cubicle to legend</small></button>
     </div>
   </div>
   <div class="lscreen" id="lsVariant" hidden>
@@ -5979,6 +5986,46 @@ const DR_SCENES = {
   ], end: 'c7' },
 };
 
+// more beats along the way, triggered by milestones
+Object.assign(DR_SCENES, {
+  trentbeat: { place: 'cardroom', title: 'Chapter 1', sub: 'The Riverside Classic', beats: [
+    { sp: 'n', t: 'The last card hits the felt. The Riverside Classic is yours.' },
+    { sp: 'trent', t: "Enjoy it. Dad says the Classic is a rounding error." },
+    { sp: 'lou', t: "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it." },
+    { sp: 'rosa', t: "Your name goes on the board by the cage. Permanent marker. Congratulations." },
+  ], end: 'hub' },
+  ring1: { place: 'casino', title: 'Chapter 2', sub: 'First ring', beats: [
+    { sp: 'n', t: 'A tournament director slides a heavy ring across the table. It barely fits. You put it on anyway.' },
+    { sp: 'L:moneybaker', t: "First ring? I still remember mine. Don't put it in a drawer. Wear it every day you play." },
+    { sp: 'slick', t: 'One ring. Now go get another one.', text: true },
+  ], end: 'hub' },
+  bracelet1: { place: 'vegas', title: 'Chapter 3', sub: 'Gold', beats: [
+    { sp: 'n', t: 'They fasten the bracelet around your wrist and the room starts clapping before you realize it is for you.\nGold. Real gold. Your name in the record book forever.' },
+    { sp: 'L:hellbent', t: "Lucky. If I had been at that final table, we'd be talking about my bracelet number eighteen." },
+    { sp: 'mom', t: 'IS THAT REAL GOLD?? YOUR AUNT SAW IT ON THE INTERNET', text: true },
+    { sp: 'slick', t: 'Nine-year-old you is screaming right now. Let him.', text: true },
+  ], end: 'hub' },
+  tour1: { place: 'tv', title: 'Chapter 4', sub: 'The interview', beats: [
+    { sp: 'host', t: "Champion! Fifty thousand people are watching on stream. How does it feel?" , choice: [
+      { t: '"People insist on calling it luck."', act: (s) => { s.flags.quote = true; }, line: { sp: 'host', t: "THERE it is. The chat is going absolutely crazy." } },
+      { t: '"I just tried to make good decisions."', act: (s) => { s.flags.humble = true; }, line: { sp: 'host', t: 'Humble AND dangerous. The worst combination for everyone else.' } },
+    ] },
+    { sp: 'L:kfoxglove', t: 'Nice result. Now everyone has a file on you. Welcome to the Tour.' },
+  ], end: 'hub' },
+  titan1: { place: 'titan', title: 'Chapter 5', sub: 'The Titan trophy', beats: [
+    { sp: 'n', t: 'A trident-shaped trophy, a wire transfer with too many zeros, and a room full of the best players alive nodding at you.' },
+    { sp: 'trent', t: "Congrats. Honestly. Turns out you can't buy what you've got." },
+    { sp: 'you', t: 'Took you long enough to figure that out.' },
+    { sp: 'trent', t: 'Ha. Rematch at the Main?' },
+  ], end: 'hub' },
+  derek: { place: 'office', title: 'Meanwhile', sub: 'Floor 34', beats: [
+    { sp: 'derek', t: "Hey buddy!! Long time. Saw your name on a poker site. Crazy! We're hiring a Senior Associate. Coffee?", text: true, choice: [
+      { t: 'Leave him on read.', line: { sp: 'n', t: 'You put the phone face down and go back to studying bubble spots.' } },
+      { t: '"Redo it yourself, Derek."', line: { sp: 'n', t: 'Three dots appear. Then disappear. Then nothing, forever.' } },
+    ] },
+  ], end: 'hub' },
+});
+
 // the first time a legend sits at your final table they say their line; who you meet is remembered
 function drMeetLine(id) {
   if (id === 'ghost') return { sp: 'ghost', t: "Heads-up for the world title. I've waited a long time for someone worth this." };
@@ -6345,7 +6392,12 @@ function drAnswer(k) {
   const pts = ok ? Math.round(100 * rel) : -Math.round(100 * (1 - rel));
   const before = run.stack; run.stack = Math.max(0, Math.min(200, run.stack + DR_DELTA[tier]));
   run.combo = ok ? run.combo + 1 : 0;
-  run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack });
+  // remember the hand so the results screen can replay the key moments
+  const keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
+  const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
+  const best = strat.indexOf(fmax), hero = v.seats[sp.hero];
+  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
+  run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand });
   if (run.stack <= 0) run.bust = true;
   arSfx(tier === 'bad' ? 'bad' : tier); arBuzz(tier);
   run.state = 'answered'; drRender();
@@ -6401,7 +6453,8 @@ function drFinish(quit) {
   s.dec += n; s.perfect += counts.perfect; s.good += counts.good; s.close += counts.close; s.mistakes += counts.bad; s.played++;
   const rec = s.events[ev.id] || (s.events[ev.id] = { played: 0, cashes: 0, wins: 0, best: null, cash: 0, net: 0 });
   rec.played++;
-  const res = { ev, n, pct, counts, quit: !!quit, boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
+  const keyHands = run.results.filter((r) => r.hand).map((r) => r).sort((a, b) => a.pts - b.pts);
+  const res = { ev, n, pct, counts, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
   if (ev.kind === 'cash') {
     let net;
     if (run.bust) net = -ev.buyin;
@@ -6428,10 +6481,17 @@ function drFinish(quit) {
       if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); }
       if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { s.legends[run.boss] = true; res.beat = run.boss; }
       if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
+      const once = (id) => { if (!s.story[id] && !s.queue.includes(id)) s.queue.push(id); };
+      if (ev.title === 'room' && run.boss === 'trent') once('trentbeat');
+      if (ev.title === 'ring' && s.titles.ring === 1) once('ring1');
+      if (ev.title === 'bracelet' && s.titles.bracelet === 1) once('bracelet1');
+      if ((ev.title === 'tour' || ev.title === 'glo') && s.titles.tour + s.titles.glo === 1) once('tour1');
+      if (ev.title === 'titan' && s.titles.titan === 1) once('titan1');
       if (ev.id === 'main' && !s.story.champ) s.queue.push('champ');
     }
   }
   if (ev.id === 'local' && !s.story.p_after) s.queue.push('p_after');
+  if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');
   res.after = s.br;
   res.unlocked = drUnlocks(s);
   drProgress(s);
@@ -6682,7 +6742,7 @@ function drLegendsHTML() {
     ${eras.map((e) => `<div class="drkicker drera">${e}</div><div class="drlegends">${DR_LEGENDS.filter((L) => L.era === e).map(card).join('')}</div>`).join('')}`;
 }
 function drStoryHTML() {
-  const s = DR.st, list = ['p_office', 'p_diner', 'p_after', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'champ', 'c7'].filter((id) => s.story[id]);
+  const s = DR.st, list = ['p_office', 'p_diner', 'p_after', 'firstwin', 'c1', 'trentbeat', 'c2', 'ring1', 'derek', 'c3', 'bracelet1', 'c4', 'tour1', 'c5', 'titan1', 'c6', 'champ', 'c7', 'broke'].filter((id) => s.story[id]);
   return `<div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
     <div class="drkicker">Money</div>
     <div class="drledger">${s.ledger.slice(-12).reverse().map((l) => `<div><span>${esc(l.why)}</span><b class="mono ${l.amt >= 0 ? 'up' : 'down'}">${l.amt >= 0 ? '+' : '−'}$${drMoney(Math.abs(l.amt))}</b></div>`).join('')}</div>
@@ -6772,6 +6832,7 @@ function drResultsHTML() {
     <div class="drmoney"><div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div><div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → $${drMoney(r.after)}</b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
     <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
       <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
+    ${r.keys && r.keys.length ? `<div class="drkeys"><div class="drkicker">Key hands</div>${r.keys.map((k) => { const h = k.hand; return `<div class="drkey t-${k.tier}"><div class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</div><div><b>${esc(h.pos)} · ${esc(h.bb)}bb · ${esc(h.cat)}</b><small>${k.tier === 'bad' ? `You: ${esc(h.mine)} (${h.myF}%). Solver: ${esc(h.best)} (${h.bestF}%).` : `You found ${esc(h.mine)}, a close spot the solver plays ${h.bestF}% of the time.`}</small></div></div>`; }).join('')}</div>` : ''}
     ${r.unlocked.length ? `<div class="drunlocks"><div class="drkicker">Unlocked</div>${r.unlocked.map((it) => `<div class="drunlock"><b>${esc(it.name)}</b><small>${esc(DR_SLOTS.find((x) => x[0] === it.slot)[1])} · ${esc(it.req)}</small></div>`).join('')}</div>` : ''}
     <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${drBtn('ghost', `data-dr="play" data-id="${ev.id}" ${drAfford(s, ev) && ev.id !== 'local' ? '' : 'disabled'}`, 'Play it again')}</div>
   </section>`;
