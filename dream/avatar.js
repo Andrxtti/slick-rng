@@ -107,7 +107,7 @@ function drAvatarSVG(st, opt = {}) {
   const titles = st.titles || {}, br = st.br || 0, id = 'a' + Math.random().toString(36).slice(2, 7);
   const face = opt.face;
   const bracelets = Math.min(4, titles.bracelet || 0), rings = Math.min(4, (titles.ring || 0) + (titles.me || 0));
-  let s = `<svg class="dravsvg" viewBox="${face ? '52 36 96 104' : '0 30 200 192'}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(st.name || 'Your player')}">`;
+  let s = `<svg class="dravsvg" viewBox="${face ? '50 46 100 100' : '0 30 200 192'}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(st.name || 'Your player')}">`;
   s += drHairSVG(look.hair, hc, true);
   // neck and outfit
   s += `<path d="M88 126 L112 126 L114 158 C106 164 94 164 86 158 Z" fill="${sk2}"/>`;

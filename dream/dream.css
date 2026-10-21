@@ -81,7 +81,7 @@
 .dream .drface span { font-size: 64px; line-height: 1; font-family: var(--disp); color: var(--gold2); }
 .dream .drface img { width: 100%; height: 100%; object-fit: cover; }
 .dream .drface.you { background: radial-gradient(circle at 50% 40%, #3a3226, #0b0a08 80%); }
-.dream .drface.you svg { width: 112%; margin-top: 8%; }
+.dream .drface.you svg { width: 100%; margin-top: 0; }
 .dream .drface.legend { --c: #d9b36c; } .dream .drface.legend span { font-size: 54px; letter-spacing: .02em; }
 .dream .drbox { background: rgba(10, 9, 7, .88); border: 1px solid var(--line2); border-radius: 16px; padding: 14px 16px 12px; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: grid; gap: 8px; box-shadow: 0 20px 40px -20px #000; min-height: 132px; }
 .dream .drbox-name { font-family: var(--disp); font-size: 19px; color: var(--gold2); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
@@ -236,10 +236,10 @@
 .dream .drprop { position: absolute; inset: -14px -14px 0; opacity: .9; pointer-events: none; }
 .dream .drprop svg { width: 100%; height: 100%; display: block; }
 .dream .drscene-who { position: relative; }
-.dream .drface svg { width: 118%; margin-top: 10%; }
+.dream .drface svg { width: 100%; margin-top: 0; }
 .dream .drface.npc, .dream .drface.legend { background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--c, #d9b36c) 45%, #1a1712), #0b0a08 78%); }
 .dream .drlegend-mono.face { overflow: hidden; padding: 0; background: radial-gradient(circle at 50% 38%, #3a3226, #0b0a08 80%); }
-.dream .drlegend-mono.face svg { width: 122%; margin-top: 14%; }
+.dream .drlegend-mono.face svg { width: 100%; margin-top: 0; }
 .dream .drlegend.unk .drlegend-mono { font-size: 22px; }
 @media (max-width: 760px) { .training .dream { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); } }
 /* Slick's pick */
@@ -265,6 +265,12 @@
 .dream .drsoon-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 8px; }
 .dream .drsoon-row div { border: 1px dashed var(--line2); border-radius: 14px; padding: 12px; display: grid; gap: 4px; opacity: .75; }
 .dream .drsoon-row b { font-family: var(--disp); font-size: 17px; } .dream .drsoon-row small { color: var(--mute); font-size: 12px; }
+.dream .drchapter { position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center; background: radial-gradient(circle at 50% 45%, rgba(26, 18, 6, .92), rgba(5, 4, 3, .98)); animation: drCard 2.6s ease forwards; pointer-events: none; }
+.dream .drchapter small { font-size: 12px; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); }
+.dream .drchapter b { font-family: var(--disp); font-size: clamp(40px, 12vw, 72px); font-weight: 500; font-style: italic; color: var(--gold2); text-shadow: 0 0 40px rgba(217, 179, 108, .5); }
+@keyframes drCard { 0% { opacity: 0; } 12% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+.dream .drhowto { background: var(--ink2); padding: 12px; display: grid; gap: 10px; justify-items: end; border-color: var(--gold3); }
+.dream .drhowto .drsay { background: transparent; border: 0; padding: 0; align-items: flex-start; } .dream .drhowto p { font-size: 14px; color: #d8cfbd; } .dream .drhowto p b { color: var(--gold2); font-family: var(--font-body); font-size: 14px; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }

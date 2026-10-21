@@ -84,7 +84,9 @@ function drSceneHTML() {
   DR.tw = { full: text, n: 0 };
   const total = def.beats.length, at = Math.min(total, sc.i + 1);
   const choice = !sc.extra.length && b.choice;
-  return `<section class="drscene pl-${place}">
+  const card = sc.i === 0 && !sc.extra.length && !sc.replay && /^(Prologue|Chapter|Legacy)/.test(def.title || '') && !sc.carded;
+  if (card) sc.carded = true;
+  return `<section class="drscene pl-${place}">${card ? `<div class="drchapter" aria-hidden="true"><small>${esc(def.title)}</small><b>${esc(def.sub || '')}</b></div>` : ''}
     <div class="drscene-top"><span class="drkicker">${esc(def.title || '')}${def.sub ? ` · ${esc(def.sub)}` : ''}</span><span class="drplace">${esc(pl.name || '')}${pl.sub ? ` <small>${esc(pl.sub)}</small>` : ''}</span>${drBtn('ghost sm', 'data-dr="skip"', 'Skip ›')}</div>
     <div class="drscene-stage"><div class="drprop" aria-hidden="true">${drPropSVG(place)}</div>${who && !b.text ? `<div class="drscene-who">${who.av}</div>` : ''}${b.text ? `<div class="drphone"><div class="drphone-h">${esc(who ? who.name : '')}</div><div class="drphone-b" id="drText"></div></div>` : ''}</div>
     ${b.text ? '' : `<div class="drbox ${b.sp === 'n' ? 'narr' : ''} ${b.big ? 'big' : ''} ${b.goal ? 'goal' : ''}" data-dr="adv">
@@ -169,6 +171,9 @@ function drHubHTML() {
         <div class="drlifestyle"><span>${DR_HOME_ICON[s.eq.home] || '🏠'} ${esc(home ? home.name : '')}</span><span>${DR_RIDE_ICON[s.eq.ride] || '🚗'} ${esc(ride ? ride.name : '')}</span></div>
       </div>
     </section>
+    ${!s.flags.howto && s.ch >= 1 ? `<section class="drhowto"><div class="drsay">${drSpeaker({ sp: 'slick' }).av}<div><b>How this works</b>
+      <p>Every event is a run of real solver spots. Textbook decisions build your chips, mistakes cost you, and three or four can send you home. Your <b>bankroll</b> is your score: it decides what you can enter, so don't bet the dream on one shot. Titles, cashes and a bigger roll unlock clothes, jewelry, a better place and a better ride. Win every chapter's goal and the next stop opens.</p></div></div>
+      ${drBtn('gold sm', 'data-dr="howto"', 'Got it')}</section>` : ''}
     ${drTitleStrip(s)}
     <section class="drgoal">
       <div><div class="drkicker">${esc(chd.n)} goal</div><b>${esc(chd.goal)}</b><div class="drbar"><i style="width:${(pr[0] * 100).toFixed(1)}%"></i></div><small>${esc(pr[1])}</small></div>
@@ -369,6 +374,7 @@ document.addEventListener('click', (e) => {
   if (a === 'next') { drNext(); return; }
   if (a === 'quit') { drQuit(); return; }
   if (a === 'coolerdone') { drFinish(); return; }
+  if (a === 'howto') { s.flags.howto = true; drSave(); drRender(); return; }
   if (a === 'hub') { DR.view = 'hub'; DR.tab = 'events'; drRender(); scrollTo(0, 0); return; }
 });
 document.addEventListener('keydown', (e) => {
