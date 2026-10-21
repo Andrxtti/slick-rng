@@ -4019,13 +4019,13 @@ const FX_PARTS = {
   mouth: [['line', 'Neutral'], ['smirk', 'Smirk'], ['grin', 'Grin'], ['frown', 'Frown'], ['guard', 'Mouthguard']],
   hair: [['bald', 'Bald'], ['buzz', 'Buzz'], ['short', 'Short'], ['fade', 'Fade'], ['flattop', 'Flat top'], ['afro', 'Afro'], ['mohawk', 'Mohawk'], ['spiky', 'Spiky'], ['cornrows', 'Cornrows'], ['bun', 'Top knot'], ['long', 'Long']],
   face: [['none', 'Clean'], ['stubble', 'Stubble'], ['mustache', 'Mustache'], ['goatee', 'Goatee'], ['beard', 'Full beard']],
-  top: [['none', 'Shirtless'], ['tank', 'Gym tank'], ['tee', 'Plain tee'], ['boxtee', 'Supremo box tee'], ['hoodie', 'Champyun hoodie'], ['tracktop', 'Abibas track jacket'], ['jersey', 'Chicago Bullies 23'], ['montage', 'Montage tracksuit'], ['robe', 'Philly Stallion robe']],
-  bottom: [['trunks', 'Everlust trunks'], ['liberty', 'Liberty trunks'], ['shorts', 'Gym shorts'], ['pants', 'Sweats'], ['trackpants', 'Abibas track pants'], ['joggers', 'Montage joggers']],
-  shoes: [['boots', 'Ring boots'], ['sneakers', 'Runners'], ['chucks', 'Chuck Tailors'], ['jabbers', "Air Jabber 1 'Bred'"], ['tumbs', 'Tumberlands'], ['slides', 'Yeesh slides']],
-  gloves: [['classic', 'Training gloves'], ['reyez', 'Reyez Royale'], ['winnin', "Winnin' Pro"], ['mma', 'Cage gloves'], ['wraps', 'Hand wraps']],
-  head: [['none', 'None'], ['headband', 'Sweatband'], ['cap', 'New Err 59FIFTEEN'], ['bandana', 'Paisley bandana'], ['durag', 'Silky durag']],
-  eyewear: [['none', 'None'], ['shades', 'Deal-With-It 8-bits'], ['aviator', 'Ray-Bam aviators'], ['sport', 'Oakly blades']],
-  neck: [['none', 'None'], ['towel', 'Corner towel'], ['chain', 'Havana Link chain'], ['belt', 'WBX title belt']],
+  top: [['none', 'Shirtless'], ['tank', 'Underdog tank'], ['tee', 'Plain white tee'], ['boxtee', 'Drop Day box tee'], ['hoodie', 'Runner-Up hoodie'], ['tracktop', 'Hollis Ave track jacket'], ['jersey', 'Flu Game 23'], ['montage', 'Bike Path montage jacket'], ['robe', 'Art Museum Steps robe']],
+  bottom: [['trunks', 'Last Round trunks'], ['liberty', 'Moon Landing trunks'], ['shorts', 'Gym class shorts'], ['pants', 'Gray sweatpants'], ['trackpants', 'Hollis Ave track pants'], ['joggers', 'Bike Path montage joggers']],
+  shoes: [['boots', 'Ring boots'], ['sneakers', 'Grill Master runners'], ['chucks', 'Gym Class hightops'], ['jabbers', "Hangtime 1 'Banned'"], ['tumbs', 'New Yawkas'], ['slides', 'Socks-Optional slides']],
+  gloves: [['classic', 'Training gloves'], ['reyez', 'Mexico City Bombers'], ['winnin', 'Pillow Fight Pros'], ['mma', 'Ground-n-Pound gloves'], ['wraps', 'Hand wraps']],
+  head: [['none', 'None'], ['headband', 'VHS Workout sweatband'], ['cap', 'Sticker-Still-On fitted'], ['bandana', 'Purple Reign bandana'], ['durag', '360 Waves durag']],
+  eyewear: [['none', 'None'], ['shades', 'Deal-With-It 8-bits'], ['aviator', 'Danger Zone aviators'], ['sport', 'Cookout wraparounds']],
+  neck: [['none', 'None'], ['towel', 'Throw-In towel'], ['chain', 'Definitely Not Rented chain'], ['belt', 'Alphabet Soup belt']],
 };
 const FX_DEFAULT = { skin: 3, build: 'regular', eyes: 'focused', brows: 'fierce', mouth: 'line', hair: 'fade', hairC: 0, face: 'none', top: 'tank', topC: 2, topA: 4,
   bottom: 'trunks', bottomC: 5, bottomA: 4, shoes: 'boots', shoeC: 5, gloves: 'classic', gloveC: 0, head: 'none', eyewear: 'none', neck: 'none', gearC: 0, beltC: '#169c3c' };
@@ -4342,27 +4342,27 @@ const AR_CLOTH_NAMES = ['Red', 'Blue', 'Green', 'Gold', 'White', 'Black', 'Gray'
 // [id, slot, value, name, rarity, how to get it]. Brand-inspired gear is parody: recognizable, never a copy.
 const AR_ITEMS = [
   // earned in the free Fight Pass
-  ['cloth:13', 'cloth', 13, 'Leather brown', 'common', { pass: 1 }], ['head:bandana', 'head', 'bandana', 'Paisley bandana', 'common', { pass: 3 }],
+  ['cloth:13', 'cloth', 13, 'Leather brown', 'common', { pass: 1 }], ['head:bandana', 'head', 'bandana', 'Purple Reign bandana', 'common', { pass: 3 }],
   ['cloth:8', 'cloth', 8, 'Sky blue', 'common', { pass: 4 }], ['hair:bun', 'hair', 'bun', 'Top knot', 'common', { pass: 5 }],
-  ['shoes:chucks', 'shoes', 'chucks', 'Chuck Tailors', 'rare', { pass: 7 }], ['cloth:10', 'cloth', 10, 'Blaze orange', 'common', { pass: 8 }],
-  ['shoes:slides', 'shoes', 'slides', 'Yeesh slides', 'rare', { pass: 9 }], ['eyewear:sport', 'eyewear', 'sport', 'Oakly blades', 'rare', { pass: 11 }],
+  ['shoes:chucks', 'shoes', 'chucks', 'Gym Class hightops', 'rare', { pass: 7 }], ['cloth:10', 'cloth', 10, 'Blaze orange', 'common', { pass: 8 }],
+  ['shoes:slides', 'shoes', 'slides', 'Socks-Optional slides', 'rare', { pass: 9 }], ['eyewear:sport', 'eyewear', 'sport', 'Cookout wraparounds', 'rare', { pass: 11 }],
   ['hair:mohawk', 'hair', 'mohawk', 'Mohawk', 'rare', { pass: 13 }],
   // earned with trophies, levels and streaks
   ['mouth:guard', 'mouth', 'guard', 'Mouthguard', 'common', { ach: 'first', how: 'Finish your first fight' }],
-  ['head:cap', 'head', 'cap', 'New Err 59FIFTEEN', 'rare', { lvl: 3 }],
-  ['top:montage', 'top', 'montage', 'Montage tracksuit', 'epic', { streak: 3, how: 'Do 3 days of road work in a row' }],
-  ['bottom:joggers', 'bottom', 'joggers', 'Montage joggers', 'epic', { streak: 3, how: 'Do 3 days of road work in a row' }],
-  ['neck:chain', 'neck', 'chain', 'Havana Link chain', 'epic', { streak: 7, how: 'Reach a 7-day streak' }],
-  ['top:robe', 'top', 'robe', 'Philly Stallion robe', 'epic', { ach: 'gradeA', how: 'Win a fight by TKO' }],
+  ['head:cap', 'head', 'cap', 'Sticker-Still-On fitted', 'rare', { lvl: 3 }],
+  ['top:montage', 'top', 'montage', 'Bike Path montage jacket', 'epic', { streak: 3, how: 'Do 3 days of road work in a row' }],
+  ['bottom:joggers', 'bottom', 'joggers', 'Bike Path montage joggers', 'epic', { streak: 3, how: 'Do 3 days of road work in a row' }],
+  ['neck:chain', 'neck', 'chain', 'Definitely Not Rented chain', 'epic', { streak: 7, how: 'Reach a 7-day streak' }],
+  ['top:robe', 'top', 'robe', 'Art Museum Steps robe', 'epic', { ach: 'gradeA', how: 'Win a fight by TKO' }],
   ['eyewear:shades', 'eyewear', 'shades', 'Deal-With-It 8-bits', 'legendary', { ach: 'gradeS', how: 'Win a fight by KO' }],
   // Store
-  ['top:boxtee', 'top', 'boxtee', 'Supremo box tee', 'rare', { store: 1 }], ['top:tracktop', 'top', 'tracktop', 'Abibas track jacket', 'rare', { store: 1 }],
-  ['bottom:trackpants', 'bottom', 'trackpants', 'Abibas track pants', 'rare', { store: 1 }], ['top:jersey', 'top', 'jersey', 'Chicago Bullies 23', 'epic', { store: 1 }],
-  ['bottom:liberty', 'bottom', 'liberty', 'Liberty trunks', 'epic', { store: 1 }],
-  ['shoes:jabbers', 'shoes', 'jabbers', "Air Jabber 1 'Bred'", 'legendary', { store: 1 }], ['shoes:tumbs', 'shoes', 'tumbs', 'Tumberlands', 'rare', { store: 1 }],
-  ['gloves:reyez', 'gloves', 'reyez', 'Reyez Royale', 'epic', { store: 1 }], ['gloves:winnin', 'gloves', 'winnin', "Winnin' Pro", 'epic', { store: 1 }],
-  ['gloves:mma', 'gloves', 'mma', 'Cage gloves', 'rare', { store: 1 }], ['head:durag', 'head', 'durag', 'Silky durag', 'common', { store: 1 }],
-  ['eyewear:aviator', 'eyewear', 'aviator', 'Ray-Bam aviators', 'rare', { store: 1 }],
+  ['top:boxtee', 'top', 'boxtee', 'Drop Day box tee', 'rare', { store: 1 }], ['top:tracktop', 'top', 'tracktop', 'Hollis Ave track jacket', 'rare', { store: 1 }],
+  ['bottom:trackpants', 'bottom', 'trackpants', 'Hollis Ave track pants', 'rare', { store: 1 }], ['top:jersey', 'top', 'jersey', 'Flu Game 23', 'epic', { store: 1 }],
+  ['bottom:liberty', 'bottom', 'liberty', 'Moon Landing trunks', 'epic', { store: 1 }],
+  ['shoes:jabbers', 'shoes', 'jabbers', "Hangtime 1 'Banned'", 'legendary', { store: 1 }], ['shoes:tumbs', 'shoes', 'tumbs', 'New Yawkas', 'rare', { store: 1 }],
+  ['gloves:reyez', 'gloves', 'reyez', 'Mexico City Bombers', 'epic', { store: 1 }], ['gloves:winnin', 'gloves', 'winnin', 'Pillow Fight Pros', 'epic', { store: 1 }],
+  ['gloves:mma', 'gloves', 'mma', 'Ground-n-Pound gloves', 'rare', { store: 1 }], ['head:durag', 'head', 'durag', '360 Waves durag', 'common', { store: 1 }],
+  ['eyewear:aviator', 'eyewear', 'aviator', 'Danger Zone aviators', 'rare', { store: 1 }],
   ['hairC:8', 'hairC', 8, 'Electric blue hair', 'rare', { store: 1 }], ['hairC:9', 'hairC', 9, 'Bubblegum hair', 'rare', { store: 1 }],
   ['hairC:10', 'hairC', 10, 'Toxic green hair', 'rare', { store: 1 }], ['hairC:11', 'hairC', 11, 'Fire red hair', 'epic', { store: 1 }],
   ['cloth:9', 'cloth', 9, 'Royal purple', 'rare', { store: 1 }], ['cloth:11', 'cloth', 11, 'Deep teal', 'rare', { store: 1 }],
@@ -4392,7 +4392,7 @@ function arSeason(d = new Date()) {
   return { sid, num, name: th[0], c1: th[1], c2: th[2], gem: th[3], daysLeft: Math.max(1, Math.ceil((end - d) / 864e5)),
     items: { c1: { id: `season:${sid}:c1`, slot: 'cloth', val: th[1][0], name: `${th[1][1]} (S${num})`, rarity: 'epic', limited: sid },
       c2: { id: `season:${sid}:c2`, slot: 'cloth', val: th[2][0], name: `${th[2][1]} (S${num})`, rarity: 'legendary', limited: sid },
-      belt: { id: `season:${sid}:belt`, slot: 'belt', val: th[3], name: `${th[0]} title belt`, rarity: 'legendary', limited: sid } } };
+      belt: { id: `season:${sid}:belt`, slot: 'belt', val: th[3], name: `${th[0]} Alphabet Soup belt`, rarity: 'legendary', limited: sid } } };
 }
 const arItem = (id) => AR_ITEMS.find((x) => x.id === id) || (AR.st.inv[id] && typeof AR.st.inv[id] === 'object' ? AR.st.inv[id] : null);
 function arOwns(id) { return !!AR.st.inv[id]; }
