@@ -273,6 +273,8 @@
 .dream .drhowto .drsay { background: transparent; border: 0; padding: 0; align-items: flex-start; } .dream .drhowto p { font-size: 14px; color: #d8cfbd; } .dream .drhowto p b { color: var(--gold2); font-family: var(--font-body); font-size: 14px; }
 .dream .drlife-av .dravsvg, .dream .drcreate-prev .dravsvg { animation: drBreathe 4.5s ease-in-out infinite; transform-origin: 50% 100%; }
 @keyframes drBreathe { 50% { transform: translateY(-1.5px) scale(1.006); } }
+.dream .drseat.boss { border-color: #c084fc; background: linear-gradient(180deg, rgba(192, 132, 252, .16), rgba(0, 0, 0, .4)); }
+.dream .drseat .drbossname { color: #e3c8ff; font-weight: 600; font-size: 10px; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
