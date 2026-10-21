@@ -38,6 +38,25 @@ function drRepay(s, profit) {
   const pay = Math.min(s.debt, Math.round(profit / 2)); s.debt -= pay; drAdd(s, -pay, 'Paid Slick back'); return pay;
 }
 
+// ---------------------------------------------------------------- Player of the Year race (this month)
+// You earn points for cashes and titles; the legends of your chapter are racing too (simulated until online play).
+const drMonth = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+function drPoyPoints(ev, place) {
+  const P = drPaid(ev); if (!place || place > P || ev.kind !== 'mtt' || ev.daily) return 0;
+  return Math.round(60 * Math.log10(ev.field) * (1 + (P - place) / P) + (place === 1 ? 150 : place <= 9 ? 50 : 0));
+}
+function drPoyBoard(s) {
+  const m = drMonth(), day = new Date().getDate(), rows = [];
+  const pool = DR_LEGENDS.filter((L) => L.ch <= Math.max(2, s.ch) && L.ch >= Math.max(1, s.ch - 2));
+  for (const L of pool) {
+    let h = 2166136261; for (const ch of L.id + m) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+    const rate = 40 + ((h >>> 0) % 120), pts = Math.round(rate * day * (0.6 + ((h >>> 8) % 100) / 125));
+    rows.push({ n: L.name, nick: L.nick, p: pts });
+  }
+  rows.push({ n: s.name, p: (s.poy && s.poy[m]) || 0, me: true });
+  return rows.sort((a, b) => b.p - a.p);
+}
+
 // ---------------------------------------------------------------- unlocks
 function drItemKey(it) { return it.slot + ':' + it.id; }
 // the story so far: big moments, newest first in the Story tab
@@ -276,6 +295,7 @@ function drFinish(quit) {
     const prize = place <= P ? Math.round(pays[place - 1]) : 0;
     res.place = place; res.paid = P; res.prize = prize; res.net = prize - (ev.free ? 0 : ev.buyin);
     rec.best = rec.best ? Math.min(rec.best, place) : place;
+    const poy = drPoyPoints(ev, place); if (poy) { s.poy = s.poy || {}; s.poy[drMonth()] = (s.poy[drMonth()] || 0) + poy; res.poy = poy; }
     if (prize > 0 && s.cashes === 0) drMoment(s, '💵', `First cash: ${drOrd(place)} in the ${ev.name}`);
     if (prize > 0) { drAdd(s, prize, `${drOrd(place)} in ${ev.name}`); s.cashes++; rec.cashes++; rec.cash = Math.max(rec.cash, prize); if (ev.ch === 2) s.flags.circuitCash = true; res.repaid = drRepay(s, res.net); }
     rec.net += res.net;

@@ -245,6 +245,10 @@ function drTrophiesHTML() {
       <div><small>Final tables</small><b class="mono">${s.ft}</b></div><div><small>Peak bankroll</small><b class="mono">$${drMoneyShort(s.peak)}</b></div>
       <div><small>Decisions</small><b class="mono">${s.dec}</b></div><div><small>Solver-approved</small><b class="mono">${acc}%</b></div>
     </div>
+    ${s.ch >= 1 ? (() => { const b = drPoyBoard(s), me = b.findIndex((r) => r.me), top = b.slice(0, 8), show = me >= 8 ? [...top, b[me]] : top;
+      return `<div class="drpoy"><div class="drkicker">Player of the Year race · ${new Date().toLocaleDateString(undefined, { month: 'long' })}</div>
+        <div class="drpoy-list">${show.map((r) => `<div class="${r.me ? 'me' : ''}"><span class="mono">${b.indexOf(r) + 1}</span><b>${esc(r.n)}</b><small class="mono">${drMoney(r.p)} pts</small></div>`).join('')}</div>
+        <small class="drhint">Cash and win tournaments to climb. The race resets every month. Rivals are simulated until online play arrives.</small></div>`; })() : ''}
     <div class="drcase">${s.trophies.length ? s.trophies.map((t) => `<div class="drtrophy t-${t.t}"><b>${DR_TITLES[t.t].icon}</b><span>${esc(DR_TITLES[t.t].n)}</span><small>${esc(t.ev)}</small><small class="mono">$${drMoney(t.prize)}</small></div>`).join('') : '<p class="drhint">Your trophy case is empty. For now.</p>'}</div>`;
 }
 function drLegendsHTML() {
