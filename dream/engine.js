@@ -50,7 +50,7 @@ function drPoyBoard(s) {
   const pool = DR_LEGENDS.filter((L) => L.ch <= Math.max(2, s.ch) && L.ch >= Math.max(1, s.ch - 2));
   for (const L of pool) {
     let h = 2166136261; for (const ch of L.id + m) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
-    const rate = 40 + ((h >>> 0) % 120), pts = Math.round(rate * day * (0.6 + ((h >>> 8) % 100) / 125));
+    const rate = 40 + ((h >>> 0) % 120), pts = Math.round(rate * day * (0.6 + ((h >>> 8) % 100) / 125) * Math.min(1, 0.12 + 0.13 * s.ch));
     rows.push({ n: L.name, nick: L.nick, p: pts });
   }
   rows.push({ n: s.name, p: (s.poy && s.poy[m]) || 0, me: true });
