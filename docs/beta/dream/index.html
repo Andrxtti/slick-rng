@@ -1223,7 +1223,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 .dream .drverdict.t-good { border-color: #2d6a33; background: linear-gradient(90deg, rgba(92, 191, 100, .16), transparent); } .dream .drverdict.t-good b { color: #8fe39a; }
 .dream .drverdict.t-close { border-color: #7a5a1c; } .dream .drverdict.t-close b { color: #f0c36b; }
 .dream .drverdict.t-bad { border-color: #7a2a24; background: linear-gradient(90deg, rgba(232, 112, 90, .16), transparent); } .dream .drverdict.t-bad b { color: #ff9c8c; }
-.dream .drdelta { font-size: 18px; }
+.dream .drdelta { font-size: 18px; white-space: nowrap; }
 .dream .drmix { display: grid; gap: 4px; } .dream .drmix > div { display: grid; grid-template-columns: minmax(0, 1fr) 90px 40px; gap: 8px; align-items: center; font-size: 13px; }
 .dream .drmix > div.mine span { color: var(--gold2); font-weight: 600; } .dream .drmix i { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--gold) var(--w), rgba(255, 255, 255, .07) var(--w)); } .dream .drmix b { text-align: right; font-weight: 500; }
 .dream .drbust { text-align: center; font-family: var(--disp); font-size: 20px; color: #ff9c8c; }
@@ -1300,6 +1300,16 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
   .dream .drtitles::-webkit-scrollbar { display: none; }
   .dream .drtl { flex: 0 0 72px; }
 }
+.dream .drtimeline { display: grid; gap: 0; border-left: 2px solid var(--gold3); margin-left: 10px; }
+.dream .drtimeline > div { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0 6px 0; margin-left: -12px; }
+.dream .drtimeline span { width: 22px; height: 22px; border-radius: 50%; background: var(--ink2); border: 1px solid var(--gold3); display: grid; place-items: center; font-size: 12px; flex: none; }
+.dream .drtimeline b { font-size: 14px; font-weight: 500; display: block; } .dream .drtimeline small { color: var(--mute); font-size: 11px; }
+.dream .drtip { display: flex; gap: 10px; align-items: center; background: rgba(0, 0, 0, .4); border: 1px solid var(--line2); border-radius: 12px; padding: 8px 10px; }
+.dream .drtip .drface { width: 40px; height: 40px; flex: none; border-width: 2px; box-shadow: none; } .dream .drtip p { margin: 0; font-size: 13px; color: #e9dfca; line-height: 1.45; }
+.dream .drpoy { display: grid; gap: 8px; background: var(--ink2); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+.dream .drpoy-list { display: grid; gap: 2px; } .dream .drpoy-list > div { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; padding: 5px 6px; border-radius: 8px; }
+.dream .drpoy-list span { color: var(--mute); font-size: 12px; } .dream .drpoy-list b { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .dream .drpoy-list small { color: var(--gold2); font-size: 12px; }
+.dream .drpoy-list .me { background: linear-gradient(90deg, rgba(217, 179, 108, .2), transparent); } .dream .drpoy-list .me b { color: var(--gold2); font-weight: 700; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
@@ -5776,7 +5786,7 @@ const DR_EVENTS = [
   { id: 'c25', ch: 2, kind: 'cash', name: '$2/$5 No-Limit', venue: 'casino', buyin: 500, blurb: 'Deeper stacks, bigger egos.' },
   { id: 'ring400', ch: 2, kind: 'mtt', name: 'Circuit $400 No-Limit', venue: 'casino', buyin: 400, field: 384, title: 'ring', legends: ['fargo', 'mouth'], blurb: 'Every Circuit event awards a ring.' },
   { id: 'ring600', ch: 2, kind: 'mtt', name: 'Circuit $600 Deepstack', venue: 'casino', buyin: 600, field: 522, title: 'ring', legends: ['mouth', 'moneybaker'], blurb: 'Deep stacks, deep field.' },
-  { id: 'ring1700', ch: 2, kind: 'mtt', name: 'Circuit $1,700 Main Event', venue: 'casino', buyin: 1700, field: 1146, title: 'ring', legends: ['moneybaker', 'fargo', 'mouth'], blurb: 'The ring everyone wants on this stop.' },
+  { id: 'ring1700', ch: 2, kind: 'mtt', name: 'Circuit $1,700 Main Event', venue: 'casino', buyin: 1700, field: 1146, title: 'ring', legends: ['moneybaker', 'fargo', 'mouth', 'trent'], blurb: 'The ring everyone wants on this stop. Trent Vale is registered.' },
   { id: 'sat10k', ch: 3, kind: 'sat', name: '$10K Championship Satellite', venue: 'vegas', buyin: 1100, field: 212, seats: 21, target: 'b10k', blurb: 'One in ten wins a seat into the pros-only bracelet event.' },
   { id: 'c510', ch: 3, kind: 'cash', name: '$5/$10 No-Limit', venue: 'vegas', buyin: 1500, blurb: 'Summer in Vegas. Every table has a story.' },
   { id: 'b1500', ch: 3, kind: 'mtt', name: 'WCS $1,500 No-Limit', venue: 'vegas', buyin: 1500, field: 2410, title: 'bracelet', legends: ['negrono', 'glazer', 'chance'], blurb: 'Gold bracelet event. Huge field.' },
@@ -5789,7 +5799,7 @@ const DR_EVENTS = [
   { id: 'sat25k', ch: 5, kind: 'sat', name: 'Titan $25K Satellite', venue: 'titan', buyin: 2700, field: 104, seats: 10, target: 't25k', blurb: 'Ten seats into the Titan $25,000. Ninety-four people go home with nothing.' },
   { id: 'private', ch: 5, kind: 'cash', name: '$100/$200 Private Game', venue: 'titan', buyin: 40000, blurb: 'Penthouse game. Invitation from Trent, of all people.' },
   { id: 't25k', ch: 5, kind: 'mtt', name: 'Titan $25,000', venue: 'titan', buyin: 25000, field: 142, title: 'titan', legends: ['chillwick', 'kahoon', 'lonestar', 'bindr'], blurb: 'The entry point to the biggest games on earth.' },
-  { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'punchline', 'mocha'], blurb: 'Sixty-eight of the best players alive.' },
+  { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'punchline', 'mocha', 'trent'], blurb: 'Sixty-eight of the best players alive. And Trent.' },
   { id: 't250k', ch: 5, kind: 'mtt', name: 'Titan $250,000 Invitational', venue: 'titan', buyin: 250000, field: 40, title: 'titan', legends: ['addemup', 'kenny', 'hackston', 'antionius', 'daisies'], blurb: 'The richest table in the world.' },
   { id: 'satmain', ch: 6, kind: 'sat', name: 'Main Event Mega Satellite', venue: 'main', buyin: 1100, field: 704, seats: 70, target: 'main', blurb: "The accountant's route: a cheap seat into the biggest tournament on earth." },
   { id: 'main', ch: 6, kind: 'mtt', name: 'WCS $10,000 Main Event', venue: 'main', buyin: 10000, field: 8402, title: 'me', boss: 'ghost', legends: ['mizrockie'], blurb: 'Eight thousand dreamers. One world champion.' },
@@ -6088,7 +6098,7 @@ Object.assign(DR_SCENES, {
 // the first time a legend sits at your final table they say their line; who you meet is remembered
 function drMeetLine(id) {
   if (id === 'ghost') return { sp: 'ghost', t: "Heads-up for the world title. I've waited a long time for someone worth this." };
-  if (id === 'trent') return { sp: 'trent', t: "Final table of the Classic. Just you, me and Dad's money. Let's go." };
+  if (id === 'trent') return { sp: 'trent', t: DR.run && DR.run.ev.id === 'classic' ? "Final table of the Classic. Just you, me and Dad's money. Let's go." : DR.run && DR.run.ev.ch >= 5 ? "Titan final table. Look at us. Two nobodies from Riverside." : "You again. Fine. This ring is mine." };
   if (id === 'lou') return { sp: 'lou', t: "Final table, kid. Thirty years I've been trying to win this thing. Don't you dare." };
   const L = drLegend(id); return L ? { sp: 'L:' + id, t: L.line } : null;
 }
@@ -6329,8 +6339,29 @@ function drRepay(s, profit) {
   const pay = Math.min(s.debt, Math.round(profit / 2)); s.debt -= pay; drAdd(s, -pay, 'Paid Slick back'); return pay;
 }
 
+// ---------------------------------------------------------------- Player of the Year race (this month)
+// You earn points for cashes and titles; the legends of your chapter are racing too (simulated until online play).
+const drMonth = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+function drPoyPoints(ev, place) {
+  const P = drPaid(ev); if (!place || place > P || ev.kind !== 'mtt' || ev.daily) return 0;
+  return Math.round(60 * Math.log10(ev.field) * (1 + (P - place) / P) + (place === 1 ? 150 : place <= 9 ? 50 : 0));
+}
+function drPoyBoard(s) {
+  const m = drMonth(), day = new Date().getDate(), rows = [];
+  const pool = DR_LEGENDS.filter((L) => L.ch <= Math.max(2, s.ch) && L.ch >= Math.max(1, s.ch - 2));
+  for (const L of pool) {
+    let h = 2166136261; for (const ch of L.id + m) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+    const rate = 40 + ((h >>> 0) % 120), pts = Math.round(rate * day * (0.6 + ((h >>> 8) % 100) / 125));
+    rows.push({ n: L.name, nick: L.nick, p: pts });
+  }
+  rows.push({ n: s.name, p: (s.poy && s.poy[m]) || 0, me: true });
+  return rows.sort((a, b) => b.p - a.p);
+}
+
 // ---------------------------------------------------------------- unlocks
 function drItemKey(it) { return it.slot + ':' + it.id; }
+// the story so far: big moments, newest first in the Story tab
+function drMoment(s, icon, text) { s.timeline = s.timeline || []; s.timeline.push({ d: Date.now(), icon, text }); if (s.timeline.length > 150) s.timeline.splice(0, s.timeline.length - 150); }
 function drUnlocks(s) {
   const fresh = [];
   for (const it of DR_ITEMS) {
@@ -6372,7 +6403,7 @@ function drProgress(s) {
     const live = drAvailable(s).filter((e) => !e.free), cheapest = Math.min(...live.map((e) => e.buyin));
     if (s.br < cheapest && !s.queue.includes('broke')) {
       const stake = Math.max(drStakeSize(s), cheapest - s.br);
-      drAdd(s, stake, "Slick's stake"); s.debt += stake; s.flags.stakes = (s.flags.stakes || 0) + 1; s.queue.push('broke');
+      drAdd(s, stake, "Slick's stake"); s.debt += stake; drMoment(s, '🥧', `Went broke. Slick staked you $${drMoney(stake)}`); s.flags.stakes = (s.flags.stakes || 0) + 1; s.queue.push('broke');
     }
   }
 }
@@ -6472,7 +6503,7 @@ function drAnswer(k) {
   const keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
   const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
   const best = strat.indexOf(fmax), hero = v.seats[sp.hero];
-  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
+  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
   run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand });
   if (run.stack <= 0) run.bust = true;
   arSfx(tier === 'bad' ? 'bad' : tier); arBuzz(tier);
@@ -6493,6 +6524,18 @@ function drNext() {
 }
 // cash sessions: your stack decides what you take home (each step of the meter is real money)
 function drCashNet(run, luck) { return Math.round(run.ev.buyin * Math.max(-1, Math.min(2.5, (run.stack - 100) / 40 + (luck || 0)))); }
+// Slick's one-line lesson after a mistake or a borderline play
+function drTip(r) {
+  const h = r.hand; if (!h || r.tier === 'perfect' || r.tier === 'good') return '';
+  const icm = ['bubble', 'satbubble', 'deep', 'final'].includes(r.stage);
+  const loose = h.mineK !== 'fold' && h.bestK === 'fold', tight = h.mineK === 'fold' && h.bestK !== 'fold';
+  const c = h.cat;
+  if (!loose && !tight) return `Right idea, wrong size. The solver prefers ${h.best} here.`;
+  if (c === 'Facing a jam') return loose ? `Calling a jam takes a much stronger hand than shoving one.${icm ? ' Near the money, stronger still: busting costs more than chips.' : ''}` : `This hand is ahead of their shoving range often enough. Folding gives up too much.${icm ? ' Even with ICM, this one is a call.' : ''}`;
+  if (c === 'First in / vs limps') return loose ? `Too loose from ${h.pos}. With players still to act behind you, open fewer hands.` : `This is a profitable open from ${h.pos}. Folding lets the blinds walk.`;
+  if (c === 'Facing a raise') return loose ? 'Facing a raise, play tighter than when you open. Their range is already strong.' : `Good enough to continue from ${h.pos}. Folding here is too tight.`;
+  return loose ? 'Against a 3-bet or more, only the top of your range keeps going.' : "You're folding too much to aggression. This hand wants to continue.";
+}
 function drRestore() {
   if (DR.saved) { applySetup(DR.saved); DR.saved = null; }
   TR.random = false; window.__trRand = false;
@@ -6541,7 +6584,7 @@ function drFinish(quit) {
   if (ev.kind === 'sat') {
     const place = drPlace(run, ev); res.place = place; res.paid = ev.seats;
     rec.best = rec.best ? Math.min(rec.best, place) : place;
-    if (place <= ev.seats) { s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
+    if (place <= ev.seats) { drMoment(s, '🎟', `Won a seat into the ${drEvent(ev.target).name}`); s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
     res.net = -(DR.usedTicket ? 0 : ev.buyin);
   } else if (ev.kind === 'cash') {
     const net = run.bust ? -ev.buyin : drCashNet(run, quit ? 0 : (run.rng() - 0.5) * 0.3);
@@ -6553,6 +6596,8 @@ function drFinish(quit) {
     const prize = place <= P ? Math.round(pays[place - 1]) : 0;
     res.place = place; res.paid = P; res.prize = prize; res.net = prize - (ev.free ? 0 : ev.buyin);
     rec.best = rec.best ? Math.min(rec.best, place) : place;
+    const poy = drPoyPoints(ev, place); if (poy) { s.poy = s.poy || {}; s.poy[drMonth()] = (s.poy[drMonth()] || 0) + poy; res.poy = poy; }
+    if (prize > 0 && s.cashes === 0) drMoment(s, '💵', `First cash: ${drOrd(place)} in the ${ev.name}`);
     if (prize > 0) { drAdd(s, prize, `${drOrd(place)} in ${ev.name}`); s.cashes++; rec.cashes++; rec.cash = Math.max(rec.cash, prize); if (ev.ch === 2) s.flags.circuitCash = true; res.repaid = drRepay(s, res.net); }
     rec.net += res.net;
     const reachedFinal = !run.bust || run.stages[run.si] === 'final';
@@ -6560,8 +6605,11 @@ function drFinish(quit) {
     if (reachedFinal && run.si >= run.stages.length - 1) { s.ft++; if (ev.id === 'main') s.flags.meft = true; if (run.boss) { s.met[run.boss] = true; res.met = run.boss; } }
     if (place === 1) {
       rec.wins++;
-      if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); }
-      if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { s.legends[run.boss] = true; res.beat = run.boss; }
+      if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); drMoment(s, DR_TITLES[ev.title].icon, `Won the ${ev.name} for $${drMoney(prize)}`); }
+      else if (!ev.daily) drMoment(s, '🏅', `Won the ${ev.name}`);
+      if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { if (!s.legends[run.boss]) drMoment(s, '🂡', `Beat ${drLegend(run.boss).name} heads-up`); s.legends[run.boss] = true; res.beat = run.boss; }
+      if (run.boss === 'ghost') drMoment(s, '🕶️', 'Beat The Ghost for the world title');
+      if (run.boss === 'trent') { s.flags.trentW = (s.flags.trentW || 0) + 1; drMoment(s, '😏', `Beat Trent Vale heads-up (${s.flags.trentW} and counting)`); }
       if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
       const once = (id) => { if (!s.story[id] && !s.queue.includes(id)) s.queue.push(id); };
       if (ev.title === 'room' && run.boss === 'trent') once('trentbeat');
@@ -6725,7 +6773,8 @@ function drSceneEnd() {
   const s = DR.st, id = DR.sc.id, def = DR_SCENES[id]; clearInterval(DR.twTimer);
   if (DR.sc.replay) { DR.sc = null; DR.view = 'hub'; DR.tab = 'story'; drRender(); scrollTo(0, 0); return; }
   s.story[id] = true;
-  const m = /^c(\d)$/.exec(id); if (m) s.ch = Math.max(s.ch, +m[1]);
+  const m = /^c(\d)$/.exec(id); if (m) { if (+m[1] > s.ch) drMoment(s, '📖', `${DR_CHAPTERS[+m[1]].n}: ${DR_CHAPTERS[+m[1]].t}`); s.ch = Math.max(s.ch, +m[1]); }
+  if (id === 'p_quit') drMoment(s, '🚪', 'Quit the 9-to-5'); if (id === 'p_keep') drMoment(s, '🌙', 'Kept the day job. Nights are for the dream.');
   drUnlocks(s); drProgress(s); drSave();
   DR.sc = null;
   const end = def.end || 'hub';
@@ -6835,6 +6884,10 @@ function drTrophiesHTML() {
       <div><small>Final tables</small><b class="mono">${s.ft}</b></div><div><small>Peak bankroll</small><b class="mono">$${drMoneyShort(s.peak)}</b></div>
       <div><small>Decisions</small><b class="mono">${s.dec}</b></div><div><small>Solver-approved</small><b class="mono">${acc}%</b></div>
     </div>
+    ${s.ch >= 1 ? (() => { const b = drPoyBoard(s), me = b.findIndex((r) => r.me), top = b.slice(0, 8), show = me >= 8 ? [...top, b[me]] : top;
+      return `<div class="drpoy"><div class="drkicker">Player of the Year race · ${new Date().toLocaleDateString(undefined, { month: 'long' })}</div>
+        <div class="drpoy-list">${show.map((r) => `<div class="${r.me ? 'me' : ''}"><span class="mono">${b.indexOf(r) + 1}</span><b>${esc(r.n)}</b><small class="mono">${drMoney(r.p)} pts</small></div>`).join('')}</div>
+        <small class="drhint">Cash and win tournaments to climb. The race resets every month. Rivals are simulated until online play arrives.</small></div>`; })() : ''}
     <div class="drcase">${s.trophies.length ? s.trophies.map((t) => `<div class="drtrophy t-${t.t}"><b>${DR_TITLES[t.t].icon}</b><span>${esc(DR_TITLES[t.t].n)}</span><small>${esc(t.ev)}</small><small class="mono">$${drMoney(t.prize)}</small></div>`).join('') : '<p class="drhint">Your trophy case is empty. For now.</p>'}</div>`;
 }
 function drLegendsHTML() {
@@ -6850,7 +6903,9 @@ function drLegendsHTML() {
 }
 function drStoryHTML() {
   const s = DR.st, list = ['p_office', 'p_diner', 'p_after', 'firstwin', 'c1', 'trentbeat', 'c2', 'ring1', 'derek', 'c3', 'bracelet1', 'c4', 'tour1', 'c5', 'titan1', 'c6', 'champ', 'c7', 'broke'].filter((id) => s.story[id]);
-  return `<div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
+  const tl = (s.timeline || []).slice().reverse();
+  return `${tl.length ? `<div class="drkicker">Your story so far</div><div class="drtimeline">${tl.slice(0, 40).map((m) => `<div><span>${m.icon}</span><div><b>${esc(m.text)}</b><small>${new Date(m.d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</small></div></div>`).join('')}</div>` : ''}
+    <div class="drkicker">Replay a scene</div><div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
     <div class="drkicker">Money</div>
     <div class="drledger">${s.ledger.slice(-12).reverse().map((l) => `<div><span>${esc(l.why)}</span><b class="mono ${l.amt >= 0 ? 'up' : 'down'}">${l.amt >= 0 ? '+' : '−'}$${drMoney(Math.abs(l.amt))}</b></div>`).join('')}</div>
     <div class="drrow">${drBtn('ghost sm', 'data-dr="title"', 'Title screen')}${drBtn('ghost sm', 'data-dr="sound"', AR && AR.st.sound === false ? '🔇 Sound off' : '🔊 Sound on')}</div>`;
@@ -6918,6 +6973,7 @@ function drRunHTML() {
     const d = r.after - r.before;
     html += `<div class="drverdict t-${r.tier}"><div><b>${big}</b><small>${sub}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < 0 ? 'Life ▼▼' : 'Life ='}</span></div>
       <div class="drmix">${sp.res.actions.map((a, k) => `<div class="${k === r.j ? 'mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><i style="--w:${(r.strat[k] * 100).toFixed(1)}%"></i><b class="mono">${Math.round(r.strat[k] * 100)}%</b></div>`).join('')}</div>
+      ${drTip(r) ? `<div class="drtip">${drSpeaker({ sp: 'slick' }).av}<p>${esc(drTip(r))}</p></div>` : ''}
       ${run.bust ? `<div class="drbust">${ev.kind === 'cash' ? 'Felted. That session is over.' : 'Busted. Your tournament is over.'}</div>` : ''}
       <div class="drrow">${drBtn('gold big', 'data-dr="next"', run.bust || lastHand ? (ev.kind === 'cash' ? 'Cash out ▸' : 'See where you finished ▸') : run.h === per - 1 ? 'Next level ▸' : 'Next hand ▸')}</div>`;
   }
