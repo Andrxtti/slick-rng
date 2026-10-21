@@ -579,8 +579,10 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 /* ---------- end arena */
 /* ---------- MyFighter and rewards */
 .fxsvg { display: block; width: 100%; height: auto; image-rendering: pixelated; }
-.fxsvg.idle { animation: fxidle 1s steps(2) infinite; }
-@keyframes fxidle { 50% { transform: translateY(2.2%); } }
+.fx2 { display: grid; }
+.fx2 img { grid-area: 1 / 1; width: 100%; height: auto; display: block; image-rendering: pixelated; }
+.fx2 .fb { opacity: 0; animation: fxbreathe 1.3s steps(1) infinite; }
+@keyframes fxbreathe { 50% { opacity: 1; } }
 .arena .arava { padding: 0; overflow: hidden; position: relative; cursor: pointer; background: radial-gradient(circle at 50% 40%, #1846b8, #071636); width: 72px; height: 72px; }
 .arava .fxsvg { width: 100%; height: 100%; }
 .aredit { position: absolute; bottom: 0; left: 0; right: 0; font-size: 6px; background: rgba(0, 0, 0, .7); color: var(--gold); padding: 2px 0; text-align: center; }
@@ -593,7 +595,7 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 /* creator */
 .arcreate { border-color: var(--gold); }
 .arstage { display: grid; place-items: center; padding: 14px 0 10px; background: radial-gradient(60% 70% at 50% 45%, #2458d8, #071636 75%); border: 4px solid var(--w); box-shadow: inset 0 -16px 0 #0a1f5a; }
-.arstagefx { width: min(46vw, 190px); }
+.arstagefx { width: min(52vw, 210px); }
 .pxtabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
 .pxtabs::-webkit-scrollbar { display: none; }
 .pxtabs button { flex: none; font: 9px "Press Start 2P", monospace; text-transform: uppercase; background: #000; color: var(--w); border: 3px solid var(--gry); border-radius: 0; padding: 9px 10px; cursor: pointer; }
@@ -601,7 +603,7 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .arcparts { display: grid; gap: 8px; }
 .aropts2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 6px; }
 .aropt2 { display: grid; gap: 4px; justify-items: center; padding: 6px 4px; background: #071636; border: 3px solid var(--rc, #333); border-radius: 0; color: var(--w); cursor: pointer; }
-.aropt2 .fxsvg { max-height: 86px; width: auto; }
+.aropt2 .fxsvg { height: 92px; width: auto; max-width: 100%; }
 .aropt2 small { font-size: 10px; line-height: 1.2; text-align: center; }
 .aropt2.on { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); background: #1a2a6a; }
 .aropt2.locked { opacity: .45; cursor: not-allowed; }
@@ -645,7 +647,7 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .arcelbox .pxbtn { font: 12px "Press Start 2P", monospace; text-transform: uppercase; color: #000; background: #f8b800; border: 4px solid #000; padding: 12px 22px; cursor: pointer; margin-top: 6px; }
 @keyframes arpopin { from { transform: scale(.6); opacity: 0; } }
 @keyframes arbob { 50% { transform: translateY(-6px); } }
-@media (prefers-reduced-motion: reduce) { .fxsvg.idle, .arcelbox, .arcelicon, .arcelstars { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .fx2 .fb, .arcelbox, .arcelicon, .arcelstars { animation: none !important; } }
 /* ---------- end rewards */
 .whatif { display: grid; gap: 12px; }
 .whatif .wi { display: grid; gap: 4px; min-width: 0; font-size: 12px; color: var(--muted); }
@@ -4079,178 +4081,333 @@ document.addEventListener('keydown', (e) => {
   else if ((e.key === 'Enter' || e.key.toLowerCase() === 'n') && (!sp || sp.result)) trDeal();
 });
 
-// ---------------------------------------------------------------- MyFighter: a layered pixel-art fighter drawn in code
-// 32x48 sprite built from shape layers (body, clothes, face, hair, gear, gloves), then auto-shaded
-// and outlined, NES-style. Every piece takes palette colors, so one shape gives many looks.
-const FX_W = 32, FX_H = 48, FX_INK = '#120a08';
-const FX_SKIN = ['#ffe3c8', '#f5cba3', '#e6ad7c', '#cf8f5a', '#ad6c3d', '#8a522c', '#69391d', '#472413'];
-const FX_HAIRC = ['#1b1512', '#3d2617', '#6e4524', '#a8743a', '#e6c46e', '#b8432a', '#8e8e8e', '#ececec', '#3cbcfc', '#f878f8', '#38c838', '#d82800'];
-const FX_CLOTH = ['#d82800', '#0058f8', '#00a800', '#f8b800', '#fcfcfc', '#262626', '#7c7c7c', '#f878f8', '#3cbcfc', '#6844fc', '#e45c10', '#00586a', '#8a1c10', '#5a3a1a', '#b8f818', '#00d8c8'];
+// ---------------------------------------------------------------- MyFighter: modern pixel art over an 8-bit soul
+// Each fighter is modeled from lit 3D primitives (ellipsoids and capsules), rendered per pixel with a
+// key light, hue-shifted shadows, a cyan arena rim light and specular shine, then quantized to tone
+// ramps with ordered dithering and selective outlines. Clothing and gear are materials and overlays,
+// so one body gives thousands of looks. Branded-looking gear is parody: recognizable, never a copy.
+const FX_W = 72, FX_H = 120;
+const FX_SKIN = ['#ffe0c2', '#f2c6a0', '#e2a676', '#c98852', '#a96a3c', '#87502c', '#663a1f', '#452514'];
+const FX_HAIRC = ['#1c1613', '#3e2717', '#6e4526', '#a8743a', '#e6c46e', '#b8432a', '#8e8e8e', '#ececec', '#3cbcfc', '#f878f8', '#38c838', '#e02010'];
+const FX_CLOTH = ['#d82020', '#1f5ae8', '#169c3c', '#f0b818', '#f4f0e6', '#262628', '#76767c', '#f878b8', '#5cc8fc', '#6844dc', '#e85c10', '#0c6a7a', '#8a1c14', '#6a4422', '#b8f018', '#10d8c8'];
 const FX_PARTS = {
-  build: [['lean', 'Lean'], ['regular', 'Regular'], ['heavy', 'Heavy']],
-  eyes: [['focused', 'Focused'], ['calm', 'Calm'], ['narrow', 'Narrow'], ['wide', 'Wide']],
+  build: [['lean', 'Lean'], ['regular', 'Regular'], ['heavy', 'Heavyweight']],
+  eyes: [['focused', 'Focused'], ['calm', 'Calm'], ['narrow', 'Locked in'], ['wide', 'Wide']],
   brows: [['fierce', 'Fierce'], ['flat', 'Flat'], ['thick', 'Thick'], ['raised', 'Raised']],
   mouth: [['line', 'Neutral'], ['smirk', 'Smirk'], ['grin', 'Grin'], ['frown', 'Frown'], ['guard', 'Mouthguard']],
-  hair: [['bald', 'Bald'], ['buzz', 'Buzz'], ['short', 'Short'], ['fade', 'Fade'], ['flattop', 'Flat top'], ['afro', 'Afro'], ['mohawk', 'Mohawk'], ['spiky', 'Spiky'], ['cornrows', 'Cornrows'], ['bun', 'Bun'], ['long', 'Long']],
-  face: [['none', 'Clean'], ['stubble', 'Stubble'], ['mustache', 'Mustache'], ['goatee', 'Goatee'], ['beard', 'Beard']],
-  top: [['none', 'Shirtless'], ['tank', 'Tank'], ['tee', 'Tee'], ['jersey', 'Jersey'], ['hoodie', 'Hoodie'], ['robe', 'Robe']],
-  bottom: [['trunks', 'Trunks'], ['shorts', 'Shorts'], ['pants', 'Pants'], ['joggers', 'Joggers']],
-  shoes: [['boots', 'Ring boots'], ['sneakers', 'Sneakers'], ['hightops', 'High-tops'], ['slides', 'Slides']],
-  gloves: [['classic', 'Boxing'], ['wraps', 'Hand wraps'], ['mma', 'MMA']],
-  head: [['none', 'None'], ['headband', 'Headband'], ['cap', 'Cap'], ['bandana', 'Bandana']],
-  eyewear: [['none', 'None'], ['shades', '8-bit shades'], ['sport', 'Sport lenses']],
-  neck: [['none', 'None'], ['towel', 'Towel'], ['chain', 'Gold chain'], ['belt', 'Title belt']],
+  hair: [['bald', 'Bald'], ['buzz', 'Buzz'], ['short', 'Short'], ['fade', 'Fade'], ['flattop', 'Flat top'], ['afro', 'Afro'], ['mohawk', 'Mohawk'], ['spiky', 'Spiky'], ['cornrows', 'Cornrows'], ['bun', 'Top knot'], ['long', 'Long']],
+  face: [['none', 'Clean'], ['stubble', 'Stubble'], ['mustache', 'Mustache'], ['goatee', 'Goatee'], ['beard', 'Full beard']],
+  top: [['none', 'Shirtless'], ['tank', 'Gym tank'], ['tee', 'Plain tee'], ['boxtee', 'Supremo box tee'], ['hoodie', 'Champyun hoodie'], ['tracktop', 'Abibas track jacket'], ['jersey', 'Chicago Bullies 23'], ['montage', 'Montage tracksuit'], ['robe', 'Philly Stallion robe']],
+  bottom: [['trunks', 'Everlust trunks'], ['liberty', 'Liberty trunks'], ['shorts', 'Gym shorts'], ['pants', 'Sweats'], ['trackpants', 'Abibas track pants'], ['joggers', 'Montage joggers']],
+  shoes: [['boots', 'Ring boots'], ['sneakers', 'Runners'], ['chucks', 'Chuck Tailors'], ['jabbers', "Air Jabber 1 'Bred'"], ['tumbs', 'Tumberlands'], ['slides', 'Yeesh slides']],
+  gloves: [['classic', 'Training gloves'], ['reyez', 'Reyez Royale'], ['winnin', "Winnin' Pro"], ['mma', 'Cage gloves'], ['wraps', 'Hand wraps']],
+  head: [['none', 'None'], ['headband', 'Sweatband'], ['cap', 'New Err 59FIFTEEN'], ['bandana', 'Paisley bandana'], ['durag', 'Silky durag']],
+  eyewear: [['none', 'None'], ['shades', 'Deal-With-It 8-bits'], ['aviator', 'Ray-Bam aviators'], ['sport', 'Oakly blades']],
+  neck: [['none', 'None'], ['towel', 'Corner towel'], ['chain', 'Havana Link chain'], ['belt', 'WBX title belt']],
 };
-const FX_DEFAULT = { skin: 3, build: 'regular', eyes: 'focused', brows: 'fierce', mouth: 'line', hair: 'fade', hairC: 0, face: 'none', top: 'tank', topC: 0, topA: 4,
-  bottom: 'trunks', bottomC: 1, bottomA: 4, shoes: 'boots', shoeC: 4, gloves: 'classic', gloveC: 0, head: 'none', eyewear: 'none', neck: 'none', gearC: 3, beltC: '#f83800' };
-function fxShade(hex, f) {
-  const n = parseInt(hex.slice(1), 16), ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.max(0, Math.min(255, Math.round(f < 0 ? v * (1 + f) : v + (255 - v) * f))));
-  return '#' + ch.map((v) => v.toString(16).padStart(2, '0')).join('');
+const FX_DEFAULT = { skin: 3, build: 'regular', eyes: 'focused', brows: 'fierce', mouth: 'line', hair: 'fade', hairC: 0, face: 'none', top: 'tank', topC: 2, topA: 4,
+  bottom: 'trunks', bottomC: 5, bottomA: 4, shoes: 'boots', shoeC: 5, gloves: 'classic', gloveC: 0, head: 'none', eyewear: 'none', neck: 'none', gearC: 0, beltC: '#169c3c' };
+const fxRGB = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const fxMix = (a, b, t) => [0, 1, 2].map((i) => Math.round(a[i] + (b[i] - a[i]) * t));
+function fxShade(hex, f) { const c = fxRGB(hex); return '#' + fxMix(c, f < 0 ? [0, 0, 0] : [255, 255, 255], Math.abs(f)).map((v) => v.toString(16).padStart(2, '0')).join(''); }
+// 5-tone ramp: shadows shift cool and violet, highlights shift warm (how modern pixel artists shade)
+const fxRamps = new Map();
+function fxRamp(hex) {
+  if (fxRamps.has(hex)) return fxRamps.get(hex);
+  const b = fxRGB(hex), r = [fxMix(fxMix(b, [28, 14, 58], 0.55), [0, 0, 0], 0.3), fxMix(b, [44, 26, 92], 0.34), b, fxMix(b, [255, 236, 200], 0.2), fxMix(b, [255, 250, 236], 0.48)];
+  fxRamps.set(hex, r); return r;
 }
-function fxBuild(cfg) {
-  const f = { ...FX_DEFAULT, ...cfg }, px = Array.from({ length: FX_H }, () => Array(FX_W).fill(null));
+const FX_BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+const FX_L = (() => { const v = [-0.5, -0.62, 0.6], m = Math.hypot(...v); return v.map((x) => x / m); })();
+const FX_H2 = (() => { const v = [FX_L[0], FX_L[1], FX_L[2] + 1], m = Math.hypot(...v); return v.map((x) => x / m); })();
+const FX_RIM = [92, 225, 255];
+const FX_DIGITS = { 2: ['111', '001', '111', '100', '111'], 3: ['111', '001', '111', '001', '111'] };
+
+function fxRender(cfg, bob) {
+  const f = { ...FX_DEFAULT, ...cfg };
   const C = (v, list, d) => (typeof v === 'string' ? v : list[v] || d);
-  const skin = C(f.skin, FX_SKIN, FX_SKIN[3]), hair = C(f.hairC, FX_HAIRC, FX_HAIRC[0]), top = C(f.topC, FX_CLOTH, '#d82800'), topA = C(f.topA, FX_CLOTH, '#fcfcfc');
-  const bot = C(f.bottomC, FX_CLOTH, '#0058f8'), botA = C(f.bottomA, FX_CLOTH, '#fcfcfc'), shoe = C(f.shoeC, FX_CLOTH, '#fcfcfc'), glove = C(f.gloveC, FX_CLOTH, '#d82800'), gear = C(f.gearC, FX_CLOTH, '#f8b800');
-  const b = f.build === 'lean' ? -1 : f.build === 'heavy' ? 1 : 0;
-  const put = (x, y, c, l) => { x = Math.round(x); y = Math.round(y); if (x >= 0 && x < FX_W && y >= 0 && y < FX_H) px[y][x] = { c, l }; };
-  const det = (x, y, c) => { if (x >= 0 && x < FX_W && y >= 0 && y < FX_H) { const p = px[y][x]; px[y][x] = { c, l: p ? p.l : 'd', d: true }; } };
-  const rect = (x0, y0, x1, y1, c, l) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) put(x, y, c, l); };
-  const inE = (x, y, cx, cy, rx, ry) => ((x + 0.5 - cx) / rx) ** 2 + ((y + 0.5 - cy) / ry) ** 2 <= 1;
-  const ell = (cx, cy, rx, ry, c, l, keep = () => true) => { for (let y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y++) for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) if (inE(x, y, cx, cy, rx, ry) && keep(x, y)) put(x, y, c, l); };
-  const inHead = (x, y) => inE(x, y, 16, 10.5, 6.2, 7);
-  const torsoX = (y) => { const hw = 8 + b - (y - 19) * 0.22; return [Math.round(16 - hw), Math.round(16 + hw) - 1]; };
-  // hair behind the body
-  if (f.hair === 'long') rect(9, 8, 22, 25, fxShade(hair, -0.15), 'hairb');
-  if (f.hair === 'afro') ell(16, 8, 9, 7.5, hair, 'hairb');
-  // body
-  for (let y = 33; y <= 37; y++) rect(11 - (b > 0 ? 1 : 0), y, 20 + (b > 0 ? 1 : 0), y, skin, 'skin');
-  rect(10, 37, 14, 45, skin, 'skin'); rect(17, 37, 21, 45, skin, 'skin');
-  for (let y = 19; y <= 33; y++) { const [a, z] = torsoX(y); rect(a, y, z, y, skin, 'skin'); }
-  rect(6 - b, 20, 8, 27, skin, 'arm'); rect(23, 20, 25 + b, 27, skin, 'arm');
-  rect(7 - b, 25, 10, 28, skin, 'arm'); rect(21, 25, 24 + b, 28, skin, 'arm');
-  rect(14, 15, 17, 19, fxShade(skin, -0.1), 'neck');
-  ell(9.7, 11, 1.4, 1.9, skin, 'ear'); ell(22.3, 11, 1.4, 1.9, skin, 'ear');
-  ell(16, 10.5, 6.2, 7, skin, 'head');
-  if (b > 0) { det(13, 27, fxShade(skin, -0.12)); det(18, 27, fxShade(skin, -0.12)); }
-  // bottoms
-  if (f.bottom === 'trunks') { rect(10, 32, 21, 39, bot, 'bot'); rect(10, 32, 21, 33, botA, 'botA'); rect(10, 34, 10, 39, botA, 'botA'); rect(21, 34, 21, 39, botA, 'botA'); rect(15, 38, 16, 39, null, 'x'); }
-  else { const end = f.bottom === 'shorts' ? 41 : 44; rect(10, 32, 21, 37, bot, 'bot'); rect(10, 38, 14, end, bot, 'bot'); rect(17, 38, 21, end, bot, 'bot'); rect(10, 32, 21, 32, botA, 'botA');
-    if (f.bottom === 'joggers') { rect(10, 43, 14, 44, botA, 'botA'); rect(17, 43, 21, 44, botA, 'botA'); }
-    if (f.bottom === 'pants') { det(12, 36, fxShade(bot, -0.2)); det(19, 36, fxShade(bot, -0.2)); } }
-  // top
-  if (f.top === 'tank' || f.top === 'jersey') {
-    for (let y = 21; y <= 33; y++) { const [a, z] = torsoX(y); rect(a + 2, y, z - 2, y, top, 'top'); }
-    rect(11, 19, 13, 20, top, 'top'); rect(18, 19, 20, 20, top, 'top'); rect(14, 21, 17, 21, skin, 'skin');
-    if (f.top === 'jersey') { rect(11, 19, 11, 21, topA, 'topA'); rect(20, 19, 20, 21, topA, 'topA'); for (let y = 21; y <= 33; y++) { const [a, z] = torsoX(y); det(a + 2, y, topA); det(z - 2, y, topA); } rect(14, 26, 17, 29, topA, 'topA'); det(15, 27, top); det(16, 28, top); }
-  } else if (f.top === 'tee' || f.top === 'hoodie') {
-    for (let y = 19; y <= 33; y++) { const [a, z] = torsoX(y); rect(a, y, z, y, top, 'top'); }
-    rect(6 - b, 20, 8, f.top === 'hoodie' ? 27 : 23, top, 'top'); rect(23, 20, 25 + b, f.top === 'hoodie' ? 27 : 23, top, 'top');
-    if (f.top === 'hoodie') { rect(7 - b, 25, 10, 28, top, 'top'); rect(21, 25, 24 + b, 28, top, 'top'); rect(11, 17, 20, 19, fxShade(top, -0.25), 'hood'); rect(13, 29, 18, 32, fxShade(top, -0.18), 'top'); det(14, 21, topA); det(14, 22, topA); det(17, 21, topA); det(17, 22, topA); }
-    else { rect(14, 19, 17, 20, skin, 'skin'); rect(6 - b, 23, 8, 23, topA, 'topA'); rect(23, 23, 25 + b, 23, topA, 'topA'); }
-  } else if (f.top === 'robe') {
-    for (let y = 19; y <= 41; y++) { const [a, z] = y <= 33 ? torsoX(y) : [9 - Math.floor((y - 33) / 3), 22 + Math.floor((y - 33) / 3)]; rect(a, y, z, y, top, 'top'); }
-    rect(5 - b, 20, 8, 28, top, 'top'); rect(23, 20, 26 + b, 28, top, 'top'); rect(7 - b, 26, 10, 29, top, 'top'); rect(21, 26, 24 + b, 29, top, 'top');
-    for (let y = 19; y <= 25; y++) { const w = Math.max(0, 3 - Math.floor((y - 19) / 2)); rect(16 - w, y, 15 + w, y, skin, 'skin'); det(15 - w, y, topA); det(16 + w, y, topA); }
-    rect(10, 31, 21, 32, topA, 'topA'); rect(5 - b, 28, 8, 28, topA, 'topA'); rect(23, 28, 26 + b, 28, topA, 'topA');
-  }
-  // shoes
-  const foot = (x0, x1, y0) => rect(x0, y0, x1, 47, shoe, 'shoe');
-  if (f.shoes === 'boots') { foot(10, 14, 40); foot(17, 21, 40); rect(9, 45, 15, 47, shoe, 'shoe'); rect(16, 45, 22, 47, shoe, 'shoe'); for (const y of [41, 43]) { det(12, y, fxShade(shoe, -0.35)); det(19, y, fxShade(shoe, -0.35)); } rect(9, 47, 15, 47, fxShade(shoe, -0.45), 'sole'); rect(16, 47, 22, 47, fxShade(shoe, -0.45), 'sole'); }
-  else if (f.shoes === 'hightops') { foot(10, 14, 42); foot(17, 21, 42); rect(9, 45, 15, 46, shoe, 'shoe'); rect(16, 45, 22, 46, shoe, 'shoe'); rect(9, 47, 15, 47, '#fcfcfc', 'sole'); rect(16, 47, 22, 47, '#fcfcfc', 'sole'); det(11, 43, '#fcfcfc'); det(20, 43, '#fcfcfc'); }
-  else if (f.shoes === 'sneakers') { rect(9, 44, 15, 46, shoe, 'shoe'); rect(16, 44, 22, 46, shoe, 'shoe'); rect(9, 47, 15, 47, '#fcfcfc', 'sole'); rect(16, 47, 22, 47, '#fcfcfc', 'sole'); det(12, 45, fxShade(shoe, -0.3)); det(19, 45, fxShade(shoe, -0.3)); }
-  else { rect(9, 46, 15, 46, shoe, 'shoe'); rect(16, 46, 22, 46, shoe, 'shoe'); rect(9, 47, 15, 47, fxShade(shoe, -0.4), 'sole'); rect(16, 47, 22, 47, fxShade(shoe, -0.4), 'sole'); rect(10, 44, 14, 45, skin, 'skin'); rect(17, 44, 21, 45, skin, 'skin'); }
-  // face
-  const eyeD = '#1a0e0a', browC = fxShade(hair, (typeof f.hairC === 'number' && f.hairC >= 6) ? -0.35 : -0.05);
-  const eye = (x) => {
-    if (f.eyes === 'focused') { det(x, 10, '#fcfcfc'); det(x + 1, 10, eyeD); det(x, 11, eyeD); det(x + 1, 11, eyeD); }
-    else if (f.eyes === 'calm') { det(x, 11, eyeD); det(x + 1, 11, eyeD); }
-    else if (f.eyes === 'narrow') { det(x, 11, eyeD); det(x + 1, 11, eyeD); det(x, 10, fxShade(skin, -0.2)); det(x + 1, 10, fxShade(skin, -0.2)); }
-    else { det(x, 10, '#fcfcfc'); det(x + 1, 10, '#fcfcfc'); det(x, 11, '#fcfcfc'); det(x + 1, 11, eyeD); }
-  };
-  eye(12); eye(18);
-  if (f.brows === 'flat') { for (const x of [11, 12, 13, 18, 19, 20]) det(x, 8, browC); }
-  else if (f.brows === 'thick') { for (const x of [11, 12, 13, 18, 19, 20]) { det(x, 8, browC); det(x, 7, browC); } }
-  else if (f.brows === 'raised') { for (const x of [11, 12, 13, 18, 19, 20]) det(x, 7, browC); }
-  else { det(11, 8, browC); det(12, 8, browC); det(13, 9, browC); det(18, 9, browC); det(19, 8, browC); det(20, 8, browC); }
-  det(15, 13, fxShade(skin, -0.22)); det(16, 13, fxShade(skin, -0.12)); det(16, 12, fxShade(skin, -0.12));
-  const lip = fxShade(skin, -0.45);
-  if (f.mouth === 'line') { for (let x = 14; x <= 17; x++) det(x, 15, lip); }
-  else if (f.mouth === 'smirk') { for (let x = 14; x <= 16; x++) det(x, 15, lip); det(17, 14, lip); }
-  else if (f.mouth === 'grin') { for (let x = 14; x <= 17; x++) { det(x, 15, '#fcfcfc'); det(x, 16, lip); } det(13, 15, lip); det(18, 15, lip); }
-  else if (f.mouth === 'frown') { det(14, 16, lip); det(15, 15, lip); det(16, 15, lip); det(17, 16, lip); }
-  else { for (let x = 14; x <= 17; x++) det(x, 15, gear); det(13, 15, lip); det(18, 15, lip); }
-  // facial hair
-  const fh = fxShade(hair, -0.05), fhs = fxShade(hair, 0.15);
-  if (f.face === 'stubble') { for (let y = 13; y <= 17; y++) for (let x = 10; x <= 21; x++) if (inHead(x, y) && (x + y) % 2 === 0 && (y >= 16 || x <= 11 || x >= 20)) det(x, y, fxShade(skin, -0.3)); }
-  if (f.face === 'mustache' || f.face === 'goatee') { for (let x = 13; x <= 18; x++) det(x, 14, fh); }
-  if (f.face === 'goatee') { for (let x = 14; x <= 17; x++) { det(x, 16, fh); det(x, 17, fh); } }
-  if (f.face === 'beard') { for (let y = 12; y <= 18; y++) for (let x = 9; x <= 22; x++) if (inHead(x, y) && (y >= 14 || x <= 11 || x >= 20) && !(y === 15 && x >= 14 && x <= 17)) det(x, y, (x + y) % 3 ? fh : fhs); }
-  // hair (front)
-  const hs = fxShade(hair, -0.25), hl = fxShade(hair, 0.18);
-  const cap = (yMax, grow = 0.5) => { for (let y = 0; y <= yMax; y++) for (let x = 8; x <= 23; x++) if (inE(x, y, 16, 10.5, 6.2 + grow, 7 + grow)) put(x, y, hair, 'hair'); };
-  const sides = (y0, y1, c = hair) => { for (let y = y0; y <= y1; y++) { for (const x of [9, 10]) if (inE(x, y, 16, 10.5, 6.8, 7.4)) put(x, y, c, 'hair'); for (const x of [21, 22]) if (inE(x, y, 16, 10.5, 6.8, 7.4)) put(x, y, c, 'hair'); } };
-  if (f.hair === 'buzz') { cap(5, 0.1); sides(6, 8, hs); }
-  else if (f.hair === 'short') { cap(6); sides(7, 9); }
-  else if (f.hair === 'fade') { cap(6); sides(7, 11, hs); }
-  else if (f.hair === 'flattop') { rect(10, 0, 21, 5, hair, 'hair'); det(10, 0, hl); sides(6, 10, hs); }
-  else if (f.hair === 'afro') { for (let y = 0; y <= 8; y++) for (let x = 6; x <= 25; x++) if (inE(x, y, 16, 8, 9, 7.5)) put(x, y, hair, 'hair'); sides(9, 13); }
-  else if (f.hair === 'mohawk') { rect(14, 0, 17, 6, hair, 'hair'); sides(6, 9, hs); }
-  else if (f.hair === 'spiky') { cap(6); for (const [x, h] of [[10, 2], [12, 0], [14, 1], [16, 0], [18, 1], [20, 0], [21, 2]]) rect(x, h, x + 1, 4, hair, 'hair'); sides(7, 9); }
-  else if (f.hair === 'cornrows') { cap(6, 0.2); for (let y = 0; y <= 6; y++) for (let x = 8; x <= 23; x++) if (px[y][x] && px[y][x].l === 'hair' && x % 2) det(x, y, hs); sides(7, 9, hs); }
-  else if (f.hair === 'bun') { cap(6); sides(7, 9); ell(16, 1.5, 2.6, 2, hair, 'hair'); }
-  else if (f.hair === 'long') { cap(6); sides(7, 18); }
-  else if (f.hair === 'bald') det(13, 5, fxShade(skin, 0.25));
-  // headwear and eyewear
-  if (f.head === 'headband' || f.head === 'bandana') { for (let x = 8; x <= 23; x++) for (let y = 6; y <= 7; y++) if (inE(x, y, 16, 10.5, 6.9, 7.6)) put(x, y, gear, 'gear'); if (f.head === 'bandana') { for (let y = 0; y <= 6; y++) for (let x = 8; x <= 23; x++) if (inE(x, y, 16, 10.5, 6.8, 7.5)) put(x, y, gear, 'gear'); det(13, 3, '#fcfcfc'); det(18, 4, '#fcfcfc'); } rect(23, 7, 24, 9, gear, 'gear'); }
-  if (f.head === 'cap') { for (let y = 0; y <= 6; y++) for (let x = 8; x <= 23; x++) if (inE(x, y, 16, 10.5, 6.9, 7.7)) put(x, y, gear, 'gear'); rect(8, 6, 23, 7, fxShade(gear, -0.3), 'brim'); det(15, 0, fxShade(gear, 0.3)); det(16, 0, fxShade(gear, 0.3)); }
-  if (f.eyewear === 'shades') { rect(10, 9, 21, 9, '#0a0a0a', 'glass'); rect(11, 10, 14, 11, '#0a0a0a', 'glass'); rect(17, 10, 20, 11, '#0a0a0a', 'glass'); det(12, 10, '#fcfcfc'); det(18, 10, '#fcfcfc'); det(13, 11, '#fcfcfc'); det(19, 11, '#fcfcfc'); }
-  if (f.eyewear === 'sport') { rect(10, 9, 21, 11, gear, 'glass'); rect(15, 11, 16, 11, null, 'x'); det(11, 10, fxShade(gear, 0.5)); det(17, 10, fxShade(gear, 0.5)); }
-  // neck gear
-  if (f.neck === 'chain') { for (const [x, y] of [[12, 19], [13, 20], [14, 21], [15, 21], [16, 21], [17, 21], [18, 20], [19, 19]]) put(x, y, '#f8c838', 'chain'); rect(15, 22, 16, 23, '#f8b800', 'chain'); det(15, 22, '#fff0a0'); }
-  if (f.neck === 'towel') { rect(10, 17, 21, 20, '#fcfcfc', 'towel'); rect(10, 21, 12, 28, '#fcfcfc', 'towel'); rect(19, 21, 21, 28, '#fcfcfc', 'towel'); rect(10, 26, 12, 26, gear, 'towelA'); rect(19, 26, 21, 26, gear, 'towelA'); rect(14, 17, 17, 18, fxShade(skin, -0.1), 'neck'); }
-  // the title belt is worn around the waist, like a champion
-  if (f.neck === 'belt') { rect(9, 31, 22, 33, '#e8b020', 'belt'); rect(9, 33, 22, 33, '#a86c10', 'belt'); rect(13, 29, 18, 35, '#f8d040', 'plate'); rect(14, 30, 17, 34, f.beltC || '#f83800', 'gem'); det(14, 30, '#fcfcfc'); det(11, 32, '#fff0a0'); det(20, 32, '#fff0a0'); }
-  // gloves in a guard
-  if (f.gloves === 'wraps') { for (const cx of [10, 22]) { ell(cx, 23, 2.6, 2.6, '#f4f0e6', 'glove'); det(cx - 1, 22, glove); det(cx, 22, glove); det(cx + 1, 24, glove); } }
-  else {
-    const r = f.gloves === 'mma' ? 3 : 4.2;
-    for (const [cx, side] of [[10.5, -1], [21.5, 1]]) {
-      ell(cx, 22.5, r, r - 0.3, glove, 'glove');
-      if (f.gloves === 'classic') { det(Math.round(cx) + (side < 0 ? 1 : -2), 23, fxShade(glove, -0.28)); det(Math.round(cx) + (side < 0 ? 1 : -2), 24, fxShade(glove, -0.28)); }
-      if (f.gloves === 'classic') { rect(Math.round(cx) - 2, 25, Math.round(cx) + 1, 27, '#fcfcfc', 'cuff'); det(Math.round(cx) - 2 + (side < 0 ? 0 : 1), 20, fxShade(glove, 0.45)); det(Math.round(cx) - 1 + (side < 0 ? 0 : 1), 20, fxShade(glove, 0.3)); }
-      else { for (let x = Math.round(cx) - 2; x <= Math.round(cx) + 1; x++) det(x, 21, fxShade(glove, -0.3)); rect(Math.round(cx) - 2, 25, Math.round(cx) + 1, 26, '#1a1a1a', 'cuff'); }
+  const skin = C(f.skin, FX_SKIN, FX_SKIN[3]), hair = C(f.hairC, FX_HAIRC, FX_HAIRC[0]), top = C(f.topC, FX_CLOTH, '#169c3c'), topA = C(f.topA, FX_CLOTH, '#f4f0e6');
+  const bot = C(f.bottomC, FX_CLOTH, '#262628'), botA = C(f.bottomA, FX_CLOTH, '#f4f0e6'), shoe = C(f.shoeC, FX_CLOTH, '#262628'), glove = C(f.gloveC, FX_CLOTH, '#d82020'), gear = C(f.gearC, FX_CLOTH, '#d82020');
+  const b = f.build === 'lean' ? -1 : f.build === 'heavy' ? 1 : 0, u = bob ? -1 : 0, gu = bob ? -2 : 0, hx = 36, hy = 20 + u;
+  const P = [];
+  const E = (part, cx, cy, cz, rx, ry, rz, o = {}) => P.push({ k: 'e', part, cx, cy, cz, rx, ry, rz, ...o });
+  const K = (part, ax, ay, az, bx, by, bz, r, o = {}) => P.push({ k: 'c', part, ax, ay, az, bx, by, bz, r, ...o });
+  // legs and feet
+  const tw = 6.2 + b * 0.7, cw = 4.8 + b * 0.4;
+  K('thighL', 30, 71, 0, 29, 90, 1, tw); K('thighR', 42, 71, 0, 43, 90, 1, tw);
+  K('calfL', 29, 90, 1, 28, 106, 0, cw); K('calfR', 43, 90, 1, 44, 106, 0, cw);
+  E('footL', 27, 110, 3, 6.4, 3.6, 5); E('footR', 45, 110, 3, 6.4, 3.6, 5);
+  E('hips', 36, 69, 0, 12.6 + b, 7, 8);
+  if (f.top === 'robe') { K('skirt', 30, 62, 3, 27, 93, 4, 8.6 + b * 0.6); K('skirt', 42, 62, 3, 45, 93, 4, 8.6 + b * 0.6); }
+  // torso, neck, head
+  E('waist', 36, 60 + u, 0, 11.4 + b * 1.6, 9, 8);
+  E('chest', 36, 46 + u, 1, 14.8 + b * 1.6, 11, 9);
+  K('neck', 36, 30 + u, 0, 36, 37 + u, 0, 4.6 + b * 0.5);
+  E('deltL', 22 - b, 41 + u, 0, 6.6 + b * 0.6, 6.2, 6); E('deltR', 50 + b, 41 + u, 0, 6.6 + b * 0.6, 6.2, 6);
+  K('uarmL', 21 - b, 43 + u, -1, 17 - b, 57 + u, 1, 5 + b * 0.5); K('uarmR', 51 + b, 43 + u, -1, 55 + b, 57 + u, 1, 5 + b * 0.5);
+  K('farmL', 17 - b, 57 + u, 1, 25, 46 + gu, 7, 4.4 + b * 0.3); K('farmR', 55 + b, 57 + u, 1, 47, 46 + gu, 7, 4.4 + b * 0.3);
+  E('head', hx, hy, 2, 9.8, 11.6, 9.6); E('earL', 25.9, hy + 2, 0, 2, 2.8, 2); E('earR', 46.1, hy + 2, 0, 2, 2.8, 2);
+  // gloves
+  const gr = f.gloves === 'mma' ? 5.6 : f.gloves === 'wraps' ? 4.6 : 7.5;
+  K('cuffL', 24.6, 46 + gu, 7, 23.4, 49 + gu, 6, f.gloves === 'wraps' ? 4.6 : 4.4); K('cuffR', 47.4, 46 + gu, 7, 48.6, 49 + gu, 6, f.gloves === 'wraps' ? 4.6 : 4.4);
+  E('gloveL', 27, 40 + gu, 10, gr, gr - 0.3, 7); E('gloveR', 45, 40 + gu, 10, gr, gr - 0.3, 7);
+  // hair volume
+  if (f.hair === 'afro') E('hair', hx, hy - 6, -6, 13.5, 12.2, 12);
+  if (f.hair === 'bun') E('hair', hx, hy - 13.5, 0, 4.2, 3.8, 4);
+  if (f.hair === 'mohawk') K('hair', hx, hy - 15, 3, hx, hy - 3, 7, 3.2);
+  if (f.hair === 'spiky') for (let i = -2; i <= 2; i++) E('hair', hx + i * 3.8, hy - 11.5 + Math.abs(i) * 1.4, 4, 3.4, 4.2, 3.4);
+  if (f.hair === 'flattop') E('hair', hx, hy - 12, 1, 9.8, 6.8, 8.5, { clipTop: hy - 17 });
+  if (f.hair === 'long') { K('hairback', 29, hy - 4, -6, 27, hy + 20, -6, 5.2); K('hairback', 43, hy - 4, -6, 45, hy + 20, -6, 5.2); }
+  // gear volume
+  if (f.head === 'cap') { E('cap', hx, hy - 8, 2, 9.9, 7.4, 9.6, { clipBottom: hy - 4 }); E('brim', hx, hy - 4, 10, 9.2, 1.7, 4); }
+  if (f.head === 'durag') K('durtail', hx + 5, hy - 2, -7, hx + 9, hy + 18, -8, 2.6);
+  if (f.neck === 'towel') { K('towel', 25, 36 + u, 4, 47, 36 + u, 4, 3.4); K('towel', 26, 37 + u, 5, 26, 55 + u, 9, 3); K('towel', 46, 37 + u, 5, 46, 55 + u, 9, 3); }
+  if (f.neck === 'belt') { E('plate', 36, 63 + u, 9.5, 6.4, 4.6, 2.2); E('plate2', 25.5, 63 + u, 7, 2.6, 3, 1.6); E('plate2', 46.5, 63 + u, 7, 2.6, 3, 1.6); }
+
+  // rasterize with a z-buffer
+  const N = FX_W * FX_H, zb = new Float32Array(N).fill(-1e9), pr = new Array(N), nx = new Float32Array(N), ny = new Float32Array(N), nz = new Float32Array(N), tt = new Float32Array(N), pp = new Float32Array(N);
+  for (const p of P) {
+    let x0, x1, y0, y1;
+    if (p.k === 'e') { x0 = p.cx - p.rx; x1 = p.cx + p.rx; y0 = p.cy - p.ry; y1 = p.cy + p.ry; }
+    else { x0 = Math.min(p.ax, p.bx) - p.r; x1 = Math.max(p.ax, p.bx) + p.r; y0 = Math.min(p.ay, p.by) - p.r; y1 = Math.max(p.ay, p.by) + p.r; }
+    for (let y = Math.max(0, Math.floor(y0)); y <= Math.min(FX_H - 1, Math.ceil(y1)); y++) {
+      if (p.clipTop !== undefined && y < p.clipTop) continue; if (p.clipBottom !== undefined && y > p.clipBottom) continue;
+      for (let x = Math.max(0, Math.floor(x0)); x <= Math.min(FX_W - 1, Math.ceil(x1)); x++) {
+        const px = x + 0.5, py = y + 0.5; let z, a, c, d, t = 0, perp = 0;
+        if (p.k === 'e') {
+          const U = (px - p.cx) / p.rx, V = (py - p.cy) / p.ry, q = U * U + V * V; if (q > 1) continue;
+          const w = Math.sqrt(1 - q); z = p.cz + p.rz * w; a = U / p.rx; c = V / p.ry; d = w / p.rz; t = V; perp = U;
+        } else {
+          const dx = p.bx - p.ax, dy = p.by - p.ay, L2 = dx * dx + dy * dy; t = Math.max(0, Math.min(1, ((px - p.ax) * dx + (py - p.ay) * dy) / L2));
+          const qx = px - (p.ax + t * dx), qy = py - (p.ay + t * dy), dd = Math.hypot(qx, qy); if (dd > p.r) continue;
+          const h = Math.sqrt(p.r * p.r - dd * dd); z = p.az + t * (p.bz - p.az) + h; a = qx; c = qy; d = h; perp = (qx * -dy + qy * dx) / Math.sqrt(L2) / p.r;
+        }
+        const i = y * FX_W + x; if (z <= zb[i]) continue;
+        const m = Math.hypot(a, c, d) || 1; zb[i] = z; pr[i] = p.part; nx[i] = a / m; ny[i] = c / m; nz[i] = d / m; tt[i] = t; pp[i] = perp;
+      }
     }
   }
-  // shade the bottom and right edge of each part, then outline the silhouette
-  const out = px.map((row) => row.map((p) => (p && p.c ? { ...p } : null)));
-  for (let y = 0; y < FX_H; y++) for (let x = 0; x < FX_W; x++) {
-    const p = px[y][x]; if (!p || !p.c || p.d) continue;
-    const below = y + 1 < FX_H ? px[y + 1][x] : null, right = x + 1 < FX_W ? px[y][x + 1] : null, above = y > 0 ? px[y - 1][x] : null;
-    if (!below || !below.c || below.l !== p.l) out[y][x].c = fxShade(p.c, -0.2);
-    else if (!right || !right.c || right.l !== p.l) out[y][x].c = fxShade(p.c, -0.1);
-    else if (!above || !above.c || above.l !== p.l) out[y][x].c = fxShade(p.c, 0.12);
+  // materials: [base color, shininess 0..1, texture]
+  const T = (base, shine = 0, tex = 0) => ({ base, shine, tex });
+  const sk = T(skin, 0.15);
+  const sleeve = { tee: 0.5, boxtee: 0.5, hoodie: 1, tracktop: 1, montage: 1, robe: 1 };
+  const pinkMontage = '#f878b8';
+  const topCol = f.top === 'montage' ? pinkMontage : top;
+  const botCol = f.bottom === 'joggers' ? pinkMontage : f.bottom === 'liberty' ? '#1f3ab8' : bot;
+  const hairOn = (x, y) => {
+    const dx = x + 0.5 - hx, dy = y + 0.5 - hy, ax = Math.abs(dx), s = f.hair;
+    if (s === 'bald' || f.head === 'bandana' || f.head === 'durag') return 0;
+    const capTop = dy < -6 + (ax >= 7 ? 5 : 0) - (ax >= 8.2 ? 1 : 0);
+    if (s === 'mohawk') return ax <= 2.2 && dy < -3 ? 1 : capTop ? 0.25 : 0;
+    if (s === 'buzz') return capTop ? 0.55 : 0;
+    if (s === 'fade') return dy < -6 ? 1 : ax >= 7 && dy < 0 ? Math.max(0.15, 0.9 + dy * 0.14) : 0;
+    if (s === 'long') return capTop || (ax >= 7 && dy < 6) ? 1 : 0;
+    return capTop ? 1 : 0;
+  };
+  const beardOn = (x, y) => {
+    const dx = x + 0.5 - hx, dy = y + 0.5 - hy, ax = Math.abs(dx);
+    if (f.face === 'beard') return (dy >= 3 && (ax >= 5 || dy >= 8.5)) || (dy >= 5.5 && dy < 6.6 && ax <= 4.5);
+    if (f.face === 'goatee') return (dy >= 8.5 && ax <= 3.2) || (dy >= 5.5 && dy < 6.6 && ax <= 4.5);
+    if (f.face === 'mustache') return dy >= 5.5 && dy < 6.6 && ax <= 4.5;
+    if (f.face === 'stubble') return (dy >= 3 && (ax >= 5 || dy >= 8)) && (x + y) % 2 === 0 ? 2 : 0;
+    return false;
+  };
+  const mat = (i, x, y) => {
+    const part = pr[i], t = tt[i], perp = pp[i], dx = x + 0.5 - 36, ax = Math.abs(dx), yy = y - u;
+    switch (part) {
+      case 'head': {
+        if (f.head === 'cap' && y + 0.5 < hy - 4) return T(gear, 0.2);
+        if (f.head === 'bandana' && y + 0.5 - hy < -3) return T(gear, 0.1, 'paisley');
+        if (f.head === 'durag' && y + 0.5 - hy < -2.5) return T(gear, 0.85, 'silk');
+        if (f.head === 'headband' && y + 0.5 - hy >= -7.5 && y + 0.5 - hy < -5) return T(gear, 0, 'terry');
+        const h = hairOn(x, y); if (h >= 1 || (h > 0 && FX_BAYER[(y & 3) * 4 + (x & 3)] < h)) return T(hair, 0, f.hair === 'cornrows' ? 'rows' : 'strand');
+        const bd = beardOn(x, y); if (bd === 2) return T(fxShade(skin, -0.28), 0.1); if (bd) return T(hair, 0.15, 'strand');
+        return T(skin, f.hair === 'bald' ? 0.45 : 0.15);
+      }
+      case 'earL': case 'earR': case 'neck': return f.neck === 'towel' && part === 'neck' && y < 37 + u ? T('#f4f0e6', 0, 'terry') : sk;
+      case 'hair': case 'hairback': return T(part === 'hairback' ? fxShade(hair, -0.12) : hair, 0, f.hair === 'afro' ? 'curl' : 'strand');
+      case 'cap': return T(gear, 0.2); case 'brim': return T(fxShade(gear, -0.15), 0.3, 'sticker');
+      case 'durtail': return T(gear, 0.85, 'silk');
+      case 'towel': return T('#f4f0e6', 0, 'terry');
+      case 'plate': return T('#f2c440', 0.95, 'gem'); case 'plate2': return T('#e8b020', 0.9);
+      case 'gloveL': case 'gloveR': {
+        if (f.gloves === 'reyez') return T('#a8141a', 0.75, 'logo'); if (f.gloves === 'winnin') return T('#f4efe2', 0.7, 'logo');
+        if (f.gloves === 'wraps') return T('#f2eee4', 0, 'wrap'); if (f.gloves === 'mma') return T(glove, 0.55, 'mma');
+        return T(glove, 0.7);
+      }
+      case 'cuffL': case 'cuffR': return f.gloves === 'mma' ? T('#1a1a1c', 0.3) : f.gloves === 'wraps' ? T('#f2eee4', 0, 'wrap') : f.gloves === 'winnin' ? T('#e8b020', 0.6) : T('#f4f0e6', 0.3, f.gloves === 'reyez' ? 'lace' : 0);
+      case 'chest': case 'waist': {
+        if (f.neck === 'belt' && yy >= 61 && yy <= 65) return T('#e8b020', 0.85, 'beltband');
+        const s = f.top;
+        if (s === 'none') return sk;
+        if (s === 'tank' || s === 'jersey') {
+          if ((ax > (s === 'jersey' ? 8.5 : 9.5) && yy < 48) || (dx / 5.2) ** 2 + ((yy - 35.5) / 4.2) ** 2 < 1) return sk;
+          if (s === 'jersey') { if ((ax > 7.5 && ax <= 8.5 && yy < 48) || Math.abs((dx / 5.2) ** 2 + ((yy - 35.5) / 4.2) ** 2 - 1.15) < 0.25) return T(topA, 0.15); return T(top, 0.15, 'number'); }
+          return T(top, 0.05);
+        }
+        if (s === 'robe') { const w = 6.5 - (yy - 34) * 0.42; if (yy < 50 && ax < w) return sk; if (yy < 52 && ax < w + 1.6) return T(topA, 0.5); if (yy >= 59 && yy <= 61) return T(topA, 0.5); return T(top, 0.55, 'satin'); }
+        if ((s === 'tee' || s === 'boxtee') && (dx / 4.2) ** 2 + ((yy - 35) / 2.6) ** 2 < 1) return sk;
+        if (s === 'hoodie' && yy < 39 && ax < 9) return T(fxShade(top, -0.18), 0.05);
+        if (s === 'hoodie' && yy >= 55 && yy <= 62 && ax < 6.5) return T(fxShade(top, -0.1), 0.05, 'pocket');
+        if ((s === 'tracktop' || s === 'montage') && ax < 0.8 && yy > 36) return T('#c8ccd4', 0.9);
+        if ((s === 'tracktop' || s === 'montage') && yy < 38.5 && ax < 7) return T(s === 'montage' ? '#262628' : topA, 0.2);
+        if (s === 'boxtee' && ax <= 5.5 && yy >= 43 && yy <= 48) return T('#e0202a', 0.1, 'boxlogo');
+        return T(topCol, 0.08, s === 'hoodie' ? 'fleece' : 0);
+      }
+      case 'skirt': return Math.abs(dx) < 1.6 || t > 0.93 ? T(topA, 0.5) : T(top, 0.55, 'satin');
+      case 'deltL': case 'deltR': return ['tee', 'boxtee', 'hoodie', 'tracktop', 'montage', 'robe'].includes(f.top) ? T(f.top === 'robe' ? top : topCol, f.top === 'robe' ? 0.55 : 0.08) : sk;
+      case 'uarmL': case 'uarmR': case 'farmL': case 'farmR': {
+        const upper = part[0] === 'u', cover = sleeve[f.top] || 0, reach = upper ? cover >= 1 || t < cover * 2 - 0.5 : cover >= 1 && t < 0.72;
+        if (!reach || f.top === 'none' || f.top === 'tank' || f.top === 'jersey') return sk;
+        const col = f.top === 'robe' ? top : topCol;
+        if ((f.top === 'tracktop' || f.top === 'montage') && Math.abs(perp) > 0.38) return T(f.top === 'montage' ? '#262628' : topA, 0.2, f.top === 'tracktop' ? 'stripes' : 0);
+        if (upper && cover < 1 && t > cover * 2 - 0.7) return T(fxShade(col, -0.12), 0.08);
+        if (!upper && t > 0.62) return T(fxShade(col, -0.15), 0.08);
+        return T(col, f.top === 'robe' ? 0.55 : 0.08);
+      }
+      case 'hips': {
+        if (f.neck === 'belt' && yy >= 61) return T('#e8b020', 0.85, 'beltband');
+        if (y <= 64) return T(f.bottom === 'liberty' ? '#f4f0e6' : f.bottom === 'joggers' ? '#262628' : botA, 0.4, f.bottom === 'trunks' ? 'band' : 0);
+        return T(botCol, f.bottom === 'trunks' || f.bottom === 'liberty' ? 0.6 : 0.05, f.bottom === 'liberty' ? 'stars' : 0);
+      }
+      case 'thighL': case 'thighR': case 'calfL': case 'calfR': {
+        const thigh = part[0] === 't', s = f.bottom, sh = f.shoes;
+        if (!thigh && ((sh === 'boots' && t > 0.42) || (sh === 'chucks' && t > 0.8) || (sh === 'jabbers' && t > 0.74) || (sh === 'tumbs' && t > 0.72))) return shoeMat(sh, x, y, true);
+        const full = s === 'pants' || s === 'trackpants' || s === 'joggers';
+        const cov = thigh ? (s === 'trunks' || s === 'liberty' ? 0.5 : s === 'shorts' ? 0.85 : 1.01) : full ? 1.01 : 0;
+        if (t >= cov) return sk;
+        if (s === 'trackpants' && Math.abs(perp) > 0.42) return T(botA, 0.2, 'stripes');
+        if (s === 'joggers' && !thigh && t > 0.86) return T('#262628', 0.1);
+        if ((s === 'trunks' || s === 'liberty' || s === 'shorts') && thigh && t > cov - 0.08) return T(s === 'liberty' ? '#d82020' : botA, 0.4);
+        if (s === 'liberty' && thigh) return T(Math.floor(perp * 4 + 4) % 2 ? '#d82020' : '#f4f0e6', 0.55);
+        return T(botCol, s === 'trunks' ? 0.6 : 0.06, s === 'pants' || s === 'joggers' ? 'fleece' : 0);
+      }
+      case 'footL': case 'footR': return shoeMat(f.shoes, x, y, false);
+    }
+    return sk;
+  };
+  function shoeMat(sh, x, y, upper) {
+    const sole = !upper && y >= 112;
+    if (sh === 'slides') return upper ? sk : y >= 111 ? T('#e8e2d4', 0.1) : y >= 109 ? T(shoe, 0.2) : sk;
+    if (sh === 'jabbers') { if (sole) return T('#f4f0e6', 0.2); if (upper) return T(y < 104 ? '#d82020' : '#1c1c1e', 0.45); return T(y >= 110 ? '#d82020' : '#1c1c1e', 0.5, 'wing'); }
+    if (sh === 'chucks') { if (sole) return T(y === 112 ? '#262628' : '#f4f0e6', 0.1); if (!upper && y >= 110) return T('#f4f0e6', 0.15); return T(shoe, 0.05, upper ? 'star' : 'laces'); }
+    if (sh === 'tumbs') { if (sole) return T('#4a3220', 0.1); return T(upper && y < 100 ? '#9a6a2a' : '#c8963c', 0.08, 'laces'); }
+    if (sole) return T(sh === 'boots' ? fxShade(shoe, -0.4) : '#f4f0e6', 0.2);
+    return T(shoe, sh === 'boots' ? 0.55 : 0.3, sh === 'boots' ? 'laces' : 0);
   }
+  // shade
+  const img = new Uint8ClampedArray(N * 4), lvl = new Int8Array(N).fill(-1), ramp = new Array(N);
   for (let y = 0; y < FX_H; y++) for (let x = 0; x < FX_W; x++) {
-    if (out[y][x]) continue;
-    const n = [[0, 1], [0, -1], [1, 0], [-1, 0]].some(([dx, dy]) => { const p = px[y + dy] && px[y + dy][x + dx]; return p && p.c; });
-    if (n) out[y][x] = { c: FX_INK };
+    const i = y * FX_W + x; if (!pr[i]) continue;
+    const m = mat(i, x, y), R = fxRamp(m.base), bay = FX_BAYER[(y & 3) * 4 + (x & 3)];
+    const dl = nx[i] * FX_L[0] + ny[i] * FX_L[1] + nz[i] * FX_L[2];
+    let v = ((dl + 0.25) / 1.15) * 4;
+    if (m.tex === 'strand' && (x * 7 + y * 3) % 5 === 0) v -= 0.9;
+    if (m.tex === 'curl' && (x * 5 + y * 11) % 4 === 0) v -= 1;
+    if (m.tex === 'rows' && x % 3 === 0) v -= 1.2;
+    if (m.tex === 'terry' && (x + y) % 2) v -= 0.4;
+    if (m.tex === 'fleece' && (x * 3 + y * 5) % 7 === 0) v -= 0.5;
+    if (pr[i] === 'head' && m.base === skin) v += 0.35; // soft fill light on faces
+    const isHair = m.tex === 'strand' || m.tex === 'curl' || m.tex === 'rows';
+    let k = Math.max(0, Math.min(isHair ? 3 : 4, Math.floor(v + (bay - 0.5) * 0.7)));
+    let col = R[k].slice();
+    const spec = Math.pow(Math.max(0, nx[i] * FX_H2[0] + ny[i] * FX_H2[1] + nz[i] * FX_H2[2]), 6 + m.shine * 26);
+    if (m.shine > 0 && spec > 0.55) { col = fxMix(R[4], [255, 255, 255], Math.min(1, m.shine)); k = 4; }
+    const rim = Math.pow(1 - nz[i], 2.2) * Math.max(0, nx[i] * 0.92 - ny[i] * 0.25);
+    if (rim > 0.32) col = fxMix(col, FX_RIM, Math.min(0.75, (rim - 0.32) * 2.2));
+    // pattern details
+    const dxp = x - 36, yy = y - u;
+    if (m.tex === 'paisley' && (x * 3 + y * 7) % 9 === 0) col = fxMix(col, [255, 255, 255], 0.6);
+    if (m.tex === 'silk' && (x + y * 2) % 6 === 0) col = fxMix(col, [255, 255, 255], 0.35);
+    if (m.tex === 'stars' && (x * 5 + y * 3) % 11 === 0) col = [244, 240, 230];
+    if (m.tex === 'boxlogo' && yy >= 45 && yy <= 46 && Math.abs(dxp + 0.5) <= 3.5 && (x % 2 || yy === 45)) col = [250, 250, 250];
+    if (m.tex === 'pocket' && (yy === 55 || Math.abs(dxp + 0.5) > 5.8)) col = fxMix(col, [0, 0, 0], 0.25);
+    if (m.tex === 'band' && (x % 3 === 0) && yy === 63) col = fxMix(col, [0, 0, 0], 0.55);
+    if (m.tex === 'stripes') { const a = Math.abs(pp[i]); if (!((a > 0.4 && a < 0.56) || (a > 0.7 && a < 0.86))) col = fxRamp(f.top === 'tracktop' || f.bottom === 'trackpants' ? (pr[i][0] === 't' || pr[i][0] === 'c' ? botCol : topCol) : topCol)[Math.min(4, k)]; }
+    if (m.tex === 'laces' && Math.abs(x - (x < 36 ? 28 : 44)) < 1 && y % 2 === 0) col = fxMix(col, [255, 255, 255], 0.55);
+    if (m.tex === 'lace' && (x + y) % 2 === 0) col = [120, 20, 24];
+    if (m.tex === 'wrap' && y % 2 === 0) col = fxMix(col, [0, 0, 0], 0.12);
+    if (m.tex === 'mma' && (y === Math.round(40 + gu)) ) col = fxMix(col, [0, 0, 0], 0.5);
+    if (m.tex === 'logo' && Math.abs(nx[i]) < 0.18 && ny[i] < -0.35 && ny[i] > -0.62) col = f.gloves === 'winnin' ? [232, 176, 32] : [242, 196, 64];
+    if (m.tex === 'wing' && y === 108 && (x % 2 === 0)) col = [244, 240, 230];
+    if (m.tex === 'star' && (x === 31 || x === 41) && y === 104) col = [30, 60, 160];
+    if (m.tex === 'sticker' && (x === 39 || x === 40) && y === Math.round(hy - 4)) col = [210, 214, 220];
+    if (m.tex === 'beltband' && (x % 4 === 0)) col = fxMix(col, [255, 250, 220], 0.4);
+    if (m.tex === 'gem' && Math.abs(dxp + 0.5) <= 2.6 && Math.abs(yy - 62.5) <= 1.8) { col = fxRGB(f.beltC || '#169c3c'); if (dxp === -2 && yy === 61) col = [255, 255, 255]; }
+    if (m.tex === 'number') { const gx = x - 31, gy = yy - 47; if (gy >= 0 && gy < 5) { const dg = gx >= 0 && gx < 3 ? FX_DIGITS[2] : gx >= 5 && gx < 8 ? FX_DIGITS[3] : null; if (dg && dg[gy][gx >= 5 ? gx - 5 : gx] === '1') col = fxRGB(topA); } }
+    lvl[i] = k; ramp[i] = R;
+    img.set([col[0], col[1], col[2], 255], i * 4);
+  }
+  // contact shadows where a part sits behind another
+  for (let y = 0; y < FX_H; y++) for (let x = 0; x < FX_W; x++) {
+    const i = y * FX_W + x; if (!pr[i]) continue;
+    for (const [ox, oy] of [[1, 0], [-1, 0], [0, -1], [0, 1]]) {
+      const X = x + ox, Y = y + oy; if (X < 0 || Y < 0 || X >= FX_W || Y >= FX_H) continue;
+      const j = Y * FX_W + X; if (pr[j] && pr[j] !== pr[i] && zb[j] - zb[i] > 3.5) { const d = ramp[i][Math.max(0, lvl[i] - 2)]; img.set([d[0], d[1], d[2], 255], i * 4); break; }
+    }
+  }
+  // face
+  const put = (x, y, c) => { x = Math.round(x); y = Math.round(y); const i = y * FX_W + x; if (pr[i] === 'head') img.set([c[0], c[1], c[2], 255], i * 4); };
+  const S = fxRamp(skin), lash = fxMix(S[0], [10, 6, 8], 0.5), white = [236, 232, 228], iris = [40, 26, 22];
+  const ey = Math.round(hy + 1);
+  for (const ex of [31, 39]) {
+    const inner = ex === 31 ? ex + 2 : ex;
+    if (f.eyes === 'calm') { for (let k = 0; k < 3; k++) put(ex + k, ey, lash); put(ex + 1, ey + 1, S[1]); }
+    else if (f.eyes === 'narrow') { for (let k = 0; k < 3; k++) { put(ex + k, ey - 1, lash); put(ex + k, ey, k === 1 ? iris : white); } }
+    else if (f.eyes === 'wide') { for (let k = 0; k < 3; k++) { put(ex + k, ey - 1, lash); put(ex + k, ey, white); put(ex + k, ey + 1, white); } put(ex + 1, ey, iris); put(ex + 1, ey + 1, iris); put(ex + 2, ey, [255, 255, 255]); }
+    else { for (let k = 0; k < 3; k++) { put(ex + k, ey - 1, lash); put(ex + k, ey, white); } put(inner === ex ? ex : ex + 2, ey, iris); put(ex + 1, ey, iris); put(ex + 1, ey + 1, S[1]); put(ex + (ex === 31 ? 1 : 1), ey, [20, 12, 10]); }
+  }
+  const brow = fxMix(fxRGB(hair), [0, 0, 0], typeof f.hairC === 'number' && f.hairC >= 6 ? 0.45 : 0.1);
+  const by = ey - 3;
+  if (f.brows === 'fierce') { for (const [x, y] of [[30, by], [31, by], [32, by + 1], [33, by + 1], [39, by + 1], [40, by + 1], [41, by], [42, by]]) put(x, y, brow); }
+  else if (f.brows === 'thick') { for (let x = 30; x <= 33; x++) { put(x, by, brow); put(x, by + 1, brow); } for (let x = 39; x <= 42; x++) { put(x, by, brow); put(x, by + 1, brow); } }
+  else { const yb = f.brows === 'raised' ? by - 1 : by; for (let x = 30; x <= 33; x++) put(x, yb, brow); for (let x = 39; x <= 42; x++) put(x, yb, brow); }
+  put(36, ey + 1, S[3]); put(37, ey + 2, S[1]); put(37, ey + 3, S[1]); put(35, ey + 4, S[0]); put(37, ey + 4, S[0]); put(36, ey + 4, S[2]);
+  const my = ey + 6, lip = fxMix(S[0], [120, 40, 40], 0.3);
+  if (f.mouth === 'grin') { for (let x = 33; x <= 39; x++) put(x, my, x === 33 || x === 39 ? lip : [244, 240, 232]); for (let x = 34; x <= 38; x++) put(x, my + 1, lip); }
+  else if (f.mouth === 'smirk') { for (let x = 33; x <= 37; x++) put(x, my, lip); put(38, my - 1, lip); }
+  else if (f.mouth === 'frown') { put(33, my + 1, lip); for (let x = 34; x <= 38; x++) put(x, my, lip); put(39, my + 1, lip); }
+  else if (f.mouth === 'guard') { for (let x = 33; x <= 39; x++) { put(x, my, fxRGB(gear)); put(x, my + 1, fxMix(fxRGB(gear), [0, 0, 0], 0.3)); } put(34, my, [255, 255, 255]); }
+  else { for (let x = 33; x <= 39; x++) put(x, my, lip); put(36, my + 1, S[1]); }
+  // eyewear
+  if (f.eyewear === 'shades') { for (let x = 28; x <= 44; x++) put(x, ey - 1, [8, 8, 10]); for (const x0 of [29, 38]) for (let x = x0; x <= x0 + 5; x++) { put(x, ey, [8, 8, 10]); put(x, ey + 1, [8, 8, 10]); } for (const [x, y] of [[30, ey], [31, ey + 1], [39, ey], [40, ey + 1]]) put(x, y, [255, 255, 255]); }
+  if (f.eyewear === 'aviator') { const gold = [216, 168, 56]; for (let x = 28; x <= 44; x++) put(x, ey - 1, gold); for (const x0 of [29, 38]) for (let y = 0; y < 4; y++) for (let x = x0; x <= x0 + 5 - (y === 3 ? 1 : 0); x++) put(x + (y === 3 ? (x0 === 29 ? 1 : 0) : 0), ey + y, fxMix([20, 30, 40], [120, 150, 170], y / 3.5)); put(30, ey, [255, 255, 255]); put(39, ey, [255, 255, 255]); }
+  if (f.eyewear === 'sport') { const g = fxRGB(gear); for (let x = 28; x <= 44; x++) for (let y = ey - 1; y <= ey + 1; y++) put(x, y, fxMix(g, [248, 120, 248], (x - 28) / 16)); for (let x = 30; x <= 33; x++) put(x, ey - 1, [255, 255, 255]); }
+  // gold chain
+  if (f.neck === 'chain') for (let k = -6; k <= 6; k++) { const x = 36 + k, y = 37 + u + Math.round((6 - Math.abs(k)) * 0.8); for (const yy of [y, y + 1]) { const i = yy * FX_W + x; if (pr[i] && !String(pr[i]).startsWith('glove')) img.set((k + yy) % 2 ? [255, 228, 120, 255] : [200, 140, 30, 255], i * 4); } }
+  // selective outline: each silhouette edge takes the darkest tone of the part it borders
+  const out = new Uint8ClampedArray(img);
+  for (let y = 0; y < FX_H; y++) for (let x = 0; x < FX_W; x++) {
+    const i = y * FX_W + x; if (pr[i]) continue;
+    let best = null;
+    for (const [ox, oy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const X = x + ox, Y = y + oy; if (X < 0 || Y < 0 || X >= FX_W || Y >= FX_H) continue; const j = Y * FX_W + X; if (pr[j]) { best = ramp[j][0]; break; } }
+    if (best) { const c = fxMix(best, [6, 4, 14], 0.45); out.set([c[0], c[1], c[2], 255], i * 4); }
+    else if (y >= 112 && y <= 117 && ((x + 0.5 - 36) / 22) ** 2 + ((y + 0.5 - 114.5) / 3) ** 2 < 1) out.set([0, 0, 0, 90], i * 4);
   }
   return out;
 }
-// SVG from the pixel map; view 'full' (32x48) or 'face' (head and shoulders)
+const fxCache = new Map();
+function fxURL(cfg, bob, view) {
+  const key = JSON.stringify([cfg, bob, view]); if (fxCache.has(key)) return fxCache.get(key);
+  const data = fxRender(cfg, bob), cv = document.createElement('canvas');
+  const [sx, sy, w, h] = view === 'face' ? [15, 1, 42, 42] : [0, 0, FX_W, FX_H];
+  cv.width = w; cv.height = h; const ctx = cv.getContext('2d'), id = ctx.createImageData(FX_W, FX_H); id.data.set(data);
+  const tmp = document.createElement('canvas'); tmp.width = FX_W; tmp.height = FX_H; tmp.getContext('2d').putImageData(id, 0, 0);
+  ctx.drawImage(tmp, sx, sy, w, h, 0, 0, w, h);
+  const url = cv.toDataURL('image/png'); if (fxCache.size > 400) fxCache.clear(); fxCache.set(key, url); return url;
+}
+// markup for a fighter; 'idle' adds a breathing guard (two frames)
 function fxSVG(cfg, view = 'full', cls = '') {
-  const px = fxBuild(cfg), vb = view === 'face' ? '5 0 22 22' : '0 0 32 48';
-  let r = '';
-  for (let y = 0; y < FX_H; y++) { let x = 0; while (x < FX_W) { const p = px[y][x]; if (!p) { x++; continue; } let w = 1; while (x + w < FX_W && px[y][x + w] && px[y][x + w].c === p.c) w++; r += `<rect x="${x}" y="${y}" width="${w}" height="1" fill="${p.c}"/>`; x += w; } }
-  return `<svg class="fxsvg ${cls}" viewBox="${vb}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+  const a = fxURL(cfg, 0, view);
+  if (!/\bidle\b/.test(cls)) return `<img class="fxsvg ${cls}" src="${a}" alt="">`;
+  return `<span class="fxsvg fx2 ${cls}"><img src="${a}" alt=""><img class="fb" src="${fxURL(cfg, 1, view)}" alt=""></span>`;
 }
 function fxRandom(rng = Math.random) {
   const pick = (a) => a[(rng() * a.length) | 0], f = {};
   for (const [k, opts] of Object.entries(FX_PARTS)) f[k] = pick(opts)[0];
   Object.assign(f, { skin: (rng() * FX_SKIN.length) | 0, hairC: (rng() * 8) | 0, topC: (rng() * FX_CLOTH.length) | 0, topA: (rng() * FX_CLOTH.length) | 0, bottomC: (rng() * FX_CLOTH.length) | 0,
     bottomA: (rng() * FX_CLOTH.length) | 0, shoeC: (rng() * FX_CLOTH.length) | 0, gloveC: (rng() * FX_CLOTH.length) | 0, gearC: (rng() * FX_CLOTH.length) | 0 });
-  if (rng() < 0.6) f.head = 'none'; if (rng() < 0.75) f.eyewear = 'none'; if (rng() < 0.7) f.neck = 'none'; if (rng() < 0.4) f.face = 'none';
+  if (rng() < 0.6) f.head = 'none'; if (rng() < 0.7) f.eyewear = 'none'; if (rng() < 0.6) f.neck = 'none'; if (rng() < 0.4) f.face = 'none';
   return f;
 }
 
@@ -4260,24 +4417,34 @@ function fxRandom(rng = Math.random) {
 // store prices are placeholders until purchases are live
 const AR_RARITY = { common: { n: 'Common', c: '#bcbcbc', usd: '$0.99' }, rare: { n: 'Rare', c: '#3cbcfc', usd: '$1.99' }, epic: { n: 'Epic', c: '#c084fc', usd: '$2.99' }, legendary: { n: 'Legendary', c: '#f8b800', usd: '$4.99' } };
 const AR_CLOTH_NAMES = ['Red', 'Blue', 'Green', 'Gold', 'White', 'Black', 'Gray', 'Pink', 'Sky blue', 'Royal purple', 'Blaze orange', 'Deep teal', 'Blood red', 'Leather brown', 'Volt', 'Aqua'];
-// [id, slot, value, name, rarity, how to get it]
+// [id, slot, value, name, rarity, how to get it]. Brand-inspired gear is parody: recognizable, never a copy.
 const AR_ITEMS = [
-  ['hair:mohawk', 'hair', 'mohawk', 'Mohawk', 'rare', { pass: 13 }], ['hair:bun', 'hair', 'bun', 'Top knot', 'common', { pass: 5 }],
+  // earned in the free Fight Pass
+  ['cloth:13', 'cloth', 13, 'Leather brown', 'common', { pass: 1 }], ['head:bandana', 'head', 'bandana', 'Paisley bandana', 'common', { pass: 3 }],
+  ['cloth:8', 'cloth', 8, 'Sky blue', 'common', { pass: 4 }], ['hair:bun', 'hair', 'bun', 'Top knot', 'common', { pass: 5 }],
+  ['shoes:chucks', 'shoes', 'chucks', 'Chuck Tailors', 'rare', { pass: 7 }], ['cloth:10', 'cloth', 10, 'Blaze orange', 'common', { pass: 8 }],
+  ['shoes:slides', 'shoes', 'slides', 'Yeesh slides', 'rare', { pass: 9 }], ['eyewear:sport', 'eyewear', 'sport', 'Oakly blades', 'rare', { pass: 11 }],
+  ['hair:mohawk', 'hair', 'mohawk', 'Mohawk', 'rare', { pass: 13 }],
+  // earned with trophies, levels and streaks
+  ['mouth:guard', 'mouth', 'guard', 'Mouthguard', 'common', { ach: 'first', how: 'Finish your first fight' }],
+  ['head:cap', 'head', 'cap', 'New Err 59FIFTEEN', 'rare', { lvl: 3 }],
+  ['top:montage', 'top', 'montage', 'Montage tracksuit', 'epic', { streak: 3, how: 'Do 3 days of road work in a row' }],
+  ['bottom:joggers', 'bottom', 'joggers', 'Montage joggers', 'epic', { streak: 3, how: 'Do 3 days of road work in a row' }],
+  ['neck:chain', 'neck', 'chain', 'Havana Link chain', 'epic', { streak: 7, how: 'Reach a 7-day streak' }],
+  ['top:robe', 'top', 'robe', 'Philly Stallion robe', 'epic', { ach: 'gradeA', how: 'Win a fight by TKO' }],
+  ['eyewear:shades', 'eyewear', 'shades', 'Deal-With-It 8-bits', 'legendary', { ach: 'gradeS', how: 'Win a fight by KO' }],
+  // Store
+  ['top:boxtee', 'top', 'boxtee', 'Supremo box tee', 'rare', { store: 1 }], ['top:tracktop', 'top', 'tracktop', 'Abibas track jacket', 'rare', { store: 1 }],
+  ['bottom:trackpants', 'bottom', 'trackpants', 'Abibas track pants', 'rare', { store: 1 }], ['top:jersey', 'top', 'jersey', 'Chicago Bullies 23', 'epic', { store: 1 }],
+  ['bottom:liberty', 'bottom', 'liberty', 'Liberty trunks', 'epic', { store: 1 }],
+  ['shoes:jabbers', 'shoes', 'jabbers', "Air Jabber 1 'Bred'", 'legendary', { store: 1 }], ['shoes:tumbs', 'shoes', 'tumbs', 'Tumberlands', 'rare', { store: 1 }],
+  ['gloves:reyez', 'gloves', 'reyez', 'Reyez Royale', 'epic', { store: 1 }], ['gloves:winnin', 'gloves', 'winnin', "Winnin' Pro", 'epic', { store: 1 }],
+  ['gloves:mma', 'gloves', 'mma', 'Cage gloves', 'rare', { store: 1 }], ['head:durag', 'head', 'durag', 'Silky durag', 'common', { store: 1 }],
+  ['eyewear:aviator', 'eyewear', 'aviator', 'Ray-Bam aviators', 'rare', { store: 1 }],
   ['hairC:8', 'hairC', 8, 'Electric blue hair', 'rare', { store: 1 }], ['hairC:9', 'hairC', 9, 'Bubblegum hair', 'rare', { store: 1 }],
   ['hairC:10', 'hairC', 10, 'Toxic green hair', 'rare', { store: 1 }], ['hairC:11', 'hairC', 11, 'Fire red hair', 'epic', { store: 1 }],
-  ['top:jersey', 'top', 'jersey', 'Jersey', 'rare', { store: 1 }], ['top:robe', 'top', 'robe', 'Ring robe', 'epic', { ach: 'gradeA', how: 'Win a fight by TKO' }],
-  ['bottom:joggers', 'bottom', 'joggers', 'Joggers', 'common', { pass: 7 }],
-  ['shoes:hightops', 'shoes', 'hightops', 'High-tops', 'rare', { store: 1 }], ['shoes:slides', 'shoes', 'slides', 'Slides', 'common', { pass: 9 }],
-  ['gloves:mma', 'gloves', 'mma', 'MMA gloves', 'epic', { store: 1 }],
-  ['head:cap', 'head', 'cap', 'Cap', 'common', { lvl: 3 }], ['head:bandana', 'head', 'bandana', 'Bandana', 'common', { pass: 3 }],
-  ['eyewear:sport', 'eyewear', 'sport', 'Sport lenses', 'rare', { pass: 11 }],
-  ['eyewear:shades', 'eyewear', 'shades', "Slick's 8-bit shades", 'legendary', { ach: 'gradeS', how: 'Win a fight by KO' }],
-  ['neck:chain', 'neck', 'chain', 'Gold chain', 'epic', { streak: 7, how: 'Reach a 7-day streak' }],
-  ['mouth:guard', 'mouth', 'guard', 'Mouthguard', 'common', { ach: 'first', how: 'Finish your first fight' }],
-  ['cloth:8', 'cloth', 8, 'Sky blue', 'common', { pass: 4 }], ['cloth:9', 'cloth', 9, 'Royal purple', 'rare', { store: 1 }],
-  ['cloth:10', 'cloth', 10, 'Blaze orange', 'common', { pass: 8 }], ['cloth:11', 'cloth', 11, 'Deep teal', 'rare', { store: 1 }],
-  ['cloth:12', 'cloth', 12, 'Blood red', 'rare', { store: 1 }], ['cloth:13', 'cloth', 13, 'Leather brown', 'common', { pass: 1 }],
-  ['cloth:14', 'cloth', 14, 'Volt', 'epic', { store: 1 }], ['cloth:15', 'cloth', 15, 'Aqua', 'rare', { store: 1 }],
+  ['cloth:9', 'cloth', 9, 'Royal purple', 'rare', { store: 1 }], ['cloth:11', 'cloth', 11, 'Deep teal', 'rare', { store: 1 }],
+  ['cloth:12', 'cloth', 12, 'Blood red', 'rare', { store: 1 }], ['cloth:14', 'cloth', 14, 'Volt', 'epic', { store: 1 }], ['cloth:15', 'cloth', 15, 'Aqua', 'rare', { store: 1 }],
 ].map(([id, slot, val, name, rarity, src]) => ({ id, slot, val, name, rarity, src }));
 const AR_CLOTH_FIELDS = ['topC', 'topA', 'bottomC', 'bottomA', 'shoeC', 'gloveC', 'gearC'];
 // monthly seasons: each has two limited-edition colors and a title belt you can only earn that month
