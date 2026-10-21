@@ -611,10 +611,6 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .arswb.locked { opacity: .5; cursor: not-allowed; }
 .arswb.ltd { outline-color: #f83800; }
 /* gym bag, earn back */
-.arbag { border-color: var(--gold); background: radial-gradient(100% 120% at 0% 0%, #3a2a00, #000 70%); animation: arbagpulse 1.2s steps(2) infinite; }
-.arbag small { display: block; font-size: 12px; color: #dcdcdc; margin-top: 4px; }
-.arbag b { font-size: 12px; color: var(--gold); }
-@keyframes arbagpulse { 50% { border-color: var(--w); } }
 .arearn { border-color: #f83800; gap: 6px; }
 .arearn b { font-size: 12px; color: #f83800; }
 .arearn span { font-size: 13px; }
@@ -623,8 +619,8 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .arseason small { font-size: 12px; color: #bcbcbc; }
 .arnext { font-size: 13px; padding: 8px 10px; border: 2px dashed #f83800; }
 .arnext b { color: #f83800; }
-.artrack { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
-.arpt { display: grid; justify-items: center; gap: 2px; padding: 4px 0; border: 2px solid #333; background: #0a0a0a; font-size: 16px; }
+.artrack { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.arpt { display: grid; justify-items: center; gap: 2px; padding: 6px 0; border: 2px solid #333; background: #0a0a0a; font-size: 22px; }
 .arpt small { font-size: 7px; color: #9c9c9c; }
 .arpt small.px { font-size: 7px; }
 .arpt.got { border-color: var(--grn); background: #002a00; }
@@ -637,7 +633,6 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .arshopi b { font-size: 13px; }
 .arshopi small { font: 7px "Press Start 2P", monospace; text-transform: uppercase; }
 .arshopfx { width: 64px; }
-.arxprow.coin .mono { color: #f8d878; }
 .arrtabs button { font-size: 9px; padding: 11px 2px; }
 /* celebration */
 .arcel { position: fixed; inset: 0; z-index: 95; background: rgba(0, 0, 0, .78); display: grid; place-items: center; padding: 16px; }
@@ -650,7 +645,7 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .arcelbox .pxbtn { font: 12px "Press Start 2P", monospace; text-transform: uppercase; color: #000; background: #f8b800; border: 4px solid #000; padding: 12px 22px; cursor: pointer; margin-top: 6px; }
 @keyframes arpopin { from { transform: scale(.6); opacity: 0; } }
 @keyframes arbob { 50% { transform: translateY(-6px); } }
-@media (prefers-reduced-motion: reduce) { .fxsvg.idle, .arbag, .arcelbox, .arcelicon, .arcelstars { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .fxsvg.idle, .arcelbox, .arcelicon, .arcelstars { animation: none !important; } }
 /* ---------- end rewards */
 .whatif { display: grid; gap: 12px; }
 .whatif .wi { display: grid; gap: 4px; min-width: 0; font-size: 12px; color: var(--muted); }
@@ -4259,29 +4254,30 @@ function fxRandom(rng = Math.random) {
   return f;
 }
 
-// ---------------------------------------------------------------- MyFighter wardrobe, coins, Fight Pass, Pro Shop, gym bag
+// ---------------------------------------------------------------- MyFighter wardrobe, Fight Pass, Store
 // Everything here is cosmetic: it changes how your fighter looks, never your score, rank or odds.
-// Coins are earned by playing. Every item can be earned without paying.
-const AR_RARITY = { common: { n: 'Common', c: '#bcbcbc', price: 150 }, rare: { n: 'Rare', c: '#3cbcfc', price: 400 }, epic: { n: 'Epic', c: '#c084fc', price: 900 }, legendary: { n: 'Legendary', c: '#f8b800', price: 2000 } };
+// No currency: every item is either earned (trophies, levels, streaks, the free Fight Pass) or bought outright.
+// store prices are placeholders until purchases are live
+const AR_RARITY = { common: { n: 'Common', c: '#bcbcbc', usd: '$0.99' }, rare: { n: 'Rare', c: '#3cbcfc', usd: '$1.99' }, epic: { n: 'Epic', c: '#c084fc', usd: '$2.99' }, legendary: { n: 'Legendary', c: '#f8b800', usd: '$4.99' } };
 const AR_CLOTH_NAMES = ['Red', 'Blue', 'Green', 'Gold', 'White', 'Black', 'Gray', 'Pink', 'Sky blue', 'Royal purple', 'Blaze orange', 'Deep teal', 'Blood red', 'Leather brown', 'Volt', 'Aqua'];
 // [id, slot, value, name, rarity, how to get it]
 const AR_ITEMS = [
-  ['hair:mohawk', 'hair', 'mohawk', 'Mohawk', 'rare', { shop: 1 }], ['hair:bun', 'hair', 'bun', 'Top knot', 'common', { shop: 1 }],
-  ['hairC:8', 'hairC', 8, 'Electric blue hair', 'rare', { shop: 1 }], ['hairC:9', 'hairC', 9, 'Bubblegum hair', 'rare', { shop: 1 }],
-  ['hairC:10', 'hairC', 10, 'Toxic green hair', 'rare', { bag: 1 }], ['hairC:11', 'hairC', 11, 'Fire red hair', 'epic', { shop: 1 }],
-  ['top:jersey', 'top', 'jersey', 'Jersey', 'rare', { shop: 1 }], ['top:robe', 'top', 'robe', 'Ring robe', 'epic', { ach: 'gradeA', how: 'Win a fight by TKO' }],
-  ['bottom:joggers', 'bottom', 'joggers', 'Joggers', 'common', { shop: 1 }],
-  ['shoes:hightops', 'shoes', 'hightops', 'High-tops', 'rare', { shop: 1 }], ['shoes:slides', 'shoes', 'slides', 'Slides', 'common', { shop: 1 }],
-  ['gloves:mma', 'gloves', 'mma', 'MMA gloves', 'epic', { shop: 1 }],
-  ['head:cap', 'head', 'cap', 'Cap', 'common', { lvl: 3 }], ['head:bandana', 'head', 'bandana', 'Bandana', 'common', { shop: 1 }],
-  ['eyewear:sport', 'eyewear', 'sport', 'Sport lenses', 'rare', { shop: 1 }],
+  ['hair:mohawk', 'hair', 'mohawk', 'Mohawk', 'rare', { pass: 13 }], ['hair:bun', 'hair', 'bun', 'Top knot', 'common', { pass: 5 }],
+  ['hairC:8', 'hairC', 8, 'Electric blue hair', 'rare', { store: 1 }], ['hairC:9', 'hairC', 9, 'Bubblegum hair', 'rare', { store: 1 }],
+  ['hairC:10', 'hairC', 10, 'Toxic green hair', 'rare', { store: 1 }], ['hairC:11', 'hairC', 11, 'Fire red hair', 'epic', { store: 1 }],
+  ['top:jersey', 'top', 'jersey', 'Jersey', 'rare', { store: 1 }], ['top:robe', 'top', 'robe', 'Ring robe', 'epic', { ach: 'gradeA', how: 'Win a fight by TKO' }],
+  ['bottom:joggers', 'bottom', 'joggers', 'Joggers', 'common', { pass: 7 }],
+  ['shoes:hightops', 'shoes', 'hightops', 'High-tops', 'rare', { store: 1 }], ['shoes:slides', 'shoes', 'slides', 'Slides', 'common', { pass: 9 }],
+  ['gloves:mma', 'gloves', 'mma', 'MMA gloves', 'epic', { store: 1 }],
+  ['head:cap', 'head', 'cap', 'Cap', 'common', { lvl: 3 }], ['head:bandana', 'head', 'bandana', 'Bandana', 'common', { pass: 3 }],
+  ['eyewear:sport', 'eyewear', 'sport', 'Sport lenses', 'rare', { pass: 11 }],
   ['eyewear:shades', 'eyewear', 'shades', "Slick's 8-bit shades", 'legendary', { ach: 'gradeS', how: 'Win a fight by KO' }],
   ['neck:chain', 'neck', 'chain', 'Gold chain', 'epic', { streak: 7, how: 'Reach a 7-day streak' }],
   ['mouth:guard', 'mouth', 'guard', 'Mouthguard', 'common', { ach: 'first', how: 'Finish your first fight' }],
-  ['cloth:8', 'cloth', 8, 'Sky blue', 'common', { shop: 1 }], ['cloth:9', 'cloth', 9, 'Royal purple', 'rare', { shop: 1 }],
-  ['cloth:10', 'cloth', 10, 'Blaze orange', 'common', { shop: 1 }], ['cloth:11', 'cloth', 11, 'Deep teal', 'rare', { bag: 1 }],
-  ['cloth:12', 'cloth', 12, 'Blood red', 'rare', { shop: 1 }], ['cloth:13', 'cloth', 13, 'Leather brown', 'common', { shop: 1 }],
-  ['cloth:14', 'cloth', 14, 'Volt', 'epic', { shop: 1 }], ['cloth:15', 'cloth', 15, 'Aqua', 'rare', { shop: 1 }],
+  ['cloth:8', 'cloth', 8, 'Sky blue', 'common', { pass: 4 }], ['cloth:9', 'cloth', 9, 'Royal purple', 'rare', { store: 1 }],
+  ['cloth:10', 'cloth', 10, 'Blaze orange', 'common', { pass: 8 }], ['cloth:11', 'cloth', 11, 'Deep teal', 'rare', { store: 1 }],
+  ['cloth:12', 'cloth', 12, 'Blood red', 'rare', { store: 1 }], ['cloth:13', 'cloth', 13, 'Leather brown', 'common', { pass: 1 }],
+  ['cloth:14', 'cloth', 14, 'Volt', 'epic', { store: 1 }], ['cloth:15', 'cloth', 15, 'Aqua', 'rare', { store: 1 }],
 ].map(([id, slot, val, name, rarity, src]) => ({ id, slot, val, name, rarity, src }));
 const AR_CLOTH_FIELDS = ['topC', 'topA', 'bottomC', 'bottomA', 'shoeC', 'gloveC', 'gearC'];
 // monthly seasons: each has two limited-edition colors and a title belt you can only earn that month
@@ -4293,13 +4289,13 @@ const AR_SEASONS = [
   ['Back to the Gym', ['#a85000', 'Rust'], ['#f8b860', 'Harvest'], '#a85000'], ['Haunted Ring', ['#f87800', 'Pumpkin'], ['#5c2c9c', 'Midnight Purple'], '#f87800'],
   ['Thanksgiving Throwdown', ['#8c4c1c', 'Roast'], ['#e8a838', 'Cornbread'], '#e8a838'], ['Holiday Haymaker', ['#c80000', 'Candy Cane'], ['#007800', 'Evergreen'], '#00a800'],
 ];
-const AR_PASS_TIERS = 30, AR_PASS_STEP = 150, AR_ICE_MAX = 2, AR_ICE_PRICE = 300;
+const AR_PASS_TIERS = 15, AR_PASS_STEP = 300, AR_ICE_MAX = 2;
 const AR_WEEKLY = [
   { id: 'fights', text: 'Finish 7 fights', need: 7, ev: () => 1 }, { id: 'stars', text: 'Earn 12 stars', need: 12, ev: (g) => g.stars },
   { id: 'daily', text: 'Fight 4 daily bouts', need: 4, ev: (g) => (g.mode === 'daily' ? 1 : 0) }, { id: 'ranked', text: 'Play 3 ranked fights', need: 3, ev: (g) => (g.mode === 'ranked' ? 1 : 0) },
   { id: 'wins', text: 'Win 4 fights', need: 4, ev: (g) => (g.pct >= 55 ? 1 : 0) }, { id: 'tko', text: 'Win 2 fights by TKO or KO', need: 2, ev: (g) => (g.grade === 'A' || g.grade === 'S' ? 1 : 0) },
 ];
-const AR_MILESTONES = { 3: { coins: 100 }, 7: { coins: 200 }, 14: { coins: 250, ice: 1 }, 30: { coins: 600, ice: 2 }, 50: { coins: 800, ice: 2 }, 100: { coins: 1500, ice: 2 }, 365: { coins: 5000, ice: 2 } };
+const AR_MILESTONES = { 3: { ice: 1 }, 7: { ice: 1 }, 14: { ice: 1 }, 30: { ice: 2 }, 50: { ice: 2 }, 100: { ice: 2 }, 365: { ice: 2 } };
 
 function arSeason(d = new Date()) {
   const y = d.getFullYear(), m = d.getMonth(), th = AR_SEASONS[m], num = (y - 2026) * 12 + m - 8, end = new Date(y, m + 1, 1);
@@ -4321,7 +4317,7 @@ function arPartOk(slot, val) {
 }
 function arHow(it) {
   const s = it.src || {};
-  return it.limited ? `Limited · Fight Pass ${it.limited}` : s.how || (s.lvl ? `Reach level ${s.lvl}` : s.shop ? `Pro Shop · ${AR_RARITY[it.rarity].price} coins` : s.bag ? 'Gym bags only' : 'Locked');
+  return it.limited ? `Limited · Fight Pass ${it.limited}` : s.how || (s.lvl ? `Reach level ${s.lvl}` : s.pass ? `Fight Pass tier ${s.pass}` : s.store ? `Store · ${AR_RARITY[it.rarity].usd}` : 'Locked');
 }
 function arGrant(it, quiet) {
   const s = AR.st; if (!it || s.inv[it.id]) return false;
@@ -4336,7 +4332,6 @@ function arAutoGrant() {
   for (const it of AR_ITEMS) { const r = it.src; if ((r.lvl && L >= r.lvl) || (r.streak && (s.bestStreak || 0) >= r.streak) || (r.ach && s.ach[r.ach])) if (arGrant(it, true)) got.push(it); }
   return got;
 }
-function arCoins(n) { AR.st.coins = (AR.st.coins || 0) + Math.max(0, Math.round(n)); }
 function arIce(n) { const s = AR.st, before = s.ice || 0; s.ice = Math.min(AR_ICE_MAX, before + n); return s.ice - before; }
 
 // ---------------------------------------------------------------- Fight Pass (free, monthly, 30 tiers)
@@ -4346,23 +4341,19 @@ function arPass() {
   return s.pass;
 }
 function arPassReward(t, se = arSeason()) {
-  if (t === 10) return { item: se.items.c1 }; if (t === 20) return { item: se.items.c2 }; if (t === 30) return { item: se.items.belt };
-  if (t === 3 || t === 13 || t === 23) return { ice: 1 };
-  if (t === 5 || t === 15 || t === 25) {
-    const want = t === 5 ? 'rare' : t === 15 ? 'epic' : 'legendary', pool = AR_ITEMS.filter((x) => x.src.shop && x.rarity === want);
-    return { item: pool[arHash(se.sid + t) % pool.length], fallback: AR_RARITY[want].price / 2 };
-  }
-  return { coins: 30 + t * 3 };
+  if (t === 10) return { item: se.items.c1 }; if (t === 14) return { item: se.items.c2 }; if (t === 15) return { item: se.items.belt };
+  if (t === 2 || t === 6 || t === 12) return { ice: 1 };
+  return { item: AR_ITEMS.find((x) => x.src.pass === t) };
 }
-function arRewardLabel(r) { return r.item ? r.item.name : r.ice ? 'Ice pack' : `${r.coins} coins`; }
-function arRewardIcon(r) { return r.item ? (r.item.slot === 'belt' ? '🏆' : r.item.slot === 'cloth' ? '🎨' : '👕') : r.ice ? '🧊' : '🪙'; }
+function arRewardLabel(r) { return r.item ? r.item.name : 'Ice pack'; }
+function arRewardIcon(r) { return r.item ? (r.item.slot === 'belt' ? '🏆' : r.item.slot === 'cloth' ? '🎨' : r.item.slot === 'hair' || r.item.slot === 'hairC' ? '💇' : r.item.slot === 'eyewear' ? '🕶️' : r.item.slot === 'shoes' ? '👟' : '👕') : '🧊'; }
 // add Fight Pass XP; returns the rewards unlocked
 function arPassXP(n) {
   const p = arPass(), out = [];
   p.xp += Math.max(0, Math.round(n));
   while (p.tier < AR_PASS_TIERS && p.xp >= (p.tier + 1) * AR_PASS_STEP) {
     p.tier++; const r = arPassReward(p.tier);
-    if (r.item) { if (!arGrant(r.item, true) && r.fallback) arCoins(r.fallback); } else if (r.ice) { if (!arIce(1)) arCoins(150); } else arCoins(r.coins);
+    if (r.item) { if (!arGrant(r.item, true)) arIce(1); } else arIce(1);
     out.push({ t: p.tier, r });
   }
   AR.st.bestTier = Math.max(AR.st.bestTier || 0, p.tier);
@@ -4377,44 +4368,6 @@ function arWeekly() {
   while (list.length < 3) list.push(pool.splice((rng() * pool.length) | 0, 1)[0].id);
   s.weekly = { week: ws, list: list.map((id) => ({ id, prog: 0, done: false })) };
   return s.weekly;
-}
-
-// ---------------------------------------------------------------- Pro Shop: 4 items a day, plus ice packs
-function arShopStock() {
-  const rng = arRng('shop|' + arToday()), pool = AR_ITEMS.filter((x) => x.src.shop), out = [];
-  while (out.length < 4 && pool.length) out.push(pool.splice((rng() * pool.length) | 0, 1)[0]);
-  return out;
-}
-function arBuy(id) {
-  const s = AR.st;
-  if (id === 'ice') { if ((s.ice || 0) >= AR_ICE_MAX || s.coins < AR_ICE_PRICE) return; s.coins -= AR_ICE_PRICE; arIce(1); arSave(); arToast('🧊', 'Ice pack', 'Saves your streak if you miss a day'); arRender(); return; }
-  const it = AR_ITEMS.find((x) => x.id === id); if (!it || arOwns(id)) return;
-  const price = AR_RARITY[it.rarity].price; if (s.coins < price) return;
-  s.coins -= price; arGrant(it, true); arSave();
-  arCelebrate('🛍️', 'Bought!', it.name, [`${AR_RARITY[it.rarity].n} · find it in the fighter creator`]);
-  arRender();
-}
-
-// ---------------------------------------------------------------- gym bag: one after each day's fight night
-// Five outcomes with equal odds, shown up front. Every 5th bag is a Title bag with guaranteed epic or better gear.
-const AR_BAG_ODDS = [['60 coins', '🪙'], ['150 coins', '💰'], ['Ice pack', '🧊'], ['Rare gear', '🔷'], ['Epic gear', '🟣']];
-function arBagOpen() {
-  const s = AR.st, b = s.bag; if (!b || b.day !== arToday() || b.opened) return;
-  b.opened = true; s.bags = (s.bags || 0) + 1;
-  const title = s.bags % 5 === 0, rng = arRng(`bag|${arToday()}|${s.bags}|${Math.random()}`);
-  const unowned = (rar) => AR_ITEMS.filter((x) => (x.src.shop || x.src.bag) && rar.includes(x.rarity) && !arOwns(x.id));
-  let got = null, label = '', icon = '🎒';
-  const giveItem = (rar, coins) => { const pool = unowned(rar); if (pool.length) { got = pool[(rng() * pool.length) | 0]; arGrant(got, true); label = got.name; icon = '👕'; } else { arCoins(coins); label = `${coins} coins`; icon = '💰'; } };
-  if (title) giveItem(['epic', 'legendary'], 600);
-  else {
-    const k = (rng() * 5) | 0;
-    if (k === 0) { arCoins(60); label = '60 coins'; icon = '🪙'; } else if (k === 1) { arCoins(150); label = '150 coins'; icon = '💰'; }
-    else if (k === 2) { if (arIce(1)) { label = 'Ice pack'; icon = '🧊'; } else { arCoins(150); label = '150 coins (ice packs full)'; icon = '💰'; } }
-    else giveItem(k === 3 ? ['rare'] : ['epic'], k === 3 ? 200 : 450);
-  }
-  arSave();
-  arCelebrate(icon, title ? 'Title bag!' : 'Gym bag', label, got ? [`${AR_RARITY[got.rarity].n} · try it on in the fighter creator`] : []);
-  arRender();
 }
 
 // ---------------------------------------------------------------- celebrations (one at a time)
@@ -4438,8 +4391,8 @@ function arStreakDay() {
   else { if (gap > 1 && s.streak >= 3) s.earn = { day: today, old: s.streak, prog: 0 }; s.streak = 1; s.perfect = 1; }
   s.lastDay = today; s.bestStreak = Math.max(s.bestStreak || 0, s.streak);
   const m = AR_MILESTONES[s.streak]; s.ms = s.ms || {};
-  if (m && !s.ms[s.streak]) { s.ms[s.streak] = today; arCoins(m.coins); const ice = m.ice ? arIce(m.ice) : 0;
-    arCelebrate('🔥', `${s.streak}-day streak!`, 'Road work pays off.', [`+${m.coins} coins`, ...(ice ? [`+${ice} ice pack${ice > 1 ? 's' : ''}`] : []), ...(s.streak === 7 ? ['Gold chain unlocked'] : [])]); }
+  if (m && !s.ms[s.streak]) { s.ms[s.streak] = today; const ice = m.ice ? arIce(m.ice) : 0;
+    arCelebrate('🔥', `${s.streak}-day streak!`, 'Road work pays off.', [...(ice ? [`+${ice} ice pack${ice > 1 ? 's' : ''}`] : ['Ice packs full']), ...(s.streak === 7 ? ['Gold chain unlocked'] : [])]); }
 }
 
 // ---------------------------------------------------------------- the fighter creator
@@ -4472,7 +4425,7 @@ function arCreatorHTML() {
     <div class="pxtabs">${AR_CTABS.map(([k, l]) => `<button data-ar="ctab" data-t="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>
     <div class="arcparts">${parts}${colors}</div>
     <div class="row">${arBtn('', 'data-ar="crandom"', '🎲 Random')}<span class="grow"></span>${first ? '' : arBtn('', 'data-ar="ccancel"', 'Cancel')}${arBtn('go', 'data-ar="csave"', first ? 'Step into the ring' : 'Save')}</div>
-    <div class="hint">🔒 Locked pieces are earned by playing or bought with coins you win in fights. Looks only: gear never changes your score.</div>
+    <div class="hint">🔒 Locked pieces are earned through trophies, levels, streaks and the free Fight Pass, or bought in the Store. Looks only: gear never changes your score.</div>
   </section>`;
 }
 function arRandomFighter() {
@@ -4488,37 +4441,28 @@ const arMe = (view = 'face', cls = '') => fxSVG(AR.st.fighter || FX_DEFAULT, vie
 // ---------------------------------------------------------------- reward screens: pass, shop, bag, weekly
 function arPassHTML() {
   const se = arSeason(), p = arPass(), into = p.tier >= AR_PASS_TIERS ? AR_PASS_STEP : p.xp - p.tier * AR_PASS_STEP;
-  const next = [10, 20, 30].find((t) => t > p.tier);
+  const next = [10, 14, 15].find((t) => t > p.tier);
   return `<div class="row"><span class="arhead px">Fight Pass</span><span class="grow"></span><span class="archip px">Free</span></div>
     <div class="arseason"><b class="px">Season ${se.num}: ${esc(se.name)}</b><small>${se.daysLeft} day${se.daysLeft === 1 ? '' : 's'} left · limited gear can only be earned this month</small></div>
     <div class="arlvl solo"><b class="px">T${p.tier}</b><div class="pxbar xp"><i style="width:${((into / AR_PASS_STEP) * 100).toFixed(1)}%"></i></div><small class="mono">${into}/${AR_PASS_STEP}</small></div>
     ${next ? `<div class="arnext">Next limited reward at tier ${next}: <b>${esc(arPassReward(next, se).item.name)}</b></div>` : '<div class="arnext">Season complete. Champion work.</div>'}
     <div class="artrack">${Array.from({ length: AR_PASS_TIERS }, (_, i) => { const t = i + 1, r = arPassReward(t, se), got = p.tier >= t, ltd = r.item && r.item.limited;
       return `<div class="arpt${got ? ' got' : ''}${ltd ? ' ltd' : ''}" title="${esc(arRewardLabel(r))}"><small class="px">${t}</small><span>${ltd && r.item.slot === 'cloth' ? `<i class="ardot" style="background:${r.item.val}"></i>` : arRewardIcon(r)}</span><small>${got ? '✓' : ltd ? 'LTD' : ''}</small></div>`; }).join('')}</div>
-    <div class="hint">Every fight fills the pass with the XP you earn. Weekly challenges give a big boost. No paid track.</div>`;
+    <div class="hint">Every fight fills the pass with the XP you earn, and weekly challenges give a big boost. A reward at every tier. Free for everyone, no paid track.</div>`;
 }
-function arShopHTML() {
-  const s = AR.st, stock = arShopStock(), f = s.fighter || FX_DEFAULT;
+function arStoreHTML() {
+  const f = AR.st.fighter || FX_DEFAULT, items = AR_ITEMS.filter((x) => x.src.store);
   const tryOn = (it) => { const c = { ...f }; if (it.slot === 'cloth') c.topC = it.val; else if (it.slot === 'hairC') c.hairC = it.val; else c[it.slot] = it.val; return fxSVG(c, AR_FACEVIEW.has(it.slot) || it.slot === 'hairC' ? 'face' : 'full'); };
-  return `<div class="row"><span class="arhead px">Pro Shop</span><span class="grow"></span><span class="archip px">🪙 ${s.coins || 0}</span></div>
-    <div class="hint">New stock every day at midnight. Coins come from fights, goals, the pass and gym bags.</div>
-    <div class="arshop">${stock.map((it) => { const own = arOwns(it.id), price = AR_RARITY[it.rarity].price, can = (s.coins || 0) >= price;
+  return `<div class="row"><span class="arhead px">Store</span><span class="grow"></span><span class="archip px">Coming soon</span></div>
+    <div class="hint">Premium looks you can buy outright. Shown on your fighter. Cosmetic only: nothing here changes a score, a rank or a reward.</div>
+    <div class="arshop">${items.map((it) => { const own = arOwns(it.id);
       return `<div class="arshopi" style="--rc:${AR_RARITY[it.rarity].c}"><div class="arshopfx">${tryOn(it)}</div><b>${esc(it.name)}</b><small style="color:${AR_RARITY[it.rarity].c}">${AR_RARITY[it.rarity].n}</small>
-        ${own ? '<span class="archip px">Owned</span>' : arBtn(can ? 'go sm' : 'sm', `data-ar="buy" data-id="${it.id}"${can ? '' : ' disabled'}`, `🪙 ${price}`)}</div>`; }).join('')}</div>
-    <div class="artile" style="--gc:#3cbcfc"><div class="arportrait sm" style="--gc:#3cbcfc">🧊</div><div class="grow"><b class="px">Ice pack</b><small>Auto-saves your streak if you miss a day. Hold up to ${AR_ICE_MAX}. You have ${s.ice || 0}.</small></div>
-      ${arBtn((s.coins || 0) >= AR_ICE_PRICE && (s.ice || 0) < AR_ICE_MAX ? 'go sm' : 'sm', `data-ar="buy" data-id="ice"${(s.coins || 0) >= AR_ICE_PRICE && (s.ice || 0) < AR_ICE_MAX ? '' : ' disabled'}`, `🪙 ${AR_ICE_PRICE}`)}</div>`;
-}
-function arBagHTML() {
-  const s = AR.st, b = s.bag;
-  if (!b || b.day !== arToday() || b.opened) return '';
-  const title = ((s.bags || 0) + 1) % 5 === 0;
-  return `<section class="pxbox arbag"><div class="arcornerrow"><div class="arportrait" style="--gc:#f8b800">🎒</div><div class="grow"><b class="px">${title ? 'Title bag ready!' : 'Gym bag ready!'}</b>
-    <small>${title ? 'Guaranteed epic or legendary gear.' : `Equal odds, 1 in 5 each: ${AR_BAG_ODDS.map(([n]) => n).join(' · ')}. Every 5th bag is a Title bag.`}</small></div></div>
-    ${arBtn('go arbig', 'data-ar="bag"', 'Open it')}</section>`;
+        ${own ? '<span class="archip px">Owned</span>' : arBtn('sm', 'disabled title="Purchases open once accounts are live"', AR_RARITY[it.rarity].usd)}</div>`; }).join('')}</div>
+    <div class="hint">Purchases open with accounts (the backend step), so what you buy is saved to you, not to one phone. Prices are placeholders.</div>`;
 }
 function arWeeklyHTML() {
   const w = arWeekly(), days = 7 - ((new Date().getDay() + 6) % 7);
-  return `<div class="row"><span class="arhead px">Weekly</span><span class="grow"></span><span class="hint">${days} day${days === 1 ? '' : 's'} left · +300 pass XP, +150 coins each</span></div>
+  return `<div class="row"><span class="arhead px">Weekly</span><span class="grow"></span><span class="hint">${days} day${days === 1 ? '' : 's'} left · +300 pass XP each</span></div>
     ${w.list.map((it) => { const d = AR_WEEKLY.find((x) => x.id === it.id); return `<div class="argoal ${it.done ? 'done' : ''}"><span class="arck">${it.done ? '✓' : ''}</span><span class="grow">${esc(d.text)} <small class="mono">${Math.min(it.prog, d.need)}/${d.need}</small></span></div>`; }).join('')}`;
 }
 
@@ -4612,7 +4556,7 @@ function arRng(seed) {
   let a = arHash(String(seed));
   return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
-function arDefault() { return { v: 1, fighter: null, coins: 0, inv: {}, ice: 0, pass: null, bag: null, bags: 0, ms: {}, bestStreak: 0, perfect: 0, earn: null, weekly: null, bestTier: 0, name: 'Player', town: 'Parts Unknown', xp: 0, games: 0, ranked: 0, casual: 0, streak: 0, lastDay: null, rr: {}, hist: [], ach: {}, eq: { title: 'Rookie', banner: 'canvas', color: 'auto' }, goals: null, daily: {} }; }
+function arDefault() { return { v: 1, fighter: null, inv: {}, ice: 0, pass: null, ms: {}, bestStreak: 0, perfect: 0, earn: null, weekly: null, bestTier: 0, name: 'Player', town: 'Parts Unknown', xp: 0, games: 0, ranked: 0, casual: 0, streak: 0, lastDay: null, rr: {}, hist: [], ach: {}, eq: { title: 'Rookie', banner: 'canvas', color: 'auto' }, goals: null, daily: {} }; }
 function arLoad() { try { const v = JSON.parse(localStorage.getItem(AR_KEY) || 'null'); return v && v.v === 1 ? { ...arDefault(), ...v, eq: { ...arDefault().eq, ...(v.eq || {}) } } : arDefault(); } catch { return arDefault(); } }
 function arSave() { try { localStorage.setItem(AR_KEY, JSON.stringify(AR.st)); } catch { /* storage unavailable */ } }
 
@@ -4665,11 +4609,11 @@ function arToast(icon, title, sub) {
 function arCheckIn() {
   const s = AR.st, today = arToday();
   if (s.lastDay === today) return;
-  arStreakDay(); s.xp += 10; arCoins(10);
+  arStreakDay(); s.xp += 10;
   arGoals(); arWeekly(); arPass();
   const got = arUnlock(null); arAutoGrant();
   arSave();
-  arToast('🔥', `Day ${s.streak} of road work`, '+10 XP and 10 coins for showing up');
+  arToast('🔥', `Day ${s.streak} of road work`, '+10 XP for showing up');
   got.forEach((a) => arToast(a.icon, a.name, `+${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`));
 }
 function arUnlock(g) {
@@ -4835,14 +4779,6 @@ function arFinish() {
   s.xp += xp.reduce((a, x) => a + x[1], 0);
   const got = arUnlock(g);
   const lv1 = arLevel(s.xp).L;
-  // coins: every fight pays, casual pays half
-  const coins = [];
-  const cAdd = (label, v) => { v = Math.round(v); if (v > 0) { coins.push([label, v]); arCoins(v); } };
-  cAdd('Fight purse', (15 + Math.max(0, run.total) / 15) * mult);
-  if (league !== null) cAdd('Fight night bonus', 50);
-  goals.forEach((d) => cAdd(`Training: ${d.text}`, 25));
-  weekly.forEach((d) => cAdd(`Weekly: ${d.text}`, 150));
-  if (run.mode === 'daily' && league !== null) s.bag = { day: g.day, opened: false };
   // earn back a broken streak: finish 2 fights the day it broke
   let earned = null;
   if (s.earn && s.earn.day === g.day) { s.earn.prog++; if (s.earn.prog >= 2) { s.streak = s.earn.old + 1; s.bestStreak = Math.max(s.bestStreak || 0, s.streak); earned = s.streak; s.earn = null; } }
@@ -4851,7 +4787,7 @@ function arFinish() {
   const tiers = arPassXP(passGain);
   const gear = arAutoGrant();
   arSave();
-  AR.last = { g, xp, gain: xp.reduce((a, x) => a + x[1], 0) + got.reduce((a, x) => a + x.xp, 0), rr, league, got, goals, lv0, lv1, label: run.label, opp: run.opp, coins, passGain, tiers, weekly, gear, earned };
+  AR.last = { g, xp, gain: xp.reduce((a, x) => a + x[1], 0) + got.reduce((a, x) => a + x.xp, 0), rr, league, got, goals, lv0, lv1, label: run.label, opp: run.opp, passGain, tiers, weekly, gear, earned };
   AR.view = 'results'; arRender(); scrollTo(0, 0);
   if (got.length) arCelebrate(got[0].icon, got.length > 1 ? `${got.length} trophies unlocked!` : `Trophy: ${got[0].name}`, got.length > 1 ? got.map((a) => a.name).join(' · ') : got[0].desc, got.map((a) => `${a.icon} ${a.name}: +${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`));
   if (lv1 > lv0) arCelebrate('⬆️', `Level ${lv1}!`, 'Your fighter is moving up.', gear.length ? gear.map((x) => `Unlocked: ${x.name}`) : []);
@@ -4908,7 +4844,7 @@ function arFighterCard() {
       <div><small>Circuit</small><b class="px"${tier ? ` style="color:${tier.color}"` : ''}>${tier ? esc(tier.name.replace(' Circuit', '')) : '—'}</b><small>${tier ? arBestRR(s) : 'unranked'}</small></div>
       <div><small>Road work</small><b class="px${(s.perfect || 0) >= 7 ? ' arperfect' : ''}">${s.streak}</b><small>day${s.streak === 1 ? '' : 's'} 🔥${s.ice ? ` · 🧊${s.ice}` : ''}</small></div>
     </div>
-    <div class="arwallet"><span class="px">🪙 ${(s.coins || 0).toLocaleString()}</span><span class="px">🎟️ T${arPass().tier}</span><span class="px">🏆 ${Object.keys(s.ach).length}</span></div>
+    <div class="arwallet"><span class="px">🎟️ Pass T${arPass().tier}</span><span class="px">🏆 ${Object.keys(s.ach).length}</span><span class="px">🎽 ${Object.keys(s.inv).length} items</span></div>
     <div class="arlvl"><b class="px">LV${lv.L}</b><div class="pxbar xp"><i style="width:${((lv.into / lv.need) * 100).toFixed(1)}%"></i></div><small class="mono">${lv.into}/${lv.need}</small></div>
   </section>`;
 }
@@ -4936,7 +4872,7 @@ function arDailyHTML() {
 }
 function arGoalsHTML() {
   return `<section class="pxbox"><div class="row"><span class="arhead px">Training camp</span><span class="grow"></span><span class="hint">new drills tomorrow</span></div>
-    ${arGoals().list.map((it) => { const d = AR_GOALS.find((x) => x.id === it.id); return `<div class="argoal ${it.done ? 'done' : ''}"><span class="arck">${it.done ? '✓' : ''}</span><span class="grow">${esc(d.text)}${d.need > 1 ? ` <small class="mono">${it.prog}/${d.need}</small>` : ''}</span><span class="arxpchip">+${d.xp} XP · 🪙25</span></div>`; }).join('')}
+    ${arGoals().list.map((it) => { const d = AR_GOALS.find((x) => x.id === it.id); return `<div class="argoal ${it.done ? 'done' : ''}"><span class="arck">${it.done ? '✓' : ''}</span><span class="grow">${esc(d.text)}${d.need > 1 ? ` <small class="mono">${it.prog}/${d.need}</small>` : ''}</span><span class="arxpchip">+${d.xp} XP</span></div>`; }).join('')}
     ${arWeeklyHTML()}
   </section>`;
 }
@@ -4971,11 +4907,11 @@ function arHubHTML() {
   const earn = s.earn && s.earn.day === arToday() ? `<section class="pxbox arearn"><b class="px">Get back up!</b><span>Your ${s.earn.old}-day streak broke. Finish ${2 - s.earn.prog} more fight${2 - s.earn.prog === 1 ? '' : 's'} today to earn it back.</span></section>` : '';
   const trophies = `<div class="row"><span class="arhead px">Trophy case</span><span class="grow"></span><span class="px arcount">${achN}/${AR_ACH.length}</span></div>
       <div class="arachs">${AR_ACH.map((a) => `<div class="arach${s.ach[a.id] ? ' got' : ''}" title="${esc(a.desc)}"><span class="aric">${s.ach[a.id] ? a.icon : '🔒'}</span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small><small class="arxpchip">+${a.xp} XP${a.title ? ` · “${esc(a.title)}”` : ''}</small></div>`).join('')}</div>`;
-  const rbody = rw === 'shop' ? arShopHTML() : rw === 'trophies' ? trophies : rw === 'locker' ? arLockerHTML() : arPassHTML();
-  return `${arFighterCard()}${earn}${arBagHTML()}${arDailyHTML()}${arGoalsHTML()}
+  const rbody = rw === 'store' ? arStoreHTML() : rw === 'trophies' ? trophies : rw === 'locker' ? arLockerHTML() : arPassHTML();
+  return `${arFighterCard()}${earn}${arDailyHTML()}${arGoalsHTML()}
     <div class="pxseg armodes">${[['casual', 'Casual'], ['ranked', 'Ranked'], ['league', 'League']].map(([k, l]) => `<button data-ar="tab" data-t="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>
     ${body}
-    <div class="pxseg arrtabs">${[['pass', '🎟️ Pass'], ['shop', '🛍️ Shop'], ['trophies', '🏆 Trophies'], ['locker', '🎽 Locker']].map(([k, l]) => `<button data-ar="rtab" data-t="${k}" aria-pressed="${rw === k}">${l}</button>`).join('')}</div>
+    <div class="pxseg arrtabs">${[['pass', '🎟️ Pass'], ['trophies', '🏆 Trophies'], ['locker', '🎽 Locker'], ['store', '🛍️ Store']].map(([k, l]) => `<button data-ar="rtab" data-t="${k}" aria-pressed="${rw === k}">${l}</button>`).join('')}</div>
     <section class="pxbox">${rbody}</section>`;
 }
 function arLockerHTML() {
@@ -5066,9 +5002,8 @@ function arResultsHTML() {
     ${L.xp.map(([k, v]) => `<div class="arxprow"><span>${esc(k)}</span><span class="mono">+${v} XP</span></div>`).join('')}
     ${L.got.map((a) => `<div class="arxprow ach"><span>${a.icon} ${esc(a.name)}${a.title ? ` · title “${esc(a.title)}”` : ''}</span><span class="mono">+${a.xp} XP</span></div>`).join('')}
     <div class="arxprow total"><span class="px">Total</span><span class="mono">+${L.gain} XP</span></div>
-    ${L.coins.map(([k, v]) => `<div class="arxprow coin"><span>${esc(k)}</span><span class="mono">+${v} 🪙</span></div>`).join('')}
     <div class="arrank"><span>🎟️ Fight Pass</span><b class="px">Tier ${arPass().tier}</b><span class="mono up">+${L.passGain} pass XP</span>${L.tiers.length ? `<span class="hint">${L.tiers.map((x) => `T${x.t}: ${esc(arRewardLabel(x.r))}`).join(' · ')}</span>` : ''}</div>
-    ${s.bag && s.bag.day === arToday() && !s.bag.opened ? `<div class="arlevelup px">🎒 Gym bag waiting in the gym</div>` : ''}
+
     ${g.mode === 'casual' ? '<div class="hint">Exhibition fights pay half XP and never touch your record, circuit or rankings.</div>' : ''}
     ${L.rr ? `<div class="arrank"><span>${esc(AR_GAMES[g.gid].name)} circuit</span><b class="px" style="color:${arTier(L.rr.after).color}">${arTier(L.rr.after).name} · ${L.rr.after}</b><span class="mono ${L.rr.d >= 0 ? 'up' : 'down'}">${L.rr.d >= 0 ? '▲ +' : '▼ '}${L.rr.d}</span></div>` : ''}
     ${L.league !== null ? `<div class="arrank"><span>League points</span><b class="px">+${L.league.toLocaleString()}</b><span class="hint">fight night ×5</span></div>` : ''}
@@ -5092,15 +5027,13 @@ document.addEventListener('click', (e) => {
   else if (a === 'period') { AR.period = b.dataset.p; arRender(); }
   else if (a === 'eq') { s.eq[b.dataset.type] = b.dataset.id; arSave(); arRender(); }
   else if (a === 'rtab') { AR.rtab = b.dataset.t; arRender(); }
-  else if (a === 'buy') arBuy(b.dataset.id);
-  else if (a === 'bag') arBagOpen();
   else if (a === 'edit') { AR.cf = { ...FX_DEFAULT, ...(s.fighter || {}) }; AR.view = 'create'; arRender(); scrollTo(0, 0); }
   else if (a === 'ctab') { AR.ctab = b.dataset.t; arRender(); }
   else if (a === 'cpart') { if (!b.classList.contains('locked')) { AR.cf[b.dataset.slot] = b.dataset.v; arRender(); } }
   else if (a === 'ccolor') { if (!b.classList.contains('locked')) { const v = b.dataset.v; AR.cf[b.dataset.f] = v.startsWith('n') ? +v.slice(1) : v; arRender(); } }
   else if (a === 'crandom') { AR.cf = arRandomFighter(); arRender(); }
   else if (a === 'ccancel') { AR.view = 'hub'; arRender(); }
-  else if (a === 'csave') { const first = !s.fighter; s.fighter = { ...AR.cf }; arSave(); AR.view = 'hub'; arRender(); scrollTo(0, 0); if (first) arCelebrate('🥊', `Welcome to the gym, ${s.name}!`, 'Your fighter is ready.', ['Win fights to earn coins, gear and limited-edition season items.', 'Everything you can unlock is cosmetic.']); }
+  else if (a === 'csave') { const first = !s.fighter; s.fighter = { ...AR.cf }; arSave(); AR.view = 'hub'; arRender(); scrollTo(0, 0); if (first) arCelebrate('🥊', `Welcome to the gym, ${s.name}!`, 'Your fighter is ready.', ['Earn gear through trophies, levels, streaks and the free Fight Pass.', 'Limited-edition season gear is only available that month.']); }
 });
 document.addEventListener('keydown', (e) => {
   if (!AR || S.mode !== 'trainer' || AR.view !== 'run' || !AR.run || e.target.closest('input,select,textarea')) return;
