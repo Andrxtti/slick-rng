@@ -291,6 +291,10 @@
   .dream .drtitles::-webkit-scrollbar { display: none; }
   .dream .drtl { flex: 0 0 72px; }
 }
+.dream .drtimeline { display: grid; gap: 0; border-left: 2px solid var(--gold3); margin-left: 10px; }
+.dream .drtimeline > div { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0 6px 0; margin-left: -12px; }
+.dream .drtimeline span { width: 22px; height: 22px; border-radius: 50%; background: var(--ink2); border: 1px solid var(--gold3); display: grid; place-items: center; font-size: 12px; flex: none; }
+.dream .drtimeline b { font-size: 14px; font-weight: 500; display: block; } .dream .drtimeline small { color: var(--mute); font-size: 11px; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }

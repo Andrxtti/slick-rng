@@ -1283,6 +1283,10 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
   .dream .drtitles::-webkit-scrollbar { display: none; }
   .dream .drtl { flex: 0 0 72px; }
 }
+.dream .drtimeline { display: grid; gap: 0; border-left: 2px solid var(--gold3); margin-left: 10px; }
+.dream .drtimeline > div { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0 6px 0; margin-left: -12px; }
+.dream .drtimeline span { width: 22px; height: 22px; border-radius: 50%; background: var(--ink2); border: 1px solid var(--gold3); display: grid; place-items: center; font-size: 12px; flex: none; }
+.dream .drtimeline b { font-size: 14px; font-weight: 500; display: block; } .dream .drtimeline small { color: var(--mute); font-size: 11px; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
@@ -6314,6 +6318,8 @@ function drRepay(s, profit) {
 
 // ---------------------------------------------------------------- unlocks
 function drItemKey(it) { return it.slot + ':' + it.id; }
+// the story so far: big moments, newest first in the Story tab
+function drMoment(s, icon, text) { s.timeline = s.timeline || []; s.timeline.push({ d: Date.now(), icon, text }); if (s.timeline.length > 150) s.timeline.splice(0, s.timeline.length - 150); }
 function drUnlocks(s) {
   const fresh = [];
   for (const it of DR_ITEMS) {
@@ -6355,7 +6361,7 @@ function drProgress(s) {
     const live = drAvailable(s).filter((e) => !e.free), cheapest = Math.min(...live.map((e) => e.buyin));
     if (s.br < cheapest && !s.queue.includes('broke')) {
       const stake = Math.max(drStakeSize(s), cheapest - s.br);
-      drAdd(s, stake, "Slick's stake"); s.debt += stake; s.flags.stakes = (s.flags.stakes || 0) + 1; s.queue.push('broke');
+      drAdd(s, stake, "Slick's stake"); s.debt += stake; drMoment(s, '🥧', `Went broke. Slick staked you $${drMoney(stake)}`); s.flags.stakes = (s.flags.stakes || 0) + 1; s.queue.push('broke');
     }
   }
 }
@@ -6524,7 +6530,7 @@ function drFinish(quit) {
   if (ev.kind === 'sat') {
     const place = drPlace(run, ev); res.place = place; res.paid = ev.seats;
     rec.best = rec.best ? Math.min(rec.best, place) : place;
-    if (place <= ev.seats) { s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
+    if (place <= ev.seats) { drMoment(s, '🎟', `Won a seat into the ${drEvent(ev.target).name}`); s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
     res.net = -(DR.usedTicket ? 0 : ev.buyin);
   } else if (ev.kind === 'cash') {
     const net = run.bust ? -ev.buyin : drCashNet(run, quit ? 0 : (run.rng() - 0.5) * 0.3);
@@ -6536,6 +6542,7 @@ function drFinish(quit) {
     const prize = place <= P ? Math.round(pays[place - 1]) : 0;
     res.place = place; res.paid = P; res.prize = prize; res.net = prize - (ev.free ? 0 : ev.buyin);
     rec.best = rec.best ? Math.min(rec.best, place) : place;
+    if (prize > 0 && s.cashes === 0) drMoment(s, '💵', `First cash: ${drOrd(place)} in the ${ev.name}`);
     if (prize > 0) { drAdd(s, prize, `${drOrd(place)} in ${ev.name}`); s.cashes++; rec.cashes++; rec.cash = Math.max(rec.cash, prize); if (ev.ch === 2) s.flags.circuitCash = true; res.repaid = drRepay(s, res.net); }
     rec.net += res.net;
     const reachedFinal = !run.bust || run.stages[run.si] === 'final';
@@ -6543,8 +6550,10 @@ function drFinish(quit) {
     if (reachedFinal && run.si >= run.stages.length - 1) { s.ft++; if (ev.id === 'main') s.flags.meft = true; if (run.boss) { s.met[run.boss] = true; res.met = run.boss; } }
     if (place === 1) {
       rec.wins++;
-      if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); }
-      if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { s.legends[run.boss] = true; res.beat = run.boss; }
+      if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); drMoment(s, DR_TITLES[ev.title].icon, `Won the ${ev.name} for $${drMoney(prize)}`); }
+      else if (!ev.daily) drMoment(s, '🏅', `Won the ${ev.name}`);
+      if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { if (!s.legends[run.boss]) drMoment(s, '🂡', `Beat ${drLegend(run.boss).name} heads-up`); s.legends[run.boss] = true; res.beat = run.boss; }
+      if (run.boss === 'ghost') drMoment(s, '🕶️', 'Beat The Ghost for the world title');
       if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
       const once = (id) => { if (!s.story[id] && !s.queue.includes(id)) s.queue.push(id); };
       if (ev.title === 'room' && run.boss === 'trent') once('trentbeat');
@@ -6708,7 +6717,8 @@ function drSceneEnd() {
   const s = DR.st, id = DR.sc.id, def = DR_SCENES[id]; clearInterval(DR.twTimer);
   if (DR.sc.replay) { DR.sc = null; DR.view = 'hub'; DR.tab = 'story'; drRender(); scrollTo(0, 0); return; }
   s.story[id] = true;
-  const m = /^c(\d)$/.exec(id); if (m) s.ch = Math.max(s.ch, +m[1]);
+  const m = /^c(\d)$/.exec(id); if (m) { if (+m[1] > s.ch) drMoment(s, '📖', `${DR_CHAPTERS[+m[1]].n}: ${DR_CHAPTERS[+m[1]].t}`); s.ch = Math.max(s.ch, +m[1]); }
+  if (id === 'p_quit') drMoment(s, '🚪', 'Quit the 9-to-5'); if (id === 'p_keep') drMoment(s, '🌙', 'Kept the day job. Nights are for the dream.');
   drUnlocks(s); drProgress(s); drSave();
   DR.sc = null;
   const end = def.end || 'hub';
@@ -6833,7 +6843,9 @@ function drLegendsHTML() {
 }
 function drStoryHTML() {
   const s = DR.st, list = ['p_office', 'p_diner', 'p_after', 'firstwin', 'c1', 'trentbeat', 'c2', 'ring1', 'derek', 'c3', 'bracelet1', 'c4', 'tour1', 'c5', 'titan1', 'c6', 'champ', 'c7', 'broke'].filter((id) => s.story[id]);
-  return `<div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
+  const tl = (s.timeline || []).slice().reverse();
+  return `${tl.length ? `<div class="drkicker">Your story so far</div><div class="drtimeline">${tl.slice(0, 40).map((m) => `<div><span>${m.icon}</span><div><b>${esc(m.text)}</b><small>${new Date(m.d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</small></div></div>`).join('')}</div>` : ''}
+    <div class="drkicker">Replay a scene</div><div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
     <div class="drkicker">Money</div>
     <div class="drledger">${s.ledger.slice(-12).reverse().map((l) => `<div><span>${esc(l.why)}</span><b class="mono ${l.amt >= 0 ? 'up' : 'down'}">${l.amt >= 0 ? '+' : '−'}$${drMoney(Math.abs(l.amt))}</b></div>`).join('')}</div>
     <div class="drrow">${drBtn('ghost sm', 'data-dr="title"', 'Title screen')}${drBtn('ghost sm', 'data-dr="sound"', AR && AR.st.sound === false ? '🔇 Sound off' : '🔊 Sound on')}</div>`;

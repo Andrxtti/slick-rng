@@ -134,7 +134,8 @@ function drSceneEnd() {
   const s = DR.st, id = DR.sc.id, def = DR_SCENES[id]; clearInterval(DR.twTimer);
   if (DR.sc.replay) { DR.sc = null; DR.view = 'hub'; DR.tab = 'story'; drRender(); scrollTo(0, 0); return; }
   s.story[id] = true;
-  const m = /^c(\d)$/.exec(id); if (m) s.ch = Math.max(s.ch, +m[1]);
+  const m = /^c(\d)$/.exec(id); if (m) { if (+m[1] > s.ch) drMoment(s, '📖', `${DR_CHAPTERS[+m[1]].n}: ${DR_CHAPTERS[+m[1]].t}`); s.ch = Math.max(s.ch, +m[1]); }
+  if (id === 'p_quit') drMoment(s, '🚪', 'Quit the 9-to-5'); if (id === 'p_keep') drMoment(s, '🌙', 'Kept the day job. Nights are for the dream.');
   drUnlocks(s); drProgress(s); drSave();
   DR.sc = null;
   const end = def.end || 'hub';
@@ -259,7 +260,9 @@ function drLegendsHTML() {
 }
 function drStoryHTML() {
   const s = DR.st, list = ['p_office', 'p_diner', 'p_after', 'firstwin', 'c1', 'trentbeat', 'c2', 'ring1', 'derek', 'c3', 'bracelet1', 'c4', 'tour1', 'c5', 'titan1', 'c6', 'champ', 'c7', 'broke'].filter((id) => s.story[id]);
-  return `<div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
+  const tl = (s.timeline || []).slice().reverse();
+  return `${tl.length ? `<div class="drkicker">Your story so far</div><div class="drtimeline">${tl.slice(0, 40).map((m) => `<div><span>${m.icon}</span><div><b>${esc(m.text)}</b><small>${new Date(m.d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</small></div></div>`).join('')}</div>` : ''}
+    <div class="drkicker">Replay a scene</div><div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
     <div class="drkicker">Money</div>
     <div class="drledger">${s.ledger.slice(-12).reverse().map((l) => `<div><span>${esc(l.why)}</span><b class="mono ${l.amt >= 0 ? 'up' : 'down'}">${l.amt >= 0 ? '+' : '−'}$${drMoney(Math.abs(l.amt))}</b></div>`).join('')}</div>
     <div class="drrow">${drBtn('ghost sm', 'data-dr="title"', 'Title screen')}${drBtn('ghost sm', 'data-dr="sound"', AR && AR.st.sound === false ? '🔇 Sound off' : '🔊 Sound on')}</div>`;

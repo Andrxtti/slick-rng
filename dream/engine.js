@@ -40,6 +40,8 @@ function drRepay(s, profit) {
 
 // ---------------------------------------------------------------- unlocks
 function drItemKey(it) { return it.slot + ':' + it.id; }
+// the story so far: big moments, newest first in the Story tab
+function drMoment(s, icon, text) { s.timeline = s.timeline || []; s.timeline.push({ d: Date.now(), icon, text }); if (s.timeline.length > 150) s.timeline.splice(0, s.timeline.length - 150); }
 function drUnlocks(s) {
   const fresh = [];
   for (const it of DR_ITEMS) {
@@ -81,7 +83,7 @@ function drProgress(s) {
     const live = drAvailable(s).filter((e) => !e.free), cheapest = Math.min(...live.map((e) => e.buyin));
     if (s.br < cheapest && !s.queue.includes('broke')) {
       const stake = Math.max(drStakeSize(s), cheapest - s.br);
-      drAdd(s, stake, "Slick's stake"); s.debt += stake; s.flags.stakes = (s.flags.stakes || 0) + 1; s.queue.push('broke');
+      drAdd(s, stake, "Slick's stake"); s.debt += stake; drMoment(s, '🥧', `Went broke. Slick staked you $${drMoney(stake)}`); s.flags.stakes = (s.flags.stakes || 0) + 1; s.queue.push('broke');
     }
   }
 }
@@ -250,7 +252,7 @@ function drFinish(quit) {
   if (ev.kind === 'sat') {
     const place = drPlace(run, ev); res.place = place; res.paid = ev.seats;
     rec.best = rec.best ? Math.min(rec.best, place) : place;
-    if (place <= ev.seats) { s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
+    if (place <= ev.seats) { drMoment(s, '🎟', `Won a seat into the ${drEvent(ev.target).name}`); s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
     res.net = -(DR.usedTicket ? 0 : ev.buyin);
   } else if (ev.kind === 'cash') {
     const net = run.bust ? -ev.buyin : drCashNet(run, quit ? 0 : (run.rng() - 0.5) * 0.3);
@@ -262,6 +264,7 @@ function drFinish(quit) {
     const prize = place <= P ? Math.round(pays[place - 1]) : 0;
     res.place = place; res.paid = P; res.prize = prize; res.net = prize - (ev.free ? 0 : ev.buyin);
     rec.best = rec.best ? Math.min(rec.best, place) : place;
+    if (prize > 0 && s.cashes === 0) drMoment(s, '💵', `First cash: ${drOrd(place)} in the ${ev.name}`);
     if (prize > 0) { drAdd(s, prize, `${drOrd(place)} in ${ev.name}`); s.cashes++; rec.cashes++; rec.cash = Math.max(rec.cash, prize); if (ev.ch === 2) s.flags.circuitCash = true; res.repaid = drRepay(s, res.net); }
     rec.net += res.net;
     const reachedFinal = !run.bust || run.stages[run.si] === 'final';
@@ -269,8 +272,10 @@ function drFinish(quit) {
     if (reachedFinal && run.si >= run.stages.length - 1) { s.ft++; if (ev.id === 'main') s.flags.meft = true; if (run.boss) { s.met[run.boss] = true; res.met = run.boss; } }
     if (place === 1) {
       rec.wins++;
-      if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); }
-      if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { s.legends[run.boss] = true; res.beat = run.boss; }
+      if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); drMoment(s, DR_TITLES[ev.title].icon, `Won the ${ev.name} for $${drMoney(prize)}`); }
+      else if (!ev.daily) drMoment(s, '🏅', `Won the ${ev.name}`);
+      if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { if (!s.legends[run.boss]) drMoment(s, '🂡', `Beat ${drLegend(run.boss).name} heads-up`); s.legends[run.boss] = true; res.beat = run.boss; }
+      if (run.boss === 'ghost') drMoment(s, '🕶️', 'Beat The Ghost for the world title');
       if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
       const once = (id) => { if (!s.story[id] && !s.queue.includes(id)) s.queue.push(id); };
       if (ev.title === 'room' && run.boss === 'trent') once('trentbeat');
