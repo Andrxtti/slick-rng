@@ -80,7 +80,7 @@ button, .cell, .seat, .slot { touch-action: manipulation; }
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&display=swap">
 <style>
 /* Layout: solver workstation. Sticky top bar; tournament setup drawer across the top;
    then two columns: the table (felt with seats, board on the felt, action rows, solve controls)
@@ -352,150 +352,231 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .trstat b { font-family: var(--font-mono); font-size: 24px; font-weight: 500; } .trstat span { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
 .trleaks { flex: 1; min-width: min(100%, 260px); display: grid; gap: 4px; }
 .trleak { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; border-bottom: 1px solid var(--line); padding-block: 4px; }
-/* ---------- arena: the trainer as a game */
+/* ---------- arena: the trainer as an 8-bit boxing game */
 .training:not(.ar-practice) .trclassic { display: none; }
-/* the arena deals its own tables: hide the table setup so it can't be changed mid-game */
+/* the arena deals its own tables: hide the table setup so it can't be changed mid-fight */
 .training:not(.ar-practice) #t222, .training:not(.ar-practice) #stackWrap, .training:not(.ar-practice) #leftWrap, .training:not(.ar-practice) .nav .seg:not(.mode), .training:not(.ar-practice) #spotBar { display: none !important; }
-.arena { display: grid; gap: 14px; min-width: 0; }
-.arena > section { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--panel); padding: 14px 16px; display: grid; gap: 10px; box-shadow: var(--shadow); min-width: 0; }
-.arena h3 { margin: 0; font: 700 26px/1.05 var(--font-display); letter-spacing: .02em; }
+.arena { --w: #fcfcfc; --k: #000; --gold: #f8b800; --red: #d82800; --blue: #0058f8; --sky: #3cbcfc; --grn: #00a800; --gry: #7c7c7c;
+  --notch: polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px));
+  display: grid; gap: 16px; min-width: 0; color: var(--w); }
+.arena .px { font-family: "Press Start 2P", ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0; line-height: 1.5; font-weight: 400; }
 .arena .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .arena .grow { flex: 1; }
-.arbig { font-size: 17px; padding: 13px 20px; font-family: var(--font-display); letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
-.aricon { font-size: 34px; width: 56px; height: 56px; display: grid; place-items: center; border-radius: 14px; background: color-mix(in srgb, var(--gc, #efe4c8) 16%, #0000); border: 1px solid color-mix(in srgb, var(--gc, #efe4c8) 40%, #0000); flex: none; }
-.aricon.sm { font-size: 22px; width: 40px; height: 40px; border-radius: 10px; }
-.archip { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: rgba(0, 0, 0, .35); border: 1px solid rgba(255, 255, 255, .14); white-space: nowrap; }
-.arxpchip { font-family: var(--font-mono); font-size: 11px; color: var(--gold); white-space: nowrap; }
-/* profile */
-.arena > .arprof { position: relative; overflow: hidden; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px 14px; border-color: rgba(255, 255, 255, .1); padding: 16px; }
-.arprof::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, .5)); pointer-events: none; }
-.arprof > * { position: relative; z-index: 1; }
-.arava { width: 58px; height: 58px; border-radius: 16px; display: grid; place-items: center; font: 700 32px var(--font-display); background: rgba(0, 0, 0, .38); border: 2px solid rgba(255, 255, 255, .28); }
-.arnm { font: 700 28px/1 var(--font-display); letter-spacing: .02em; overflow-wrap: anywhere; }
-.artitle { font-size: 11px; text-transform: uppercase; letter-spacing: .16em; color: rgba(243, 236, 220, .82); margin-top: 4px; }
-.arbadges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.arena .hint { color: #bcbcbc; font-size: 12px; }
+.arena .label { color: var(--gold); font: 9px/1.5 "Press Start 2P", monospace; text-transform: uppercase; letter-spacing: 0; }
+.arena h3 { margin: 0; font-size: 15px; }
+.pxbox { position: relative; background: #000; border: 4px solid var(--w); clip-path: var(--notch); padding: 14px; display: grid; gap: 12px; min-width: 0; }
+.arhead { font-size: 11px; color: var(--gold); }
+.arbill { font-size: 10px; color: var(--gold); text-align: center; }
+.arbill.sm { font-size: 8px; color: #bcbcbc; margin-top: 4px; }
+.arcount { font-size: 10px; }
+/* buttons */
+.arena .pxbtn { font: 11px/1.4 "Press Start 2P", monospace; text-transform: uppercase; color: #000; background: var(--w); border: 4px solid #000; border-radius: 0; padding: 11px 14px; cursor: pointer; clip-path: var(--notch);
+  box-shadow: inset -4px -4px 0 #9c9c9c, inset 4px 4px 0 #fff; min-height: 0; }
+.arena .pxbtn:hover { filter: brightness(1.08); }
+.arena .pxbtn:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: inset 4px 4px 0 #9c9c9c; }
+.arena .pxbtn.go { background: var(--gold); box-shadow: inset -4px -4px 0 #a85c00, inset 4px 4px 0 #ffe08a; }
+.arena .pxbtn.sm { font-size: 8px; padding: 7px 9px; }
+.arena .pxbtn:disabled { opacity: .4; cursor: not-allowed; }
+.arena .pxbtn .kbd { font: 8px "Press Start 2P", monospace; color: #555; border: 2px solid #555; border-radius: 0; padding: 1px 4px; margin-right: 6px; }
+.arbig { font-size: 15px !important; padding: 16px 18px !important; width: 100%; }
+.pxseg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+.pxseg button { font: 10px "Press Start 2P", monospace; text-transform: uppercase; background: #000; color: var(--w); border: 4px solid var(--gry); border-radius: 0; padding: 10px 4px; cursor: pointer; clip-path: var(--notch); }
+.pxseg button[aria-pressed="true"] { border-color: var(--w); background: var(--blue); }
+.armodes button { font-size: 12px; padding: 13px 4px; }
+/* bars */
+.pxbar { height: 14px; background: #000; border: 3px solid var(--w); position: relative; overflow: hidden; }
+.pxbar i { display: block; height: 100%; width: 0; transition: width .45s steps(8); background: repeating-linear-gradient(90deg, var(--c, var(--gold)) 0 8px, color-mix(in srgb, var(--c, var(--gold)) 70%, #000) 8px 10px); }
+.pxbar.xp i { --c: var(--gold); }
+.pxbar.me i { --c: var(--sky); }
+.pxbar.opp i { --c: #f83800; }
+.pxbar.load { width: min(320px, 92%); justify-self: center; }
+.pxbar.load i { --c: var(--gc, var(--gold)); transition: width .25s linear; }
+.pxbar.mix { height: 12px; border-width: 2px; }
+.pxbar.mix i { --c: var(--w); }
+.archip { font-size: 8px; padding: 5px 8px; border: 2px solid var(--w); white-space: nowrap; }
+.arxpchip { font: 8px "Press Start 2P", monospace; color: var(--gold); white-space: nowrap; }
+/* portraits */
+.arportrait { width: 64px; height: 64px; display: grid; place-items: center; font-size: 38px; background: color-mix(in srgb, var(--gc, var(--gry)) 35%, #000); border: 4px solid var(--w); clip-path: var(--notch); flex: none; image-rendering: pixelated; }
+.arportrait.sm { width: 48px; height: 48px; font-size: 26px; border-width: 3px; }
+.arportrait.big { width: 92px; height: 92px; font-size: 56px; }
+.arportrait.me { --gc: var(--blue); font: 40px "Press Start 2P", monospace; color: var(--w); }
+.arfrom { font-size: 12px; color: #bcbcbc; }
+.arrec { font-size: 12px; color: var(--sky); }
+/* fighter card */
+.arprof { grid-template-columns: auto 1fr; align-items: center; gap: 12px 14px; }
+.arprofbg { position: absolute; inset: 0; background: var(--banner); opacity: .85; }
+.arprofbg::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .18) 0 2px, transparent 2px 4px), linear-gradient(180deg, transparent 30%, rgba(0, 0, 0, .7)); }
+.arprof > *:not(.arprofbg) { position: relative; z-index: 1; }
+.arava { width: 64px; height: 64px; display: grid; place-items: center; font: 30px "Press Start 2P", monospace; background: var(--blue); border: 4px solid var(--w); clip-path: var(--notch); }
+.arnm { font-size: 16px; overflow-wrap: anywhere; }
+.artitle { font: 9px/1.6 "Press Start 2P", monospace; color: var(--gold); text-transform: uppercase; margin-top: 4px; }
+.arstats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.arstats div, .arhudcell { display: grid; gap: 3px; padding: 7px 8px; background: rgba(0, 0, 0, .7); border: 2px solid var(--gry); }
+.arstats small, .arhudcell small { font: 7px "Press Start 2P", monospace; color: var(--gold); text-transform: uppercase; }
+.arstats b { font-size: 12px; }
+.arstats small:last-child { color: #bcbcbc; font-family: var(--font-body); font-size: 11px; text-transform: none; }
 .arlvl { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
-.arlvl b { font: 700 19px var(--font-display); color: var(--gold); letter-spacing: .04em; }
-.arlvl small { font-size: 12px; color: var(--muted); }
-.arxp { height: 11px; border-radius: 999px; background: rgba(0, 0, 0, .5); overflow: hidden; border: 1px solid rgba(255, 255, 255, .12); }
-.arxp i { display: block; height: 100%; background: linear-gradient(90deg, #f0c35a, #e8704f); box-shadow: 0 0 14px rgba(240, 195, 90, .7); transition: width .6s ease; }
-.arname { font-weight: inherit; }
-.arname.fire { background: linear-gradient(90deg, #f0c35a, #e8704f, #d9434f, #f0c35a); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: arfire 3s linear infinite; }
-@keyframes arfire { to { background-position: 200% 0; } }
-/* daily */
-.arena > .ardaily { border-color: color-mix(in srgb, var(--gc) 50%, var(--line)); background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--gc) 20%, #0000), #0000 60%), var(--panel); }
-.ardg { display: flex; gap: 14px; align-items: center; }
-.ardg small { color: var(--muted); font-size: 13px; }
+.arlvl b { font-size: 11px; color: var(--gold); }
+.arlvl small { font-size: 11px; color: #bcbcbc; }
+.arname.fire { background: linear-gradient(90deg, #f8b800, #f83800, #f878f8, #f8b800); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: arfire 2s steps(12) infinite; }
+@keyframes arfire { to { background-position: 300% 0; } }
+/* tonight's bout */
+.ardaily { border-color: var(--gold); background: radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--gc) 26%, #000), #000 70%); }
+.arvsmini { display: flex; gap: 14px; align-items: center; }
+.artell { font-size: 13px; color: #dcdcdc; padding: 8px 10px; border: 2px dashed var(--gry); }
+.artell b { font: 8px "Press Start 2P", monospace; color: var(--gold); text-transform: uppercase; margin-right: 6px; }
 .arfacts { display: flex; gap: 6px; flex-wrap: wrap; }
-.arfacts span { font-size: 12px; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--muted); }
-.ardone { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); }
-.ardone b { font: 700 30px var(--font-display); color: var(--gold); }
-.arweek { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-.arday { display: grid; justify-items: center; gap: 2px; padding: 6px 0; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-2); font-size: 18px; }
-.arday small { font-size: 10px; color: var(--muted); letter-spacing: .1em; }
-.arday.today { border-color: var(--gc); box-shadow: 0 0 0 1px var(--gc) inset, 0 0 16px -4px var(--gc); }
-.arday.done { border-color: #2d6a33; color: #6cc070; font-weight: 700; }
-.arday.miss { opacity: .45; }
-/* goals */
-.argoal { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.arfacts span { font-size: 11px; padding: 4px 8px; border: 2px solid var(--gry); color: #dcdcdc; }
+.ardone { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border: 3px solid var(--gold); }
+.ardone b { font-size: 16px; color: var(--gold); }
+.arweek { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.arday { display: grid; justify-items: center; gap: 3px; padding: 6px 0; border: 2px solid var(--gry); font-size: 20px; background: #000; }
+.arday small { font: 6px "Press Start 2P", monospace; color: #bcbcbc; }
+.arday .arres1 { color: var(--gold); min-height: 9px; }
+.arday.today { border-color: var(--gold); background: #2a1e00; animation: arblink 1s steps(2) infinite; }
+.arday.done { border-color: var(--grn); }
+.arday.miss { opacity: .4; }
+@keyframes arblink { 50% { border-color: #000; } }
+/* training camp */
+.argoal { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 2px dotted #333; font-size: 14px; }
 .argoal:last-child { border-bottom: 0; }
-.arck { width: 22px; height: 22px; border-radius: 7px; border: 1px solid var(--line-2); display: grid; place-items: center; color: #0b0b09; font-weight: 700; flex: none; }
-.argoal.done .arck { background: #6cc070; border-color: #6cc070; }
-.argoal.done span.grow { color: var(--muted); text-decoration: line-through; }
-/* modes and tiles */
-.armodes { display: grid !important; grid-template-columns: repeat(3, 1fr); }
-.armodes button { font-family: var(--font-display); font-size: 17px; letter-spacing: .06em; text-transform: uppercase; padding: 10px 0; }
+.arck { width: 22px; height: 22px; border: 3px solid var(--w); display: grid; place-items: center; color: #000; font-weight: 700; flex: none; }
+.argoal.done .arck { background: var(--grn); }
+.argoal.done span.grow { color: var(--gry); text-decoration: line-through; }
+/* fighter lists */
 .artiles { display: grid; gap: 8px; }
-.artile { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(90deg, color-mix(in srgb, var(--gc) 10%, #0000), #0000 55%), var(--bg-2); }
-.artile b { font: 600 19px var(--font-display); letter-spacing: .03em; display: block; }
-.artile small { display: block; font-size: 12px; color: var(--muted); }
-.artile small.artier { font-family: var(--font-mono); margin-top: 2px; }
-.artile.soon { opacity: .55; }
+.artile { display: flex; gap: 12px; align-items: center; padding: 8px; border: 3px solid #333; background: linear-gradient(90deg, color-mix(in srgb, var(--gc) 16%, #000), #000 60%); }
+.artile b { font-size: 11px; display: block; }
+.artile small { display: block; font-size: 12px; color: #bcbcbc; margin-top: 3px; }
+.artile small.artier { font: 7px/1.6 "Press Start 2P", monospace; text-transform: uppercase; }
+.artile.soon { opacity: .5; }
 .arboard { display: grid; }
-.arrow { display: flex; gap: 10px; align-items: center; padding: 7px 4px; border-bottom: 1px solid var(--line); font-size: 14px; }
-.arrow.me { background: color-mix(in srgb, var(--hero) 12%, #0000); border-radius: 8px; border-bottom-color: #0000; }
-.arpos { width: 26px; text-align: center; }
+.arrow { display: flex; gap: 10px; align-items: center; padding: 8px 4px; border-bottom: 2px dotted #333; font-size: 14px; }
+.arrow.me { background: #0a1f5a; outline: 2px solid var(--sky); }
+.arrow.champ { background: #2a1e00; }
+.arpos { width: 28px; text-align: center; font-size: 10px; }
+.arrec2 { display: block; font-size: 11px; color: #9c9c9c; }
+.archamp { font-size: 7px; color: var(--gold); margin-left: 4px; }
 .arrules { display: grid; gap: 6px; }
-.arrules div { display: flex; gap: 10px; justify-content: space-between; font-size: 13px; padding: 6px 10px; border-radius: 10px; background: var(--bg-2); }
-.arrules span { color: var(--muted); text-align: right; }
-/* achievements and locker */
-.arachs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
-.arach { display: grid; gap: 2px; padding: 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-2); opacity: .55; }
-.arach.got { opacity: 1; border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); background: radial-gradient(100% 120% at 0% 0%, rgba(240, 195, 90, .12), #0000 60%), var(--bg-2); }
+.arrules div { display: flex; gap: 10px; justify-content: space-between; font-size: 12px; padding: 7px 10px; border: 2px solid #333; }
+.arrules b { font: 8px "Press Start 2P", monospace; color: var(--gold); text-transform: uppercase; }
+.arrules span { color: #bcbcbc; text-align: right; }
+/* trophies and locker */
+.arachs { display: grid; grid-template-columns: repeat(auto-fill, minmax(146px, 1fr)); gap: 8px; }
+.arach { display: grid; gap: 4px; padding: 10px; border: 3px solid #333; opacity: .5; }
+.arach.got { opacity: 1; border-color: var(--gold); background: #1a1300; }
 .arach .aric { font-size: 26px; }
-.arach b { font: 600 16px var(--font-display); letter-spacing: .03em; }
-.arach small { font-size: 11.5px; color: var(--muted); }
+.arach b { font: 9px/1.5 "Press Start 2P", monospace; text-transform: uppercase; }
+.arach small { font-size: 11.5px; color: #bcbcbc; }
+.arfields { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.arena .field input { border-radius: 0; border: 3px solid var(--w); background: #000; color: var(--w); }
 .archips { display: flex; gap: 6px; flex-wrap: wrap; }
-.archoose { font-size: 13px; padding: 6px 11px; border-radius: 999px; }
-.archoose.on { outline: 2px solid var(--gold); outline-offset: 1px; }
-.archoose:disabled { opacity: .45; }
+.archoose { font: 8px/1.4 "Press Start 2P", monospace; text-transform: uppercase; padding: 8px 10px; border-radius: 0; border: 3px solid var(--gry); background: #000; color: var(--w); cursor: pointer; }
+.archoose.on { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+.archoose:disabled { opacity: .4; cursor: not-allowed; }
 .arpbar { display: flex !important; gap: 12px; align-items: center; }
-.arpbar small { display: block; color: var(--muted); font-size: 12px; }
-/* in a game */
-.arena > .arhud { border-color: color-mix(in srgb, var(--gc) 45%, var(--line)); gap: 8px; padding: 10px 14px; }
-.arhudt { font: 700 20px var(--font-display); letter-spacing: .03em; }
-.armode { font: 600 11px var(--font-mono); letter-spacing: .12em; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--line-2); }
-.armode.ranked { color: var(--gold); border-color: #7a5a1c; } .armode.daily { color: #6cc070; border-color: #2d6a33; }
-.arscore { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.arscore div { display: grid; padding: 6px 10px; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--line); }
-.arscore small { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
-.arscore b { font-size: 20px; font-weight: 500; }
-.arpips { display: flex; gap: 4px; }
-.arpips i { flex: 1; height: 7px; border-radius: 4px; background: var(--line-2); }
-.arpips.big i { height: 12px; }
-.arpips i.cur { background: var(--fg); animation: arpulse 1.2s ease-in-out infinite; }
-.arpips i.perfect { background: #6cc070; } .arpips i.good { background: #a5cf5a; } .arpips i.close { background: #f0a35b; } .arpips i.bad { background: #ef7d6d; } .arpips i.skip { background: #3a352c; }
-@keyframes arpulse { 50% { opacity: .35; } }
-.arload { justify-items: center; text-align: center; padding-block: 34px !important; background: radial-gradient(80% 120% at 50% 0%, color-mix(in srgb, var(--gc) 14%, #0000), #0000 70%), var(--panel) !important; }
-.arbar { width: min(320px, 90%); height: 8px; border-radius: 999px; background: var(--bg-2); overflow: hidden; border: 1px solid var(--line); }
-.arbar i { display: block; height: 100%; width: 0; background: var(--gc); transition: width .25s linear; }
+.arpbar small { display: block; color: #bcbcbc; font-size: 12px; margin-top: 4px; }
+.arpbar b { font-size: 11px; color: var(--gold); }
+/* the fight */
+.arhud { gap: 8px; padding: 10px; border-color: var(--w); }
+.arhudrow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.arhudcell b { font-size: 12px; white-space: nowrap; }
+.arhudcell b i { font-style: normal; font-size: 9px; margin-left: 2px; }
+.arhp { display: grid; grid-template-columns: 96px 1fr; gap: 8px; align-items: center; }
+.arhp span { font-size: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.arhudfoot .hint { font-size: 11px; }
+.armode { font-size: 7px; padding: 4px 6px; border: 2px solid var(--w); }
+.armode.ranked { color: var(--gold); border-color: var(--gold); } .armode.daily { color: #f83800; border-color: #f83800; }
+.arpips { display: flex; gap: 3px; }
+.arpips i { flex: 1; height: 12px; border: 2px solid #333; background: #111; }
+.arpips i.perfect { background: var(--gold); border-color: var(--gold); } .arpips i.good { background: var(--grn); border-color: var(--grn); }
+.arpips i.close { background: #c86000; border-color: #c86000; } .arpips i.bad { background: var(--red); border-color: var(--red); } .arpips i.skip { background: #222; }
+.arvs { justify-items: center; text-align: center; border-color: var(--gold); padding-block: 20px; background: radial-gradient(90% 70% at 50% 40%, #102a7a, #000 75%); }
+.arvsgrid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; width: 100%; }
+.arcard { display: grid; justify-items: center; gap: 6px; }
+.arcard b { font-size: 10px; }
+.arcard small { font-size: 11px; color: #bcbcbc; }
+.arvsword { font-size: 34px; color: var(--gold); text-shadow: 4px 4px 0 var(--red); animation: arpop .45s steps(4); }
+.arround { font-size: 18px; color: var(--w); text-shadow: 3px 3px 0 var(--blue); }
+.arcorner { border-color: var(--sky); justify-items: center; text-align: center; }
+.arcornerrow { display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%; }
+.arcoach { width: 76px; height: 76px; font-size: 42px; }
+.arref { width: 76px; height: 76px; object-fit: cover; border: 4px solid var(--w); clip-path: var(--notch); image-rendering: pixelated; flex: none; background: #000; }
+.arref.big { width: 112px; height: 112px; }
+.arbubble.sm { max-width: 320px; text-align: center; }
+.arrefcall { display: flex; gap: 12px; align-items: center; text-align: left; }
+.arrefcall .arbubble { text-align: left; }
+.arbubble { position: relative; background: var(--w); color: #000; padding: 10px 12px; clip-path: var(--notch); flex: 1; }
+.arbubble b { font-size: 9px; color: var(--blue); }
+.arbubble p { margin: 4px 0 0; font-size: 13px; line-height: 1.45; }
+.arrecap { display: flex; justify-content: space-between; gap: 10px; width: 100%; font-size: 12px; padding: 8px 10px; border: 2px solid #333; flex-wrap: wrap; }
+.arbell { justify-items: center; text-align: center; padding-block: 40px; border-color: var(--gold); gap: 10px; }
+.arbell.dim { border-color: var(--gry); padding-block: 26px; }
+.arbell.dim .px { font-size: 11px; color: #bcbcbc; animation: arblinktext 1s steps(2) infinite; }
+.arfight { font-size: 38px; color: var(--gold); text-shadow: 4px 4px 0 var(--red); animation: arpop .4s steps(4); }
+@keyframes arblinktext { 50% { opacity: .3; } }
+@keyframes arpop { from { transform: scale(1.6); opacity: 0; } }
+.arspot { border-color: var(--w); }
+.arspothead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.arspothead .px { font-size: 10px; color: var(--gold); }
+.arring { padding: 10px; background: #1846b8; border: 4px solid var(--w); box-shadow: inset 0 6px 0 #d82800, inset 0 10px 0 var(--w), inset 0 14px 0 #0058f8; padding-top: 22px; }
+.arring .trseat { background: #000; border: 2px solid var(--w); border-radius: 0; }
+.arring .trseat.me { background: #0a1f5a; border-color: var(--sky); }
+.arena .trhero { border-radius: 0; border: 4px solid var(--w); clip-path: var(--notch); }
+.arena .trhero .who { font-size: 12px; }
+.arena .trcard { border-radius: 2px; box-shadow: 4px 4px 0 #000; }
 .aropts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
-.aropt { font-size: 17px; padding: 15px 14px; font-weight: 600; }
-.arverdict { display: flex; gap: 14px; align-items: center; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg-2); animation: arpop .35s cubic-bezier(.2, 1.4, .4, 1); }
-.arverdict b { font-size: 34px; font-weight: 500; }
-.arverdict.perfect { border-color: #2d6a33; } .arverdict.perfect b { color: #6cc070; }
-.arverdict.good { border-color: #4d6a24; } .arverdict.good b { color: #a5cf5a; }
-.arverdict.close { border-color: #7a5a1c; } .arverdict.close b { color: #f0a35b; }
-.arverdict.bad { border-color: #7a2a24; } .arverdict.bad b { color: #ef7d6d; }
-@keyframes arpop { from { transform: scale(.92); opacity: 0; } }
+.arena .aropt { font-size: 11px; padding: 15px 10px; }
+.arverdict { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 12px 14px; border: 4px solid var(--w); clip-path: var(--notch); animation: arpop .3s steps(3); }
+.arverdict b { font-size: 16px; }
+.arverdict .arpts { font-size: 20px; }
+.arverdict small { grid-column: 1 / -1; font-size: 12px; }
+.arverdict.perfect { background: var(--gold); color: #000; } .arverdict.good { background: var(--grn); color: #fff; }
+.arverdict.close { background: #c86000; color: #fff; } .arverdict.bad { background: var(--red); color: #fff; animation: arshake .4s steps(6); }
+@keyframes arshake { 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
 .armix { display: grid; gap: 6px; }
 .armixrow { display: grid; grid-template-columns: minmax(0, 1.2fr) 2fr 44px; gap: 10px; align-items: center; font-size: 13px; }
-.armixrow.mine span:first-child { color: var(--hero); font-weight: 600; }
-.armixbar { height: 10px; border-radius: 999px; background: var(--bg-2); overflow: hidden; border: 1px solid var(--line); }
-.armixbar i { display: block; height: 100%; background: var(--carolina); }
+.armixrow.mine span:first-child { color: var(--sky); font-weight: 600; }
 /* results */
-.arena > .arres { justify-items: center; text-align: center; border-color: color-mix(in srgb, var(--gc) 45%, var(--line)); background: radial-gradient(90% 120% at 50% 0%, color-mix(in srgb, var(--gc) 16%, #0000), #0000 70%), var(--panel); }
-.arres .arpips, .arres .arscore { width: 100%; }
-.argrade { font: 700 110px/1 var(--font-display); letter-spacing: .02em; animation: arpop .5s cubic-bezier(.2, 1.4, .4, 1); }
-.grade-S .argrade { background: linear-gradient(90deg, #f0c35a, #e8704f, #f0c35a); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: arfire 2.5s linear infinite; }
-.grade-A .argrade { color: #6cc070; } .grade-B .argrade { color: #a5cf5a; } .grade-C .argrade { color: #f0a35b; } .grade-D .argrade { color: #ef7d6d; }
-.arresline { display: flex; gap: 10px; align-items: baseline; font-size: 18px; }
-.arxprow { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.arres { justify-items: center; text-align: center; border-color: var(--gold); background: radial-gradient(90% 70% at 50% 30%, color-mix(in srgb, var(--gc) 24%, #000), #000 75%); }
+.arres .arpips, .arres .arhudrow { width: 100%; }
+.arko { font-size: 64px; line-height: 1.1; color: var(--gold); text-shadow: 6px 6px 0 var(--red); animation: arpop .5s steps(5), arblinktext .5s steps(2) .5s 4; }
+.grade-D .arko { color: var(--gry); text-shadow: 6px 6px 0 #222; animation: arpop .5s steps(5); }
+.grade-B .arko, .grade-C .arko { font-size: 52px; color: var(--w); text-shadow: 5px 5px 0 var(--blue); }
+.arresline { font-size: 14px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; justify-content: center; }
+.arresline b { font-size: 14px; }
+.arxprow { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; padding: 6px 0; border-bottom: 2px dotted #333; }
 .arxprow .mono { color: var(--gold); }
-.arxprow.total { font-weight: 600; border-bottom: 0; }
-.arrank { display: flex; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 10px; background: var(--bg-2); flex-wrap: wrap; }
-.arrank b { font-family: var(--font-display); font-size: 18px; }
-.arrank .up { color: #6cc070; } .arrank .down { color: #ef7d6d; }
+.arxprow.total { border-bottom: 0; }
+.arxprow.total .px { font-size: 11px; }
+.arrank { display: flex; gap: 10px; align-items: center; padding: 9px 12px; border: 2px solid #333; flex-wrap: wrap; font-size: 13px; }
+.arrank b { font-size: 10px; }
+.arrank .up { color: #38e838; } .arrank .down { color: #f83800; }
 .arlvl.solo { grid-column: auto; }
-.arlevelup { padding: 10px 12px; border-radius: 10px; border: 1px solid #7a5a1c; color: var(--gold); text-align: center; }
+.arlevelup { padding: 12px; border: 3px solid var(--gold); color: var(--gold); text-align: center; font-size: 12px; animation: arblinktext .5s steps(2) 6; }
 .arend { justify-content: center; }
+.arend .pxbtn { width: auto; }
 /* toasts */
 .artoasts { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 50%; transform: translateX(-50%); z-index: 90; display: grid; gap: 8px; pointer-events: none; width: min(92vw, 380px); }
-.artoast { display: flex; gap: 12px; align-items: center; padding: 10px 14px; border-radius: 14px; background: #1b1913; border: 1px solid #7a5a1c; box-shadow: 0 12px 32px -8px rgba(0, 0, 0, .8), 0 0 24px -10px rgba(240, 195, 90, .6); animation: arin .35s cubic-bezier(.2, 1.4, .4, 1), arout .4s ease-in 3.7s forwards; }
+.artoast { display: flex; gap: 12px; align-items: center; padding: 10px 12px; background: #000; border: 4px solid #f8b800; color: #fcfcfc; box-shadow: 6px 6px 0 rgba(0, 0, 0, .7); animation: arin .3s steps(3), arout .3s steps(3) 3.8s forwards; }
 .artoast .aric { font-size: 26px; }
-.artoast b { display: block; font-family: var(--font-display); font-size: 17px; letter-spacing: .03em; color: var(--gold); }
-.artoast small { display: block; font-size: 12px; color: var(--muted); }
-@keyframes arin { from { transform: translateY(-14px) scale(.96); opacity: 0; } }
-@keyframes arout { to { transform: translateY(-10px); opacity: 0; } }
+.artoast b { display: block; font: 10px/1.5 "Press Start 2P", monospace; text-transform: uppercase; color: #f8b800; }
+.artoast small { display: block; font-size: 12px; color: #bcbcbc; margin-top: 2px; }
+@keyframes arin { from { transform: translateY(-16px); opacity: 0; } }
+@keyframes arout { to { transform: translateY(-12px); opacity: 0; } }
 @media (max-width: 760px) {
-  .arena > .arprof { grid-template-columns: auto 1fr; }
-  .arbadges { grid-column: 1 / -1; justify-content: flex-start; }
-  .argrade { font-size: 92px; }
+  .arena { gap: 12px; }
+  .arko { font-size: 52px; }
+  .arvsword { font-size: 26px; }
+  .arportrait.big { width: 76px; height: 76px; font-size: 44px; }
   .aropts { grid-template-columns: 1fr; }
+  .arhp { grid-template-columns: 78px 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .arname.fire, .grade-S .argrade, .arpips i.cur, .artoast, .arverdict, .argrade { animation: none; }
+  .arena *, .artoast { animation: none !important; transition: none !important; }
 }
+/* ---------- end arena */
 .whatif { display: grid; gap: 12px; }
 .whatif .wi { display: grid; gap: 4px; min-width: 0; font-size: 12px; color: var(--muted); }
 .whatif .wi b { color: var(--fg); font-family: var(--font-mono); font-weight: 500; }
@@ -3929,80 +4010,83 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ================================================================ ARENA: the Trainer as a game
-// Daily games, Casual / Ranked / League, XP and levels, ranks, achievements, goals and cosmetics.
-// Draft: progress is stored on this device. Leaderboards and leagues show sample rivals until
-// online accounts exist. Scoring: a play the solver makes earns up to 100 points, prorated by how
-// often the solver makes it next to its favourite play; a play it (almost) never makes loses up to 100.
+// An 8-bit boxing ode: each daily game is a bout against a fighter, tables are rounds, perfect
+// plays earn stars, mistakes are knockdowns, results are KO / TKO / decision, ranks are circuits.
+// Draft: progress is stored on this device. Rankings and leagues show sample rivals until online
+// accounts exist. Scoring: the solver's favourite play earns 100, plays it mixes in earn their
+// share, and a play it (almost) never makes loses up to 100. Winning the hand never matters.
 var AR = null;
 const AR_KEY = 'slickArena', AR_TABLES = 3, AR_HANDS = 4, AR_SOLVE_MS = 12000;
 const AR_GAMES = {
-  cash: { name: 'Cash Clash', icon: '💵', blurb: 'NLH cash · 6-max · 40–60bb', color: '#5cbf64' },
-  bubble: { name: 'Bubble Trouble', icon: '🫧', blurb: 'MTT · ICM · right before the money', color: '#5aa9de' },
-  shove: { name: 'Shove or Fold', icon: '🚀', blurb: 'MTT · 3–20bb · jam, call or fold', color: '#e8704f' },
-  omaha: { name: 'Omaha Night', icon: '🌙', blurb: 'PLO · 4 cards', color: '#b48ce8', soon: true },
-  ring: { name: 'Full Ring Frenzy', icon: '🎯', blurb: 'MTT · 9-handed · chip EV', color: '#f0c35a' },
-  mix: { name: 'Weekend Mix', icon: '🎲', blurb: '3 games, one table each', color: '#efe4c8' },
+  cash: { name: 'Cash Clash', fighter: 'Glass Chip', face: '🥐', from: 'Paris, Texas', rec: '1-99 · 0 KO', tell: 'Folds to anything. Take his blinds, but don\'t spew.', blurb: 'NLH cash · 6-max · 40–60bb', color: '#3cbcfc' },
+  bubble: { name: 'Bubble Trouble', fighter: 'King Bubbo', face: '👑', from: 'Bubble Island', rec: '18-9 · 12 KO', tell: 'Big stack bully at the bubble. Know when ICM says fold.', blurb: 'MTT · ICM · right before the money', color: '#f8b800' },
+  shove: { name: 'Shove or Fold', fighter: 'Piston Shove', face: '🚀', from: 'Tokyo, Japan', rec: '26-1 · 18 KO', tell: 'Jams any two. Your calling ranges decide this fight.', blurb: 'MTT · 3–20bb · jam, call or fold', color: '#d82800' },
+  omaha: { name: 'Omaha Night', fighter: 'Don Omaha', face: '🌹', from: 'Omaha, Nebraska', rec: '22-3 · 19 KO', tell: 'Four cards, pot-limit. Coming soon.', blurb: 'PLO · 4 cards', color: '#e45cbf', soon: true },
+  ring: { name: 'Full Ring Frenzy', fighter: 'Great Ring Tiger', face: '🐯', from: 'Mumbai, India', rec: '24-5 · 16 KO', tell: 'Nine-handed traffic. Patience up front, pressure late.', blurb: 'MTT · 9-handed · chip EV', color: '#00a800' },
+  mix: { name: 'Weekend Mix', fighter: 'Super Mixo Man', face: '💪', from: 'Hollywood, California', rec: '29-3 · 25 KO', tell: 'Switches styles every round. Stay sharp.', blurb: 'A different game every round', color: '#fcfcfc' },
 };
+const AR_CHAMP = { fighter: 'Mr. Solver', face: '🤖', from: 'The Cloud', rec: '31-0 · 27 KO' };
 const AR_PLAYABLE = ['cash', 'bubble', 'shove', 'ring'];
 const AR_WEEK = ['mix', 'cash', 'bubble', 'shove', 'omaha', 'ring', 'mix']; // index = getDay(), 0 = Sunday
 const AR_TIERS = [
-  { id: 'bronze', name: 'Bronze', min: 0, color: '#d39a62' }, { id: 'silver', name: 'Silver', min: 1050, color: '#d4dbe3' },
-  { id: 'gold', name: 'Gold', min: 1150, color: '#f0c35a' }, { id: 'plat', name: 'Platinum', min: 1275, color: '#7fe0d4' },
-  { id: 'diamond', name: 'Diamond', min: 1400, color: '#8fbaff' }, { id: 'slick', name: 'Slick', min: 1550, color: '#f0c35a' },
+  { id: 'minor', name: 'Minor Circuit', min: 0, color: '#3cbcfc' }, { id: 'major', name: 'Major Circuit', min: 1100, color: '#fcfcfc' },
+  { id: 'world', name: 'World Circuit', min: 1250, color: '#f8b800' }, { id: 'contender', name: 'Contender', min: 1400, color: '#ff7a45' },
+  { id: 'champ', name: 'Champion', min: 1550, color: '#f8b800' },
 ];
 const AR_BANNERS = [
-  { id: 'felt', name: 'Felt', lvl: 1, bg: 'linear-gradient(135deg,#183626,#0c1d14 70%)' },
-  { id: 'ember', name: 'Ember', lvl: 3, bg: 'linear-gradient(135deg,#3a160c,#7a2e14 55%,#c2512a)' },
-  { id: 'ocean', name: 'Deep Water', lvl: 5, bg: 'linear-gradient(135deg,#091a2c,#12406a 55%,#1d6fa8)' },
-  { id: 'royal', name: 'Royal Flush', lvl: 8, bg: 'linear-gradient(135deg,#190c2c,#46207a 55%,#8e4fd1)' },
-  { id: 'gold', name: 'Gold Rush', lvl: 12, bg: 'linear-gradient(135deg,#251b06,#8a6512 55%,#f0c35a)' },
-  { id: 'fire', name: 'Confirmed Fire', ach: 'week', bg: 'linear-gradient(135deg,#260505,#8e1a2c 45%,#e8704f 75%,#f0c35a)' },
+  { id: 'canvas', name: 'Canvas', lvl: 1, bg: 'linear-gradient(180deg,#0f2f6e,#071636)' },
+  { id: 'red', name: 'Red Corner', lvl: 3, bg: 'linear-gradient(180deg,#7a1408,#2a0602)' },
+  { id: 'gym', name: 'Old Gym', lvl: 5, bg: 'repeating-linear-gradient(90deg,#3a2a18 0 22px,#33251a 22px 44px)' },
+  { id: 'neon', name: 'Neon City', lvl: 8, bg: 'linear-gradient(180deg,#2a0a4a,#0a0a2a 60%,#d8287a)' },
+  { id: 'belt', name: 'Gold Belt', lvl: 12, bg: 'linear-gradient(180deg,#5a3c00,#f8b800 50%,#5a3c00)' },
+  { id: 'fire', name: 'Confirmed Fire', ach: 'week', bg: 'linear-gradient(180deg,#260505,#8e1a2c 45%,#e8704f 75%,#f8b800)' },
 ];
-const AR_LVL_TITLES = [[1, 'Rookie'], [5, 'Regular'], [10, 'Crusher'], [20, 'High Roller']];
+const AR_LVL_TITLES = [[1, 'Rookie'], [5, 'Sparring Partner'], [10, 'Heavy Hitter'], [20, 'Main Event']];
 const arPct = (gid) => (s, g) => !!g && g.n >= AR_TABLES * AR_HANDS && g.tables.every((t) => t === gid) && g.pct >= 80;
 const AR_ACH = [
-  { id: 'first', icon: '🃏', name: 'Shuffle Up', desc: 'Finish your first game', xp: 50, test: (s) => s.games >= 1 },
-  { id: 'daily', icon: '📅', name: 'Daily Driver', desc: 'Finish a daily game', xp: 75, test: (s) => Object.keys(s.daily).length >= 1 },
-  { id: 'streak3', icon: '🔥', name: 'On a Heater', desc: 'Log in 3 days in a row', xp: 60, test: (s) => s.streak >= 3 },
-  { id: 'streak7', icon: '📆', name: 'Week Warrior', desc: 'Log in 7 days in a row', xp: 150, title: 'Week Warrior', test: (s) => s.streak >= 7 },
-  { id: 'streak30', icon: '🛡️', name: 'Iron Will', desc: 'Log in 30 days in a row', xp: 500, title: 'Iron Will', test: (s) => s.streak >= 30 },
-  { id: 'g10', icon: '🎮', name: 'Getting Warm', desc: 'Finish 10 games', xp: 100, test: (s) => s.games >= 10 },
-  { id: 'g50', icon: '⚙️', name: 'Grinder', desc: 'Finish 50 games', xp: 300, title: 'Grinder', test: (s) => s.games >= 50 },
-  { id: 'g100', icon: '🏛️', name: 'Centurion', desc: 'Finish 100 games', xp: 600, title: 'Centurion', test: (s) => s.games >= 100 },
-  { id: 'pure', icon: '💎', name: 'Pure GTO', desc: "Make the solver's favourite play", xp: 25, test: (s, g) => !!g && g.results.some((r) => r.rel >= 0.999) },
-  { id: 'combo5', icon: '⚡', name: 'In the Zone', desc: '5 correct decisions in a row', xp: 60, test: (s, g) => !!g && g.bestCombo >= 5 },
-  { id: 'clean', icon: '🌪️', name: 'Untouchable', desc: 'A full game without a mistake', xp: 250, title: 'Untouchable', test: (s, g) => !!g && g.n >= AR_TABLES * AR_HANDS && g.results.every((r) => r.ok) },
-  { id: 'gradeA', icon: '🅰️', name: 'Sharp', desc: 'Get an A grade or better', xp: 80, test: (s, g) => !!g && (g.grade === 'A' || g.grade === 'S') },
-  { id: 'gradeS', icon: '🧠', name: 'Solver Brain', desc: 'Get an S grade', xp: 200, title: 'Solver Brain', test: (s, g) => !!g && g.grade === 'S' },
-  { id: 'cash80', icon: '💵', name: 'Table Shark', desc: 'Score 80%+ in Cash Clash', xp: 120, title: 'Table Shark', test: arPct('cash') },
-  { id: 'bubble80', icon: '🫧', name: 'Bubble Survivor', desc: 'Score 80%+ in Bubble Trouble', xp: 120, title: 'Bubble Survivor', test: arPct('bubble') },
-  { id: 'shove80', icon: '🚀', name: 'Shove Lord', desc: 'Score 80%+ in Shove or Fold', xp: 120, title: 'Shove Lord', test: arPct('shove') },
-  { id: 'ring80', icon: '🎯', name: 'Ring Leader', desc: 'Score 80%+ in Full Ring Frenzy', xp: 120, title: 'Ring Leader', test: arPct('ring') },
-  { id: 'week', icon: '🗓️', name: 'Perfect Attendance', desc: 'Play the daily every weekday in one week', xp: 300, test: (s) => { const ws = arWeekStart(); return [0, 1, 2, 3, 4].every((k) => s.daily[arAddDays(ws, k)]); } },
-  { id: 'weekend', icon: '🎲', name: 'Weekend Warrior', desc: 'Finish a Weekend Mix daily', xp: 80, test: (s, g) => !!g && g.mode === 'daily' && g.gid === 'mix' },
-  { id: 'comeback', icon: '↩️', name: 'Comeback Kid', desc: 'Finish positive after being negative at halftime', xp: 100, test: (s, g) => !!g && g.half !== null && g.half < 0 && g.pts > 0 },
-  { id: 'night', icon: '🦉', name: 'Night Owl', desc: 'Finish a game between midnight and 4 am', xp: 40, title: 'Night Owl', test: (s, g) => !!g && new Date().getHours() < 4 },
-  { id: 'gold', icon: '🥇', name: 'Gold Standard', desc: 'Reach Gold rank in any game', xp: 200, test: (s) => arBestRR(s) >= 1150 },
-  { id: 'slick', icon: '😎', name: 'Confirmed Fire', desc: 'Reach Slick rank in any game', xp: 1000, title: 'Slick', test: (s) => arBestRR(s) >= 1550 },
+  { id: 'first', icon: '🥊', name: 'First Bout', desc: 'Finish your first fight', xp: 50, test: (s) => s.games >= 1 },
+  { id: 'daily', icon: '📅', name: 'Fight Night', desc: 'Finish a daily bout', xp: 75, test: (s) => Object.keys(s.daily).length >= 1 },
+  { id: 'streak3', icon: '🔥', name: 'Road Work', desc: 'Log in 3 days in a row', xp: 60, test: (s) => s.streak >= 3 },
+  { id: 'streak7', icon: '🏃', name: 'Training Camp', desc: 'Log in 7 days in a row', xp: 150, title: 'Road Warrior', test: (s) => s.streak >= 7 },
+  { id: 'streak30', icon: '🛡️', name: 'Iron Chin', desc: 'Log in 30 days in a row', xp: 500, title: 'Iron Chin', test: (s) => s.streak >= 30 },
+  { id: 'g10', icon: '🥋', name: 'Getting Warm', desc: 'Finish 10 fights', xp: 100, test: (s) => s.games >= 10 },
+  { id: 'g50', icon: '⚙️', name: 'Grinder', desc: 'Finish 50 fights', xp: 300, title: 'Grinder', test: (s) => s.games >= 50 },
+  { id: 'g100', icon: '🏛️', name: 'Centurion', desc: 'Finish 100 fights', xp: 600, title: 'Centurion', test: (s) => s.games >= 100 },
+  { id: 'pure', icon: '⭐', name: 'Star Punch', desc: "Earn a star with the solver's favourite play", xp: 25, test: (s, g) => !!g && g.results.some((r) => r.rel >= 0.999) },
+  { id: 'combo5', icon: '⚡', name: 'Combo', desc: '5 correct decisions in a row', xp: 60, test: (s, g) => !!g && g.bestCombo >= 5 },
+  { id: 'clean', icon: '🌪️', name: 'Untouchable', desc: 'A full fight without a knockdown', xp: 250, title: 'Untouchable', test: (s, g) => !!g && g.n >= AR_TABLES * AR_HANDS && g.results.every((r) => r.ok) },
+  { id: 'gradeA', icon: '💥', name: 'TKO', desc: 'Win by TKO or better', xp: 80, test: (s, g) => !!g && (g.grade === 'A' || g.grade === 'S') },
+  { id: 'gradeS', icon: '🧠', name: 'Knockout Artist', desc: 'Win by KO', xp: 200, title: 'KO Artist', test: (s, g) => !!g && g.grade === 'S' },
+  { id: 'cash80', icon: '🥐', name: 'Glass Shattered', desc: 'Score 80%+ against Glass Chip', xp: 120, title: 'Table Shark', test: arPct('cash') },
+  { id: 'bubble80', icon: '👑', name: 'Dethroned', desc: 'Score 80%+ against King Bubbo', xp: 120, title: 'Bubble Survivor', test: arPct('bubble') },
+  { id: 'shove80', icon: '🚀', name: 'Piston Stopped', desc: 'Score 80%+ against Piston Shove', xp: 120, title: 'Shove Lord', test: arPct('shove') },
+  { id: 'ring80', icon: '🐯', name: 'Tiger Tamer', desc: 'Score 80%+ against Great Ring Tiger', xp: 120, title: 'Ring Leader', test: arPct('ring') },
+  { id: 'week', icon: '🗓️', name: 'Full Fight Card', desc: 'Fight the daily every weekday in one week', xp: 300, test: (s) => { const ws = arWeekStart(); return [0, 1, 2, 3, 4].every((k) => s.daily[arAddDays(ws, k)]); } },
+  { id: 'weekend', icon: '💪', name: 'Weekend Warrior', desc: 'Beat the Weekend Mix bout', xp: 80, test: (s, g) => !!g && g.mode === 'daily' && g.gid === 'mix' && g.pct >= 55 },
+  { id: 'comeback', icon: '↩️', name: 'Off the Canvas', desc: 'Win after being negative at halftime', xp: 100, test: (s, g) => !!g && g.half !== null && g.half < 0 && g.pct >= 55 },
+  { id: 'night', icon: '🦉', name: 'Late Night Bout', desc: 'Finish a fight between midnight and 4 am', xp: 40, title: 'Night Owl', test: (s, g) => !!g && new Date().getHours() < 4 },
+  { id: 'world', icon: '🌎', name: 'World Class', desc: 'Reach the World Circuit in any game', xp: 200, test: (s) => arBestRR(s) >= 1250 },
+  { id: 'champ', icon: '🏆', name: 'Confirmed Fire', desc: 'Become Champion in any game', xp: 1000, title: 'Champ', test: (s) => arBestRR(s) >= 1550 },
 ];
 const AR_GOALS = [
-  { id: 'daily', text: "Play today's daily", xp: 60, need: 1, ev: (g) => (g.mode === 'daily' ? 1 : 0) },
-  { id: 'right8', text: 'Get 8+ decisions right in one game', xp: 40, need: 1, ev: (g) => (g.results.filter((r) => r.ok).length >= 8 ? 1 : 0) },
-  { id: 'casual2', text: 'Play 2 casual games', xp: 30, need: 2, ev: (g) => (g.mode === 'casual' ? 1 : 0) },
-  { id: 'ranked1', text: 'Play a ranked game', xp: 40, need: 1, ev: (g) => (g.mode === 'ranked' ? 1 : 0) },
-  { id: 'combo4', text: 'Hit a 4-decision streak', xp: 40, need: 1, ev: (g) => (g.bestCombo >= 4 ? 1 : 0) },
-  { id: 'score75', text: 'Score 75%+ in any game', xp: 50, need: 1, ev: (g) => (g.pct >= 75 ? 1 : 0) },
-  { id: 'two', text: 'Finish 2 games of any kind', xp: 35, need: 2, ev: () => 1 },
+  { id: 'daily', text: "Fight today's bout", xp: 60, need: 1, ev: (g) => (g.mode === 'daily' ? 1 : 0) },
+  { id: 'right8', text: 'Land 8+ clean decisions in one fight', xp: 40, need: 1, ev: (g) => (g.results.filter((r) => r.ok).length >= 8 ? 1 : 0) },
+  { id: 'casual2', text: 'Spar 2 casual fights', xp: 30, need: 2, ev: (g) => (g.mode === 'casual' ? 1 : 0) },
+  { id: 'ranked1', text: 'Fight a ranked bout', xp: 40, need: 1, ev: (g) => (g.mode === 'ranked' ? 1 : 0) },
+  { id: 'combo4', text: 'Throw a 4-hit combo', xp: 40, need: 1, ev: (g) => (g.bestCombo >= 4 ? 1 : 0) },
+  { id: 'stars3', text: 'Earn 3 stars in one fight', xp: 50, need: 1, ev: (g) => (g.stars >= 3 ? 1 : 0) },
+  { id: 'two', text: 'Finish 2 fights of any kind', xp: 35, need: 2, ev: () => 1 },
 ];
-const AR_RIVALS = ['RiverRat', 'NitPicker', 'ColdDeck', 'AceMagnet', 'BluffDaddy', 'TiltProof', 'PocketRockets', 'DonkSlayer', 'ICMurder', 'ShoveIt',
-  'RangeRover', 'GTOgremlin', 'ChipLeader', 'RunnerRunner', 'SuitedUp', 'Overbet', 'MinRaiseMike', 'LimpKing', 'FoldEquity', 'NutPeddler'];
-const AR_TIPS = [
-  'Points are prorated: the solver\'s favourite play earns 100, a play it mixes in earns its share.',
-  'A play the solver never makes costs up to 100 points. Winning the hand does not matter.',
-  'Near the bubble, ICM makes calling all-in much tighter than chip EV would.',
-  'Short stacks: a jam keeps fold equity that a min-raise and call off gives away.',
-  'Keys: 1–9 answer, Enter goes to the next hand.',
-  'Streaks earn bonus XP. Mistakes reset them.',
+const AR_RIVALS = ['Kid Nitro', 'Bald Bluff', 'Soda Pokinski', 'Bear Mucker', 'Von Raiser', 'Mad Cloun', 'Mr. Sandbag', 'Old Man Quads', 'Aran Rangeman', 'Disco Nick',
+  'Little Stack', 'Jab Jabber', 'Iron Mitt', 'Glass Jaw Gus', 'Punchy Pete', 'Hook City', 'Uppercut Ursula', 'Southpaw Sue', 'Canvas Carl', 'Rope-a-Dope'];
+const AR_CORNER = [
+  'Points are prorated. The solver\'s favourite play is a star punch; a mixed play still lands.',
+  'Winning the hand doesn\'t matter in here. Only the decision counts.',
+  'Near the bubble, calling an all-in costs more than chips. Tighten up.',
+  'Short stack? A jam keeps your fold equity. A min-raise and call gives it away.',
+  'Every knockdown resets your combo. Stay on your feet.',
+  'Keys: 1–9 to throw, Enter to come back out swinging.',
+  'Early position at a full ring: fold the junk, let them come to you.',
 ];
 
 // ---------------------------------------------------------------- dates, seeds, storage
@@ -4015,7 +4099,7 @@ function arRng(seed) {
   let a = arHash(String(seed));
   return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
-function arDefault() { return { v: 1, name: 'Player', xp: 0, games: 0, ranked: 0, casual: 0, streak: 0, lastDay: null, rr: {}, hist: [], ach: {}, eq: { title: 'Rookie', banner: 'felt', color: 'auto' }, goals: null, daily: {} }; }
+function arDefault() { return { v: 1, name: 'Player', town: 'Parts Unknown', xp: 0, games: 0, ranked: 0, casual: 0, streak: 0, lastDay: null, rr: {}, hist: [], ach: {}, eq: { title: 'Rookie', banner: 'canvas', color: 'auto' }, goals: null, daily: {} }; }
 function arLoad() { try { const v = JSON.parse(localStorage.getItem(AR_KEY) || 'null'); return v && v.v === 1 ? { ...arDefault(), ...v, eq: { ...arDefault().eq, ...(v.eq || {}) } } : arDefault(); } catch { return arDefault(); } }
 function arSave() { try { localStorage.setItem(AR_KEY, JSON.stringify(AR.st)); } catch { /* storage unavailable */ } }
 
@@ -4023,25 +4107,32 @@ function arSave() { try { localStorage.setItem(AR_KEY, JSON.stringify(AR.st)); }
 function arLevel(xp) { let L = 1, need = 100, left = xp; while (left >= need) { left -= need; L++; need = 100 + 40 * (L - 1); } return { L, into: left, need }; }
 function arTier(rr) { let t = AR_TIERS[0]; for (const x of AR_TIERS) if (rr >= x.min) t = x; return t; }
 function arBestRR(s) { const v = Object.values(s.rr); return v.length ? Math.max(...v) : 0; }
+function arRecord(s) {
+  const fights = s.hist.filter((h) => h.mode !== 'casual');
+  return { w: fights.filter((h) => h.pct >= 55).length, l: fights.filter((h) => h.pct < 55).length, ko: fights.filter((h) => h.pct >= 85).length };
+}
+function arResult(grade) {
+  return { S: { big: 'KO!', sub: 'goes down for the count' }, A: { big: 'TKO!', sub: 'the ref stops it' }, B: { big: 'WIN', sub: 'by decision' }, C: { big: 'WIN', sub: 'by split decision' }, D: { big: 'LOSS', sub: 'by decision' } }[grade];
+}
 function arTitles(s) {
   const L = arLevel(s.xp).L, out = AR_LVL_TITLES.map(([l, t]) => ({ t, ok: L >= l, req: `Level ${l}` }));
   AR_ACH.filter((a) => a.title).forEach((a) => out.push({ t: a.title, ok: !!s.ach[a.id], req: a.name }));
   return out;
 }
 function arBanners(s) { const L = arLevel(s.xp).L; return AR_BANNERS.map((b) => ({ ...b, ok: b.ach ? !!s.ach[b.ach] : L >= b.lvl, req: b.ach ? AR_ACH.find((a) => a.id === b.ach).name : `Level ${b.lvl}` })); }
-function arColors(s) { const has = Object.keys(s.rr).length > 0, best = arBestRR(s); return [{ id: 'auto', name: 'Rank color', ok: true }, ...AR_TIERS.map((t) => ({ id: t.id, name: t.name, ok: has && best >= t.min, req: `Reach ${t.name}` }))]; }
+function arColors(s) { const has = Object.keys(s.rr).length > 0, best = arBestRR(s); return [{ id: 'auto', name: 'Circuit color', ok: true }, ...AR_TIERS.map((t) => ({ id: t.id, name: t.name, ok: has && best >= t.min, req: `Reach ${t.name}` }))]; }
 function arNameColor(s) {
   if (s.eq.color !== 'auto') { const c = arColors(s).find((x) => x.id === s.eq.color); if (c && c.ok) return c.id; }
   return Object.keys(s.rr).length ? arTier(arBestRR(s)).id : null;
 }
 function arNameHTML(name, colorId) {
   const t = AR_TIERS.find((x) => x.id === colorId);
-  return `<span class="arname${colorId === 'slick' ? ' fire' : ''}"${t && colorId !== 'slick' ? ` style="color:${t.color}"` : ''}>${esc(name)}</span>`;
+  return `<span class="arname${colorId === 'champ' ? ' fire' : ''}"${t && colorId !== 'champ' ? ` style="color:${t.color}"` : ''}>${esc(name)}</span>`;
 }
 function arDailyGame(d = new Date()) {
   const gid = AR_WEEK[d.getDay()], g = AR_GAMES[gid];
-  if (g.soon) return { gid: 'mix', label: 'Wild Card', blurb: `${g.name} is coming soon · today is a mix of 3 games`, icon: g.icon };
-  return { gid, label: g.name, blurb: g.blurb, icon: g.icon };
+  if (g.soon) return { gid: 'mix', label: 'Wild Card', fighter: AR_GAMES.mix.fighter, face: AR_GAMES.mix.face, from: AR_GAMES.mix.from, rec: AR_GAMES.mix.rec, tell: `${g.fighter} is still in training camp. ${AR_GAMES.mix.fighter} steps in.`, blurb: 'A different game every round' };
+  return { gid, label: g.name, fighter: g.fighter, face: g.face, from: g.from, rec: g.rec, tell: g.tell, blurb: g.blurb };
 }
 function arGoals() {
   const s = AR.st, today = arToday();
@@ -4064,14 +4155,17 @@ function arCheckIn() {
   arGoals();
   const got = arUnlock(null);
   arSave();
-  arToast('🔥', `Day ${s.streak} streak`, '+10 XP for checking in');
-  got.forEach((a) => arToast(a.icon, `Achievement: ${a.name}`, `+${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`));
+  arToast('🔥', `Day ${s.streak} of road work`, '+10 XP for showing up');
+  got.forEach((a) => arToast(a.icon, a.name, `+${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`));
 }
 function arUnlock(g) {
   const s = AR.st, got = [];
   for (const a of AR_ACH) if (!s.ach[a.id] && a.test(s, g)) { s.ach[a.id] = arToday(); s.xp += a.xp; got.push(a); }
   return got;
 }
+// the referee is Slick, the logo with the 8-bit glasses
+function arRefImg() { const i = document.querySelector('.brandmark img'); return i ? i.src : ''; }
+const arRefHTML = (cls = '') => { const img = arRefImg(); return img ? `<img class="arref ${cls}" src="${img}" alt="Referee Slick">` : '<div class="arportrait">😎</div>'; };
 
 // ---------------------------------------------------------------- tables and hands
 function arSetup(gid, rng) {
@@ -4119,28 +4213,28 @@ async function arDeal(rng) {
     }
     if (!(res && res.ok && !res.terminal && res.player === hero)) continue;
     const cls = clsOf(hands[hero]), strat = res.strat[cls], top = strat.indexOf(Math.max(...strat));
-    // no-brainer folds make a dull game: keep about one in five
+    // no-brainer folds make a dull fight: keep about one in five
     if (strat[top] >= 0.985 && res.actions[top].k === 'fold' && rng() > 0.2 && tries < 25) continue;
     return { seats, hands, hero, path, res, cls };
   }
   return null;
 }
 
-// ---------------------------------------------------------------- a game: start, tables, hands, answers, finish
+// ---------------------------------------------------------------- a fight: start, rounds, hands, answers, finish
 function arStart(gid, mode) {
   if (AR.run) return;
   const today = arToday(), daily = mode === 'daily';
   const seed = daily ? `daily|${today}|${gid}` : `${mode}|${Date.now()}|${Math.random()}`;
   const weekendMix = daily && gid === 'mix' && [0, 6].includes(new Date().getDay());
-  const label = daily ? arDailyGame().label : AR_GAMES[gid].name;
+  const opp = daily ? arDailyGame() : { ...AR_GAMES[gid], label: AR_GAMES[gid].name };
   AR.saved = snapSetup(); TR.random = true; window.__trRand = true;
   if (S.variant !== 'nlh') setVariant('nlh');
-  AR.run = { gid, mode, label, rng: arRng(seed), tables: arPlan(gid, arRng(weekendMix ? 'mix|' + arWeekStart() : seed)), t: 0, h: 0, results: [], total: 0, combo: 0, bestCombo: 0, half: null, state: 'loading', spot: null, fails: 0 };
+  AR.run = { gid, mode, label: opp.label, opp, rng: arRng(seed), tables: arPlan(gid, arRng(weekendMix ? 'mix|' + arWeekStart() : seed)), t: 0, h: 0, results: [], total: 0, combo: 0, bestCombo: 0, stars: 0, downs: 0, half: null, state: 'loading', spot: null, fails: 0 };
   AR.view = 'run'; arRender(); arTable();
 }
 async function arTable() {
   const run = AR.run; if (!run) return;
-  run.state = 'loading'; run.spot = null; run.t0 = performance.now(); arRender();
+  run.state = 'loading'; run.spot = null; run.t0 = performance.now(); run.roundStart = run.total; arRender();
   for (let attempt = 0; attempt < 3; attempt++) {
     applySetup(arSetup(run.tables[run.t], run.rng)); run.t0 = performance.now();
     while (performance.now() - run.t0 < AR_SOLVE_MS) {
@@ -4150,6 +4244,8 @@ async function arTable() {
     }
     if (!pfState.error && !pfState.deep) break;
   }
+  run.state = 'bell'; arRender(); // "FIGHT!" flash before the first hand of the round
+  await sleep(900); if (AR.run !== run) return;
   arHand();
 }
 async function arHand() {
@@ -4166,6 +4262,7 @@ function arAnswer(k) {
   const pts = ok ? Math.round(100 * rel) : -Math.round(100 * (1 - rel));
   const tier = !ok ? 'bad' : rel >= 0.9 ? 'perfect' : rel >= 0.5 ? 'good' : 'close';
   run.combo = ok ? run.combo + 1 : 0; run.bestCombo = Math.max(run.bestCombo, run.combo);
+  if (tier === 'perfect') run.stars++; if (tier === 'bad') run.downs++;
   run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), ms: performance.now() - run.shown });
   if (run.results.length === (AR_TABLES * AR_HANDS) / 2) run.half = run.total;
   run.state = 'answered'; arRender();
@@ -4181,7 +4278,7 @@ function arRestore() {
   if (AR.saved) { applySetup(AR.saved); AR.saved = null; }
   TR.random = false; window.__trRand = false;
 }
-// quitting: casual is thrown away; ranked and daily count what was played against the full game
+// quitting: casual is thrown away; ranked and daily count what was played against the full fight
 function arQuit() {
   const run = AR.run; if (!run) return;
   if (run.mode !== 'casual' && run.results.length) { arFinish(); return; }
@@ -4192,15 +4289,16 @@ function arFinish() {
   const run = AR.run, s = AR.st, n = run.results.length, planned = run.tables.length * AR_HANDS;
   const pct = Math.round((Math.max(0, run.total) / (100 * planned)) * 100);
   const grade = pct >= 95 ? 'S' : pct >= 85 ? 'A' : pct >= 70 ? 'B' : pct >= 55 ? 'C' : 'D';
-  const g = { gid: run.gid, mode: run.mode, day: arToday(), pts: run.total, pct, grade, n, planned, results: run.results, bestCombo: run.bestCombo, half: run.half, tables: run.tables };
+  const g = { gid: run.gid, mode: run.mode, day: arToday(), pts: run.total, pct, grade, n, planned, results: run.results, bestCombo: run.bestCombo, stars: run.stars, downs: run.downs, half: run.half, tables: run.tables };
   AR.run = null; arRestore();
   const lv0 = arLevel(s.xp).L, xp = [];
   const mult = run.mode === 'casual' ? 0.5 : 1, add = (label, v) => { if (v > 0) xp.push([label, Math.round(v * mult)]); };
-  add('Game finished', 30); add('Decisions', Math.max(0, run.total) / 12);
-  if (run.bestCombo >= 3) add(`Best streak ×${run.bestCombo}`, run.bestCombo * 3);
-  if (grade === 'S') add('S grade', 50); else if (grade === 'A') add('A grade', 25);
+  add('Fight finished', 30); add('Clean decisions', Math.max(0, run.total) / 12);
+  if (run.stars) add(`Stars ×${run.stars}`, run.stars * 5);
+  if (run.bestCombo >= 3) add(`Best combo ×${run.bestCombo}`, run.bestCombo * 3);
+  if (grade === 'S') add('Knockout', 50); else if (grade === 'A') add('TKO', 25);
   let rr = null, league = null;
-  if (run.mode === 'daily' && !s.daily[g.day]) { s.daily[g.day] = { gid: run.gid, pts: run.total, pct, grade }; xp.push(['Daily bonus', 50]); league = Math.max(0, run.total) * 5; }
+  if (run.mode === 'daily' && !s.daily[g.day]) { s.daily[g.day] = { gid: run.gid, pts: run.total, pct, grade }; xp.push(['Fight night bonus', 50]); league = Math.max(0, run.total) * 5; }
   if (run.mode === 'ranked') {
     const before = s.rr[run.gid] ?? 1000, d = Math.max(-25, Math.min(40, Math.round((pct - 62) * 0.9)));
     s.rr[run.gid] = before + d; rr = { before, after: before + d, d }; s.ranked++;
@@ -4211,34 +4309,35 @@ function arFinish() {
   for (const it of arGoals().list) {
     if (it.done) continue;
     const def = AR_GOALS.find((x) => x.id === it.id); it.prog = Math.min(def.need, it.prog + def.ev(g));
-    if (it.prog >= def.need) { it.done = true; xp.push([`Goal: ${def.text}`, def.xp]); goals.push(def); }
+    if (it.prog >= def.need) { it.done = true; xp.push([`Training: ${def.text}`, def.xp]); goals.push(def); }
   }
   s.xp += xp.reduce((a, x) => a + x[1], 0);
   const got = arUnlock(g);
   const lv1 = arLevel(s.xp).L;
   arSave();
-  AR.last = { g, xp, gain: xp.reduce((a, x) => a + x[1], 0) + got.reduce((a, x) => a + x.xp, 0), rr, league, got, goals, lv0, lv1, label: run.label };
-  AR.view = 'results'; arRender();
-  got.forEach((a, i) => setTimeout(() => arToast(a.icon, `Achievement: ${a.name}`, `+${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`), 300 + i * 700));
-  if (lv1 > lv0) setTimeout(() => arToast('⭐', `Level ${lv1}!`, 'New rewards may be waiting in your locker'), 300 + got.length * 700);
+  AR.last = { g, xp, gain: xp.reduce((a, x) => a + x[1], 0) + got.reduce((a, x) => a + x.xp, 0), rr, league, got, goals, lv0, lv1, label: run.label, opp: run.opp };
+  AR.view = 'results'; arRender(); scrollTo(0, 0);
+  got.forEach((a, i) => setTimeout(() => arToast(a.icon, a.name, `+${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`), 600 + i * 700));
+  if (lv1 > lv0) setTimeout(() => arToast('⬆️', `Level ${lv1}!`, 'New gear may be waiting in the locker room'), 600 + got.length * 700);
 }
 
-// ---------------------------------------------------------------- boards (sample rivals until online play)
+// ---------------------------------------------------------------- rankings (sample rivals until online play)
 function arPeriodStart(p) { const t = arToday(); return p === 'week' ? arWeekStart() : p === 'month' ? t.slice(0, 8) + '01' : t.slice(0, 5) + '01-01'; }
 function arBoard(p) {
   const s = AR.st, start = arPeriodStart(p), days = Math.round((arDate(arToday()) - arDate(start)) / 864e5) + 1;
-  const mine = s.hist.filter((h) => h.mode === 'ranked' && h.day >= start).reduce((a, h) => a + Math.max(0, h.pts), 0);
+  const mine = s.hist.filter((h) => h.mode === 'ranked' && h.day >= start);
   const rng = arRng(`board|${p}|${start}`);
-  const rows = AR_RIVALS.map((n) => { const pace = 120 + rng() * 900, rr = 960 + ((rng() * 640) | 0); return { n, p: Math.round(pace * days * (0.7 + rng() * 0.6)), c: arTier(rr).id }; });
-  rows.push({ n: s.name, p: mine, me: true, c: arNameColor(s) });
+  const rows = AR_RIVALS.map((n) => { const pace = 120 + rng() * 900, rr = 960 + ((rng() * 640) | 0), f = Math.max(1, Math.round(days * (0.6 + rng() * 1.6))), w = Math.round(f * (0.45 + rng() * 0.45)); return { n, p: Math.round(pace * days * (0.7 + rng() * 0.6)), c: arTier(rr).id, rec: `${w}-${f - w}-${Math.round(w * rng() * 0.6)}` }; });
+  const w = mine.filter((h) => h.pct >= 55).length;
+  rows.push({ n: s.name, p: mine.reduce((a, h) => a + Math.max(0, h.pts), 0), me: true, c: arNameColor(s), rec: `${w}-${mine.length - w}-${mine.filter((h) => h.pct >= 85).length}` });
   return rows.sort((a, b) => b.p - a.p);
 }
 function arLeague() {
   const s = AR.st, ws = arWeekStart(), days = Math.round((arDate(arToday()) - arDate(ws)) / 864e5) + 1;
-  const mine = Object.entries(s.daily).filter(([d]) => d >= ws).reduce((a, [, x]) => a + Math.max(0, x.pts) * 5, 0);
+  const mine = Object.entries(s.daily).filter(([d]) => d >= ws);
   const rng = arRng('league|' + ws);
-  const rows = AR_RIVALS.slice(0, 5).map((n) => { let p = 0; for (let d = 0; d < days; d++) if (rng() < 0.85) p += Math.round((350 + rng() * 650) * 5); return { n, p, c: arTier(980 + ((rng() * 500) | 0)).id }; });
-  rows.push({ n: s.name, p: mine, me: true, c: arNameColor(s) });
+  const rows = AR_RIVALS.slice(0, 5).map((n) => { let p = 0, f = 0; for (let d = 0; d < days; d++) if (rng() < 0.85) { p += Math.round((350 + rng() * 650) * 5); f++; } return { n, p, c: arTier(980 + ((rng() * 500) | 0)).id, rec: `${f} bouts` }; });
+  rows.push({ n: s.name, p: mine.reduce((a, [, x]) => a + Math.max(0, x.pts) * 5, 0), me: true, c: arNameColor(s), rec: `${mine.length} bouts` });
   return rows.sort((a, b) => b.p - a.p);
 }
 
@@ -4250,38 +4349,52 @@ function arRender() {
   if (AR.view === 'hub' || AR.view === 'practice') arCheckIn();
   box.innerHTML = AR.view === 'practice' ? arPracticeHTML() : AR.view === 'run' ? arRunHTML() : AR.view === 'results' ? arResultsHTML() : arHubHTML();
   const nm = $('arName'); if (nm) nm.onchange = () => { AR.st.name = nm.value.trim().slice(0, 16) || 'Player'; arSave(); arRender(); };
+  const tw = $('arTown'); if (tw) tw.onchange = () => { AR.st.town = tw.value.trim().slice(0, 28) || 'Parts Unknown'; arSave(); arRender(); };
 }
+const arBtn = (cls, attrs, label) => `<button class="pxbtn ${cls}" ${attrs}>${label}</button>`;
 function arPracticeHTML() {
-  return `<section class="arpbar"><button data-ar="lobby">‹ Arena</button><div><b>Free practice</b><small>Deal spots from your own table setup. Nothing here counts toward XP or ranks.</small></div></section>`;
+  return `<section class="pxbox arpbar">${arBtn('', 'data-ar="lobby"', '‹ Arena')}<div><b class="px">Sparring</b><small>Free practice from your own table setup. Doesn't count toward XP or rank.</small></div></section>`;
 }
-function arProfileHTML() {
-  const s = AR.st, lv = arLevel(s.xp), has = Object.keys(s.rr).length > 0, tier = has ? arTier(arBestRR(s)) : null;
+function arFighterCard() {
+  const s = AR.st, lv = arLevel(s.xp), has = Object.keys(s.rr).length > 0, tier = has ? arTier(arBestRR(s)) : null, rec = arRecord(s);
   const bn = arBanners(s).find((b) => b.id === s.eq.banner && b.ok) || AR_BANNERS[0];
   const title = arTitles(s).find((t) => t.t === s.eq.title && t.ok) ? s.eq.title : 'Rookie';
-  return `<section class="arprof" style="background:${bn.bg}">
+  return `<section class="pxbox arprof" style="--banner:${bn.bg}">
+    <div class="arprofbg"></div>
     <div class="arava">${esc((s.name || 'P').slice(0, 1).toUpperCase())}</div>
-    <div class="arwho"><div class="arnm">${arNameHTML(s.name, arNameColor(s))}</div><div class="artitle">${esc(title)}</div></div>
-    <div class="arbadges"><span class="archip">🔥 ${s.streak} day${s.streak === 1 ? '' : 's'}</span><span class="archip"${tier ? ` style="color:${tier.color}"` : ''}>${tier ? `${tier.name} · ${arBestRR(s)}` : 'Unranked'}</span></div>
-    <div class="arlvl"><b>LV ${lv.L}</b><div class="arxp"><i style="width:${((lv.into / lv.need) * 100).toFixed(1)}%"></i></div><small class="mono">${lv.into}/${lv.need} XP</small></div>
+    <div class="arwho"><div class="arnm px">${arNameHTML(s.name, arNameColor(s))}</div><div class="artitle">${esc(title)}</div><div class="arfrom">from ${esc(s.town)}</div></div>
+    <div class="arstats">
+      <div><small>Record</small><b class="px">${rec.w}-${rec.l}</b><small>${rec.ko} KO</small></div>
+      <div><small>Circuit</small><b class="px"${tier ? ` style="color:${tier.color}"` : ''}>${tier ? esc(tier.name.replace(' Circuit', '')) : '—'}</b><small>${tier ? arBestRR(s) : 'unranked'}</small></div>
+      <div><small>Road work</small><b class="px">${s.streak}</b><small>day${s.streak === 1 ? '' : 's'} 🔥</small></div>
+    </div>
+    <div class="arlvl"><b class="px">LV${lv.L}</b><div class="pxbar xp"><i style="width:${((lv.into / lv.need) * 100).toFixed(1)}%"></i></div><small class="mono">${lv.into}/${lv.need}</small></div>
   </section>`;
 }
 function arDailyHTML() {
   const s = AR.st, dg = arDailyGame(), today = arToday(), done = s.daily[today], ws = arWeekStart(), color = AR_GAMES[dg.gid].color;
-  const week = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((l, k) => {
+  const week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((l, k) => {
     const key = arAddDays(ws, k), gid = AR_WEEK[(k + 1) % 7], st = s.daily[key] ? 'done' : key === today ? 'today' : key < today ? 'miss' : '';
-    return `<div class="arday ${st}" title="${esc(AR_GAMES[gid].name)}"><small>${l}</small><span>${s.daily[key] ? '✓' : AR_GAMES[gid].icon}</span></div>`;
+    const r = s.daily[key];
+    return `<div class="arday ${st}" title="${esc(AR_GAMES[gid].fighter)} · ${esc(AR_GAMES[gid].name)}"><small>${l}</small><span>${AR_GAMES[gid].face}</span><small class="arres1">${r ? arResult(r.grade).big.replace('!', '') : st === 'today' ? 'TONIGHT' : ''}</small></div>`;
   }).join('');
-  return `<section class="ardaily" style="--gc:${color}">
-    <div class="row"><span class="eyebrow">Today's daily</span><span class="grow"></span><span class="hint">resets at midnight</span></div>
-    <div class="ardg"><span class="aricon">${dg.icon}</span><div><h3>${esc(dg.label)}</h3><small>${esc(dg.blurb)}</small></div></div>
-    <div class="arfacts"><span>⏱ ~5 min</span><span>🃏 12 hands</span><span>1× a day</span><span>5× league points</span></div>
-    ${done ? `<div class="ardone"><b>${done.grade}</b><span>Played today · ${done.pts} pts · ${done.pct}%</span></div><button data-ar="play" data-g="${dg.gid}" data-m="casual">Replay as casual</button>`
-      : `<button class="primary arbig" data-ar="play" data-g="${dg.gid}" data-m="daily">Play today's daily</button>`}
+  const r = done && arResult(done.grade);
+  return `<section class="pxbox ardaily" style="--gc:${color}">
+    <div class="arbill px">Tonight's main event</div>
+    <div class="arvsmini">
+      <div class="arportrait" style="--gc:${color}">${dg.face}</div>
+      <div><h3 class="px">${esc(dg.fighter)}</h3><div class="arfrom">from ${esc(dg.from)}</div><div class="mono arrec">${esc(dg.rec)}</div></div>
+    </div>
+    <div class="artell"><b>Scouting report</b> ${esc(dg.tell)}</div>
+    <div class="arfacts"><span>${esc(dg.label)}</span><span>${esc(dg.blurb)}</span><span>3 rounds · 12 hands · ~5 min</span><span>once a day · 5× league pts</span></div>
+    ${done ? `<div class="ardone"><b class="px">${r.big}</b><span>${esc(r.sub)} · ${done.pts} pts · ${done.pct}%</span></div>${arBtn('', `data-ar="play" data-g="${dg.gid}" data-m="casual"`, 'Rematch (casual)')}`
+      : arBtn('go arbig', `data-ar="play" data-g="${dg.gid}" data-m="daily"`, 'Fight!')}
+    <div class="arbill sm px">This week's fight card</div>
     <div class="arweek">${week}</div>
   </section>`;
 }
 function arGoalsHTML() {
-  return `<section><div class="row"><span class="eyebrow">Daily goals</span><span class="grow"></span><span class="hint">new goals tomorrow</span></div>
+  return `<section class="pxbox"><div class="row"><span class="arhead px">Training camp</span><span class="grow"></span><span class="hint">new drills tomorrow</span></div>
     ${arGoals().list.map((it) => { const d = AR_GOALS.find((x) => x.id === it.id); return `<div class="argoal ${it.done ? 'done' : ''}"><span class="arck">${it.done ? '✓' : ''}</span><span class="grow">${esc(d.text)}${d.need > 1 ? ` <small class="mono">${it.prog}/${d.need}</small>` : ''}</span><span class="arxpchip">+${d.xp} XP</span></div>`; }).join('')}
   </section>`;
 }
@@ -4289,98 +4402,134 @@ function arGameTiles(mode) {
   const s = AR.st;
   return `<div class="artiles">${[...AR_PLAYABLE, 'mix', 'omaha'].map((gid) => {
     const g = AR_GAMES[gid], rr = s.rr[gid], tier = rr !== undefined ? arTier(rr) : null;
-    return `<div class="artile${g.soon ? ' soon' : ''}" style="--gc:${g.color}"><span class="aricon sm">${g.icon}</span><div class="grow"><b>${esc(g.name)}</b><small>${esc(g.blurb)}</small>${mode === 'ranked' && !g.soon ? `<small class="artier"${tier ? ` style="color:${tier.color}"` : ''}>${tier ? `${tier.name} · ${rr}` : 'Unranked · 1000'}</small>` : ''}</div>
-      ${g.soon ? '<span class="archip">Soon</span>' : `<button class="${mode === 'ranked' ? 'primary' : ''}" data-ar="play" data-g="${gid}" data-m="${mode}">Play</button>`}</div>`;
+    return `<div class="artile${g.soon ? ' soon' : ''}" style="--gc:${g.color}"><div class="arportrait sm" style="--gc:${g.color}">${g.face}</div><div class="grow"><b class="px">${esc(g.fighter)}</b><small>${esc(g.name)} · ${esc(g.blurb)}</small>${mode === 'ranked' && !g.soon ? `<small class="artier"${tier ? ` style="color:${tier.color}"` : ''}>${tier ? `${tier.name} · ${rr}` : 'Unranked · 1000'}</small>` : ''}</div>
+      ${g.soon ? '<span class="archip px">Soon</span>' : arBtn(mode === 'ranked' ? 'go' : '', `data-ar="play" data-g="${gid}" data-m="${mode}"`, 'Fight')}</div>`;
   }).join('')}</div>`;
 }
 function arBoardHTML(rows, unit) {
   const meIdx = rows.findIndex((r) => r.me), show = rows.slice(0, 10);
   if (meIdx >= 10) show.push(rows[meIdx]);
-  return `<div class="arboard">${show.map((r) => { const i = rows.indexOf(r); return `<div class="arrow${r.me ? ' me' : ''}"><span class="mono arpos">${i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</span><span class="grow">${arNameHTML(r.n, r.c)}${r.me ? ' <small>(you)</small>' : ''}</span><span class="mono">${r.p.toLocaleString()} ${unit}</span></div>`; }).join('')}</div>`;
+  return `<div class="arboard">${show.map((r) => { const i = rows.indexOf(r); return `<div class="arrow${r.me ? ' me' : ''}${i === 0 ? ' champ' : ''}"><span class="px arpos">${i === 0 ? '🏆' : i + 1}</span><span class="grow">${arNameHTML(r.n, r.c)}${r.me ? ' <small>(you)</small>' : ''}${i === 0 ? ' <small class="archamp px">Champ</small>' : ''}<small class="mono arrec2">${esc(r.rec)}</small></span><span class="mono">${r.p.toLocaleString()} ${unit}</span></div>`; }).join('')}</div>`;
 }
 function arHubHTML() {
   const tab = AR.tab, s = AR.st, per = AR.period;
   let body = '';
-  if (tab === 'casual') body = `<section><div class="row"><span class="eyebrow">Casual</span><span class="grow"></span><span class="hint">any game, any time · score only, no stats</span></div>${arGameTiles('casual')}
-    <div class="artile" style="--gc:#b0a690"><span class="aricon sm">🧪</span><div class="grow"><b>Free practice</b><small>Spots from your own table setup</small></div><button data-ar="practice">Open</button></div></section>`;
-  else if (tab === 'ranked') body = `<section><div class="row"><span class="eyebrow">Public ranked</span><span class="grow"></span><span class="hint">every game counts toward your rank and the boards</span></div>${arGameTiles('ranked')}</section>
-    <section><div class="row"><span class="eyebrow">Leaderboard</span><span class="grow"></span><div class="seg" role="group" aria-label="Period">${['week', 'month', 'year'].map((p) => `<button data-ar="period" data-p="${p}" aria-pressed="${per === p}">${p === 'week' ? 'Weekly' : p === 'month' ? 'Monthly' : 'Yearly'}</button>`).join('')}</div></div>
-    ${arBoardHTML(arBoard(per), 'pts')}<div class="hint">Preview: rivals are sample players until online leaderboards go live. Your points are real.</div></section>`;
-  else body = `<section><div class="row"><span class="eyebrow">League · Friday Night Felt</span><span class="grow"></span><span class="archip">Private · preview</span></div>
+  if (tab === 'casual') body = `<section class="pxbox"><div class="row"><span class="arhead px">Exhibition</span><span class="grow"></span><span class="hint">any fighter, any time · score only</span></div>${arGameTiles('casual')}
+    <div class="artile" style="--gc:#7c7c7c"><div class="arportrait sm" style="--gc:#7c7c7c">🥊</div><div class="grow"><b class="px">Sparring</b><small>Free practice from your own table setup</small></div>${arBtn('', 'data-ar="practice"', 'Spar')}</div></section>`;
+  else if (tab === 'ranked') body = `<section class="pxbox"><div class="row"><span class="arhead px">Ranked circuit</span><span class="grow"></span><span class="hint">climb Minor → Major → World → Champ</span></div>${arGameTiles('ranked')}</section>
+    <section class="pxbox"><div class="row"><span class="arhead px">World rankings</span><span class="grow"></span></div>
+    <div class="pxseg">${['week', 'month', 'year'].map((p) => `<button data-ar="period" data-p="${p}" aria-pressed="${per === p}">${p === 'week' ? 'Week' : p === 'month' ? 'Month' : 'Year'}</button>`).join('')}</div>
+    ${arBoardHTML(arBoard(per), 'pts')}<div class="hint">Preview: the other fighters are samples until online rankings go live. Your points and record are real.</div></section>`;
+  else body = `<section class="pxbox"><div class="row"><span class="arhead px">Fight Night League</span><span class="grow"></span><span class="archip px">Private · preview</span></div>
     ${arBoardHTML(arLeague(), 'pts')}
-    <div class="arrules"><div><b>Daily game</b><span>once a day · points ×5</span></div><div><b>SNG table</b><span>2–6 players + CPU · 10 hands · any time · points ×1</span></div><div><b>Weekend</b><span>3 of the week's games, shortened</span></div></div>
-    <div class="row"><button disabled>Create league</button><button disabled>Join with code</button><button disabled>SNG table</button></div>
-    <div class="hint">Leagues, SNG tables and invites need online accounts, which come with the backend. Your daily scores above are real; the rivals are samples.</div></section>`;
+    <div class="arrules"><div><b>Daily bout</b><span>once a day · points ×5</span></div><div><b>SNG table</b><span>2–6 fighters + CPU · 10 hands · any time · ×1</span></div><div><b>Weekend</b><span>3 of the week's fighters, shortened</span></div></div>
+    <div class="row">${arBtn('', 'disabled', 'Create league')}${arBtn('', 'disabled', 'Join with code')}${arBtn('', 'disabled', 'SNG table')}</div>
+    <div class="hint">Leagues, SNG tables and invites need online accounts (the backend step). Your daily scores are real; the rivals are samples.</div></section>`;
   const achN = Object.keys(s.ach).length;
-  return `${arProfileHTML()}${arDailyHTML()}${arGoalsHTML()}
-    <div class="seg armodes" role="group" aria-label="Mode">${[['casual', 'Casual'], ['ranked', 'Ranked'], ['league', 'League']].map(([k, l]) => `<button data-ar="tab" data-t="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>
+  return `${arFighterCard()}${arDailyHTML()}${arGoalsHTML()}
+    <div class="pxseg armodes">${[['casual', 'Casual'], ['ranked', 'Ranked'], ['league', 'League']].map(([k, l]) => `<button data-ar="tab" data-t="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>
     ${body}
-    <section><div class="row"><span class="eyebrow">Achievements</span><span class="grow"></span><span class="mono">${achN}/${AR_ACH.length}</span></div>
+    <section class="pxbox"><div class="row"><span class="arhead px">Trophy case</span><span class="grow"></span><span class="px arcount">${achN}/${AR_ACH.length}</span></div>
       <div class="arachs">${AR_ACH.map((a) => `<div class="arach${s.ach[a.id] ? ' got' : ''}" title="${esc(a.desc)}"><span class="aric">${s.ach[a.id] ? a.icon : '🔒'}</span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small><small class="arxpchip">+${a.xp} XP${a.title ? ` · “${esc(a.title)}”` : ''}</small></div>`).join('')}</div></section>
     ${arLockerHTML()}`;
 }
 function arLockerHTML() {
   const s = AR.st;
   const chip = (type, id, label, ok, req, on, style = '') => `<button class="archoose${on ? ' on' : ''}" data-ar="eq" data-type="${type}" data-id="${esc(id)}"${ok ? '' : ' disabled'} title="${ok ? '' : esc('Unlock: ' + req)}"${style}>${ok ? '' : '🔒 '}${label}</button>`;
-  return `<section><div class="row"><span class="eyebrow">Locker</span><span class="grow"></span><span class="hint">show off what you've unlocked</span></div>
-    <label class="field"><span class="label">Display name</span><input id="arName" maxlength="16" value="${esc(s.name)}"></label>
+  return `<section class="pxbox"><div class="row"><span class="arhead px">Locker room</span><span class="grow"></span><span class="hint">gear up with what you've earned</span></div>
+    <div class="arfields"><label class="field"><span class="label">Fighter name</span><input id="arName" maxlength="16" value="${esc(s.name)}"></label>
+    <label class="field"><span class="label">Fighting out of</span><input id="arTown" maxlength="28" value="${esc(s.town)}"></label></div>
     <div class="label">Title</div><div class="archips">${arTitles(s).map((t) => chip('title', t.t, esc(t.t), t.ok, t.req, s.eq.title === t.t)).join('')}</div>
     <div class="label">Banner</div><div class="archips">${arBanners(s).map((b) => chip('banner', b.id, esc(b.name), b.ok, b.req, s.eq.banner === b.id, ` style="background:${b.bg}"`)).join('')}</div>
-    <div class="label">Name color</div><div class="archips">${arColors(s).map((c) => { const t = AR_TIERS.find((x) => x.id === c.id); return chip('color', c.id, c.id === 'slick' ? '<span class="arname fire">Slick</span>' : esc(c.name), c.ok, c.req, s.eq.color === c.id, t && c.id !== 'slick' ? ` style="color:${t.color}"` : ''); }).join('')}</div>
+    <div class="label">Name color</div><div class="archips">${arColors(s).map((c) => { const t = AR_TIERS.find((x) => x.id === c.id); return chip('color', c.id, c.id === 'champ' ? '<span class="arname fire">Champion</span>' : esc(c.name), c.ok, c.req, s.eq.color === c.id, t && c.id !== 'champ' ? ` style="color:${t.color}"` : ''); }).join('')}</div>
   </section>`;
 }
 function arSetupLine() {
   const n = S.slots.filter((x) => x.active).length;
   return `${S.game === '222' ? (icmOn() ? `MTT · ICM · ${S.t222.left} left · ${S.t222.paid} paid` : 'MTT · chip EV') : `Cash · ${S.stack}bb`} · ${n}-handed`;
 }
-function arRunHTML() {
-  const run = AR.run, gHere = AR_GAMES[run.tables[Math.min(run.t, run.tables.length - 1)]], total = run.tables.length * AR_HANDS, i = run.t * AR_HANDS + run.h;
-  const head = `<section class="arhud" style="--gc:${gHere.color}">
-    <div class="row"><span class="aricon sm">${AR_GAMES[run.gid].icon}</span><b class="arhudt">${esc(run.label)}</b><span class="armode ${run.mode}">${run.mode.toUpperCase()}</span><span class="grow"></span><button class="mini" data-ar="quit" title="${run.mode === 'casual' ? 'Leave without saving' : 'Finish now: hands not played score 0'}">Quit</button></div>
-    <div class="arscore"><div><small>Score</small><b class="mono">${run.total}</b></div><div><small>Hand</small><b class="mono">${Math.min(i + 1, total)}/${total}</b></div><div><small>Streak</small><b class="mono">${run.combo ? '🔥' + run.combo : '–'}</b></div></div>
-    <div class="arpips">${Array.from({ length: total }, (_, k) => `<i class="${run.results[k] ? run.results[k].tier : k === i ? 'cur' : ''}"></i>`).join('')}</div>
+function arHudHTML(run) {
+  const total = run.tables.length * AR_HANDS, i = run.t * AR_HANDS + run.h, max = 100 * total;
+  const pos = run.results.reduce((a, r) => a + Math.max(0, r.pts), 0), neg = run.results.reduce((a, r) => a + Math.max(0, -r.pts), 0);
+  const oppHp = Math.max(0, 100 - (pos / max) * 100), myHp = Math.max(4, 100 - (neg / max) * 300);
+  const me = AR.st, opp = run.opp, round = Math.min(run.t + 1, run.tables.length);
+  return `<section class="pxbox arhud">
+    <div class="arhudrow"><div class="arhudcell"><small>Points</small><b class="px">${run.total}</b></div><div class="arhudcell"><small>Stars</small><b class="px">${'⭐'.repeat(Math.min(run.stars, 3)) || '–'}${run.stars > 3 ? `<i>×${run.stars}</i>` : ''}</b></div>
+      <div class="arhudcell"><small>Round</small><b class="px">${round}</b></div><div class="arhudcell"><small>Hand</small><b class="px">${Math.min(i + 1, total)}/${total}</b></div></div>
+    <div class="arhp"><span class="px">${esc(me.name.slice(0, 10))}</span><div class="pxbar me"><i style="width:${myHp.toFixed(1)}%"></i></div></div>
+    <div class="arhp"><span class="px">${esc(opp.fighter.split(' ').slice(-1)[0].slice(0, 10))}</span><div class="pxbar opp"><i style="width:${oppHp.toFixed(1)}%"></i></div></div>
+    <div class="row arhudfoot"><span class="armode px ${run.mode}">${run.mode === 'daily' ? 'Fight night' : run.mode}</span><span class="hint">${esc(run.label)}${run.combo >= 2 ? ` · combo ×${run.combo}` : ''}</span><span class="grow"></span>${arBtn('sm', `data-ar="quit" title="${run.mode === 'casual' ? 'Leave without saving' : 'Throw in the towel: hands not played score 0'}"`, 'Towel')}</div>
   </section>`;
-  if (run.state === 'loading' || run.state === 'dealing') {
-    const tip = AR_TIPS[(run.t + run.h + run.results.length) % AR_TIPS.length];
-    return `${head}<section class="arload" style="--gc:${gHere.color}"><div class="eyebrow">Table ${run.t + 1} of ${run.tables.length} · ${esc(gHere.name)}</div>
-      <h3>${run.state === 'loading' ? 'Shuffling up and dealing…' : 'Dealing the next hand…'}</h3>${run.state === 'loading' ? '<div class="arbar"><i id="arLoadBar"></i></div>' : ''}<div class="hint">💡 ${esc(tip)}</div></section>`;
+}
+function arRunHTML() {
+  const run = AR.run, here = AR_GAMES[run.tables[Math.min(run.t, run.tables.length - 1)]], me = AR.st, opp = run.opp, round = run.t + 1;
+  const head = arHudHTML(run);
+  if (run.state === 'loading' && run.t === 0) {
+    // the VS screen covers the first table's solve
+    const lv = arLevel(me.xp).L, rec = arRecord(me);
+    return `<section class="pxbox arvs" style="--gc:${AR_GAMES[run.gid].color}">
+      <div class="arbill px">${run.mode === 'daily' ? "Tonight's main event" : run.mode === 'ranked' ? 'Ranked bout' : 'Exhibition'}</div>
+      <div class="arvsgrid">
+        <div class="arcard"><div class="arportrait big me">${esc(me.name.slice(0, 1).toUpperCase())}</div><b class="px">${arNameHTML(me.name, arNameColor(me))}</b><small>from ${esc(me.town)}</small><small class="mono">LV${lv} · ${rec.w}-${rec.l} · ${rec.ko} KO</small></div>
+        <div class="arvsword px">VS</div>
+        <div class="arcard"><div class="arportrait big" style="--gc:${AR_GAMES[run.gid].color}">${opp.face}</div><b class="px">${esc(opp.fighter)}</b><small>from ${esc(opp.from)}</small><small class="mono">${esc(opp.rec)}</small></div>
+      </div>
+      <div class="artell"><b>Scouting report</b> ${esc(opp.tell)}</div>
+      <div class="arround px">Round 1</div><div class="pxbar load"><i id="arLoadBar"></i></div><div class="hint">Getting the table ready…</div>
+    </section>`;
   }
+  if (run.state === 'loading') {
+    // between rounds: the cornerman talks while the next table solves
+    const last = run.results.slice(-AR_HANDS), rpts = last.reduce((a, r) => a + r.pts, 0);
+    const tip = AR_CORNER[(run.t * 3 + run.results.length) % AR_CORNER.length];
+    return `${head}<section class="pxbox arcorner" style="--gc:${here.color}">
+      <div class="arbill px">Between rounds</div>
+      <div class="arcornerrow"><div class="arportrait arcoach" style="--gc:#00a800">🧢</div><div class="arbubble"><b class="px">Doc Hold'em</b><p>${esc(tip)}</p></div></div>
+      <div class="arrecap"><span>Round ${run.t} ${rpts >= 0 ? 'won' : 'lost'} · ${rpts > 0 ? '+' : ''}${rpts}</span><span>${last.filter((r) => r.tier === 'perfect').length} ⭐ · ${last.filter((r) => r.tier === 'bad').length} down${last.filter((r) => r.tier === 'bad').length === 1 ? '' : 's'}</span></div>
+      <div class="arround px">Round ${round}${run.gid === 'mix' ? ` · ${esc(here.fighter)}` : ''}</div><div class="pxbar load"><i id="arLoadBar"></i></div>
+    </section>`;
+  }
+  if (run.state === 'bell') return `${head}<section class="pxbox arbell">${arRefHTML('big')}<div class="arbubble sm"><b class="px">Ref Slick</b><p>${round === 1 ? 'Protect your stack at all times. Keep it clean.' : 'Back to your corners… and'}</p></div><div class="px arfight">Fight!</div><div class="px">Round ${round}</div></section>`;
+  if (run.state === 'dealing') return `${head}<section class="pxbox arbell dim"><div class="px">Dealing…</div></section>`;
   const sp = run.spot, keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
   const hero = v.seats[sp.hero], label = (a) => { const o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
-  let html = `${head}<section class="arspot"><div class="eyebrow">${esc(arSetupLine())}</div>
-    <div class="trtable">${v.seats.map((x, k) => `<div class="trseat ${k === sp.hero ? 'me' : ''} ${x.folded ? 'fold' : ''}"><b>${x.pos}</b><small class="mono">${fmt(x.stack - x.put)} bb</small><small>${x.acts.join(' · ') || (k === sp.hero ? 'you' : '–')}</small></div>`).join('')}</div>
-    <div class="trhero"><div>${trCardHTML(sp.hands[sp.hero][0])}${trCardHTML(sp.hands[sp.hero][1])}</div><div><div class="who">${hero.pos} to act</div><div class="muted mono">pot ${fmt(v.pot)} bb · ${trCategory(v)}</div></div></div>`;
-  if (run.state === 'play') html += `<div class="aropts">${sp.res.actions.map((a, k) => `<button class="tropt aropt" data-ar="ans" data-k="${a.k}"><span class="kbd">${k + 1}</span> ${esc(label(a))}</button>`).join('')}</div>`;
+  let html = `${head}<section class="pxbox arspot"><div class="arspothead"><span class="px">R${round} · H${run.h + 1}</span><span class="hint">${esc(arSetupLine())}</span></div>
+    <div class="trtable arring">${v.seats.map((x, k) => `<div class="trseat ${k === sp.hero ? 'me' : ''} ${x.folded ? 'fold' : ''}"><b>${x.pos}</b><small class="mono">${fmt(x.stack - x.put)} bb</small><small>${x.acts.join(' · ') || (k === sp.hero ? 'you' : '–')}</small></div>`).join('')}</div>
+    <div class="trhero"><div>${trCardHTML(sp.hands[sp.hero][0])}${trCardHTML(sp.hands[sp.hero][1])}</div><div><div class="who px">${hero.pos} to act</div><div class="muted mono">pot ${fmt(v.pot)} bb · ${trCategory(v)}</div></div></div>`;
+  if (run.state === 'play') html += `<div class="aropts">${sp.res.actions.map((a, k) => arBtn('aropt', `data-ar="ans" data-k="${a.k}"`, `<span class="kbd">${k + 1}</span> ${esc(label(a))}`)).join('')}</div>`;
   else {
     const r = run.results[run.results.length - 1], last = run.h === AR_HANDS - 1 && run.t === run.tables.length - 1;
-    const txt = { perfect: 'Perfect', good: 'Good play', close: 'Playable, but the solver prefers another option', bad: 'Mistake' }[r.tier];
-    html += `<div class="arverdict ${r.tier}"><b class="mono">${r.pts > 0 ? '+' : ''}${r.pts}</b><span>${txt}${r.ok && run.combo >= 3 ? ` · 🔥 ${run.combo} in a row` : ''}</span></div>
-      <div class="armix"><div class="label">What the solver does with this hand</div>${sp.res.actions.map((a, k) => `<div class="armixrow${k === r.j ? ' mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><div class="armixbar"><i style="width:${(r.strat[k] * 100).toFixed(1)}%"></i></div><span class="mono">${Math.round(r.strat[k] * 100)}%</span></div>`).join('')}</div>
-      <button class="primary arbig" data-ar="next">${last ? 'See results' : 'Next hand ›'}</button>`;
+    const big = { perfect: 'Star punch!', good: 'Hit!', close: 'Glancing blow', bad: 'Down!' }[r.tier];
+    const sub = { perfect: "The solver's favourite play", good: 'A play the solver makes', close: 'The solver mixes it in, but prefers another option', bad: 'The solver (almost) never does this' }[r.tier];
+    html += `<div class="arverdict ${r.tier}"><b class="px">${big}</b><span class="px arpts">${r.pts > 0 ? '+' : ''}${r.pts}</span><small>${sub}${r.ok && run.combo >= 3 ? ` · combo ×${run.combo}` : ''}</small></div>
+      <div class="armix"><div class="label">What the solver does with this hand</div>${sp.res.actions.map((a, k) => `<div class="armixrow${k === r.j ? ' mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><div class="pxbar mix"><i style="width:${(r.strat[k] * 100).toFixed(1)}%"></i></div><span class="mono">${Math.round(r.strat[k] * 100)}%</span></div>`).join('')}</div>
+      ${arBtn('go arbig', 'data-ar="next"', last ? 'Final bell' : run.h === AR_HANDS - 1 ? 'End of round' : 'Next hand ›')}`;
   }
   return html + '</section>';
 }
 function arResultsHTML() {
-  const L = AR.last, g = L.g, s = AR.st, lv = arLevel(s.xp), right = g.results.filter((r) => r.ok).length;
+  const L = AR.last, g = L.g, s = AR.st, lv = arLevel(s.xp), right = g.results.filter((r) => r.ok).length, res = arResult(g.grade), win = g.grade !== 'D';
   const avg = g.results.length ? g.results.reduce((a, r) => a + r.ms, 0) / g.results.length / 1000 : 0;
-  return `<section class="arres grade-${g.grade}" style="--gc:${AR_GAMES[g.gid].color}">
-    <div class="eyebrow">${esc(L.label)} · ${g.mode.toUpperCase()}</div>
-    <div class="argrade">${g.grade}</div>
-    <div class="arresline"><b class="mono">${g.pts} pts</b><span class="muted">${g.pct}% of max</span></div>
-    <div class="arpips big">${Array.from({ length: g.planned }, (_, k) => `<i class="${g.results[k] ? g.results[k].tier : 'skip'}"></i>`).join('')}</div>
-    <div class="arscore"><div><small>Correct</small><b class="mono">${right}/${g.planned}</b></div><div><small>Best streak</small><b class="mono">${g.bestCombo}</b></div><div><small>Avg time</small><b class="mono">${avg.toFixed(1)}s</b></div></div>
+  return `<section class="pxbox arres grade-${g.grade}" style="--gc:${AR_GAMES[g.gid].color}">
+    <div class="arbill px">${esc(L.label)} · ${g.mode === 'daily' ? 'Fight night' : g.mode}</div>
+    <div class="arrefcall">${arRefHTML()}<div class="arbubble sm"><b class="px">Ref Slick</b><p>${g.grade === 'S' ? '…8… 9… 10! You\'re out!' : g.grade === 'A' ? 'That\'s enough! I\'m stopping it!' : win ? 'The judges have it… your hand goes up!' : 'The judges score it the other way. Get back in the gym.'}</p></div></div>
+    <div class="arko px">${res.big}</div>
+    <div class="arresline">${win ? `${esc(L.opp.fighter)} ${esc(res.sub)}` : `${esc(L.opp.fighter)} wins ${esc(res.sub)}`}</div>
+    <div class="arresline"><b class="px">${g.pts} pts</b><span class="muted">${g.pct}% · grade ${g.grade}</span></div>
+    <div class="arpips">${Array.from({ length: g.planned }, (_, k) => `<i class="${g.results[k] ? g.results[k].tier : 'skip'}"></i>`).join('')}</div>
+    <div class="arhudrow"><div class="arhudcell"><small>Clean</small><b class="px">${right}/${g.planned}</b></div><div class="arhudcell"><small>Stars</small><b class="px">${g.stars}</b></div><div class="arhudcell"><small>Downs</small><b class="px">${g.downs}</b></div><div class="arhudcell"><small>Speed</small><b class="px">${avg.toFixed(1)}s</b></div></div>
   </section>
-  <section><div class="eyebrow">Rewards</div>
+  <section class="pxbox"><div class="arhead px">Purse</div>
     ${L.xp.map(([k, v]) => `<div class="arxprow"><span>${esc(k)}</span><span class="mono">+${v} XP</span></div>`).join('')}
     ${L.got.map((a) => `<div class="arxprow ach"><span>${a.icon} ${esc(a.name)}${a.title ? ` · title “${esc(a.title)}”` : ''}</span><span class="mono">+${a.xp} XP</span></div>`).join('')}
-    <div class="arxprow total"><span>Total</span><span class="mono">+${L.gain} XP</span></div>
-    ${g.mode === 'casual' ? '<div class="hint">Casual games earn half XP and never touch your rank or the leaderboards.</div>' : ''}
-    ${L.rr ? `<div class="arrank"><span>${esc(AR_GAMES[g.gid].name)} rank</span><b style="color:${arTier(L.rr.after).color}">${arTier(L.rr.after).name} · ${L.rr.after}</b><span class="mono ${L.rr.d >= 0 ? 'up' : 'down'}">${L.rr.d >= 0 ? '▲ +' : '▼ '}${L.rr.d}</span></div>` : ''}
-    ${L.league !== null ? `<div class="arrank"><span>League points</span><b class="mono">+${L.league.toLocaleString()}</b><span class="hint">daily ×5</span></div>` : ''}
-    <div class="arlvl solo"><b>LV ${lv.L}</b><div class="arxp"><i style="width:${((lv.into / lv.need) * 100).toFixed(1)}%"></i></div><small class="mono">${lv.into}/${lv.need}</small></div>
-    ${L.lv1 > L.lv0 ? `<div class="arlevelup">⭐ Level up! You reached level ${L.lv1}. Check the locker for new rewards.</div>` : ''}
+    <div class="arxprow total"><span class="px">Total</span><span class="mono">+${L.gain} XP</span></div>
+    ${g.mode === 'casual' ? '<div class="hint">Exhibition fights pay half XP and never touch your record, circuit or rankings.</div>' : ''}
+    ${L.rr ? `<div class="arrank"><span>${esc(AR_GAMES[g.gid].name)} circuit</span><b class="px" style="color:${arTier(L.rr.after).color}">${arTier(L.rr.after).name} · ${L.rr.after}</b><span class="mono ${L.rr.d >= 0 ? 'up' : 'down'}">${L.rr.d >= 0 ? '▲ +' : '▼ '}${L.rr.d}</span></div>` : ''}
+    ${L.league !== null ? `<div class="arrank"><span>League points</span><b class="px">+${L.league.toLocaleString()}</b><span class="hint">fight night ×5</span></div>` : ''}
+    <div class="arlvl solo"><b class="px">LV${lv.L}</b><div class="pxbar xp"><i style="width:${((lv.into / lv.need) * 100).toFixed(1)}%"></i></div><small class="mono">${lv.into}/${lv.need}</small></div>
+    ${L.lv1 > L.lv0 ? `<div class="arlevelup px">Level up! LV${L.lv1}</div>` : ''}
   </section>
-  <div class="row arend"><button class="primary arbig" data-ar="lobby">Back to the Arena</button>${g.gid !== 'mix' || g.mode !== 'daily' ? `<button data-ar="play" data-g="${g.gid}" data-m="${g.mode === 'daily' ? 'casual' : g.mode}">Play again${g.mode === 'daily' ? ' (casual)' : ''}</button>` : ''}</div>`;
+  <div class="row arend">${arBtn('go arbig', 'data-ar="lobby"', 'Back to the gym')}${g.gid !== 'mix' || g.mode !== 'daily' ? arBtn('', `data-ar="play" data-g="${g.gid}" data-m="${g.mode === 'daily' ? 'casual' : g.mode}"`, g.mode === 'daily' ? 'Rematch (casual)' : 'Rematch') : ''}</div>`;
 }
 
 // ---------------------------------------------------------------- input
