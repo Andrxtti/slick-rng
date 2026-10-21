@@ -8,7 +8,9 @@ function drRender() {
   if (!DR || S.mode !== 'trainer') return;
   const box = $('dream'); if (!box) return;
   const s = DR.st;
-  if (DR.view === 'hub' && s.queue.length && !DR.run) { drPlayScene(s.queue.shift()); return; }
+  if (DR.view === 'hub' && s.queue.length && !DR.run) { drPlayScene(s.queue.shift()); drSave(); return; }
+  // picked up mid-prologue: start the story where it was left
+  if (DR.view === 'hub' && s.made && s.ch === 0 && !s.story.p_diner && !DR.run) { drPlayScene(s.story.p_office ? 'p_diner' : 'p_office'); return; }
   box.className = 'dream v-' + DR.view;
   box.innerHTML = DR.view === 'title' ? drTitleHTML() : DR.view === 'create' ? drCreateHTML() : DR.view === 'scene' ? drSceneHTML()
     : DR.view === 'run' ? drRunHTML() : DR.view === 'results' ? drResultsHTML() : drHubHTML();
@@ -204,7 +206,11 @@ function drEventsHTML() {
   const s = DR.st, list = drAvailable(s), now = list.filter((e) => e.ch === s.ch || s.ch === 0), older = list.filter((e) => !now.includes(e));
   return `${s.ch === 0 ? '' : `<p class="drhint">Your bankroll decides what you can enter. Big shots pay big, and busting hurts. ${s.debt > 0 ? 'Slick takes half your profits until his stake is paid back.' : ''}</p>`}
     <div class="drevs">${now.map(drEventCard).join('')}</div>
-    ${older.length ? `<details class="drolder"><summary>Earlier stops (${older.length})</summary><div class="drevs">${older.map(drEventCard).join('')}</div></details>` : ''}`;
+    ${older.length ? `<details class="drolder"><summary>Earlier stops (${older.length})</summary><div class="drevs">${older.map(drEventCard).join('')}</div></details>` : ''}
+    <div class="drsoon"><div class="drkicker">Coming next</div><div class="drsoon-row">
+      <div><b>Ranked season</b><small>Weekly, monthly and lifetime boards. Season-only gear for the top finishers.</small></div>
+      <div><b>Friends league</b><small>Your crew, the same spots, one leaderboard. Bragging rights included.</small></div>
+      <div><b>Daily grind</b><small>One five-minute session a day for streak rewards.</small></div></div></div>`;
 }
 function drClosetHTML() {
   const s = DR.st, fresh = new Set(s.newItems || []);
@@ -252,12 +258,13 @@ function drHudHTML(run) {
   const N = ev.field, P = ev.kind === 'mtt' ? drPaid(ev) : 0;
   const left = ev.kind === 'cash' ? null : stage === 'early' ? Math.max(P * 3, Math.round(N * (1 - 0.15 * (run.h + 1)))) : stage === 'middle' ? Math.max(P + 4, Math.round(N * (0.45 - 0.08 * run.h)))
     : stage === 'bubble' ? P + 1 - (run.h > 0 ? run.h : 0) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.08 * run.h))) : Math.max(2, 9 - run.h * 3);
-  const bb = Math.round(run.stack / 4 * 10) / 10;
+  const status = run.stack >= 150 ? 'Big stack' : run.stack >= 110 ? 'Above average' : run.stack >= 75 ? 'Healthy' : run.stack >= 40 ? 'Getting short' : 'Short. Careful.';
+  const cashUp = drCashNet(run, 0);
   return `<section class="drhud pl-${ev.venue}">
     <div class="drhud-top"><div><div class="drkicker">${esc(DR_PLACES[ev.venue].name)}</div><b>${esc(ev.name)}</b></div>${drBtn('ghost sm', 'data-dr="quit"', ev.kind === 'cash' ? 'Cash out' : 'Walk away')}</div>
     ${ev.kind === 'mtt' ? `<div class="drstages">${run.stages.map((st, k) => `<span class="${k < run.si ? 'done' : k === run.si ? 'now' : ''}">${DR_STAGE[st].label}</span>`).join('')}</div>` : ''}
     <div class="drhud-row">
-      <div class="drstack"><small>${ev.kind === 'cash' ? 'Your stack' : 'Chips'}</small><div class="drbar stack ${run.stack < 40 ? 'low' : run.stack > 140 ? 'big' : ''}"><i style="width:${Math.min(100, run.stack / 2)}%"></i></div><b class="mono">${ev.kind === 'cash' ? `${bb * 4} bb` : `${bb} bb`}</b></div>
+      <div class="drstack"><small>${ev.kind === 'cash' ? 'Session' : 'Chip status'}</small><div class="drbar stack ${run.stack < 40 ? 'low' : run.stack > 140 ? 'big' : ''}"><i style="width:${Math.min(100, run.stack / 2)}%"></i></div><b class="mono">${ev.kind === 'cash' ? `${cashUp >= 0 ? '+' : '−'}$${drMoney(Math.abs(cashUp))}` : status}</b></div>
       ${left ? `<div class="drleft"><small>Players left</small><b class="mono">${drMoney(left)}</b></div>` : ''}
       ${ev.kind === 'mtt' ? `<div class="drleft"><small>Paid</small><b class="mono">${drMoney(P)}</b></div>` : ''}
     </div>
@@ -299,7 +306,7 @@ function drRunHTML() {
     const lastHand = run.h === per - 1 && run.si === run.stages.length - 1;
     const big = { perfect: 'Textbook.', good: 'Solid.', close: 'Playable.', bad: 'Mistake.' }[r.tier], sub = { perfect: "The solver's favourite play.", good: 'A play the solver makes too.', close: 'The solver mixes it in, but prefers something else.', bad: 'The solver (almost) never does this.' }[r.tier];
     const d = r.after - r.before;
-    html += `<div class="drverdict t-${r.tier}"><div><b>${big}</b><small>${sub}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${d >= 0 ? '+' : '−'}${Math.abs(d / 4)} bb</span></div>
+    html += `<div class="drverdict t-${r.tier}"><div><b>${big}</b><small>${sub}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Chips ▲' : d < 0 ? 'Chips ▼▼' : 'Chips ='}</span></div>
       <div class="drmix">${sp.res.actions.map((a, k) => `<div class="${k === r.j ? 'mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><i style="--w:${(r.strat[k] * 100).toFixed(1)}%"></i><b class="mono">${Math.round(r.strat[k] * 100)}%</b></div>`).join('')}</div>
       ${run.bust ? `<div class="drbust">${ev.kind === 'cash' ? 'Felted. That session is over.' : 'Busted. Your tournament is over.'}</div>` : ''}
       <div class="drrow">${drBtn('gold big', 'data-dr="next"', run.bust || lastHand ? (ev.kind === 'cash' ? 'Cash out ▸' : 'See where you finished ▸') : run.h === per - 1 ? 'Next level ▸' : 'Next hand ▸')}</div>`;

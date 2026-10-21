@@ -188,6 +188,8 @@ function drNext() {
     run.si++; run.tip++; drTable();
   } else { run.si++; drFinish(); }
 }
+// cash sessions: your stack decides what you take home (each step of the meter is real money)
+function drCashNet(run, luck) { return Math.round(run.ev.buyin * Math.max(-1, Math.min(2.5, (run.stack - 100) / 40 + (luck || 0)))); }
 function drRestore() {
   if (DR.saved) { applySetup(DR.saved); DR.saved = null; }
   TR.random = false; window.__trRand = false;
@@ -229,13 +231,7 @@ function drFinish(quit) {
   const keyHands = run.results.filter((r) => r.hand).map((r) => r).sort((a, b) => a.pts - b.pts);
   const res = { ev, n, pct, counts, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
   if (ev.kind === 'cash') {
-    let net;
-    if (run.bust) net = -ev.buyin;
-    else {
-      const edge = Math.max(-1, Math.min(2.4, (pct - 0.45) * 4)), luck = (run.rng() - 0.5) * 0.5;
-      net = Math.round(ev.buyin * Math.max(-1, edge + luck));
-      if (quit) net = Math.min(net, Math.round(ev.buyin * ((run.stack - 100) / 100)));
-    }
+    const net = run.bust ? -ev.buyin : drCashNet(run, quit ? 0 : (run.rng() - 0.5) * 0.3);
     drAdd(s, ev.buyin + net, `Cashed out: ${ev.name}`);
     res.net = net; res.prize = ev.buyin + net; rec.net += net;
     if (net > 0) { s.flags.cashWin = true; res.repaid = drRepay(s, net); }
