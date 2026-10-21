@@ -112,6 +112,7 @@ function drAvatarSVG(st, opt = {}) {
   // neck and outfit
   s += `<path d="M88 126 L112 126 L114 158 C106 164 94 164 86 158 Z" fill="${sk2}"/>`;
   s += drOutfitSVG(eq.outfit || 'office', eq.patch);
+  s += `<path d="M14 222 C18 178 46 160 76 154 L124 154 C154 160 182 178 186 222 Z" fill="url(#${id}t)" pointer-events="none"/>`;
   if (eq.head === 'phones') s += `<path d="M72 160 C70 144 130 144 128 160" stroke="#222" stroke-width="5" fill="none"/><rect x="64" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/><rect x="122" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/>`;
   if (eq.chain && eq.chain !== 'none') {
     const c = eq.chain === 'silver' ? '#c9ccd4' : '#e3b94f', w = eq.chain === 'silver' ? 1.6 : 3.4;
@@ -120,7 +121,10 @@ function drAvatarSVG(st, opt = {}) {
   }
   // head
   s += `<ellipse cx="70" cy="106" rx="6" ry="9" fill="${sk2}"/><ellipse cx="130" cy="106" rx="6" ry="9" fill="${sk2}"/>`;
-  s += `<path d="M70 96 C70 66 84 58 100 58 C116 58 130 66 130 96 C130 124 118 146 100 146 C82 146 70 124 70 96 Z" fill="${skin}"/>`;
+  s += `<defs><radialGradient id="${id}f" cx="42%" cy="38%" r="70%"><stop offset="0" stop-color="${drShade(skin, 0.12)}"/><stop offset=".7" stop-color="${skin}"/><stop offset="1" stop-color="${sk2}"/></radialGradient>
+    <linearGradient id="${id}t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>`;
+  s += `<path d="M70 96 C70 66 84 58 100 58 C116 58 130 66 130 96 C130 124 118 146 100 146 C82 146 70 124 70 96 Z" fill="url(#${id}f)"/>`;
+  s += `<ellipse cx="82" cy="117" rx="6" ry="3.4" fill="#e8705a" opacity=".12"/><ellipse cx="118" cy="117" rx="6" ry="3.4" fill="#e8705a" opacity=".12"/>`;
   s += `<path d="M76 120 C82 138 92 145 100 145 C108 145 118 138 124 120 C118 134 110 140 100 140 C90 140 82 134 76 120 Z" fill="${sk2}" opacity=".6"/>`;
   // eyes, brows, nose, mouth
   const blink = opt.blink ? ' class="drblink"' : '';

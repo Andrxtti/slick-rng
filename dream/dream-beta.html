@@ -1263,6 +1263,8 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 @keyframes drCard { 0% { opacity: 0; } 12% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
 .dream .drhowto { background: var(--ink2); padding: 12px; display: grid; gap: 10px; justify-items: end; border-color: var(--gold3); }
 .dream .drhowto .drsay { background: transparent; border: 0; padding: 0; align-items: flex-start; } .dream .drhowto p { font-size: 14px; color: #d8cfbd; } .dream .drhowto p b { color: var(--gold2); font-family: var(--font-body); font-size: 14px; }
+.dream .drlife-av .dravsvg, .dream .drcreate-prev .dravsvg { animation: drBreathe 4.5s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes drBreathe { 50% { transform: translateY(-1.5px) scale(1.006); } }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
@@ -6166,6 +6168,7 @@ function drAvatarSVG(st, opt = {}) {
   // neck and outfit
   s += `<path d="M88 126 L112 126 L114 158 C106 164 94 164 86 158 Z" fill="${sk2}"/>`;
   s += drOutfitSVG(eq.outfit || 'office', eq.patch);
+  s += `<path d="M14 222 C18 178 46 160 76 154 L124 154 C154 160 182 178 186 222 Z" fill="url(#${id}t)" pointer-events="none"/>`;
   if (eq.head === 'phones') s += `<path d="M72 160 C70 144 130 144 128 160" stroke="#222" stroke-width="5" fill="none"/><rect x="64" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/><rect x="122" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/>`;
   if (eq.chain && eq.chain !== 'none') {
     const c = eq.chain === 'silver' ? '#c9ccd4' : '#e3b94f', w = eq.chain === 'silver' ? 1.6 : 3.4;
@@ -6174,7 +6177,10 @@ function drAvatarSVG(st, opt = {}) {
   }
   // head
   s += `<ellipse cx="70" cy="106" rx="6" ry="9" fill="${sk2}"/><ellipse cx="130" cy="106" rx="6" ry="9" fill="${sk2}"/>`;
-  s += `<path d="M70 96 C70 66 84 58 100 58 C116 58 130 66 130 96 C130 124 118 146 100 146 C82 146 70 124 70 96 Z" fill="${skin}"/>`;
+  s += `<defs><radialGradient id="${id}f" cx="42%" cy="38%" r="70%"><stop offset="0" stop-color="${drShade(skin, 0.12)}"/><stop offset=".7" stop-color="${skin}"/><stop offset="1" stop-color="${sk2}"/></radialGradient>
+    <linearGradient id="${id}t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>`;
+  s += `<path d="M70 96 C70 66 84 58 100 58 C116 58 130 66 130 96 C130 124 118 146 100 146 C82 146 70 124 70 96 Z" fill="url(#${id}f)"/>`;
+  s += `<ellipse cx="82" cy="117" rx="6" ry="3.4" fill="#e8705a" opacity=".12"/><ellipse cx="118" cy="117" rx="6" ry="3.4" fill="#e8705a" opacity=".12"/>`;
   s += `<path d="M76 120 C82 138 92 145 100 145 C108 145 118 138 124 120 C118 134 110 140 100 140 C90 140 82 134 76 120 Z" fill="${sk2}" opacity=".6"/>`;
   // eyes, brows, nose, mouth
   const blink = opt.blink ? ' class="drblink"' : '';
@@ -6549,6 +6555,7 @@ function drRender() {
   box.innerHTML = DR.view === 'title' ? drTitleHTML() : DR.view === 'create' ? drCreateHTML() : DR.view === 'scene' ? drSceneHTML()
     : DR.view === 'run' ? drRunHTML() : DR.view === 'results' ? drResultsHTML() : drHubHTML();
   if (DR.view === 'scene') drType();
+  if (DR.view === 'results') drCountUp();
   const nm = $('drName'); if (nm) nm.oninput = () => { DR.draft.name = nm.value.slice(0, 18); const p = $('drPrevName'); if (p) p.textContent = nm.value || 'You'; };
 }
 
@@ -6855,6 +6862,16 @@ function drRunHTML() {
 }
 
 // ---------------------------------------------------------------- results
+// money on the results screen rolls up from where you started
+function drCountUp() {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('#dream [data-count]').forEach((el) => {
+    const [a, b] = el.dataset.count.split(':').map(Number); if (reduce || a === b) { el.textContent = '$' + drMoney(b); return; }
+    const t0 = performance.now(), dur = 1400;
+    const step = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = '$' + drMoney(a + (b - a) * e); if (k < 1 && el.isConnected) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
 function drResultsHTML() {
   const r = DR.last, s = DR.st, ev = r.ev;
   const titleHTML = r.titles.map((t) => `<div class="drwin t-${t}"><div class="drwin-icon">${DR_TITLES[t].icon}</div><div><div class="drkicker">Champion</div><b>${esc(DR_TITLES[t].n)}</b><small>${esc(ev.name)}</small></div></div>`).join('');
@@ -6875,7 +6892,7 @@ function drResultsHTML() {
     ${r.titles.includes('me') && r.boss === 'ghost' ? `<div class="drbeat"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><div><div class="drkicker">Heads-up for the world title</div><b>You beat The Ghost</b><small>Fourteen bracelets, and he finally smiled.</small></div></div>` : ''}
     ${beat ? `<div class="drbeat">${drLegendFace(beat)}<div><div class="drkicker">Legend beaten</div><b>${esc(beat.name)}</b><small>“${esc(beat.nick)}” · card added to your Legends</small></div></div>` : r.met && r.met !== 'ghost' && drLegend(r.met) ? `<div class="drbeat met">${drLegendFace(drLegend(r.met))}<div><div class="drkicker">You shared a final table with</div><b>${esc(drLegend(r.met).name)}</b><small>Beat them heads-up to win their card</small></div></div>` : ''}
     ${r.ticket ? `<div class="drwin"><div class="drwin-icon">🎟</div><div><div class="drkicker">Seat won</div><b>${esc(drEvent(r.ticket).name)}</b><small>Buy-in $${drMoney(drEvent(r.ticket).buyin)}, paid for.</small></div></div>` : ''}
-    <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → $${drMoney(r.after)}</b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
+    <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → <span data-count="${r.before}:${r.after}">$${drMoney(r.after)}</span></b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
     <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
       <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
     ${r.keys && r.keys.length ? `<div class="drkeys"><div class="drkicker">Key hands</div>${r.keys.map((k) => { const h = k.hand; return `<div class="drkey t-${k.tier}"><div class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</div><div><b>${esc(h.pos)} · ${esc(h.bb)}bb · ${esc(h.cat)}</b><small>${k.tier === 'bad' ? `You: ${esc(h.mine)} (${h.myF}%). Solver: ${esc(h.best)} (${h.bestF}%).` : `You found ${esc(h.mine)}, a close spot the solver plays ${h.bestF}% of the time.`}</small></div></div>`; }).join('')}</div>` : ''}
