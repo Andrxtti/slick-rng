@@ -214,7 +214,7 @@
 .dream .drverdict.t-good { border-color: #2d6a33; background: linear-gradient(90deg, rgba(92, 191, 100, .16), transparent); } .dream .drverdict.t-good b { color: #8fe39a; }
 .dream .drverdict.t-close { border-color: #7a5a1c; } .dream .drverdict.t-close b { color: #f0c36b; }
 .dream .drverdict.t-bad { border-color: #7a2a24; background: linear-gradient(90deg, rgba(232, 112, 90, .16), transparent); } .dream .drverdict.t-bad b { color: #ff9c8c; }
-.dream .drdelta { font-size: 18px; }
+.dream .drdelta { font-size: 18px; white-space: nowrap; }
 .dream .drmix { display: grid; gap: 4px; } .dream .drmix > div { display: grid; grid-template-columns: minmax(0, 1fr) 90px 40px; gap: 8px; align-items: center; font-size: 13px; }
 .dream .drmix > div.mine span { color: var(--gold2); font-weight: 600; } .dream .drmix i { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--gold) var(--w), rgba(255, 255, 255, .07) var(--w)); } .dream .drmix b { text-align: right; font-weight: 500; }
 .dream .drbust { text-align: center; font-family: var(--disp); font-size: 20px; color: #ff9c8c; }
@@ -295,6 +295,8 @@
 .dream .drtimeline > div { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0 6px 0; margin-left: -12px; }
 .dream .drtimeline span { width: 22px; height: 22px; border-radius: 50%; background: var(--ink2); border: 1px solid var(--gold3); display: grid; place-items: center; font-size: 12px; flex: none; }
 .dream .drtimeline b { font-size: 14px; font-weight: 500; display: block; } .dream .drtimeline small { color: var(--mute); font-size: 11px; }
+.dream .drtip { display: flex; gap: 10px; align-items: center; background: rgba(0, 0, 0, .4); border: 1px solid var(--line2); border-radius: 12px; padding: 8px 10px; }
+.dream .drtip .drface { width: 40px; height: 40px; flex: none; border-width: 2px; box-shadow: none; } .dream .drtip p { margin: 0; font-size: 13px; color: #e9dfca; line-height: 1.45; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }

@@ -183,7 +183,7 @@ function drAnswer(k) {
   const keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
   const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
   const best = strat.indexOf(fmax), hero = v.seats[sp.hero];
-  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
+  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
   run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand });
   if (run.stack <= 0) run.bust = true;
   arSfx(tier === 'bad' ? 'bad' : tier); arBuzz(tier);
@@ -204,6 +204,18 @@ function drNext() {
 }
 // cash sessions: your stack decides what you take home (each step of the meter is real money)
 function drCashNet(run, luck) { return Math.round(run.ev.buyin * Math.max(-1, Math.min(2.5, (run.stack - 100) / 40 + (luck || 0)))); }
+// Slick's one-line lesson after a mistake or a borderline play
+function drTip(r) {
+  const h = r.hand; if (!h || r.tier === 'perfect' || r.tier === 'good') return '';
+  const icm = ['bubble', 'satbubble', 'deep', 'final'].includes(r.stage);
+  const loose = h.mineK !== 'fold' && h.bestK === 'fold', tight = h.mineK === 'fold' && h.bestK !== 'fold';
+  const c = h.cat;
+  if (!loose && !tight) return `Right idea, wrong size. The solver prefers ${h.best} here.`;
+  if (c === 'Facing a jam') return loose ? `Calling a jam takes a much stronger hand than shoving one.${icm ? ' Near the money, stronger still: busting costs more than chips.' : ''}` : `This hand is ahead of their shoving range often enough. Folding gives up too much.${icm ? ' Even with ICM, this one is a call.' : ''}`;
+  if (c === 'First in / vs limps') return loose ? `Too loose from ${h.pos}. With players still to act behind you, open fewer hands.` : `This is a profitable open from ${h.pos}. Folding lets the blinds walk.`;
+  if (c === 'Facing a raise') return loose ? 'Facing a raise, play tighter than when you open. Their range is already strong.' : `Good enough to continue from ${h.pos}. Folding here is too tight.`;
+  return loose ? 'Against a 3-bet or more, only the top of your range keeps going.' : "You're folding too much to aggression. This hand wants to continue.";
+}
 function drRestore() {
   if (DR.saved) { applySetup(DR.saved); DR.saved = null; }
   TR.random = false; window.__trRand = false;

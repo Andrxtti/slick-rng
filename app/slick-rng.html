@@ -1206,7 +1206,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 .dream .drverdict.t-good { border-color: #2d6a33; background: linear-gradient(90deg, rgba(92, 191, 100, .16), transparent); } .dream .drverdict.t-good b { color: #8fe39a; }
 .dream .drverdict.t-close { border-color: #7a5a1c; } .dream .drverdict.t-close b { color: #f0c36b; }
 .dream .drverdict.t-bad { border-color: #7a2a24; background: linear-gradient(90deg, rgba(232, 112, 90, .16), transparent); } .dream .drverdict.t-bad b { color: #ff9c8c; }
-.dream .drdelta { font-size: 18px; }
+.dream .drdelta { font-size: 18px; white-space: nowrap; }
 .dream .drmix { display: grid; gap: 4px; } .dream .drmix > div { display: grid; grid-template-columns: minmax(0, 1fr) 90px 40px; gap: 8px; align-items: center; font-size: 13px; }
 .dream .drmix > div.mine span { color: var(--gold2); font-weight: 600; } .dream .drmix i { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--gold) var(--w), rgba(255, 255, 255, .07) var(--w)); } .dream .drmix b { text-align: right; font-weight: 500; }
 .dream .drbust { text-align: center; font-family: var(--disp); font-size: 20px; color: #ff9c8c; }
@@ -1287,6 +1287,8 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 .dream .drtimeline > div { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0 6px 0; margin-left: -12px; }
 .dream .drtimeline span { width: 22px; height: 22px; border-radius: 50%; background: var(--ink2); border: 1px solid var(--gold3); display: grid; place-items: center; font-size: 12px; flex: none; }
 .dream .drtimeline b { font-size: 14px; font-weight: 500; display: block; } .dream .drtimeline small { color: var(--mute); font-size: 11px; }
+.dream .drtip { display: flex; gap: 10px; align-items: center; background: rgba(0, 0, 0, .4); border: 1px solid var(--line2); border-radius: 12px; padding: 8px 10px; }
+.dream .drtip .drface { width: 40px; height: 40px; flex: none; border-width: 2px; box-shadow: none; } .dream .drtip p { margin: 0; font-size: 13px; color: #e9dfca; line-height: 1.45; }
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
@@ -6461,7 +6463,7 @@ function drAnswer(k) {
   const keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
   const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
   const best = strat.indexOf(fmax), hero = v.seats[sp.hero];
-  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
+  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
   run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand });
   if (run.stack <= 0) run.bust = true;
   arSfx(tier === 'bad' ? 'bad' : tier); arBuzz(tier);
@@ -6482,6 +6484,18 @@ function drNext() {
 }
 // cash sessions: your stack decides what you take home (each step of the meter is real money)
 function drCashNet(run, luck) { return Math.round(run.ev.buyin * Math.max(-1, Math.min(2.5, (run.stack - 100) / 40 + (luck || 0)))); }
+// Slick's one-line lesson after a mistake or a borderline play
+function drTip(r) {
+  const h = r.hand; if (!h || r.tier === 'perfect' || r.tier === 'good') return '';
+  const icm = ['bubble', 'satbubble', 'deep', 'final'].includes(r.stage);
+  const loose = h.mineK !== 'fold' && h.bestK === 'fold', tight = h.mineK === 'fold' && h.bestK !== 'fold';
+  const c = h.cat;
+  if (!loose && !tight) return `Right idea, wrong size. The solver prefers ${h.best} here.`;
+  if (c === 'Facing a jam') return loose ? `Calling a jam takes a much stronger hand than shoving one.${icm ? ' Near the money, stronger still: busting costs more than chips.' : ''}` : `This hand is ahead of their shoving range often enough. Folding gives up too much.${icm ? ' Even with ICM, this one is a call.' : ''}`;
+  if (c === 'First in / vs limps') return loose ? `Too loose from ${h.pos}. With players still to act behind you, open fewer hands.` : `This is a profitable open from ${h.pos}. Folding lets the blinds walk.`;
+  if (c === 'Facing a raise') return loose ? 'Facing a raise, play tighter than when you open. Their range is already strong.' : `Good enough to continue from ${h.pos}. Folding here is too tight.`;
+  return loose ? 'Against a 3-bet or more, only the top of your range keeps going.' : "You're folding too much to aggression. This hand wants to continue.";
+}
 function drRestore() {
   if (DR.saved) { applySetup(DR.saved); DR.saved = null; }
   TR.random = false; window.__trRand = false;
@@ -6914,6 +6928,7 @@ function drRunHTML() {
     const d = r.after - r.before;
     html += `<div class="drverdict t-${r.tier}"><div><b>${big}</b><small>${sub}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < 0 ? 'Life ▼▼' : 'Life ='}</span></div>
       <div class="drmix">${sp.res.actions.map((a, k) => `<div class="${k === r.j ? 'mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><i style="--w:${(r.strat[k] * 100).toFixed(1)}%"></i><b class="mono">${Math.round(r.strat[k] * 100)}%</b></div>`).join('')}</div>
+      ${drTip(r) ? `<div class="drtip">${drSpeaker({ sp: 'slick' }).av}<p>${esc(drTip(r))}</p></div>` : ''}
       ${run.bust ? `<div class="drbust">${ev.kind === 'cash' ? 'Felted. That session is over.' : 'Busted. Your tournament is over.'}</div>` : ''}
       <div class="drrow">${drBtn('gold big', 'data-dr="next"', run.bust || lastHand ? (ev.kind === 'cash' ? 'Cash out ▸' : 'See where you finished ▸') : run.h === per - 1 ? 'Next level ▸' : 'Next hand ▸')}</div>`;
   }
