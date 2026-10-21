@@ -6,7 +6,8 @@ var DR = null;
 const drMoney = (n) => Math.round(n).toLocaleString('en-US');
 const drMoneyShort = (n) => (n >= 1e6 ? `${+(n / 1e6).toFixed(n >= 1e7 ? 1 : 2)}M` : n >= 1e4 ? `${Math.round(n / 1000)}K` : drMoney(n));
 const drOrd = (n) => { const v = n % 100; return n + (v >= 11 && v <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); };
-const drPaid = (ev) => typicalPayouts(ev.field, ev.buyin, 0).paid;
+const drPaid = (ev) => (ev.kind === 'sat' ? ev.seats : typicalPayouts(ev.field, ev.buyin, 0).paid);
+const drTicket = (s, ev) => !!(s.tickets && s.tickets[ev.id] > 0);
 const drTitleCount = (s) => Object.values(s.titles).reduce((a, b) => a + b, 0);
 const drStakeSize = (s) => [300, 300, 1500, 6000, 25000, 120000, 60000, 150000][Math.min(7, s.ch)];
 
@@ -61,9 +62,10 @@ function drAvailable(s) {
   if (s.ch === 0) return DR_EVENTS.filter((e) => e.id === 'local');
   return DR_EVENTS.filter((e) => e.ch >= 1 && e.ch <= s.ch);
 }
-function drAfford(s, ev) { return ev.free || s.br >= ev.buyin; }
+function drAfford(s, ev) { return ev.free || drTicket(s, ev) || s.br >= ev.buyin; }
 function drRisk(s, ev) {
   if (ev.free) return ['free', 'Free seat'];
+  if (drTicket(s, ev)) return ['free', '🎟 You have a seat'];
   if (s.br < ev.buyin) return ['no', `Need $${drMoney(ev.buyin)}`];
   const r = ev.buyin / Math.max(1, s.br);
   return r <= 0.05 ? ['safe', 'Safe for your roll'] : r <= 0.2 ? ['shot', 'Taking a shot'] : ['yolo', 'Betting the dream'];
@@ -82,10 +84,11 @@ function drProgress(s) {
 
 // ---------------------------------------------------------------- an event
 const DR_STAGE = { early: { gid: 'ring', label: 'Early', long: 'Early levels' }, middle: { gid: 'ring', label: 'Middle', long: 'Middle levels' }, bubble: { gid: 'bubble', label: 'Bubble', long: 'The bubble' },
-  deep: { gid: 'shove', label: 'Deep', long: 'Deep run' }, final: { gid: 'shove', label: 'Final', long: 'Final table' }, cash: { gid: 'cash', label: 'Cash', long: 'Cash session' } };
+  deep: { gid: 'shove', label: 'Deep', long: 'Deep run' }, satbubble: { gid: 'sat', label: 'Bubble', long: 'Satellite bubble' }, final: { gid: 'shove', label: 'Final', long: 'Final table' }, cash: { gid: 'cash', label: 'Cash', long: 'Cash session' } };
 // bigger fields mean longer days: more levels to survive before the final table
 function drStagesFor(ev) {
   if (ev.kind === 'cash') return ['cash'];
+  if (ev.kind === 'sat') return ['early', 'satbubble'];
   return ev.field < 150 ? ['early', 'bubble', 'final'] : ev.field < 1500 ? ['early', 'middle', 'bubble', 'final'] : ['early', 'middle', 'bubble', 'deep', 'final'];
 }
 // poker is poker: even perfect play gets coolered sometimes. A bigger stack survives more of them.
@@ -111,7 +114,8 @@ function drPickBoss(s, ev, rng) {
 function drStart(id) {
   const s = DR.st, ev = drEvent(id);
   if (DR.run || !ev || !drAfford(s, ev)) return;
-  if (!ev.free) drAdd(s, -ev.buyin, `Buy-in: ${ev.name}`);
+  if (drTicket(s, ev)) { s.tickets[ev.id]--; s.ledger.push({ d: Date.now(), amt: 0, why: `Satellite seat: ${ev.name}` }); DR.usedTicket = true; }
+  else { DR.usedTicket = false; if (!ev.free) drAdd(s, -ev.buyin, `Buy-in: ${ev.name}`); }
   s.lastEvent = id; drSave();
   const seed = `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
   DR.saved = snapSetup(); TR.random = true; window.__trRand = true;
@@ -125,7 +129,10 @@ async function drTable() {
   run.state = 'loading'; run.spot = null; drRender();
   const stage = run.stages[run.si];
   for (let attempt = 0; attempt < 3; attempt++) {
-    applySetup(arSetup(DR_STAGE[stage].gid, run.rng)); run.t0 = performance.now();
+    const gid = DR_STAGE[stage].gid, setup = arSetup(gid === 'sat' ? 'bubble' : gid, run.rng);
+    // satellite bubble: every seat pays the same, so ICM squeezes hardest here
+    if (gid === 'sat') { const t = setup.t222; t.payouts = Array(Math.max(1, t.paid)).fill('1').join(','); t.pko = { on: false, b: {}, frac: 75 }; }
+    applySetup(setup); run.t0 = performance.now();
     while (performance.now() - run.t0 < AR_SOLVE_MS) {
       await sleep(250); if (DR.run !== run) return;
       if (pfState.done || pfState.error || pfState.deep) break;
@@ -184,7 +191,7 @@ function drNext() {
   run.h = 0;
   if (run.si + 1 < run.stages.length) {
     // between levels, the cards can still beat you
-    if (run.ev.kind === 'mtt' && drCoolerRoll(run)) { run.bust = true; run.cooler = DR_COOLERS[(run.rng() * DR_COOLERS.length) | 0]; run.state = 'cooler'; drRender(); return; }
+    if (run.ev.kind !== 'cash' && drCoolerRoll(run)) { run.bust = true; run.cooler = DR_COOLERS[(run.rng() * DR_COOLERS.length) | 0]; run.state = 'cooler'; drRender(); return; }
     run.si++; run.tip++; drTable();
   } else { run.si++; drFinish(); }
 }
@@ -197,13 +204,18 @@ function drRestore() {
 function drQuit() {
   const run = DR.run; if (!run) return;
   // walking away: a tournament counts as busting where you are; a cash session cashes out what's left
-  if (run.ev.kind === 'mtt') run.bust = true;
+  if (run.ev.kind !== 'cash') run.bust = true;
   drFinish(true);
 }
 function drLeave() { if (DR && DR.run) drQuit(); }
 
 // where you finish: busting decides it early; surviving to the end, your decisions (and a little luck) do
 function drPlace(run, ev) {
+  if (ev.kind === 'sat') {
+    const P = ev.seats, between = (a, b) => Math.max(1, Math.min(ev.field, a + ((run.rng() * Math.max(1, b - a + 1)) | 0)));
+    if (!run.bust) return between(1, P);
+    return run.stages[Math.min(run.si, run.stages.length - 1)] === 'early' ? between(P + 6, ev.field) : run.h === 0 ? P + 1 : between(P + 1, P + 5);
+  }
   const N = ev.field, P = drPaid(ev), rng = run.rng, stage = run.stages[Math.min(run.si, run.stages.length - 1)];
   const n = run.results.length, pct = run.total / (100 * Math.max(1, n)), between = (a, b) => Math.max(1, Math.min(N, a + ((rng() * Math.max(1, b - a + 1)) | 0)));
   if (run.bust) {
@@ -229,8 +241,13 @@ function drFinish(quit) {
   const rec = s.events[ev.id] || (s.events[ev.id] = { played: 0, cashes: 0, wins: 0, best: null, cash: 0, net: 0 });
   rec.played++;
   const keyHands = run.results.filter((r) => r.hand).map((r) => r).sort((a, b) => a.pts - b.pts);
-  const res = { ev, n, pct, counts, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
-  if (ev.kind === 'cash') {
+  const res = { ev, n, pct, counts, before0: 0, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
+  if (ev.kind === 'sat') {
+    const place = drPlace(run, ev); res.place = place; res.paid = ev.seats;
+    rec.best = rec.best ? Math.min(rec.best, place) : place;
+    if (place <= ev.seats) { s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
+    res.net = -(DR.usedTicket ? 0 : ev.buyin);
+  } else if (ev.kind === 'cash') {
     const net = run.bust ? -ev.buyin : drCashNet(run, quit ? 0 : (run.rng() - 0.5) * 0.3);
     drAdd(s, ev.buyin + net, `Cashed out: ${ev.name}`);
     res.net = net; res.prize = ev.buyin + net; rec.net += net;

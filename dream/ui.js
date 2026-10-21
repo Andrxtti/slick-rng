@@ -195,16 +195,16 @@ function drEventCard(ev) {
   const first = ev.kind === 'mtt' ? Math.round(typicalPayouts(ev.field, ev.buyin, 0).amounts[0]) : 0;
   const boss = ev.boss ? (DR_PEOPLE[ev.boss] || {}).name : null, legends = (ev.legends || []).map(drLegend).filter(Boolean);
   return `<article class="drev pl-${ev.venue} ${rk === 'no' ? 'locked' : ''} ${pick ? 'pick' : ''}">${pick ? `<div class="drpick"><span class="drpick-face">${drPortraitImg() ? `<img src="${drPortraitImg()}" alt="">` : '🕶️'}</span>Slick's pick</div>` : ''}
-    <div class="drev-top"><span class="drev-kind">${ev.kind === 'cash' ? 'Cash game' : ev.title ? `${DR_TITLES[ev.title].icon} ${DR_TITLES[ev.title].n} event` : 'Tournament'}</span><span class="drrisk r-${rk}">${esc(rl)}</span></div>
+    <div class="drev-top"><span class="drev-kind">${ev.kind === 'cash' ? 'Cash game' : ev.kind === 'sat' ? '🎟 Satellite' : ev.title ? `${DR_TITLES[ev.title].icon} ${DR_TITLES[ev.title].n} event` : 'Tournament'}</span><span class="drrisk r-${rk}">${esc(rl)}</span></div>
     <h3>${esc(ev.name)}</h3>
     <p>${esc(ev.blurb)}</p>
     <div class="drev-facts">
-      <span><small>Buy-in</small><b class="mono">${ev.free ? 'FREE' : '$' + drMoney(ev.buyin)}</b></span>
-      ${ev.kind === 'mtt' ? `<span><small>Field</small><b class="mono">${drMoney(ev.field)}</b></span><span><small>1st place</small><b class="mono">$${drMoneyShort(first)}</b></span>` : `<span><small>Venue</small><b>${esc(pl.name)}</b></span>`}
+      <span><small>Buy-in</small><b class="mono">${ev.free ? 'FREE' : drTicket(s, ev) ? '🎟 Seat' : '$' + drMoney(ev.buyin)}</b></span>
+      ${ev.kind === 'mtt' ? `<span><small>Field</small><b class="mono">${drMoney(ev.field)}</b></span><span><small>1st place</small><b class="mono">$${drMoneyShort(first)}</b></span>` : ev.kind === 'sat' ? `<span><small>Field</small><b class="mono">${drMoney(ev.field)}</b></span><span><small>Seats</small><b class="mono">${ev.seats}</b></span><span><small>Prize</small><b>${esc(drEvent(ev.target).name.replace(/^WCS |^Circuit /, ''))} seat</b></span>` : `<span><small>Venue</small><b>${esc(pl.name)}</b></span>`}
     </div>
     ${boss || legends.length ? `<div class="drev-legends">${boss ? `<span>Final boss: <b>${esc(boss)}</b></span>` : ''}${legends.length ? `<span>Legends in the field: ${legends.map((l) => `<b class="${s.legends[l.id] ? 'beat' : ''}">${esc(l.name)}</b>`).join(', ')}</span>` : ''}</div>` : ''}
-    <div class="drev-bot"><small>${rec ? `Played ${rec.played}${ev.kind === 'mtt' ? ` · best ${rec.best ? drOrd(rec.best) : '—'}${rec.wins ? ` · ${rec.wins} win${rec.wins > 1 ? 's' : ''}` : ''}` : ` · net ${rec.net >= 0 ? '+' : '−'}$${drMoney(Math.abs(rec.net))}`}` : 'Never played'}</small>
-      ${drBtn(rk === 'no' ? 'ghost' : 'gold', `data-dr="play" data-id="${ev.id}" ${rk === 'no' ? 'disabled' : ''}`, rk === 'no' ? 'Can\'t afford it' : ev.kind === 'cash' ? 'Sit down' : 'Register')}</div>
+    <div class="drev-bot"><small>${rec ? `Played ${rec.played}${ev.kind === 'sat' ? ` · ${rec.wins} seat${rec.wins === 1 ? '' : 's'} won` : ev.kind === 'mtt' ? ` · best ${rec.best ? drOrd(rec.best) : '—'}${rec.wins ? ` · ${rec.wins} win${rec.wins > 1 ? 's' : ''}` : ''}` : ` · net ${rec.net >= 0 ? '+' : '−'}$${drMoney(Math.abs(rec.net))}`}` : 'Never played'}</small>
+      ${drBtn(rk === 'no' ? 'ghost' : 'gold', `data-dr="play" data-id="${ev.id}" ${rk === 'no' ? 'disabled' : ''}`, rk === 'no' ? 'Can\'t afford it' : ev.kind === 'cash' ? 'Sit down' : drTicket(s, ev) ? 'Use your seat' : 'Register')}</div>
   </article>`;
 }
 function drEventsHTML() {
@@ -254,24 +254,24 @@ function drStoryHTML() {
   return `<div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
     <div class="drkicker">Money</div>
     <div class="drledger">${s.ledger.slice(-12).reverse().map((l) => `<div><span>${esc(l.why)}</span><b class="mono ${l.amt >= 0 ? 'up' : 'down'}">${l.amt >= 0 ? '+' : '−'}$${drMoney(Math.abs(l.amt))}</b></div>`).join('')}</div>
-    <div class="drrow">${drBtn('ghost sm', 'data-dr="title"', 'Title screen')}</div>`;
+    <div class="drrow">${drBtn('ghost sm', 'data-dr="title"', 'Title screen')}${drBtn('ghost sm', 'data-dr="sound"', AR && AR.st.sound === false ? '🔇 Sound off' : '🔊 Sound on')}</div>`;
 }
 
 // ---------------------------------------------------------------- an event in progress
 function drHudHTML(run) {
   const ev = run.ev, stage = run.stages[Math.min(run.si, run.stages.length - 1)];
-  const N = ev.field, P = ev.kind === 'mtt' ? drPaid(ev) : 0;
+  const N = ev.field, P = ev.kind !== 'cash' ? drPaid(ev) : 0;
   const left = ev.kind === 'cash' ? null : stage === 'early' ? Math.max(P * 3, Math.round(N * (1 - 0.15 * (run.h + 1)))) : stage === 'middle' ? Math.max(P + 4, Math.round(N * (0.45 - 0.08 * run.h)))
-    : stage === 'bubble' ? P + 1 - (run.h > 0 ? run.h : 0) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.08 * run.h))) : Math.max(2, 9 - run.h * 3);
+    : stage === 'bubble' || stage === 'satbubble' ? P + 1 + (stage === 'satbubble' ? 2 - run.h : 0) - (stage === 'bubble' && run.h > 0 ? run.h : 0) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.08 * run.h))) : Math.max(2, 9 - run.h * 3);
   const status = run.stack >= 150 ? 'Big stack' : run.stack >= 110 ? 'Above average' : run.stack >= 75 ? 'Healthy' : run.stack >= 40 ? 'Getting short' : 'Short. Careful.';
   const cashUp = drCashNet(run, 0);
   return `<section class="drhud pl-${ev.venue}">
     <div class="drhud-top"><div><div class="drkicker">${esc(DR_PLACES[ev.venue].name)}</div><b>${esc(ev.name)}</b></div>${drBtn('ghost sm', 'data-dr="quit"', ev.kind === 'cash' ? 'Cash out' : 'Walk away')}</div>
-    ${ev.kind === 'mtt' ? `<div class="drstages">${run.stages.map((st, k) => `<span class="${k < run.si ? 'done' : k === run.si ? 'now' : ''}">${DR_STAGE[st].label}</span>`).join('')}</div>` : ''}
+    ${ev.kind !== 'cash' ? `<div class="drstages">${run.stages.map((st, k) => `<span class="${k < run.si ? 'done' : k === run.si ? 'now' : ''}">${DR_STAGE[st].label}</span>`).join('')}</div>` : ''}
     <div class="drhud-row">
       <div class="drstack"><small>${ev.kind === 'cash' ? 'Session' : 'Chip status'}</small><div class="drbar stack ${run.stack < 40 ? 'low' : run.stack > 140 ? 'big' : ''}"><i style="width:${Math.min(100, run.stack / 2)}%"></i></div><b class="mono">${ev.kind === 'cash' ? `${cashUp >= 0 ? '+' : '−'}$${drMoney(Math.abs(cashUp))}` : status}</b></div>
       ${left ? `<div class="drleft"><small>Players left</small><b class="mono">${drMoney(left)}</b></div>` : ''}
-      ${ev.kind === 'mtt' ? `<div class="drleft"><small>Paid</small><b class="mono">${drMoney(P)}</b></div>` : ''}
+      ${ev.kind !== 'cash' ? `<div class="drleft"><small>${ev.kind === 'sat' ? 'Seats' : 'Paid'}</small><b class="mono">${drMoney(P)}</b></div>` : ''}
     </div>
   </section>`;
 }
@@ -285,6 +285,7 @@ function drRunHTML() {
     if (!meet && field.length && stage !== 'early' && stage !== 'final' && run.tip % 2 === 1) { const L = drLegend(field[run.tip % field.length]); meet = { sp: 'L:' + L.id, t: `${L.style}` }; }
     const who = meet ? drSpeaker(meet) : drSpeaker({ sp: 'slick' });
     const intro = stage === 'early' ? (ev.kind === 'cash' ? 'Grab a rack. Find a seat.' : `${drMoney(ev.field)} players. Shuffle up and deal.`)
+      : stage === 'satbubble' ? `${drMoney(drPaid(ev) + 3)} left for ${drMoney(drPaid(ev))} seats. A seat is a seat: chips above it are worth nothing.`
       : stage === 'middle' ? `Day two. About ${drMoney(Math.round(ev.field * 0.45))} left. The fish are gone.`
       : stage === 'deep' ? `In the money, ${drMoney(Math.max(10, Math.round(drPaid(ev) * 0.3)))} left. Every pay jump is real.`
       : stage === 'bubble' ? `${drMoney(drPaid(ev) + 1)} left. ${drMoney(drPaid(ev))} get paid. Somebody is going home with nothing.`
@@ -325,7 +326,8 @@ function drResultsHTML() {
   const titleHTML = r.titles.map((t) => `<div class="drwin t-${t}"><div class="drwin-icon">${DR_TITLES[t].icon}</div><div><div class="drkicker">Champion</div><b>${esc(DR_TITLES[t].n)}</b><small>${esc(ev.name)}</small></div></div>`).join('');
   const beat = r.beat ? drLegend(r.beat) : null;
   let headline, sub;
-  if (ev.kind === 'cash') { headline = r.net > 0 ? `Up $${drMoney(r.net)}` : r.net < 0 ? `Down $${drMoney(-r.net)}` : 'Broke even'; sub = r.net > 0 ? 'Rack it up. That table is still talking about you.' : 'Some nights the cards win. Your decisions are what you keep.'; }
+  if (ev.kind === 'sat') { headline = r.ticket ? 'You won a seat' : r.place === r.paid + 1 ? 'Bubble boy' : `${drOrd(r.place)} place`; sub = r.ticket ? `Your seat in the ${drEvent(r.ticket).name} is waiting on the schedule.` : r.place === r.paid + 1 ? 'One spot from a seat. In a satellite, that hurts twice.' : `of ${drMoney(ev.field)} · ${ev.seats} seats`; }
+  else if (ev.kind === 'cash') { headline = r.net > 0 ? `Up $${drMoney(r.net)}` : r.net < 0 ? `Down $${drMoney(-r.net)}` : 'Broke even'; sub = r.net > 0 ? 'Rack it up. That table is still talking about you.' : 'Some nights the cards win. Your decisions are what you keep.'; }
   else if (r.place === 1) { headline = 'You won it all'; sub = `1st of ${drMoney(ev.field)}${r.luck > 0.03 ? ' · you ran hot, and you earned it' : ''}`; }
   else if (r.prize > 0) { headline = `${drOrd(r.place)} place`; sub = `of ${drMoney(ev.field)} · ${r.place === r.paid ? 'a min-cash, but a cash' : r.place <= 9 ? 'a final table finish' : 'in the money'}`; }
   else { headline = r.place === r.paid + 1 ? 'Bubble boy' : `${drOrd(r.place)} place`; sub = r.place === r.paid + 1 ? 'One spot from the money. It happens to everyone once.' : `of ${drMoney(ev.field)} · out before the money`; }
@@ -338,7 +340,8 @@ function drResultsHTML() {
     ${titleHTML}
     ${r.titles.includes('me') && r.boss === 'ghost' ? `<div class="drbeat"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><div><div class="drkicker">Heads-up for the world title</div><b>You beat The Ghost</b><small>Fourteen bracelets, and he finally smiled.</small></div></div>` : ''}
     ${beat ? `<div class="drbeat">${drLegendFace(beat)}<div><div class="drkicker">Legend beaten</div><b>${esc(beat.name)}</b><small>“${esc(beat.nick)}” · card added to your Legends</small></div></div>` : r.met && r.met !== 'ghost' && drLegend(r.met) ? `<div class="drbeat met">${drLegendFace(drLegend(r.met))}<div><div class="drkicker">You shared a final table with</div><b>${esc(drLegend(r.met).name)}</b><small>Beat them heads-up to win their card</small></div></div>` : ''}
-    <div class="drmoney"><div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div><div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → $${drMoney(r.after)}</b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
+    ${r.ticket ? `<div class="drwin"><div class="drwin-icon">🎟</div><div><div class="drkicker">Seat won</div><b>${esc(drEvent(r.ticket).name)}</b><small>Buy-in $${drMoney(drEvent(r.ticket).buyin)}, paid for.</small></div></div>` : ''}
+    <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → $${drMoney(r.after)}</b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
     <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
       <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
     ${r.keys && r.keys.length ? `<div class="drkeys"><div class="drkicker">Key hands</div>${r.keys.map((k) => { const h = k.hand; return `<div class="drkey t-${k.tier}"><div class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</div><div><b>${esc(h.pos)} · ${esc(h.bb)}bb · ${esc(h.cat)}</b><small>${k.tier === 'bad' ? `You: ${esc(h.mine)} (${h.myF}%). Solver: ${esc(h.best)} (${h.bestF}%).` : `You found ${esc(h.mine)}, a close spot the solver plays ${h.bestF}% of the time.`}</small></div></div>`; }).join('')}</div>` : ''}
@@ -374,6 +377,7 @@ document.addEventListener('click', (e) => {
   if (a === 'next') { drNext(); return; }
   if (a === 'quit') { drQuit(); return; }
   if (a === 'coolerdone') { drFinish(); return; }
+  if (a === 'sound') { if (AR) { AR.st.sound = AR.st.sound === false; arSave(); } drRender(); return; }
   if (a === 'howto') { s.flags.howto = true; drSave(); drRender(); return; }
   if (a === 'hub') { DR.view = 'hub'; DR.tab = 'events'; drRender(); scrollTo(0, 0); return; }
 });

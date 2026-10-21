@@ -119,10 +119,12 @@ const DR_EVENTS = [
   { id: 'nightly', ch: 1, kind: 'mtt', name: 'Nightly $60 Turbo', venue: 'cardroom', buyin: 60, field: 42, blurb: 'Fast blinds. Shove-or-fold by midnight.' },
   { id: 'deep', ch: 1, kind: 'mtt', name: 'Sunday $150 Deepstack', venue: 'cardroom', buyin: 150, field: 126, legends: ['armadillo'], blurb: 'The best structure in town.' },
   { id: 'classic', ch: 1, kind: 'mtt', name: 'Riverside Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Riverside. Trent Vale wants it too.' },
+  { id: 'sat1700', ch: 2, kind: 'sat', name: 'Circuit Main Mega Satellite', venue: 'casino', buyin: 180, field: 164, seats: 16, target: 'ring1700', blurb: 'Win a seat into the $1,700 Circuit Main. The bubble is brutal: everyone left gets the same prize.' },
   { id: 'c25', ch: 2, kind: 'cash', name: '$2/$5 No-Limit', venue: 'casino', buyin: 500, blurb: 'Deeper stacks, bigger egos.' },
   { id: 'ring400', ch: 2, kind: 'mtt', name: 'Circuit $400 No-Limit', venue: 'casino', buyin: 400, field: 384, title: 'ring', legends: ['fargo', 'mouth'], blurb: 'Every Circuit event awards a ring.' },
   { id: 'ring600', ch: 2, kind: 'mtt', name: 'Circuit $600 Deepstack', venue: 'casino', buyin: 600, field: 522, title: 'ring', legends: ['mouth', 'moneybaker'], blurb: 'Deep stacks, deep field.' },
   { id: 'ring1700', ch: 2, kind: 'mtt', name: 'Circuit $1,700 Main Event', venue: 'casino', buyin: 1700, field: 1146, title: 'ring', legends: ['moneybaker', 'fargo', 'mouth'], blurb: 'The ring everyone wants on this stop.' },
+  { id: 'sat10k', ch: 3, kind: 'sat', name: '$10K Championship Satellite', venue: 'vegas', buyin: 1100, field: 212, seats: 21, target: 'b10k', blurb: 'One in ten wins a seat into the pros-only bracelet event.' },
   { id: 'c510', ch: 3, kind: 'cash', name: '$5/$10 No-Limit', venue: 'vegas', buyin: 1500, blurb: 'Summer in Vegas. Every table has a story.' },
   { id: 'b1500', ch: 3, kind: 'mtt', name: 'WCS $1,500 No-Limit', venue: 'vegas', buyin: 1500, field: 2410, title: 'bracelet', legends: ['negrono', 'glazer', 'chance'], blurb: 'Gold bracelet event. Huge field.' },
   { id: 'b3000', ch: 3, kind: 'mtt', name: 'WCS $3,000 Six-Max', venue: 'vegas', buyin: 3000, field: 1104, title: 'bracelet', legends: ['hellbent', 'negrono', 'glazer'], blurb: 'Gold bracelet event. Six-handed aggression.' },
@@ -131,10 +133,12 @@ const DR_EVENTS = [
   { id: 'rpt3500', ch: 4, kind: 'mtt', name: 'Royal Tour $3,500 Main', venue: 'tv', buyin: 3500, field: 862, title: 'tour', legends: ['handsome', 'escandalo', 'kfoxglove'], blurb: 'Tour title and a seat in the Champions Cup.' },
   { id: 'glo10k', ch: 4, kind: 'mtt', name: 'GLO Cup $10,000', venue: 'tv', buyin: 10000, field: 96, title: 'glo', legends: ['foxglove', 'kfoxglove', 'swan'], blurb: 'Small field. Every player is a killer.' },
   { id: 'rpt10k', ch: 4, kind: 'mtt', name: 'Royal Tour $10,000 Championship', venue: 'tv', buyin: 10000, field: 421, title: 'tour', legends: ['sidle', 'swan', 'escandalo'], blurb: 'The crown jewel of the Tour.' },
+  { id: 'sat25k', ch: 5, kind: 'sat', name: 'Titan $25K Satellite', venue: 'titan', buyin: 2700, field: 104, seats: 10, target: 't25k', blurb: 'Ten seats into the Titan $25,000. Ninety-four people go home with nothing.' },
   { id: 'private', ch: 5, kind: 'cash', name: '$100/$200 Private Game', venue: 'titan', buyin: 40000, blurb: 'Penthouse game. Invitation from Trent, of all people.' },
   { id: 't25k', ch: 5, kind: 'mtt', name: 'Titan $25,000', venue: 'titan', buyin: 25000, field: 142, title: 'titan', legends: ['chillwick', 'kahoon', 'lonestar', 'bindr'], blurb: 'The entry point to the biggest games on earth.' },
   { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'punchline', 'mocha'], blurb: 'Sixty-eight of the best players alive.' },
   { id: 't250k', ch: 5, kind: 'mtt', name: 'Titan $250,000 Invitational', venue: 'titan', buyin: 250000, field: 40, title: 'titan', legends: ['addemup', 'kenny', 'hackston', 'antionius', 'daisies'], blurb: 'The richest table in the world.' },
+  { id: 'satmain', ch: 6, kind: 'sat', name: 'Main Event Mega Satellite', venue: 'main', buyin: 1100, field: 704, seats: 70, target: 'main', blurb: "The accountant's route: a cheap seat into the biggest tournament on earth." },
   { id: 'main', ch: 6, kind: 'mtt', name: 'WCS $10,000 Main Event', venue: 'main', buyin: 10000, field: 8402, title: 'me', boss: 'ghost', legends: ['mizrockie'], blurb: 'Eight thousand dreamers. One world champion.' },
   { id: 'legends', ch: 7, kind: 'mtt', name: 'Legends Invitational', venue: 'hall', buyin: 50000, field: 33, title: 'bracelet', legends: ['hungar', 'brunswick', 'chance', 'hellbent'], blurb: 'Every era. One table. A bracelet for the winner.' },
 ];
@@ -211,6 +215,10 @@ const DR_REPUTATION = [
 
 // ---------------------------------------------------------------- coach lines between stages
 const DR_TIPS = {
+  satbubble: [
+    'Satellite bubble: once you have a seat locked up, folding aces can be right. Survival is the only prize.',
+    "Short stacks have to gamble. Big stacks don't. Know which one you are.",
+  ],
   middle: [
     "The short stacks are getting desperate. Let them shove into your good hands.",
     "Stack sizes changed. Your opening ranges should too.",

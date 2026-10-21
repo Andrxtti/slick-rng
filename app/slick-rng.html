@@ -5735,10 +5735,12 @@ const DR_EVENTS = [
   { id: 'nightly', ch: 1, kind: 'mtt', name: 'Nightly $60 Turbo', venue: 'cardroom', buyin: 60, field: 42, blurb: 'Fast blinds. Shove-or-fold by midnight.' },
   { id: 'deep', ch: 1, kind: 'mtt', name: 'Sunday $150 Deepstack', venue: 'cardroom', buyin: 150, field: 126, legends: ['armadillo'], blurb: 'The best structure in town.' },
   { id: 'classic', ch: 1, kind: 'mtt', name: 'Riverside Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Riverside. Trent Vale wants it too.' },
+  { id: 'sat1700', ch: 2, kind: 'sat', name: 'Circuit Main Mega Satellite', venue: 'casino', buyin: 180, field: 164, seats: 16, target: 'ring1700', blurb: 'Win a seat into the $1,700 Circuit Main. The bubble is brutal: everyone left gets the same prize.' },
   { id: 'c25', ch: 2, kind: 'cash', name: '$2/$5 No-Limit', venue: 'casino', buyin: 500, blurb: 'Deeper stacks, bigger egos.' },
   { id: 'ring400', ch: 2, kind: 'mtt', name: 'Circuit $400 No-Limit', venue: 'casino', buyin: 400, field: 384, title: 'ring', legends: ['fargo', 'mouth'], blurb: 'Every Circuit event awards a ring.' },
   { id: 'ring600', ch: 2, kind: 'mtt', name: 'Circuit $600 Deepstack', venue: 'casino', buyin: 600, field: 522, title: 'ring', legends: ['mouth', 'moneybaker'], blurb: 'Deep stacks, deep field.' },
   { id: 'ring1700', ch: 2, kind: 'mtt', name: 'Circuit $1,700 Main Event', venue: 'casino', buyin: 1700, field: 1146, title: 'ring', legends: ['moneybaker', 'fargo', 'mouth'], blurb: 'The ring everyone wants on this stop.' },
+  { id: 'sat10k', ch: 3, kind: 'sat', name: '$10K Championship Satellite', venue: 'vegas', buyin: 1100, field: 212, seats: 21, target: 'b10k', blurb: 'One in ten wins a seat into the pros-only bracelet event.' },
   { id: 'c510', ch: 3, kind: 'cash', name: '$5/$10 No-Limit', venue: 'vegas', buyin: 1500, blurb: 'Summer in Vegas. Every table has a story.' },
   { id: 'b1500', ch: 3, kind: 'mtt', name: 'WCS $1,500 No-Limit', venue: 'vegas', buyin: 1500, field: 2410, title: 'bracelet', legends: ['negrono', 'glazer', 'chance'], blurb: 'Gold bracelet event. Huge field.' },
   { id: 'b3000', ch: 3, kind: 'mtt', name: 'WCS $3,000 Six-Max', venue: 'vegas', buyin: 3000, field: 1104, title: 'bracelet', legends: ['hellbent', 'negrono', 'glazer'], blurb: 'Gold bracelet event. Six-handed aggression.' },
@@ -5747,10 +5749,12 @@ const DR_EVENTS = [
   { id: 'rpt3500', ch: 4, kind: 'mtt', name: 'Royal Tour $3,500 Main', venue: 'tv', buyin: 3500, field: 862, title: 'tour', legends: ['handsome', 'escandalo', 'kfoxglove'], blurb: 'Tour title and a seat in the Champions Cup.' },
   { id: 'glo10k', ch: 4, kind: 'mtt', name: 'GLO Cup $10,000', venue: 'tv', buyin: 10000, field: 96, title: 'glo', legends: ['foxglove', 'kfoxglove', 'swan'], blurb: 'Small field. Every player is a killer.' },
   { id: 'rpt10k', ch: 4, kind: 'mtt', name: 'Royal Tour $10,000 Championship', venue: 'tv', buyin: 10000, field: 421, title: 'tour', legends: ['sidle', 'swan', 'escandalo'], blurb: 'The crown jewel of the Tour.' },
+  { id: 'sat25k', ch: 5, kind: 'sat', name: 'Titan $25K Satellite', venue: 'titan', buyin: 2700, field: 104, seats: 10, target: 't25k', blurb: 'Ten seats into the Titan $25,000. Ninety-four people go home with nothing.' },
   { id: 'private', ch: 5, kind: 'cash', name: '$100/$200 Private Game', venue: 'titan', buyin: 40000, blurb: 'Penthouse game. Invitation from Trent, of all people.' },
   { id: 't25k', ch: 5, kind: 'mtt', name: 'Titan $25,000', venue: 'titan', buyin: 25000, field: 142, title: 'titan', legends: ['chillwick', 'kahoon', 'lonestar', 'bindr'], blurb: 'The entry point to the biggest games on earth.' },
   { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'punchline', 'mocha'], blurb: 'Sixty-eight of the best players alive.' },
   { id: 't250k', ch: 5, kind: 'mtt', name: 'Titan $250,000 Invitational', venue: 'titan', buyin: 250000, field: 40, title: 'titan', legends: ['addemup', 'kenny', 'hackston', 'antionius', 'daisies'], blurb: 'The richest table in the world.' },
+  { id: 'satmain', ch: 6, kind: 'sat', name: 'Main Event Mega Satellite', venue: 'main', buyin: 1100, field: 704, seats: 70, target: 'main', blurb: "The accountant's route: a cheap seat into the biggest tournament on earth." },
   { id: 'main', ch: 6, kind: 'mtt', name: 'WCS $10,000 Main Event', venue: 'main', buyin: 10000, field: 8402, title: 'me', boss: 'ghost', legends: ['mizrockie'], blurb: 'Eight thousand dreamers. One world champion.' },
   { id: 'legends', ch: 7, kind: 'mtt', name: 'Legends Invitational', venue: 'hall', buyin: 50000, field: 33, title: 'bracelet', legends: ['hungar', 'brunswick', 'chance', 'hellbent'], blurb: 'Every era. One table. A bracelet for the winner.' },
 ];
@@ -5827,6 +5831,10 @@ const DR_REPUTATION = [
 
 // ---------------------------------------------------------------- coach lines between stages
 const DR_TIPS = {
+  satbubble: [
+    'Satellite bubble: once you have a seat locked up, folding aces can be right. Survival is the only prize.',
+    "Short stacks have to gamble. Big stacks don't. Know which one you are.",
+  ],
   middle: [
     "The short stacks are getting desperate. Let them shove into your good hands.",
     "Stack sizes changed. Your opening ranges should too.",
@@ -6243,7 +6251,8 @@ var DR = null;
 const drMoney = (n) => Math.round(n).toLocaleString('en-US');
 const drMoneyShort = (n) => (n >= 1e6 ? `${+(n / 1e6).toFixed(n >= 1e7 ? 1 : 2)}M` : n >= 1e4 ? `${Math.round(n / 1000)}K` : drMoney(n));
 const drOrd = (n) => { const v = n % 100; return n + (v >= 11 && v <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); };
-const drPaid = (ev) => typicalPayouts(ev.field, ev.buyin, 0).paid;
+const drPaid = (ev) => (ev.kind === 'sat' ? ev.seats : typicalPayouts(ev.field, ev.buyin, 0).paid);
+const drTicket = (s, ev) => !!(s.tickets && s.tickets[ev.id] > 0);
 const drTitleCount = (s) => Object.values(s.titles).reduce((a, b) => a + b, 0);
 const drStakeSize = (s) => [300, 300, 1500, 6000, 25000, 120000, 60000, 150000][Math.min(7, s.ch)];
 
@@ -6298,9 +6307,10 @@ function drAvailable(s) {
   if (s.ch === 0) return DR_EVENTS.filter((e) => e.id === 'local');
   return DR_EVENTS.filter((e) => e.ch >= 1 && e.ch <= s.ch);
 }
-function drAfford(s, ev) { return ev.free || s.br >= ev.buyin; }
+function drAfford(s, ev) { return ev.free || drTicket(s, ev) || s.br >= ev.buyin; }
 function drRisk(s, ev) {
   if (ev.free) return ['free', 'Free seat'];
+  if (drTicket(s, ev)) return ['free', '🎟 You have a seat'];
   if (s.br < ev.buyin) return ['no', `Need $${drMoney(ev.buyin)}`];
   const r = ev.buyin / Math.max(1, s.br);
   return r <= 0.05 ? ['safe', 'Safe for your roll'] : r <= 0.2 ? ['shot', 'Taking a shot'] : ['yolo', 'Betting the dream'];
@@ -6319,10 +6329,11 @@ function drProgress(s) {
 
 // ---------------------------------------------------------------- an event
 const DR_STAGE = { early: { gid: 'ring', label: 'Early', long: 'Early levels' }, middle: { gid: 'ring', label: 'Middle', long: 'Middle levels' }, bubble: { gid: 'bubble', label: 'Bubble', long: 'The bubble' },
-  deep: { gid: 'shove', label: 'Deep', long: 'Deep run' }, final: { gid: 'shove', label: 'Final', long: 'Final table' }, cash: { gid: 'cash', label: 'Cash', long: 'Cash session' } };
+  deep: { gid: 'shove', label: 'Deep', long: 'Deep run' }, satbubble: { gid: 'sat', label: 'Bubble', long: 'Satellite bubble' }, final: { gid: 'shove', label: 'Final', long: 'Final table' }, cash: { gid: 'cash', label: 'Cash', long: 'Cash session' } };
 // bigger fields mean longer days: more levels to survive before the final table
 function drStagesFor(ev) {
   if (ev.kind === 'cash') return ['cash'];
+  if (ev.kind === 'sat') return ['early', 'satbubble'];
   return ev.field < 150 ? ['early', 'bubble', 'final'] : ev.field < 1500 ? ['early', 'middle', 'bubble', 'final'] : ['early', 'middle', 'bubble', 'deep', 'final'];
 }
 // poker is poker: even perfect play gets coolered sometimes. A bigger stack survives more of them.
@@ -6348,7 +6359,8 @@ function drPickBoss(s, ev, rng) {
 function drStart(id) {
   const s = DR.st, ev = drEvent(id);
   if (DR.run || !ev || !drAfford(s, ev)) return;
-  if (!ev.free) drAdd(s, -ev.buyin, `Buy-in: ${ev.name}`);
+  if (drTicket(s, ev)) { s.tickets[ev.id]--; s.ledger.push({ d: Date.now(), amt: 0, why: `Satellite seat: ${ev.name}` }); DR.usedTicket = true; }
+  else { DR.usedTicket = false; if (!ev.free) drAdd(s, -ev.buyin, `Buy-in: ${ev.name}`); }
   s.lastEvent = id; drSave();
   const seed = `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
   DR.saved = snapSetup(); TR.random = true; window.__trRand = true;
@@ -6362,7 +6374,10 @@ async function drTable() {
   run.state = 'loading'; run.spot = null; drRender();
   const stage = run.stages[run.si];
   for (let attempt = 0; attempt < 3; attempt++) {
-    applySetup(arSetup(DR_STAGE[stage].gid, run.rng)); run.t0 = performance.now();
+    const gid = DR_STAGE[stage].gid, setup = arSetup(gid === 'sat' ? 'bubble' : gid, run.rng);
+    // satellite bubble: every seat pays the same, so ICM squeezes hardest here
+    if (gid === 'sat') { const t = setup.t222; t.payouts = Array(Math.max(1, t.paid)).fill('1').join(','); t.pko = { on: false, b: {}, frac: 75 }; }
+    applySetup(setup); run.t0 = performance.now();
     while (performance.now() - run.t0 < AR_SOLVE_MS) {
       await sleep(250); if (DR.run !== run) return;
       if (pfState.done || pfState.error || pfState.deep) break;
@@ -6421,7 +6436,7 @@ function drNext() {
   run.h = 0;
   if (run.si + 1 < run.stages.length) {
     // between levels, the cards can still beat you
-    if (run.ev.kind === 'mtt' && drCoolerRoll(run)) { run.bust = true; run.cooler = DR_COOLERS[(run.rng() * DR_COOLERS.length) | 0]; run.state = 'cooler'; drRender(); return; }
+    if (run.ev.kind !== 'cash' && drCoolerRoll(run)) { run.bust = true; run.cooler = DR_COOLERS[(run.rng() * DR_COOLERS.length) | 0]; run.state = 'cooler'; drRender(); return; }
     run.si++; run.tip++; drTable();
   } else { run.si++; drFinish(); }
 }
@@ -6434,13 +6449,18 @@ function drRestore() {
 function drQuit() {
   const run = DR.run; if (!run) return;
   // walking away: a tournament counts as busting where you are; a cash session cashes out what's left
-  if (run.ev.kind === 'mtt') run.bust = true;
+  if (run.ev.kind !== 'cash') run.bust = true;
   drFinish(true);
 }
 function drLeave() { if (DR && DR.run) drQuit(); }
 
 // where you finish: busting decides it early; surviving to the end, your decisions (and a little luck) do
 function drPlace(run, ev) {
+  if (ev.kind === 'sat') {
+    const P = ev.seats, between = (a, b) => Math.max(1, Math.min(ev.field, a + ((run.rng() * Math.max(1, b - a + 1)) | 0)));
+    if (!run.bust) return between(1, P);
+    return run.stages[Math.min(run.si, run.stages.length - 1)] === 'early' ? between(P + 6, ev.field) : run.h === 0 ? P + 1 : between(P + 1, P + 5);
+  }
   const N = ev.field, P = drPaid(ev), rng = run.rng, stage = run.stages[Math.min(run.si, run.stages.length - 1)];
   const n = run.results.length, pct = run.total / (100 * Math.max(1, n)), between = (a, b) => Math.max(1, Math.min(N, a + ((rng() * Math.max(1, b - a + 1)) | 0)));
   if (run.bust) {
@@ -6466,8 +6486,13 @@ function drFinish(quit) {
   const rec = s.events[ev.id] || (s.events[ev.id] = { played: 0, cashes: 0, wins: 0, best: null, cash: 0, net: 0 });
   rec.played++;
   const keyHands = run.results.filter((r) => r.hand).map((r) => r).sort((a, b) => a.pts - b.pts);
-  const res = { ev, n, pct, counts, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
-  if (ev.kind === 'cash') {
+  const res = { ev, n, pct, counts, before0: 0, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
+  if (ev.kind === 'sat') {
+    const place = drPlace(run, ev); res.place = place; res.paid = ev.seats;
+    rec.best = rec.best ? Math.min(rec.best, place) : place;
+    if (place <= ev.seats) { s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
+    res.net = -(DR.usedTicket ? 0 : ev.buyin);
+  } else if (ev.kind === 'cash') {
     const net = run.bust ? -ev.buyin : drCashNet(run, quit ? 0 : (run.rng() - 0.5) * 0.3);
     drAdd(s, ev.buyin + net, `Cashed out: ${ev.name}`);
     res.net = net; res.prize = ev.buyin + net; rec.net += net;
@@ -6704,16 +6729,16 @@ function drEventCard(ev) {
   const first = ev.kind === 'mtt' ? Math.round(typicalPayouts(ev.field, ev.buyin, 0).amounts[0]) : 0;
   const boss = ev.boss ? (DR_PEOPLE[ev.boss] || {}).name : null, legends = (ev.legends || []).map(drLegend).filter(Boolean);
   return `<article class="drev pl-${ev.venue} ${rk === 'no' ? 'locked' : ''} ${pick ? 'pick' : ''}">${pick ? `<div class="drpick"><span class="drpick-face">${drPortraitImg() ? `<img src="${drPortraitImg()}" alt="">` : '🕶️'}</span>Slick's pick</div>` : ''}
-    <div class="drev-top"><span class="drev-kind">${ev.kind === 'cash' ? 'Cash game' : ev.title ? `${DR_TITLES[ev.title].icon} ${DR_TITLES[ev.title].n} event` : 'Tournament'}</span><span class="drrisk r-${rk}">${esc(rl)}</span></div>
+    <div class="drev-top"><span class="drev-kind">${ev.kind === 'cash' ? 'Cash game' : ev.kind === 'sat' ? '🎟 Satellite' : ev.title ? `${DR_TITLES[ev.title].icon} ${DR_TITLES[ev.title].n} event` : 'Tournament'}</span><span class="drrisk r-${rk}">${esc(rl)}</span></div>
     <h3>${esc(ev.name)}</h3>
     <p>${esc(ev.blurb)}</p>
     <div class="drev-facts">
-      <span><small>Buy-in</small><b class="mono">${ev.free ? 'FREE' : '$' + drMoney(ev.buyin)}</b></span>
-      ${ev.kind === 'mtt' ? `<span><small>Field</small><b class="mono">${drMoney(ev.field)}</b></span><span><small>1st place</small><b class="mono">$${drMoneyShort(first)}</b></span>` : `<span><small>Venue</small><b>${esc(pl.name)}</b></span>`}
+      <span><small>Buy-in</small><b class="mono">${ev.free ? 'FREE' : drTicket(s, ev) ? '🎟 Seat' : '$' + drMoney(ev.buyin)}</b></span>
+      ${ev.kind === 'mtt' ? `<span><small>Field</small><b class="mono">${drMoney(ev.field)}</b></span><span><small>1st place</small><b class="mono">$${drMoneyShort(first)}</b></span>` : ev.kind === 'sat' ? `<span><small>Field</small><b class="mono">${drMoney(ev.field)}</b></span><span><small>Seats</small><b class="mono">${ev.seats}</b></span><span><small>Prize</small><b>${esc(drEvent(ev.target).name.replace(/^WCS |^Circuit /, ''))} seat</b></span>` : `<span><small>Venue</small><b>${esc(pl.name)}</b></span>`}
     </div>
     ${boss || legends.length ? `<div class="drev-legends">${boss ? `<span>Final boss: <b>${esc(boss)}</b></span>` : ''}${legends.length ? `<span>Legends in the field: ${legends.map((l) => `<b class="${s.legends[l.id] ? 'beat' : ''}">${esc(l.name)}</b>`).join(', ')}</span>` : ''}</div>` : ''}
-    <div class="drev-bot"><small>${rec ? `Played ${rec.played}${ev.kind === 'mtt' ? ` · best ${rec.best ? drOrd(rec.best) : '—'}${rec.wins ? ` · ${rec.wins} win${rec.wins > 1 ? 's' : ''}` : ''}` : ` · net ${rec.net >= 0 ? '+' : '−'}$${drMoney(Math.abs(rec.net))}`}` : 'Never played'}</small>
-      ${drBtn(rk === 'no' ? 'ghost' : 'gold', `data-dr="play" data-id="${ev.id}" ${rk === 'no' ? 'disabled' : ''}`, rk === 'no' ? 'Can\'t afford it' : ev.kind === 'cash' ? 'Sit down' : 'Register')}</div>
+    <div class="drev-bot"><small>${rec ? `Played ${rec.played}${ev.kind === 'sat' ? ` · ${rec.wins} seat${rec.wins === 1 ? '' : 's'} won` : ev.kind === 'mtt' ? ` · best ${rec.best ? drOrd(rec.best) : '—'}${rec.wins ? ` · ${rec.wins} win${rec.wins > 1 ? 's' : ''}` : ''}` : ` · net ${rec.net >= 0 ? '+' : '−'}$${drMoney(Math.abs(rec.net))}`}` : 'Never played'}</small>
+      ${drBtn(rk === 'no' ? 'ghost' : 'gold', `data-dr="play" data-id="${ev.id}" ${rk === 'no' ? 'disabled' : ''}`, rk === 'no' ? 'Can\'t afford it' : ev.kind === 'cash' ? 'Sit down' : drTicket(s, ev) ? 'Use your seat' : 'Register')}</div>
   </article>`;
 }
 function drEventsHTML() {
@@ -6763,24 +6788,24 @@ function drStoryHTML() {
   return `<div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
     <div class="drkicker">Money</div>
     <div class="drledger">${s.ledger.slice(-12).reverse().map((l) => `<div><span>${esc(l.why)}</span><b class="mono ${l.amt >= 0 ? 'up' : 'down'}">${l.amt >= 0 ? '+' : '−'}$${drMoney(Math.abs(l.amt))}</b></div>`).join('')}</div>
-    <div class="drrow">${drBtn('ghost sm', 'data-dr="title"', 'Title screen')}</div>`;
+    <div class="drrow">${drBtn('ghost sm', 'data-dr="title"', 'Title screen')}${drBtn('ghost sm', 'data-dr="sound"', AR && AR.st.sound === false ? '🔇 Sound off' : '🔊 Sound on')}</div>`;
 }
 
 // ---------------------------------------------------------------- an event in progress
 function drHudHTML(run) {
   const ev = run.ev, stage = run.stages[Math.min(run.si, run.stages.length - 1)];
-  const N = ev.field, P = ev.kind === 'mtt' ? drPaid(ev) : 0;
+  const N = ev.field, P = ev.kind !== 'cash' ? drPaid(ev) : 0;
   const left = ev.kind === 'cash' ? null : stage === 'early' ? Math.max(P * 3, Math.round(N * (1 - 0.15 * (run.h + 1)))) : stage === 'middle' ? Math.max(P + 4, Math.round(N * (0.45 - 0.08 * run.h)))
-    : stage === 'bubble' ? P + 1 - (run.h > 0 ? run.h : 0) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.08 * run.h))) : Math.max(2, 9 - run.h * 3);
+    : stage === 'bubble' || stage === 'satbubble' ? P + 1 + (stage === 'satbubble' ? 2 - run.h : 0) - (stage === 'bubble' && run.h > 0 ? run.h : 0) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.08 * run.h))) : Math.max(2, 9 - run.h * 3);
   const status = run.stack >= 150 ? 'Big stack' : run.stack >= 110 ? 'Above average' : run.stack >= 75 ? 'Healthy' : run.stack >= 40 ? 'Getting short' : 'Short. Careful.';
   const cashUp = drCashNet(run, 0);
   return `<section class="drhud pl-${ev.venue}">
     <div class="drhud-top"><div><div class="drkicker">${esc(DR_PLACES[ev.venue].name)}</div><b>${esc(ev.name)}</b></div>${drBtn('ghost sm', 'data-dr="quit"', ev.kind === 'cash' ? 'Cash out' : 'Walk away')}</div>
-    ${ev.kind === 'mtt' ? `<div class="drstages">${run.stages.map((st, k) => `<span class="${k < run.si ? 'done' : k === run.si ? 'now' : ''}">${DR_STAGE[st].label}</span>`).join('')}</div>` : ''}
+    ${ev.kind !== 'cash' ? `<div class="drstages">${run.stages.map((st, k) => `<span class="${k < run.si ? 'done' : k === run.si ? 'now' : ''}">${DR_STAGE[st].label}</span>`).join('')}</div>` : ''}
     <div class="drhud-row">
       <div class="drstack"><small>${ev.kind === 'cash' ? 'Session' : 'Chip status'}</small><div class="drbar stack ${run.stack < 40 ? 'low' : run.stack > 140 ? 'big' : ''}"><i style="width:${Math.min(100, run.stack / 2)}%"></i></div><b class="mono">${ev.kind === 'cash' ? `${cashUp >= 0 ? '+' : '−'}$${drMoney(Math.abs(cashUp))}` : status}</b></div>
       ${left ? `<div class="drleft"><small>Players left</small><b class="mono">${drMoney(left)}</b></div>` : ''}
-      ${ev.kind === 'mtt' ? `<div class="drleft"><small>Paid</small><b class="mono">${drMoney(P)}</b></div>` : ''}
+      ${ev.kind !== 'cash' ? `<div class="drleft"><small>${ev.kind === 'sat' ? 'Seats' : 'Paid'}</small><b class="mono">${drMoney(P)}</b></div>` : ''}
     </div>
   </section>`;
 }
@@ -6794,6 +6819,7 @@ function drRunHTML() {
     if (!meet && field.length && stage !== 'early' && stage !== 'final' && run.tip % 2 === 1) { const L = drLegend(field[run.tip % field.length]); meet = { sp: 'L:' + L.id, t: `${L.style}` }; }
     const who = meet ? drSpeaker(meet) : drSpeaker({ sp: 'slick' });
     const intro = stage === 'early' ? (ev.kind === 'cash' ? 'Grab a rack. Find a seat.' : `${drMoney(ev.field)} players. Shuffle up and deal.`)
+      : stage === 'satbubble' ? `${drMoney(drPaid(ev) + 3)} left for ${drMoney(drPaid(ev))} seats. A seat is a seat: chips above it are worth nothing.`
       : stage === 'middle' ? `Day two. About ${drMoney(Math.round(ev.field * 0.45))} left. The fish are gone.`
       : stage === 'deep' ? `In the money, ${drMoney(Math.max(10, Math.round(drPaid(ev) * 0.3)))} left. Every pay jump is real.`
       : stage === 'bubble' ? `${drMoney(drPaid(ev) + 1)} left. ${drMoney(drPaid(ev))} get paid. Somebody is going home with nothing.`
@@ -6834,7 +6860,8 @@ function drResultsHTML() {
   const titleHTML = r.titles.map((t) => `<div class="drwin t-${t}"><div class="drwin-icon">${DR_TITLES[t].icon}</div><div><div class="drkicker">Champion</div><b>${esc(DR_TITLES[t].n)}</b><small>${esc(ev.name)}</small></div></div>`).join('');
   const beat = r.beat ? drLegend(r.beat) : null;
   let headline, sub;
-  if (ev.kind === 'cash') { headline = r.net > 0 ? `Up $${drMoney(r.net)}` : r.net < 0 ? `Down $${drMoney(-r.net)}` : 'Broke even'; sub = r.net > 0 ? 'Rack it up. That table is still talking about you.' : 'Some nights the cards win. Your decisions are what you keep.'; }
+  if (ev.kind === 'sat') { headline = r.ticket ? 'You won a seat' : r.place === r.paid + 1 ? 'Bubble boy' : `${drOrd(r.place)} place`; sub = r.ticket ? `Your seat in the ${drEvent(r.ticket).name} is waiting on the schedule.` : r.place === r.paid + 1 ? 'One spot from a seat. In a satellite, that hurts twice.' : `of ${drMoney(ev.field)} · ${ev.seats} seats`; }
+  else if (ev.kind === 'cash') { headline = r.net > 0 ? `Up $${drMoney(r.net)}` : r.net < 0 ? `Down $${drMoney(-r.net)}` : 'Broke even'; sub = r.net > 0 ? 'Rack it up. That table is still talking about you.' : 'Some nights the cards win. Your decisions are what you keep.'; }
   else if (r.place === 1) { headline = 'You won it all'; sub = `1st of ${drMoney(ev.field)}${r.luck > 0.03 ? ' · you ran hot, and you earned it' : ''}`; }
   else if (r.prize > 0) { headline = `${drOrd(r.place)} place`; sub = `of ${drMoney(ev.field)} · ${r.place === r.paid ? 'a min-cash, but a cash' : r.place <= 9 ? 'a final table finish' : 'in the money'}`; }
   else { headline = r.place === r.paid + 1 ? 'Bubble boy' : `${drOrd(r.place)} place`; sub = r.place === r.paid + 1 ? 'One spot from the money. It happens to everyone once.' : `of ${drMoney(ev.field)} · out before the money`; }
@@ -6847,7 +6874,8 @@ function drResultsHTML() {
     ${titleHTML}
     ${r.titles.includes('me') && r.boss === 'ghost' ? `<div class="drbeat"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><div><div class="drkicker">Heads-up for the world title</div><b>You beat The Ghost</b><small>Fourteen bracelets, and he finally smiled.</small></div></div>` : ''}
     ${beat ? `<div class="drbeat">${drLegendFace(beat)}<div><div class="drkicker">Legend beaten</div><b>${esc(beat.name)}</b><small>“${esc(beat.nick)}” · card added to your Legends</small></div></div>` : r.met && r.met !== 'ghost' && drLegend(r.met) ? `<div class="drbeat met">${drLegendFace(drLegend(r.met))}<div><div class="drkicker">You shared a final table with</div><b>${esc(drLegend(r.met).name)}</b><small>Beat them heads-up to win their card</small></div></div>` : ''}
-    <div class="drmoney"><div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div><div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → $${drMoney(r.after)}</b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
+    ${r.ticket ? `<div class="drwin"><div class="drwin-icon">🎟</div><div><div class="drkicker">Seat won</div><b>${esc(drEvent(r.ticket).name)}</b><small>Buy-in $${drMoney(drEvent(r.ticket).buyin)}, paid for.</small></div></div>` : ''}
+    <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → $${drMoney(r.after)}</b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
     <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
       <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
     ${r.keys && r.keys.length ? `<div class="drkeys"><div class="drkicker">Key hands</div>${r.keys.map((k) => { const h = k.hand; return `<div class="drkey t-${k.tier}"><div class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</div><div><b>${esc(h.pos)} · ${esc(h.bb)}bb · ${esc(h.cat)}</b><small>${k.tier === 'bad' ? `You: ${esc(h.mine)} (${h.myF}%). Solver: ${esc(h.best)} (${h.bestF}%).` : `You found ${esc(h.mine)}, a close spot the solver plays ${h.bestF}% of the time.`}</small></div></div>`; }).join('')}</div>` : ''}
@@ -6883,6 +6911,7 @@ document.addEventListener('click', (e) => {
   if (a === 'next') { drNext(); return; }
   if (a === 'quit') { drQuit(); return; }
   if (a === 'coolerdone') { drFinish(); return; }
+  if (a === 'sound') { if (AR) { AR.st.sound = AR.st.sound === false; arSave(); } drRender(); return; }
   if (a === 'howto') { s.flags.howto = true; drSave(); drRender(); return; }
   if (a === 'hub') { DR.view = 'hub'; DR.tab = 'events'; drRender(); scrollTo(0, 0); return; }
 });
