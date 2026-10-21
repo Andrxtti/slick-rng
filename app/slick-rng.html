@@ -1094,10 +1094,17 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 
 /* ---------- life hub */
 .dream .drlife { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); align-items: end; min-height: 230px; }
-@media (max-width: 560px) { .dream .drlife { grid-template-columns: minmax(0, 1fr); } .dream .drlife-av { max-width: 280px; justify-self: center; } }
+@media (max-width: 560px) {
+  .dream .drlife { grid-template-columns: minmax(0, 44%) minmax(0, 1fr); min-height: 0; align-items: stretch; }
+  .dream .drlife-av { align-self: end; }
+  .dream .drlife-info { padding: 12px 12px 12px 4px; }
+  .dream .drlife-name { font-size: 24px; } .dream .drlife-rep { font-size: 13px; }
+  .dream .drbank b { font-size: 24px; } .dream .drbank { margin-top: 4px; }
+  .dream .drlifestyle { gap: 4px; } .dream .drlifestyle span { font-size: 11px; padding: 2px 8px; }
+}
 .dream .drlife-av { align-self: end; }
 .dream .drlife-info { padding: 16px; display: grid; gap: 4px; align-content: end; background: linear-gradient(90deg, rgba(0, 0, 0, .55), rgba(0, 0, 0, .15)); height: 100%; }
-@media (max-width: 560px) { .dream .drlife-info { background: linear-gradient(180deg, rgba(0, 0, 0, .25), rgba(0, 0, 0, .75)); } }
+@media (max-width: 560px) { .dream .drlife-info { background: linear-gradient(90deg, rgba(0, 0, 0, .1), rgba(0, 0, 0, .6)); } }
 .dream .drlife-name { font-family: var(--disp); font-size: 32px; line-height: 1.05; font-weight: 600; }
 .dream .drlife-rep { color: var(--gold2); font-size: 14px; font-style: italic; font-family: var(--disp); }
 .dream .drbank { display: grid; margin-top: 8px; } .dream .drbank small { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
@@ -1267,6 +1274,15 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 @keyframes drBreathe { 50% { transform: translateY(-1.5px) scale(1.006); } }
 .dream .drseat.boss { border-color: #c084fc; background: linear-gradient(180deg, rgba(192, 132, 252, .16), rgba(0, 0, 0, .4)); }
 .dream .drseat .drbossname { color: #e3c8ff; font-weight: 600; font-size: 10px; }
+.dream .drdaily { display: flex; gap: 12px; align-items: center; justify-content: space-between; border: 1px solid var(--gold3); border-radius: 16px; padding: 14px; }
+.dream .drdaily > div { display: grid; gap: 4px; min-width: 0; } .dream .drdaily h3 { font-family: var(--disp); font-size: 21px; margin: 0; } .dream .drdaily p { margin: 0; font-size: 13px; color: #d8cfbd; } .dream .drdaily small { font-size: 12px; color: var(--mute); }
+@media (max-width: 480px) { .dream .drdaily { flex-direction: column; align-items: stretch; } }
+.dream .drstreak { font-size: 14px; color: #ffb197; } .dream .drstreak b { color: var(--gold2); }
+@media (max-width: 560px) {
+  .dream .drtitles { display: flex; overflow-x: auto; scrollbar-width: none; gap: 6px; padding-bottom: 2px; }
+  .dream .drtitles::-webkit-scrollbar { display: none; }
+  .dream .drtl { flex: 0 0 72px; }
+}
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
@@ -5762,7 +5778,9 @@ const DR_EVENTS = [
   { id: 'main', ch: 6, kind: 'mtt', name: 'WCS $10,000 Main Event', venue: 'main', buyin: 10000, field: 8402, title: 'me', boss: 'ghost', legends: ['mizrockie'], blurb: 'Eight thousand dreamers. One world champion.' },
   { id: 'legends', ch: 7, kind: 'mtt', name: 'Legends Invitational', venue: 'hall', buyin: 50000, field: 33, title: 'bracelet', legends: ['hungar', 'brunswick', 'chance', 'hellbent', 'mizrockie'], blurb: 'Every era. One table. A bracelet for the winner.' },
 ];
-const drEvent = (id) => DR_EVENTS.find((e) => e.id === id);
+// the Daily Grind: one free sponsored freeroll a day, same venue as your current chapter
+const DR_DAILY = { id: 'daily', ch: 1, kind: 'mtt', name: 'The Daily Grind', buyin: 0, field: 60, free: true, daily: true, blurb: 'One free sponsored freeroll a day. Keep the streak alive for exclusive gear.' };
+const drEvent = (id) => (id === 'daily' ? DR_DAILY : DR_EVENTS.find((e) => e.id === id));
 
 // ---------------------------------------------------------------- unlockables
 // slot: what it changes. Each unlocks with a milestone: never bought.
@@ -5787,6 +5805,7 @@ const DR_ITEMS = [
   { slot: 'head', id: 'cap', name: 'Riverside ballcap', req: 'Play 5 sessions', test: (s) => s.played >= 5 },
   { slot: 'head', id: 'phones', name: 'Noise-cancelling cans', req: 'Make 100 decisions', test: (s) => s.dec >= 100 },
   { slot: 'head', id: 'beanie', name: 'Vegas pool beanie', req: 'Reach the Summer', test: (s) => s.ch >= 3 },
+  { slot: 'head', id: 'visor', name: "Old-school dealer's visor", req: 'Daily Grind streak of 7 days', test: (s) => (s.bestStreak || 0) >= 7 },
   // watches
   { slot: 'watch', id: 'digital', name: 'Gas-station digital', req: 'Where it all started', test: () => true },
   { slot: 'watch', id: 'steel', name: 'Steel diver', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
@@ -5814,6 +5833,7 @@ const DR_ITEMS = [
   { slot: 'ride', id: 'jet', name: 'Private jet share', req: 'Win a Titan title', test: (s) => s.titles.titan >= 1 },
   // sponsor patches
   { slot: 'patch', id: 'none', name: 'Unsponsored', req: 'Where it all started', test: () => true },
+  { slot: 'patch', id: 'grind', name: 'Daily Grind patch', req: 'Daily Grind streak of 3 days', test: (s) => (s.bestStreak || 0) >= 3 },
   { slot: 'patch', id: 'tavern', name: "Rusty's Tavern", req: 'Win a session at $1/$2', test: (s) => !!s.flags.cashWin },
   { slot: 'patch', id: 'site', name: 'Online site patch', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
   { slot: 'patch', id: 'energy', name: 'Energy drink sponsor', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
@@ -5822,7 +5842,7 @@ const DR_ITEMS = [
 const DR_SLOTS = [['outfit', 'Outfit'], ['eyes', 'Eyewear'], ['head', 'Head'], ['watch', 'Watch'], ['chain', 'Chain'], ['home', 'Home'], ['ride', 'Ride'], ['patch', 'Sponsor']];
 const DR_RIDE_ICON = { bus: '🚌', hatch: '🚗', coupe: '🏎️', sedan: '🚘', super: '🏎️', jet: '🛩️' };
 const DR_HOME_ICON = { studio: '🧺', apt: '🏢', condo: '🌆', penthouse: '🌃', mansion: '🏛️', island: '🏝️' };
-const DR_PATCH = { none: null, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' } };
+const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' } };
 
 // the line under your name, earned as you climb
 const DR_REPUTATION = [
@@ -6155,6 +6175,7 @@ function drEyewearSVG(id) {
 
 function drHeadwearSVG(id, hairStyle) {
   if (id === 'cap') return `<path d="M66 86 C66 58 86 50 100 50 C116 50 134 58 134 86 Z" fill="#1d3b2c"/><path d="M64 86 C80 80 120 80 136 86 C136 92 64 92 64 86 Z" fill="#14281e"/><text x="100" y="76" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="9" fill="#d9b36c">R</text>`;
+  if (id === 'visor') return `<path d="M64 84 C80 74 120 74 136 84 L132 92 C118 86 82 86 68 92 Z" fill="#1e8f4a" opacity=".78" stroke="#0d4f28" stroke-width="1.2"/><path d="M68 84 C84 80 116 80 132 84" stroke="#dff5e6" stroke-width="1" fill="none" opacity=".5"/>`;
   if (id === 'beanie') return `<path d="M66 88 C64 58 84 48 100 48 C118 48 136 58 134 88 Z" fill="#b8432a"/><rect x="64" y="80" width="72" height="12" rx="5" fill="#8a2f1d"/><circle cx="100" cy="46" r="7" fill="#e9e5dc"/>`;
   return '';
 }
@@ -6259,7 +6280,7 @@ var DR = null;
 const drMoney = (n) => Math.round(n).toLocaleString('en-US');
 const drMoneyShort = (n) => (n >= 1e6 ? `${+(n / 1e6).toFixed(n >= 1e7 ? 1 : 2)}M` : n >= 1e4 ? `${Math.round(n / 1000)}K` : drMoney(n));
 const drOrd = (n) => { const v = n % 100; return n + (v >= 11 && v <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); };
-const drPaid = (ev) => (ev.kind === 'sat' ? ev.seats : typicalPayouts(ev.field, ev.buyin, 0).paid);
+const drPaid = (ev) => (ev.kind === 'sat' ? ev.seats : typicalPayouts(ev.field, ev.prizeBase || ev.buyin || 1, 0).paid);
 const drTicket = (s, ev) => !!(s.tickets && s.tickets[ev.id] > 0);
 const drTitleCount = (s) => Object.values(s.titles).reduce((a, b) => a + b, 0);
 const drStakeSize = (s) => [300, 300, 1500, 6000, 25000, 120000, 60000, 150000][Math.min(7, s.ch)];
@@ -6311,6 +6332,10 @@ const drOwns = (s, slot, id) => !!s.owned[slot + ':' + id];
 function drRep(s) { for (const [t, label] of DR_REPUTATION) if (t(s)) return typeof label === 'function' ? label(s) : label; return 'Dreamer'; }
 
 // ---------------------------------------------------------------- chapters
+const drToday = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const drDailyDone = (s) => !!(s.daily && s.daily[drToday()]);
+// the daily freeroll pays like a small tournament at your level, funded by the sponsor
+function drDailyEvent(s) { return { ...DR_DAILY, venue: DR_CHAPTERS[Math.max(1, Math.min(7, s.ch))].place, prizeBase: [15, 15, 60, 250, 1000, 4000, 2000, 5000][Math.min(7, s.ch)] }; }
 function drAvailable(s) {
   if (s.ch === 0) return DR_EVENTS.filter((e) => e.id === 'local');
   return DR_EVENTS.filter((e) => e.ch >= 1 && e.ch <= s.ch);
@@ -6365,12 +6390,13 @@ function drPickBoss(s, ev, rng) {
   return pool[(rng() * pool.length) | 0];
 }
 function drStart(id) {
-  const s = DR.st, ev = drEvent(id);
+  const s = DR.st, ev = id === 'daily' ? drDailyEvent(s) : drEvent(id);
   if (DR.run || !ev || !drAfford(s, ev)) return;
+  if (ev.daily && drDailyDone(s)) return;
   if (drTicket(s, ev)) { s.tickets[ev.id]--; s.ledger.push({ d: Date.now(), amt: 0, why: `Satellite seat: ${ev.name}` }); DR.usedTicket = true; }
   else { DR.usedTicket = false; if (!ev.free) drAdd(s, -ev.buyin, `Buy-in: ${ev.name}`); }
   s.lastEvent = id; drSave();
-  const seed = `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
+  const seed = ev.daily ? `daily|${drToday()}` : `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
   DR.saved = snapSetup(); TR.random = true; window.__trRand = true;
   if (S.variant !== 'nlh') setVariant('nlh');
   DR.run = { ev, stages: drStagesFor(ev), si: 0, h: 0, stack: 100, results: [], total: 0, rng,
@@ -6506,7 +6532,7 @@ function drFinish(quit) {
     res.net = net; res.prize = ev.buyin + net; rec.net += net;
     if (net > 0) { s.flags.cashWin = true; res.repaid = drRepay(s, net); }
   } else {
-    const P = drPaid(ev), place = drPlace(run, ev), pays = typicalPayouts(ev.field, ev.buyin, 0).amounts;
+    const P = drPaid(ev), place = drPlace(run, ev), pays = typicalPayouts(ev.field, ev.prizeBase || ev.buyin, 0).amounts;
     const prize = place <= P ? Math.round(pays[place - 1]) : 0;
     res.place = place; res.paid = P; res.prize = prize; res.net = prize - (ev.free ? 0 : ev.buyin);
     rec.best = rec.best ? Math.min(rec.best, place) : place;
@@ -6528,6 +6554,12 @@ function drFinish(quit) {
       if (ev.title === 'titan' && s.titles.titan === 1) once('titan1');
       if (ev.id === 'main' && !s.story.champ) s.queue.push('champ');
     }
+  }
+  if (ev.daily) {
+    s.daily = s.daily || {}; const today = drToday(), y = new Date(); y.setDate(y.getDate() - 1);
+    s.streak = s.daily[drToday(y)] ? (s.streak || 0) + 1 : 1; s.bestStreak = Math.max(s.bestStreak || 0, s.streak);
+    s.daily[today] = { place: res.place, prize: res.prize }; res.streak = s.streak;
+    const keys = Object.keys(s.daily).sort(); if (keys.length > 120) keys.slice(0, keys.length - 120).forEach((k) => delete s.daily[k]);
   }
   if (ev.id === 'local' && !s.story.p_after) s.queue.push('p_after');
   if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');
@@ -6752,13 +6784,20 @@ function drEventCard(ev) {
 }
 function drEventsHTML() {
   const s = DR.st, list = drAvailable(s), now = list.filter((e) => e.ch === s.ch || s.ch === 0), older = list.filter((e) => !now.includes(e));
-  return `${s.ch === 0 ? '' : `<p class="drhint">Your bankroll decides what you can enter. Big shots pay big, and busting hurts. ${s.debt > 0 ? 'Slick takes half your profits until his stake is paid back.' : ''}</p>`}
+  const ev = drDailyEvent(s), done = drDailyDone(s), today = done ? s.daily[drToday()] : null;
+  const y = new Date(); y.setDate(y.getDate() - 1);
+  const alive = done || (s.daily && s.daily[drToday(y)]);
+  const daily = s.ch === 0 ? '' : `<article class="drdaily pl-${ev.venue}"><div><div class="drkicker">Today · free</div><h3>The Daily Grind</h3>
+      <p>${done ? `Played today: ${today.place ? drOrd(today.place) : '—'}${today.prize ? `, +$${drMoney(today.prize)}` : ''}. Back tomorrow.` : 'One free sponsored freeroll a day, about five minutes. New spots every day.'}</p>
+      <small>🔥 Streak ${alive ? s.streak || 0 : 0} day${(alive ? s.streak : 0) === 1 ? '' : 's'} · best ${s.bestStreak || 0} · 3 days: Grind patch · 7 days: dealer's visor</small></div>
+      ${drBtn(done ? 'ghost' : 'gold', `data-dr="play" data-id="daily" ${done ? 'disabled' : ''}`, done ? 'Done ✓' : 'Play today')}</article>`;
+  return `${daily}${s.ch === 0 ? '' : `<p class="drhint">Your bankroll decides what you can enter. Big shots pay big, and busting hurts. ${s.debt > 0 ? 'Slick takes half your profits until his stake is paid back.' : ''}</p>`}
     <div class="drevs">${now.map(drEventCard).join('')}</div>
     ${older.length ? `<details class="drolder"><summary>Earlier stops (${older.length})</summary><div class="drevs">${older.map(drEventCard).join('')}</div></details>` : ''}
     <div class="drsoon"><div class="drkicker">Coming next</div><div class="drsoon-row">
       <div><b>Ranked season</b><small>Weekly, monthly and lifetime boards. Season-only gear for the top finishers.</small></div>
       <div><b>Friends league</b><small>Your crew, the same spots, one leaderboard. Bragging rights included.</small></div>
-      <div><b>Daily grind</b><small>One five-minute session a day for streak rewards.</small></div></div></div>`;
+      <div><b>Story chapters 7+</b><small>Rivalries, sponsorship deals and the Hall of Legends ceremony.</small></div></div></div>`;
 }
 function drClosetHTML() {
   const s = DR.st, fresh = new Set(s.newItems || []);
@@ -6900,11 +6939,12 @@ function drResultsHTML() {
     ${beat ? `<div class="drbeat">${drLegendFace(beat)}<div><div class="drkicker">Legend beaten</div><b>${esc(beat.name)}</b><small>“${esc(beat.nick)}” · card added to your Legends</small></div></div>` : r.met && r.met !== 'ghost' && drLegend(r.met) ? `<div class="drbeat met">${drLegendFace(drLegend(r.met))}<div><div class="drkicker">You shared a final table with</div><b>${esc(drLegend(r.met).name)}</b><small>Beat them heads-up to win their card</small></div></div>` : ''}
     ${r.ticket ? `<div class="drwin"><div class="drwin-icon">🎟</div><div><div class="drkicker">Seat won</div><b>${esc(drEvent(r.ticket).name)}</b><small>Buy-in $${drMoney(drEvent(r.ticket).buyin)}, paid for.</small></div></div>` : ''}
     <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → <span data-count="${r.before}:${r.after}">$${drMoney(r.after)}</span></b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
+    ${r.streak ? `<div class="drstreak">🔥 Daily Grind streak: <b>${r.streak} day${r.streak === 1 ? '' : 's'}</b></div>` : ''}
     <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
       <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
     ${r.keys && r.keys.length ? `<div class="drkeys"><div class="drkicker">Key hands</div>${r.keys.map((k) => { const h = k.hand; return `<div class="drkey t-${k.tier}"><div class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</div><div><b>${esc(h.pos)} · ${esc(h.bb)}bb · ${esc(h.cat)}</b><small>${k.tier === 'bad' ? `You: ${esc(h.mine)} (${h.myF}%). Solver: ${esc(h.best)} (${h.bestF}%).` : `You found ${esc(h.mine)}, a close spot the solver plays ${h.bestF}% of the time.`}</small></div></div>`; }).join('')}</div>` : ''}
     ${r.unlocked.length ? `<div class="drunlocks"><div class="drkicker">Unlocked</div>${r.unlocked.map((it) => `<div class="drunlock"><b>${esc(it.name)}</b><small>${esc(DR_SLOTS.find((x) => x[0] === it.slot)[1])} · ${esc(it.req)}</small></div>`).join('')}</div>` : ''}
-    <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${drBtn('ghost', `data-dr="play" data-id="${ev.id}" ${drAfford(s, ev) && ev.id !== 'local' ? '' : 'disabled'}`, 'Play it again')}</div>
+    <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${ev.daily ? '' : drBtn('ghost', `data-dr="play" data-id="${ev.id}" ${drAfford(s, ev) && ev.id !== 'local' ? '' : 'disabled'}`, 'Play it again')}</div>
   </section>`;
 }
 

@@ -6,7 +6,7 @@ var DR = null;
 const drMoney = (n) => Math.round(n).toLocaleString('en-US');
 const drMoneyShort = (n) => (n >= 1e6 ? `${+(n / 1e6).toFixed(n >= 1e7 ? 1 : 2)}M` : n >= 1e4 ? `${Math.round(n / 1000)}K` : drMoney(n));
 const drOrd = (n) => { const v = n % 100; return n + (v >= 11 && v <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); };
-const drPaid = (ev) => (ev.kind === 'sat' ? ev.seats : typicalPayouts(ev.field, ev.buyin, 0).paid);
+const drPaid = (ev) => (ev.kind === 'sat' ? ev.seats : typicalPayouts(ev.field, ev.prizeBase || ev.buyin || 1, 0).paid);
 const drTicket = (s, ev) => !!(s.tickets && s.tickets[ev.id] > 0);
 const drTitleCount = (s) => Object.values(s.titles).reduce((a, b) => a + b, 0);
 const drStakeSize = (s) => [300, 300, 1500, 6000, 25000, 120000, 60000, 150000][Math.min(7, s.ch)];
@@ -58,6 +58,10 @@ const drOwns = (s, slot, id) => !!s.owned[slot + ':' + id];
 function drRep(s) { for (const [t, label] of DR_REPUTATION) if (t(s)) return typeof label === 'function' ? label(s) : label; return 'Dreamer'; }
 
 // ---------------------------------------------------------------- chapters
+const drToday = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const drDailyDone = (s) => !!(s.daily && s.daily[drToday()]);
+// the daily freeroll pays like a small tournament at your level, funded by the sponsor
+function drDailyEvent(s) { return { ...DR_DAILY, venue: DR_CHAPTERS[Math.max(1, Math.min(7, s.ch))].place, prizeBase: [15, 15, 60, 250, 1000, 4000, 2000, 5000][Math.min(7, s.ch)] }; }
 function drAvailable(s) {
   if (s.ch === 0) return DR_EVENTS.filter((e) => e.id === 'local');
   return DR_EVENTS.filter((e) => e.ch >= 1 && e.ch <= s.ch);
@@ -112,12 +116,13 @@ function drPickBoss(s, ev, rng) {
   return pool[(rng() * pool.length) | 0];
 }
 function drStart(id) {
-  const s = DR.st, ev = drEvent(id);
+  const s = DR.st, ev = id === 'daily' ? drDailyEvent(s) : drEvent(id);
   if (DR.run || !ev || !drAfford(s, ev)) return;
+  if (ev.daily && drDailyDone(s)) return;
   if (drTicket(s, ev)) { s.tickets[ev.id]--; s.ledger.push({ d: Date.now(), amt: 0, why: `Satellite seat: ${ev.name}` }); DR.usedTicket = true; }
   else { DR.usedTicket = false; if (!ev.free) drAdd(s, -ev.buyin, `Buy-in: ${ev.name}`); }
   s.lastEvent = id; drSave();
-  const seed = `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
+  const seed = ev.daily ? `daily|${drToday()}` : `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
   DR.saved = snapSetup(); TR.random = true; window.__trRand = true;
   if (S.variant !== 'nlh') setVariant('nlh');
   DR.run = { ev, stages: drStagesFor(ev), si: 0, h: 0, stack: 100, results: [], total: 0, rng,
@@ -253,7 +258,7 @@ function drFinish(quit) {
     res.net = net; res.prize = ev.buyin + net; rec.net += net;
     if (net > 0) { s.flags.cashWin = true; res.repaid = drRepay(s, net); }
   } else {
-    const P = drPaid(ev), place = drPlace(run, ev), pays = typicalPayouts(ev.field, ev.buyin, 0).amounts;
+    const P = drPaid(ev), place = drPlace(run, ev), pays = typicalPayouts(ev.field, ev.prizeBase || ev.buyin, 0).amounts;
     const prize = place <= P ? Math.round(pays[place - 1]) : 0;
     res.place = place; res.paid = P; res.prize = prize; res.net = prize - (ev.free ? 0 : ev.buyin);
     rec.best = rec.best ? Math.min(rec.best, place) : place;
@@ -275,6 +280,12 @@ function drFinish(quit) {
       if (ev.title === 'titan' && s.titles.titan === 1) once('titan1');
       if (ev.id === 'main' && !s.story.champ) s.queue.push('champ');
     }
+  }
+  if (ev.daily) {
+    s.daily = s.daily || {}; const today = drToday(), y = new Date(); y.setDate(y.getDate() - 1);
+    s.streak = s.daily[drToday(y)] ? (s.streak || 0) + 1 : 1; s.bestStreak = Math.max(s.bestStreak || 0, s.streak);
+    s.daily[today] = { place: res.place, prize: res.prize }; res.streak = s.streak;
+    const keys = Object.keys(s.daily).sort(); if (keys.length > 120) keys.slice(0, keys.length - 120).forEach((k) => delete s.daily[k]);
   }
   if (ev.id === 'local' && !s.story.p_after) s.queue.push('p_after');
   if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');

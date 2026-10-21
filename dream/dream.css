@@ -102,10 +102,17 @@
 
 /* ---------- life hub */
 .dream .drlife { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); align-items: end; min-height: 230px; }
-@media (max-width: 560px) { .dream .drlife { grid-template-columns: minmax(0, 1fr); } .dream .drlife-av { max-width: 280px; justify-self: center; } }
+@media (max-width: 560px) {
+  .dream .drlife { grid-template-columns: minmax(0, 44%) minmax(0, 1fr); min-height: 0; align-items: stretch; }
+  .dream .drlife-av { align-self: end; }
+  .dream .drlife-info { padding: 12px 12px 12px 4px; }
+  .dream .drlife-name { font-size: 24px; } .dream .drlife-rep { font-size: 13px; }
+  .dream .drbank b { font-size: 24px; } .dream .drbank { margin-top: 4px; }
+  .dream .drlifestyle { gap: 4px; } .dream .drlifestyle span { font-size: 11px; padding: 2px 8px; }
+}
 .dream .drlife-av { align-self: end; }
 .dream .drlife-info { padding: 16px; display: grid; gap: 4px; align-content: end; background: linear-gradient(90deg, rgba(0, 0, 0, .55), rgba(0, 0, 0, .15)); height: 100%; }
-@media (max-width: 560px) { .dream .drlife-info { background: linear-gradient(180deg, rgba(0, 0, 0, .25), rgba(0, 0, 0, .75)); } }
+@media (max-width: 560px) { .dream .drlife-info { background: linear-gradient(90deg, rgba(0, 0, 0, .1), rgba(0, 0, 0, .6)); } }
 .dream .drlife-name { font-family: var(--disp); font-size: 32px; line-height: 1.05; font-weight: 600; }
 .dream .drlife-rep { color: var(--gold2); font-size: 14px; font-style: italic; font-family: var(--disp); }
 .dream .drbank { display: grid; margin-top: 8px; } .dream .drbank small { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
@@ -275,6 +282,15 @@
 @keyframes drBreathe { 50% { transform: translateY(-1.5px) scale(1.006); } }
 .dream .drseat.boss { border-color: #c084fc; background: linear-gradient(180deg, rgba(192, 132, 252, .16), rgba(0, 0, 0, .4)); }
 .dream .drseat .drbossname { color: #e3c8ff; font-weight: 600; font-size: 10px; }
+.dream .drdaily { display: flex; gap: 12px; align-items: center; justify-content: space-between; border: 1px solid var(--gold3); border-radius: 16px; padding: 14px; }
+.dream .drdaily > div { display: grid; gap: 4px; min-width: 0; } .dream .drdaily h3 { font-family: var(--disp); font-size: 21px; margin: 0; } .dream .drdaily p { margin: 0; font-size: 13px; color: #d8cfbd; } .dream .drdaily small { font-size: 12px; color: var(--mute); }
+@media (max-width: 480px) { .dream .drdaily { flex-direction: column; align-items: stretch; } }
+.dream .drstreak { font-size: 14px; color: #ffb197; } .dream .drstreak b { color: var(--gold2); }
+@media (max-width: 560px) {
+  .dream .drtitles { display: flex; overflow-x: auto; scrollbar-width: none; gap: 6px; padding-bottom: 2px; }
+  .dream .drtitles::-webkit-scrollbar { display: none; }
+  .dream .drtl { flex: 0 0 72px; }
+}
 @keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes drPulse { 50% { opacity: .45; } }
 @keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }

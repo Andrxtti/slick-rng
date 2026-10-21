@@ -142,7 +142,9 @@ const DR_EVENTS = [
   { id: 'main', ch: 6, kind: 'mtt', name: 'WCS $10,000 Main Event', venue: 'main', buyin: 10000, field: 8402, title: 'me', boss: 'ghost', legends: ['mizrockie'], blurb: 'Eight thousand dreamers. One world champion.' },
   { id: 'legends', ch: 7, kind: 'mtt', name: 'Legends Invitational', venue: 'hall', buyin: 50000, field: 33, title: 'bracelet', legends: ['hungar', 'brunswick', 'chance', 'hellbent', 'mizrockie'], blurb: 'Every era. One table. A bracelet for the winner.' },
 ];
-const drEvent = (id) => DR_EVENTS.find((e) => e.id === id);
+// the Daily Grind: one free sponsored freeroll a day, same venue as your current chapter
+const DR_DAILY = { id: 'daily', ch: 1, kind: 'mtt', name: 'The Daily Grind', buyin: 0, field: 60, free: true, daily: true, blurb: 'One free sponsored freeroll a day. Keep the streak alive for exclusive gear.' };
+const drEvent = (id) => (id === 'daily' ? DR_DAILY : DR_EVENTS.find((e) => e.id === id));
 
 // ---------------------------------------------------------------- unlockables
 // slot: what it changes. Each unlocks with a milestone: never bought.
@@ -167,6 +169,7 @@ const DR_ITEMS = [
   { slot: 'head', id: 'cap', name: 'Riverside ballcap', req: 'Play 5 sessions', test: (s) => s.played >= 5 },
   { slot: 'head', id: 'phones', name: 'Noise-cancelling cans', req: 'Make 100 decisions', test: (s) => s.dec >= 100 },
   { slot: 'head', id: 'beanie', name: 'Vegas pool beanie', req: 'Reach the Summer', test: (s) => s.ch >= 3 },
+  { slot: 'head', id: 'visor', name: "Old-school dealer's visor", req: 'Daily Grind streak of 7 days', test: (s) => (s.bestStreak || 0) >= 7 },
   // watches
   { slot: 'watch', id: 'digital', name: 'Gas-station digital', req: 'Where it all started', test: () => true },
   { slot: 'watch', id: 'steel', name: 'Steel diver', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
@@ -194,6 +197,7 @@ const DR_ITEMS = [
   { slot: 'ride', id: 'jet', name: 'Private jet share', req: 'Win a Titan title', test: (s) => s.titles.titan >= 1 },
   // sponsor patches
   { slot: 'patch', id: 'none', name: 'Unsponsored', req: 'Where it all started', test: () => true },
+  { slot: 'patch', id: 'grind', name: 'Daily Grind patch', req: 'Daily Grind streak of 3 days', test: (s) => (s.bestStreak || 0) >= 3 },
   { slot: 'patch', id: 'tavern', name: "Rusty's Tavern", req: 'Win a session at $1/$2', test: (s) => !!s.flags.cashWin },
   { slot: 'patch', id: 'site', name: 'Online site patch', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
   { slot: 'patch', id: 'energy', name: 'Energy drink sponsor', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
@@ -202,7 +206,7 @@ const DR_ITEMS = [
 const DR_SLOTS = [['outfit', 'Outfit'], ['eyes', 'Eyewear'], ['head', 'Head'], ['watch', 'Watch'], ['chain', 'Chain'], ['home', 'Home'], ['ride', 'Ride'], ['patch', 'Sponsor']];
 const DR_RIDE_ICON = { bus: '🚌', hatch: '🚗', coupe: '🏎️', sedan: '🚘', super: '🏎️', jet: '🛩️' };
 const DR_HOME_ICON = { studio: '🧺', apt: '🏢', condo: '🌆', penthouse: '🌃', mansion: '🏛️', island: '🏝️' };
-const DR_PATCH = { none: null, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' } };
+const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' } };
 
 // the line under your name, earned as you climb
 const DR_REPUTATION = [
