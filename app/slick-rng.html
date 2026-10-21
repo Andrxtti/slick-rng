@@ -1,8 +1,8 @@
-<title>Confirmed Fire Poker</title>
+<title>Confirmed Fire Dream</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500;1,6..96,600&display=swap">
 <style>
 /* Layout: solver workstation. Sticky top bar; tournament setup drawer across the top;
    then two columns: the table (felt with seats, board on the felt, action rows, solve controls)
@@ -990,6 +990,269 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 }
 @media (max-width: 760px) { .icmflag { order: 0; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+/* ---------- THE DREAM: a career trainer. Cinematic dark, champagne gold, felt green; each place has its own light. */
+.dream { --ink: #0b0a08; --ink2: #13110d; --card: #1a1712; --card2: #221e17; --line: #3a3226; --line2: #4d4232;
+  --gold: #d9b36c; --gold2: #f4dfa6; --gold3: #8f6f33; --cream: #f3ecdc; --mute: #a99d86; --faint: #6f6555;
+  --felt: #0e4d39; --red: #e8705a; --green: #5cbf64; --blue: #5aa9de; --violet: #c084fc;
+  --disp: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  display: grid; gap: 14px; color: var(--cream); font-family: var(--font-body); }
+.training:not(.ar-practice) #t222, .training #stackWrap, .training #leftWrap, .training .nav .seg:not(.mode), .training #spotBar { display: none !important; }
+.dream .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.dream .drkicker { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+.dream .drh { font-family: var(--disp); font-weight: 600; font-size: 26px; line-height: 1.15; margin: 0; text-wrap: balance; letter-spacing: .005em; }
+.dream .drhint { font-size: 13px; color: var(--mute); margin: 0; }
+.dream .drrow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.dream section { border-radius: 18px; border: 1px solid var(--line); position: relative; overflow: hidden; }
+
+/* buttons */
+.dream .drbtn { font: 600 14px/1.2 var(--font-body); color: var(--cream); background: var(--card2); border: 1px solid var(--line2); border-radius: 12px; padding: 11px 16px; cursor: pointer; transition: transform .08s, background-color .15s, border-color .15s, box-shadow .15s; }
+.dream .drbtn:hover:not(:disabled) { border-color: var(--gold); }
+.dream .drbtn:active:not(:disabled) { transform: translateY(1px) scale(.99); }
+.dream .drbtn.gold { background: linear-gradient(180deg, var(--gold2), var(--gold) 55%, #b88f45); color: #1a1206; border-color: #f7e6b8; box-shadow: 0 8px 22px -10px rgba(217, 179, 108, .8), inset 0 1px 0 rgba(255, 255, 255, .6); }
+.dream .drbtn.gold:hover:not(:disabled) { filter: brightness(1.06); }
+.dream .drbtn.big { font-size: 16px; padding: 14px 22px; }
+.dream .drbtn.ghost { background: rgba(255, 255, 255, .03); }
+.dream .drbtn.sm { font-size: 12px; padding: 7px 11px; border-radius: 10px; }
+.dream .drbtn.danger { background: #3a1410; border-color: #8a2f1d; color: #ffb4a3; }
+.dream .drbtn:disabled { opacity: .45; cursor: default; }
+.dream .drbtn .kbd { font: 500 10px var(--font-mono); color: var(--mute); border: 1px solid var(--line2); border-radius: 5px; padding: 1px 5px; margin-right: 8px; }
+@media (pointer: coarse) { .dream .drbtn .kbd { display: none; } }
+
+/* places: every scene has its own light */
+.dream .pl-office { background: linear-gradient(180deg, rgba(210, 235, 255, .09) 0 3px, transparent 3px) 0 0 / 140px 64px, linear-gradient(180deg, #1c252c, #0c1013 75%); }
+.dream .pl-diner { background: radial-gradient(circle at 82% 14%, rgba(255, 79, 121, .38), transparent 42%), radial-gradient(circle at 12% 88%, rgba(60, 220, 210, .22), transparent 46%), linear-gradient(180deg, #1a0d16, #0b0609); }
+.dream .pl-cardroom { background: radial-gradient(ellipse at 50% 125%, rgba(14, 77, 57, .95), transparent 62%), radial-gradient(circle at 28% -4%, rgba(255, 190, 110, .28), transparent 38%), radial-gradient(circle at 78% -4%, rgba(255, 190, 110, .18), transparent 34%), #120f0b; }
+.dream .pl-casino { background: radial-gradient(circle at 74% 8%, rgba(232, 112, 79, .32), transparent 44%), radial-gradient(circle at 10% 100%, rgba(217, 179, 108, .2), transparent 50%), linear-gradient(180deg, #1c0d14, #0c0609); }
+.dream .pl-vegas { background: radial-gradient(circle at 20% 0%, rgba(248, 120, 184, .32), transparent 40%), radial-gradient(circle at 85% 10%, rgba(244, 223, 166, .3), transparent 38%), linear-gradient(180deg, #2a0f3d, #0c0716 70%); }
+.dream .pl-tv { background: radial-gradient(ellipse at 50% -12%, rgba(90, 169, 222, .5), transparent 56%), radial-gradient(circle at 0% 100%, rgba(192, 132, 252, .18), transparent 40%), #060a13; }
+.dream .pl-titan { background: linear-gradient(115deg, transparent 0 46%, rgba(217, 179, 108, .16) 46.3% 46.6%, transparent 47%), linear-gradient(135deg, #0a0a0a, #1d1a15 50%, #0a0a0a); }
+.dream .pl-main { background: radial-gradient(ellipse at 50% -10%, rgba(244, 223, 166, .42), transparent 52%), linear-gradient(180deg, #3d0b14, #0d0406 75%); }
+.dream .pl-hall { background: radial-gradient(ellipse at 50% 0%, rgba(244, 223, 166, .35), transparent 60%), repeating-linear-gradient(90deg, rgba(255, 255, 255, .03) 0 2px, transparent 2px 70px), #0e0b07; }
+/* homes behind your player on the hub */
+.dream .hm-studio { background: linear-gradient(90deg, transparent 62%, rgba(255, 230, 160, .14) 62% 64%, transparent 64%), radial-gradient(circle at 78% 30%, rgba(255, 220, 140, .25), transparent 30%), linear-gradient(180deg, #2a241d, #14100c); }
+.dream .hm-apt { background: radial-gradient(circle at 80% 25%, rgba(90, 169, 222, .25), transparent 35%), linear-gradient(180deg, #1d2430, #0e1218); }
+.dream .hm-condo { background: linear-gradient(180deg, transparent 55%, #0b0f18 55%), repeating-linear-gradient(90deg, #1b2335 0 18px, #222c42 18px 20px, #1b2335 20px 44px), linear-gradient(180deg, #2a3a5a, #101626); }
+.dream .hm-penthouse { background: radial-gradient(circle at 70% 90%, rgba(248, 120, 184, .35), transparent 40%), radial-gradient(circle at 30% 95%, rgba(244, 223, 166, .3), transparent 38%), linear-gradient(180deg, #120b24, #050309); }
+.dream .hm-mansion { background: radial-gradient(ellipse at 50% 110%, rgba(92, 191, 100, .25), transparent 55%), linear-gradient(180deg, #e8a86a 0%, #8a4a5a 40%, #1d1530 80%); }
+.dream .hm-island { background: radial-gradient(circle at 75% 30%, rgba(255, 240, 200, .9), transparent 12%), linear-gradient(180deg, #ffb46b 0%, #e8705a 35%, #2a6f8f 70%, #0d2f40); }
+
+/* ---------- title screen */
+.dream .drtitle { min-height: min(78vh, 640px); display: grid; place-items: center; text-align: center; padding: 28px 18px; }
+.dream .drtitle-in { display: grid; gap: 16px; justify-items: center; max-width: 520px; }
+.dream .drlogo { font-family: var(--disp); font-weight: 500; font-size: clamp(54px, 15vw, 96px); line-height: .95; margin: 0; letter-spacing: -.01em; }
+.dream .drlogo em { font-style: italic; color: var(--gold2); text-shadow: 0 0 40px rgba(217, 179, 108, .45); }
+.dream .drtag { color: #d8cfbd; font-size: 15px; line-height: 1.55; margin: 0; }
+.dream .drtitle-btns { display: grid; gap: 10px; width: min(320px, 100%); margin-top: 8px; }
+.dream .drquote { font-family: var(--disp); font-style: italic; color: var(--mute); font-size: 15px; margin-top: 10px; }
+.dream .drconfirm { display: grid; gap: 8px; background: rgba(0, 0, 0, .5); border: 1px solid #8a2f1d; border-radius: 12px; padding: 12px; font-size: 13px; }
+
+/* ---------- creator */
+.dream .drcreate { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); background: var(--ink2); }
+@media (max-width: 720px) { .dream .drcreate { grid-template-columns: minmax(0, 1fr); } }
+.dream .drcreate-prev { display: grid; justify-items: center; align-content: end; gap: 2px; padding: 20px 12px 16px; min-height: 280px; }
+.dream .drcreate-prev .drcard-av { width: min(260px, 70vw); }
+.dream .drcreate-prev b { font-family: var(--disp); font-size: 22px; } .dream .drcreate-prev small { color: var(--mute); font-size: 12px; }
+.dream .drcreate-form { padding: 18px; display: grid; gap: 14px; align-content: start; }
+.dream .drfield { display: grid; gap: 6px; } .dream .drfield > span { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+.dream .drfield input { background: var(--ink); border: 1px solid var(--line2); border-radius: 10px; padding: 11px 12px; color: var(--cream); font: 500 16px var(--font-body); }
+.dream .drfield input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(217, 179, 108, .18); }
+.dream .drsws, .dream .drchips { display: flex; flex-wrap: wrap; gap: 7px; }
+.dream .drsw { width: 34px; height: 34px; border-radius: 50%; background: var(--c); border: 2px solid rgba(255, 255, 255, .15); cursor: pointer; padding: 0; }
+.dream .drsw[aria-pressed="true"] { border-color: var(--gold2); box-shadow: 0 0 0 3px rgba(217, 179, 108, .35); }
+.dream .drchip { font: 500 13px var(--font-body); color: var(--cream); background: var(--card); border: 1px solid var(--line2); border-radius: 999px; padding: 7px 12px; cursor: pointer; }
+.dream .drchip[aria-pressed="true"] { background: var(--gold); color: #1a1206; border-color: var(--gold2); font-weight: 600; }
+.dream .dravsvg { width: 100%; height: auto; display: block; }
+
+/* ---------- story scenes */
+.dream .drscene { min-height: min(80vh, 680px); display: grid; grid-template-rows: auto 1fr auto auto; padding: 14px; gap: 12px; }
+.dream .drscene-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dream .drplace { margin-left: auto; font-family: var(--disp); font-size: 15px; color: #e9dfca; } .dream .drplace small { color: var(--mute); font-family: var(--font-body); font-size: 11px; margin-left: 4px; }
+.dream .drscene-stage { display: grid; place-items: end center; min-height: 150px; }
+.dream .drscene-who { animation: drIn .35s ease both; }
+.dream .drface { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--c, #5aa9de) 55%, #000), #0b0a08 75%); border: 3px solid rgba(244, 223, 166, .5); box-shadow: 0 20px 50px -20px #000, 0 0 0 8px rgba(0, 0, 0, .25); }
+.dream .drface span { font-size: 64px; line-height: 1; font-family: var(--disp); color: var(--gold2); }
+.dream .drface img { width: 100%; height: 100%; object-fit: cover; }
+.dream .drface.you { background: radial-gradient(circle at 50% 40%, #3a3226, #0b0a08 80%); }
+.dream .drface.you svg { width: 112%; margin-top: 8%; }
+.dream .drface.legend { --c: #d9b36c; } .dream .drface.legend span { font-size: 54px; letter-spacing: .02em; }
+.dream .drbox { background: rgba(10, 9, 7, .88); border: 1px solid var(--line2); border-radius: 16px; padding: 14px 16px 12px; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: grid; gap: 8px; box-shadow: 0 20px 40px -20px #000; min-height: 132px; }
+.dream .drbox-name { font-family: var(--disp); font-size: 19px; color: var(--gold2); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.dream .drbox-name small { font-family: var(--font-body); font-size: 11px; color: var(--mute); letter-spacing: .04em; }
+.dream .drbox-text { font-size: 17px; line-height: 1.55; white-space: pre-line; min-height: 2.6em; }
+.dream .drbox.narr .drbox-text { font-family: var(--disp); font-style: italic; font-size: 18px; color: #e9dfca; }
+.dream .drbox.big .drbox-text { font-size: 24px; text-align: center; color: var(--gold2); }
+.dream .drbox.goal { border-color: var(--gold); } .dream .drbox.goal .drbox-text { font-style: normal; font-family: var(--font-body); font-weight: 600; color: var(--gold2); }
+.dream .drbox.slim { min-height: 0; padding: 10px 14px; }
+.dream .drbox-more { font-size: 11px; color: var(--mute); text-align: right; letter-spacing: .08em; animation: drPulse 1.6s ease-in-out infinite; }
+.dream .drchoices { display: grid; gap: 8px; }
+.dream .drbtn.choice { text-align: left; background: rgba(217, 179, 108, .1); border-color: rgba(217, 179, 108, .5); font-size: 15px; }
+.dream .drbtn.choice::before { content: "▸ "; color: var(--gold); }
+.dream .drdots { display: flex; gap: 5px; justify-content: center; } .dream .drdots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, .15); } .dream .drdots i.on { background: var(--gold); }
+.dream .drphone { width: min(300px, 86%); background: #f2f2f6; color: #111; border-radius: 26px; padding: 14px; box-shadow: 0 30px 60px -20px #000; border: 6px solid #1d1d1f; animation: drIn .35s ease both; }
+.dream .drphone-h { font: 600 12px var(--font-body); color: #666; text-align: center; margin-bottom: 10px; }
+.dream .drphone-b { background: #e5e5ea; border-radius: 18px 18px 18px 4px; padding: 10px 13px; font-size: 15px; line-height: 1.4; white-space: pre-line; min-height: 2.8em; }
+
+/* ---------- life hub */
+.dream .drlife { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); align-items: end; min-height: 230px; }
+@media (max-width: 560px) { .dream .drlife { grid-template-columns: minmax(0, 1fr); } .dream .drlife-av { max-width: 280px; justify-self: center; } }
+.dream .drlife-av { align-self: end; }
+.dream .drlife-info { padding: 16px; display: grid; gap: 4px; align-content: end; background: linear-gradient(90deg, rgba(0, 0, 0, .55), rgba(0, 0, 0, .15)); height: 100%; }
+@media (max-width: 560px) { .dream .drlife-info { background: linear-gradient(180deg, rgba(0, 0, 0, .25), rgba(0, 0, 0, .75)); } }
+.dream .drlife-name { font-family: var(--disp); font-size: 32px; line-height: 1.05; font-weight: 600; }
+.dream .drlife-rep { color: var(--gold2); font-size: 14px; font-style: italic; font-family: var(--disp); }
+.dream .drbank { display: grid; margin-top: 8px; } .dream .drbank small { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
+.dream .drbank b { font-size: 34px; color: var(--gold2); font-weight: 500; line-height: 1.1; text-shadow: 0 0 24px rgba(217, 179, 108, .35); }
+.dream .drdebt { font-size: 12px; color: #ffb4a3; }
+.dream .drlifestyle { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; } .dream .drlifestyle span { font-size: 12px; background: rgba(0, 0, 0, .45); border: 1px solid var(--line2); border-radius: 999px; padding: 3px 10px; }
+.dream .drtitles { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; }
+@media (max-width: 700px) { .dream .drtitles { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.dream .drtl { background: var(--ink2); border: 1px solid var(--line); border-radius: 12px; padding: 8px 4px; display: grid; justify-items: center; gap: 1px; opacity: .45; text-align: center; }
+.dream .drtl.on { opacity: 1; border-color: var(--gold3); background: linear-gradient(180deg, #2a2214, var(--ink2)); }
+.dream .drtl b { font-size: 20px; line-height: 1.1; } .dream .drtl span { font-size: 15px; color: var(--gold2); } .dream .drtl small { font-size: 9px; color: var(--mute); line-height: 1.15; }
+.dream .drgoal { background: var(--ink2); padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
+.dream .drgoal > div { flex: 1; min-width: 0; display: grid; gap: 4px; } .dream .drgoal b { font-size: 15px; } .dream .drgoal small { color: var(--mute); font-size: 12px; }
+.dream .drbar { height: 8px; background: rgba(255, 255, 255, .07); border-radius: 999px; overflow: hidden; }
+.dream .drbar i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold3), var(--gold2)); border-radius: 999px; transition: width .4s; }
+.dream .drbar.load i { width: 0; transition: width .25s linear; }
+.dream .drtabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--line); }
+.dream .drtabs::-webkit-scrollbar { display: none; }
+.dream .drtabs button { font: 600 14px var(--font-body); color: var(--mute); background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 12px; cursor: pointer; white-space: nowrap; }
+.dream .drtabs button[aria-selected="true"] { color: var(--cream); border-bottom-color: var(--gold); }
+.dream .drnew { font-style: normal; font-size: 10px; background: var(--red); color: #fff; border-radius: 999px; padding: 1px 6px; margin-left: 4px; vertical-align: 2px; }
+.dream .drtabbody { display: grid; gap: 12px; }
+
+/* event cards */
+.dream .drevs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; }
+.dream .drev { border: 1px solid var(--line2); border-radius: 16px; padding: 14px; display: grid; gap: 8px; align-content: start; }
+.dream .drev.locked { opacity: .6; }
+.dream .drev h3 { font-family: var(--disp); font-size: 21px; margin: 0; line-height: 1.15; } .dream .drev p { margin: 0; color: #d8cfbd; font-size: 13px; }
+.dream .drev-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; } .dream .drev-kind { font-size: 11px; color: var(--gold); letter-spacing: .06em; }
+.dream .drrisk { font-size: 10px; letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+.dream .r-free { color: #8fe39a; border-color: #2d6a33; } .dream .r-safe { color: #8fe39a; border-color: #2d6a33; } .dream .r-shot { color: #f0c36b; border-color: #7a5a1c; } .dream .r-yolo { color: #ff9c8c; border-color: #7a2a24; } .dream .r-no { color: var(--mute); border-color: var(--line2); }
+.dream .drev-facts { display: flex; gap: 14px; flex-wrap: wrap; } .dream .drev-facts span { display: grid; } .dream .drev-facts small { font-size: 10px; color: var(--mute); letter-spacing: .1em; text-transform: uppercase; } .dream .drev-facts b { font-size: 15px; }
+.dream .drev-legends { font-size: 12px; color: var(--mute); display: grid; gap: 2px; } .dream .drev-legends b { color: #e9dfca; font-weight: 600; } .dream .drev-legends b.beat { color: var(--gold2); }
+.dream .drev-bot { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-top: 2px; } .dream .drev-bot small { font-size: 12px; color: var(--mute); }
+.dream .drolder summary { cursor: pointer; color: var(--mute); font-size: 13px; padding: 6px 0; } .dream .drolder[open] summary { margin-bottom: 10px; }
+
+/* closet */
+.dream .drcloset { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: 12px; align-items: start; }
+@media (max-width: 640px) { .dream .drcloset { grid-template-columns: minmax(0, 1fr); } .dream .drcloset-prev { max-width: 260px; justify-self: center; width: 100%; } }
+.dream .drcloset-prev { border-radius: 16px; border: 1px solid var(--line); overflow: hidden; position: sticky; top: 70px; }
+.dream .drslots { display: grid; gap: 12px; } .dream .drslot { display: grid; gap: 6px; }
+.dream .dritems { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.dream .dritem { position: relative; text-align: left; background: var(--card); border: 1px solid var(--line2); border-radius: 12px; padding: 9px 10px; color: var(--cream); cursor: pointer; display: grid; gap: 2px; font-family: var(--font-body); }
+.dream .dritem b { font-size: 13px; } .dream .dritem small { font-size: 11px; color: var(--mute); }
+.dream .dritem.on { border-color: var(--gold); background: linear-gradient(180deg, #2a2214, var(--card)); } .dream .dritem.on small { color: var(--gold2); }
+.dream .dritem.locked { opacity: .55; cursor: default; }
+.dream .dritem .drnew { position: absolute; top: -6px; right: 6px; }
+
+/* trophies, stats, legends, story */
+.dream .drstats { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.dream .drstats > div { background: var(--ink2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; }
+.dream .drstats small { font-size: 10px; color: var(--mute); letter-spacing: .12em; text-transform: uppercase; } .dream .drstats b { font-size: 22px; color: var(--gold2); font-weight: 500; }
+.dream .drcase { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.dream .drtrophy { background: linear-gradient(180deg, #2a2214, #120f0a); border: 1px solid var(--gold3); border-radius: 14px; padding: 12px; display: grid; gap: 2px; justify-items: center; text-align: center; }
+.dream .drtrophy b { font-size: 32px; } .dream .drtrophy span { font-family: var(--disp); color: var(--gold2); font-size: 16px; } .dream .drtrophy small { color: var(--mute); font-size: 11px; }
+.dream .drlegends { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 8px; }
+.dream .drera { margin-top: 6px; }
+.dream .drlegend { background: var(--ink2); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 3px; grid-template-columns: auto 1fr; column-gap: 12px; align-items: start; }
+.dream .drlegend > :not(.drlegend-mono) { grid-column: 2; }
+.dream .drlegend-mono { grid-row: span 4; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-family: var(--disp); font-size: 19px; color: var(--mute); background: #1d1a15; border: 2px solid var(--line2); }
+.dream .drlegend b { font-size: 15px; } .dream .drlegend small { color: var(--mute); font-style: italic; font-family: var(--disp); } .dream .drlegend p { margin: 2px 0 0; font-size: 12px; color: #cfc5b1; }
+.dream .drlegend-st { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); margin-top: 4px; }
+.dream .drlegend.unk { opacity: .55; } .dream .drlegend.met .drlegend-mono { border-color: #c9ccd4; color: #e9edf2; }
+.dream .drlegend.beat { border-color: var(--gold3); background: linear-gradient(180deg, #2a2214, var(--ink2)); } .dream .drlegend.beat .drlegend-mono { border-color: var(--gold2); color: #1a1206; background: linear-gradient(180deg, var(--gold2), var(--gold)); } .dream .drlegend.beat .drlegend-st { color: var(--gold2); }
+.dream .drlegend.ghost { border-color: var(--line2); background: radial-gradient(circle at 0% 0%, rgba(244, 223, 166, .12), transparent 50%), var(--ink2); }
+.dream .drlegend.ghost .drlegend-mono { font-size: 24px; }
+.dream .drstorylist { display: grid; gap: 6px; } .dream .drstorylist .drbtn { text-align: left; }
+.dream .drledger { display: grid; gap: 2px; font-size: 13px; } .dream .drledger div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); padding: 6px 2px; }
+.dream .drledger .up, .dream .drdelta.up { color: #8fe39a; } .dream .drledger .down, .dream .drdelta.down { color: #ff9c8c; }
+
+/* ---------- an event */
+.dream .drhud { padding: 12px 14px; display: grid; gap: 10px; }
+.dream .drhud-top { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; } .dream .drhud-top b { font-family: var(--disp); font-size: 20px; line-height: 1.15; }
+.dream .drstages { display: flex; gap: 4px; } .dream .drstages span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 5px 2px; border-radius: 8px; background: rgba(0, 0, 0, .35); color: var(--faint); border: 1px solid transparent; }
+.dream .drstages .done { color: var(--gold); } .dream .drstages .now { color: #1a1206; background: linear-gradient(180deg, var(--gold2), var(--gold)); font-weight: 700; }
+.dream .drhud-row { display: flex; gap: 14px; align-items: end; }
+.dream .drstack { flex: 1; display: grid; gap: 4px; min-width: 0; } .dream .drstack small, .dream .drleft small { font-size: 10px; color: var(--mute); letter-spacing: .12em; text-transform: uppercase; }
+.dream .drstack b { font-size: 15px; color: var(--gold2); } .dream .drleft { display: grid; text-align: right; } .dream .drleft b { font-size: 15px; }
+.dream .drbar.stack { height: 10px; } .dream .drbar.stack.low i { background: linear-gradient(90deg, #8a2f1d, var(--red)); } .dream .drbar.stack.big i { background: linear-gradient(90deg, #2d6a33, #8fe39a); }
+.dream .drstagecard { padding: 22px 18px; display: grid; gap: 14px; justify-items: start; min-height: 300px; align-content: center; }
+.dream .drsay { display: flex; gap: 12px; align-items: center; background: rgba(0, 0, 0, .55); border: 1px solid var(--line2); border-radius: 14px; padding: 12px; width: 100%; }
+.dream .drsay .drface { width: 64px; height: 64px; flex: none; border-width: 2px; } .dream .drsay .drface span { font-size: 28px; } .dream .drsay .drface.legend span { font-size: 22px; }
+.dream .drsay b { font-family: var(--disp); color: var(--gold2); font-size: 16px; } .dream .drsay p { margin: 2px 0 0; font-size: 15px; line-height: 1.45; }
+.dream .drstagecard .drbar { width: 100%; }
+.dream .drspot { background: radial-gradient(ellipse at 50% 0%, rgba(14, 77, 57, .55), transparent 70%), var(--ink2); padding: 14px; display: grid; gap: 12px; }
+.dream .drspot.dim { min-height: 220px; place-items: center; align-content: center; }
+.dream .drspot-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.dream .drseats { display: grid; grid-template-columns: repeat(auto-fit, minmax(74px, 1fr)); gap: 6px; }
+.dream .drseat { background: rgba(0, 0, 0, .4); border: 1px solid var(--line); border-radius: 10px; padding: 6px 4px; text-align: center; display: grid; gap: 1px; }
+.dream .drseat b { font-size: 13px; } .dream .drseat small { font-size: 11px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dream .drseat.fold { opacity: .35; } .dream .drseat.me { border-color: var(--gold); background: linear-gradient(180deg, #2a2214, rgba(0, 0, 0, .4)); } .dream .drseat.me b { color: var(--gold2); }
+.dream .drhero { display: flex; gap: 16px; align-items: center; } .dream .drhero b { font-family: var(--disp); font-size: 20px; display: block; } .dream .drhero small { color: var(--mute); }
+.dream .drcards { display: flex; gap: 6px; } .dream .drcards .trcard { width: 60px; height: 84px; font-size: 24px; border-radius: 9px; margin: 0; }
+.dream .dropts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+.dream .drbtn.opt { font-size: 15px; padding: 15px 10px; background: linear-gradient(180deg, #2a241b, #1a1712); }
+.dream .drverdict { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid; animation: drIn .25s ease both; }
+.dream .drverdict b { font-family: var(--disp); font-size: 26px; display: block; } .dream .drverdict small { color: #d8cfbd; font-size: 13px; }
+.dream .drverdict.t-perfect { border-color: var(--gold); background: linear-gradient(90deg, rgba(217, 179, 108, .22), transparent); } .dream .drverdict.t-perfect b { color: var(--gold2); }
+.dream .drverdict.t-good { border-color: #2d6a33; background: linear-gradient(90deg, rgba(92, 191, 100, .16), transparent); } .dream .drverdict.t-good b { color: #8fe39a; }
+.dream .drverdict.t-close { border-color: #7a5a1c; } .dream .drverdict.t-close b { color: #f0c36b; }
+.dream .drverdict.t-bad { border-color: #7a2a24; background: linear-gradient(90deg, rgba(232, 112, 90, .16), transparent); } .dream .drverdict.t-bad b { color: #ff9c8c; }
+.dream .drdelta { font-size: 18px; }
+.dream .drmix { display: grid; gap: 4px; } .dream .drmix > div { display: grid; grid-template-columns: minmax(0, 1fr) 90px 40px; gap: 8px; align-items: center; font-size: 13px; }
+.dream .drmix > div.mine span { color: var(--gold2); font-weight: 600; } .dream .drmix i { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--gold) var(--w), rgba(255, 255, 255, .07) var(--w)); } .dream .drmix b { text-align: right; font-weight: 500; }
+.dream .drbust { text-align: center; font-family: var(--disp); font-size: 20px; color: #ff9c8c; }
+.dream .drdealing { display: flex; gap: 8px; } .dream .drdealing span { width: 34px; height: 48px; border-radius: 6px; background: linear-gradient(135deg, #8a1c24, #4a0f14); border: 2px solid #f3ecdc; animation: drDeal 1s ease-in-out infinite; } .dream .drdealing span:nth-child(2) { animation-delay: .15s; } .dream .drdealing span:nth-child(3) { animation-delay: .3s; }
+
+/* ---------- results */
+.dream .drres { padding: 24px 18px; display: grid; gap: 14px; justify-items: center; text-align: center; }
+.dream .drres-h { font-family: var(--disp); font-size: clamp(36px, 10vw, 58px); margin: 0; line-height: 1; font-weight: 600; }
+.dream .drres.champ .drres-h { color: var(--gold2); text-shadow: 0 0 40px rgba(217, 179, 108, .55); animation: drShine 2.4s ease-in-out infinite; }
+.dream .drres-sub { margin: 0; color: #d8cfbd; }
+.dream .drwin { display: flex; gap: 14px; align-items: center; text-align: left; background: linear-gradient(135deg, #3a2c12, #120f0a 70%); border: 1px solid var(--gold); border-radius: 16px; padding: 14px 18px; animation: drIn .5s ease both; box-shadow: 0 0 50px -12px rgba(217, 179, 108, .6); }
+.dream .drwin-icon { font-size: 46px; animation: drBounce 1.4s ease-in-out infinite; } .dream .drwin b { font-family: var(--disp); font-size: 22px; color: var(--gold2); display: block; } .dream .drwin small { color: var(--mute); }
+.dream .drbeat { display: flex; gap: 12px; align-items: center; text-align: left; background: var(--ink2); border: 1px solid var(--gold3); border-radius: 14px; padding: 12px 16px; }
+.dream .drbeat .drlegend-mono { border-color: var(--gold2); color: #1a1206; background: linear-gradient(180deg, var(--gold2), var(--gold)); }
+.dream .drbeat.met { border-color: var(--line2); } .dream .drbeat.met .drlegend-mono { background: #1d1a15; color: #e9edf2; border-color: #c9ccd4; }
+.dream .drbeat b { font-family: var(--disp); font-size: 18px; display: block; } .dream .drbeat small { color: var(--mute); font-size: 12px; }
+.dream .drmoney { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; } .dream .drmoney > div { background: rgba(0, 0, 0, .45); border: 1px solid var(--line2); border-radius: 12px; padding: 10px 14px; display: grid; }
+.dream .drmoney small { font-size: 10px; color: var(--mute); letter-spacing: .12em; text-transform: uppercase; } .dream .drmoney b { font-size: 18px; color: var(--gold2); font-weight: 500; }
+.dream .drdec { display: grid; gap: 6px; } .dream .drdec-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; } .dream .drdec-row span { font-size: 12px; border-radius: 999px; padding: 3px 10px; border: 1px solid var(--line2); }
+.dream .drdec-row .t-perfect { color: var(--gold2); } .dream .drdec-row .t-good { color: #8fe39a; } .dream .drdec-row .t-close { color: #f0c36b; } .dream .drdec-row .t-bad { color: #ff9c8c; }
+.dream .drunlocks { display: grid; gap: 6px; width: min(420px, 100%); } .dream .drunlock { background: linear-gradient(90deg, rgba(217, 179, 108, .18), transparent); border: 1px solid var(--gold3); border-radius: 12px; padding: 9px 12px; text-align: left; display: grid; animation: drIn .4s ease both; }
+.dream .drunlock b { font-size: 14px; } .dream .drunlock small { color: var(--mute); font-size: 12px; }
+
+/* scene props, faces */
+.dream .drscene-stage { position: relative; }
+.dream .drprop { position: absolute; inset: -14px -14px 0; opacity: .9; pointer-events: none; }
+.dream .drprop svg { width: 100%; height: 100%; display: block; }
+.dream .drscene-who { position: relative; }
+.dream .drface svg { width: 118%; margin-top: 10%; }
+.dream .drface.npc, .dream .drface.legend { background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--c, #d9b36c) 45%, #1a1712), #0b0a08 78%); }
+.dream .drlegend-mono.face { overflow: hidden; padding: 0; background: radial-gradient(circle at 50% 38%, #3a3226, #0b0a08 80%); }
+.dream .drlegend-mono.face svg { width: 122%; margin-top: 14%; }
+.dream .drlegend.unk .drlegend-mono { font-size: 22px; }
+@media (max-width: 760px) { .training .dream { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); } }
+/* Slick's pick */
+.dream .drev.pick { border-color: var(--gold); box-shadow: 0 0 0 1px rgba(217, 179, 108, .35), 0 16px 40px -24px rgba(217, 179, 108, .7); }
+.dream .drpick { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #1a1206; background: linear-gradient(180deg, var(--gold2), var(--gold)); border-radius: 999px; padding: 2px 10px 2px 2px; width: max-content; }
+.dream .drpick-face { width: 20px; height: 20px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: #000; }
+.dream .drpick-face img { width: 100%; height: 100%; object-fit: cover; }
+.dream .drlegend.unk { padding-block: 8px; } .dream .drlegend.unk .drlegend-mono { width: 34px; height: 34px; font-size: 16px; }
+.dream .drlegends { grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
+.dream .drstagecard.cooler { border-color: #7a2a24; } .dream .drstagecard.cooler .drkicker { color: #ff9c8c; }
+.dream .drconfetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.dream .drconfetti i { position: absolute; top: -12px; left: var(--x); width: 7px; height: 12px; background: var(--c); transform: rotate(var(--r)); animation: drFall 3.2s linear var(--d) infinite; opacity: .85; }
+@keyframes drFall { to { transform: translateY(820px) rotate(calc(var(--r) + 540deg)); } }
+.dream .drres > :not(.drconfetti) { position: relative; }
+@keyframes drIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes drPulse { 50% { opacity: .45; } }
+@keyframes drDeal { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
+@keyframes drShine { 50% { text-shadow: 0 0 60px rgba(244, 223, 166, .85); } }
+@keyframes drBounce { 50% { transform: translateY(-6px) rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) { .dream *, .dream *::before { animation: none !important; transition: none !important; } }
+
 </style>
 
 <header class="top">
@@ -997,7 +1260,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
     <div class="brand" id="brandHome" role="button" tabindex="0" title="Home">
       <span class="brandmark" aria-hidden="true"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABgAGADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDyWiiivCPqyG4SIRszIM44xWNe6jZWZAubhIyegJ5NT65fNFC5hjaVlBKovU1yyQXMTR3A0tJ5yoMkksw37u+B0FdVGjzq7OHFYtUnaOrN651ext5BHLIysRnG09KdPqVssCSR+a+9gqnYeCfUVXuvOt7Nbl45lBAbYmGb6YqOWSYXESJCXRsl5C2Ao/qa6Y0ILc4J46rLbQn0+bUZNRaK58gW5+4yHk+xFaskTqQVww53ZOCP8axpZo4EMsjhAoyT9O9Vr+a/keC4snS4iOfMUuBvB6EGh0YPoKOMqp6s3qWsW18+O8W68x0iaMK8Dc4PrkHGa145EkGUYNjr7Vxyi4uzPXp1FUjdD6KKKk0K7eLNCAJF3I3sIHyf0qebWLObSpL61nDwIDvbaQRgdMHmvaD8ffDu3C+D/FHmYzte0jRemTli2B9a+fPE/iTU/G9xqWs30wiW5uvkt0QBY0BBC8Dk4711Qw8Gzy6mNqxWqWpnQ3V1LG0zlo5JSWIJzj0H4DHFRbr1HUx37mRj910DK34dql6mptM2S3GeflXdggj6V2WSR5rbbuyR9RuovLi1S3YIhyksWWQH3HUVq6U9pODP58bov3cMCD9agZ1TBZwuSFGTjJPQVFYQi5ZoorR0ieR0cBNuPVj7Htj1qRlXXWiivob5onKI5CsmflB55A7Ui30RtlNgqhWJPK4A5549etTL9keSbT7Pf5Nthd45AP8Adz3NUzA3nR208hgklLGMphsheeT06UxGhZytMGdm+78pUYxnrn1qTRreK3vbl0DhpnLNubOfp7U2OKK2RzFEeTlgoyWNUtUu5rKVmiffK6gQLszsbvj6+9Z1Ic6sjehVVKXM1c6wW52qzSRpu6BmxR5C4b/SIvl+98w4+vpXT/DnWPgdq+lmfxboekaVqqjbcRTibazA/eUg856kdQc/U7/9hfsxvlvtmkDPb+0bkfpurm+r23f4Hesc3qo/j/wDz7xtrcNpCqB5JHWTYsUZ5dyOn0Gc/lXBwW09t5xl2BJZTIgRiV59j0rT16Czt9cm1FVeSdn2nJ+VGxyfas7UrmT7NLMzZKqdvHStsNBRhdHNj6sp1LPoMe4t45RHLMFY4+XBJ59AK3LMLNbs1t8yx8MnRgfQqeQa9P8Ahl8O9FsfD1tf3sH2vU7pBK1y/wB5ARkBPT69TVzxF4Ct7phJHbR3WOAd3lSqPZgRn86wnjoKVkdVPKKjhzSep5NcWzLJiby2IbdEcZ28Yz9etEbypB5DSsd67XYDG716dK7W/wDhn5mxpodTk8skoPtZfH5HNYV74Du7CNjp1zNbEnOy4Qsh/PkfgaqOMg9yKmWVY7HNefbWqrBBBhVOAEGAPrVG5aabUYLklQkOSBnqTWnc+HfECzsksPmqzA+fbKPl5GQVP9Ky9Skisp4wyyrHLnErqQjY7qf4h7iuqNSEtmcE6FSCvJWLN1qBwRGdpVS20EFjWz4c8Fa74j8N6jq0c5gvYAstnZsozOgznceoz0A9fqKwNHsZdd8QadpOmbBdXr7RPgfu4+dzfgAT+Fe7eG/hnr58eWOvWaxW2l6XEYjP9p/eXq7eFKdFAyckk/4c+Jr+z0Ts9/69TswOEVa8pJtXt/wflueHeELq3u/tEEsK72bc8bjcDwBnBHtXR/ZrP/nwsv8AwHT/AArk45oV8dXVxYDdaXGoyRR4HBUsSMfpXWwzRytKI23GKVon9mHUVnXTUr9zowcoyhyvpoUvFWmxXUM11buS88OCAflY9mx69BmuQaf7ZZPaxNi4CgMr8Z9f1rvyNwIPIPXNY2p+HbS8cSKxhkDbt6AAk+5qqFbkVpE4rCOo+aG5698Ddbm1bwLDFOrGXTz9lbPX5RwPyxXe186eC9Y1fwDe3c1nZS6vaXsYEsRl2lZFPD8D0JB4710kvxm1K3Zf7R8OR2kcnAaK4EzqeOq8frXDVw0pTbhsz08PjoU6SjWdmvJ/mej+LfGXh3wun/E21BEnIylug3yt6fKOg9zXOeF/F/jHxTdC507wtaWmiecFM99K4eRM4JUDqe/AI7Zrz2TX/CEOoz6iJxcXdyTNJdtG0s4duw3LgADjrx0xWoPip4u1i7j0/wAF+G3uPKUYVbWS6mYAddqfdHFaQwr5bRjr5mVTMIqd5Tsuy1fzf9ep6J4q1O30zTjOmhWd3qFze/Y9Pt1cE3LZxuOBkY5LDkjHXmug1TwcdYsbmLWvD1jLo8KRvCXwHZzncwAwVUfKAeCcntXkEPxb8UeC3Oj6n4KtLLVIUYvFdrLCY/NG8MIzyhIfPUfe7dKXw38XfH2tta+GtFj0TTLCCEIsMdsSRCpUbd7liTjv1OTmk8HUir7W63GsyoTla979Lf1f/gGzoHg208GfFuyl0y1aXT9Us7hI9z5a0dAGbk9QRgevzGu4+KPj+HSvCC+DtHWSTxDqtrLEgUELBGdwaQn3GQPeteCTzYxLs2bux6gVl3Hh3TbjxVa+JXic6ha27QIQflKnuRjkjJx9fpXP7XmkpT6I7fq/JBwpaJv7k97HytpUxthptzGjNJa3aloscsQckY9cV2N9eFPEt+sAjNpKVuEIQhiWUKeenVc0/wCIWg2+jePdT097dfsl+fttrkf3vvgH1DZ+lZ8SeXCke4tsULk9TivSqVFUtJdjxKFGVK8W9n+Rt1R1qOaayWGGcwNJMiGQHG1SeeavU11V0ZHUMrDDKRkEelYRdnc7Jx5otG78B/Bnwx13xG2h/ErVNfj1a+1KK10e1s2IW4DkgvIwVsAnAPIIBz71m/tHfB2f4Xa2bmG/02XSdQvrhNPtoroy3MEK4aPzcgclT1GenWse7sIfsYVVndoRmIrITInpsbORjsM1l6LomhXGpLa3FzcGecZgWeN4y3tnAya7o4hct2ePUwUlJJPfuafwa8BDxzdXtpcrPDbKF8u6jIGyUHlc4PVWzjGOK9Y0jQvF/wAINcvNR8FeJFS6uVij1JLvyWVoA24EfKQrHBAJHRmrO+HHiDw18Jb3UV1ZLuXT9Rihube4giMgjlUMrxMP4TnBGe1M8SfEnxP8WNIv9F8L+D7WHTmlEMl9d3CsUU9CVOBnGTgbsVySq1ZVOeOkfwPQp4ehGl7Oorz10W/4fmR/tC/ETw38UYLiTQPhTqGna9PdxSTazOFM0kUasgQgDjIIzg/wrnOOOb+DHg29t9VGrX0M9tPEWRI2I2lSBkkD8a9R0zw9c6dDZW7Xi6qqZF1Ne5EzZ53Kw44PAUjp/FxW9HDb2yFlVI1AyT0ArKtjnOLikdGFymNOanJ7EqjCgVwXxa1d4brw3otnMftV5rNuZI1yGMatnr9SK39Z8SW1vE6WbLLIAcyH7ie+e/8AKvNfh3HJ4z+J83iNneXTNFG23dgcSzNnB5/FvwWuahCzc3sv6R24qrdKlHeT/Dr+B1Hx08MXOteHBrWmRF77Rd9zgDO6DrIPwwG/A147ZXsdykWVeKWWPzFjdSMr0yueoyDyK+qba9urHd9ltrW584pFLHckhDEXXzOnU7N2B3OK8NudB0Hxbq994X8FTPbnw7M/9nXly++OdXZi0bcZA3ZA6/zrqwfvwcX0OHMn7Gqprrv/AF/XQZ5ceMbF/Kq0to2SYyCPQ1brPXVUnYR2FjqN9KW2qsVq4BOcfeYAVMYylsi5zhBXk7DZI2jOHHWqt/bxXNq6TNsC/MJAcGMjkMD2IxXU6b4A8ea+iSzf2b4ftGyQZX+0T/XC8D8xVfxH4X8NeFNQis/EV7q2uziFZwHHl27sWIWNUU/MxwTjJ4HOK6YUJbtnDVxtOzSVzO8O6u2v2V/YatBDc2sarE11EG8u4Jzn6N0PH+FQaf4o1+wWbRvA3h02AEo8yaWBQCBkZyf6k1yHjLXdU1zUJWk26faWYVLe1tzhEPYDGMn3/KtG61OaG1s7PUL28txIAJLmBtvzdwT2B56VU8Py6pXXYzpY1z0k7Pv19L9Dur2fxWi20uu/Ey1sroAOLSyjRB/wJjtB+hBFaMviI+J4p4LfU5HS3Ko00KYTd1O04wxwOfTNcXa2HguytHur+FbgkDfNcyNISM8d+O3Sptb8cNeabb6P4R0hbeGMFYmSAxxRA9W56k+p/WuV0+bZfgkj0I1vZr3nv0u22Hj3VzeWNzo2lyO948yW+yLG52PLKOegHU+9es/C3QYfD3gyysowPMcedMw/jdup/T8q8q8H6FHpFpNdtF9r1FhiSbJ3HewzgnOMDn869vuLuy0jQjeXMiwWdpbhmbsqKo6fyFZV5JJU4bfmdGEg3J1qmjt9y/rc4/43eKj4f8Lmws3I1PU8wwAdUTo7+3BwPc+1eIaDdaz4dhMugajJb3UjxrIm1WWU5wvUdsmn63rV34q8S3XiG9yEclLWInIijHQD/PUmpobXc9uJY2MYkEr4OPu/dX8Sc/hXqYaj7GFnv1Pn8divrNVyWy2P/9k=" alt=""></span>
       <div class="namestack"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver<span class="vbadge" id="vBadge" hidden>PLO</span></div></div>
-      <span class="ver">BETA 4.2</span>
+      <span class="ver">BETA 4.2 · DREAM</span>
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
@@ -1136,7 +1399,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
       </section>
 
       <div class="col trainer" id="trainer" hidden>
-        <div class="arena" id="arena"></div>
+        <div class="dream v-title" id="dream"></div>
         <section class="bar trclassic">
           <div class="phd"><span class="eyebrow">Trainer</span><span class="muted" id="trSetup"></span><span class="grow"></span>
             <label class="row" id="trSeatWrap"><span class="label">Play as</span><select id="trSeat"><option value="hero">Hero</option><option value="any">Any seat</option></select></label>
@@ -1165,7 +1428,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
     <div class="lhead"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver</div></div>
     <div class="lsplit">
       <button class="half h-solver" id="goSolver" type="button"><svg class="px" viewBox="0 0 24 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#efe4c8" d="M10 1h4v1h-4zM9 2h1v1h-1zM14 2h1v1h-1zM8 3h1v1h-1zM15 3h1v1h-1zM4 4h16v1h-16zM2 5h1v1h-1zM5 5h1v1h-1zM9 5h1v1h-1zM13 5h1v1h-1zM17 5h1v1h-1zM20 5h1v1h-1zM4 6h16v1h-16z"/><path fill="#5aa9de" d="M10 2h1v1h-1zM12 2h2v1h-2zM9 3h1v1h-1zM11 3h4v1h-4z"/><path fill="#fff6e0" d="M11 2h1v1h-1zM10 3h1v1h-1z"/><path fill="#7e705a" d="M3 5h1v1h-1zM6 5h2v1h-2zM10 5h2v1h-2zM14 5h2v1h-2zM18 5h2v1h-2z"/><path fill="#e8704f" d="M4 5h1v1h-1zM8 5h1v1h-1zM12 5h1v1h-1zM16 5h1v1h-1z"/><path fill="#3a342b" d="M7 7h10v1h-10z"/><path fill="#5aa9de" fill-opacity="0.33" d="M8 8h8v1h-8zM7 9h10v1h-10zM6 10h12v1h-12zM5 11h14v1h-14z"/><path fill="#ec8fab" d="M6 12h5v1h-5zM13 12h5v1h-5zM4 13h3v1h-3zM8 13h3v1h-3zM13 13h3v1h-3zM17 13h3v1h-3zM3 14h2v1h-2zM7 14h2v1h-2zM10 14h2v1h-2zM14 14h2v1h-2zM17 14h1v1h-1zM20 14h2v1h-2zM3 15h1v1h-1zM5 15h2v1h-2zM8 15h4v1h-4zM14 15h3v1h-3zM18 15h1v1h-1zM20 15h2v1h-2zM2 16h3v1h-3zM7 16h3v1h-3zM11 16h1v1h-1zM14 16h1v1h-1zM16 16h3v1h-3zM21 16h2v1h-2zM2 17h6v1h-6zM9 17h4v1h-4zM15 17h2v1h-2zM18 17h6v1h-6zM2 18h2v1h-2zM5 18h3v1h-3zM9 18h2v1h-2zM12 18h1v1h-1zM15 18h1v1h-1zM17 18h1v1h-1zM19 18h3v1h-3zM23 18h1v1h-1zM3 19h3v1h-3zM8 19h5v1h-5zM15 19h4v1h-4zM21 19h2v1h-2zM3 20h5v1h-5zM9 20h2v1h-2zM12 20h1v1h-1zM15 20h1v1h-1zM17 20h2v1h-2zM20 20h3v1h-3zM4 21h6v1h-6zM11 21h2v1h-2zM15 21h2v1h-2zM18 21h4v1h-4zM5 22h8v1h-8zM15 22h6v1h-6zM6 23h3v1h-3zM11 23h1v1h-1zM16 23h1v1h-1zM19 23h1v1h-1z"/><path fill="#f7c2d1" d="M7 13h1v1h-1zM16 13h1v1h-1zM5 14h2v1h-2zM18 14h2v1h-2zM4 15h1v1h-1zM19 15h1v1h-1zM10 16h1v1h-1zM15 16h1v1h-1zM4 18h1v1h-1zM11 18h1v1h-1zM16 18h1v1h-1zM22 18h1v1h-1zM8 20h1v1h-1zM19 20h1v1h-1z"/><path fill="#b9547a" d="M11 13h2v1h-2zM9 14h1v1h-1zM12 14h2v1h-2zM16 14h1v1h-1zM7 15h1v1h-1zM12 15h2v1h-2zM17 15h1v1h-1zM5 16h2v1h-2zM12 16h2v1h-2zM19 16h2v1h-2zM8 17h1v1h-1zM13 17h2v1h-2zM17 17h1v1h-1zM8 18h1v1h-1zM13 18h2v1h-2zM18 18h1v1h-1zM6 19h2v1h-2zM13 19h2v1h-2zM19 19h2v1h-2zM11 20h1v1h-1zM13 20h2v1h-2zM16 20h1v1h-1zM10 21h1v1h-1zM13 21h2v1h-2zM17 21h1v1h-1zM9 23h2v1h-2zM17 23h2v1h-2z"/></svg><b>Solver</b><small>Charts · ICM · postflop</small></button>
-      <button class="half h-trainer" id="goTrainer" type="button"><svg class="px" viewBox="0 0 32 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#d9434f" d="M16 2h9v1h-9zM16 3h9v1h-9zM14 4h8v1h-8zM25 4h2v1h-2zM14 5h8v1h-8zM25 5h2v1h-2zM13 6h12v1h-12zM27 6h1v1h-1zM13 7h1v1h-1zM15 7h2v1h-2zM20 7h8v1h-8zM13 8h1v1h-1zM15 8h2v1h-2zM20 8h8v1h-8zM13 9h1v1h-1zM15 9h1v1h-1zM19 9h9v1h-9zM16 10h1v1h-1zM19 10h9v1h-9zM19 11h9v1h-9zM16 12h12v1h-12zM13 13h1v1h-1zM15 13h1v1h-1zM17 13h11v1h-11zM15 14h2v1h-2zM18 14h10v1h-10zM16 15h9v1h-9zM27 15h1v1h-1zM16 16h9v1h-9zM27 16h1v1h-1zM17 17h10v1h-10z"/><path fill="#f7c2d1" d="M22 4h3v1h-3zM22 5h3v1h-3zM25 6h2v1h-2z"/><path fill="#f0c35a" d="M14 7h1v1h-1zM11 8h1v1h-1zM14 8h1v1h-1zM17 8h1v1h-1zM12 9h1v1h-1zM16 9h1v1h-1zM11 11h2v1h-2zM16 11h2v1h-2zM12 13h1v1h-1zM16 13h1v1h-1zM11 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM14 15h1v1h-1z"/><path fill="#8e1a2c" d="M17 7h3v1h-3zM18 8h2v1h-2zM17 9h2v1h-2zM17 10h2v1h-2zM18 11h1v1h-1zM25 15h2v1h-2zM25 16h2v1h-2z"/><path fill="#efe4c8" d="M28 7h4v1h-4zM28 8h4v1h-4zM30 9h2v1h-2zM28 10h4v1h-4zM28 11h4v1h-4zM30 12h2v1h-2zM0 13h2v1h-2zM30 13h2v1h-2zM0 14h1v1h-1zM28 14h4v1h-4zM0 15h2v1h-2zM0 16h1v1h-1zM0 17h2v1h-2z"/><path fill="#e8704f" d="M14 9h1v1h-1zM13 10h3v1h-3zM13 11h1v1h-1zM15 11h1v1h-1zM13 12h3v1h-3zM14 13h1v1h-1z"/><path fill="#7e705a" d="M28 9h2v1h-2zM28 12h2v1h-2zM28 13h2v1h-2zM1 14h1v1h-1zM1 16h1v1h-1z"/><path fill="#5aa9de" d="M4 10h6v1h-6zM3 11h1v1h-1zM6 11h5v1h-5zM2 12h1v1h-1zM4 12h8v1h-8zM2 13h5v1h-5zM9 13h3v1h-3zM2 14h6v1h-6zM9 14h2v1h-2zM2 15h6v1h-6zM9 15h3v1h-3zM2 16h10v1h-10zM2 17h9v1h-9zM2 18h1v1h-1zM4 18h6v1h-6zM3 19h6v1h-6z"/><path fill="#fff6e0" d="M4 11h2v1h-2zM14 11h1v1h-1zM3 12h1v1h-1z"/><path fill="#2f6f9e" d="M7 13h2v1h-2zM8 14h1v1h-1zM8 15h1v1h-1zM3 18h1v1h-1z"/></svg><b>Trainer</b><small>Drill spots · find leaks</small></button>
+      <button class="half h-trainer" id="goTrainer" type="button"><svg class="px" viewBox="0 0 32 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#d9434f" d="M16 2h9v1h-9zM16 3h9v1h-9zM14 4h8v1h-8zM25 4h2v1h-2zM14 5h8v1h-8zM25 5h2v1h-2zM13 6h12v1h-12zM27 6h1v1h-1zM13 7h1v1h-1zM15 7h2v1h-2zM20 7h8v1h-8zM13 8h1v1h-1zM15 8h2v1h-2zM20 8h8v1h-8zM13 9h1v1h-1zM15 9h1v1h-1zM19 9h9v1h-9zM16 10h1v1h-1zM19 10h9v1h-9zM19 11h9v1h-9zM16 12h12v1h-12zM13 13h1v1h-1zM15 13h1v1h-1zM17 13h11v1h-11zM15 14h2v1h-2zM18 14h10v1h-10zM16 15h9v1h-9zM27 15h1v1h-1zM16 16h9v1h-9zM27 16h1v1h-1zM17 17h10v1h-10z"/><path fill="#f7c2d1" d="M22 4h3v1h-3zM22 5h3v1h-3zM25 6h2v1h-2z"/><path fill="#f0c35a" d="M14 7h1v1h-1zM11 8h1v1h-1zM14 8h1v1h-1zM17 8h1v1h-1zM12 9h1v1h-1zM16 9h1v1h-1zM11 11h2v1h-2zM16 11h2v1h-2zM12 13h1v1h-1zM16 13h1v1h-1zM11 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM14 15h1v1h-1z"/><path fill="#8e1a2c" d="M17 7h3v1h-3zM18 8h2v1h-2zM17 9h2v1h-2zM17 10h2v1h-2zM18 11h1v1h-1zM25 15h2v1h-2zM25 16h2v1h-2z"/><path fill="#efe4c8" d="M28 7h4v1h-4zM28 8h4v1h-4zM30 9h2v1h-2zM28 10h4v1h-4zM28 11h4v1h-4zM30 12h2v1h-2zM0 13h2v1h-2zM30 13h2v1h-2zM0 14h1v1h-1zM28 14h4v1h-4zM0 15h2v1h-2zM0 16h1v1h-1zM0 17h2v1h-2z"/><path fill="#e8704f" d="M14 9h1v1h-1zM13 10h3v1h-3zM13 11h1v1h-1zM15 11h1v1h-1zM13 12h3v1h-3zM14 13h1v1h-1z"/><path fill="#7e705a" d="M28 9h2v1h-2zM28 12h2v1h-2zM28 13h2v1h-2zM1 14h1v1h-1zM1 16h1v1h-1z"/><path fill="#5aa9de" d="M4 10h6v1h-6zM3 11h1v1h-1zM6 11h5v1h-5zM2 12h1v1h-1zM4 12h8v1h-8zM2 13h5v1h-5zM9 13h3v1h-3zM2 14h6v1h-6zM9 14h2v1h-2zM2 15h6v1h-6zM9 15h3v1h-3zM2 16h10v1h-10zM2 17h9v1h-9zM2 18h1v1h-1zM4 18h6v1h-6zM3 19h6v1h-6z"/><path fill="#fff6e0" d="M4 11h2v1h-2zM14 11h1v1h-1zM3 12h1v1h-1z"/><path fill="#2f6f9e" d="M7 13h2v1h-2zM8 14h1v1h-1zM8 15h1v1h-1zM3 18h1v1h-1z"/></svg><b>The Dream</b><small>Cubicle to legend</small></button>
     </div>
   </div>
   <div class="lscreen" id="lsVariant" hidden>
@@ -3923,8 +4186,8 @@ function setMode(m) {
   $('modeSolver').setAttribute('aria-pressed', m === 'solver'); $('modeTrainer').setAttribute('aria-pressed', m === 'trainer');
   document.querySelectorAll('.solver-only').forEach((x) => (x.hidden = m !== 'solver'));
   $('trainer').hidden = m !== 'trainer'; document.body.classList.toggle('training', m === 'trainer');
-  if (m !== 'trainer') arLeave();
-  if (m === 'trainer') { trRender(); arRender(); } else if (TR.random) setRandom(false);
+  if (m !== 'trainer') { arLeave(); drLeave(); }
+  if (m === 'trainer') { trRender(); arRender(); drRender(); } else if (TR.random) setRandom(false);
   syncSpot();
 }
 // ---------------------------------------------------------------- trainer: randomize
@@ -5334,6 +5597,1228 @@ document.addEventListener('keydown', (e) => {
   else if (run.state === 'answered' && (e.key === 'Enter' || e.key.toLowerCase() === 'n')) arNext();
 });
 AR = { st: arLoad(), view: 'hub', tab: 'ranked', period: 'week', run: null, saved: null, last: null };
+// ================================================================ THE DREAM: data
+// Story, places, legends (parody names), the event ladder and every unlockable.
+// Bankroll is the story's score and decides which buy-ins you can afford. Nothing is bought:
+// clothes, jewelry, homes and rides unlock with milestones and titles.
+
+const DR_KEY = 'slickDream';
+const DR_HANDS = 3;           // decisions per tournament stage
+const DR_CASH_HANDS = 5;      // decisions per cash session
+
+// ---------------------------------------------------------------- places (scene backdrops)
+const DR_PLACES = {
+  office:   { name: 'Floor 34', sub: 'Halvorsen & Pike Consulting' },
+  diner:    { name: 'Lucky Seven Diner', sub: '2:13 AM' },
+  cardroom: { name: 'Riverside Card Room', sub: 'Open 24 hours' },
+  casino:   { name: 'Silver Strike Casino', sub: 'Circuit stop' },
+  vegas:    { name: 'Las Vegas', sub: 'The Summer Series' },
+  tv:       { name: 'Feature Table', sub: 'Royal Poker Tour · live on stream' },
+  titan:    { name: 'Titan Super High Roller', sub: 'Invitation only' },
+  main:     { name: 'The Main Event', sub: 'World Card Series' },
+  hall:     { name: 'Hall of Legends', sub: 'Legacy' },
+};
+
+// ---------------------------------------------------------------- people
+// Legends are parody names, played as tributes to their public styles. The Ghost is our own
+// creation: the GOAT everyone measures themselves against.
+const DR_PEOPLE = {
+  slick:  { name: 'Slick', role: 'The stranger from the diner', c: '#5aa9de', img: 'slick' },
+  derek:  { name: 'Derek', role: 'Your manager', c: '#9aa6b2', look: { skin: 1, hair: 'slick', hairC: 2, facial: 'none' }, eq: { outfit: 'suit', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smug' },
+  rosa:   { name: 'Rosa', role: 'Floor manager, Riverside', c: '#e8704f', look: { skin: 4, hair: 'long', hairC: 0, facial: 'none' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'silver', patch: 'none' } },
+  trent:  { name: 'Trent Vale', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'slick', hairC: 4, facial: 'none' }, eq: { outfit: 'blazer', eyes: 'aviator', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
+  lou:    { name: 'Big Lou', role: 'Riverside regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'bald', hairC: 6, facial: 'beard' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'cap', chain: 'none', patch: 'none' } },
+  host:   { name: 'Mara Quinn', role: 'Stream host', c: '#f878b8', look: { skin: 3, hair: 'long', hairC: 5, facial: 'none' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
+  ghost:  { name: 'The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee' }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
+  mom:    { name: 'Mom', role: 'Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'bun', hairC: 6, facial: 'none' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
+};
+
+// era: old school, boom, online high stakes, high roller/GTO, rising stars
+const DR_LEGENDS = [
+  { id: 'hungar', name: 'Stu Hungar', nick: 'The Comeback Kid', era: 'Old school', ch: 7, style: 'Reads you before you read your cards. Three-time world champ, a legend for a reason.', line: "Kid, I've seen this hand before. You haven't." },
+  { id: 'brunswick', name: 'Doyle Brunswick', nick: 'Texas Dally', era: 'Old school', ch: 3, style: 'The godfather. Aggressive before aggressive was cool. Loves ten-deuce.', line: 'Son, I was playing this game before your daddy could shuffle.' },
+  { id: 'chance', name: 'Johnny Chance', nick: 'The Express', era: 'Old school', ch: 3, style: 'Slow-plays monsters and lets you hang yourself.', line: 'Take your time. I always do.' },
+  { id: 'armadillo', name: 'Armadillo Slim', nick: 'The Talker', era: 'Old school', ch: 1, style: 'Spins yarns between hands and steals your blinds during the punchline.', line: "I've got more stories than you've got chips, partner." },
+  { id: 'moneybaker', name: 'Chris Moneybaker', nick: 'The Accountant', era: 'Boom', ch: 2, style: 'Won it all off an $86 satellite. Proof the dream is real.', line: 'I was you once. Spreadsheets and all. Play your game.' },
+  { id: 'hellbent', name: 'Phil Hellbent', nick: 'The Poker Bratt', era: 'Boom', ch: 3, style: 'Most bracelets ever, and he will tell you. Tight, then explodes when he loses.', line: 'If there were no luck in poker, I would win every single one of these.' },
+  { id: 'negrono', name: 'Danny Negrono', nick: 'Kid Pokey', era: 'Boom', ch: 3, style: 'Talks through every hand and usually says your cards out loud.', line: "I put you on ace-queen. Am I close? I'm close." },
+  { id: 'handsome', name: 'Gus Handsome', nick: 'The Great Dane', era: 'Boom', ch: 4, style: 'Plays any two cards, and makes it work just often enough.', line: 'Seven-four suited. My favourite hand. Today.' },
+  { id: 'escandalo', name: 'Antonio Escandalo', nick: 'The Magician', era: 'Boom', ch: 4, style: 'Smooth, fearless, and the chips just seem to disappear.', line: 'Watch closely. Now your stack is gone.' },
+  { id: 'mouth', name: 'Mike Matusoh', nick: 'The Mouth', era: 'Boom', ch: 2, style: 'Never stops talking. Never stops jamming.', line: "You call this? You're not calling this. You're NOT calling this." },
+  { id: 'fargo', name: 'Sammy Fargo', nick: 'The Unlit Cigarette', era: 'Boom', ch: 2, style: 'Pure feel. Bets like he owns the casino.', line: 'Is a nice hand. Is not my hand, but is nice.' },
+  { id: 'sidle', name: 'Erik Sidle', nick: 'The Quiet Assassin', era: 'Boom', ch: 4, style: 'Thirty years at the top without saying thirty words.', line: '…' },
+  { id: 'swan', name: 'Tom "hrrrm" Swan', nick: 'The Online Kid', era: 'Online', ch: 4, style: 'Six-figure bluffs with nothing, on purpose.', line: 'I have air. Do you want to find out?' },
+  { id: 'antionius', name: 'Patrik Antionius', nick: 'The Finnish Ice', era: 'Online', ch: 5, style: 'Never blinks. Never tilts. Never stops.', line: 'Your move.' },
+  { id: 'holdz', name: 'Fedor Holdz', nick: 'Crown Up Guy', era: 'High roller', ch: 5, style: 'Retired at the top, came back, kept winning.', line: 'I studied this exact spot this morning.' },
+  { id: 'bonanza', name: 'Justin Bonanza', nick: 'The Prodigy', era: 'High roller', ch: 5, style: 'Biggest single-year score in history. Calm, mathematical, relentless.', line: 'Equilibrium says call. So I call.' },
+  { id: 'kenny', name: 'Bryn Kenny-Kash', nick: 'The All-Time Money King', era: 'High roller', ch: 5, style: 'Plays the biggest games on the planet like they are $1/$2.', line: 'Nice stack. I will take it.' },
+  { id: 'chillwick', name: 'Stephen Chillwick', nick: 'Mr. Consistency', era: 'High roller', ch: 5, style: 'Final table every week. Never flustered.', line: 'Good luck. Genuinely.' },
+  { id: 'kahoon', name: 'Jason Kahoon', nick: 'The Gym Rat', era: 'High roller', ch: 5, style: 'Works out at 5 AM, studies at 6, wins Titans by dinner.', line: 'Discipline beats talent. I have both.' },
+  { id: 'loophole', name: 'Linus Loophole', nick: 'The Machine', era: 'High roller', ch: 5, style: 'Plays so close to perfect that the solver checks HIS work.', line: 'Your frequency is off by four percent.' },
+  { id: 'hackston', name: 'Isaac Hackston', nick: 'The Professor', era: 'High roller', ch: 5, style: 'Four cards or two, he has solved it.', line: 'Interesting sizing. Incorrect, but interesting.' },
+  { id: 'addemup', name: 'Michael Addemup', nick: 'The Titan Slayer', era: 'High roller', ch: 5, style: 'Wins the biggest buy-ins in the world, then disappears.', line: 'Shove.' },
+  { id: 'foxglove', name: 'Alex Foxglove', nick: 'The Tour Machine', era: 'High roller', ch: 4, style: 'Top of the leaderboard so often they named the trophy room after him.', line: 'Leaderboard points are points.' },
+  { id: 'kfoxglove', name: 'Kristen Foxglove', nick: 'The Queen of the Tour', era: 'High roller', ch: 4, style: 'Multiple player-of-the-year titles. Reads people for a living.', line: "You're nervous. Your left hand gives it away." },
+  { id: 'martini', name: 'Artur Martini', nick: 'Player of the Year', era: 'High roller', ch: 5, style: 'Shaken, never stirred. Top of the Titan rankings.', line: 'Another one for the cabinet.' },
+  { id: 'lonestar', name: 'Jesse Lonestar', nick: 'Gorilla Mode', era: 'Rising star', ch: 5, style: 'Nine wins in one year. When he goes gorilla mode, run.', line: 'GORILLA. MODE.' },
+  { id: 'mocha', name: 'Kayhan Mocha', nick: 'The Norwegian Storm', era: 'Rising star', ch: 5, style: 'Topped the money list with a $7.7 million invitational win.', line: 'Cold out there. Colder in here.' },
+  { id: 'daisies', name: 'Seth Daisies', nick: 'The Quarter-Million Man', era: 'Rising star', ch: 5, style: 'First bracelet was a $250K Super High Roller. Started at the top.', line: 'Go big or go home. I went big.' },
+  { id: 'bindr', name: 'Bernhard Bindr', nick: 'The Breakout', era: 'Rising star', ch: 5, style: 'Came out of nowhere with a $10 million win. Like you.', line: 'Everyone was a nobody once.' },
+  { id: 'punchline', name: 'Punnat Punchline', nick: 'The Bangkok Banker', era: 'Rising star', ch: 5, style: 'Three Titan titles in one year. All business.', line: 'This is my office.' },
+  { id: 'glazer', name: 'Benny Glazer', nick: 'The Triple Crown', era: 'Rising star', ch: 3, style: 'Three bracelets in one summer. Mixed-game wizard.', line: 'Pick a game. Any game.' },
+  { id: 'mizrockie', name: 'Michael Mizrockie', nick: 'The Grinder', era: 'Rising star', ch: 6, style: 'Won the Main Event and the Players Championship in the same summer. Defending champ.', line: "Defending champ. You'll have to take it from me." },
+];
+const drLegend = (id) => DR_LEGENDS.find((l) => l.id === id);
+// every legend gets a fixed look from their name: older eras go gray and suited, newer ones hoodies and headphones
+function drLegendLook(L) {
+  let h = 2166136261; for (const ch of L.id) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+  const r = (n) => { h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0; return h % n; };
+  const old = L.era === 'Old school', young = L.era === 'Rising star' || L.era === 'Online';
+  const hair = old ? ['bald', 'short', 'slick', 'buzz'][r(4)] : ['short', 'fade', 'wavy', 'curly', 'slick', 'buzz', 'long', 'bun'][r(8)];
+  return { look: { skin: r(8), hair, hairC: old ? [6, 7, 0][r(3)] : [0, 1, 2, 3, 4][r(5)], facial: old ? ['mustache', 'beard', 'none', 'goatee'][r(4)] : ['none', 'none', 'stubble', 'goatee', 'beard'][r(5)] },
+    eq: { outfit: old ? ['suit', 'blazer', 'polo'][r(3)] : young ? ['hoodie', 'bomber', 'polo', 'blazer'][r(4)] : ['suit', 'designer', 'blazer', 'bomber'][r(4)],
+      eyes: ['none', 'none', 'tinted', 'aviator', 'readers'][r(5)], head: old ? ['none', 'cap'][r(2)] : young ? ['none', 'phones', 'cap', 'beanie'][r(4)] : 'none', chain: ['none', 'none', 'silver', 'cuban'][r(4)], patch: 'none' } };
+}
+
+// ---------------------------------------------------------------- chapters
+const DR_CHAPTERS = [
+  { n: 'Prologue', t: 'The 9-to-5', place: 'office', goal: 'Play the Riverside Local Championship', test: (s) => !!s.story.p_after },
+  { n: 'Chapter 1', t: 'The Grind', place: 'cardroom', goal: 'Win the Riverside Classic or build a $10,000 bankroll', test: (s) => s.titles.room > 0 || s.br >= 10000,
+    prog: (s) => [Math.min(1, s.br / 10000), `$${drMoney(s.br)} of $10,000`] },
+  { n: 'Chapter 2', t: 'The Circuit', place: 'casino', goal: 'Win 2 Circuit rings and build a $40,000 bankroll', test: (s) => s.titles.ring >= 2 && s.br >= 40000,
+    prog: (s) => [(Math.min(2, s.titles.ring) / 2 + Math.min(1, s.br / 40000)) / 2, `💍 ${Math.min(2, s.titles.ring)}/2 rings · $${drMoney(s.br)} of $40,000`] },
+  { n: 'Chapter 3', t: 'The Summer', place: 'vegas', goal: 'Win a gold bracelet', test: (s) => s.titles.bracelet > 0, prog: (s) => [Math.min(1, s.titles.bracelet), s.titles.bracelet ? 'bracelet won' : 'no bracelet yet'] },
+  { n: 'Chapter 4', t: 'The Tour', place: 'tv', goal: 'Win 2 Tour titles (Royal Tour or GLO Cup) and build a $750,000 bankroll', test: (s) => s.titles.tour + s.titles.glo >= 2 && s.br >= 750000,
+    prog: (s) => [(Math.min(2, s.titles.tour + s.titles.glo) / 2 + Math.min(1, s.br / 750000)) / 2, `👑 ${Math.min(2, s.titles.tour + s.titles.glo)}/2 titles · $${drMoneyShort(s.br)} of $750K`] },
+  { n: 'Chapter 5', t: 'High Roller', place: 'titan', goal: 'Win 2 Titan titles and build a $5,000,000 bankroll', test: (s) => s.titles.titan >= 2 && s.br >= 5e6,
+    prog: (s) => [(Math.min(2, s.titles.titan) / 2 + Math.min(1, s.br / 5e6)) / 2, `🔱 ${Math.min(2, s.titles.titan)}/2 Titans · $${drMoneyShort(s.br)} of $5M`] },
+  { n: 'Chapter 6', t: 'The Main Event', place: 'main', goal: 'Win the Main Event', test: (s) => s.titles.me > 0, prog: (s) => [s.titles.me ? 1 : 0, s.titles.me ? 'World Champion' : 'not yet'] },
+  { n: 'Legacy', t: 'The Hall of Legends', place: 'hall', goal: "Beat every legend and pass The Ghost's 14 bracelets", test: () => false,
+    prog: (s) => [(Object.keys(s.legends).length / DR_LEGENDS.length + Math.min(1, s.titles.bracelet / 15)) / 2, `${Object.keys(s.legends).length}/${DR_LEGENDS.length} legends · ${s.titles.bracelet}/15 bracelets`] },
+];
+
+// ---------------------------------------------------------------- titles
+const DR_TITLES = {
+  local: { n: 'Local Champion', icon: '🏅', plural: 'Local titles' },
+  room: { n: 'Riverside Classic', icon: '🏆', plural: 'Card-room trophies' },
+  ring: { n: 'Circuit ring', icon: '💍', plural: 'Circuit rings' },
+  bracelet: { n: 'Gold bracelet', icon: '📿', plural: 'Bracelets' },
+  tour: { n: 'Royal Tour title', icon: '👑', plural: 'Tour titles' },
+  glo: { n: 'GLO Cup', icon: '🏆', plural: 'GLO Cups' },
+  titan: { n: 'Titan trophy', icon: '🔱', plural: 'Titan titles' },
+  me: { n: 'Main Event', icon: '🌍', plural: 'Main Events' },
+};
+
+// ---------------------------------------------------------------- the event ladder
+// kind: mtt (3 stages: early, bubble, final table) or cash (one session).
+// legends: who can be waiting at your final table.
+const DR_EVENTS = [
+  { id: 'local', ch: 0, kind: 'mtt', name: 'Riverside Local Championship', venue: 'cardroom', buyin: 250, field: 118, free: true, title: 'local', boss: 'lou', blurb: 'Your free seat. Your first real tournament.' },
+  { id: 'c12', ch: 1, kind: 'cash', name: '$1/$2 No-Limit', venue: 'cardroom', buyin: 200, blurb: 'The bread and butter. 100 big blinds.' },
+  { id: 'nightly', ch: 1, kind: 'mtt', name: 'Nightly $60 Turbo', venue: 'cardroom', buyin: 60, field: 42, blurb: 'Fast blinds. Shove-or-fold by midnight.' },
+  { id: 'deep', ch: 1, kind: 'mtt', name: 'Sunday $150 Deepstack', venue: 'cardroom', buyin: 150, field: 126, legends: ['armadillo'], blurb: 'The best structure in town.' },
+  { id: 'classic', ch: 1, kind: 'mtt', name: 'Riverside Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Riverside. Trent Vale wants it too.' },
+  { id: 'c25', ch: 2, kind: 'cash', name: '$2/$5 No-Limit', venue: 'casino', buyin: 500, blurb: 'Deeper stacks, bigger egos.' },
+  { id: 'ring400', ch: 2, kind: 'mtt', name: 'Circuit $400 No-Limit', venue: 'casino', buyin: 400, field: 384, title: 'ring', legends: ['fargo', 'mouth'], blurb: 'Every Circuit event awards a ring.' },
+  { id: 'ring600', ch: 2, kind: 'mtt', name: 'Circuit $600 Deepstack', venue: 'casino', buyin: 600, field: 522, title: 'ring', legends: ['mouth', 'moneybaker'], blurb: 'Deep stacks, deep field.' },
+  { id: 'ring1700', ch: 2, kind: 'mtt', name: 'Circuit $1,700 Main Event', venue: 'casino', buyin: 1700, field: 1146, title: 'ring', legends: ['moneybaker', 'fargo', 'mouth'], blurb: 'The ring everyone wants on this stop.' },
+  { id: 'c510', ch: 3, kind: 'cash', name: '$5/$10 No-Limit', venue: 'vegas', buyin: 1500, blurb: 'Summer in Vegas. Every table has a story.' },
+  { id: 'b1500', ch: 3, kind: 'mtt', name: 'WCS $1,500 No-Limit', venue: 'vegas', buyin: 1500, field: 2410, title: 'bracelet', legends: ['negrono', 'glazer', 'chance'], blurb: 'Gold bracelet event. Huge field.' },
+  { id: 'b3000', ch: 3, kind: 'mtt', name: 'WCS $3,000 Six-Max', venue: 'vegas', buyin: 3000, field: 1104, title: 'bracelet', legends: ['hellbent', 'negrono', 'glazer'], blurb: 'Gold bracelet event. Six-handed aggression.' },
+  { id: 'b10k', ch: 3, kind: 'mtt', name: 'WCS $10,000 Championship', venue: 'vegas', buyin: 10000, field: 418, title: 'bracelet', legends: ['brunswick', 'hellbent', 'chance'], blurb: 'The pros-only bracelet. Legends everywhere.' },
+  { id: 'c1025', ch: 4, kind: 'cash', name: '$10/$25 Feature Game', venue: 'tv', buyin: 5000, blurb: 'On stream, hole cards shown. No hiding.' },
+  { id: 'rpt3500', ch: 4, kind: 'mtt', name: 'Royal Tour $3,500 Main', venue: 'tv', buyin: 3500, field: 862, title: 'tour', legends: ['handsome', 'escandalo', 'kfoxglove'], blurb: 'Tour title and a seat in the Champions Cup.' },
+  { id: 'glo10k', ch: 4, kind: 'mtt', name: 'GLO Cup $10,000', venue: 'tv', buyin: 10000, field: 96, title: 'glo', legends: ['foxglove', 'kfoxglove', 'swan'], blurb: 'Small field. Every player is a killer.' },
+  { id: 'rpt10k', ch: 4, kind: 'mtt', name: 'Royal Tour $10,000 Championship', venue: 'tv', buyin: 10000, field: 421, title: 'tour', legends: ['sidle', 'swan', 'escandalo'], blurb: 'The crown jewel of the Tour.' },
+  { id: 'private', ch: 5, kind: 'cash', name: '$100/$200 Private Game', venue: 'titan', buyin: 40000, blurb: 'Penthouse game. Invitation from Trent, of all people.' },
+  { id: 't25k', ch: 5, kind: 'mtt', name: 'Titan $25,000', venue: 'titan', buyin: 25000, field: 142, title: 'titan', legends: ['chillwick', 'kahoon', 'lonestar', 'bindr'], blurb: 'The entry point to the biggest games on earth.' },
+  { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'punchline', 'mocha'], blurb: 'Sixty-eight of the best players alive.' },
+  { id: 't250k', ch: 5, kind: 'mtt', name: 'Titan $250,000 Invitational', venue: 'titan', buyin: 250000, field: 40, title: 'titan', legends: ['addemup', 'kenny', 'hackston', 'antionius', 'daisies'], blurb: 'The richest table in the world.' },
+  { id: 'main', ch: 6, kind: 'mtt', name: 'WCS $10,000 Main Event', venue: 'main', buyin: 10000, field: 8402, title: 'me', boss: 'ghost', legends: ['mizrockie'], blurb: 'Eight thousand dreamers. One world champion.' },
+  { id: 'legends', ch: 7, kind: 'mtt', name: 'Legends Invitational', venue: 'hall', buyin: 50000, field: 33, title: 'bracelet', legends: ['hungar', 'brunswick', 'chance', 'hellbent'], blurb: 'Every era. One table. A bracelet for the winner.' },
+];
+const drEvent = (id) => DR_EVENTS.find((e) => e.id === id);
+
+// ---------------------------------------------------------------- unlockables
+// slot: what it changes. Each unlocks with a milestone: never bought.
+const DR_ITEMS = [
+  // outfits
+  { slot: 'outfit', id: 'office', name: 'Clearance-rack office fit', req: 'Where it all started', test: () => true },
+  { slot: 'outfit', id: 'hoodie', name: 'The lucky hoodie', req: 'Play your first tournament', test: (s) => s.played >= 1 },
+  { slot: 'outfit', id: 'polo', name: 'Card-room quarter-zip', req: 'Reach Chapter 1', test: (s) => s.ch >= 1 },
+  { slot: 'outfit', id: 'bomber', name: 'Black bomber jacket', req: 'Win any tournament', test: (s) => drTitleCount(s) >= 1 },
+  { slot: 'outfit', id: 'blazer', name: 'Circuit blazer', req: 'Reach the Circuit', test: (s) => s.ch >= 2 },
+  { slot: 'outfit', id: 'suit', name: 'Tailored suit', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
+  { slot: 'outfit', id: 'designer', name: 'Designer suit', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
+  { slot: 'outfit', id: 'tux', name: 'Main Event tuxedo', req: 'Make the Main Event final table', test: (s) => !!s.flags.meft },
+  // eyewear
+  { slot: 'eyes', id: 'none', name: 'No eyewear', req: '', test: () => true },
+  { slot: 'eyes', id: 'readers', name: 'Blue-light readers', req: 'Where it all started', test: () => true },
+  { slot: 'eyes', id: 'tinted', name: 'Tinted table glasses', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
+  { slot: 'eyes', id: 'aviator', name: 'Gold aviators', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
+  { slot: 'eyes', id: 'shades', name: "Slick's 8-bit shades", req: 'Win any title', test: (s) => drTitleCount(s) >= 1 },
+  // head
+  { slot: 'head', id: 'none', name: 'Nothing', req: '', test: () => true },
+  { slot: 'head', id: 'cap', name: 'Riverside ballcap', req: 'Play 5 sessions', test: (s) => s.played >= 5 },
+  { slot: 'head', id: 'phones', name: 'Noise-cancelling cans', req: 'Make 100 decisions', test: (s) => s.dec >= 100 },
+  { slot: 'head', id: 'beanie', name: 'Vegas pool beanie', req: 'Reach the Summer', test: (s) => s.ch >= 3 },
+  // watches
+  { slot: 'watch', id: 'digital', name: 'Gas-station digital', req: 'Where it all started', test: () => true },
+  { slot: 'watch', id: 'steel', name: 'Steel diver', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
+  { slot: 'watch', id: 'gold', name: 'Gold president', req: 'Peak bankroll of $250,000', test: (s) => s.peak >= 250000 },
+  { slot: 'watch', id: 'iced', name: 'Iced-out chrono', req: 'Peak bankroll of $2,000,000', test: (s) => s.peak >= 2e6 },
+  { slot: 'watch', id: 'hyper', name: 'Hypercar tourbillon', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
+  // chains
+  { slot: 'chain', id: 'none', name: 'No chain', req: '', test: () => true },
+  { slot: 'chain', id: 'silver', name: 'Thin silver chain', req: 'Peak bankroll of $10,000', test: (s) => s.peak >= 10000 },
+  { slot: 'chain', id: 'cuban', name: 'Gold Cuban link', req: 'Peak bankroll of $100,000', test: (s) => s.peak >= 100000 },
+  { slot: 'chain', id: 'iced', name: 'Iced Cuban link', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
+  // homes
+  { slot: 'home', id: 'studio', name: 'Studio over the laundromat', req: 'Where it all started', test: () => true },
+  { slot: 'home', id: 'apt', name: 'Downtown one-bedroom', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
+  { slot: 'home', id: 'condo', name: 'High-rise condo', req: 'Peak bankroll of $150,000', test: (s) => s.peak >= 150000 },
+  { slot: 'home', id: 'penthouse', name: 'Strip penthouse', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
+  { slot: 'home', id: 'mansion', name: 'Hills mansion', req: 'Peak bankroll of $5,000,000', test: (s) => s.peak >= 5e6 },
+  { slot: 'home', id: 'island', name: 'Private island villa', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
+  // rides
+  { slot: 'ride', id: 'bus', name: 'Monthly bus pass', req: 'Where it all started', test: () => true },
+  { slot: 'ride', id: 'hatch', name: "'09 hatchback", req: 'Peak bankroll of $5,000', test: (s) => s.peak >= 5000 },
+  { slot: 'ride', id: 'coupe', name: 'Used sports coupe', req: 'Peak bankroll of $50,000', test: (s) => s.peak >= 50000 },
+  { slot: 'ride', id: 'sedan', name: 'German super-sedan', req: 'Peak bankroll of $250,000', test: (s) => s.peak >= 250000 },
+  { slot: 'ride', id: 'super', name: 'Italian supercar', req: 'Peak bankroll of $2,000,000', test: (s) => s.peak >= 2e6 },
+  { slot: 'ride', id: 'jet', name: 'Private jet share', req: 'Win a Titan title', test: (s) => s.titles.titan >= 1 },
+  // sponsor patches
+  { slot: 'patch', id: 'none', name: 'Unsponsored', req: 'Where it all started', test: () => true },
+  { slot: 'patch', id: 'tavern', name: "Rusty's Tavern", req: 'Win a session at $1/$2', test: (s) => !!s.flags.cashWin },
+  { slot: 'patch', id: 'site', name: 'Online site patch', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
+  { slot: 'patch', id: 'energy', name: 'Energy drink sponsor', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
+  { slot: 'patch', id: 'global', name: 'Global brand ambassador', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
+];
+const DR_SLOTS = [['outfit', 'Outfit'], ['eyes', 'Eyewear'], ['head', 'Head'], ['watch', 'Watch'], ['chain', 'Chain'], ['home', 'Home'], ['ride', 'Ride'], ['patch', 'Sponsor']];
+const DR_RIDE_ICON = { bus: '🚌', hatch: '🚗', coupe: '🏎️', sedan: '🚘', super: '🏎️', jet: '🛩️' };
+const DR_HOME_ICON = { studio: '🧺', apt: '🏢', condo: '🌆', penthouse: '🌃', mansion: '🏛️', island: '🏝️' };
+const DR_PATCH = { none: null, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' } };
+
+// the line under your name, earned as you climb
+const DR_REPUTATION = [
+  [(s) => s.titles.me > 0 && s.titles.bracelet >= 15, 'The New GOAT'], [(s) => s.titles.me > 0, 'World Champion'],
+  [(s) => s.titles.titan > 0, 'Titan'], [(s) => s.titles.tour + s.titles.glo > 0, 'Tour Champion'],
+  [(s) => s.titles.bracelet > 0, 'Bracelet Winner'], [(s) => s.titles.ring > 0, 'Circuit Ring Winner'],
+  [(s) => s.ch >= 2, 'Circuit Grinder'], [(s) => s.titles.room > 0, 'Riverside Champion'],
+  [(s) => s.ch >= 1, (s) => (s.job === 'quit' ? 'Full-time Dreamer' : 'Moonlighter')], [() => true, 'Cubicle Dreamer'],
+];
+
+// ---------------------------------------------------------------- coach lines between stages
+const DR_TIPS = {
+  middle: [
+    "The short stacks are getting desperate. Let them shove into your good hands.",
+    "Stack sizes changed. Your opening ranges should too.",
+    "This is where tournaments are won quietly. Steal, don't spew.",
+  ],
+  deep: [
+    "You're in the money. Ladder up, but don't play scared. Scared money never wins.",
+    "Every pay jump matters now. Pick on the stacks that are clinging on.",
+  ],
+  early: [
+    "Early levels: chips are cheap, mistakes aren't. Fold the junk and let them spew.",
+    "Position is power. The button prints money; under the gun is a tax.",
+    "You don't have to win a hand to win this level. Survive and steal.",
+  ],
+  bubble: [
+    "Bubble. The short stacks are terrified. The big stacks are licking their lips. Which one are you?",
+    "Near the money, a call costs more than chips. Tighten your calls, not your raises.",
+    'Min-cash is not the goal. But busting on the bubble is a long ride home.',
+  ],
+  final: [
+    "Final table. Every pay jump is real money. Every chip is a decision.",
+    'Short stack? Your jam is your weapon. Raise-fold gives it away.',
+    "Look around. Somebody here is scared. Make sure it isn't you.",
+  ],
+  cash: [
+    "Cash game: no bubble, no pay jumps. Just chip EV. Play the math.",
+    'Steal the blinds you can. Defend the ones you should.',
+  ],
+};
+
+// ================================================================ THE DREAM: the story
+// A scene is a list of beats. sp: who talks ('n' = narrator, 'you', a DR_PEOPLE id, or 'L:<legend id>').
+// t: the line (a string or a function of state). choice: buttons; each can run act(s) and jump to a scene.
+// end: what happens when the scene finishes ('hub', or an event id to play next).
+
+const DR_SCENES = {
+  // ------------------------------------------------------------ prologue
+  p_office: { place: 'office', title: 'Prologue', sub: 'The 9-to-5', beats: [
+    { sp: 'n', t: 'Monday. 6:47 PM. Floor 34.\nEveryone else went home an hour ago.' },
+    { sp: 'derek', t: 'The Henderson deck. Redo it. All of it. On my desk by eight.' },
+    { sp: 'you', t: 'I sent it Friday. You signed off on it.' },
+    { sp: 'derek', t: "And now I'm un-signing off on it. Problem?" },
+    { sp: 'you', t: 'No problem, Derek.', mood: 'quiet' },
+    { sp: 'derek', t: 'Great. Oh, and I told the partners the new model was my idea. Team player, right?' },
+    { sp: 'n', t: 'You were nine the first time you saw it on TV.\nA final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing.' },
+    { sp: 'n', t: 'The room went silent. His opponent folded. He never showed.\nHe made it look like he could see the future.' },
+    { sp: 'you', t: 'Somewhere along the way I traded that for a lanyard.', mood: 'think' },
+  ], end: 'p_diner' },
+
+  p_diner: { place: 'diner', title: 'Prologue', sub: 'Lucky Seven Diner', beats: [
+    { sp: 'n', t: '2:13 AM. The deck is done.\nYou are not.' },
+    { sp: 'slick', t: "You're doing the thing where you stare at the pie like it owes you money.", who: 'Stranger' },
+    { sp: 'you', t: 'Long day.' },
+    { sp: 'slick', t: 'Long life, by the look of it. What do you do?', who: 'Stranger' },
+    { sp: 'you', t: 'Spreadsheets. For a guy who takes credit for them.' },
+    { sp: 'slick', t: 'And what did you want to do?', who: 'Stranger', choice: [
+      { t: 'Play poker. For real.', act: (s) => { s.flags.honest = true; }, line: { sp: 'slick', who: 'Stranger', t: 'Ha. Everybody says that at 2 AM. Almost nobody means it.' } },
+      { t: "Doesn't matter now.", act: (s) => { s.flags.honest = false; }, line: { sp: 'slick', who: 'Stranger', t: "It always matters. You just stopped saying it out loud." } },
+    ] },
+    { sp: 'n', t: 'He slides a red envelope across the counter.' },
+    { sp: 'slick', t: "Riverside Local Championship. Saturday, noon. Two-fifty seat. It's paid.", who: 'Stranger' },
+    { sp: 'you', t: "Why would you give that to a stranger?" },
+    { sp: 'slick', t: 'Because I sat on that stool once. Somebody bought my pie too.', who: 'Stranger' },
+    { sp: 'slick', t: "Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips.", who: 'Stranger' },
+    { sp: 'you', t: 'Who are you?' },
+    { sp: 'slick', t: 'People call me Slick.' },
+    { sp: 'n', t: 'He drops cash for both checks and is gone before the bell over the door stops ringing.\nInside the envelope: a seat card, and one line in pen.' },
+    { sp: 'n', t: '“People insist on calling it luck…”', big: true },
+  ], end: 'local' },
+
+  p_after: { place: 'office', title: 'Prologue', sub: 'Monday again', beats: [
+    { sp: 'derek', t: 'You look different. Did you finish the Henderson numbers?' },
+    { sp: 'n', t: (s) => s.events.local && s.events.local.best <= drPaid(drEvent('local'))
+      ? `You finished ${drOrd(s.events.local.best)} on Saturday and took home $${drMoney(s.events.local.cash)}.\nYou've replayed every hand in your head since.`
+      : `You busted Saturday. And you have never felt more alive.\nYou've replayed every hand in your head since.` },
+    { sp: 'derek', t: "Hello? I'm talking to you. Weekend's over, champ." },
+    { sp: 'n', t: 'Decision time.', choice: [
+      { t: 'Quit. Today.', act: (s) => { s.job = 'quit'; drAdd(s, 1200, 'Savings, after quitting'); }, go: 'p_quit' },
+      { t: 'Keep the job. Grind nights.', act: (s) => { s.job = 'nights'; drAdd(s, 2000, 'Savings, keeping the day job'); }, go: 'p_keep' },
+    ] },
+  ], end: 'hub' },
+  p_quit: { place: 'office', beats: [
+    { sp: 'you', t: 'Derek? Redo it yourself.' },
+    { sp: 'n', t: 'The elevator ride down is the best thirty-four floors of your life.\nYou have $1,200 in savings and absolutely no plan B.' },
+    { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
+    { sp: 'mom', t: 'YOU QUIT YOUR JOB?? CALL ME', text: true },
+  ], end: 'c1' },
+  p_keep: { place: 'office', beats: [
+    { sp: 'n', t: 'You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL.' },
+    { sp: 'n', t: '$2,000 in savings. Days for Derek. Nights for the dream.' },
+    { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
+  ], end: 'c1' },
+
+  // ------------------------------------------------------------ chapter openers
+  c1: { place: 'cardroom', title: 'Chapter 1', sub: 'The Grind', beats: [
+    { sp: 'n', t: 'Riverside Card Room. Carpet from 1994. Coffee from this morning, maybe.\nTwenty tables, every one of them a classroom.' },
+    { sp: 'rosa', t: "New face. Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven." },
+    { sp: 'lou', t: "Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast." },
+    { sp: 'trent', t: "Cute hoodie. Did it come with the free seat?" },
+    { sp: 'n', t: "Trent Vale. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Riverside Classic all year." },
+    { sp: 'n', t: 'Goal: win the Riverside Classic, or build your bankroll to $10,000.', goal: true },
+  ], end: 'hub' },
+  c2: { place: 'casino', title: 'Chapter 2', sub: 'The Circuit', beats: [
+    { sp: 'slick', t: "You've outgrown Riverside. The Circuit stops at Silver Strike this month. Every event gives a ring. Go get one." },
+    { sp: 'n', t: 'Bigger rooms. Better players. A guy at the rail is wearing four rings on one hand.' },
+    { sp: 'L:moneybaker', t: "You're the kid who quit the cubicle? I was an accountant. Spreadsheets and everything. Play your game and let them find out." },
+    { sp: 'trent', t: "Look who followed me to the Circuit. Try not to bust on the bubble this time." },
+    { sp: 'n', t: 'Goal: win two Circuit rings and build a $40,000 bankroll.', goal: true },
+  ], end: 'hub' },
+  c3: { place: 'vegas', title: 'Chapter 3', sub: 'The Summer', beats: [
+    { sp: 'n', t: "Las Vegas in June. 112 degrees outside, 68 inside, and ten thousand people chasing the same gold." },
+    { sp: 'slick', t: 'Every kid who ever loved this game dreams about a bracelet. This is the room where they hand them out.' },
+    { sp: 'n', t: "At the feature table sits a man in dark glasses. Fourteen bracelets. Nobody has seen him smile.\nThe man from TV. The reason you're here." },
+    { sp: 'ghost', t: 'Kid. Stop looking at me and look at your cards.' },
+    { sp: 'L:hellbent', t: "Another internet kid. I'll see you at the final table. Probably not, though." },
+    { sp: 'n', t: 'Goal: win a gold bracelet.', goal: true },
+  ], end: 'hub' },
+  c4: { place: 'tv', title: 'Chapter 4', sub: 'The Tour', beats: [
+    { sp: 'host', t: "Welcome back to the feature table! Joining us: the cubicle kid with a bracelet, and people are calling it a fluke." },
+    { sp: 'you', t: 'People insist on calling it luck.' },
+    { sp: 'host', t: "Ooh. We have a quote. Producers, put that on a T-shirt." },
+    { sp: 'L:kfoxglove', t: "Cameras make people do stupid things. Don't be people." },
+    { sp: 'n', t: 'Goal: win two Tour titles (Royal Tour or GLO Cup) and build a $750,000 bankroll.', goal: true },
+  ], end: 'hub' },
+  c5: { place: 'titan', title: 'Chapter 5', sub: 'High Roller', beats: [
+    { sp: 'n', t: 'A private terminal. A plane with your name on the manifest. A buy-in that used to be a house.' },
+    { sp: 'trent', t: "Funny. Dad stopped staking me last month. Guess we're both self-made now." },
+    { sp: 'L:loophole', t: 'I reviewed your last final table. Your bubble frequencies are… acceptable.' },
+    { sp: 'slick', t: "In here nobody's scared. Everyone knows the math. So the edge is in the spots they don't study. Find them." },
+    { sp: 'n', t: 'Goal: win two Titan titles and build a $5,000,000 bankroll.', goal: true },
+  ], end: 'hub' },
+  c6: { place: 'main', title: 'Chapter 6', sub: 'The Main Event', beats: [
+    { sp: 'n', t: 'Eight thousand four hundred and two players. Ten thousand dollars each.\nOne of them will be on the cover of every poker magazine in the world.' },
+    { sp: 'L:mizrockie', t: "Defending champ. If you want it, you'll have to take it from me." },
+    { sp: 'mom', t: 'IS THIS THE ONE ON TV?? SIT UP STRAIGHT', text: true },
+    { sp: 'slick', t: "Nine-year-old you watched this on a fuzzy TV. Go show him how it ends." },
+    { sp: 'n', t: 'Goal: win the Main Event.', goal: true },
+  ], end: 'hub' },
+  c7: { place: 'hall', title: 'Legacy', sub: 'The Hall of Legends', beats: [
+    { sp: 'n', t: "Your picture hangs in the Hall of Legends now. Next to men you used to watch on a fuzzy TV." },
+    { sp: 'ghost', t: "Fourteen bracelets. That's the number. Come take it." },
+    { sp: 'n', t: "Goal: beat every legend and pass The Ghost's fourteen bracelets.", goal: true },
+  ], end: 'hub' },
+
+  // ------------------------------------------------------------ beats along the way
+  broke: { place: 'diner', title: 'Rock bottom', beats: [
+    { sp: 'n', t: 'Lucky Seven Diner. 2:13 AM. Same stool. Same pie. Empty wallet.' },
+    { sp: 'slick', t: 'Busted?' },
+    { sp: 'you', t: "Every last dollar." },
+    { sp: 'slick', t: "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why." },
+    { sp: 'slick', t: (s) => `Here's $${drMoney(drStakeSize(s))}. Not a gift. Half your profits come back to me until it's paid. And this time, respect your roll.` },
+  ], end: 'hub' },
+  firstwin: { place: 'diner', title: 'First title', beats: [
+    { sp: 'slick', t: "Saw the photo. Trophy, big grin, terrible lighting. Proud of you, kid." },
+    { sp: 'slick', t: "Left something in your locker. Every champion needs a pair." },
+    { sp: 'n', t: "Inside: a pair of pixelated sunglasses and a note.\n“Deal with it.”" },
+  ], end: 'hub' },
+  champ: { place: 'main', title: 'World Champion', beats: [
+    { sp: 'n', t: 'Confetti. Cameras. A bracelet the size of a doorknob.\nSomewhere, a nine-year-old with a fuzzy TV is losing his mind.' },
+    { sp: 'ghost', t: 'Good game, kid.' },
+    { sp: 'n', t: 'He takes off his glasses. For the first time anyone can remember, The Ghost smiles.' },
+    { sp: 'ghost', t: "Now you'll find out the hard part. Everyone will be hunting you." },
+    { sp: 'derek', t: 'Hey buddy! Long time! Saw you on TV. Listen, about that promotion…', text: true },
+    { sp: 'n', t: 'You leave him on read.' },
+    { sp: 'slick', t: 'People insist on calling it luck.' },
+    { sp: 'you', t: 'Let them.' },
+  ], end: 'c7' },
+};
+
+// the first time a legend sits at your final table they say their line; who you meet is remembered
+function drMeetLine(id) {
+  if (id === 'ghost') return { sp: 'ghost', t: "Heads-up for the world title. I've waited a long time for someone worth this." };
+  if (id === 'trent') return { sp: 'trent', t: "Final table of the Classic. Just you, me and Dad's money. Let's go." };
+  if (id === 'lou') return { sp: 'lou', t: "Final table, kid. Thirty years I've been trying to win this thing. Don't you dare." };
+  const L = drLegend(id); return L ? { sp: 'L:' + id, t: L.line } : null;
+}
+
+// ================================================================ THE DREAM: your player, drawn
+// A vector bust at the table: face and hair from the creator; outfit, eyewear, headwear, chain,
+// watch, sponsor patch, bracelets and rings from what you've earned; chips from your bankroll.
+
+const DR_SKIN = ['#ffe0c2', '#f2c6a0', '#e2a676', '#c98852', '#a96a3c', '#87502c', '#663a1f', '#452514'];
+const DR_HAIRC = ['#17130f', '#3e2717', '#6e4526', '#a8743a', '#e6c46e', '#b8432a', '#8e8e8e', '#ececec'];
+const DR_HAIR = [['wavy', 'Wavy'], ['short', 'Short'], ['fade', 'Fade'], ['slick', 'Slicked back'], ['curly', 'Curly'], ['long', 'Long'], ['buzz', 'Buzz'], ['bun', 'Man bun'], ['bald', 'Bald']];
+const DR_FACIAL = [['none', 'Clean'], ['stubble', 'Stubble'], ['mustache', 'Mustache'], ['goatee', 'Goatee'], ['beard', 'Full beard']];
+const DR_LOOK_DEFAULT = { skin: 2, hair: 'wavy', hairC: 0, facial: 'none' };
+
+function drShade(hex, f) {
+  const n = parseInt(hex.slice(1), 16), c = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  return '#' + c.map((v) => Math.round(f < 0 ? v * (1 + f) : v + (255 - v) * f).toString(16).padStart(2, '0')).join('');
+}
+
+function drOutfitSVG(id, patch) {
+  const torso = (fill, stroke) => `<path d="M14 222 C18 178 46 160 76 154 L124 154 C154 160 182 178 186 222 Z" fill="${fill}" stroke="${stroke || drShade(fill, -0.35)}" stroke-width="1.5"/>`;
+  const fold = (c) => `<path d="M52 176 C60 190 62 206 60 222 M148 176 C140 190 138 206 140 222" stroke="${c}" stroke-width="2" fill="none" opacity=".55"/>`;
+  let s = '';
+  if (id === 'office') {
+    s = torso('#cdd8e6', '#93a3b8') + fold('#a9b8cc')
+      + `<path d="M84 154 L100 172 L116 154 L111 150 L100 162 L89 150 Z" fill="#f4f7fb" stroke="#93a3b8"/>`
+      + `<path d="M97 164 L103 164 L106 200 L100 210 L94 200 Z" fill="#7a1f2b" transform="rotate(8 100 180)"/>`
+      + `<path d="M82 156 L96 196 M118 156 L104 196" stroke="#2457b8" stroke-width="3" fill="none"/><rect x="92" y="194" width="16" height="20" rx="2" fill="#f4f7fb" stroke="#2457b8"/><rect x="95" y="198" width="10" height="3" fill="#2457b8"/>`;
+  } else if (id === 'hoodie') {
+    s = `<path d="M66 160 C70 140 130 140 134 160 C120 152 80 152 66 160 Z" fill="#555960"/>` + torso('#6b6f76') + fold('#5a5d63')
+      + `<path d="M74 158 C86 172 114 172 126 158" stroke="#4d5056" stroke-width="5" fill="none"/>`
+      + `<path d="M92 166 L90 196 M108 166 L110 196" stroke="#e9e5dc" stroke-width="2.2" stroke-linecap="round"/><circle cx="90" cy="197" r="2" fill="#bbb"/><circle cx="110" cy="197" r="2" fill="#bbb"/>`;
+  } else if (id === 'polo') {
+    s = torso('#1f2a44') + fold('#2c3a5c')
+      + `<path d="M82 152 L100 168 L118 152 L120 162 L100 178 L80 162 Z" fill="#26345a" stroke="#141c30"/>`
+      + `<path d="M100 168 L100 222" stroke="#c9ccd4" stroke-width="2"/><rect x="97" y="176" width="6" height="8" rx="1" fill="#c9ccd4"/>`;
+  } else if (id === 'bomber') {
+    s = torso('#1b1b1e', '#000') + fold('#2c2c31')
+      + `<path d="M78 152 C88 160 112 160 122 152 L124 160 C112 168 88 168 76 160 Z" fill="#2a2a2e"/><path d="M78 155 L122 155" stroke="#3d3d42" stroke-dasharray="2 2"/>`
+      + `<path d="M100 162 L100 222" stroke="#5c5c64" stroke-width="2.5"/>`
+      + `<text x="128" y="186" font-family="Georgia,serif" font-style="italic" font-size="7" fill="#d9b36c">Champions</text>`;
+  } else if (id === 'blazer') {
+    s = torso('#3b3f47') + `<path d="M86 152 L100 168 L114 152 L114 222 L86 222 Z" fill="#ece8df"/>`
+      + `<path d="M84 152 L98 200 L86 222 L60 222 C64 196 70 172 84 152 Z M116 152 L102 200 L114 222 L140 222 C136 196 130 172 116 152 Z" fill="#30333a" stroke="#1d1f24"/>` + fold('#2a2d33');
+  } else if (id === 'suit' || id === 'designer' || id === 'tux') {
+    const c = id === 'suit' ? '#1b2442' : id === 'designer' ? '#4a1426' : '#121214', lap = id === 'tux' ? '#26262a' : drShade(c, -0.25), shirt = id === 'designer' ? '#141416' : '#f7f6f2';
+    s = torso(c) + `<path d="M86 152 L100 168 L114 152 L114 222 L86 222 Z" fill="${shirt}"/>`
+      + (id === 'suit' ? `<path d="M97 166 L103 166 L105 204 L100 212 L95 204 Z" fill="#8a1c24"/>` : id === 'tux' ? `<path d="M90 162 L100 166 L110 162 L110 172 L100 168 L90 172 Z" fill="#000"/><circle cx="100" cy="167" r="2" fill="#222"/>` : `<path d="M90 152 L100 172 L110 152" stroke="#2a2a2e" stroke-width="2" fill="none"/>`)
+      + `<path d="M84 152 L98 204 L88 222 L58 222 C62 196 68 172 84 152 Z M116 152 L102 204 L112 222 L142 222 C138 196 132 172 116 152 Z" fill="${lap}" stroke="${drShade(c, -0.5)}"/>` + fold(drShade(c, 0.12))
+      + (id !== 'tux' ? `<path d="M64 196 l10 -3 l0 5 Z" fill="#f7f6f2" opacity=".85"/>` : '');
+  }
+  const p = DR_PATCH[patch];
+  if (p) s += `<g transform="translate(44 172) rotate(6)"><rect width="30" height="13" rx="2" fill="#0c0c0c" stroke="${p.c}" stroke-width="1.4"/><text x="15" y="9.6" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="6.6" fill="${p.c}">${p.t}</text></g>`;
+  return s;
+}
+
+function drHairSVG(style, c, back) {
+  const d = drShade(c, -0.3), l = drShade(c, 0.22);
+  // back layer: hair that sits behind the head
+  if (back) {
+    if (style === 'long') return `<path d="M64 92 C60 140 70 156 84 160 L116 160 C130 156 140 140 136 92 Z" fill="${d}"/>`;
+    if (style === 'curly') return `<path d="M62 96 C56 122 66 136 74 140 L126 140 C134 136 144 122 138 96 Z" fill="${d}"/>`;
+    return '';
+  }
+  switch (style) {
+    case 'wavy': return `<path d="M66 100 C60 66 82 50 104 52 C126 52 144 66 136 100 C134 88 130 80 124 76 C120 86 108 92 96 90 C90 96 80 98 74 92 C70 96 68 98 66 100 Z" fill="${c}"/>
+      <path d="M78 66 C88 60 96 62 100 70 M104 60 C116 58 126 64 128 74 M86 80 C94 74 104 78 106 86" stroke="${l}" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/>
+      <path d="M96 88 C104 96 116 94 122 84" stroke="${d}" stroke-width="2" fill="none"/>`;
+    case 'short': return `<path d="M68 96 C64 68 82 56 100 56 C120 56 138 68 132 96 C130 84 124 76 116 74 C106 80 90 80 80 76 C74 80 70 86 68 96 Z" fill="${c}"/>`;
+    case 'fade': return `<path d="M70 92 C68 68 84 58 100 58 C118 58 134 68 130 92 C128 82 122 76 114 74 L86 74 C78 76 72 82 70 92 Z" fill="${c}"/><path d="M68 94 L68 112 M132 94 L132 112" stroke="${c}" stroke-width="3" opacity=".35"/>`;
+    case 'slick': return `<path d="M68 98 C64 66 84 54 102 54 C122 54 138 66 132 98 C130 86 126 78 120 74 C108 70 92 70 80 74 C74 80 70 88 68 98 Z" fill="${c}"/><path d="M80 66 C94 60 110 60 126 70 M78 74 C94 66 112 66 128 78" stroke="${l}" stroke-width="2" fill="none" opacity=".75"/>`;
+    case 'curly': return `<g fill="${c}">${[[72, 74], [82, 62], [96, 56], [110, 58], [124, 66], [132, 80], [66, 88], [134, 94], [64, 102], [88, 70], [104, 68], [118, 74]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="11"/>`).join('')}</g>`;
+    case 'long': return `<path d="M66 104 C60 66 82 52 102 52 C124 52 142 66 134 104 C132 90 128 80 120 74 C106 82 90 82 80 76 C72 84 68 92 66 104 Z" fill="${c}"/>`;
+    case 'buzz': return `<path d="M70 94 C68 70 84 60 100 60 C118 60 134 70 130 94 C128 84 122 78 116 76 L84 76 C78 78 72 84 70 94 Z" fill="${c}" opacity=".85"/>`;
+    case 'bun': return `<circle cx="100" cy="46" r="11" fill="${c}"/><path d="M68 96 C64 68 82 56 100 56 C120 56 138 68 132 96 C128 80 116 72 100 72 C84 72 72 80 68 96 Z" fill="${c}"/>`;
+    default: return '';
+  }
+}
+
+function drFacialSVG(style, c) {
+  if (style === 'stubble') return `<path d="M76 116 C80 138 92 146 100 146 C108 146 120 138 124 116 C118 130 110 136 100 136 C90 136 82 130 76 116 Z" fill="${c}" opacity=".28"/>`;
+  if (style === 'mustache') return `<path d="M90 126 C94 122 106 122 110 126 C106 128 94 128 90 126 Z" fill="${c}"/>`;
+  if (style === 'goatee') return `<path d="M90 126 C94 122 106 122 110 126 C106 128 94 128 90 126 Z M94 134 C96 142 104 142 106 134 C104 138 96 138 94 134 Z" fill="${c}"/>`;
+  if (style === 'beard') return `<path d="M74 110 C76 140 90 150 100 150 C110 150 124 140 126 110 C122 124 114 132 100 132 C86 132 78 124 74 110 Z M90 126 C94 122 106 122 110 126 C106 128 94 128 90 126 Z" fill="${c}"/>`;
+  return '';
+}
+
+function drEyewearSVG(id) {
+  if (id === 'readers') return `<g fill="none" stroke="#2b2b2b" stroke-width="1.6"><rect x="78" y="98" width="18" height="12" rx="4"/><rect x="104" y="98" width="18" height="12" rx="4"/><path d="M96 103 L104 103 M78 102 L70 100 M122 102 L130 100"/></g>`;
+  if (id === 'tinted') return `<g><rect x="77" y="97" width="20" height="14" rx="5" fill="#c9a27a" opacity=".55" stroke="#c9b9a0" stroke-width="1.4"/><rect x="103" y="97" width="20" height="14" rx="5" fill="#c9a27a" opacity=".55" stroke="#c9b9a0" stroke-width="1.4"/><path d="M97 103 L103 103" stroke="#c9b9a0" stroke-width="1.4"/></g>`;
+  if (id === 'aviator') return `<defs><linearGradient id="avl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#6e5a3a"/></linearGradient></defs><g stroke="#d9b36c" stroke-width="1.6"><path d="M76 98 L97 98 L95 110 C92 116 80 116 78 110 Z" fill="url(#avl)"/><path d="M103 98 L124 98 L122 110 C120 116 108 116 105 110 Z" fill="url(#avl)"/><path d="M97 99 L103 99" fill="none"/></g>`;
+  if (id === 'shades') {
+    // the deal-with-it 8-bit shades, built from pixels
+    const P = 3, rows = ['KKKKKKKKKKKKKKKK', '.KwwKKK..KwwKKK.', '..KwwKK...KwwKK.', '...KKK.....KKK..'];
+    let r = '';
+    rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') r += `<rect x="${76 + x * P}" y="${97 + y * P}" width="${P}" height="${P}" fill="${ch === 'K' ? '#050505' : '#fff'}"/>`; }));
+    return `<g shape-rendering="crispEdges">${r}</g>`;
+  }
+  return '';
+}
+
+function drHeadwearSVG(id, hairStyle) {
+  if (id === 'cap') return `<path d="M66 86 C66 58 86 50 100 50 C116 50 134 58 134 86 Z" fill="#1d3b2c"/><path d="M64 86 C80 80 120 80 136 86 C136 92 64 92 64 86 Z" fill="#14281e"/><text x="100" y="76" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="9" fill="#d9b36c">R</text>`;
+  if (id === 'beanie') return `<path d="M66 88 C64 58 84 48 100 48 C118 48 136 58 134 88 Z" fill="#b8432a"/><rect x="64" y="80" width="72" height="12" rx="5" fill="#8a2f1d"/><circle cx="100" cy="46" r="7" fill="#e9e5dc"/>`;
+  return '';
+}
+
+function drAvatarSVG(st, opt = {}) {
+  const look = { ...DR_LOOK_DEFAULT, ...(st.look || {}) }, eq = st.eq || {};
+  const skin = DR_SKIN[look.skin] || DR_SKIN[2], sk2 = drShade(skin, -0.16), hc = DR_HAIRC[look.hairC] || DR_HAIRC[0];
+  const titles = st.titles || {}, br = st.br || 0, id = 'a' + Math.random().toString(36).slice(2, 7);
+  const face = opt.face;
+  const bracelets = Math.min(4, titles.bracelet || 0), rings = Math.min(4, (titles.ring || 0) + (titles.me || 0));
+  let s = `<svg class="dravsvg" viewBox="${face ? '52 36 96 104' : '0 30 200 192'}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(st.name || 'Your player')}">`;
+  s += drHairSVG(look.hair, hc, true);
+  // neck and outfit
+  s += `<path d="M88 126 L112 126 L114 158 C106 164 94 164 86 158 Z" fill="${sk2}"/>`;
+  s += drOutfitSVG(eq.outfit || 'office', eq.patch);
+  if (eq.head === 'phones') s += `<path d="M72 160 C70 144 130 144 128 160" stroke="#222" stroke-width="5" fill="none"/><rect x="64" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/><rect x="122" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/>`;
+  if (eq.chain && eq.chain !== 'none') {
+    const c = eq.chain === 'silver' ? '#c9ccd4' : '#e3b94f', w = eq.chain === 'silver' ? 1.6 : 3.4;
+    s += `<path d="M84 156 C88 176 112 176 116 156" stroke="${c}" stroke-width="${w}" fill="none" ${eq.chain !== 'silver' ? 'stroke-dasharray="3 1.4"' : ''}/>`;
+    if (eq.chain === 'iced') s += [[90, 168], [100, 172], [110, 168], [95, 171], [105, 171]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.2" fill="#fff"/>`).join('');
+  }
+  // head
+  s += `<ellipse cx="70" cy="106" rx="6" ry="9" fill="${sk2}"/><ellipse cx="130" cy="106" rx="6" ry="9" fill="${sk2}"/>`;
+  s += `<path d="M70 96 C70 66 84 58 100 58 C116 58 130 66 130 96 C130 124 118 146 100 146 C82 146 70 124 70 96 Z" fill="${skin}"/>`;
+  s += `<path d="M76 120 C82 138 92 145 100 145 C108 145 118 138 124 120 C118 134 110 140 100 140 C90 140 82 134 76 120 Z" fill="${sk2}" opacity=".6"/>`;
+  // eyes, brows, nose, mouth
+  const blink = opt.blink ? ' class="drblink"' : '';
+  s += `<g${blink}><ellipse cx="87" cy="104" rx="5.5" ry="3.6" fill="#fff"/><ellipse cx="113" cy="104" rx="5.5" ry="3.6" fill="#fff"/><circle cx="88" cy="104" r="2.6" fill="#2a1d14"/><circle cx="114" cy="104" r="2.6" fill="#2a1d14"/><circle cx="89" cy="103" r=".8" fill="#fff"/><circle cx="115" cy="103" r=".8" fill="#fff"/></g>`;
+  s += `<path d="M79 95 C84 92 90 92 95 94 M105 94 C110 92 116 92 121 95" stroke="${drShade(hc, 0.05)}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  s += `<path d="M100 106 C99 112 97 116 96 118 C99 120 103 120 104 118" stroke="${sk2}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+  const mouth = opt.mouth || (opt.smile ? 'smile' : 'flat');
+  s += `<path d="${mouth === 'smile' ? 'M90 127 C96 133 104 133 110 127' : mouth === 'smug' ? 'M91 129 C98 130 104 128 110 124' : 'M91 128 C96 130 104 130 109 127'}" stroke="#8a4a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+  s += drFacialSVG(look.facial, hc);
+  s += drHairSVG(look.hair, hc, false);
+  s += drEyewearSVG(eq.eyes);
+  s += drHeadwearSVG(eq.head, look.hair);
+  if (!face) {
+    // the table, your arms, cards, watch, bracelets, rings, chips
+    s += `<path d="M0 194 L200 194 L200 222 L0 222 Z" fill="#0e4d39"/><path d="M0 188 C60 182 140 182 200 188 L200 197 C140 191 60 191 0 197 Z" fill="#3a2414"/><path d="M0 189 C60 183 140 183 200 189" stroke="#5a3a20" stroke-width="1.2" fill="none"/>`;
+    const sleeve = { office: '#cdd8e6', hoodie: '#6b6f76', polo: '#1f2a44', bomber: '#1b1b1e', blazer: '#3b3f47', suit: '#1b2442', designer: '#4a1426', tux: '#121214' }[eq.outfit || 'office'];
+    s += `<path d="M10 222 C20 204 46 192 74 190 L80 202 C58 206 40 212 30 222 Z" fill="${sleeve}" stroke="${drShade(sleeve, -0.35)}"/>`;
+    s += `<path d="M190 222 C180 204 154 192 126 190 L120 202 C142 206 160 212 170 222 Z" fill="${sleeve}" stroke="${drShade(sleeve, -0.35)}"/>`;
+    s += `<g><rect x="86" y="196" width="15" height="21" rx="2" fill="#f7f3e8" stroke="#bbb" transform="rotate(-8 93 206)"/><rect x="98" y="196" width="15" height="21" rx="2" fill="#f7f3e8" stroke="#bbb" transform="rotate(7 105 206)"/><path d="M92 200 l3 4 l-3 4 l-3 -4 Z" fill="#c2362a" transform="rotate(-8 93 206)"/></g>`;
+    s += `<ellipse cx="86" cy="200" rx="13" ry="8" fill="${skin}" stroke="${sk2}"/><ellipse cx="114" cy="200" rx="13" ry="8" fill="${skin}" stroke="${sk2}"/>`;
+    s += `<path d="M92 196 L92 204 M97 195 L97 204 M103 195 L103 204 M108 196 L108 204" stroke="${sk2}" stroke-width="1"/>`;
+    // watch (left wrist)
+    const wt = eq.watch || 'digital', band = { digital: '#222', steel: '#b9bec7', gold: '#d9b36c', iced: '#e9edf2', hyper: '#1a1a1a' }[wt], face2 = { digital: '#3f5f3a', steel: '#1d3b6e', gold: '#f3e2b0', iced: '#f8fbff', hyper: '#2c2c2c' }[wt];
+    s += `<g transform="rotate(-18 72 198)"><rect x="66" y="190" width="10" height="17" rx="2" fill="${band}"/><circle cx="71" cy="198.5" r="5.6" fill="${face2}" stroke="${band}" stroke-width="2"/>${wt === 'iced' ? '<circle cx="71" cy="198.5" r="6.6" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="1 1.2"/>' : ''}${wt === 'hyper' ? '<circle cx="71" cy="198.5" r="2.4" fill="none" stroke="#d9b36c" stroke-width="1"/>' : ''}</g>`;
+    // bracelets (right wrist), one band per title, plus the count
+    for (let k = 0; k < bracelets; k++) s += `<rect x="${124 + k * 3.4}" y="${190 - k * 0.6}" width="2.6" height="16" rx="1.2" fill="#e8c35a" stroke="#9a7a2a" stroke-width=".5" transform="rotate(18 128 198)"/>`;
+    // rings on fingers
+    for (let k = 0; k < rings; k++) s += `<rect x="${91 + k * 5.4}" y="196" width="3.4" height="2.4" rx=".8" fill="#e8c35a" stroke="#fff" stroke-width=".4"/>`;
+    // chips: the stack grows with your bankroll
+    const tiers = [0, 1000, 10000, 50000, 250000, 1e6, 5e6], lv = tiers.filter((t) => br >= t).length;
+    const cols = ['#f3ecdc', '#c2362a', '#2a6fdb', '#1e8f4a', '#141414', '#7a3fc0', '#e3b94f'];
+    for (let c = 0; c < Math.min(3, Math.ceil(lv / 2)); c++) {
+      const h = Math.max(2, lv * 2 - c * 3);
+      for (let k = 0; k < h; k++) s += `<rect x="${150 + c * 14}" y="${210 - k * 3}" width="12" height="3" rx="1" fill="${cols[(k + c) % Math.min(cols.length, lv + 1)]}" stroke="#000" stroke-width=".4"/>`;
+    }
+  }
+  return s + '</svg>';
+}
+
+// ================================================================ THE DREAM: set pieces behind each scene
+// Light, simple illustrations so every place reads at a glance.
+function drPropSVG(place) {
+  const W = 400, H = 300, svg = (inner) => `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+  let rnd = 7; const R = () => { rnd = (rnd * 9301 + 49297) % 233280; return rnd / 233280; };
+  const windows = (x, y, w, h, on, col) => { let s = ''; for (let yy = y + 6; yy < y + h - 4; yy += 10) for (let xx = x + 5; xx < x + w - 5; xx += 9) if (R() < on) s += `<rect x="${xx}" y="${yy}" width="4" height="5" fill="${col}" opacity="${0.4 + R() * 0.6}"/>`; return s; };
+  const skyline = (base, col, lit) => { let s = '', x = -10; while (x < W) { const w = 30 + R() * 40, h = 60 + R() * 120; s += `<rect x="${x}" y="${base - h}" width="${w}" height="${h}" fill="${col}"/>` + windows(x, base - h, w, h, lit, '#ffd98a'); x += w + 4; } return s; };
+  switch (place) {
+    case 'office': return svg(`<rect x="40" y="20" width="320" height="170" rx="4" fill="#0d1a26" stroke="#2a3a48" stroke-width="6"/>${skyline(190, '#132232', 0.25)}<path d="M200 20 V190 M40 105 H360" stroke="#2a3a48" stroke-width="5"/>
+      <rect x="0" y="232" width="400" height="68" fill="#1b2027"/><rect x="250" y="168" width="96" height="62" rx="4" fill="#0e1318" stroke="#39434e" stroke-width="3"/><rect x="256" y="174" width="84" height="50" fill="#1f4d7a" opacity=".7"/><path d="M262 214 l14 -12 l12 7 l14 -16 l14 9 l16 -14" stroke="#9ed0ff" stroke-width="2" fill="none"/><rect x="290" y="230" width="16" height="6" fill="#39434e"/>
+      <rect x="118" y="212" width="38" height="18" rx="2" fill="#f0c35a" transform="rotate(-6 137 221)"/><text x="121" y="225" font-size="8" font-family="Arial" fill="#3a2a10" transform="rotate(-6 137 221)">DUE 8AM</text>`);
+    case 'diner': return svg(`<rect x="0" y="236" width="400" height="64" fill="#2a1520"/><rect x="0" y="228" width="400" height="10" fill="#c9c9cf"/>
+      <g font-family="Georgia,serif" font-weight="700" text-anchor="middle"><text x="200" y="88" font-size="54" fill="none" stroke="#ff4f79" stroke-width="3" style="filter:drop-shadow(0 0 8px #ff4f79)">LUCKY 7</text><text x="200" y="126" font-size="26" fill="none" stroke="#3cdcd2" stroke-width="2" letter-spacing="10" style="filter:drop-shadow(0 0 6px #3cdcd2)">DINER</text></g>
+      <path d="M296 226 l40 0 l-20 -26 Z" fill="#f0c35a"/><path d="M296 226 l40 0 l-2 -6 l-36 0 Z" fill="#b8742a"/><ellipse cx="316" cy="228" rx="30" ry="4" fill="#f4f4f6"/><rect x="70" y="196" width="18" height="30" rx="3" fill="#e9e5dc" opacity=".9"/><path d="M88 204 q10 4 0 14" stroke="#e9e5dc" stroke-width="3" fill="none"/>`);
+    case 'cardroom': return svg(`${[90, 200, 310].map((x) => `<path d="M${x} 0 V36" stroke="#3a3226" stroke-width="2"/><path d="M${x - 34} 62 L${x - 18} 36 H${x + 18} L${x + 34} 62 Z" fill="#2a1d12"/><ellipse cx="${x}" cy="64" rx="34" ry="5" fill="#ffd98a" opacity=".85"/><path d="M${x - 34} 64 L${x - 90} 240 H${x + 90} L${x + 34} 64 Z" fill="#ffd98a" opacity=".05"/>`).join('')}
+      <ellipse cx="200" cy="262" rx="230" ry="52" fill="#3a2414"/><ellipse cx="200" cy="262" rx="214" ry="44" fill="#0e4d39"/><ellipse cx="200" cy="262" rx="150" ry="24" fill="none" stroke="rgba(244,223,166,.25)" stroke-dasharray="4 5"/>`);
+    case 'casino': return svg(`<rect x="60" y="34" width="280" height="44" rx="8" fill="#1a0b10" stroke="#d9b36c" stroke-width="2"/>${Array.from({ length: 28 }, (_, i) => `<circle cx="${70 + i * 9.6}" cy="40" r="2.2" fill="#ffd98a"/><circle cx="${70 + i * 9.6}" cy="72" r="2.2" fill="#ffd98a"/>`).join('')}<text x="200" y="64" text-anchor="middle" font-family="Georgia,serif" font-size="20" font-weight="700" fill="#f4dfa6" letter-spacing="4">SILVER STRIKE</text>
+      ${[40, 110, 290, 360].map((x) => `<rect x="${x - 22}" y="150" width="44" height="90" rx="6" fill="#2a1520" stroke="#5a2a3a"/><rect x="${x - 15}" y="164" width="30" height="20" fill="#0b0609"/><text x="${x}" y="179" text-anchor="middle" font-size="12" fill="#ff4f79" font-family="Arial">777</text>`).join('')}<rect x="0" y="240" width="400" height="60" fill="#1a0b10"/>`);
+    case 'vegas': return svg(`${skyline(250, '#1d0d2e', 0.35)}<rect x="0" y="250" width="400" height="50" fill="#0c0716"/><g transform="translate(200 90)"><path d="M-110 -40 H110 V40 H-110 Z" fill="#2a0f3d" stroke="#f4dfa6" stroke-width="3"/>${Array.from({ length: 22 }, (_, i) => `<circle cx="${-104 + i * 9.9}" cy="-34" r="2.4" fill="#ffd98a"/><circle cx="${-104 + i * 9.9}" cy="34" r="2.4" fill="#ffd98a"/>`).join('')}<text y="-6" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#f878b8" letter-spacing="3">WELCOME TO</text><text y="20" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700" fill="#f4dfa6" letter-spacing="2">THE SUMMER</text></g>`);
+    case 'tv': return svg(`${[70, 330].map((x) => `<path d="M${x} 0 L${x - 30} 30 H${x + 30} Z" fill="#202838"/><path d="M${x - 30} 30 L${200} 260 L${x + 30} 30 Z" fill="#9ed0ff" opacity=".07"/>`).join('')}<rect x="168" y="20" width="64" height="26" rx="5" fill="#d8283a"/><circle cx="182" cy="33" r="5" fill="#fff"/><text x="192" y="38" font-family="Arial Black,Arial" font-size="13" fill="#fff">LIVE</text>
+      <g transform="translate(330 200)"><rect x="-26" y="-20" width="52" height="34" rx="5" fill="#15181f" stroke="#3a4250"/><circle cx="-34" cy="-3" r="12" fill="#0b0d12" stroke="#3a4250" stroke-width="3"/><path d="M-8 14 L-20 60 M8 14 L20 60 M0 14 V60" stroke="#3a4250" stroke-width="3"/></g><ellipse cx="200" cy="276" rx="220" ry="40" fill="#0e4d39" opacity=".8"/>`);
+    case 'titan': return svg(`<g transform="translate(200 150) scale(.8)" fill="none" stroke="#d9b36c" stroke-width="5" stroke-linecap="round"><path d="M0 -80 V70"/><path d="M-40 -60 V-20 Q-40 10 0 10 Q40 10 40 -20 V-60"/><path d="M0 -92 l-10 18 h20 Z M-40 -72 l-9 16 h18 Z M40 -72 l-9 16 h18 Z" fill="#d9b36c"/></g><text x="207" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="26" letter-spacing="14" fill="#d9b36c">TITAN</text>`);
+    case 'main': return svg(`<rect x="70" y="40" width="260" height="56" fill="#5a0f1c" stroke="#f4dfa6" stroke-width="2"/><text x="200" y="78" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#f4dfa6" letter-spacing="5">MAIN EVENT</text>
+      <g transform="translate(200 182)"><ellipse rx="70" ry="26" fill="none" stroke="#e3b94f" stroke-width="14"/><ellipse rx="70" ry="26" fill="none" stroke="#fff3c4" stroke-width="2" stroke-dasharray="3 6"/><rect x="-18" y="-40" width="36" height="28" rx="4" fill="#e3b94f" stroke="#fff3c4"/></g>${Array.from({ length: 40 }, () => `<rect x="${R() * 400}" y="${R() * 300}" width="5" height="9" fill="${['#f4dfa6', '#e8705a', '#5aa9de'][(R() * 3) | 0]}" opacity=".6" transform="rotate(${R() * 90} ${R() * 400} ${R() * 300})"/>`).join('')}`);
+    case 'hall': return svg(`${[70, 160, 250, 340].map((x, i) => `<rect x="${x - 34}" y="40" width="68" height="88" fill="#1d1810" stroke="#d9b36c" stroke-width="4"/><circle cx="${x}" cy="74" r="16" fill="#3a3226"/><path d="M${x - 22} 118 Q${x} 92 ${x + 22} 118 Z" fill="#3a3226"/><rect x="${x - 26}" y="136" width="52" height="8" fill="#8f6f33"/>`).join('')}<rect x="0" y="250" width="400" height="50" fill="#1a140c"/>`);
+    default: return '';
+  }
+}
+
+// ================================================================ THE DREAM: engine
+// State, money, chapters, unlocks, and playing an event: solver-graded decisions decide your
+// stack, your finish and your payout.
+
+var DR = null;
+const drMoney = (n) => Math.round(n).toLocaleString('en-US');
+const drMoneyShort = (n) => (n >= 1e6 ? `${+(n / 1e6).toFixed(n >= 1e7 ? 1 : 2)}M` : n >= 1e4 ? `${Math.round(n / 1000)}K` : drMoney(n));
+const drOrd = (n) => { const v = n % 100; return n + (v >= 11 && v <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); };
+const drPaid = (ev) => typicalPayouts(ev.field, ev.buyin, 0).paid;
+const drTitleCount = (s) => Object.values(s.titles).reduce((a, b) => a + b, 0);
+const drStakeSize = (s) => [300, 300, 1500, 6000, 25000, 120000, 60000, 150000][Math.min(7, s.ch)];
+
+function drDefault() {
+  return { v: 1, made: false, name: '', look: { ...DR_LOOK_DEFAULT }, br: 0, peak: 0, ch: 0, story: {}, queue: [], job: null,
+    titles: { local: 0, room: 0, ring: 0, bracelet: 0, tour: 0, glo: 0, titan: 0, me: 0 }, legends: {}, met: {}, events: {},
+    dec: 0, perfect: 0, good: 0, close: 0, mistakes: 0, played: 0, cashes: 0, ft: 0, flags: {},
+    eq: { outfit: 'office', eyes: 'readers', head: 'none', watch: 'digital', chain: 'none', home: 'studio', ride: 'bus', patch: 'none' },
+    owned: {}, newItems: [], debt: 0, ledger: [], trophies: [], lastEvent: null };
+}
+function drLoad() {
+  try {
+    const v = JSON.parse(localStorage.getItem(DR_KEY) || 'null');
+    if (!v || v.v !== 1) return drDefault();
+    const d = drDefault();
+    return { ...d, ...v, titles: { ...d.titles, ...(v.titles || {}) }, eq: { ...d.eq, ...(v.eq || {}) }, look: { ...d.look, ...(v.look || {}) }, flags: v.flags || {} };
+  } catch { return drDefault(); }
+}
+function drSave() { try { localStorage.setItem(DR_KEY, JSON.stringify(DR.st)); } catch { /* storage unavailable */ } }
+
+function drAdd(s, amt, why) {
+  s.br = Math.max(0, Math.round(s.br + amt)); s.peak = Math.max(s.peak, s.br);
+  s.ledger.push({ d: Date.now(), amt: Math.round(amt), why }); if (s.ledger.length > 200) s.ledger.splice(0, s.ledger.length - 200);
+}
+// profit pays back Slick's stake first (half of it until the debt is gone)
+function drRepay(s, profit) {
+  if (s.debt <= 0 || profit <= 0) return 0;
+  const pay = Math.min(s.debt, Math.round(profit / 2)); s.debt -= pay; drAdd(s, -pay, 'Paid Slick back'); return pay;
+}
+
+// ---------------------------------------------------------------- unlocks
+function drItemKey(it) { return it.slot + ':' + it.id; }
+function drUnlocks(s) {
+  const fresh = [];
+  for (const it of DR_ITEMS) {
+    const k = drItemKey(it);
+    if (s.owned[k] || !it.test(s)) continue;
+    s.owned[k] = true;
+    if (it.req && it.req !== 'Where it all started' && it.id !== 'none') fresh.push(it);
+    // wear the newest thing you earn: later in the list is the upgrade
+    const cur = DR_ITEMS.findIndex((x) => x.slot === it.slot && x.id === s.eq[it.slot]), mine = DR_ITEMS.indexOf(it);
+    if (it.id !== 'none' && mine > cur && it.slot !== 'head') s.eq[it.slot] = it.id;
+  }
+  s.newItems = [...(s.newItems || []), ...fresh.map(drItemKey)];
+  return fresh;
+}
+const drOwns = (s, slot, id) => !!s.owned[slot + ':' + id];
+function drRep(s) { for (const [t, label] of DR_REPUTATION) if (t(s)) return typeof label === 'function' ? label(s) : label; return 'Dreamer'; }
+
+// ---------------------------------------------------------------- chapters
+function drAvailable(s) {
+  if (s.ch === 0) return DR_EVENTS.filter((e) => e.id === 'local');
+  return DR_EVENTS.filter((e) => e.ch >= 1 && e.ch <= s.ch);
+}
+function drAfford(s, ev) { return ev.free || s.br >= ev.buyin; }
+function drRisk(s, ev) {
+  if (ev.free) return ['free', 'Free seat'];
+  if (s.br < ev.buyin) return ['no', `Need $${drMoney(ev.buyin)}`];
+  const r = ev.buyin / Math.max(1, s.br);
+  return r <= 0.05 ? ['safe', 'Safe for your roll'] : r <= 0.2 ? ['shot', 'Taking a shot'] : ['yolo', 'Betting the dream'];
+}
+// after anything happens: next chapter, rock bottom, first title
+function drProgress(s) {
+  if (s.ch >= 1 && s.ch < 7 && DR_CHAPTERS[s.ch].test(s) && !s.story['c' + (s.ch + 1)] && !s.queue.includes('c' + (s.ch + 1))) s.queue.push('c' + (s.ch + 1));
+  if (s.ch >= 1) {
+    const live = drAvailable(s).filter((e) => !e.free), cheapest = Math.min(...live.map((e) => e.buyin));
+    if (s.br < cheapest && !s.queue.includes('broke')) {
+      const stake = Math.max(drStakeSize(s), cheapest - s.br);
+      drAdd(s, stake, "Slick's stake"); s.debt += stake; s.flags.stakes = (s.flags.stakes || 0) + 1; s.queue.push('broke');
+    }
+  }
+}
+
+// ---------------------------------------------------------------- an event
+const DR_STAGE = { early: { gid: 'ring', label: 'Early', long: 'Early levels' }, middle: { gid: 'ring', label: 'Middle', long: 'Middle levels' }, bubble: { gid: 'bubble', label: 'Bubble', long: 'The bubble' },
+  deep: { gid: 'shove', label: 'Deep', long: 'Deep run' }, final: { gid: 'shove', label: 'Final', long: 'Final table' }, cash: { gid: 'cash', label: 'Cash', long: 'Cash session' } };
+// bigger fields mean longer days: more levels to survive before the final table
+function drStagesFor(ev) {
+  if (ev.kind === 'cash') return ['cash'];
+  return ev.field < 150 ? ['early', 'bubble', 'final'] : ev.field < 1500 ? ['early', 'middle', 'bubble', 'final'] : ['early', 'middle', 'bubble', 'deep', 'final'];
+}
+// poker is poker: even perfect play gets coolered sometimes. A bigger stack survives more of them.
+const DR_COOLERS = [
+  'Kings into aces. All the chips go in, and you never had a chance.',
+  'You flop a set. He flops the higher set. That is the whole story.',
+  'Ace-king versus queens, a coin flip for your tournament. The coin lands on its edge, then on queens.',
+  'Your all-in is called by the one hand in his range that beats you.',
+  'Runner-runner. You did nothing wrong. The deck did.',
+];
+function drCoolerRoll(run) {
+  const ev = run.ev, p = Math.max(0.02, Math.min(0.22, 0.05 + 0.025 * Math.log10(ev.field) - (run.stack - 100) / 700));
+  return run.rng() < p;
+}
+const DR_DELTA = { perfect: 10, good: 6, close: 1, bad: -36 };
+
+function drPickBoss(s, ev, rng) {
+  if (ev.boss) return ev.boss;
+  if (!ev.legends) return null;
+  const fresh = ev.legends.filter((id) => !s.legends[id]), pool = fresh.length ? fresh : ev.legends;
+  return pool[(rng() * pool.length) | 0];
+}
+function drStart(id) {
+  const s = DR.st, ev = drEvent(id);
+  if (DR.run || !ev || !drAfford(s, ev)) return;
+  if (!ev.free) drAdd(s, -ev.buyin, `Buy-in: ${ev.name}`);
+  s.lastEvent = id; drSave();
+  const seed = `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
+  DR.saved = snapSetup(); TR.random = true; window.__trRand = true;
+  if (S.variant !== 'nlh') setVariant('nlh');
+  DR.run = { ev, stages: drStagesFor(ev), si: 0, h: 0, stack: 100, results: [], total: 0, rng,
+    state: 'loading', spot: null, boss: drPickBoss(s, ev, rng), fails: 0, bust: false, combo: 0, t0: performance.now(), tip: 0 };
+  DR.view = 'run'; drRender(); drTable();
+}
+async function drTable() {
+  const run = DR.run; if (!run) return;
+  run.state = 'loading'; run.spot = null; drRender();
+  const stage = run.stages[run.si];
+  for (let attempt = 0; attempt < 3; attempt++) {
+    applySetup(arSetup(DR_STAGE[stage].gid, run.rng)); run.t0 = performance.now();
+    while (performance.now() - run.t0 < AR_SOLVE_MS) {
+      await sleep(250); if (DR.run !== run) return;
+      if (pfState.done || pfState.error || pfState.deep) break;
+      const bar = $('drLoadBar'); if (bar) bar.style.width = `${Math.min(100, ((performance.now() - run.t0) / AR_SOLVE_MS) * 100)}%`;
+    }
+    if (!pfState.error && !pfState.deep) break;
+  }
+  run.state = 'ready'; drRender();
+}
+async function drHand() {
+  const run = DR.run; if (!run) return;
+  run.state = 'dealing'; drRender();
+  const sp = await drDeal(run.rng); if (DR.run !== run) return;
+  if (!sp) { if (++run.fails > 3) { drFinish(); return; } drTable(); return; }
+  run.spot = sp; run.state = 'play'; drRender();
+}
+// a good teaching spot: the solver has a clear opinion, and the action before you is something real
+// people do (not five players all-in in front of you because a half-solved tree said so)
+async function drDeal(rng) {
+  let last = null;
+  for (let t = 0; t < 10; t++) {
+    const sp = await arDeal(rng); if (!sp) return last;
+    last = sp;
+    const strat = sp.res.strat[sp.cls], k = strat.length, hi = Math.max(...strat), lo = Math.min(...strat);
+    const flat = k >= 2 && hi - lo < 0.22;
+    let jams = 0, callsAfterJam = 0; for (const e of sp.path) { if (e.k === 'allin') jams++; else if (jams && e.k === 'call') callsAfterJam++; }
+    const chaos = jams + callsAfterJam >= 3 || jams >= 2;
+    if (!flat && !chaos) return sp;
+  }
+  return last;
+}
+function drAnswer(k) {
+  const run = DR.run; if (!run || run.state !== 'play') return;
+  const sp = run.spot, j = sp.res.actions.findIndex((x) => x.k === k); if (j < 0) return;
+  const strat = sp.res.strat[sp.cls], fmax = Math.max(...strat), rel = fmax > 0 ? strat[j] / fmax : 0, ok = strat[j] >= 0.05;
+  const tier = !ok ? 'bad' : rel >= 0.9 ? 'perfect' : rel >= 0.5 ? 'good' : 'close';
+  const pts = ok ? Math.round(100 * rel) : -Math.round(100 * (1 - rel));
+  const before = run.stack; run.stack = Math.max(0, Math.min(200, run.stack + DR_DELTA[tier]));
+  run.combo = ok ? run.combo + 1 : 0;
+  run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack });
+  if (run.stack <= 0) run.bust = true;
+  arSfx(tier === 'bad' ? 'bad' : tier); arBuzz(tier);
+  run.state = 'answered'; drRender();
+  if (matchMedia('(max-width: 760px)').matches) { const v = document.querySelector('#dream .drverdict'); if (v) v.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+}
+function drNext() {
+  const run = DR.run; if (!run || run.state !== 'answered') return;
+  if (run.bust) { drFinish(); return; }
+  const per = run.ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS;
+  if (++run.h < per) { drHand(); return; }
+  run.h = 0;
+  if (run.si + 1 < run.stages.length) {
+    // between levels, the cards can still beat you
+    if (run.ev.kind === 'mtt' && drCoolerRoll(run)) { run.bust = true; run.cooler = DR_COOLERS[(run.rng() * DR_COOLERS.length) | 0]; run.state = 'cooler'; drRender(); return; }
+    run.si++; run.tip++; drTable();
+  } else { run.si++; drFinish(); }
+}
+function drRestore() {
+  if (DR.saved) { applySetup(DR.saved); DR.saved = null; }
+  TR.random = false; window.__trRand = false;
+}
+function drQuit() {
+  const run = DR.run; if (!run) return;
+  // walking away: a tournament counts as busting where you are; a cash session cashes out what's left
+  if (run.ev.kind === 'mtt') run.bust = true;
+  drFinish(true);
+}
+function drLeave() { if (DR && DR.run) drQuit(); }
+
+// where you finish: busting decides it early; surviving to the end, your decisions (and a little luck) do
+function drPlace(run, ev) {
+  const N = ev.field, P = drPaid(ev), rng = run.rng, stage = run.stages[Math.min(run.si, run.stages.length - 1)];
+  const n = run.results.length, pct = run.total / (100 * Math.max(1, n)), between = (a, b) => Math.max(1, Math.min(N, a + ((rng() * Math.max(1, b - a + 1)) | 0)));
+  if (run.bust) {
+    if (stage === 'early') return between(Math.max(P + 2, Math.round(N * 0.45)), N);
+    if (stage === 'middle') return between(P + 2, Math.max(P + 2, Math.round(N * 0.45)));
+    if (stage === 'bubble') return run.h === 0 && !run.cooler ? P + 1 : between(Math.min(P, 10), P);
+    if (stage === 'deep') return between(10, Math.max(10, Math.min(P, Math.round(P * 0.3))));
+    const ranges = [[7, 9], [4, 6], [2, 3]], [a, b] = ranges[Math.min(2, run.h)];
+    return between(Math.min(a, N), Math.min(b, N));
+  }
+  // you survived the whole thing: your decisions (and a little luck) decide the top spots
+  const winT = 0.6 + 0.04 * Math.log10(N) + 0.01 * Math.min(6, ev.ch), luck = (rng() - 0.5) * 0.12, score = pct + luck + (run.stack - 100) / 1000;
+  run.luck = luck;
+  return score >= winT ? 1 : score >= winT - 0.12 ? 2 : score >= winT - 0.22 ? 3 : between(4, Math.min(9, N));
+}
+
+function drFinish(quit) {
+  const run = DR.run, s = DR.st, ev = run.ev; if (!run) return;
+  DR.run = null; drRestore();
+  const n = run.results.length, pct = n ? run.total / (100 * n) : 0;
+  const counts = { perfect: 0, good: 0, close: 0, bad: 0 }; run.results.forEach((r) => counts[r.tier]++);
+  s.dec += n; s.perfect += counts.perfect; s.good += counts.good; s.close += counts.close; s.mistakes += counts.bad; s.played++;
+  const rec = s.events[ev.id] || (s.events[ev.id] = { played: 0, cashes: 0, wins: 0, best: null, cash: 0, net: 0 });
+  rec.played++;
+  const res = { ev, n, pct, counts, quit: !!quit, boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
+  if (ev.kind === 'cash') {
+    let net;
+    if (run.bust) net = -ev.buyin;
+    else {
+      const edge = Math.max(-1, Math.min(2.4, (pct - 0.45) * 4)), luck = (run.rng() - 0.5) * 0.5;
+      net = Math.round(ev.buyin * Math.max(-1, edge + luck));
+      if (quit) net = Math.min(net, Math.round(ev.buyin * ((run.stack - 100) / 100)));
+    }
+    drAdd(s, ev.buyin + net, `Cashed out: ${ev.name}`);
+    res.net = net; res.prize = ev.buyin + net; rec.net += net;
+    if (net > 0) { s.flags.cashWin = true; res.repaid = drRepay(s, net); }
+  } else {
+    const P = drPaid(ev), place = drPlace(run, ev), pays = typicalPayouts(ev.field, ev.buyin, 0).amounts;
+    const prize = place <= P ? Math.round(pays[place - 1]) : 0;
+    res.place = place; res.paid = P; res.prize = prize; res.net = prize - (ev.free ? 0 : ev.buyin);
+    rec.best = rec.best ? Math.min(rec.best, place) : place;
+    if (prize > 0) { drAdd(s, prize, `${drOrd(place)} in ${ev.name}`); s.cashes++; rec.cashes++; rec.cash = Math.max(rec.cash, prize); if (ev.ch === 2) s.flags.circuitCash = true; res.repaid = drRepay(s, res.net); }
+    rec.net += res.net;
+    const reachedFinal = !run.bust || run.stages[run.si] === 'final';
+    res.cooler = run.cooler || null; res.stage = run.stages[Math.min(run.si, run.stages.length - 1)];
+    if (reachedFinal && run.si >= run.stages.length - 1) { s.ft++; if (ev.id === 'main') s.flags.meft = true; if (run.boss) { s.met[run.boss] = true; res.met = run.boss; } }
+    if (place === 1) {
+      rec.wins++;
+      if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); }
+      if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { s.legends[run.boss] = true; res.beat = run.boss; }
+      if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
+      if (ev.id === 'main' && !s.story.champ) s.queue.push('champ');
+    }
+  }
+  if (ev.id === 'local' && !s.story.p_after) s.queue.push('p_after');
+  res.after = s.br;
+  res.unlocked = drUnlocks(s);
+  drProgress(s);
+  drSave();
+  DR.last = res; DR.view = 'results'; drRender(); scrollTo(0, 0);
+  arSfx(res.titles.length ? 'win' : res.prize > 0 || res.net > 0 ? 'good' : 'loss');
+  if (res.unlocked.length) setTimeout(() => arSfx('unlock'), 900);
+}
+
+// ================================================================ THE DREAM: screens
+// title → creator → story scenes → life hub (schedule, closet, trophies, legends, story) → event → results
+
+const drBtn = (cls, attrs, label) => `<button class="drbtn ${cls}" ${attrs}>${label}</button>`;
+const drPortraitImg = () => { const i = document.querySelector('.brandmark img'); return i ? i.src : ''; };
+
+function drRender() {
+  if (!DR || S.mode !== 'trainer') return;
+  const box = $('dream'); if (!box) return;
+  const s = DR.st;
+  if (DR.view === 'hub' && s.queue.length && !DR.run) { drPlayScene(s.queue.shift()); return; }
+  box.className = 'dream v-' + DR.view;
+  box.innerHTML = DR.view === 'title' ? drTitleHTML() : DR.view === 'create' ? drCreateHTML() : DR.view === 'scene' ? drSceneHTML()
+    : DR.view === 'run' ? drRunHTML() : DR.view === 'results' ? drResultsHTML() : drHubHTML();
+  if (DR.view === 'scene') drType();
+  const nm = $('drName'); if (nm) nm.oninput = () => { DR.draft.name = nm.value.slice(0, 18); const p = $('drPrevName'); if (p) p.textContent = nm.value || 'You'; };
+}
+
+// ---------------------------------------------------------------- title + creator
+function drTitleHTML() {
+  const s = DR.st;
+  return `<section class="drtitle pl-diner">
+    <div class="drtitle-in">
+      <div class="drkicker">Confirmed Fire Poker presents</div>
+      <h1 class="drlogo">The <em>Dream</em></h1>
+      <p class="drtag">From a cubicle on floor 34 to the Hall of Legends.<br>Every decision is graded by the solver. Every title is earned.</p>
+      <div class="drtitle-btns">
+        ${s.made ? drBtn('gold big', 'data-dr="continue"', `Continue · ${esc(s.name)}`) : ''}
+        ${drBtn(s.made ? 'ghost' : 'gold big', 'data-dr="new"', s.made ? 'Start a new career' : 'Start your story')}
+      </div>
+      ${s.made ? `<div class="drconfirm" id="drNewConfirm" hidden><span>Start over? Your current career is erased.</span>${drBtn('danger', 'data-dr="newyes"', 'Erase and start over')}${drBtn('ghost', 'data-dr="newno"', 'Keep it')}</div>` : ''}
+      <div class="drquote">“People insist on calling it luck…”</div>
+    </div>
+  </section>`;
+}
+function drCreateHTML() {
+  const d = DR.draft, look = d.look, prev = { name: d.name || 'You', look, eq: drDefault().eq, titles: {}, br: 0 };
+  const sw = (field, list, cur, kind) => list.map((c, i) => `<button class="drsw ${kind}" style="--c:${c}" data-dr="look" data-f="${field}" data-v="${i}" aria-pressed="${cur === i}" aria-label="${field} ${i + 1}"></button>`).join('');
+  const opts = (field, list, cur) => list.map(([v, n]) => `<button class="drchip" data-dr="look" data-f="${field}" data-v="${v}" aria-pressed="${cur === v}">${n}</button>`).join('');
+  return `<section class="drcreate">
+    <div class="drcreate-prev pl-office"><div class="drcard-av">${drAvatarSVG(prev)}</div><b id="drPrevName">${esc(d.name || 'You')}</b><small>Associate Analyst · Floor 34</small></div>
+    <div class="drcreate-form">
+      <h2 class="drh">Who are you?</h2>
+      <label class="drfield"><span>Your name</span><input id="drName" maxlength="18" value="${esc(d.name)}" placeholder="Your name" autocomplete="off"></label>
+      <div class="drfield"><span>Skin tone</span><div class="drsws">${sw('skin', DR_SKIN, look.skin, 'skin')}</div></div>
+      <div class="drfield"><span>Hair</span><div class="drchips">${opts('hair', DR_HAIR, look.hair)}</div></div>
+      <div class="drfield"><span>Hair color</span><div class="drsws">${sw('hairC', DR_HAIRC, look.hairC, 'hair')}</div></div>
+      <div class="drfield"><span>Facial hair</span><div class="drchips">${opts('facial', DR_FACIAL, look.facial)}</div></div>
+      <div class="drrow">${drBtn('ghost', 'data-dr="title"', 'Back')}${drBtn('gold big', 'data-dr="begin"', 'Clock in →')}</div>
+      <p class="drhint">Clothes, jewelry, your home and your ride come later. You have to earn those.</p>
+    </div>
+  </section>`;
+}
+
+// ---------------------------------------------------------------- story scenes
+function drPlayScene(id) {
+  const sc = DR_SCENES[id]; if (!sc) { DR.view = 'hub'; drRender(); return; }
+  DR.sc = { id, i: 0, extra: [] }; DR.view = 'scene'; drRender(); scrollTo(0, 0);
+}
+function drBeat() {
+  const sc = DR.sc; if (!sc) return null;
+  return sc.extra.length ? sc.extra[0] : DR_SCENES[sc.id].beats[sc.i] || null;
+}
+function drSpeaker(b) {
+  const s = DR.st;
+  if (b.sp === 'n') return null;
+  if (b.sp === 'you') return { name: s.name || 'You', role: drRep(s), av: `<div class="drface you">${drAvatarSVG(s, { face: 1 })}</div>` };
+  if (b.sp.startsWith('L:')) {
+    const L = drLegend(b.sp.slice(2));
+    return { name: L.name, role: `“${L.nick}” · ${L.era}`, av: `<div class="drface legend">${drFaceOf(drLegendLook(L))}</div>` };
+  }
+  const p = DR_PEOPLE[b.sp];
+  if (b.sp === 'slick') { const img = drPortraitImg(); return { name: b.who || p.name, role: b.who ? '' : p.role, av: `<div class="drface slick">${img ? `<img src="${img}" alt="">` : '🕶️'}</div>` }; }
+  return { name: p.name, role: p.role, av: `<div class="drface npc" style="--c:${p.c}">${drFaceOf(p, p.mouth)}</div>` };
+}
+function drFaceOf(p, mouth) { return drAvatarSVG({ name: p.name || '', look: p.look, eq: { ...drDefault().eq, ...p.eq }, titles: {}, br: 0 }, { face: 1, mouth }); }
+function drLegendFace(L) { return `<div class="drlegend-mono face">${drFaceOf(drLegendLook(L))}</div>`; }
+function drSceneHTML() {
+  const sc = DR.sc, def = DR_SCENES[sc.id], b = drBeat(); if (!b) return '';
+  const place = b.place || def.place, pl = DR_PLACES[place] || {};
+  const who = drSpeaker(b), text = typeof b.t === 'function' ? b.t(DR.st) : b.t;
+  DR.tw = { full: text, n: 0 };
+  const total = def.beats.length, at = Math.min(total, sc.i + 1);
+  const choice = !sc.extra.length && b.choice;
+  return `<section class="drscene pl-${place}">
+    <div class="drscene-top"><span class="drkicker">${esc(def.title || '')}${def.sub ? ` · ${esc(def.sub)}` : ''}</span><span class="drplace">${esc(pl.name || '')}${pl.sub ? ` <small>${esc(pl.sub)}</small>` : ''}</span>${drBtn('ghost sm', 'data-dr="skip"', 'Skip ›')}</div>
+    <div class="drscene-stage"><div class="drprop" aria-hidden="true">${drPropSVG(place)}</div>${who && !b.text ? `<div class="drscene-who">${who.av}</div>` : ''}${b.text ? `<div class="drphone"><div class="drphone-h">${esc(who ? who.name : '')}</div><div class="drphone-b" id="drText"></div></div>` : ''}</div>
+    ${b.text ? '' : `<div class="drbox ${b.sp === 'n' ? 'narr' : ''} ${b.big ? 'big' : ''} ${b.goal ? 'goal' : ''}" data-dr="adv">
+      ${who ? `<div class="drbox-name">${esc(who.name)}${who.role ? `<small>${esc(who.role)}</small>` : ''}</div>` : ''}
+      <div class="drbox-text" id="drText"></div>
+      ${choice ? `<div class="drchoices">${b.choice.map((c, k) => drBtn('choice', `data-dr="choose" data-k="${k}"`, esc(c.t))).join('')}</div>` : `<div class="drbox-more">${at < total || sc.extra.length ? 'Tap to continue ▸' : 'Tap to continue ▸'}</div>`}
+    </div>`}
+    ${b.text ? `<div class="drbox narr slim" data-dr="adv"><div class="drbox-more">Tap to continue ▸</div></div>` : ''}
+    <div class="drdots">${def.beats.map((_, k) => `<i class="${k < at ? 'on' : ''}"></i>`).join('')}</div>
+  </section>`;
+}
+function drType() {
+  const el = $('drText'); if (!el || !DR.tw) return;
+  clearInterval(DR.twTimer);
+  const full = DR.tw.full, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { el.textContent = full; DR.tw.n = full.length; return; }
+  DR.tw.n = 0; el.textContent = '';
+  DR.twTimer = setInterval(() => {
+    if (!DR.tw || !$('drText')) { clearInterval(DR.twTimer); return; }
+    DR.tw.n = Math.min(full.length, DR.tw.n + 2); $('drText').textContent = full.slice(0, DR.tw.n);
+    if (DR.tw.n >= full.length) clearInterval(DR.twTimer);
+  }, 22);
+}
+function drAdvance() {
+  const sc = DR.sc; if (!sc) return;
+  if (DR.tw && DR.tw.n < DR.tw.full.length) { clearInterval(DR.twTimer); DR.tw.n = DR.tw.full.length; const el = $('drText'); if (el) el.textContent = DR.tw.full; return; }
+  const b = drBeat(); if (!sc.extra.length && b && b.choice) return; // pick an option first
+  if (sc.extra.length) sc.extra.shift(); else sc.i++;
+  if (!sc.extra.length && sc.i >= DR_SCENES[sc.id].beats.length) { drSceneEnd(); return; }
+  drRender();
+}
+function drChoose(k) {
+  const sc = DR.sc, b = drBeat(); if (!b || !b.choice) return;
+  const c = b.choice[k]; if (!c) return;
+  if (c.act && !sc.replay) c.act(DR.st);
+  drSave();
+  if (c.go) { if (sc.replay) { DR.sc = { id: c.go, i: 0, extra: [], replay: true }; drRender(); return; } DR.st.story[sc.id] = true; drSave(); drPlayScene(c.go); return; }
+  sc.i++;
+  if (c.line) sc.extra.push(c.line);
+  if (!sc.extra.length && sc.i >= DR_SCENES[sc.id].beats.length) { drSceneEnd(); return; }
+  drRender();
+}
+function drSceneEnd() {
+  const s = DR.st, id = DR.sc.id, def = DR_SCENES[id]; clearInterval(DR.twTimer);
+  if (DR.sc.replay) { DR.sc = null; DR.view = 'hub'; DR.tab = 'story'; drRender(); scrollTo(0, 0); return; }
+  s.story[id] = true;
+  const m = /^c(\d)$/.exec(id); if (m) s.ch = Math.max(s.ch, +m[1]);
+  drUnlocks(s); drProgress(s); drSave();
+  DR.sc = null;
+  const end = def.end || 'hub';
+  if (DR_SCENES[end]) { drPlayScene(end); return; }
+  if (drEvent(end)) { DR.view = 'hub'; drStart(end); return; }
+  DR.view = 'hub'; drRender(); scrollTo(0, 0);
+}
+function drSkip() {
+  // skip to the end of this scene, but never past a choice you haven't made
+  const sc = DR.sc; if (!sc) return;
+  const beats = DR_SCENES[sc.id].beats; sc.extra = [];
+  const k = beats.findIndex((b, i) => i >= sc.i && b.choice);
+  if (k >= 0) { sc.i = k; drRender(); return; }
+  drSceneEnd();
+}
+
+// ---------------------------------------------------------------- the life hub
+function drTitleStrip(s) {
+  const k = ['bracelet', 'ring', 'tour', 'glo', 'titan', 'me', 'room', 'local'];
+  return `<div class="drtitles">${k.map((t) => `<div class="drtl ${s.titles[t] ? 'on' : ''}" title="${DR_TITLES[t].plural}"><b>${DR_TITLES[t].icon}</b><span class="mono">${s.titles[t]}</span><small>${DR_TITLES[t].plural}</small></div>`).join('')}
+    <div class="drtl ${Object.keys(s.legends).length ? 'on' : ''}"><b>🂡</b><span class="mono">${Object.keys(s.legends).length}</span><small>Legends beaten</small></div></div>`;
+}
+function drHubHTML() {
+  const s = DR.st, chd = DR_CHAPTERS[Math.min(7, s.ch)], pr = chd.prog ? chd.prog(s) : [s.story.p_after ? 1 : 0, ''];
+  const home = DR_ITEMS.find((x) => x.slot === 'home' && x.id === s.eq.home), ride = DR_ITEMS.find((x) => x.slot === 'ride' && x.id === s.eq.ride);
+  const tab = DR.tab || 'events';
+  const fresh = (s.newItems || []).length;
+  return `<section class="drlife hm-${s.eq.home}">
+      <div class="drlife-av">${drAvatarSVG(s)}</div>
+      <div class="drlife-info">
+        <div class="drkicker">${esc(chd.n)} · ${esc(chd.t)}</div>
+        <div class="drlife-name">${esc(s.name)}</div>
+        <div class="drlife-rep">${esc(drRep(s))}</div>
+        <div class="drbank"><small>Bankroll</small><b class="mono">$${drMoney(s.br)}</b>${s.debt > 0 ? `<span class="drdebt">Owes Slick $${drMoney(s.debt)}</span>` : ''}</div>
+        <div class="drlifestyle"><span>${DR_HOME_ICON[s.eq.home] || '🏠'} ${esc(home ? home.name : '')}</span><span>${DR_RIDE_ICON[s.eq.ride] || '🚗'} ${esc(ride ? ride.name : '')}</span></div>
+      </div>
+    </section>
+    ${drTitleStrip(s)}
+    <section class="drgoal">
+      <div><div class="drkicker">${esc(chd.n)} goal</div><b>${esc(chd.goal)}</b><div class="drbar"><i style="width:${(pr[0] * 100).toFixed(1)}%"></i></div><small>${esc(pr[1])}</small></div>
+      ${drBtn('ghost sm', `data-dr="replay" data-id="${s.ch === 0 ? 'p_diner' : 'c' + Math.min(7, s.ch)}"`, '▶ Story')}
+    </section>
+    <nav class="drtabs" role="tablist">${[['events', 'Schedule'], ['closet', `Closet${fresh ? ` <i class="drnew">${fresh}</i>` : ''}`], ['trophies', 'Trophies'], ['legends', 'Legends'], ['story', 'Story']].map(([k, n]) => `<button role="tab" data-dr="tab" data-t="${k}" aria-selected="${tab === k}">${n}</button>`).join('')}</nav>
+    <div class="drtabbody">${tab === 'closet' ? drClosetHTML() : tab === 'trophies' ? drTrophiesHTML() : tab === 'legends' ? drLegendsHTML() : tab === 'story' ? drStoryHTML() : drEventsHTML()}</div>`;
+}
+// Slick's pick: the biggest event in this chapter that your roll can take without betting the dream
+function drPick(s) {
+  const list = drAvailable(s).filter((e) => e.ch === s.ch || s.ch === 0);
+  const ok = list.filter((e) => drRisk(s, e)[0] === 'safe' || drRisk(s, e)[0] === 'free' || drRisk(s, e)[0] === 'shot');
+  const mtt = ok.filter((e) => e.kind === 'mtt').sort((a, b) => b.buyin - a.buyin);
+  const safe = mtt.filter((e) => drRisk(s, e)[0] !== 'shot');
+  return (safe[0] || mtt[mtt.length - 1] || ok[0] || {}).id;
+}
+function drEventCard(ev) {
+  const s = DR.st, [rk, rl] = drRisk(s, ev), rec = s.events[ev.id], pl = DR_PLACES[ev.venue], pick = drPick(s) === ev.id;
+  const first = ev.kind === 'mtt' ? Math.round(typicalPayouts(ev.field, ev.buyin, 0).amounts[0]) : 0;
+  const boss = ev.boss ? (DR_PEOPLE[ev.boss] || {}).name : null, legends = (ev.legends || []).map(drLegend).filter(Boolean);
+  return `<article class="drev pl-${ev.venue} ${rk === 'no' ? 'locked' : ''} ${pick ? 'pick' : ''}">${pick ? `<div class="drpick"><span class="drpick-face">${drPortraitImg() ? `<img src="${drPortraitImg()}" alt="">` : '🕶️'}</span>Slick's pick</div>` : ''}
+    <div class="drev-top"><span class="drev-kind">${ev.kind === 'cash' ? 'Cash game' : ev.title ? `${DR_TITLES[ev.title].icon} ${DR_TITLES[ev.title].n} event` : 'Tournament'}</span><span class="drrisk r-${rk}">${esc(rl)}</span></div>
+    <h3>${esc(ev.name)}</h3>
+    <p>${esc(ev.blurb)}</p>
+    <div class="drev-facts">
+      <span><small>Buy-in</small><b class="mono">${ev.free ? 'FREE' : '$' + drMoney(ev.buyin)}</b></span>
+      ${ev.kind === 'mtt' ? `<span><small>Field</small><b class="mono">${drMoney(ev.field)}</b></span><span><small>1st place</small><b class="mono">$${drMoneyShort(first)}</b></span>` : `<span><small>Venue</small><b>${esc(pl.name)}</b></span>`}
+    </div>
+    ${boss || legends.length ? `<div class="drev-legends">${boss ? `<span>Final boss: <b>${esc(boss)}</b></span>` : ''}${legends.length ? `<span>Legends in the field: ${legends.map((l) => `<b class="${s.legends[l.id] ? 'beat' : ''}">${esc(l.name)}</b>`).join(', ')}</span>` : ''}</div>` : ''}
+    <div class="drev-bot"><small>${rec ? `Played ${rec.played}${ev.kind === 'mtt' ? ` · best ${rec.best ? drOrd(rec.best) : '—'}${rec.wins ? ` · ${rec.wins} win${rec.wins > 1 ? 's' : ''}` : ''}` : ` · net ${rec.net >= 0 ? '+' : '−'}$${drMoney(Math.abs(rec.net))}`}` : 'Never played'}</small>
+      ${drBtn(rk === 'no' ? 'ghost' : 'gold', `data-dr="play" data-id="${ev.id}" ${rk === 'no' ? 'disabled' : ''}`, rk === 'no' ? 'Can\'t afford it' : ev.kind === 'cash' ? 'Sit down' : 'Register')}</div>
+  </article>`;
+}
+function drEventsHTML() {
+  const s = DR.st, list = drAvailable(s), now = list.filter((e) => e.ch === s.ch || s.ch === 0), older = list.filter((e) => !now.includes(e));
+  return `${s.ch === 0 ? '' : `<p class="drhint">Your bankroll decides what you can enter. Big shots pay big, and busting hurts. ${s.debt > 0 ? 'Slick takes half your profits until his stake is paid back.' : ''}</p>`}
+    <div class="drevs">${now.map(drEventCard).join('')}</div>
+    ${older.length ? `<details class="drolder"><summary>Earlier stops (${older.length})</summary><div class="drevs">${older.map(drEventCard).join('')}</div></details>` : ''}`;
+}
+function drClosetHTML() {
+  const s = DR.st, fresh = new Set(s.newItems || []);
+  const html = DR_SLOTS.map(([slot, label]) => {
+    const items = DR_ITEMS.filter((x) => x.slot === slot);
+    return `<div class="drslot"><div class="drkicker">${label}</div><div class="dritems">${items.map((it) => {
+      const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it);
+      return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.req)}</small></button>`;
+    }).join('')}</div></div>`;
+  }).join('');
+  if (fresh.size) { s.newItems = []; drSave(); }
+  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${drAvatarSVG(s)}</div><div class="drslots">${html}</div></div>`;
+}
+function drTrophiesHTML() {
+  const s = DR.st, acc = s.dec ? Math.round(((s.perfect + s.good) / s.dec) * 100) : 0;
+  return `<div class="drstats">
+      <div><small>Events played</small><b class="mono">${s.played}</b></div><div><small>Cashes</small><b class="mono">${s.cashes}</b></div>
+      <div><small>Final tables</small><b class="mono">${s.ft}</b></div><div><small>Peak bankroll</small><b class="mono">$${drMoneyShort(s.peak)}</b></div>
+      <div><small>Decisions</small><b class="mono">${s.dec}</b></div><div><small>Solver-approved</small><b class="mono">${acc}%</b></div>
+    </div>
+    <div class="drcase">${s.trophies.length ? s.trophies.map((t) => `<div class="drtrophy t-${t.t}"><b>${DR_TITLES[t.t].icon}</b><span>${esc(DR_TITLES[t.t].n)}</span><small>${esc(t.ev)}</small><small class="mono">$${drMoney(t.prize)}</small></div>`).join('') : '<p class="drhint">Your trophy case is empty. For now.</p>'}</div>`;
+}
+function drLegendsHTML() {
+  const s = DR.st, eras = ['Old school', 'Boom', 'Online', 'High roller', 'Rising star'];
+  const card = (L) => {
+    const beat = s.legends[L.id], met = s.met[L.id];
+    return `<div class="drlegend ${beat ? 'beat' : met ? 'met' : 'unk'}">${beat || met ? drLegendFace(L) : `<div class="drlegend-mono">?</div>`}
+      <b>${beat || met ? esc(L.name) : '???'}</b><small>“${esc(L.nick)}”${beat || met ? '' : ` · ${esc(DR_CHAPTERS[Math.min(7, L.ch)].t)}`}</small>${beat || met ? `<p>${esc(L.style)}</p>` : ''}<span class="drlegend-st">${beat ? 'Beaten' : met ? 'Met at a final table' : 'Not met yet'}</span></div>`;
+  };
+  return `<p class="drhint">Every legend is a tribute. Beat one heads-up for the title and their card turns gold.</p>
+    <div class="drlegend ghost ${s.titles.me ? 'beat' : ''}"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><b>The Ghost</b><small>“The GOAT”</small><p>Fourteen bracelets. Never explains. The man from the fuzzy TV.</p><span class="drlegend-st">${s.titles.me ? 'Beaten for the world title' : 'Final boss of the Main Event'}</span></div>
+    ${eras.map((e) => `<div class="drkicker drera">${e}</div><div class="drlegends">${DR_LEGENDS.filter((L) => L.era === e).map(card).join('')}</div>`).join('')}`;
+}
+function drStoryHTML() {
+  const s = DR.st, list = ['p_office', 'p_diner', 'p_after', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'champ', 'c7'].filter((id) => s.story[id]);
+  return `<div class="drstorylist">${list.map((id) => { const d = DR_SCENES[id]; return drBtn('ghost', `data-dr="replay" data-id="${id}"`, `▶ ${esc(d.title || '')} · ${esc(d.sub || '')}`); }).join('')}</div>
+    <div class="drkicker">Money</div>
+    <div class="drledger">${s.ledger.slice(-12).reverse().map((l) => `<div><span>${esc(l.why)}</span><b class="mono ${l.amt >= 0 ? 'up' : 'down'}">${l.amt >= 0 ? '+' : '−'}$${drMoney(Math.abs(l.amt))}</b></div>`).join('')}</div>
+    <div class="drrow">${drBtn('ghost sm', 'data-dr="title"', 'Title screen')}</div>`;
+}
+
+// ---------------------------------------------------------------- an event in progress
+function drHudHTML(run) {
+  const ev = run.ev, stage = run.stages[Math.min(run.si, run.stages.length - 1)];
+  const N = ev.field, P = ev.kind === 'mtt' ? drPaid(ev) : 0;
+  const left = ev.kind === 'cash' ? null : stage === 'early' ? Math.max(P * 3, Math.round(N * (1 - 0.15 * (run.h + 1)))) : stage === 'middle' ? Math.max(P + 4, Math.round(N * (0.45 - 0.08 * run.h)))
+    : stage === 'bubble' ? P + 1 - (run.h > 0 ? run.h : 0) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.08 * run.h))) : Math.max(2, 9 - run.h * 3);
+  const bb = Math.round(run.stack / 4 * 10) / 10;
+  return `<section class="drhud pl-${ev.venue}">
+    <div class="drhud-top"><div><div class="drkicker">${esc(DR_PLACES[ev.venue].name)}</div><b>${esc(ev.name)}</b></div>${drBtn('ghost sm', 'data-dr="quit"', ev.kind === 'cash' ? 'Cash out' : 'Walk away')}</div>
+    ${ev.kind === 'mtt' ? `<div class="drstages">${run.stages.map((st, k) => `<span class="${k < run.si ? 'done' : k === run.si ? 'now' : ''}">${DR_STAGE[st].label}</span>`).join('')}</div>` : ''}
+    <div class="drhud-row">
+      <div class="drstack"><small>${ev.kind === 'cash' ? 'Your stack' : 'Chips'}</small><div class="drbar stack ${run.stack < 40 ? 'low' : run.stack > 140 ? 'big' : ''}"><i style="width:${Math.min(100, run.stack / 2)}%"></i></div><b class="mono">${ev.kind === 'cash' ? `${bb * 4} bb` : `${bb} bb`}</b></div>
+      ${left ? `<div class="drleft"><small>Players left</small><b class="mono">${drMoney(left)}</b></div>` : ''}
+      ${ev.kind === 'mtt' ? `<div class="drleft"><small>Paid</small><b class="mono">${drMoney(P)}</b></div>` : ''}
+    </div>
+  </section>`;
+}
+function drRunHTML() {
+  const run = DR.run, ev = run.ev, stage = run.stages[Math.min(run.si, run.stages.length - 1)], head = drHudHTML(run);
+  if (run.state === 'loading' || run.state === 'ready') {
+    const tips = DR_TIPS[stage], tip = tips[(run.tip + run.results.length) % tips.length];
+    let meet = stage === 'final' && run.boss ? drMeetLine(run.boss) : null;
+    // someone famous at your table earlier in the day
+    const field = (ev.legends || []).filter((id) => id !== run.boss);
+    if (!meet && field.length && stage !== 'early' && stage !== 'final' && run.tip % 2 === 1) { const L = drLegend(field[run.tip % field.length]); meet = { sp: 'L:' + L.id, t: `${L.style}` }; }
+    const who = meet ? drSpeaker(meet) : drSpeaker({ sp: 'slick' });
+    const intro = stage === 'early' ? (ev.kind === 'cash' ? 'Grab a rack. Find a seat.' : `${drMoney(ev.field)} players. Shuffle up and deal.`)
+      : stage === 'middle' ? `Day two. About ${drMoney(Math.round(ev.field * 0.45))} left. The fish are gone.`
+      : stage === 'deep' ? `In the money, ${drMoney(Math.max(10, Math.round(drPaid(ev) * 0.3)))} left. Every pay jump is real.`
+      : stage === 'bubble' ? `${drMoney(drPaid(ev) + 1)} left. ${drMoney(drPaid(ev))} get paid. Somebody is going home with nothing.`
+        : stage === 'final' ? (run.boss === 'ghost' ? 'Heads-up for the world title.' : 'The final table. Lights, cameras, pay jumps.') : 'Grab a rack. Find a seat.';
+    return `${head}<section class="drstagecard pl-${ev.venue}">
+      <div class="drkicker">${esc(DR_STAGE[stage].long)}</div><h2 class="drh">${esc(intro)}</h2>
+      <div class="drsay">${who.av}<div><b>${meet && stage !== 'final' ? `At your table: ${esc(who.name)}` : esc(who.name)}</b><p>${esc(meet ? meet.t : tip)}</p></div></div>
+      ${run.state === 'loading' ? `<div class="drbar load"><i id="drLoadBar"></i></div><small class="drhint">Setting up the table…</small>` : drBtn('gold big', 'data-dr="deal"', run.results.length ? 'Deal me in ▸' : "Shuffle up and deal ▸")}
+    </section>`;
+  }
+  if (run.state === 'cooler') return `${head}<section class="drstagecard cooler pl-${ev.venue}"><div class="drkicker">Cooler</div><h2 class="drh">${esc(run.cooler)}</h2>
+      <div class="drsay">${drSpeaker({ sp: 'slick' }).av}<div><b>Slick</b><p>You played it right. That's all you control. People insist on calling it luck.</p></div></div>
+      ${drBtn('gold big', 'data-dr="coolerdone"', 'See where you finished ▸')}</section>`;
+  if (run.state === 'dealing') return `${head}<section class="drspot dim"><div class="drdealing"><span></span><span></span><span></span></div><small class="drhint">Dealing…</small></section>`;
+  const sp = run.spot, keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
+  const hero = v.seats[sp.hero], label = (a) => { const o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
+  let html = `${head}<section class="drspot">
+    <div class="drspot-head"><span class="drkicker">Hand ${run.results.length + (run.state === 'answered' ? 0 : 1)}</span><span class="drhint">${esc(trCategory(v))}</span></div>
+    <div class="drseats">${v.seats.map((x, k) => `<div class="drseat ${k === sp.hero ? 'me' : ''} ${x.folded ? 'fold' : ''}"><b>${x.pos}</b><small class="mono">${fmt(x.stack - x.put)}bb</small><small>${esc(x.acts.join(' · ') || (k === sp.hero ? 'you' : ''))}</small></div>`).join('')}</div>
+    <div class="drhero"><div class="drcards">${trCardHTML(sp.hands[sp.hero][0])}${trCardHTML(sp.hands[sp.hero][1])}</div><div><b>${hero.pos} · your move</b><small class="mono">pot ${fmt(v.pot)} bb</small></div></div>`;
+  if (run.state === 'play') html += `<div class="dropts">${sp.res.actions.map((a, k) => drBtn('opt', `data-dr="ans" data-k="${a.k}"`, `<span class="kbd">${k + 1}</span>${esc(label(a))}`)).join('')}</div>`;
+  else {
+    const r = run.results[run.results.length - 1], per = ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS;
+    const lastHand = run.h === per - 1 && run.si === run.stages.length - 1;
+    const big = { perfect: 'Textbook.', good: 'Solid.', close: 'Playable.', bad: 'Mistake.' }[r.tier], sub = { perfect: "The solver's favourite play.", good: 'A play the solver makes too.', close: 'The solver mixes it in, but prefers something else.', bad: 'The solver (almost) never does this.' }[r.tier];
+    const d = r.after - r.before;
+    html += `<div class="drverdict t-${r.tier}"><div><b>${big}</b><small>${sub}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${d >= 0 ? '+' : '−'}${Math.abs(d / 4)} bb</span></div>
+      <div class="drmix">${sp.res.actions.map((a, k) => `<div class="${k === r.j ? 'mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><i style="--w:${(r.strat[k] * 100).toFixed(1)}%"></i><b class="mono">${Math.round(r.strat[k] * 100)}%</b></div>`).join('')}</div>
+      ${run.bust ? `<div class="drbust">${ev.kind === 'cash' ? 'Felted. That session is over.' : 'Busted. Your tournament is over.'}</div>` : ''}
+      <div class="drrow">${drBtn('gold big', 'data-dr="next"', run.bust || lastHand ? (ev.kind === 'cash' ? 'Cash out ▸' : 'See where you finished ▸') : run.h === per - 1 ? 'Next level ▸' : 'Next hand ▸')}</div>`;
+  }
+  return html + '</section>';
+}
+
+// ---------------------------------------------------------------- results
+function drResultsHTML() {
+  const r = DR.last, s = DR.st, ev = r.ev;
+  const titleHTML = r.titles.map((t) => `<div class="drwin t-${t}"><div class="drwin-icon">${DR_TITLES[t].icon}</div><div><div class="drkicker">Champion</div><b>${esc(DR_TITLES[t].n)}</b><small>${esc(ev.name)}</small></div></div>`).join('');
+  const beat = r.beat ? drLegend(r.beat) : null;
+  let headline, sub;
+  if (ev.kind === 'cash') { headline = r.net > 0 ? `Up $${drMoney(r.net)}` : r.net < 0 ? `Down $${drMoney(-r.net)}` : 'Broke even'; sub = r.net > 0 ? 'Rack it up. That table is still talking about you.' : 'Some nights the cards win. Your decisions are what you keep.'; }
+  else if (r.place === 1) { headline = 'You won it all'; sub = `1st of ${drMoney(ev.field)}${r.luck > 0.03 ? ' · you ran hot, and you earned it' : ''}`; }
+  else if (r.prize > 0) { headline = `${drOrd(r.place)} place`; sub = `of ${drMoney(ev.field)} · ${r.place === r.paid ? 'a min-cash, but a cash' : r.place <= 9 ? 'a final table finish' : 'in the money'}`; }
+  else { headline = r.place === r.paid + 1 ? 'Bubble boy' : `${drOrd(r.place)} place`; sub = r.place === r.paid + 1 ? 'One spot from the money. It happens to everyone once.' : `of ${drMoney(ev.field)} · out before the money`; }
+  if (r.cooler) sub = `${sub} · coolered`;
+  const acc = r.n ? Math.round(((r.counts.perfect + r.counts.good) / r.n) * 100) : 0;
+  const confetti = r.titles.length ? `<div class="drconfetti" aria-hidden="true">${Array.from({ length: 36 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--d:${(i % 7) * 0.35}s;--c:${['#f4dfa6', '#d9b36c', '#e8705a', '#5aa9de', '#f3ecdc'][i % 5]};--r:${(i * 53) % 360}deg"></i>`).join('')}</div>` : '';
+  return `<section class="drres pl-${ev.venue} ${r.titles.length ? 'champ' : ''}">${confetti}
+    <div class="drkicker">${esc(ev.name)}</div>
+    <h1 class="drres-h">${esc(headline)}</h1><p class="drres-sub">${esc(sub)}</p>
+    ${titleHTML}
+    ${r.titles.includes('me') && r.boss === 'ghost' ? `<div class="drbeat"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><div><div class="drkicker">Heads-up for the world title</div><b>You beat The Ghost</b><small>Fourteen bracelets, and he finally smiled.</small></div></div>` : ''}
+    ${beat ? `<div class="drbeat">${drLegendFace(beat)}<div><div class="drkicker">Legend beaten</div><b>${esc(beat.name)}</b><small>“${esc(beat.nick)}” · card added to your Legends</small></div></div>` : r.met && r.met !== 'ghost' && drLegend(r.met) ? `<div class="drbeat met">${drLegendFace(drLegend(r.met))}<div><div class="drkicker">You shared a final table with</div><b>${esc(drLegend(r.met).name)}</b><small>Beat them heads-up to win their card</small></div></div>` : ''}
+    <div class="drmoney"><div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div><div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → $${drMoney(r.after)}</b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
+    <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
+      <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
+    ${r.unlocked.length ? `<div class="drunlocks"><div class="drkicker">Unlocked</div>${r.unlocked.map((it) => `<div class="drunlock"><b>${esc(it.name)}</b><small>${esc(DR_SLOTS.find((x) => x[0] === it.slot)[1])} · ${esc(it.req)}</small></div>`).join('')}</div>` : ''}
+    <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${drBtn('ghost', `data-dr="play" data-id="${ev.id}" ${drAfford(s, ev) && ev.id !== 'local' ? '' : 'disabled'}`, 'Play it again')}</div>
+  </section>`;
+}
+
+// ---------------------------------------------------------------- input
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('#dream [data-dr]'); if (!b || !DR || b.disabled) return;
+  const a = b.dataset.dr, s = DR.st;
+  if (a === 'adv') { if (e.target.closest('[data-dr="choose"]')) return; drAdvance(); return; }
+  if (a === 'choose') { e.stopPropagation(); drChoose(+b.dataset.k); return; }
+  if (a === 'skip') { drSkip(); return; }
+  if (a === 'continue') { DR.view = 'hub'; drRender(); return; }
+  if (a === 'new') { const c = $('drNewConfirm'); if (c) { c.hidden = false; return; } DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'create'; drRender(); return; }
+  if (a === 'newyes') { DR.st = drDefault(); drSave(); DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'create'; drRender(); return; }
+  if (a === 'newno') { $('drNewConfirm').hidden = true; return; }
+  if (a === 'title') { DR.view = 'title'; drRender(); return; }
+  if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' ? +b.dataset.v : b.dataset.v; drRender(); return; }
+  if (a === 'begin') {
+    const n = (($('drName') || {}).value || '').trim();
+    const st = drDefault(); st.made = true; st.name = n || 'Rookie'; st.look = { ...DR.draft.look };
+    DR.st = st; drUnlocks(st); st.newItems = []; drSave(); drPlayScene('p_office'); return;
+  }
+  if (a === 'tab') { DR.tab = b.dataset.t; drRender(); return; }
+  if (a === 'replay') { const id = b.dataset.id; DR.sc = { id, i: 0, extra: [], replay: true }; DR.view = 'scene'; drRender(); scrollTo(0, 0); return; }
+  if (a === 'equip') { s.eq[b.dataset.s] = b.dataset.v; drSave(); drRender(); return; }
+  if (a === 'play') { drStart(b.dataset.id); return; }
+  if (a === 'deal') { drHand(); return; }
+  if (a === 'ans') { drAnswer(b.dataset.k); return; }
+  if (a === 'next') { drNext(); return; }
+  if (a === 'quit') { drQuit(); return; }
+  if (a === 'coolerdone') { drFinish(); return; }
+  if (a === 'hub') { DR.view = 'hub'; DR.tab = 'events'; drRender(); scrollTo(0, 0); return; }
+});
+document.addEventListener('keydown', (e) => {
+  if (!DR || S.mode !== 'trainer' || e.target.closest('input,select,textarea')) return;
+  if (DR.view === 'scene' && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); drAdvance(); return; }
+  const run = DR.run; if (DR.view !== 'run' || !run) return;
+  if (run.state === 'play' && /^[1-9]$/.test(e.key)) { const a = run.spot.res.actions[+e.key - 1]; if (a) drAnswer(a.k); }
+  else if (e.key === 'Enter' && run.state === 'answered') drNext();
+  else if (e.key === 'Enter' && run.state === 'ready') drHand();
+});
+
+DR = { st: drLoad(), view: 'title', tab: 'events', run: null, sc: null, last: null, saved: null, draft: { name: '', look: { ...DR_LOOK_DEFAULT } } };
+if (DR.st.made) DR.view = 'hub';
+window.__dream = { get DR() { return DR; }, drPlayScene, drRender, drAdvance, drUnlocks, drStart, drProgress, drSave, drFinish, drStagesFor, drCoolerRoll, drDefault, drAvailable, drAfford, drPick, drAdd, drRisk }; // for automated play-testing
+
 
 // ---------------------------------------------------------------- phone: spot tiles + bottom tab bar
 // The tiles mirror the header controls (type, format, stack) plus the seat whose chart is shown,
@@ -5435,7 +6920,7 @@ function showVariants(forWhat) {
   showLaunch('variant');
 }
 $('goSolver').onclick = () => showVariants('solver');
-$('goTrainer').onclick = () => showVariants('trainer');
+$('goTrainer').onclick = () => { setVariant('nlh'); setMode('trainer'); hideLaunch(); };
 $('goNlh').onclick = () => { setVariant('nlh'); if (launchFor === 'trainer') { setMode('trainer'); hideLaunch(); } else { $('lsGTitle').textContent = 'NLH SOLVER'; showLaunch('game'); } };
 $('goPlo').onclick = () => { if (launchFor === 'trainer') return; setVariant('plo'); $('lsGTitle').textContent = 'PLO SOLVER'; showLaunch('game'); };
 $('lsBackV').onclick = () => showLaunch('home');
