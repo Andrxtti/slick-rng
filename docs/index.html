@@ -577,6 +577,81 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
   .arena *, .artoast { animation: none !important; transition: none !important; }
 }
 /* ---------- end arena */
+/* ---------- MyFighter and rewards */
+.fxsvg { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.fxsvg.idle { animation: fxidle 1s steps(2) infinite; }
+@keyframes fxidle { 50% { transform: translateY(2.2%); } }
+.arena .arava { padding: 0; overflow: hidden; position: relative; cursor: pointer; background: radial-gradient(circle at 50% 40%, #1846b8, #071636); width: 72px; height: 72px; }
+.arava .fxsvg { width: 100%; height: 100%; }
+.aredit { position: absolute; bottom: 0; left: 0; right: 0; font-size: 6px; background: rgba(0, 0, 0, .7); color: var(--gold); padding: 2px 0; text-align: center; }
+.arwallet { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+.arwallet span { font-size: 9px; padding: 6px 8px; background: rgba(0, 0, 0, .7); border: 2px solid var(--gry); }
+.arperfect { color: var(--gold); text-shadow: 0 0 8px rgba(248, 184, 0, .8); }
+.arportrait.fxwrap { width: 88px; height: 132px; background: radial-gradient(circle at 50% 35%, #1846b8, #071636); padding: 4px; }
+.arportrait.fxwrap .fxsvg { height: 100%; }
+.arrowfx { display: inline-block; width: 26px; height: 26px; vertical-align: middle; margin-right: 6px; border: 2px solid var(--sky); background: #071636; }
+/* creator */
+.arcreate { border-color: var(--gold); }
+.arstage { display: grid; place-items: center; padding: 14px 0 10px; background: radial-gradient(60% 70% at 50% 45%, #2458d8, #071636 75%); border: 4px solid var(--w); box-shadow: inset 0 -16px 0 #0a1f5a; }
+.arstagefx { width: min(46vw, 190px); }
+.pxtabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.pxtabs::-webkit-scrollbar { display: none; }
+.pxtabs button { flex: none; font: 9px "Press Start 2P", monospace; text-transform: uppercase; background: #000; color: var(--w); border: 3px solid var(--gry); border-radius: 0; padding: 9px 10px; cursor: pointer; }
+.pxtabs button[aria-pressed="true"] { background: var(--blue); border-color: var(--w); }
+.arcparts { display: grid; gap: 8px; }
+.aropts2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 6px; }
+.aropt2 { display: grid; gap: 4px; justify-items: center; padding: 6px 4px; background: #071636; border: 3px solid var(--rc, #333); border-radius: 0; color: var(--w); cursor: pointer; }
+.aropt2 .fxsvg { max-height: 86px; width: auto; }
+.aropt2 small { font-size: 10px; line-height: 1.2; text-align: center; }
+.aropt2.on { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); background: #1a2a6a; }
+.aropt2.locked { opacity: .45; cursor: not-allowed; }
+.arsw { display: flex; gap: 6px; flex-wrap: wrap; }
+.arswb { width: 32px; height: 32px; border: 3px solid #000; outline: 2px solid var(--gry); border-radius: 0; cursor: pointer; font-size: 11px; padding: 0; }
+.arswb.on { outline: 3px solid var(--gold); }
+.arswb.locked { opacity: .5; cursor: not-allowed; }
+.arswb.ltd { outline-color: #f83800; }
+/* gym bag, earn back */
+.arbag { border-color: var(--gold); background: radial-gradient(100% 120% at 0% 0%, #3a2a00, #000 70%); animation: arbagpulse 1.2s steps(2) infinite; }
+.arbag small { display: block; font-size: 12px; color: #dcdcdc; margin-top: 4px; }
+.arbag b { font-size: 12px; color: var(--gold); }
+@keyframes arbagpulse { 50% { border-color: var(--w); } }
+.arearn { border-color: #f83800; gap: 6px; }
+.arearn b { font-size: 12px; color: #f83800; }
+.arearn span { font-size: 13px; }
+/* fight pass */
+.arseason b { font-size: 11px; color: var(--gold); display: block; }
+.arseason small { font-size: 12px; color: #bcbcbc; }
+.arnext { font-size: 13px; padding: 8px 10px; border: 2px dashed #f83800; }
+.arnext b { color: #f83800; }
+.artrack { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.arpt { display: grid; justify-items: center; gap: 2px; padding: 4px 0; border: 2px solid #333; background: #0a0a0a; font-size: 16px; }
+.arpt small { font-size: 7px; color: #9c9c9c; }
+.arpt small.px { font-size: 7px; }
+.arpt.got { border-color: var(--grn); background: #002a00; }
+.arpt.ltd { border-color: #f83800; }
+.arpt.ltd.got { background: #3a1000; }
+.ardot { display: inline-block; width: 14px; height: 14px; border: 2px solid #000; outline: 1px solid var(--w); vertical-align: middle; }
+/* shop */
+.arshop { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.arshopi { display: grid; justify-items: center; gap: 4px; padding: 8px; border: 3px solid var(--rc); background: #071636; text-align: center; }
+.arshopi b { font-size: 13px; }
+.arshopi small { font: 7px "Press Start 2P", monospace; text-transform: uppercase; }
+.arshopfx { width: 64px; }
+.arxprow.coin .mono { color: #f8d878; }
+.arrtabs button { font-size: 9px; padding: 11px 2px; }
+/* celebration */
+.arcel { position: fixed; inset: 0; z-index: 95; background: rgba(0, 0, 0, .78); display: grid; place-items: center; padding: 16px; }
+.arcelbox { width: min(360px, 100%); background: #000; border: 4px solid #f8b800; padding: 22px 18px; display: grid; justify-items: center; gap: 10px; text-align: center; color: #fcfcfc; animation: arpopin .35s steps(4); }
+.arcelbox b { font: 14px/1.5 "Press Start 2P", monospace; text-transform: uppercase; color: #f8b800; }
+.arcelbox p { margin: 0; font-size: 15px; }
+.arcelbox small { font-size: 12px; color: #bcbcbc; }
+.arcelicon { font-size: 64px; animation: arbob .6s steps(2) infinite; }
+.arcelstars { font-size: 18px; color: #f8b800; letter-spacing: 12px; animation: arblinktext .4s steps(2) infinite; }
+.arcelbox .pxbtn { font: 12px "Press Start 2P", monospace; text-transform: uppercase; color: #000; background: #f8b800; border: 4px solid #000; padding: 12px 22px; cursor: pointer; margin-top: 6px; }
+@keyframes arpopin { from { transform: scale(.6); opacity: 0; } }
+@keyframes arbob { 50% { transform: translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .fxsvg.idle, .arbag, .arcelbox, .arcelicon, .arcelstars { animation: none !important; } }
+/* ---------- end rewards */
 .whatif { display: grid; gap: 12px; }
 .whatif .wi { display: grid; gap: 4px; min-width: 0; font-size: 12px; color: var(--muted); }
 .whatif .wi b { color: var(--fg); font-family: var(--font-mono); font-weight: 500; }
@@ -4009,6 +4084,444 @@ document.addEventListener('keydown', (e) => {
   else if ((e.key === 'Enter' || e.key.toLowerCase() === 'n') && (!sp || sp.result)) trDeal();
 });
 
+// ---------------------------------------------------------------- MyFighter: a layered pixel-art fighter drawn in code
+// 32x48 sprite built from shape layers (body, clothes, face, hair, gear, gloves), then auto-shaded
+// and outlined, NES-style. Every piece takes palette colors, so one shape gives many looks.
+const FX_W = 32, FX_H = 48, FX_INK = '#120a08';
+const FX_SKIN = ['#ffe3c8', '#f5cba3', '#e6ad7c', '#cf8f5a', '#ad6c3d', '#8a522c', '#69391d', '#472413'];
+const FX_HAIRC = ['#1b1512', '#3d2617', '#6e4524', '#a8743a', '#e6c46e', '#b8432a', '#8e8e8e', '#ececec', '#3cbcfc', '#f878f8', '#38c838', '#d82800'];
+const FX_CLOTH = ['#d82800', '#0058f8', '#00a800', '#f8b800', '#fcfcfc', '#262626', '#7c7c7c', '#f878f8', '#3cbcfc', '#6844fc', '#e45c10', '#00586a', '#8a1c10', '#5a3a1a', '#b8f818', '#00d8c8'];
+const FX_PARTS = {
+  build: [['lean', 'Lean'], ['regular', 'Regular'], ['heavy', 'Heavy']],
+  eyes: [['focused', 'Focused'], ['calm', 'Calm'], ['narrow', 'Narrow'], ['wide', 'Wide']],
+  brows: [['fierce', 'Fierce'], ['flat', 'Flat'], ['thick', 'Thick'], ['raised', 'Raised']],
+  mouth: [['line', 'Neutral'], ['smirk', 'Smirk'], ['grin', 'Grin'], ['frown', 'Frown'], ['guard', 'Mouthguard']],
+  hair: [['bald', 'Bald'], ['buzz', 'Buzz'], ['short', 'Short'], ['fade', 'Fade'], ['flattop', 'Flat top'], ['afro', 'Afro'], ['mohawk', 'Mohawk'], ['spiky', 'Spiky'], ['cornrows', 'Cornrows'], ['bun', 'Bun'], ['long', 'Long']],
+  face: [['none', 'Clean'], ['stubble', 'Stubble'], ['mustache', 'Mustache'], ['goatee', 'Goatee'], ['beard', 'Beard']],
+  top: [['none', 'Shirtless'], ['tank', 'Tank'], ['tee', 'Tee'], ['jersey', 'Jersey'], ['hoodie', 'Hoodie'], ['robe', 'Robe']],
+  bottom: [['trunks', 'Trunks'], ['shorts', 'Shorts'], ['pants', 'Pants'], ['joggers', 'Joggers']],
+  shoes: [['boots', 'Ring boots'], ['sneakers', 'Sneakers'], ['hightops', 'High-tops'], ['slides', 'Slides']],
+  gloves: [['classic', 'Boxing'], ['wraps', 'Hand wraps'], ['mma', 'MMA']],
+  head: [['none', 'None'], ['headband', 'Headband'], ['cap', 'Cap'], ['bandana', 'Bandana']],
+  eyewear: [['none', 'None'], ['shades', '8-bit shades'], ['sport', 'Sport lenses']],
+  neck: [['none', 'None'], ['towel', 'Towel'], ['chain', 'Gold chain'], ['belt', 'Title belt']],
+};
+const FX_DEFAULT = { skin: 3, build: 'regular', eyes: 'focused', brows: 'fierce', mouth: 'line', hair: 'fade', hairC: 0, face: 'none', top: 'tank', topC: 0, topA: 4,
+  bottom: 'trunks', bottomC: 1, bottomA: 4, shoes: 'boots', shoeC: 4, gloves: 'classic', gloveC: 0, head: 'none', eyewear: 'none', neck: 'none', gearC: 3, beltC: '#f83800' };
+function fxShade(hex, f) {
+  const n = parseInt(hex.slice(1), 16), ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.max(0, Math.min(255, Math.round(f < 0 ? v * (1 + f) : v + (255 - v) * f))));
+  return '#' + ch.map((v) => v.toString(16).padStart(2, '0')).join('');
+}
+function fxBuild(cfg) {
+  const f = { ...FX_DEFAULT, ...cfg }, px = Array.from({ length: FX_H }, () => Array(FX_W).fill(null));
+  const C = (v, list, d) => (typeof v === 'string' ? v : list[v] || d);
+  const skin = C(f.skin, FX_SKIN, FX_SKIN[3]), hair = C(f.hairC, FX_HAIRC, FX_HAIRC[0]), top = C(f.topC, FX_CLOTH, '#d82800'), topA = C(f.topA, FX_CLOTH, '#fcfcfc');
+  const bot = C(f.bottomC, FX_CLOTH, '#0058f8'), botA = C(f.bottomA, FX_CLOTH, '#fcfcfc'), shoe = C(f.shoeC, FX_CLOTH, '#fcfcfc'), glove = C(f.gloveC, FX_CLOTH, '#d82800'), gear = C(f.gearC, FX_CLOTH, '#f8b800');
+  const b = f.build === 'lean' ? -1 : f.build === 'heavy' ? 1 : 0;
+  const put = (x, y, c, l) => { x = Math.round(x); y = Math.round(y); if (x >= 0 && x < FX_W && y >= 0 && y < FX_H) px[y][x] = { c, l }; };
+  const det = (x, y, c) => { if (x >= 0 && x < FX_W && y >= 0 && y < FX_H) { const p = px[y][x]; px[y][x] = { c, l: p ? p.l : 'd', d: true }; } };
+  const rect = (x0, y0, x1, y1, c, l) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) put(x, y, c, l); };
+  const inE = (x, y, cx, cy, rx, ry) => ((x + 0.5 - cx) / rx) ** 2 + ((y + 0.5 - cy) / ry) ** 2 <= 1;
+  const ell = (cx, cy, rx, ry, c, l, keep = () => true) => { for (let y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y++) for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) if (inE(x, y, cx, cy, rx, ry) && keep(x, y)) put(x, y, c, l); };
+  const inHead = (x, y) => inE(x, y, 16, 10.5, 6.2, 7);
+  const torsoX = (y) => { const hw = 8 + b - (y - 19) * 0.22; return [Math.round(16 - hw), Math.round(16 + hw) - 1]; };
+  // hair behind the body
+  if (f.hair === 'long') rect(9, 8, 22, 25, fxShade(hair, -0.15), 'hairb');
+  if (f.hair === 'afro') ell(16, 8, 9, 7.5, hair, 'hairb');
+  // body
+  for (let y = 33; y <= 37; y++) rect(11 - (b > 0 ? 1 : 0), y, 20 + (b > 0 ? 1 : 0), y, skin, 'skin');
+  rect(10, 37, 14, 45, skin, 'skin'); rect(17, 37, 21, 45, skin, 'skin');
+  for (let y = 19; y <= 33; y++) { const [a, z] = torsoX(y); rect(a, y, z, y, skin, 'skin'); }
+  rect(6 - b, 20, 8, 27, skin, 'arm'); rect(23, 20, 25 + b, 27, skin, 'arm');
+  rect(7 - b, 25, 10, 28, skin, 'arm'); rect(21, 25, 24 + b, 28, skin, 'arm');
+  rect(14, 15, 17, 19, fxShade(skin, -0.1), 'neck');
+  ell(9.7, 11, 1.4, 1.9, skin, 'ear'); ell(22.3, 11, 1.4, 1.9, skin, 'ear');
+  ell(16, 10.5, 6.2, 7, skin, 'head');
+  if (b > 0) { det(13, 27, fxShade(skin, -0.12)); det(18, 27, fxShade(skin, -0.12)); }
+  // bottoms
+  if (f.bottom === 'trunks') { rect(10, 32, 21, 39, bot, 'bot'); rect(10, 32, 21, 33, botA, 'botA'); rect(10, 34, 10, 39, botA, 'botA'); rect(21, 34, 21, 39, botA, 'botA'); rect(15, 38, 16, 39, null, 'x'); }
+  else { const end = f.bottom === 'shorts' ? 41 : 44; rect(10, 32, 21, 37, bot, 'bot'); rect(10, 38, 14, end, bot, 'bot'); rect(17, 38, 21, end, bot, 'bot'); rect(10, 32, 21, 32, botA, 'botA');
+    if (f.bottom === 'joggers') { rect(10, 43, 14, 44, botA, 'botA'); rect(17, 43, 21, 44, botA, 'botA'); }
+    if (f.bottom === 'pants') { det(12, 36, fxShade(bot, -0.2)); det(19, 36, fxShade(bot, -0.2)); } }
+  // top
+  if (f.top === 'tank' || f.top === 'jersey') {
+    for (let y = 21; y <= 33; y++) { const [a, z] = torsoX(y); rect(a + 2, y, z - 2, y, top, 'top'); }
+    rect(11, 19, 13, 20, top, 'top'); rect(18, 19, 20, 20, top, 'top'); rect(14, 21, 17, 21, skin, 'skin');
+    if (f.top === 'jersey') { rect(11, 19, 11, 21, topA, 'topA'); rect(20, 19, 20, 21, topA, 'topA'); for (let y = 21; y <= 33; y++) { const [a, z] = torsoX(y); det(a + 2, y, topA); det(z - 2, y, topA); } rect(14, 26, 17, 29, topA, 'topA'); det(15, 27, top); det(16, 28, top); }
+  } else if (f.top === 'tee' || f.top === 'hoodie') {
+    for (let y = 19; y <= 33; y++) { const [a, z] = torsoX(y); rect(a, y, z, y, top, 'top'); }
+    rect(6 - b, 20, 8, f.top === 'hoodie' ? 27 : 23, top, 'top'); rect(23, 20, 25 + b, f.top === 'hoodie' ? 27 : 23, top, 'top');
+    if (f.top === 'hoodie') { rect(7 - b, 25, 10, 28, top, 'top'); rect(21, 25, 24 + b, 28, top, 'top'); rect(11, 17, 20, 19, fxShade(top, -0.25), 'hood'); rect(13, 29, 18, 32, fxShade(top, -0.18), 'top'); det(14, 21, topA); det(14, 22, topA); det(17, 21, topA); det(17, 22, topA); }
+    else { rect(14, 19, 17, 20, skin, 'skin'); rect(6 - b, 23, 8, 23, topA, 'topA'); rect(23, 23, 25 + b, 23, topA, 'topA'); }
+  } else if (f.top === 'robe') {
+    for (let y = 19; y <= 41; y++) { const [a, z] = y <= 33 ? torsoX(y) : [9 - Math.floor((y - 33) / 3), 22 + Math.floor((y - 33) / 3)]; rect(a, y, z, y, top, 'top'); }
+    rect(5 - b, 20, 8, 28, top, 'top'); rect(23, 20, 26 + b, 28, top, 'top'); rect(7 - b, 26, 10, 29, top, 'top'); rect(21, 26, 24 + b, 29, top, 'top');
+    for (let y = 19; y <= 25; y++) { const w = Math.max(0, 3 - Math.floor((y - 19) / 2)); rect(16 - w, y, 15 + w, y, skin, 'skin'); det(15 - w, y, topA); det(16 + w, y, topA); }
+    rect(10, 31, 21, 32, topA, 'topA'); rect(5 - b, 28, 8, 28, topA, 'topA'); rect(23, 28, 26 + b, 28, topA, 'topA');
+  }
+  // shoes
+  const foot = (x0, x1, y0) => rect(x0, y0, x1, 47, shoe, 'shoe');
+  if (f.shoes === 'boots') { foot(10, 14, 40); foot(17, 21, 40); rect(9, 45, 15, 47, shoe, 'shoe'); rect(16, 45, 22, 47, shoe, 'shoe'); for (const y of [41, 43]) { det(12, y, fxShade(shoe, -0.35)); det(19, y, fxShade(shoe, -0.35)); } rect(9, 47, 15, 47, fxShade(shoe, -0.45), 'sole'); rect(16, 47, 22, 47, fxShade(shoe, -0.45), 'sole'); }
+  else if (f.shoes === 'hightops') { foot(10, 14, 42); foot(17, 21, 42); rect(9, 45, 15, 46, shoe, 'shoe'); rect(16, 45, 22, 46, shoe, 'shoe'); rect(9, 47, 15, 47, '#fcfcfc', 'sole'); rect(16, 47, 22, 47, '#fcfcfc', 'sole'); det(11, 43, '#fcfcfc'); det(20, 43, '#fcfcfc'); }
+  else if (f.shoes === 'sneakers') { rect(9, 44, 15, 46, shoe, 'shoe'); rect(16, 44, 22, 46, shoe, 'shoe'); rect(9, 47, 15, 47, '#fcfcfc', 'sole'); rect(16, 47, 22, 47, '#fcfcfc', 'sole'); det(12, 45, fxShade(shoe, -0.3)); det(19, 45, fxShade(shoe, -0.3)); }
+  else { rect(9, 46, 15, 46, shoe, 'shoe'); rect(16, 46, 22, 46, shoe, 'shoe'); rect(9, 47, 15, 47, fxShade(shoe, -0.4), 'sole'); rect(16, 47, 22, 47, fxShade(shoe, -0.4), 'sole'); rect(10, 44, 14, 45, skin, 'skin'); rect(17, 44, 21, 45, skin, 'skin'); }
+  // face
+  const eyeD = '#1a0e0a', browC = fxShade(hair, (typeof f.hairC === 'number' && f.hairC >= 6) ? -0.35 : -0.05);
+  const eye = (x) => {
+    if (f.eyes === 'focused') { det(x, 10, '#fcfcfc'); det(x + 1, 10, eyeD); det(x, 11, eyeD); det(x + 1, 11, eyeD); }
+    else if (f.eyes === 'calm') { det(x, 11, eyeD); det(x + 1, 11, eyeD); }
+    else if (f.eyes === 'narrow') { det(x, 11, eyeD); det(x + 1, 11, eyeD); det(x, 10, fxShade(skin, -0.2)); det(x + 1, 10, fxShade(skin, -0.2)); }
+    else { det(x, 10, '#fcfcfc'); det(x + 1, 10, '#fcfcfc'); det(x, 11, '#fcfcfc'); det(x + 1, 11, eyeD); }
+  };
+  eye(12); eye(18);
+  if (f.brows === 'flat') { for (const x of [11, 12, 13, 18, 19, 20]) det(x, 8, browC); }
+  else if (f.brows === 'thick') { for (const x of [11, 12, 13, 18, 19, 20]) { det(x, 8, browC); det(x, 7, browC); } }
+  else if (f.brows === 'raised') { for (const x of [11, 12, 13, 18, 19, 20]) det(x, 7, browC); }
+  else { det(11, 8, browC); det(12, 8, browC); det(13, 9, browC); det(18, 9, browC); det(19, 8, browC); det(20, 8, browC); }
+  det(15, 13, fxShade(skin, -0.22)); det(16, 13, fxShade(skin, -0.12)); det(16, 12, fxShade(skin, -0.12));
+  const lip = fxShade(skin, -0.45);
+  if (f.mouth === 'line') { for (let x = 14; x <= 17; x++) det(x, 15, lip); }
+  else if (f.mouth === 'smirk') { for (let x = 14; x <= 16; x++) det(x, 15, lip); det(17, 14, lip); }
+  else if (f.mouth === 'grin') { for (let x = 14; x <= 17; x++) { det(x, 15, '#fcfcfc'); det(x, 16, lip); } det(13, 15, lip); det(18, 15, lip); }
+  else if (f.mouth === 'frown') { det(14, 16, lip); det(15, 15, lip); det(16, 15, lip); det(17, 16, lip); }
+  else { for (let x = 14; x <= 17; x++) det(x, 15, gear); det(13, 15, lip); det(18, 15, lip); }
+  // facial hair
+  const fh = fxShade(hair, -0.05), fhs = fxShade(hair, 0.15);
+  if (f.face === 'stubble') { for (let y = 13; y <= 17; y++) for (let x = 10; x <= 21; x++) if (inHead(x, y) && (x + y) % 2 === 0 && (y >= 16 || x <= 11 || x >= 20)) det(x, y, fxShade(skin, -0.3)); }
+  if (f.face === 'mustache' || f.face === 'goatee') { for (let x = 13; x <= 18; x++) det(x, 14, fh); }
+  if (f.face === 'goatee') { for (let x = 14; x <= 17; x++) { det(x, 16, fh); det(x, 17, fh); } }
+  if (f.face === 'beard') { for (let y = 12; y <= 18; y++) for (let x = 9; x <= 22; x++) if (inHead(x, y) && (y >= 14 || x <= 11 || x >= 20) && !(y === 15 && x >= 14 && x <= 17)) det(x, y, (x + y) % 3 ? fh : fhs); }
+  // hair (front)
+  const hs = fxShade(hair, -0.25), hl = fxShade(hair, 0.18);
+  const cap = (yMax, grow = 0.5) => { for (let y = 0; y <= yMax; y++) for (let x = 8; x <= 23; x++) if (inE(x, y, 16, 10.5, 6.2 + grow, 7 + grow)) put(x, y, hair, 'hair'); };
+  const sides = (y0, y1, c = hair) => { for (let y = y0; y <= y1; y++) { for (const x of [9, 10]) if (inE(x, y, 16, 10.5, 6.8, 7.4)) put(x, y, c, 'hair'); for (const x of [21, 22]) if (inE(x, y, 16, 10.5, 6.8, 7.4)) put(x, y, c, 'hair'); } };
+  if (f.hair === 'buzz') { cap(5, 0.1); sides(6, 8, hs); }
+  else if (f.hair === 'short') { cap(6); sides(7, 9); }
+  else if (f.hair === 'fade') { cap(6); sides(7, 11, hs); }
+  else if (f.hair === 'flattop') { rect(10, 0, 21, 5, hair, 'hair'); det(10, 0, hl); sides(6, 10, hs); }
+  else if (f.hair === 'afro') { for (let y = 0; y <= 8; y++) for (let x = 6; x <= 25; x++) if (inE(x, y, 16, 8, 9, 7.5)) put(x, y, hair, 'hair'); sides(9, 13); }
+  else if (f.hair === 'mohawk') { rect(14, 0, 17, 6, hair, 'hair'); sides(6, 9, hs); }
+  else if (f.hair === 'spiky') { cap(6); for (const [x, h] of [[10, 2], [12, 0], [14, 1], [16, 0], [18, 1], [20, 0], [21, 2]]) rect(x, h, x + 1, 4, hair, 'hair'); sides(7, 9); }
+  else if (f.hair === 'cornrows') { cap(6, 0.2); for (let y = 0; y <= 6; y++) for (let x = 8; x <= 23; x++) if (px[y][x] && px[y][x].l === 'hair' && x % 2) det(x, y, hs); sides(7, 9, hs); }
+  else if (f.hair === 'bun') { cap(6); sides(7, 9); ell(16, 1.5, 2.6, 2, hair, 'hair'); }
+  else if (f.hair === 'long') { cap(6); sides(7, 18); }
+  else if (f.hair === 'bald') det(13, 5, fxShade(skin, 0.25));
+  // headwear and eyewear
+  if (f.head === 'headband' || f.head === 'bandana') { for (let x = 8; x <= 23; x++) for (let y = 6; y <= 7; y++) if (inE(x, y, 16, 10.5, 6.9, 7.6)) put(x, y, gear, 'gear'); if (f.head === 'bandana') { for (let y = 0; y <= 6; y++) for (let x = 8; x <= 23; x++) if (inE(x, y, 16, 10.5, 6.8, 7.5)) put(x, y, gear, 'gear'); det(13, 3, '#fcfcfc'); det(18, 4, '#fcfcfc'); } rect(23, 7, 24, 9, gear, 'gear'); }
+  if (f.head === 'cap') { for (let y = 0; y <= 6; y++) for (let x = 8; x <= 23; x++) if (inE(x, y, 16, 10.5, 6.9, 7.7)) put(x, y, gear, 'gear'); rect(8, 6, 23, 7, fxShade(gear, -0.3), 'brim'); det(15, 0, fxShade(gear, 0.3)); det(16, 0, fxShade(gear, 0.3)); }
+  if (f.eyewear === 'shades') { rect(10, 9, 21, 9, '#0a0a0a', 'glass'); rect(11, 10, 14, 11, '#0a0a0a', 'glass'); rect(17, 10, 20, 11, '#0a0a0a', 'glass'); det(12, 10, '#fcfcfc'); det(18, 10, '#fcfcfc'); det(13, 11, '#fcfcfc'); det(19, 11, '#fcfcfc'); }
+  if (f.eyewear === 'sport') { rect(10, 9, 21, 11, gear, 'glass'); rect(15, 11, 16, 11, null, 'x'); det(11, 10, fxShade(gear, 0.5)); det(17, 10, fxShade(gear, 0.5)); }
+  // neck gear
+  if (f.neck === 'chain') { for (const [x, y] of [[12, 19], [13, 20], [14, 21], [15, 21], [16, 21], [17, 21], [18, 20], [19, 19]]) put(x, y, '#f8c838', 'chain'); rect(15, 22, 16, 23, '#f8b800', 'chain'); det(15, 22, '#fff0a0'); }
+  if (f.neck === 'towel') { rect(10, 17, 21, 20, '#fcfcfc', 'towel'); rect(10, 21, 12, 28, '#fcfcfc', 'towel'); rect(19, 21, 21, 28, '#fcfcfc', 'towel'); rect(10, 26, 12, 26, gear, 'towelA'); rect(19, 26, 21, 26, gear, 'towelA'); rect(14, 17, 17, 18, fxShade(skin, -0.1), 'neck'); }
+  // the title belt is worn around the waist, like a champion
+  if (f.neck === 'belt') { rect(9, 31, 22, 33, '#e8b020', 'belt'); rect(9, 33, 22, 33, '#a86c10', 'belt'); rect(13, 29, 18, 35, '#f8d040', 'plate'); rect(14, 30, 17, 34, f.beltC || '#f83800', 'gem'); det(14, 30, '#fcfcfc'); det(11, 32, '#fff0a0'); det(20, 32, '#fff0a0'); }
+  // gloves in a guard
+  if (f.gloves === 'wraps') { for (const cx of [10, 22]) { ell(cx, 23, 2.6, 2.6, '#f4f0e6', 'glove'); det(cx - 1, 22, glove); det(cx, 22, glove); det(cx + 1, 24, glove); } }
+  else {
+    const r = f.gloves === 'mma' ? 3 : 4.2;
+    for (const [cx, side] of [[10.5, -1], [21.5, 1]]) {
+      ell(cx, 22.5, r, r - 0.3, glove, 'glove');
+      if (f.gloves === 'classic') { det(Math.round(cx) + (side < 0 ? 1 : -2), 23, fxShade(glove, -0.28)); det(Math.round(cx) + (side < 0 ? 1 : -2), 24, fxShade(glove, -0.28)); }
+      if (f.gloves === 'classic') { rect(Math.round(cx) - 2, 25, Math.round(cx) + 1, 27, '#fcfcfc', 'cuff'); det(Math.round(cx) - 2 + (side < 0 ? 0 : 1), 20, fxShade(glove, 0.45)); det(Math.round(cx) - 1 + (side < 0 ? 0 : 1), 20, fxShade(glove, 0.3)); }
+      else { for (let x = Math.round(cx) - 2; x <= Math.round(cx) + 1; x++) det(x, 21, fxShade(glove, -0.3)); rect(Math.round(cx) - 2, 25, Math.round(cx) + 1, 26, '#1a1a1a', 'cuff'); }
+    }
+  }
+  // shade the bottom and right edge of each part, then outline the silhouette
+  const out = px.map((row) => row.map((p) => (p && p.c ? { ...p } : null)));
+  for (let y = 0; y < FX_H; y++) for (let x = 0; x < FX_W; x++) {
+    const p = px[y][x]; if (!p || !p.c || p.d) continue;
+    const below = y + 1 < FX_H ? px[y + 1][x] : null, right = x + 1 < FX_W ? px[y][x + 1] : null, above = y > 0 ? px[y - 1][x] : null;
+    if (!below || !below.c || below.l !== p.l) out[y][x].c = fxShade(p.c, -0.2);
+    else if (!right || !right.c || right.l !== p.l) out[y][x].c = fxShade(p.c, -0.1);
+    else if (!above || !above.c || above.l !== p.l) out[y][x].c = fxShade(p.c, 0.12);
+  }
+  for (let y = 0; y < FX_H; y++) for (let x = 0; x < FX_W; x++) {
+    if (out[y][x]) continue;
+    const n = [[0, 1], [0, -1], [1, 0], [-1, 0]].some(([dx, dy]) => { const p = px[y + dy] && px[y + dy][x + dx]; return p && p.c; });
+    if (n) out[y][x] = { c: FX_INK };
+  }
+  return out;
+}
+// SVG from the pixel map; view 'full' (32x48) or 'face' (head and shoulders)
+function fxSVG(cfg, view = 'full', cls = '') {
+  const px = fxBuild(cfg), vb = view === 'face' ? '5 0 22 22' : '0 0 32 48';
+  let r = '';
+  for (let y = 0; y < FX_H; y++) { let x = 0; while (x < FX_W) { const p = px[y][x]; if (!p) { x++; continue; } let w = 1; while (x + w < FX_W && px[y][x + w] && px[y][x + w].c === p.c) w++; r += `<rect x="${x}" y="${y}" width="${w}" height="1" fill="${p.c}"/>`; x += w; } }
+  return `<svg class="fxsvg ${cls}" viewBox="${vb}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+}
+function fxRandom(rng = Math.random) {
+  const pick = (a) => a[(rng() * a.length) | 0], f = {};
+  for (const [k, opts] of Object.entries(FX_PARTS)) f[k] = pick(opts)[0];
+  Object.assign(f, { skin: (rng() * FX_SKIN.length) | 0, hairC: (rng() * 8) | 0, topC: (rng() * FX_CLOTH.length) | 0, topA: (rng() * FX_CLOTH.length) | 0, bottomC: (rng() * FX_CLOTH.length) | 0,
+    bottomA: (rng() * FX_CLOTH.length) | 0, shoeC: (rng() * FX_CLOTH.length) | 0, gloveC: (rng() * FX_CLOTH.length) | 0, gearC: (rng() * FX_CLOTH.length) | 0 });
+  if (rng() < 0.6) f.head = 'none'; if (rng() < 0.75) f.eyewear = 'none'; if (rng() < 0.7) f.neck = 'none'; if (rng() < 0.4) f.face = 'none';
+  return f;
+}
+
+// ---------------------------------------------------------------- MyFighter wardrobe, coins, Fight Pass, Pro Shop, gym bag
+// Everything here is cosmetic: it changes how your fighter looks, never your score, rank or odds.
+// Coins are earned by playing. Every item can be earned without paying.
+const AR_RARITY = { common: { n: 'Common', c: '#bcbcbc', price: 150 }, rare: { n: 'Rare', c: '#3cbcfc', price: 400 }, epic: { n: 'Epic', c: '#c084fc', price: 900 }, legendary: { n: 'Legendary', c: '#f8b800', price: 2000 } };
+const AR_CLOTH_NAMES = ['Red', 'Blue', 'Green', 'Gold', 'White', 'Black', 'Gray', 'Pink', 'Sky blue', 'Royal purple', 'Blaze orange', 'Deep teal', 'Blood red', 'Leather brown', 'Volt', 'Aqua'];
+// [id, slot, value, name, rarity, how to get it]
+const AR_ITEMS = [
+  ['hair:mohawk', 'hair', 'mohawk', 'Mohawk', 'rare', { shop: 1 }], ['hair:bun', 'hair', 'bun', 'Top knot', 'common', { shop: 1 }],
+  ['hairC:8', 'hairC', 8, 'Electric blue hair', 'rare', { shop: 1 }], ['hairC:9', 'hairC', 9, 'Bubblegum hair', 'rare', { shop: 1 }],
+  ['hairC:10', 'hairC', 10, 'Toxic green hair', 'rare', { bag: 1 }], ['hairC:11', 'hairC', 11, 'Fire red hair', 'epic', { shop: 1 }],
+  ['top:jersey', 'top', 'jersey', 'Jersey', 'rare', { shop: 1 }], ['top:robe', 'top', 'robe', 'Ring robe', 'epic', { ach: 'gradeA', how: 'Win a fight by TKO' }],
+  ['bottom:joggers', 'bottom', 'joggers', 'Joggers', 'common', { shop: 1 }],
+  ['shoes:hightops', 'shoes', 'hightops', 'High-tops', 'rare', { shop: 1 }], ['shoes:slides', 'shoes', 'slides', 'Slides', 'common', { shop: 1 }],
+  ['gloves:mma', 'gloves', 'mma', 'MMA gloves', 'epic', { shop: 1 }],
+  ['head:cap', 'head', 'cap', 'Cap', 'common', { lvl: 3 }], ['head:bandana', 'head', 'bandana', 'Bandana', 'common', { shop: 1 }],
+  ['eyewear:sport', 'eyewear', 'sport', 'Sport lenses', 'rare', { shop: 1 }],
+  ['eyewear:shades', 'eyewear', 'shades', "Slick's 8-bit shades", 'legendary', { ach: 'gradeS', how: 'Win a fight by KO' }],
+  ['neck:chain', 'neck', 'chain', 'Gold chain', 'epic', { streak: 7, how: 'Reach a 7-day streak' }],
+  ['mouth:guard', 'mouth', 'guard', 'Mouthguard', 'common', { ach: 'first', how: 'Finish your first fight' }],
+  ['cloth:8', 'cloth', 8, 'Sky blue', 'common', { shop: 1 }], ['cloth:9', 'cloth', 9, 'Royal purple', 'rare', { shop: 1 }],
+  ['cloth:10', 'cloth', 10, 'Blaze orange', 'common', { shop: 1 }], ['cloth:11', 'cloth', 11, 'Deep teal', 'rare', { bag: 1 }],
+  ['cloth:12', 'cloth', 12, 'Blood red', 'rare', { shop: 1 }], ['cloth:13', 'cloth', 13, 'Leather brown', 'common', { shop: 1 }],
+  ['cloth:14', 'cloth', 14, 'Volt', 'epic', { shop: 1 }], ['cloth:15', 'cloth', 15, 'Aqua', 'rare', { shop: 1 }],
+].map(([id, slot, val, name, rarity, src]) => ({ id, slot, val, name, rarity, src }));
+const AR_CLOTH_FIELDS = ['topC', 'topA', 'bottomC', 'bottomA', 'shoeC', 'gloveC', 'gearC'];
+// monthly seasons: each has two limited-edition colors and a title belt you can only earn that month
+const AR_SEASONS = [
+  ['Cold Open', ['#a8e4fc', 'Frostbite'], ['#3c7cfc', 'Glacier'], '#3cbcfc'], ['Heartbreaker', ['#f83878', 'Heartbreaker'], ['#f8b8f8', 'Valentine'], '#f83878'],
+  ['Lucky Punch', ['#00b800', 'Shamrock'], ['#f8d878', 'Pot of Gold'], '#00b800'], ['Spring Training', ['#b8f8b8', 'Mint'], ['#f8f8a0', 'Lemon'], '#58d854'],
+  ['Bloom', ['#f878f8', 'Orchid'], ['#a8f0e0', 'Seafoam'], '#f878f8'], ['Summer Slam', ['#f8b800', 'Sunshine'], ['#00e8d8', 'Pool Party'], '#f8b800'],
+  ['Fireworks', ['#d82800', 'Firecracker'], ['#2058f8', 'Star-Spangled'], '#d82800'], ['Heatwave', ['#f87858', 'Heat Index'], ['#f8d8a8', 'Beach Sand'], '#f87858'],
+  ['Back to the Gym', ['#a85000', 'Rust'], ['#f8b860', 'Harvest'], '#a85000'], ['Haunted Ring', ['#f87800', 'Pumpkin'], ['#5c2c9c', 'Midnight Purple'], '#f87800'],
+  ['Thanksgiving Throwdown', ['#8c4c1c', 'Roast'], ['#e8a838', 'Cornbread'], '#e8a838'], ['Holiday Haymaker', ['#c80000', 'Candy Cane'], ['#007800', 'Evergreen'], '#00a800'],
+];
+const AR_PASS_TIERS = 30, AR_PASS_STEP = 150, AR_ICE_MAX = 2, AR_ICE_PRICE = 300;
+const AR_WEEKLY = [
+  { id: 'fights', text: 'Finish 7 fights', need: 7, ev: () => 1 }, { id: 'stars', text: 'Earn 12 stars', need: 12, ev: (g) => g.stars },
+  { id: 'daily', text: 'Fight 4 daily bouts', need: 4, ev: (g) => (g.mode === 'daily' ? 1 : 0) }, { id: 'ranked', text: 'Play 3 ranked fights', need: 3, ev: (g) => (g.mode === 'ranked' ? 1 : 0) },
+  { id: 'wins', text: 'Win 4 fights', need: 4, ev: (g) => (g.pct >= 55 ? 1 : 0) }, { id: 'tko', text: 'Win 2 fights by TKO or KO', need: 2, ev: (g) => (g.grade === 'A' || g.grade === 'S' ? 1 : 0) },
+];
+const AR_MILESTONES = { 3: { coins: 100 }, 7: { coins: 200 }, 14: { coins: 250, ice: 1 }, 30: { coins: 600, ice: 2 }, 50: { coins: 800, ice: 2 }, 100: { coins: 1500, ice: 2 }, 365: { coins: 5000, ice: 2 } };
+
+function arSeason(d = new Date()) {
+  const y = d.getFullYear(), m = d.getMonth(), th = AR_SEASONS[m], num = (y - 2026) * 12 + m - 8, end = new Date(y, m + 1, 1);
+  const sid = `${y}-${String(m + 1).padStart(2, '0')}`;
+  return { sid, num, name: th[0], c1: th[1], c2: th[2], gem: th[3], daysLeft: Math.max(1, Math.ceil((end - d) / 864e5)),
+    items: { c1: { id: `season:${sid}:c1`, slot: 'cloth', val: th[1][0], name: `${th[1][1]} (S${num})`, rarity: 'epic', limited: sid },
+      c2: { id: `season:${sid}:c2`, slot: 'cloth', val: th[2][0], name: `${th[2][1]} (S${num})`, rarity: 'legendary', limited: sid },
+      belt: { id: `season:${sid}:belt`, slot: 'belt', val: th[3], name: `${th[0]} title belt`, rarity: 'legendary', limited: sid } } };
+}
+const arItem = (id) => AR_ITEMS.find((x) => x.id === id) || (AR.st.inv[id] && typeof AR.st.inv[id] === 'object' ? AR.st.inv[id] : null);
+function arOwns(id) { return !!AR.st.inv[id]; }
+// is this fighter part or color free, owned, or locked?
+function arPartOk(slot, val) {
+  const id = AR_CLOTH_FIELDS.includes(slot) ? `cloth:${val}` : `${slot}:${val}`;
+  if (typeof val === 'string' && val.startsWith('#')) return Object.values(AR.st.inv).some((x) => x && x.val === val);
+  if (id === 'neck:belt') return arOwns(id);
+  const it = AR_ITEMS.find((x) => x.id === id);
+  return !it || arOwns(id);
+}
+function arHow(it) {
+  const s = it.src || {};
+  return it.limited ? `Limited · Fight Pass ${it.limited}` : s.how || (s.lvl ? `Reach level ${s.lvl}` : s.shop ? `Pro Shop · ${AR_RARITY[it.rarity].price} coins` : s.bag ? 'Gym bags only' : 'Locked');
+}
+function arGrant(it, quiet) {
+  const s = AR.st; if (!it || s.inv[it.id]) return false;
+  s.inv[it.id] = it.limited ? { id: it.id, slot: it.slot, val: it.val, name: it.name, rarity: it.rarity, limited: it.limited } : true;
+  if (it.slot === 'belt') s.inv['neck:belt'] = true;
+  if (!quiet) arToast('🎁', `New gear: ${it.name}`, `${AR_RARITY[it.rarity].n}${it.limited ? ' · limited edition' : ''}`);
+  return true;
+}
+// items earned by level, streak or achievement
+function arAutoGrant() {
+  const s = AR.st, L = arLevel(s.xp).L, got = [];
+  for (const it of AR_ITEMS) { const r = it.src; if ((r.lvl && L >= r.lvl) || (r.streak && (s.bestStreak || 0) >= r.streak) || (r.ach && s.ach[r.ach])) if (arGrant(it, true)) got.push(it); }
+  return got;
+}
+function arCoins(n) { AR.st.coins = (AR.st.coins || 0) + Math.max(0, Math.round(n)); }
+function arIce(n) { const s = AR.st, before = s.ice || 0; s.ice = Math.min(AR_ICE_MAX, before + n); return s.ice - before; }
+
+// ---------------------------------------------------------------- Fight Pass (free, monthly, 30 tiers)
+function arPass() {
+  const s = AR.st, se = arSeason();
+  if (!s.pass || s.pass.sid !== se.sid) s.pass = { sid: se.sid, xp: 0, tier: 0 };
+  return s.pass;
+}
+function arPassReward(t, se = arSeason()) {
+  if (t === 10) return { item: se.items.c1 }; if (t === 20) return { item: se.items.c2 }; if (t === 30) return { item: se.items.belt };
+  if (t === 3 || t === 13 || t === 23) return { ice: 1 };
+  if (t === 5 || t === 15 || t === 25) {
+    const want = t === 5 ? 'rare' : t === 15 ? 'epic' : 'legendary', pool = AR_ITEMS.filter((x) => x.src.shop && x.rarity === want);
+    return { item: pool[arHash(se.sid + t) % pool.length], fallback: AR_RARITY[want].price / 2 };
+  }
+  return { coins: 30 + t * 3 };
+}
+function arRewardLabel(r) { return r.item ? r.item.name : r.ice ? 'Ice pack' : `${r.coins} coins`; }
+function arRewardIcon(r) { return r.item ? (r.item.slot === 'belt' ? '🏆' : r.item.slot === 'cloth' ? '🎨' : '👕') : r.ice ? '🧊' : '🪙'; }
+// add Fight Pass XP; returns the rewards unlocked
+function arPassXP(n) {
+  const p = arPass(), out = [];
+  p.xp += Math.max(0, Math.round(n));
+  while (p.tier < AR_PASS_TIERS && p.xp >= (p.tier + 1) * AR_PASS_STEP) {
+    p.tier++; const r = arPassReward(p.tier);
+    if (r.item) { if (!arGrant(r.item, true) && r.fallback) arCoins(r.fallback); } else if (r.ice) { if (!arIce(1)) arCoins(150); } else arCoins(r.coins);
+    out.push({ t: p.tier, r });
+  }
+  AR.st.bestTier = Math.max(AR.st.bestTier || 0, p.tier);
+  return out;
+}
+
+// ---------------------------------------------------------------- weekly challenges
+function arWeekly() {
+  const s = AR.st, ws = arWeekStart();
+  if (s.weekly && s.weekly.week === ws) return s.weekly;
+  const rng = arRng('weekly|' + ws), pool = AR_WEEKLY.slice(), list = [];
+  while (list.length < 3) list.push(pool.splice((rng() * pool.length) | 0, 1)[0].id);
+  s.weekly = { week: ws, list: list.map((id) => ({ id, prog: 0, done: false })) };
+  return s.weekly;
+}
+
+// ---------------------------------------------------------------- Pro Shop: 4 items a day, plus ice packs
+function arShopStock() {
+  const rng = arRng('shop|' + arToday()), pool = AR_ITEMS.filter((x) => x.src.shop), out = [];
+  while (out.length < 4 && pool.length) out.push(pool.splice((rng() * pool.length) | 0, 1)[0]);
+  return out;
+}
+function arBuy(id) {
+  const s = AR.st;
+  if (id === 'ice') { if ((s.ice || 0) >= AR_ICE_MAX || s.coins < AR_ICE_PRICE) return; s.coins -= AR_ICE_PRICE; arIce(1); arSave(); arToast('🧊', 'Ice pack', 'Saves your streak if you miss a day'); arRender(); return; }
+  const it = AR_ITEMS.find((x) => x.id === id); if (!it || arOwns(id)) return;
+  const price = AR_RARITY[it.rarity].price; if (s.coins < price) return;
+  s.coins -= price; arGrant(it, true); arSave();
+  arCelebrate('🛍️', 'Bought!', it.name, [`${AR_RARITY[it.rarity].n} · find it in the fighter creator`]);
+  arRender();
+}
+
+// ---------------------------------------------------------------- gym bag: one after each day's fight night
+// Five outcomes with equal odds, shown up front. Every 5th bag is a Title bag with guaranteed epic or better gear.
+const AR_BAG_ODDS = [['60 coins', '🪙'], ['150 coins', '💰'], ['Ice pack', '🧊'], ['Rare gear', '🔷'], ['Epic gear', '🟣']];
+function arBagOpen() {
+  const s = AR.st, b = s.bag; if (!b || b.day !== arToday() || b.opened) return;
+  b.opened = true; s.bags = (s.bags || 0) + 1;
+  const title = s.bags % 5 === 0, rng = arRng(`bag|${arToday()}|${s.bags}|${Math.random()}`);
+  const unowned = (rar) => AR_ITEMS.filter((x) => (x.src.shop || x.src.bag) && rar.includes(x.rarity) && !arOwns(x.id));
+  let got = null, label = '', icon = '🎒';
+  const giveItem = (rar, coins) => { const pool = unowned(rar); if (pool.length) { got = pool[(rng() * pool.length) | 0]; arGrant(got, true); label = got.name; icon = '👕'; } else { arCoins(coins); label = `${coins} coins`; icon = '💰'; } };
+  if (title) giveItem(['epic', 'legendary'], 600);
+  else {
+    const k = (rng() * 5) | 0;
+    if (k === 0) { arCoins(60); label = '60 coins'; icon = '🪙'; } else if (k === 1) { arCoins(150); label = '150 coins'; icon = '💰'; }
+    else if (k === 2) { if (arIce(1)) { label = 'Ice pack'; icon = '🧊'; } else { arCoins(150); label = '150 coins (ice packs full)'; icon = '💰'; } }
+    else giveItem(k === 3 ? ['rare'] : ['epic'], k === 3 ? 200 : 450);
+  }
+  arSave();
+  arCelebrate(icon, title ? 'Title bag!' : 'Gym bag', label, got ? [`${AR_RARITY[got.rarity].n} · try it on in the fighter creator`] : []);
+  arRender();
+}
+
+// ---------------------------------------------------------------- celebrations (one at a time)
+function arCelebrate(icon, title, sub, lines = []) {
+  AR.cel = AR.cel || []; AR.cel.push({ icon, title, sub, lines }); if (AR.cel.length === 1) arCelShow();
+}
+function arCelShow() {
+  const c = AR.cel && AR.cel[0]; let box = $('arCel');
+  if (!c) { if (box) box.remove(); return; }
+  if (!box) { box = document.createElement('div'); box.id = 'arCel'; box.className = 'arcel'; document.body.appendChild(box); }
+  box.innerHTML = `<div class="arcelbox"><div class="arcelstars">✦ ✦ ✦</div><div class="arcelicon">${c.icon}</div><b>${esc(c.title)}</b><p>${esc(c.sub)}</p>${c.lines.map((l) => `<small>${esc(l)}</small>`).join('')}<button class="pxbtn go" id="arCelOk">Nice!</button></div>`;
+  $('arCelOk').onclick = () => { AR.cel.shift(); arCelShow(); };
+}
+
+// ---------------------------------------------------------------- streak: ice packs, milestones, earning it back
+function arStreakDay() {
+  const s = AR.st, today = arToday();
+  const gap = s.lastDay ? Math.round((arDate(today) - arDate(s.lastDay)) / 864e5) : null;
+  if (gap === 1) { s.streak++; s.perfect = (s.perfect || 0) + 1; }
+  else if (gap > 1 && (s.ice || 0) >= gap - 1) { s.ice -= gap - 1; s.streak++; s.perfect = 1; arToast('🧊', `Ice pack used`, `Your streak survived ${gap - 1} missed day${gap > 2 ? 's' : ''}`); }
+  else { if (gap > 1 && s.streak >= 3) s.earn = { day: today, old: s.streak, prog: 0 }; s.streak = 1; s.perfect = 1; }
+  s.lastDay = today; s.bestStreak = Math.max(s.bestStreak || 0, s.streak);
+  const m = AR_MILESTONES[s.streak]; s.ms = s.ms || {};
+  if (m && !s.ms[s.streak]) { s.ms[s.streak] = today; arCoins(m.coins); const ice = m.ice ? arIce(m.ice) : 0;
+    arCelebrate('🔥', `${s.streak}-day streak!`, 'Road work pays off.', [`+${m.coins} coins`, ...(ice ? [`+${ice} ice pack${ice > 1 ? 's' : ''}`] : []), ...(s.streak === 7 ? ['Gold chain unlocked'] : [])]); }
+}
+
+// ---------------------------------------------------------------- the fighter creator
+const AR_CTABS = [['body', 'Body'], ['face', 'Face'], ['hair', 'Hair'], ['top', 'Top'], ['bottom', 'Bottoms'], ['shoes', 'Shoes'], ['gloves', 'Gloves'], ['gear', 'Gear']];
+const AR_CPARTS = { body: [['build', 'Build']], face: [['eyes', 'Eyes'], ['brows', 'Brows'], ['mouth', 'Mouth'], ['face', 'Facial hair']], hair: [['hair', 'Style']], top: [['top', 'Style']], bottom: [['bottom', 'Style']], shoes: [['shoes', 'Style']], gloves: [['gloves', 'Style']], gear: [['head', 'Head'], ['eyewear', 'Eyewear'], ['neck', 'Neck & waist']] };
+const AR_CCOLORS = { body: [['skin', 'Skin tone', 'skin']], hair: [['hairC', 'Hair color', 'hair']], top: [['topC', 'Color', 'cloth'], ['topA', 'Trim', 'cloth']], bottom: [['bottomC', 'Color', 'cloth'], ['bottomA', 'Trim', 'cloth']], shoes: [['shoeC', 'Color', 'cloth']], gloves: [['gloveC', 'Color', 'cloth']], gear: [['gearC', 'Gear color', 'cloth'], ['beltC', 'Belt', 'belt']] };
+const AR_FACEVIEW = new Set(['eyes', 'brows', 'mouth', 'face', 'hair', 'head', 'eyewear']);
+function arPalette(kind) {
+  const owned = Object.values(AR.st.inv).filter((x) => x && typeof x === 'object');
+  if (kind === 'skin') return FX_SKIN.map((c, i) => ({ v: i, c, ok: true }));
+  if (kind === 'hair') return FX_HAIRC.map((c, i) => ({ v: i, c, ok: arPartOk('hairC', i), it: AR_ITEMS.find((x) => x.id === `hairC:${i}`) }));
+  if (kind === 'belt') return owned.filter((x) => x.slot === 'belt').map((x) => ({ v: x.val, c: x.val, ok: true, it: x }));
+  return [...FX_CLOTH.map((c, i) => ({ v: i, c, ok: arPartOk('topC', i), it: AR_ITEMS.find((x) => x.id === `cloth:${i}`) })), ...owned.filter((x) => x.slot === 'cloth').map((x) => ({ v: x.val, c: x.val, ok: true, it: x, ltd: true }))];
+}
+function arCreatorHTML() {
+  const cf = AR.cf, tab = AR.ctab || 'body', first = !AR.st.fighter;
+  const parts = (AR_CPARTS[tab] || []).map(([slot, label]) => `<div class="label">${label}</div><div class="aropts2">${FX_PARTS[slot].map(([v, name]) => {
+    const ok = arPartOk(slot, v), it = AR_ITEMS.find((x) => x.id === `${slot}:${v}`), on = cf[slot] === v;
+    if (slot === 'neck' && v === 'belt' && !ok) return '';
+    return `<button class="aropt2${on ? ' on' : ''}${ok ? '' : ' locked'}" data-ar="cpart" data-slot="${slot}" data-v="${v}" title="${esc(ok ? name : `${name} · ${arHow(it)}`)}"${it ? ` style="--rc:${AR_RARITY[it.rarity].c}"` : ''}>
+      ${fxSVG({ ...cf, [slot]: v }, AR_FACEVIEW.has(slot) ? 'face' : 'full')}<small>${ok ? '' : '🔒 '}${esc(name)}</small></button>`;
+  }).join('')}</div>`).join('');
+  const colors = (AR_CCOLORS[tab] || []).map(([field, label, kind]) => { const pal = arPalette(kind); if (!pal.length) return ''; return `<div class="label">${label}</div><div class="arsw">${pal.map((p) =>
+    `<button class="arswb${cf[field] === p.v ? ' on' : ''}${p.ok ? '' : ' locked'}${p.ltd ? ' ltd' : ''}" data-ar="ccolor" data-f="${field}" data-v="${typeof p.v === 'string' ? p.v : 'n' + p.v}" style="background:${p.c}" title="${esc(p.it ? `${p.it.name}${p.ok ? '' : ' · ' + arHow(p.it)}` : '')}">${p.ok ? '' : '🔒'}</button>`).join('')}</div>`; }).join('');
+  return `<section class="pxbox arcreate">
+    <div class="arbill px">${first ? 'Create your fighter' : 'Edit your fighter'}</div>
+    <div class="arstage"><div class="arstagefx">${fxSVG(cf, 'full', 'idle')}</div></div>
+    <div class="arfields"><label class="field"><span class="label">Fighter name</span><input id="arName" maxlength="16" value="${esc(AR.st.name)}"></label>
+      <label class="field"><span class="label">Fighting out of</span><input id="arTown" maxlength="28" value="${esc(AR.st.town)}"></label></div>
+    <div class="pxtabs">${AR_CTABS.map(([k, l]) => `<button data-ar="ctab" data-t="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>
+    <div class="arcparts">${parts}${colors}</div>
+    <div class="row">${arBtn('', 'data-ar="crandom"', '🎲 Random')}<span class="grow"></span>${first ? '' : arBtn('', 'data-ar="ccancel"', 'Cancel')}${arBtn('go', 'data-ar="csave"', first ? 'Step into the ring' : 'Save')}</div>
+    <div class="hint">🔒 Locked pieces are earned by playing or bought with coins you win in fights. Looks only: gear never changes your score.</div>
+  </section>`;
+}
+function arRandomFighter() {
+  const f = { ...FX_DEFAULT }, pick = (a) => a[(Math.random() * a.length) | 0];
+  for (const [slot, opts] of Object.entries(FX_PARTS)) { const ok = opts.filter(([v]) => arPartOk(slot, v) && !(slot === 'neck' && v === 'belt')); f[slot] = pick(ok)[0]; }
+  f.skin = (Math.random() * FX_SKIN.length) | 0; f.hairC = pick(arPalette('hair').filter((p) => p.ok)).v;
+  const cl = arPalette('cloth').filter((p) => p.ok); for (const k of AR_CLOTH_FIELDS) f[k] = pick(cl).v;
+  if (Math.random() < 0.6) f.head = 'none'; if (Math.random() < 0.7) f.eyewear = 'none'; if (Math.random() < 0.6) f.neck = 'none';
+  return f;
+}
+const arMe = (view = 'face', cls = '') => fxSVG(AR.st.fighter || FX_DEFAULT, view, cls);
+
+// ---------------------------------------------------------------- reward screens: pass, shop, bag, weekly
+function arPassHTML() {
+  const se = arSeason(), p = arPass(), into = p.tier >= AR_PASS_TIERS ? AR_PASS_STEP : p.xp - p.tier * AR_PASS_STEP;
+  const next = [10, 20, 30].find((t) => t > p.tier);
+  return `<div class="row"><span class="arhead px">Fight Pass</span><span class="grow"></span><span class="archip px">Free</span></div>
+    <div class="arseason"><b class="px">Season ${se.num}: ${esc(se.name)}</b><small>${se.daysLeft} day${se.daysLeft === 1 ? '' : 's'} left · limited gear can only be earned this month</small></div>
+    <div class="arlvl solo"><b class="px">T${p.tier}</b><div class="pxbar xp"><i style="width:${((into / AR_PASS_STEP) * 100).toFixed(1)}%"></i></div><small class="mono">${into}/${AR_PASS_STEP}</small></div>
+    ${next ? `<div class="arnext">Next limited reward at tier ${next}: <b>${esc(arPassReward(next, se).item.name)}</b></div>` : '<div class="arnext">Season complete. Champion work.</div>'}
+    <div class="artrack">${Array.from({ length: AR_PASS_TIERS }, (_, i) => { const t = i + 1, r = arPassReward(t, se), got = p.tier >= t, ltd = r.item && r.item.limited;
+      return `<div class="arpt${got ? ' got' : ''}${ltd ? ' ltd' : ''}" title="${esc(arRewardLabel(r))}"><small class="px">${t}</small><span>${ltd && r.item.slot === 'cloth' ? `<i class="ardot" style="background:${r.item.val}"></i>` : arRewardIcon(r)}</span><small>${got ? '✓' : ltd ? 'LTD' : ''}</small></div>`; }).join('')}</div>
+    <div class="hint">Every fight fills the pass with the XP you earn. Weekly challenges give a big boost. No paid track.</div>`;
+}
+function arShopHTML() {
+  const s = AR.st, stock = arShopStock(), f = s.fighter || FX_DEFAULT;
+  const tryOn = (it) => { const c = { ...f }; if (it.slot === 'cloth') c.topC = it.val; else if (it.slot === 'hairC') c.hairC = it.val; else c[it.slot] = it.val; return fxSVG(c, AR_FACEVIEW.has(it.slot) || it.slot === 'hairC' ? 'face' : 'full'); };
+  return `<div class="row"><span class="arhead px">Pro Shop</span><span class="grow"></span><span class="archip px">🪙 ${s.coins || 0}</span></div>
+    <div class="hint">New stock every day at midnight. Coins come from fights, goals, the pass and gym bags.</div>
+    <div class="arshop">${stock.map((it) => { const own = arOwns(it.id), price = AR_RARITY[it.rarity].price, can = (s.coins || 0) >= price;
+      return `<div class="arshopi" style="--rc:${AR_RARITY[it.rarity].c}"><div class="arshopfx">${tryOn(it)}</div><b>${esc(it.name)}</b><small style="color:${AR_RARITY[it.rarity].c}">${AR_RARITY[it.rarity].n}</small>
+        ${own ? '<span class="archip px">Owned</span>' : arBtn(can ? 'go sm' : 'sm', `data-ar="buy" data-id="${it.id}"${can ? '' : ' disabled'}`, `🪙 ${price}`)}</div>`; }).join('')}</div>
+    <div class="artile" style="--gc:#3cbcfc"><div class="arportrait sm" style="--gc:#3cbcfc">🧊</div><div class="grow"><b class="px">Ice pack</b><small>Auto-saves your streak if you miss a day. Hold up to ${AR_ICE_MAX}. You have ${s.ice || 0}.</small></div>
+      ${arBtn((s.coins || 0) >= AR_ICE_PRICE && (s.ice || 0) < AR_ICE_MAX ? 'go sm' : 'sm', `data-ar="buy" data-id="ice"${(s.coins || 0) >= AR_ICE_PRICE && (s.ice || 0) < AR_ICE_MAX ? '' : ' disabled'}`, `🪙 ${AR_ICE_PRICE}`)}</div>`;
+}
+function arBagHTML() {
+  const s = AR.st, b = s.bag;
+  if (!b || b.day !== arToday() || b.opened) return '';
+  const title = ((s.bags || 0) + 1) % 5 === 0;
+  return `<section class="pxbox arbag"><div class="arcornerrow"><div class="arportrait" style="--gc:#f8b800">🎒</div><div class="grow"><b class="px">${title ? 'Title bag ready!' : 'Gym bag ready!'}</b>
+    <small>${title ? 'Guaranteed epic or legendary gear.' : `Equal odds, 1 in 5 each: ${AR_BAG_ODDS.map(([n]) => n).join(' · ')}. Every 5th bag is a Title bag.`}</small></div></div>
+    ${arBtn('go arbig', 'data-ar="bag"', 'Open it')}</section>`;
+}
+function arWeeklyHTML() {
+  const w = arWeekly(), days = 7 - ((new Date().getDay() + 6) % 7);
+  return `<div class="row"><span class="arhead px">Weekly</span><span class="grow"></span><span class="hint">${days} day${days === 1 ? '' : 's'} left · +300 pass XP, +150 coins each</span></div>
+    ${w.list.map((it) => { const d = AR_WEEKLY.find((x) => x.id === it.id); return `<div class="argoal ${it.done ? 'done' : ''}"><span class="arck">${it.done ? '✓' : ''}</span><span class="grow">${esc(d.text)} <small class="mono">${Math.min(it.prog, d.need)}/${d.need}</small></span></div>`; }).join('')}`;
+}
+
 // ================================================================ ARENA: the Trainer as a game
 // An 8-bit boxing ode: each daily game is a bout against a fighter, tables are rounds, perfect
 // plays earn stars, mistakes are knockdowns, results are KO / TKO / decision, ranks are circuits.
@@ -4099,7 +4612,7 @@ function arRng(seed) {
   let a = arHash(String(seed));
   return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
-function arDefault() { return { v: 1, name: 'Player', town: 'Parts Unknown', xp: 0, games: 0, ranked: 0, casual: 0, streak: 0, lastDay: null, rr: {}, hist: [], ach: {}, eq: { title: 'Rookie', banner: 'canvas', color: 'auto' }, goals: null, daily: {} }; }
+function arDefault() { return { v: 1, fighter: null, coins: 0, inv: {}, ice: 0, pass: null, bag: null, bags: 0, ms: {}, bestStreak: 0, perfect: 0, earn: null, weekly: null, bestTier: 0, name: 'Player', town: 'Parts Unknown', xp: 0, games: 0, ranked: 0, casual: 0, streak: 0, lastDay: null, rr: {}, hist: [], ach: {}, eq: { title: 'Rookie', banner: 'canvas', color: 'auto' }, goals: null, daily: {} }; }
 function arLoad() { try { const v = JSON.parse(localStorage.getItem(AR_KEY) || 'null'); return v && v.v === 1 ? { ...arDefault(), ...v, eq: { ...arDefault().eq, ...(v.eq || {}) } } : arDefault(); } catch { return arDefault(); } }
 function arSave() { try { localStorage.setItem(AR_KEY, JSON.stringify(AR.st)); } catch { /* storage unavailable */ } }
 
@@ -4144,18 +4657,19 @@ function arGoals() {
 }
 function arToast(icon, title, sub) {
   let box = $('arToasts'); if (!box) { box = document.createElement('div'); box.id = 'arToasts'; box.className = 'artoasts'; document.body.appendChild(box); }
+  if (box.children.length >= 2) { (AR.tq = AR.tq || []).push([icon, title, sub]); return; }
   const t = document.createElement('div'); t.className = 'artoast';
   t.innerHTML = `<span class="aric">${icon}</span><div><b>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
-  box.appendChild(t); setTimeout(() => t.remove(), 4200);
+  box.appendChild(t); setTimeout(() => { t.remove(); const nx = AR.tq && AR.tq.shift(); if (nx) arToast(...nx); }, 4200);
 }
 function arCheckIn() {
   const s = AR.st, today = arToday();
   if (s.lastDay === today) return;
-  s.streak = s.lastDay === arAddDays(today, -1) ? s.streak + 1 : 1; s.lastDay = today; s.xp += 10;
-  arGoals();
-  const got = arUnlock(null);
+  arStreakDay(); s.xp += 10; arCoins(10);
+  arGoals(); arWeekly(); arPass();
+  const got = arUnlock(null); arAutoGrant();
   arSave();
-  arToast('🔥', `Day ${s.streak} of road work`, '+10 XP for showing up');
+  arToast('🔥', `Day ${s.streak} of road work`, '+10 XP and 10 coins for showing up');
   got.forEach((a) => arToast(a.icon, a.name, `+${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`));
 }
 function arUnlock(g) {
@@ -4311,14 +4825,39 @@ function arFinish() {
     const def = AR_GOALS.find((x) => x.id === it.id); it.prog = Math.min(def.need, it.prog + def.ev(g));
     if (it.prog >= def.need) { it.done = true; xp.push([`Training: ${def.text}`, def.xp]); goals.push(def); }
   }
+  // weekly challenges
+  const weekly = [];
+  for (const it of arWeekly().list) {
+    if (it.done) continue;
+    const def = AR_WEEKLY.find((x) => x.id === it.id); it.prog += def.ev(g);
+    if (it.prog >= def.need) { it.done = true; weekly.push(def); }
+  }
   s.xp += xp.reduce((a, x) => a + x[1], 0);
   const got = arUnlock(g);
   const lv1 = arLevel(s.xp).L;
+  // coins: every fight pays, casual pays half
+  const coins = [];
+  const cAdd = (label, v) => { v = Math.round(v); if (v > 0) { coins.push([label, v]); arCoins(v); } };
+  cAdd('Fight purse', (15 + Math.max(0, run.total) / 15) * mult);
+  if (league !== null) cAdd('Fight night bonus', 50);
+  goals.forEach((d) => cAdd(`Training: ${d.text}`, 25));
+  weekly.forEach((d) => cAdd(`Weekly: ${d.text}`, 150));
+  if (run.mode === 'daily' && league !== null) s.bag = { day: g.day, opened: false };
+  // earn back a broken streak: finish 2 fights the day it broke
+  let earned = null;
+  if (s.earn && s.earn.day === g.day) { s.earn.prog++; if (s.earn.prog >= 2) { s.streak = s.earn.old + 1; s.bestStreak = Math.max(s.bestStreak || 0, s.streak); earned = s.streak; s.earn = null; } }
+  // Fight Pass: the XP you earn plus 300 per weekly challenge
+  const passGain = xp.reduce((a, x) => a + x[1], 0) + got.reduce((a, x) => a + x.xp, 0) + weekly.length * 300;
+  const tiers = arPassXP(passGain);
+  const gear = arAutoGrant();
   arSave();
-  AR.last = { g, xp, gain: xp.reduce((a, x) => a + x[1], 0) + got.reduce((a, x) => a + x.xp, 0), rr, league, got, goals, lv0, lv1, label: run.label, opp: run.opp };
+  AR.last = { g, xp, gain: xp.reduce((a, x) => a + x[1], 0) + got.reduce((a, x) => a + x.xp, 0), rr, league, got, goals, lv0, lv1, label: run.label, opp: run.opp, coins, passGain, tiers, weekly, gear, earned };
   AR.view = 'results'; arRender(); scrollTo(0, 0);
-  got.forEach((a, i) => setTimeout(() => arToast(a.icon, a.name, `+${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`), 600 + i * 700));
-  if (lv1 > lv0) setTimeout(() => arToast('⬆️', `Level ${lv1}!`, 'New gear may be waiting in the locker room'), 600 + got.length * 700);
+  if (got.length) arCelebrate(got[0].icon, got.length > 1 ? `${got.length} trophies unlocked!` : `Trophy: ${got[0].name}`, got.length > 1 ? got.map((a) => a.name).join(' · ') : got[0].desc, got.map((a) => `${a.icon} ${a.name}: +${a.xp} XP${a.title ? ` · title "${a.title}"` : ''}`));
+  if (lv1 > lv0) arCelebrate('⬆️', `Level ${lv1}!`, 'Your fighter is moving up.', gear.length ? gear.map((x) => `Unlocked: ${x.name}`) : []);
+  else if (gear.length) arCelebrate('🎁', 'New gear unlocked', gear.map((x) => x.name).join(' · '), ['Try it on in the fighter creator']);
+  tiers.filter((x) => x.r.item && x.r.item.limited).forEach((x) => arCelebrate(x.r.item.slot === 'belt' ? '🏆' : '🎨', `Fight Pass tier ${x.t}`, x.r.item.name, ['Limited edition · only this season']));
+  if (earned) arCelebrate('💪', 'Streak earned back!', `Your ${earned}-day streak is alive.`, []);
 }
 
 // ---------------------------------------------------------------- rankings (sample rivals until online play)
@@ -4346,8 +4885,9 @@ function arRender() {
   if (!AR || S.mode !== 'trainer') return;
   const box = $('arena'); if (!box) return;
   document.body.classList.toggle('ar-practice', AR.view === 'practice');
+  if (!AR.st.fighter && AR.view === 'hub') { AR.view = 'create'; AR.cf = AR.cf || { ...FX_DEFAULT }; }
   if (AR.view === 'hub' || AR.view === 'practice') arCheckIn();
-  box.innerHTML = AR.view === 'practice' ? arPracticeHTML() : AR.view === 'run' ? arRunHTML() : AR.view === 'results' ? arResultsHTML() : arHubHTML();
+  box.innerHTML = AR.view === 'create' ? arCreatorHTML() : AR.view === 'practice' ? arPracticeHTML() : AR.view === 'run' ? arRunHTML() : AR.view === 'results' ? arResultsHTML() : arHubHTML();
   const nm = $('arName'); if (nm) nm.onchange = () => { AR.st.name = nm.value.trim().slice(0, 16) || 'Player'; arSave(); arRender(); };
   const tw = $('arTown'); if (tw) tw.onchange = () => { AR.st.town = tw.value.trim().slice(0, 28) || 'Parts Unknown'; arSave(); arRender(); };
 }
@@ -4361,13 +4901,14 @@ function arFighterCard() {
   const title = arTitles(s).find((t) => t.t === s.eq.title && t.ok) ? s.eq.title : 'Rookie';
   return `<section class="pxbox arprof" style="--banner:${bn.bg}">
     <div class="arprofbg"></div>
-    <div class="arava">${esc((s.name || 'P').slice(0, 1).toUpperCase())}</div>
+    <button class="arava" data-ar="edit" title="Edit your fighter">${arMe('face')}<span class="aredit px">Edit</span></button>
     <div class="arwho"><div class="arnm px">${arNameHTML(s.name, arNameColor(s))}</div><div class="artitle">${esc(title)}</div><div class="arfrom">from ${esc(s.town)}</div></div>
     <div class="arstats">
       <div><small>Record</small><b class="px">${rec.w}-${rec.l}</b><small>${rec.ko} KO</small></div>
       <div><small>Circuit</small><b class="px"${tier ? ` style="color:${tier.color}"` : ''}>${tier ? esc(tier.name.replace(' Circuit', '')) : '—'}</b><small>${tier ? arBestRR(s) : 'unranked'}</small></div>
-      <div><small>Road work</small><b class="px">${s.streak}</b><small>day${s.streak === 1 ? '' : 's'} 🔥</small></div>
+      <div><small>Road work</small><b class="px${(s.perfect || 0) >= 7 ? ' arperfect' : ''}">${s.streak}</b><small>day${s.streak === 1 ? '' : 's'} 🔥${s.ice ? ` · 🧊${s.ice}` : ''}</small></div>
     </div>
+    <div class="arwallet"><span class="px">🪙 ${(s.coins || 0).toLocaleString()}</span><span class="px">🎟️ T${arPass().tier}</span><span class="px">🏆 ${Object.keys(s.ach).length}</span></div>
     <div class="arlvl"><b class="px">LV${lv.L}</b><div class="pxbar xp"><i style="width:${((lv.into / lv.need) * 100).toFixed(1)}%"></i></div><small class="mono">${lv.into}/${lv.need}</small></div>
   </section>`;
 }
@@ -4395,7 +4936,8 @@ function arDailyHTML() {
 }
 function arGoalsHTML() {
   return `<section class="pxbox"><div class="row"><span class="arhead px">Training camp</span><span class="grow"></span><span class="hint">new drills tomorrow</span></div>
-    ${arGoals().list.map((it) => { const d = AR_GOALS.find((x) => x.id === it.id); return `<div class="argoal ${it.done ? 'done' : ''}"><span class="arck">${it.done ? '✓' : ''}</span><span class="grow">${esc(d.text)}${d.need > 1 ? ` <small class="mono">${it.prog}/${d.need}</small>` : ''}</span><span class="arxpchip">+${d.xp} XP</span></div>`; }).join('')}
+    ${arGoals().list.map((it) => { const d = AR_GOALS.find((x) => x.id === it.id); return `<div class="argoal ${it.done ? 'done' : ''}"><span class="arck">${it.done ? '✓' : ''}</span><span class="grow">${esc(d.text)}${d.need > 1 ? ` <small class="mono">${it.prog}/${d.need}</small>` : ''}</span><span class="arxpchip">+${d.xp} XP · 🪙25</span></div>`; }).join('')}
+    ${arWeeklyHTML()}
   </section>`;
 }
 function arGameTiles(mode) {
@@ -4409,7 +4951,7 @@ function arGameTiles(mode) {
 function arBoardHTML(rows, unit) {
   const meIdx = rows.findIndex((r) => r.me), show = rows.slice(0, 10);
   if (meIdx >= 10) show.push(rows[meIdx]);
-  return `<div class="arboard">${show.map((r) => { const i = rows.indexOf(r); return `<div class="arrow${r.me ? ' me' : ''}${i === 0 ? ' champ' : ''}"><span class="px arpos">${i === 0 ? '🏆' : i + 1}</span><span class="grow">${arNameHTML(r.n, r.c)}${r.me ? ' <small>(you)</small>' : ''}${i === 0 ? ' <small class="archamp px">Champ</small>' : ''}<small class="mono arrec2">${esc(r.rec)}</small></span><span class="mono">${r.p.toLocaleString()} ${unit}</span></div>`; }).join('')}</div>`;
+  return `<div class="arboard">${show.map((r) => { const i = rows.indexOf(r); return `<div class="arrow${r.me ? ' me' : ''}${i === 0 ? ' champ' : ''}"><span class="px arpos">${i === 0 ? '🏆' : i + 1}</span><span class="grow">${r.me ? `<span class="arrowfx">${arMe('face')}</span>` : ''}${arNameHTML(r.n, r.c)}${r.me ? ' <small>(you)</small>' : ''}${i === 0 ? ' <small class="archamp px">Champ</small>' : ''}<small class="mono arrec2">${esc(r.rec)}</small></span><span class="mono">${r.p.toLocaleString()} ${unit}</span></div>`; }).join('')}</div>`;
 }
 function arHubHTML() {
   const tab = AR.tab, s = AR.st, per = AR.period;
@@ -4425,24 +4967,25 @@ function arHubHTML() {
     <div class="arrules"><div><b>Daily bout</b><span>once a day · points ×5</span></div><div><b>SNG table</b><span>2–6 fighters + CPU · 10 hands · any time · ×1</span></div><div><b>Weekend</b><span>3 of the week's fighters, shortened</span></div></div>
     <div class="row">${arBtn('', 'disabled', 'Create league')}${arBtn('', 'disabled', 'Join with code')}${arBtn('', 'disabled', 'SNG table')}</div>
     <div class="hint">Leagues, SNG tables and invites need online accounts (the backend step). Your daily scores are real; the rivals are samples.</div></section>`;
-  const achN = Object.keys(s.ach).length;
-  return `${arFighterCard()}${arDailyHTML()}${arGoalsHTML()}
+  const achN = Object.keys(s.ach).length, rw = AR.rtab || 'pass';
+  const earn = s.earn && s.earn.day === arToday() ? `<section class="pxbox arearn"><b class="px">Get back up!</b><span>Your ${s.earn.old}-day streak broke. Finish ${2 - s.earn.prog} more fight${2 - s.earn.prog === 1 ? '' : 's'} today to earn it back.</span></section>` : '';
+  const trophies = `<div class="row"><span class="arhead px">Trophy case</span><span class="grow"></span><span class="px arcount">${achN}/${AR_ACH.length}</span></div>
+      <div class="arachs">${AR_ACH.map((a) => `<div class="arach${s.ach[a.id] ? ' got' : ''}" title="${esc(a.desc)}"><span class="aric">${s.ach[a.id] ? a.icon : '🔒'}</span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small><small class="arxpchip">+${a.xp} XP${a.title ? ` · “${esc(a.title)}”` : ''}</small></div>`).join('')}</div>`;
+  const rbody = rw === 'shop' ? arShopHTML() : rw === 'trophies' ? trophies : rw === 'locker' ? arLockerHTML() : arPassHTML();
+  return `${arFighterCard()}${earn}${arBagHTML()}${arDailyHTML()}${arGoalsHTML()}
     <div class="pxseg armodes">${[['casual', 'Casual'], ['ranked', 'Ranked'], ['league', 'League']].map(([k, l]) => `<button data-ar="tab" data-t="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>
     ${body}
-    <section class="pxbox"><div class="row"><span class="arhead px">Trophy case</span><span class="grow"></span><span class="px arcount">${achN}/${AR_ACH.length}</span></div>
-      <div class="arachs">${AR_ACH.map((a) => `<div class="arach${s.ach[a.id] ? ' got' : ''}" title="${esc(a.desc)}"><span class="aric">${s.ach[a.id] ? a.icon : '🔒'}</span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small><small class="arxpchip">+${a.xp} XP${a.title ? ` · “${esc(a.title)}”` : ''}</small></div>`).join('')}</div></section>
-    ${arLockerHTML()}`;
+    <div class="pxseg arrtabs">${[['pass', '🎟️ Pass'], ['shop', '🛍️ Shop'], ['trophies', '🏆 Trophies'], ['locker', '🎽 Locker']].map(([k, l]) => `<button data-ar="rtab" data-t="${k}" aria-pressed="${rw === k}">${l}</button>`).join('')}</div>
+    <section class="pxbox">${rbody}</section>`;
 }
 function arLockerHTML() {
   const s = AR.st;
   const chip = (type, id, label, ok, req, on, style = '') => `<button class="archoose${on ? ' on' : ''}" data-ar="eq" data-type="${type}" data-id="${esc(id)}"${ok ? '' : ' disabled'} title="${ok ? '' : esc('Unlock: ' + req)}"${style}>${ok ? '' : '🔒 '}${label}</button>`;
-  return `<section class="pxbox"><div class="row"><span class="arhead px">Locker room</span><span class="grow"></span><span class="hint">gear up with what you've earned</span></div>
-    <div class="arfields"><label class="field"><span class="label">Fighter name</span><input id="arName" maxlength="16" value="${esc(s.name)}"></label>
-    <label class="field"><span class="label">Fighting out of</span><input id="arTown" maxlength="28" value="${esc(s.town)}"></label></div>
+  return `<div class="row"><span class="arhead px">Locker room</span><span class="grow"></span>${arBtn('sm', 'data-ar="edit"', '🎨 Edit fighter')}</div>
+    <div class="hint">Show off what you've earned: title, banner and name color. Clothes and gear are in the fighter creator.</div>
     <div class="label">Title</div><div class="archips">${arTitles(s).map((t) => chip('title', t.t, esc(t.t), t.ok, t.req, s.eq.title === t.t)).join('')}</div>
     <div class="label">Banner</div><div class="archips">${arBanners(s).map((b) => chip('banner', b.id, esc(b.name), b.ok, b.req, s.eq.banner === b.id, ` style="background:${b.bg}"`)).join('')}</div>
-    <div class="label">Name color</div><div class="archips">${arColors(s).map((c) => { const t = AR_TIERS.find((x) => x.id === c.id); return chip('color', c.id, c.id === 'champ' ? '<span class="arname fire">Champion</span>' : esc(c.name), c.ok, c.req, s.eq.color === c.id, t && c.id !== 'champ' ? ` style="color:${t.color}"` : ''); }).join('')}</div>
-  </section>`;
+    <div class="label">Name color</div><div class="archips">${arColors(s).map((c) => { const t = AR_TIERS.find((x) => x.id === c.id); return chip('color', c.id, c.id === 'champ' ? '<span class="arname fire">Champion</span>' : esc(c.name), c.ok, c.req, s.eq.color === c.id, t && c.id !== 'champ' ? ` style="color:${t.color}"` : ''); }).join('')}</div>`;
 }
 function arSetupLine() {
   const n = S.slots.filter((x) => x.active).length;
@@ -4470,7 +5013,7 @@ function arRunHTML() {
     return `<section class="pxbox arvs" style="--gc:${AR_GAMES[run.gid].color}">
       <div class="arbill px">${run.mode === 'daily' ? "Tonight's main event" : run.mode === 'ranked' ? 'Ranked bout' : 'Exhibition'}</div>
       <div class="arvsgrid">
-        <div class="arcard"><div class="arportrait big me">${esc(me.name.slice(0, 1).toUpperCase())}</div><b class="px">${arNameHTML(me.name, arNameColor(me))}</b><small>from ${esc(me.town)}</small><small class="mono">LV${lv} · ${rec.w}-${rec.l} · ${rec.ko} KO</small></div>
+        <div class="arcard"><div class="arportrait big me fxwrap">${arMe('full', 'idle')}</div><b class="px">${arNameHTML(me.name, arNameColor(me))}</b><small>from ${esc(me.town)}</small><small class="mono">LV${lv} · ${rec.w}-${rec.l} · ${rec.ko} KO</small></div>
         <div class="arvsword px">VS</div>
         <div class="arcard"><div class="arportrait big" style="--gc:${AR_GAMES[run.gid].color}">${opp.face}</div><b class="px">${esc(opp.fighter)}</b><small>from ${esc(opp.from)}</small><small class="mono">${esc(opp.rec)}</small></div>
       </div>
@@ -4523,6 +5066,9 @@ function arResultsHTML() {
     ${L.xp.map(([k, v]) => `<div class="arxprow"><span>${esc(k)}</span><span class="mono">+${v} XP</span></div>`).join('')}
     ${L.got.map((a) => `<div class="arxprow ach"><span>${a.icon} ${esc(a.name)}${a.title ? ` · title “${esc(a.title)}”` : ''}</span><span class="mono">+${a.xp} XP</span></div>`).join('')}
     <div class="arxprow total"><span class="px">Total</span><span class="mono">+${L.gain} XP</span></div>
+    ${L.coins.map(([k, v]) => `<div class="arxprow coin"><span>${esc(k)}</span><span class="mono">+${v} 🪙</span></div>`).join('')}
+    <div class="arrank"><span>🎟️ Fight Pass</span><b class="px">Tier ${arPass().tier}</b><span class="mono up">+${L.passGain} pass XP</span>${L.tiers.length ? `<span class="hint">${L.tiers.map((x) => `T${x.t}: ${esc(arRewardLabel(x.r))}`).join(' · ')}</span>` : ''}</div>
+    ${s.bag && s.bag.day === arToday() && !s.bag.opened ? `<div class="arlevelup px">🎒 Gym bag waiting in the gym</div>` : ''}
     ${g.mode === 'casual' ? '<div class="hint">Exhibition fights pay half XP and never touch your record, circuit or rankings.</div>' : ''}
     ${L.rr ? `<div class="arrank"><span>${esc(AR_GAMES[g.gid].name)} circuit</span><b class="px" style="color:${arTier(L.rr.after).color}">${arTier(L.rr.after).name} · ${L.rr.after}</b><span class="mono ${L.rr.d >= 0 ? 'up' : 'down'}">${L.rr.d >= 0 ? '▲ +' : '▼ '}${L.rr.d}</span></div>` : ''}
     ${L.league !== null ? `<div class="arrank"><span>League points</span><b class="px">+${L.league.toLocaleString()}</b><span class="hint">fight night ×5</span></div>` : ''}
@@ -4545,6 +5091,16 @@ document.addEventListener('click', (e) => {
   else if (a === 'tab') { AR.tab = b.dataset.t; arRender(); }
   else if (a === 'period') { AR.period = b.dataset.p; arRender(); }
   else if (a === 'eq') { s.eq[b.dataset.type] = b.dataset.id; arSave(); arRender(); }
+  else if (a === 'rtab') { AR.rtab = b.dataset.t; arRender(); }
+  else if (a === 'buy') arBuy(b.dataset.id);
+  else if (a === 'bag') arBagOpen();
+  else if (a === 'edit') { AR.cf = { ...FX_DEFAULT, ...(s.fighter || {}) }; AR.view = 'create'; arRender(); scrollTo(0, 0); }
+  else if (a === 'ctab') { AR.ctab = b.dataset.t; arRender(); }
+  else if (a === 'cpart') { if (!b.classList.contains('locked')) { AR.cf[b.dataset.slot] = b.dataset.v; arRender(); } }
+  else if (a === 'ccolor') { if (!b.classList.contains('locked')) { const v = b.dataset.v; AR.cf[b.dataset.f] = v.startsWith('n') ? +v.slice(1) : v; arRender(); } }
+  else if (a === 'crandom') { AR.cf = arRandomFighter(); arRender(); }
+  else if (a === 'ccancel') { AR.view = 'hub'; arRender(); }
+  else if (a === 'csave') { const first = !s.fighter; s.fighter = { ...AR.cf }; arSave(); AR.view = 'hub'; arRender(); scrollTo(0, 0); if (first) arCelebrate('🥊', `Welcome to the gym, ${s.name}!`, 'Your fighter is ready.', ['Win fights to earn coins, gear and limited-edition season items.', 'Everything you can unlock is cosmetic.']); }
 });
 document.addEventListener('keydown', (e) => {
   if (!AR || S.mode !== 'trainer' || AR.view !== 'run' || !AR.run || e.target.closest('input,select,textarea')) return;
