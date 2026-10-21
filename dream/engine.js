@@ -6,7 +6,7 @@ var DR = null;
 const drMoney = (n) => Math.round(n).toLocaleString('en-US');
 const drMoneyShort = (n) => (n >= 1e6 ? `${+(n / 1e6).toFixed(n >= 1e7 ? 1 : 2)}M` : n >= 1e4 ? `${Math.round(n / 1000)}K` : drMoney(n));
 const drOrd = (n) => { const v = n % 100; return n + (v >= 11 && v <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); };
-const drPaid = (ev) => (ev.kind === 'sat' ? ev.seats : typicalPayouts(ev.field, ev.prizeBase || ev.buyin || 1, 0).paid);
+const drPaid = (ev) => (ev.kind === 'sat' ? ev.seats : ev.kind === 'sng' ? ev.paid : typicalPayouts(ev.field, ev.prizeBase || ev.buyin || 1, 0).paid);
 const drTicket = (s, ev) => !!(s.tickets && s.tickets[ev.id] > 0);
 const drTitleCount = (s) => Object.values(s.titles).reduce((a, b) => a + b, 0);
 const drStakeSize = (s) => [300, 300, 1500, 6000, 25000, 120000, 60000, 150000][Math.min(7, s.ch)];
@@ -70,7 +70,9 @@ function drUnlocks(s) {
     if (it.req && it.req !== 'Where it all started' && it.id !== 'none') fresh.push(it);
     // wear the newest thing you earn: later in the list is the upgrade
     const cur = DR_ITEMS.findIndex((x) => x.slot === it.slot && x.id === s.eq[it.slot]), mine = DR_ITEMS.indexOf(it);
-    if (it.id !== 'none' && mine > cur && it.slot !== 'head') s.eq[it.slot] = it.id;
+    // never swap out league gear you chose to wear
+    const wearingLeague = DR_LG_ITEMS.some((x) => x.slot === it.slot && x.id === s.eq[it.slot]);
+    if (it.id !== 'none' && mine > cur && it.slot !== 'head' && !wearingLeague) s.eq[it.slot] = it.id;
   }
   s.newItems = [...(s.newItems || []), ...fresh.map(drItemKey)];
   return fresh;
@@ -112,6 +114,7 @@ const DR_STAGE = { early: { gid: 'ring', label: 'Early', long: 'Early levels' },
   deep: { gid: 'shove', label: 'Deep', long: 'Deep run' }, satbubble: { gid: 'sat', label: 'Bubble', long: 'Satellite bubble' }, final: { gid: 'shove', label: 'Final', long: 'Final table' }, cash: { gid: 'cash', label: 'Cash', long: 'Cash session' } };
 // bigger fields mean longer days: more levels to survive before the final table
 function drStagesFor(ev) {
+  if (ev.kind === 'sng') return ev.stagesFix.slice();
   if (ev.kind === 'cash') return ['cash'];
   if (ev.kind === 'sat') return ['early', 'satbubble'];
   return ev.field < 150 ? ['early', 'bubble', 'final'] : ev.field < 1500 ? ['early', 'middle', 'bubble', 'final'] : ['early', 'middle', 'bubble', 'deep', 'final'];
@@ -273,6 +276,7 @@ function drPlace(run, ev) {
 function drFinish(quit) {
   const run = DR.run, s = DR.st, ev = run.ev; if (!run) return;
   DR.run = null; drRestore();
+  if (ev.kind === 'sng') { drSngFinish(run, quit); return; }
   const n = run.results.length, pct = n ? run.total / (100 * n) : 0;
   const counts = { perfect: 0, good: 0, close: 0, bad: 0 }; run.results.forEach((r) => counts[r.tier]++);
   s.dec += n; s.perfect += counts.perfect; s.good += counts.good; s.close += counts.close; s.mistakes += counts.bad; s.played++;

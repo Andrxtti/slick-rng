@@ -13,7 +13,7 @@ function drRender() {
   if (DR.view === 'hub' && s.made && s.ch === 0 && !s.story.p_diner && !DR.run) { drPlayScene(s.story.p_office ? 'p_diner' : 'p_office'); return; }
   box.className = 'dream v-' + DR.view;
   box.innerHTML = DR.view === 'title' ? drTitleHTML() : DR.view === 'create' ? drCreateHTML() : DR.view === 'scene' ? drSceneHTML()
-    : DR.view === 'run' ? drRunHTML() : DR.view === 'results' ? drResultsHTML() : drHubHTML();
+    : DR.view === 'run' ? drRunHTML() : DR.view === 'results' ? (DR.last && DR.last.sng ? drSngResultsHTML() : drResultsHTML()) : DR.mode && DR.mode !== 'story' ? drModeHubHTML() : drHubHTML();
   if (DR.view === 'scene') drType();
   if (DR.view === 'results') drCountUp();
   const nm = $('drName'); if (nm) nm.oninput = () => { DR.draft.name = nm.value.slice(0, 18); const p = $('drPrevName'); if (p) p.textContent = nm.value || 'You'; };
@@ -163,7 +163,7 @@ function drHubHTML() {
   const home = DR_ITEMS.find((x) => x.slot === 'home' && x.id === s.eq.home), ride = DR_ITEMS.find((x) => x.slot === 'ride' && x.id === s.eq.ride);
   const tab = DR.tab || 'events';
   const fresh = (s.newItems || []).length;
-  return `<section class="drlife hm-${s.eq.home}">
+  return `${drModeBar()}<section class="drlife hm-${s.eq.home}">
       <div class="drlife-av">${drAvatarSVG(s)}</div>
       <div class="drlife-info">
         <div class="drkicker">${esc(chd.n)} · ${esc(chd.t)}</div>
@@ -222,17 +222,18 @@ function drEventsHTML() {
     <div class="drevs">${now.map(drEventCard).join('')}</div>
     ${older.length ? `<details class="drolder"><summary>Earlier stops (${older.length})</summary><div class="drevs">${older.map(drEventCard).join('')}</div></details>` : ''}
     <div class="drsoon"><div class="drkicker">Coming next</div><div class="drsoon-row">
-      <div><b>Ranked season</b><small>Weekly, monthly and lifetime boards. Season-only gear for the top finishers.</small></div>
-      <div><b>Friends league</b><small>Your crew, the same spots, one leaderboard. Bragging rights included.</small></div>
+      <div><b>Online play</b><small>Real opponents in Ranked and Leagues, and private leagues for your crew.</small></div>
+      <div><b>Story-only gear</b><small>Everything in this closet comes from your career. League exclusives live in Leagues.</small></div>
       <div><b>Story chapters 7+</b><small>Rivalries, sponsorship deals and the Hall of Legends ceremony.</small></div></div></div>`;
 }
 function drClosetHTML() {
   const s = DR.st, fresh = new Set(s.newItems || []);
   const html = DR_SLOTS.map(([slot, label]) => {
-    const items = DR_ITEMS.filter((x) => x.slot === slot);
+    const cur = drSeasonFor(drMonth()).key;
+    const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))];
     return `<div class="drslot"><div class="drkicker">${label}</div><div class="dritems">${items.map((it) => {
       const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it);
-      return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.req)}</small></button>`;
+      return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : ''}</button>`;
     }).join('')}</div></div>`;
   }).join('');
   if (fresh.size) { s.newItems = []; drSave(); }
@@ -278,6 +279,7 @@ function drHudHTML(run) {
   const N = ev.field, P = ev.kind !== 'cash' ? drPaid(ev) : 0;
   const left = ev.kind === 'cash' ? null : stage === 'early' ? Math.max(P * 3, Math.round(N * (1 - 0.15 * (run.h + 1)))) : stage === 'middle' ? Math.max(P + 4, Math.round(N * (0.45 - 0.08 * run.h)))
     : stage === 'bubble' || stage === 'satbubble' ? P + 1 + (stage === 'satbubble' ? 2 - run.h : 0) - (stage === 'bubble' && run.h > 0 ? run.h : 0) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.08 * run.h))) : Math.max(2, 9 - run.h * 3);
+  const leftN = left == null ? null : Math.min(N, left);
   const status = run.stack >= 150 ? 'Dominating' : run.stack >= 110 ? 'Strong' : run.stack >= 75 ? 'Healthy' : run.stack >= 40 ? 'Hanging on' : 'On fumes. Careful.';
   const cashUp = drCashNet(run, 0);
   return `<section class="drhud pl-${ev.venue}">
@@ -285,7 +287,7 @@ function drHudHTML(run) {
     ${ev.kind !== 'cash' ? `<div class="drstages">${run.stages.map((st, k) => `<span class="${k < run.si ? 'done' : k === run.si ? 'now' : ''}">${DR_STAGE[st].label}</span>`).join('')}</div>` : ''}
     <div class="drhud-row">
       <div class="drstack"><small>${ev.kind === 'cash' ? 'Session' : 'Tournament life'}</small><div class="drbar stack ${run.stack < 40 ? 'low' : run.stack > 140 ? 'big' : ''}"><i style="width:${Math.min(100, run.stack / 2)}%"></i></div><b class="mono">${ev.kind === 'cash' ? `${cashUp >= 0 ? '+' : '−'}$${drMoney(Math.abs(cashUp))}` : status}</b></div>
-      ${left ? `<div class="drleft"><small>Players left</small><b class="mono">${drMoney(left)}</b></div>` : ''}
+      ${leftN ? `<div class="drleft"><small>Players left</small><b class="mono">${drMoney(leftN)}</b></div>` : ''}
       ${ev.kind !== 'cash' ? `<div class="drleft"><small>${ev.kind === 'sat' ? 'Seats' : 'Paid'}</small><b class="mono">${drMoney(P)}</b></div>` : ''}
     </div>
   </section>`;
@@ -293,7 +295,7 @@ function drHudHTML(run) {
 function drRunHTML() {
   const run = DR.run, ev = run.ev, stage = run.stages[Math.min(run.si, run.stages.length - 1)], head = drHudHTML(run);
   if (run.state === 'loading' || run.state === 'ready') {
-    const tips = DR_TIPS[stage], tip = tips[(run.tip + run.results.length) % tips.length];
+    const tips = DR_TIPS[stage] || DR_TIPS.early, tip = tips[(run.tip + run.results.length) % tips.length];
     let meet = stage === 'final' && run.boss ? drMeetLine(run.boss) : null;
     // someone famous at your table earlier in the day
     const field = (ev.legends || []).filter((id) => id !== run.boss);
@@ -301,9 +303,11 @@ function drRunHTML() {
     const who = meet ? drSpeaker(meet) : drSpeaker({ sp: 'slick' });
     const intro = stage === 'early' ? (ev.kind === 'cash' ? 'Grab a rack. Find a seat.' : `${drMoney(ev.field)} players. Shuffle up and deal.`)
       : stage === 'satbubble' ? `${drMoney(drPaid(ev) + 3)} left for ${drMoney(drPaid(ev))} seats. A seat is a seat: chips above it are worth nothing.`
+      : stage === 'middle' && ev.kind === 'sng' ? 'Two tables are about to become one. Short stacks are getting itchy.'
       : stage === 'middle' ? `Day two. About ${drMoney(Math.round(ev.field * 0.45))} left. The fish are gone.`
       : stage === 'deep' ? `In the money, ${drMoney(Math.max(10, Math.round(drPaid(ev) * 0.3)))} left. Every pay jump is real.`
       : stage === 'bubble' ? `${drMoney(drPaid(ev) + 1)} left. ${drMoney(drPaid(ev))} get paid. Somebody is going home with nothing.`
+        : stage === 'final' && ev.kind === 'sng' ? `Down to the last few. ${ev.paid} get paid, only one wins.`
         : stage === 'final' ? (run.boss === 'ghost' ? 'Heads-up for the world title.' : 'The final table. Lights, cameras, pay jumps.') : 'Grab a rack. Find a seat.';
     return `${head}<section class="drstagecard pl-${ev.venue}">
       <div class="drkicker">${esc(DR_STAGE[stage].long)}</div><h2 class="drh">${esc(intro)}</h2>
@@ -352,6 +356,10 @@ function drCountUp() {
     requestAnimationFrame(step);
   });
 }
+function drKeysHTML(keys) {
+  const r = { keys };
+  return r.keys && r.keys.length ? `<div class="drkeys"><div class="drkicker">Key hands</div>${r.keys.map((k) => { const h = k.hand; return `<div class="drkey t-${k.tier}"><div class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</div><div><b>${esc(h.pos)} · ${esc(h.bb)}bb · ${esc(h.cat)}</b><small>${k.tier === 'bad' ? `You: ${esc(h.mine)} (${h.myF}%). Solver: ${esc(h.best)} (${h.bestF}%).` : `You found ${esc(h.mine)}, a close spot the solver plays ${h.bestF}% of the time.`}</small></div></div>`; }).join('')}</div>` : '';
+}
 function drResultsHTML() {
   const r = DR.last, s = DR.st, ev = r.ev;
   const titleHTML = r.titles.map((t) => `<div class="drwin t-${t}"><div class="drwin-icon">${DR_TITLES[t].icon}</div><div><div class="drkicker">Champion</div><b>${esc(DR_TITLES[t].n)}</b><small>${esc(ev.name)}</small></div></div>`).join('');
@@ -376,7 +384,7 @@ function drResultsHTML() {
     ${r.streak ? `<div class="drstreak">🔥 Daily Grind streak: <b>${r.streak} day${r.streak === 1 ? '' : 's'}</b></div>` : ''}
     <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
       <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
-    ${r.keys && r.keys.length ? `<div class="drkeys"><div class="drkicker">Key hands</div>${r.keys.map((k) => { const h = k.hand; return `<div class="drkey t-${k.tier}"><div class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</div><div><b>${esc(h.pos)} · ${esc(h.bb)}bb · ${esc(h.cat)}</b><small>${k.tier === 'bad' ? `You: ${esc(h.mine)} (${h.myF}%). Solver: ${esc(h.best)} (${h.bestF}%).` : `You found ${esc(h.mine)}, a close spot the solver plays ${h.bestF}% of the time.`}</small></div></div>`; }).join('')}</div>` : ''}
+    ${drKeysHTML(r.keys)}
     ${r.unlocked.length ? `<div class="drunlocks"><div class="drkicker">Unlocked</div>${r.unlocked.map((it) => `<div class="drunlock"><b>${esc(it.name)}</b><small>${esc(DR_SLOTS.find((x) => x[0] === it.slot)[1])} · ${esc(it.req)}</small></div>`).join('')}</div>` : ''}
     <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${ev.daily ? '' : drBtn('ghost', `data-dr="play" data-id="${ev.id}" ${drAfford(s, ev) && ev.id !== 'local' ? '' : 'disabled'}`, 'Play it again')}</div>
   </section>`;
@@ -401,6 +409,17 @@ document.addEventListener('click', (e) => {
     DR.st = st; drUnlocks(st); st.newItems = []; drSave(); drPlayScene('p_office'); return;
   }
   if (a === 'tab') { DR.tab = b.dataset.t; drRender(); return; }
+  if (a === 'mode') { DR.mode = b.dataset.m; if (DR.mode === 'story') DR.tab = 'events'; drRender(); return; }
+  if (a === 'closet') { DR.mode = 'story'; DR.tab = 'closet'; drRender(); const t = document.querySelector('#dream .drtabs'); if (t) t.scrollIntoView({ block: 'start' }); return; }
+  if (a === 'sng') { drSngStart(b.dataset.m, b.dataset.f); return; }
+  if (a === 'lgb') { DR.lgb = b.dataset.k; drRender(); return; }
+  if (a === 'lgnew' || a === 'lgjoin') {
+    const inp = $(a === 'lgnew' ? 'drLgName' : 'drLgCode'), v = ((inp || {}).value || '').trim(); if (!v) { if (inp) inp.focus(); return; }
+    drModeState(s);
+    if (a === 'lgnew') { const code = 'CF-' + Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[(Math.random() * 32) | 0]).join(''); s.lg.priv.push({ name: v.slice(0, 24), code, own: true, fmt: 'sng9', d: Date.now() }); }
+    else { const code = v.toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 9); if (!s.lg.priv.some((p) => p.code === code)) s.lg.priv.push({ name: `League ${code}`, code, own: false, fmt: 'sng9', d: Date.now() }); }
+    drSave(); drRender(); return;
+  }
   if (a === 'replay') { const id = b.dataset.id; DR.sc = { id, i: 0, extra: [], replay: true }; DR.view = 'scene'; drRender(); scrollTo(0, 0); return; }
   if (a === 'equip') { s.eq[b.dataset.s] = b.dataset.v; drSave(); drRender(); return; }
   if (a === 'play') { drStart(b.dataset.id); return; }

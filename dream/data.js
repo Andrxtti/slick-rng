@@ -18,6 +18,9 @@ const DR_PLACES = {
   titan:    { name: 'Titan Super High Roller', sub: 'Invitation only' },
   main:     { name: 'The Main Event', sub: 'World Card Series' },
   hall:     { name: 'Hall of Legends', sub: 'Legacy' },
+  online:   { name: 'Casual tables', sub: 'Just for fun' },
+  ranked:   { name: 'Ranked', sub: 'Monthly season' },
+  league:   { name: 'League night', sub: 'Public league' },
 };
 
 // ---------------------------------------------------------------- people
@@ -206,7 +209,8 @@ const DR_ITEMS = [
 const DR_SLOTS = [['outfit', 'Outfit'], ['eyes', 'Eyewear'], ['head', 'Head'], ['watch', 'Watch'], ['chain', 'Chain'], ['home', 'Home'], ['ride', 'Ride'], ['patch', 'Sponsor']];
 const DR_RIDE_ICON = { bus: '🚌', hatch: '🚗', coupe: '🏎️', sedan: '🚘', super: '🏎️', jet: '🛩️' };
 const DR_HOME_ICON = { studio: '🧺', apt: '🏢', condo: '🌆', penthouse: '🌃', mansion: '🏛️', island: '🏝️' };
-const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' } };
+const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' },
+  boo: { t: 'BOO!', c: '#ff7a1a' }, harvest: { t: 'HARVEST', c: '#d9893a' }, frost: { t: 'FROST', c: '#7fd0ff' } };
 
 // the line under your name, earned as you climb
 const DR_REPUTATION = [

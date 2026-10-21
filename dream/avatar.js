@@ -45,6 +45,17 @@ function drOutfitSVG(id, patch) {
       + `<path d="M84 152 L98 204 L88 222 L58 222 C62 196 68 172 84 152 Z M116 152 L102 204 L112 222 L142 222 C138 196 132 172 116 152 Z" fill="${lap}" stroke="${drShade(c, -0.5)}"/>` + fold(drShade(c, 0.12))
       + (id !== 'tux' ? `<path d="M64 196 l10 -3 l0 5 Z" fill="#f7f6f2" opacity=".85"/>` : '');
   }
+  else if (id === 'vampire') {
+    s = `<path d="M30 222 C34 186 50 166 70 158 L60 132 C76 146 88 152 100 154 C112 152 124 146 140 132 L130 158 C150 166 166 186 170 222 Z" fill="#8a0f1e" stroke="#4a0610" stroke-width="1.5"/>`
+      + torso('#141216', '#000') + `<path d="M86 152 L100 168 L114 152 L114 222 L86 222 Z" fill="#f4efe6"/><path d="M92 158 C96 166 104 166 108 158 L104 172 L96 172 Z" fill="#f4efe6" stroke="#cfc6b6"/>`
+      + `<path d="M84 152 L98 204 L88 222 L58 222 C62 196 68 172 84 152 Z M116 152 L102 204 L112 222 L142 222 C138 196 132 172 116 152 Z" fill="#1f1a22" stroke="#000"/><circle cx="100" cy="176" r="4" fill="#b8142a" stroke="#e3b94f"/>`;
+  } else if (id === 'flannel') {
+    s = torso('#a3262a') + `<g opacity=".55" stroke="#1b0d0d">${[40, 64, 88, 112, 136, 160].map((x) => `<path d="M${x} 160 V222" stroke-width="5"/>`).join('')}${[172, 192, 212].map((y) => `<path d="M20 ${y} H180" stroke-width="5"/>`).join('')}</g>`
+      + `<path d="M82 152 L100 168 L118 152 L120 162 L100 178 L80 162 Z" fill="#7e1b1e" stroke="#3a0c0c"/><path d="M100 170 L100 222" stroke="#3a0c0c" stroke-width="2"/>${[184, 198, 212].map((y) => `<circle cx="104" cy="${y}" r="1.6" fill="#e9e5dc"/>`).join('')}`;
+  } else if (id === 'ugly') {
+    s = torso('#1d6b3a') + fold('#175a30') + `<path d="M24 196 H176" stroke="#c2362a" stroke-width="9"/><g fill="#f3ecdc">${[34, 54, 74, 94, 114, 134, 154].map((x) => `<path d="M${x} 196 l4 -4 l4 4 l-4 4 Z"/>`).join('')}</g>`
+      + `<path d="M78 152 C88 162 112 162 122 152 L124 160 C112 170 88 170 76 160 Z" fill="#c2362a"/><g fill="#f3ecdc">${[[60, 176], [100, 182], [140, 176], [80, 212], [120, 212]].map(([x, y]) => `<path d="M${x} ${y - 5} L${x + 1.4} ${y - 1.4} L${x + 5} ${y} L${x + 1.4} ${y + 1.4} L${x} ${y + 5} L${x - 1.4} ${y + 1.4} L${x - 5} ${y} L${x - 1.4} ${y - 1.4} Z"/>`).join('')}</g>`;
+  }
   const p = DR_PATCH[patch];
   if (p) s += `<g transform="translate(44 172) rotate(6)"><rect width="30" height="13" rx="2" fill="#0c0c0c" stroke="${p.c}" stroke-width="1.4"/><text x="15" y="9.6" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="6.6" fill="${p.c}">${p.t}</text></g>`;
   return s;
@@ -92,12 +103,18 @@ function drEyewearSVG(id) {
     rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') r += `<rect x="${76 + x * P}" y="${97 + y * P}" width="${P}" height="${P}" fill="${ch === 'K' ? '#050505' : '#fff'}"/>`; }));
     return `<g shape-rendering="crispEdges">${r}</g>`;
   }
+  if (id === 'masq') return `<path d="M72 100 C78 92 92 94 98 101 C100 103 100 103 102 101 C108 94 122 92 128 100 C126 110 116 114 108 110 C104 108 96 108 92 110 C84 114 74 110 72 100 Z" fill="#2a0b3a" stroke="#e3b94f" stroke-width="1.4"/><ellipse cx="87" cy="104" rx="5" ry="3" fill="#0b0609"/><ellipse cx="113" cy="104" rx="5" ry="3" fill="#0b0609"/><path d="M128 98 C136 88 140 80 138 72" stroke="#ff7a1a" stroke-width="2.4" fill="none"/>`;
+  if (id === 'amber') return `<g><rect x="77" y="97" width="20" height="14" rx="6" fill="#e08a1e" opacity=".7" stroke="#6a3a10" stroke-width="1.8"/><rect x="103" y="97" width="20" height="14" rx="6" fill="#e08a1e" opacity=".7" stroke="#6a3a10" stroke-width="1.8"/><path d="M97 103 L103 103" stroke="#6a3a10" stroke-width="1.8"/></g>`;
+  if (id === 'snow') return `<g><rect x="72" y="95" width="56" height="18" rx="9" fill="#cfefff" stroke="#f3f6fa" stroke-width="2.4"/><rect x="74" y="97" width="52" height="14" rx="7" fill="url(#snowg)"/><defs><linearGradient id="snowg" x1="0" x2="1"><stop offset="0" stop-color="#7fd0ff"/><stop offset=".5" stop-color="#c79bff"/><stop offset="1" stop-color="#ffb37f"/></linearGradient></defs><path d="M72 104 L66 102 M128 104 L134 102" stroke="#f3f6fa" stroke-width="3"/></g>`;
   return '';
 }
 
 function drHeadwearSVG(id, hairStyle) {
   if (id === 'cap') return `<path d="M66 86 C66 58 86 50 100 50 C116 50 134 58 134 86 Z" fill="#1d3b2c"/><path d="M64 86 C80 80 120 80 136 86 C136 92 64 92 64 86 Z" fill="#14281e"/><text x="100" y="76" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="9" fill="#d9b36c">R</text>`;
   if (id === 'visor') return `<path d="M64 84 C80 74 120 74 136 84 L132 92 C118 86 82 86 68 92 Z" fill="#1e8f4a" opacity=".78" stroke="#0d4f28" stroke-width="1.2"/><path d="M68 84 C84 80 116 80 132 84" stroke="#dff5e6" stroke-width="1" fill="none" opacity=".5"/>`;
+  if (id === 'pumpkin') return `<path d="M64 88 C60 54 82 44 100 44 C118 44 140 54 136 88 Z" fill="#ff7a1a" stroke="#b44c0a" stroke-width="1.5"/><path d="M84 50 C80 64 80 76 82 88 M116 50 C120 64 120 76 118 88 M100 44 V88" stroke="#d9600f" stroke-width="2" fill="none"/><path d="M98 44 C98 36 102 32 108 30" stroke="#3f6b2a" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M82 66 l6 -6 l6 6 Z M106 66 l6 -6 l6 6 Z M84 76 Q100 86 116 76 l-4 4 l-4 -3 l-4 3 l-4 -3 l-4 3 l-4 -3 Z" fill="#2a1406"/>`;
+  if (id === 'pilgrim') return `<rect x="74" y="30" width="52" height="52" rx="3" fill="#1a1a1c"/><path d="M58 86 C70 78 130 78 142 86 C142 92 58 92 58 86 Z" fill="#1a1a1c"/><rect x="74" y="66" width="52" height="9" fill="#5a3a20"/><rect x="92" y="64" width="16" height="13" rx="1" fill="none" stroke="#e3b94f" stroke-width="2.6"/>`;
+  if (id === 'santa') return `<path d="M68 86 C70 56 92 44 112 48 C130 52 144 70 150 98 L138 100 C132 82 124 70 114 66 C106 70 92 78 68 86 Z" fill="#c2141e"/><circle cx="146" cy="102" r="8" fill="#f7f6f2"/><rect x="62" y="80" width="76" height="13" rx="6" fill="#f7f6f2"/>`;
   if (id === 'beanie') return `<path d="M66 88 C64 58 84 48 100 48 C118 48 136 58 134 88 Z" fill="#b8432a"/><rect x="64" y="80" width="72" height="12" rx="5" fill="#8a2f1d"/><circle cx="100" cy="46" r="7" fill="#e9e5dc"/>`;
   return '';
 }
@@ -116,8 +133,11 @@ function drAvatarSVG(st, opt = {}) {
   s += `<path d="M14 222 C18 178 46 160 76 154 L124 154 C154 160 182 178 186 222 Z" fill="url(#${id}t)" pointer-events="none"/>`;
   if (eq.head === 'phones') s += `<path d="M72 160 C70 144 130 144 128 160" stroke="#222" stroke-width="5" fill="none"/><rect x="64" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/><rect x="122" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/>`;
   if (eq.chain && eq.chain !== 'none') {
-    const c = eq.chain === 'silver' ? '#c9ccd4' : '#e3b94f', w = eq.chain === 'silver' ? 1.6 : 3.4;
-    s += `<path d="M84 156 C88 176 112 176 116 156" stroke="${c}" stroke-width="${w}" fill="none" ${eq.chain !== 'silver' ? 'stroke-dasharray="3 1.4"' : ''}/>`;
+    const c = eq.chain === 'silver' ? '#c9ccd4' : eq.chain === 'bones' ? 'none' : eq.chain === 'lights' ? '#1d4a22' : '#e3b94f', w = eq.chain === 'silver' || eq.chain === 'lights' ? 1.6 : eq.chain === 'wishbone' ? 1.4 : 3.4;
+    s += `<path d="M84 156 C88 176 112 176 116 156" stroke="${c}" stroke-width="${w}" fill="none" ${['iced', 'cuban'].includes(eq.chain) ? 'stroke-dasharray="3 1.4"' : ''}/>`;
+    if (eq.chain === 'bones') s += [[86, 162], [91, 168], [97, 171], [103, 171], [109, 168], [114, 162]].map(([x, y]) => `<g transform="translate(${x} ${y})"><rect x="-2.6" y="-1" width="5.2" height="2" fill="#efe8d6"/><circle cx="-2.6" cy="-1" r="1.2" fill="#efe8d6"/><circle cx="-2.6" cy="1" r="1.2" fill="#efe8d6"/><circle cx="2.6" cy="-1" r="1.2" fill="#efe8d6"/><circle cx="2.6" cy="1" r="1.2" fill="#efe8d6"/></g>`).join('') + `<circle cx="100" cy="178" r="4.4" fill="#efe8d6"/><circle cx="98.4" cy="177" r="1.1" fill="#111"/><circle cx="101.6" cy="177" r="1.1" fill="#111"/>`;
+    if (eq.chain === 'wishbone') s += `<path d="M100 186 L94 174 M100 186 L106 174 M100 186 L100 190" stroke="#e3b94f" stroke-width="2.4" stroke-linecap="round" fill="none"/>`;
+    if (eq.chain === 'lights') s += [[86, 162], [90, 168], [95, 171], [100, 172], [105, 171], [110, 168], [114, 162]].map(([x, y], i) => `<ellipse cx="${x}" cy="${y + 2}" rx="1.6" ry="2.4" fill="${['#ff4f4f', '#5cbf64', '#ffd23a', '#5aa9de'][i % 4]}"/>`).join('');
     if (eq.chain === 'iced') s += [[90, 168], [100, 172], [110, 168], [95, 171], [105, 171]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.2" fill="#fff"/>`).join('');
   }
   // head
@@ -141,7 +161,7 @@ function drAvatarSVG(st, opt = {}) {
   if (!face) {
     // the table, your arms, cards, watch, bracelets, rings, chips
     s += `<path d="M0 194 L200 194 L200 222 L0 222 Z" fill="#0e4d39"/><path d="M0 188 C60 182 140 182 200 188 L200 197 C140 191 60 191 0 197 Z" fill="#3a2414"/><path d="M0 189 C60 183 140 183 200 189" stroke="#5a3a20" stroke-width="1.2" fill="none"/>`;
-    const sleeve = { office: '#cdd8e6', hoodie: '#6b6f76', polo: '#1f2a44', bomber: '#1b1b1e', blazer: '#3b3f47', suit: '#1b2442', designer: '#4a1426', tux: '#121214' }[eq.outfit || 'office'];
+    const sleeve = { office: '#cdd8e6', hoodie: '#6b6f76', polo: '#1f2a44', bomber: '#1b1b1e', blazer: '#3b3f47', suit: '#1b2442', designer: '#4a1426', tux: '#121214', vampire: '#141216', flannel: '#a3262a', ugly: '#1d6b3a' }[eq.outfit || 'office'] || '#3b3f47';
     s += `<path d="M10 222 C20 204 46 192 74 190 L80 202 C58 206 40 212 30 222 Z" fill="${sleeve}" stroke="${drShade(sleeve, -0.35)}"/>`;
     s += `<path d="M190 222 C180 204 154 192 126 190 L120 202 C142 206 160 212 170 222 Z" fill="${sleeve}" stroke="${drShade(sleeve, -0.35)}"/>`;
     s += `<g><rect x="86" y="196" width="15" height="21" rx="2" fill="#f7f3e8" stroke="#bbb" transform="rotate(-8 93 206)"/><rect x="98" y="196" width="15" height="21" rx="2" fill="#f7f3e8" stroke="#bbb" transform="rotate(7 105 206)"/><path d="M92 200 l3 4 l-3 4 l-3 -4 Z" fill="#c2362a" transform="rotate(-8 93 206)"/></g>`;

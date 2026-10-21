@@ -307,3 +307,54 @@
 @keyframes drShine { 50% { text-shadow: 0 0 60px rgba(244, 223, 166, .85); } }
 @keyframes drBounce { 50% { transform: translateY(-6px) rotate(-4deg); } }
 @media (prefers-reduced-motion: reduce) { .dream *, .dream *::before { animation: none !important; transition: none !important; } }
+
+/* ---------------------------------------------------------------- modes: Storyline · Casual · Ranked · Leagues */
+.dream .pl-online { background: radial-gradient(ellipse at 50% 120%, rgba(30, 110, 90, .55), transparent 60%), #0d0f10; }
+.dream .pl-ranked { background: radial-gradient(ellipse at 50% -10%, rgba(127, 160, 255, .32), transparent 55%), radial-gradient(ellipse at 50% 125%, rgba(14, 77, 57, .8), transparent 60%), #090b12; }
+.dream .pl-league { background: radial-gradient(ellipse at 20% -10%, rgba(255, 122, 26, .3), transparent 50%), radial-gradient(ellipse at 90% 0%, rgba(150, 70, 220, .25), transparent 45%), radial-gradient(ellipse at 50% 125%, rgba(14, 77, 57, .8), transparent 60%), #0c0810; }
+.dream .drmodes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: var(--ink2); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+.dream .drmodes button { display: flex; flex-direction: column; align-items: center; gap: 2px; font: 600 12px var(--font-body); color: var(--mute); background: none; border: 0; border-radius: 10px; padding: 8px 2px; cursor: pointer; min-height: 52px; }
+.dream .drmodes button span { font-size: 18px; line-height: 1; }
+.dream .drmodes button[aria-selected="true"] { background: linear-gradient(180deg, rgba(217, 179, 108, .28), rgba(217, 179, 108, .08)); color: var(--gold2); box-shadow: inset 0 0 0 1px rgba(217, 179, 108, .5); }
+.dream .drmodes button:disabled { opacity: .45; cursor: default; }
+.dream .drprof { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--ink2); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
+.dream .drprof-av { width: 54px; height: 54px; border-radius: 50%; overflow: hidden; background: #241d14; border: 2px solid var(--gold3); }
+.dream .drprof-av svg { width: 100%; height: 100%; display: block; }
+.dream .drprof b { display: block; font-family: var(--disp); font-size: 19px; color: var(--cream); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dream .drprof small { color: var(--mute); font-size: 12.5px; }
+.dream .drmodehead, .dream .drrank, .dream .drseason { border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: var(--card); display: grid; gap: 6px; }
+.dream .drmodehead p, .dream .drseason p { margin: 0; color: var(--mute); line-height: 1.45; }
+.dream .drfmts { display: grid; gap: 10px; }
+.dream .drfmt { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.dream .drfmt h3 { margin: 0 0 2px; font-family: var(--disp); font-size: 19px; color: var(--cream); }
+.dream .drfmt p { margin: 0 0 4px; color: var(--mute); font-size: 13.5px; line-height: 1.4; }
+.dream .drfmt small { color: var(--faint); font-size: 11.5px; }
+.dream .drrank { grid-template-columns: 64px minmax(0, 1fr); align-items: center; background: radial-gradient(ellipse at 0% 0%, rgba(127, 160, 255, .18), transparent 60%), var(--card); }
+.dream .drrank-emb { font-size: 48px; text-align: center; filter: drop-shadow(0 4px 12px rgba(0, 0, 0, .5)); }
+.dream .drrank-t { font-family: var(--disp); font-size: 26px; color: var(--gold2); margin-right: 8px; }
+.dream .drrank-r { color: var(--cream); font-size: 18px; }
+.dream .drrank small { color: var(--mute); font-size: 12.5px; }
+.dream .drembs { display: flex; flex-wrap: wrap; gap: 6px; } .dream .drembs span { background: var(--ink2); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; font-size: 13px; display: grid; } .dream .drembs small { color: var(--faint); font-size: 11px; }
+.dream .drseason { grid-template-columns: 64px minmax(0, 1fr); align-items: center; border-color: color-mix(in srgb, var(--acc) 55%, var(--line)); background: radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--acc) 30%, transparent), transparent 65%), var(--card); }
+.dream .drseason-icon { font-size: 46px; text-align: center; }
+.dream .drseason .drh { margin: 2px 0; } .dream .drseason small { color: var(--mute); font-size: 12.5px; }
+.dream .drboardtabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.dream .drboardtabs button { font: 600 13px var(--font-body); color: var(--mute); background: none; border: 1px solid var(--line); border-radius: 9px; padding: 7px 4px; cursor: pointer; }
+.dream .drboardtabs button[aria-pressed="true"] { color: #1a1206; background: var(--gold); border-color: var(--gold2); }
+.dream .drlgitems { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.dream .drlgitem { display: grid; justify-items: center; text-align: center; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 6px; }
+.dream .drlgitem-av { width: 76px; height: 76px; border-radius: 50%; overflow: hidden; background: #241d14; filter: grayscale(.85) brightness(.7); }
+.dream .drlgitem.own .drlgitem-av { filter: none; box-shadow: 0 0 0 2px var(--gold); }
+.dream .drlgitem-av svg { width: 100%; height: 100%; display: block; }
+.dream .drlgitem b { font-size: 13px; color: var(--cream); line-height: 1.25; } .dream .drlgitem small { font-size: 11.5px; color: var(--mute); line-height: 1.3; }
+.dream .drlgnews { display: grid; gap: 8px; } .dream .drlgnews > div { background: linear-gradient(90deg, rgba(217, 179, 108, .25), rgba(217, 179, 108, .05)); border: 1px solid var(--gold3); border-radius: 12px; padding: 10px 12px; display: grid; }
+.dream .drlgnews small { color: var(--mute); }
+.dream .drpriv { display: grid; gap: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+.dream .drprivcard { display: grid; gap: 2px; border-bottom: 1px solid var(--line); padding-bottom: 8px; } .dream .drprivcard small { color: var(--mute); }
+.dream .drprivform { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.dream .drprivform input { font: 15px var(--font-body); color: var(--cream); background: var(--ink2); border: 1px solid var(--line2); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.dream .dritem.lg { padding-top: 24px; }
+.dream .dritem .drnew { z-index: 1; }
+.dream .drlgtag { position: absolute; top: 6px; left: 8px; font-style: normal; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #1a1206; background: #ff9a3a; border-radius: 6px; padding: 1px 5px; }
+.dream .dritem { position: relative; }
+@media (max-width: 420px) { .dream .drfmt { grid-template-columns: 1fr; } .dream .drfmt .drbtn { width: 100%; } }
