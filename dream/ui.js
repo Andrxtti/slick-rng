@@ -274,7 +274,7 @@ function drHudHTML(run) {
   const status = run.stack >= 150 ? 'Dominating' : run.stack >= 110 ? 'Strong' : run.stack >= 75 ? 'Healthy' : run.stack >= 40 ? 'Hanging on' : 'On fumes. Careful.';
   const cashUp = drCashNet(run, 0);
   return `<section class="drhud pl-${ev.venue}">
-    <div class="drhud-top"><div><div class="drkicker">${esc(DR_PLACES[ev.venue].name)}</div><b>${esc(ev.name)}</b></div>${drBtn('ghost sm', 'data-dr="quit"', ev.kind === 'cash' ? 'Cash out' : 'Walk away')}</div>
+    <div class="drhud-top"><div><div class="drkicker">${esc(DR_PLACES[ev.venue].name)}</div><b>${esc(ev.name)}</b></div>${drBtn(`ghost sm ${run.confirmQuit ? 'danger' : ''}`, 'data-dr="quit"', run.confirmQuit ? (ev.kind === 'cash' ? 'Tap again to cash out' : 'Tap again: you forfeit') : ev.kind === 'cash' ? 'Cash out' : 'Walk away')}</div>
     ${ev.kind !== 'cash' ? `<div class="drstages">${run.stages.map((st, k) => `<span class="${k < run.si ? 'done' : k === run.si ? 'now' : ''}">${DR_STAGE[st].label}</span>`).join('')}</div>` : ''}
     <div class="drhud-row">
       <div class="drstack"><small>${ev.kind === 'cash' ? 'Session' : 'Tournament life'}</small><div class="drbar stack ${run.stack < 40 ? 'low' : run.stack > 140 ? 'big' : ''}"><i style="width:${Math.min(100, run.stack / 2)}%"></i></div><b class="mono">${ev.kind === 'cash' ? `${cashUp >= 0 ? '+' : '−'}$${drMoney(Math.abs(cashUp))}` : status}</b></div>
@@ -399,7 +399,11 @@ document.addEventListener('click', (e) => {
   if (a === 'deal') { drHand(); return; }
   if (a === 'ans') { drAnswer(b.dataset.k); return; }
   if (a === 'next') { drNext(); return; }
-  if (a === 'quit') { drQuit(); return; }
+  if (a === 'quit') {
+    const run = DR.run; if (!run) return;
+    if (!run.confirmQuit) { run.confirmQuit = true; drRender(); setTimeout(() => { if (DR.run === run && run.confirmQuit) { run.confirmQuit = false; drRender(); } }, 3500); return; }
+    drQuit(); return;
+  }
   if (a === 'coolerdone') { drFinish(); return; }
   if (a === 'sound') { if (AR) { AR.st.sound = AR.st.sound === false; arSave(); } drRender(); return; }
   if (a === 'howto') { s.flags.howto = true; drSave(); drRender(); return; }
