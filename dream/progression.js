@@ -214,6 +214,14 @@ function drEventDone(res, run) {
   res.prog = out;
 }
 
+// ---------------------------------------------------------------- the streak: consecutive days you played anything
+function drStreak(s) {
+  const p = drPg(s), set = new Set(p.days), d = new Date(); let n = 0;
+  if (!set.has(drToday(d))) d.setDate(d.getDate() - 1); // yesterday still counts until midnight
+  while (set.has(drToday(d))) { n++; d.setDate(d.getDate() - 1); }
+  return { n, today: set.has(drToday()) };
+}
+
 // ---------------------------------------------------------------- screens
 function drFrameStyle(s) { const p = drPg(s), f = DR_FRAMES[p.eq.frame] || DR_FRAMES.none; return `--frame:${f.css}`; }
 function drTitleBadge(s) { const p = drPg(s); return p.eq.title && p.eq.title !== 'none' ? `<span class="drtitlebadge">${esc(DR_TITLES_COS[p.eq.title])}</span>` : ''; }

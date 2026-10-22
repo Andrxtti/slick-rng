@@ -163,7 +163,7 @@ function drTitleStrip(s) {
 function drTodayBar(s) {
   const p = drPg(s), L = drLevelOf(p.xp), done = p.q.list.filter((q) => q.done).length;
   return `<button class="drtoday" data-dr="profile"><span class="drlvl"><b>${L.lvl}</b><span><i style="width:${((L.into / L.need) * 100).toFixed(1)}%"></i></span></span>
-    <span class="drtoday-t"><b>Career level ${L.lvl}</b><small>${done}/3 daily quests${p.news.length ? ` · ${p.news.length} new unlock${p.news.length > 1 ? 's' : ''}` : ''}</small></span><span class="drtoday-q">${p.q.list.map((q) => `<i class="${q.done ? 'on' : ''}"></i>`).join('')}</span><span aria-hidden="true">›</span></button>`;
+    <span class="drtoday-t"><b>Career level ${L.lvl}${(() => { const k = drStreak(s); return k.n ? ` <span class="drflame ${k.today ? '' : 'cold'}">🔥 ${k.n}</span>` : ''; })()}</b><small>${(() => { const k = drStreak(s); return k.n && !k.today ? 'Play today to keep your streak' : `${done}/3 daily quests${p.news.length ? ` · ${p.news.length} new unlock${p.news.length > 1 ? 's' : ''}` : ''}`; })()}</small></span><span class="drtoday-q">${p.q.list.map((q) => `<i class="${q.done ? 'on' : ''}"></i>`).join('')}</span><span aria-hidden="true">›</span></button>`;
 }
 function drHubHTML() {
   const s = DR.st, chd = DR_CHAPTERS[Math.min(7, s.ch)], pr = chd.prog ? chd.prog(s) : [s.story.p_after ? 1 : 0, ''];
@@ -180,6 +180,8 @@ function drHubHTML() {
         <div class="drlifestyle"><span>${DR_HOME_ICON[s.eq.home] || '🏠'} ${esc(home ? home.name : '')}</span><span>${DR_RIDE_ICON[s.eq.ride] || '🚗'} ${esc(ride ? ride.name : '')}</span></div>
       </div>
     </section>
+    ${s.flags.howto && s.flags.seen !== 'v2' && s.ch >= 1 ? `<section class="drnews"><div><div class="drkicker">New in this build</div><b>Every hand is now a real decision</b>
+      <ul><li>Hands come from long solver runs, graded Best to Blunder with the pot odds shown.</li><li>A game review after every event, and a mistake deck that saves the spots you missed.</li><li>Career levels, daily quests, achievements, skill drills and a Daily Challenge you can share.</li><li>Weekly league divisions that promote and relegate.</li></ul></div>${drBtn('gold sm', 'data-dr="seennews"', 'Let\'s go')}</section>` : ''}
     ${!s.flags.howto && s.ch >= 1 ? `<section class="drhowto"><div class="drsay">${drSpeaker({ sp: 'slick' }).av}<div><b>How this works</b>
       <p>Every hand is a real decision from a long solver run, graded like a chess engine grades moves: <b>Best</b>, <b>Inaccuracy</b>, <b>Mistake</b>, <b>Blunder</b>, and the rare <b>Brilliant</b>. Good decisions grow your <b>tournament life</b>; a couple of blunders send you home. Your <b>bankroll</b> decides what you can enter. Titles and a bigger roll unlock clothes, jewelry, a better place and a better ride. Every decision in every mode also earns <b>career XP</b> toward table cosmetics. It gets harder as you climb.</p></div></div>
       ${drBtn('gold sm', 'data-dr="howto"', 'Got it')}</section>` : ''}
@@ -343,13 +345,26 @@ function drRunHTML() {
   const pgx = drPg(DR.st), felt = DR_FELTS[pgx.eq.felt] || DR_FELTS.green, back = DR_BACKS[pgx.eq.back] || DR_BACKS.classic;
   let html = `${head}<section class="drspot st-${run.state}" style="--felt:${felt.c};--trim:${felt.trim || 'transparent'};--back:${back.bg};--backbd:${back.bd}">
     <div class="drspot-head"><span class="drkicker">Hand ${run.results.length + (run.state === 'answered' ? 0 : 1)}</span><span class="drhint">${esc(trCategory(v))}</span></div>
-    <div class="drseats">${(() => {
+    <div class="drtable">${(() => {
       // at the final table, the boss sits in the biggest stack that isn't you
       let bossSeat = -1, bossName = '';
       if (stage === 'final' && run.boss) { bossName = run.boss === 'ghost' ? 'The Ghost' : (DR_PEOPLE[run.boss] || drLegend(run.boss) || {}).name || ''; let big = -1; v.seats.forEach((x, k) => { if (k !== sp.hero && x.stack > big) { big = x.stack; bossSeat = k; } }); }
-      return v.seats.map((x, k) => `<div class="drseat ${k === sp.hero ? 'me' : ''} ${x.folded ? 'fold' : ''} ${k === bossSeat ? 'boss' : ''}">${k !== sp.hero && !x.folded ? '<span class="drseat-cards"><i></i><i></i></span>' : ''}<b>${x.pos}</b>${k === bossSeat ? `<small class="drbossname">${esc(bossName)}</small>` : ''}<small class="mono">${fmt(x.stack - x.put)}bb</small><small>${esc(x.acts.join(' · ') || (k === sp.hero ? 'you' : ''))}</small></div>`).join('');
+      // seats around an oval, clockwise from you at the bottom
+      const n = v.seats.length;
+      const seats = v.seats.map((x, k) => {
+        const off = (k - sp.hero + n) % n, ang = Math.PI / 2 + (off * 2 * Math.PI) / n, cx = 50 + 41 * Math.cos(ang), cy = 50 + 41 * Math.sin(ang);
+        const act = x.acts.length ? x.acts[x.acts.length - 1] : '', live = !x.folded && k !== sp.hero, me = k === sp.hero;
+        const actCls = /jam|all-in/i.test(act) ? 'jam' : /raise|3-bet|4-bet|bet/i.test(act) ? 'raise' : /call|limp|complete/i.test(act) ? 'call' : /fold/i.test(act) ? 'fold' : '';
+        return `<div class="drts ${me ? 'me' : ''} ${x.folded ? 'fold' : ''} ${k === bossSeat ? 'boss' : ''}" style="left:${cx.toFixed(1)}%;top:${cy.toFixed(1)}%">
+          ${live ? '<span class="drseat-cards"><i></i><i></i></span>' : ''}${x.pos === 'BTN' ? '<span class="drdealer">D</span>' : ''}
+          <b>${me ? 'You' : x.pos}</b><small class="mono">${fmt(x.stack - x.put)}</small>${k === bossSeat ? `<small class="drbossname">${esc(bossName)}</small>` : ''}
+          ${act ? `<em class="drts-act ${actCls}">${esc(act)}</em>` : me ? `<em class="drts-act you">${esc(x.pos)}</em>` : ''}</div>`;
+      }).join('');
+      return `<div class="drfelt"></div>${seats}<div class="drpot"><span class="drpot-chips"><i></i><i></i><i></i></span><b class="mono">${fmt(v.pot)} bb</b><small>pot</small></div>`;
     })()}</div>
-    <div class="drhero"><div class="drcards">${trCardHTML(sp.hands[sp.hero][0])}${trCardHTML(sp.hands[sp.hero][1])}</div><div><b>${hero.pos} · your move</b><small class="mono">pot ${fmt(v.pot)} bb</small></div></div>`;
+    <div class="drhero"><div class="drcards">${trCardHTML(sp.hands[sp.hero][0])}${trCardHTML(sp.hands[sp.hero][1])}</div><div><b>${hero.pos} · your move</b><small class="mono">${fmt(hero.stack - hero.put)} bb behind</small></div></div>`;
+  // the very first hand of a career: one line of coaching
+  if (run.state === 'play' && !DR.st.dec && !run.results.length) html += `<div class="drtip first">${drSpeaker({ sp: 'slick' }).av}<p>You're in the <b>${esc(hero.pos)}</b> with these two cards. Everyone before you has acted; their moves are on the seats. Tap the play you'd make. The solver grades it instantly, the way a chess engine grades a move.</p></div>`;
   if (run.state === 'play') html += `<div class="dropts">${sp.res.actions.map((a, k) => drBtn('opt', `data-dr="ans" data-k="${a.k}"`, `<span class="kbd">${k + 1}</span>${esc(label(a))}`)).join('')}</div>`;
   else {
     const r = run.results[run.results.length - 1], per = run.per || (ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS);
@@ -480,7 +495,8 @@ document.addEventListener('click', (e) => {
   }
   if (a === 'coolerdone') { drFinish(); return; }
   if (a === 'sound') { if (AR) { AR.st.sound = AR.st.sound === false; arSave(); } drRender(); return; }
-  if (a === 'howto') { s.flags.howto = true; drSave(); drRender(); return; }
+  if (a === 'howto') { s.flags.howto = true; s.flags.seen = 'v2'; drSave(); drRender(); return; }
+  if (a === 'seennews') { s.flags.seen = 'v2'; drSave(); drRender(); return; }
   if (a === 'hub') { DR.view = 'hub'; DR.tab = 'events'; drRender(); scrollTo(0, 0); return; }
 });
 document.addEventListener('keydown', (e) => {

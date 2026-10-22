@@ -133,6 +133,10 @@ function drLgSettle(s) {
   // the play-5 patch, in case it was earned before this check existed
   for (const [m, n] of Object.entries(s.lg.games)) { const it = drSeasonItem(drSeasonFor(m), 'play'); if (it && n >= 5) { const g = drLgGrant(s, it, '5 league games'); if (g) got.push(g); } }
   if (s.lg.hist.length > 60) s.lg.hist.length = 60;
+  // keep saves small: settled daily boards older than two months are dropped
+  const cut = drToday(new Date(Date.now() - 62 * 864e5));
+  for (const k of Object.keys(s.lg.pts.d)) if (k < cut) { delete s.lg.pts.d[k]; delete s.lg.done['d:' + k]; }
+  for (const k of Object.keys(s.lg.pts.w)) if (k < cut) { delete s.lg.pts.w[k]; delete s.lg.done['w:' + k]; if (s.lg.divs) delete s.lg.divs[k]; }
   if (got.length) drSave();
   return got;
 }
