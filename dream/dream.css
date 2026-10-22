@@ -555,3 +555,6 @@
 .dream .drdye { margin-top: 12px; }
 .dream .drdye .drsw { width: 30px; height: 30px; }
 .dream .drsw.orig { background: conic-gradient(#b3262c, #d98a2b, #1e6b45, #24427e, #6b3fa0, #b3262c); }
+
+.dream .dr3live { width: 100%; height: auto; aspect-ratio: 440 / 480; display: block; cursor: grab; touch-action: pan-y; }
+.dream .dr3live:active { cursor: grabbing; }

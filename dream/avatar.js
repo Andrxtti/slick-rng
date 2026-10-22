@@ -7,7 +7,7 @@
 const DR_SKIN = ['#ffe3c8', '#f6cfab', '#e9b48a', '#d49a6a', '#b97c4c', '#9a6038', '#784626', '#55301a', '#3c2010'];
 const DR_HAIRC = ['#141010', '#3a2416', '#64402a', '#9a6a3a', '#d6b06a', '#f1e2b6', '#b4472a', '#8e8e8e', '#efefef', '#3a6fd8', '#e86fae', '#d4433a', '#2ab3a6', '#8d4fd6'];
 const DR_EYEC = ['#4a2f1c', '#2c1d12', '#7a5a2a', '#3f6e8c', '#4f7a48', '#6e7680', '#5b8fb9'];
-const DR_HAIR = [['short', 'Textured crop'], ['wavy', 'Wavy flow'], ['curtains', 'Curtains'], ['fade', 'High fade'], ['waves', '360 waves'], ['twists', 'Twists'], ['curly', 'Curly top'], ['locs', 'Locs'], ['slick', 'Slicked back'], ['mullet', 'Modern mullet'], ['long', 'Long'], ['bun', 'Man bun'], ['buzz', 'Buzz'], ['bald', 'Bald']];
+const DR_HAIR = [['short', 'Textured crop'], ['fade', 'High fade'], ['waves', '360 waves'], ['buzz', 'Buzz'], ['quiff', 'Quiff'], ['slick', 'Slicked back'], ['curly', 'Curly top'], ['afro', 'Afro'], ['twists', 'Twists'], ['cornrows', 'Cornrows'], ['locs', 'Locs'], ['mohawk', 'Mohawk'], ['wavy', 'Shaggy'], ['curtains', 'Curtains'], ['mullet', 'Modern mullet'], ['long', 'Long'], ['ponytail', 'Ponytail'], ['bun', 'Man bun'], ['bald', 'Bald']];
 const DR_FACIAL = [['none', 'Clean'], ['stubble', 'Stubble'], ['mustache', 'Thin mustache'], ['goatee', 'Goatee'], ['chin', 'Chin strap'], ['beard', 'Short beard']];
 const DR_BROWS = [['natural', 'Natural'], ['thick', 'Thick'], ['slit', 'Slit'], ['arched', 'Arched']];
 const DR_FACES = [['oval', 'Oval'], ['round', 'Round'], ['angular', 'Sharp jaw']];
@@ -306,7 +306,7 @@ const DR_HEADS = {
   angular: 'M100 55 C121 55 133 70 133 91 C133 103 132 112 129 120 L118 137 C112 143 106 145 100 145 C94 145 88 143 82 137 L71 120 C68 112 67 103 67 91 C67 70 79 55 100 55 Z',
 };
 const DR_FULL_HATS = ['beanie', 'cowboy', 'fedora', 'bucket', 'pumpkin', 'pilgrim', 'santa'];
-function drAvatarSVG(st, opt = {}) {
+function drAvatarSVG2D(st, opt = {}) {
   const look = { ...DR_LOOK_DEFAULT, ...(st.look || {}) }, eq = st.eq || {}, dye = st.dye || {};
   const hair = DR_HAIR.some((h) => h[0] === look.hair) ? look.hair : 'short';
   const skin = DR_SKIN[look.skin] || DR_SKIN[2], sk2 = drShade(skin, -0.16), sk3 = drShade(skin, -0.3), skL = drShade(skin, 0.18);
