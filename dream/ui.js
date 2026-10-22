@@ -8,12 +8,21 @@ function drRender() {
   if (!DR || S.mode !== 'trainer') return;
   const box = $('dream'); if (!box) return;
   const s = DR.st;
-  if (DR.view === 'hub' && s.queue.length && !DR.run) { drPlayScene(s.queue.shift()); drSave(); return; }
+  if (DR.view === 'hub' && s.scene && !DR.run && DR_SCENES[s.scene]) { drPlayScene(s.scene); return; }
+  if (DR.view === 'hub' && s.queue.length && !DR.run) { const id = s.queue.shift(); drPlayScene(id); drSave(); return; }
   // picked up mid-prologue: start the story where it was left
   if (DR.view === 'hub' && s.made && s.ch === 0 && !s.story.p_diner && !DR.run) { drPlayScene(s.story.p_office ? 'p_diner' : 'p_office'); return; }
   box.className = 'dream v-' + DR.view;
-  box.innerHTML = DR.view === 'title' ? drTitleHTML() : DR.view === 'create' ? drCreateHTML() : DR.view === 'scene' ? drSceneHTML()
+  try { box.innerHTML = DR.view === 'title' ? drTitleHTML() : DR.view === 'create' ? drCreateHTML() : DR.view === 'scene' ? drSceneHTML()
     : DR.view === 'profile' ? drProfileHTML() : DR.view === 'run' ? drRunHTML() : DR.view === 'results' ? (DR.last && DR.last.sng ? drSngResultsHTML() : drResultsHTML()) : DR.mode && DR.mode !== 'story' ? drModeHubHTML() : drHubHTML();
+  } catch (e) {
+    console.error('Dream render', e);
+    // first try again without 3D; if the scene still can't draw, finish it so the story moves on
+    if (!window.__dr2d) { window.__dr2d = true; drRender(); return; }
+    if (DR.view === 'scene' && DR.sc && !DR.sc.dead) { DR.sc.dead = true; drSceneEnd(); return; }
+    if (DR.view !== 'hub') { DR.sc = null; DR.view = 'hub'; s.scene = null; drSave(); drRender(); return; }
+    throw e;
+  }
   if (DR.view === 'scene') drType();
   if ($('dr3live')) { DR3.liveState = () => (DR.view === 'create' ? { name: DR.draft.name || 'You', look: DR.draft.look, eq: drDefault().eq, dye: {}, titles: {}, br: 0 } : DR.st); try { dr3Mount(); } catch (e) { DR3.ok = false; } }
   if (DR.view === 'results') drCountUp();
@@ -64,7 +73,7 @@ function drCreateHTML() {
 // ---------------------------------------------------------------- story scenes
 function drPlayScene(id) {
   const sc = DR_SCENES[id]; if (!sc) { DR.view = 'hub'; drRender(); return; }
-  DR.sc = { id, i: 0, extra: [] }; DR.view = 'scene'; drRender(); scrollTo(0, 0);
+  DR.sc = { id, i: 0, extra: [] }; DR.view = 'scene'; DR.st.scene = id; drSave(); drRender(); scrollTo(0, 0);
 }
 function drBeat() {
   const sc = DR.sc; if (!sc) return null;
@@ -139,14 +148,14 @@ function drChoose(k) {
 function drSceneEnd() {
   const s = DR.st, id = DR.sc.id, def = DR_SCENES[id]; clearInterval(DR.twTimer);
   if (DR.sc.replay) { DR.sc = null; DR.view = 'hub'; DR.tab = 'story'; drRender(); scrollTo(0, 0); return; }
-  s.story[id] = true;
+  s.story[id] = true; s.scene = null;
   const m = /^c(\d)$/.exec(id); if (m) { if (+m[1] > s.ch) drMoment(s, '📖', `${DR_CHAPTERS[+m[1]].n}: ${DR_CHAPTERS[+m[1]].t}`); s.ch = Math.max(s.ch, +m[1]); }
   if (id === 'p_quit') drMoment(s, '🚪', 'Quit the 9-to-5'); if (id === 'p_keep') drMoment(s, '🌙', 'Kept the day job. Nights are for the dream.');
   drUnlocks(s); drProgress(s); drSave();
   DR.sc = null;
   const end = def.end || 'hub';
   if (DR_SCENES[end]) { drPlayScene(end); return; }
-  if (drEvent(end)) { DR.view = 'hub'; drStart(end); return; }
+  if (drEvent(end)) { DR.view = 'hub'; drStart(end); if (!DR.run) { drRender(); scrollTo(0, 0); } return; }
   DR.view = 'hub'; drRender(); scrollTo(0, 0);
 }
 function drSkip() {

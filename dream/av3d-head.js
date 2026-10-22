@@ -80,6 +80,13 @@ function dr3Head(look, opt) {
 }
 
 // ---------------------------------------------------------------- painted skin
+let DR3_GRAIN = null;
+function dr3Grain() {
+  if (DR3_GRAIN) return DR3_GRAIN;
+  const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'), id = g.createImageData(256, 256), d = id.data, r = dr3Rng(99);
+  for (let k = 0; k < d.length; k += 4) { const v = r() < 0.5 ? 0 : 255; d[k] = d[k + 1] = d[k + 2] = v; d[k + 3] = Math.round(r() * 7); }
+  g.putImageData(id, 0, 0); return (DR3_GRAIN = c);
+}
 function dr3SkinTex(look, skinHex, H, scalp, beard) {
   const W = 2048, Hh = 1024, c = document.createElement('canvas'); c.width = W; c.height = Hh; const g = c.getContext('2d');
   const sk = new THREE.Color(skinHex), deep = look.skin >= 5, light = look.skin <= 1, age = look.age || 'young', old = age === 'old', yng = age === 'young';
@@ -113,15 +120,16 @@ function dr3SkinTex(look, skinHex, H, scalp, beard) {
   g.strokeStyle = 'rgba(80,44,34,.16)'; g.lineCap = 'round';
   if (!yng) { g.lineWidth = old ? 5 : 3; for (let k = 0; k < (old ? 4 : 2); k++) { g.beginPath(); for (let t = -1; t <= 1.001; t += 0.1) { const x = t * 0.5, y = 0.38 + k * 0.07 + (old ? 0.012 : 0) * Math.sin(t * 5 + k); const [px, py] = P(x, y); t < -0.99 ? g.moveTo(px, py) : g.lineTo(px, py); } g.stroke(); }
     for (const s of [-1, 1]) { for (let k = 0; k < 3; k++) { const [x0, y0] = P(s * 0.6, 0.04 + k * 0.04), [x1, y1] = P(s * (0.74 + k * 0.01), 0.1 - k * 0.1); g.lineWidth = 3; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); } g.lineWidth = old ? 6 : 4; g.beginPath(); for (let t = 0; t <= 1.001; t += 0.1) { const [px, py] = P(s * (0.2 + t * 0.12), -0.42 - t * 0.2); t ? g.lineTo(px, py) : g.moveTo(px, py); } g.stroke(); } }
-  // the scalp under thin hair (buzz, fades, braids) takes the hair colour
-  if (scalp) { const id = g.getImageData(0, 0, W, Hh), d = id.data, hc = scalp.c, rr = Math.round(hc.r * 255), gg = Math.round(hc.g * 255), bb = Math.round(hc.b * 255);
-    for (let py = 0; py < Hh * 0.82; py++) { const y = 1 - (py / Hh) * 2; for (let px = 0; px < W; px++) { const ph = (px / W - 0.5) * Math.PI * 2, r = H.ring(y); const x = r.wx * Math.sign(Math.sin(ph)) * Math.pow(Math.abs(Math.sin(ph)), 2 / 2.3), z = Math.cos(ph) > 0 ? Math.cos(ph) : -Math.cos(ph) * 0.9; const m = scalp.mask(x, y, Math.cos(ph) > 0 ? 1 : -1) * scalp.a; if (m < 0.01) continue; const k = (py * W + px) * 4; d[k] += (rr - d[k]) * m; d[k + 1] += (gg - d[k + 1]) * m; d[k + 2] += (bb - d[k + 2]) * m; } }
-    g.putImageData(id, 0, 0); }
-  if (beard) { const id = g.getImageData(0, Math.floor(Hh * 0.05), W, Math.floor(Hh * 0.55)), d = id.data, hc = beard.c, rr = Math.round(hc.r * 255), gg = Math.round(hc.g * 255), bb = Math.round(hc.b * 255), y0 = Math.floor(Hh * 0.05), hh = Math.floor(Hh * 0.55);
-    for (let py = 0; py < hh; py++) { const y = 1 - ((py + y0) / Hh) * 2, r = H.ring(y); for (let px = 0; px < W; px += 1) { const ph = (px / W - 0.5) * Math.PI * 2, c = Math.cos(ph); if (c < -0.2) continue; const x = r.wx * Math.sign(Math.sin(ph)) * Math.pow(Math.abs(Math.sin(ph)), 2 / 2.3), m = beard.mask(x, y, c) * beard.a; if (m < 0.01) continue; const k = (py * W + px) * 4; d[k] += (rr - d[k]) * m; d[k + 1] += (gg - d[k + 1]) * m; d[k + 2] += (bb - d[k + 2]) * m; } }
-    g.putImageData(id, 0, y0); }
-  // skin grain
-  const id2 = g.getImageData(0, 0, W, Hh), d2 = id2.data; for (let k = 0; k < d2.length; k += 4) { const n = (rng() - 0.5) * 7; d2[k] += n; d2[k + 1] += n; d2[k + 2] += n; } g.putImageData(id2, 0, 0);
+  // the scalp under thin hair (buzz, fades, braids) and the beard shadow take the hair colour.
+  // Masks are evaluated on a quarter-size grid and scaled up (soft edges, ~16x less work).
+  const tint = (o, y0f, y1f, cmin) => { const w = W / 4, h = Math.max(1, Math.round((Hh * (y1f - y0f)) / 4)), lc = document.createElement('canvas'); lc.width = w; lc.height = h; const lg = lc.getContext('2d'), id = lg.createImageData(w, h), d = id.data, hc = o.c, rr = Math.round(hc.r * 255), gg = Math.round(hc.g * 255), bb = Math.round(hc.b * 255);
+    const SX = new Float32Array(w), CX = new Float32Array(w); for (let px = 0; px < w; px++) { const ph = ((px + 0.5) / w - 0.5) * Math.PI * 2, s = Math.sin(ph); SX[px] = Math.sign(s) * Math.pow(Math.abs(s), 2 / 2.3); CX[px] = Math.cos(ph); }
+    for (let py = 0; py < h; py++) { const y = 1 - (y0f + ((py + 0.5) / h) * (y1f - y0f)) * 2, r = H.ring(y); for (let px = 0; px < w; px++) { const c2 = CX[px]; if (c2 < cmin) continue; const m = o.mask(r.wx * SX[px], y, cmin > -1 ? c2 : c2 > 0 ? 1 : -1) * o.a; if (m < 0.01) continue; const k = (py * w + px) * 4; d[k] = rr; d[k + 1] = gg; d[k + 2] = bb; d[k + 3] = Math.min(255, m * 255); } }
+    lg.putImageData(id, 0, 0); g.imageSmoothingEnabled = true; g.drawImage(lc, 0, Math.round(Hh * y0f), W, Math.round(Hh * (y1f - y0f))); };
+  if (scalp) tint(scalp, 0, 0.82, -2);
+  if (beard) tint(beard, 0.05, 0.6, -0.2);
+  // skin grain: one shared noise tile
+  g.fillStyle = g.createPattern(dr3Grain(), 'repeat'); g.fillRect(0, 0, W, Hh);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; t.wrapS = THREE.RepeatWrapping; return t;
 }
 
