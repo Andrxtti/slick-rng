@@ -374,6 +374,7 @@ function drRunHTML() {
     const mood = r.tier === 'perfect' ? 'smile' : r.tier === 'bad' ? 'frown' : 'flat';
     html += `<div class="drverdict t-${r.tier} l-${r.lab}" style="--lc:${L.c}"><div class="drverdict-face">${drAvatarSVG(DR.st, { face: true, mouth: mood })}</div><div><span class="drlab"><i>${L.icon}</i>${esc(L.n)}</span><small>${esc(L.line)}${lossTxt ? ` · <span class="mono">${lossTxt}</span>` : ''}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < -20 ? 'Life ▼▼' : d < 0 ? 'Life ▼' : 'Life ='}</span></div>
       ${h.odds && (h.cat === 'Facing a jam' || h.cat === 'Facing a raise' || h.cat === 'Facing a 3-bet or more') ? `<div class="drodds"><span>Pot odds</span><b>Call ${fmt(h.odds.call)} to win ${fmt(h.odds.pot)}</b><i class="mono">${h.odds.need}% equity needed</i>${['bubble', 'satbubble', 'deep', 'final'].includes(r.stage) ? '<small>ICM: busting costs more than chips here, so you need more than this.</small>' : ''}</div>` : ''}
+      ${drRangeHTML(h)}
       ${run.combo >= 3 && r.tier !== 'bad' ? `<div class="drcombo">🔥 ${run.combo} in a row</div>` : ''}
       <div class="drmix">${sp.res.actions.map((a, k) => `<div class="${k === r.j ? 'mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><i style="--w:${(r.strat[k] * 100).toFixed(1)}%"></i><b class="mono">${Math.round(r.strat[k] * 100)}%</b></div>`).join('')}</div>
       ${drTip(r) ? `<div class="drtip">${drSpeaker({ sp: 'slick' }).av}<p>${esc(drTip(r))}</p></div>` : ''}
@@ -394,6 +395,23 @@ function drCountUp() {
     requestAnimationFrame(step);
   });
 }
+// the solver's whole range at this spot: a 13x13 chart, best action per hand, yours outlined
+let DR_CLS_IDX = null;
+const DR_ACT_COL = { fold: '#3b3a40', check: '#2f6fa8', call: '#2f6fa8', raise: '#c9a03e', raiseB: '#d98a2b', allin: '#c0392b' };
+function drRangeHTML(h) {
+  if (!h || !h.grid) return '';
+  if (!DR_CLS_IDX) { DR_CLS_IDX = {}; Engine.CLASS_NAMES.forEach((n, i) => { DR_CLS_IDX[n] = i; }); }
+  const R = 'AKQJT98765432'; let cells = '';
+  for (let i = 0; i < 13; i++) for (let j = 0; j < 13; j++) {
+    const name = i === j ? R[i] + R[j] : i < j ? R[i] + R[j] + 's' : R[j] + R[i] + 'o', idx = DR_CLS_IDX[name], ch = h.grid[idx];
+    const k = ch === '.' || ch == null ? null : h.acts[+ch], col = k ? DR_ACT_COL[k] || '#555' : null;
+    cells += `<i class="${idx === h.heroCls ? 'me' : ''} ${k ? '' : 'mix'}" style="${col ? `background:${col}` : ''}">${name.replace(/[so]$/, '')}</i>`;
+  }
+  const used = [...new Set([...h.grid].filter((c) => c !== '.').map((c) => +c))];
+  return `<details class="drrange"><summary>See the solver's whole range here</summary><div class="drrange-grid">${cells}</div>
+    <div class="drrange-key">${used.map((a) => `<span><i style="background:${DR_ACT_COL[h.acts[a]] || '#555'}"></i>${esc(h.labels[a])}</span>`).join('')}<span><i class="mix"></i>Mixed</span></div>
+    <small class="drhint">Suited hands above the diagonal, offsuit below. Your hand is outlined.</small></details>`;
+}
 // the post-game review: accuracy, label counts, then every decision you made
 function drReviewHTML(r) {
   const all = r.all || [], acc = r.acc != null ? r.acc : drAccuracy(all), n = all.length;
@@ -404,7 +422,7 @@ function drReviewHTML(r) {
   const row = (x, i) => { const h = x.hand, L = DR_LABELS[x.lab] || DR_LABELS.good;
     const loss = h.loss == null || h.loss <= 1e-9 ? '' : `−${h.unit === 'icm' ? h.loss.toFixed(2) + '%' : h.loss.toFixed(2) + 'bb'}`; // bbicm shows as bb
     return `<details class="drrev-row" ${x.tier === 'bad' && i < 40 ? '' : ''}><summary><i class="drrev-ic" style="--lc:${L.c}">${L.icon}</i><span class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</span><span class="drrev-what"><b>${esc(h.pos)} · ${esc(h.bb)}bb</b><small>${esc(h.cat)}</small></span><span class="drrev-play"><small>You</small><b>${esc(h.mine)}</b></span>${loss ? `<span class="mono drrev-loss">${loss}</span>` : ''}</summary>
-      <div class="drrev-body"><div class="drmix">${(h.mix || []).map(([t, f]) => `<div class="${t === h.mine ? 'mine' : ''}"><span>${esc(t)}${t === h.mine ? ' · you' : ''}</span><i style="--w:${f}%"></i><b class="mono">${f}%</b></div>`).join('')}</div>${drTip({ tier: x.tier, stage: x.stage, hand: h }) ? `<p class="drhint">${esc(drTip({ tier: x.tier, stage: x.stage, hand: h }))}</p>` : ''}</div></details>`; };
+      <div class="drrev-body">${drRangeHTML(h)}<div class="drmix">${(h.mix || []).map(([t, f]) => `<div class="${t === h.mine ? 'mine' : ''}"><span>${esc(t)}${t === h.mine ? ' · you' : ''}</span><i style="--w:${f}%"></i><b class="mono">${f}%</b></div>`).join('')}</div>${drTip({ tier: x.tier, stage: x.stage, hand: h }) ? `<p class="drhint">${esc(drTip({ tier: x.tier, stage: x.stage, hand: h }))}</p>` : ''}</div></details>`; };
   return `<div class="drreview"><div class="drreview-top"><div class="dracc">${ring}<b class="mono">${acc}</b><small>Accuracy</small></div><div><div class="drkicker">Game review</div><b class="drreview-v">${verdict}</b>
       <div class="drlabs">${order.filter((k) => cnt[k]).map((k) => `<span style="--lc:${DR_LABELS[k].c}"><i>${DR_LABELS[k].icon}</i>${cnt[k]} ${esc(DR_LABELS[k].n)}</span>`).join('')}</div>${r.bestCombo >= 3 ? `<small class="drhint">Best run: ${r.bestCombo} good decisions in a row</small>` : ''}</div></div>
     ${n ? `<div class="drrev-list">${all.map(row).join('')}</div><small class="drhint">Tap any hand to see the solver's full mix.</small>` : ''}</div>`;

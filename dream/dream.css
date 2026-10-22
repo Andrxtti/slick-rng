@@ -535,3 +535,13 @@
 .dream .drspot { overflow: visible; }
 .dream .drflame { display: inline-block; margin-left: 6px; font-size: 13px; padding: 1px 8px; border-radius: 999px; background: rgba(255, 140, 50, .16); border: 1px solid rgba(255, 140, 50, .45); color: #ffb86b; vertical-align: 2px; }
 .dream .drflame.cold { filter: grayscale(.7); opacity: .8; }
+.dream .drrange { background: rgba(0, 0, 0, .28); border: 1px solid var(--line2); border-radius: 12px; padding: 0 12px; }
+.dream .drrange summary { cursor: pointer; padding: 10px 0; font-family: var(--disp); font-style: italic; color: var(--gold2); font-size: 15px; list-style: none; }
+.dream .drrange summary::before { content: '▸ '; font-style: normal; } .dream .drrange[open] summary::before { content: '▾ '; }
+.dream .drrange-grid { display: grid; grid-template-columns: repeat(13, 1fr); gap: 1.5px; margin-bottom: 8px; }
+.dream .drrange-grid i { font-style: normal; aspect-ratio: 1; display: grid; place-items: center; font: 600 clamp(7px, 2.2vw, 11px) var(--font-body); color: rgba(255, 255, 255, .92); border-radius: 2px; letter-spacing: -.02em; }
+.dream .drrange-grid i.mix, .dream .drrange-key i.mix { background: repeating-linear-gradient(45deg, #c9a03e 0 3px, #3b3a40 3px 6px); }
+.dream .drrange-grid i.me { outline: 2px solid #fff; outline-offset: -1px; z-index: 1; box-shadow: 0 0 10px rgba(255, 255, 255, .7); }
+.dream .drrange-key { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--cream); margin-bottom: 6px; }
+.dream .drrange-key span { display: inline-flex; align-items: center; gap: 5px; } .dream .drrange-key i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.dream .drrange small { display: block; padding-bottom: 10px; }

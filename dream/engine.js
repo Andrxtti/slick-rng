@@ -274,7 +274,7 @@ function drBuildSpot(run, node, ni, row, d) {
   const seats = run.libSeats, hands = seats.map((_, i) => (i === node.h ? [a, b] : [deck[2 * i], deck[2 * i + 1]]));
   const st = [], evs = []; st[cls] = strat; evs[cls] = row[2] || null;
   const idx = node.r.indexOf(row), hard = node.r.length > 1 ? 1 - idx / (node.r.length - 1) : 0.5;
-  return { ref: run.libRef ? { ...run.libRef, n: ni, c: cls, p: node.p.join(',') } : null, seats, hands, hero: node.h, path: node.p.map((k) => ({ k })), res: { actions: node.a.map((k) => ({ k })), strat: st, ev: evs }, cls, diff: d, hard, unit: lib2.u === 'icm' && lib2.k ? 'bbicm' : lib2.u || 'bb', evScale: lib2.u === 'icm' && lib2.k ? lib2.k : 1 };
+  return { grid: node.g || null, ref: run.libRef ? { ...run.libRef, n: ni, c: cls, p: node.p.join(',') } : null, seats, hands, hero: node.h, path: node.p.map((k) => ({ k })), res: { actions: node.a.map((k) => ({ k })), strat: st, ev: evs }, cls, diff: d, hard, unit: lib2.u === 'icm' && lib2.k ? 'bbicm' : lib2.u || 'bb', evScale: lib2.u === 'icm' && lib2.k ? lib2.k : 1 };
 }
 async function drDeal(rng, d = 0.3) {
   const seats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
@@ -360,6 +360,7 @@ function drAnswer(k) {
   const best = g.bestIdx, hero = v.seats[sp.hero];
   const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(strat[best] * 100), myF: Math.round(strat[j] * 100),
     odds: (() => { const o = v.opts.find((x) => x.k === 'call'), m = o && /([\d.]+)/.exec(o.t), amt = m ? +m[1] - (hero.put || 0) : 0; return amt > 0 && v.pot > 0 ? { call: Math.round(amt * 10) / 10, pot: Math.round(v.pot * 10) / 10, need: Math.round((amt / (v.pot + amt)) * 100) } : null; })(),
+    grid: sp.grid || null, acts: sp.res.actions.map((x) => x.k), labels: sp.res.actions.map((x, i) => lab(i)), heroCls: sp.cls,
     lab: g.lab, loss: g.loss, unit, mix: sp.res.actions.map((a, i) => [lab(i), Math.round(strat[i] * 100)]), facing: sp.path.filter((e) => e.k !== 'fold').length };
   if (window.__drLog) window.__drLog.push({ ...hand, tier, stage: run.stages[run.si], d: sp.diff, acts: sp.res.actions.map((x) => x.k).join('/'), facing: sp.path.filter((e) => e.k !== 'fold').map((e) => e.k).join('-') || 'first in' });
   const r = { j, pts, rel, ok, tier, lab: g.lab, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand };
