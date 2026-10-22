@@ -5972,13 +5972,13 @@ const DR_PLACES = {
 // creation: the GOAT everyone measures themselves against.
 const DR_PEOPLE = {
   slick:  { name: 'Slick', role: 'The stranger from the diner', c: '#5aa9de', img: 'slick' },
-  derek:  { name: 'Derek', role: 'Your manager', c: '#9aa6b2', look: { skin: 1, hair: 'slick', hairC: 2, facial: 'none' }, eq: { outfit: 'suit', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smug' },
-  rosa:   { name: 'Rosa', role: 'Floor manager, Riverside', c: '#e8704f', look: { skin: 4, hair: 'long', hairC: 0, facial: 'none' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'silver', patch: 'none' } },
-  trent:  { name: 'Trent Vale', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'slick', hairC: 4, facial: 'none', eyeC: 3 }, eq: { outfit: 'blazer', eyes: 'aviator', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
-  lou:    { name: 'Big Lou', role: 'Riverside regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'bald', hairC: 6, facial: 'beard' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'cap', chain: 'none', patch: 'none' } },
-  host:   { name: 'Mara Quinn', role: 'Stream host', c: '#f878b8', look: { skin: 3, hair: 'long', hairC: 5, facial: 'none' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
+  derek:  { name: 'Corporate Lou', role: 'Your manager', c: '#9aa6b2', look: { skin: 1, hair: 'slick', hairC: 2, facial: 'none' }, eq: { outfit: 'suit', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smug' },
+  rosa:   { name: 'Cheryl', role: 'Floor manager, Riverside', c: '#e8704f', look: { skin: 4, hair: 'long', hairC: 0, facial: 'none' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'silver', patch: 'none' } },
+  trent:  { name: 'Mustich', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'slick', hairC: 4, facial: 'none', eyeC: 3 }, eq: { outfit: 'blazer', eyes: 'aviator', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
+  lou:    { name: 'Tommy "The Nose" Maio', role: 'Riverside regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'bald', hairC: 6, facial: 'beard' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'cap', chain: 'none', patch: 'none' } },
+  host:   { name: 'Miles Gnomey', role: 'Stream host', c: '#f878b8', look: { skin: 3, hair: 'quiff', hairC: 1, facial: 'stubble' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
   ghost:  { name: 'The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
-  mom:    { name: 'Mom', role: 'Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'bun', hairC: 6, facial: 'none' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
+  mom:    { name: 'David Pec', role: 'Your best friend. Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'fade', hairC: 1, facial: 'stubble' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
 };
 
 // era: old school, boom, online high stakes, high roller/GTO, rising stars
@@ -6065,12 +6065,12 @@ const DR_EVENTS = [
   { id: 'c12', ch: 1, kind: 'cash', name: '$1/$2 No-Limit', venue: 'cardroom', buyin: 200, blurb: 'The bread and butter. 100 big blinds.' },
   { id: 'nightly', ch: 1, kind: 'mtt', name: 'Nightly $60 Turbo', venue: 'cardroom', buyin: 60, field: 42, blurb: 'Fast blinds. Shove-or-fold by midnight.' },
   { id: 'deep', ch: 1, kind: 'mtt', name: 'Sunday $150 Deepstack', venue: 'cardroom', buyin: 150, field: 126, legends: ['armadillo'], blurb: 'The best structure in town.' },
-  { id: 'classic', ch: 1, kind: 'mtt', name: 'Riverside Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Riverside. Trent Vale wants it too.' },
+  { id: 'classic', ch: 1, kind: 'mtt', name: 'Riverside Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Riverside. Mustich wants it too.' },
   { id: 'sat1700', ch: 2, kind: 'sat', name: 'Circuit Main Mega Satellite', venue: 'casino', buyin: 180, field: 164, seats: 16, target: 'ring1700', blurb: 'Win a seat into the $1,700 Circuit Main. The bubble is brutal: everyone left gets the same prize.' },
   { id: 'c25', ch: 2, kind: 'cash', name: '$2/$5 No-Limit', venue: 'casino', buyin: 500, blurb: 'Deeper stacks, bigger egos.' },
   { id: 'ring400', ch: 2, kind: 'mtt', name: 'Circuit $400 No-Limit', venue: 'casino', buyin: 400, field: 384, title: 'ring', legends: ['fargo', 'mouth'], blurb: 'Every Circuit event awards a ring.' },
   { id: 'ring600', ch: 2, kind: 'mtt', name: 'Circuit $600 Deepstack', venue: 'casino', buyin: 600, field: 522, title: 'ring', legends: ['mouth', 'moneybaker'], blurb: 'Deep stacks, deep field.' },
-  { id: 'ring1700', ch: 2, kind: 'mtt', name: 'Circuit $1,700 Main Event', venue: 'casino', buyin: 1700, field: 1146, title: 'ring', legends: ['moneybaker', 'fargo', 'mouth', 'trent'], blurb: 'The ring everyone wants on this stop. Trent Vale is registered.' },
+  { id: 'ring1700', ch: 2, kind: 'mtt', name: 'Circuit $1,700 Main Event', venue: 'casino', buyin: 1700, field: 1146, title: 'ring', legends: ['moneybaker', 'fargo', 'mouth', 'trent'], blurb: 'The ring everyone wants on this stop. Mustich is registered.' },
   { id: 'sat10k', ch: 3, kind: 'sat', name: '$10K Championship Satellite', venue: 'vegas', buyin: 1100, field: 212, seats: 21, target: 'b10k', blurb: 'One in ten wins a seat into the pros-only bracelet event.' },
   { id: 'c510', ch: 3, kind: 'cash', name: '$5/$10 No-Limit', venue: 'vegas', buyin: 1500, blurb: 'Summer in Vegas. Every table has a story.' },
   { id: 'b1500', ch: 3, kind: 'mtt', name: 'WCS $1,500 No-Limit', venue: 'vegas', buyin: 1500, field: 2410, title: 'bracelet', legends: ['negrono', 'glazer', 'chance'], blurb: 'Gold bracelet event. Huge field.' },
@@ -6081,9 +6081,9 @@ const DR_EVENTS = [
   { id: 'glo10k', ch: 4, kind: 'mtt', name: 'GLO Cup $10,000', venue: 'tv', buyin: 10000, field: 96, title: 'glo', legends: ['foxglove', 'kfoxglove', 'swan'], blurb: 'Small field. Every player is a killer.' },
   { id: 'rpt10k', ch: 4, kind: 'mtt', name: 'Royal Tour $10,000 Championship', venue: 'tv', buyin: 10000, field: 421, title: 'tour', legends: ['sidle', 'swan', 'escandalo', 'mizrockie'], blurb: 'The crown jewel of the Tour.' },
   { id: 'sat25k', ch: 5, kind: 'sat', name: 'Titan $25K Satellite', venue: 'titan', buyin: 2700, field: 104, seats: 10, target: 't25k', blurb: 'Ten seats into the Titan $25,000. Ninety-four people go home with nothing.' },
-  { id: 'private', ch: 5, kind: 'cash', name: '$100/$200 Private Game', venue: 'titan', buyin: 40000, blurb: 'Penthouse game. Invitation from Trent, of all people.' },
+  { id: 'private', ch: 5, kind: 'cash', name: '$100/$200 Private Game', venue: 'titan', buyin: 40000, blurb: 'Penthouse game. Invitation from Mustich, of all people.' },
   { id: 't25k', ch: 5, kind: 'mtt', name: 'Titan $25,000', venue: 'titan', buyin: 25000, field: 142, title: 'titan', legends: ['chillwick', 'kahoon', 'lonestar', 'bindr'], blurb: 'The entry point to the biggest games on earth.' },
-  { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'punchline', 'mocha', 'trent'], blurb: 'Sixty-eight of the best players alive. And Trent.' },
+  { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'punchline', 'mocha', 'trent'], blurb: 'Sixty-eight of the best players alive. And Mustich.' },
   { id: 't250k', ch: 5, kind: 'mtt', name: 'Titan $250,000 Invitational', venue: 'titan', buyin: 250000, field: 40, title: 'titan', legends: ['addemup', 'kenny', 'hackston', 'antionius', 'daisies'], blurb: 'The richest table in the world.' },
   { id: 'satmain', ch: 6, kind: 'sat', name: 'Main Event Mega Satellite', venue: 'main', buyin: 1100, field: 704, seats: 70, target: 'main', blurb: "The accountant's route: a cheap seat into the biggest tournament on earth." },
   { id: 'main', ch: 6, kind: 'mtt', name: 'WCS $10,000 Main Event', venue: 'main', buyin: 10000, field: 8402, title: 'me', boss: 'ghost', legends: ['mizrockie'], blurb: 'Eight thousand dreamers. One world champion.' },
@@ -6262,7 +6262,7 @@ const DR_SCENES = {
     { sp: 'derek', t: 'The Henderson deck. Redo it. All of it. On my desk by eight.' },
     { sp: 'you', t: 'I sent it Friday. You signed off on it.' },
     { sp: 'derek', t: "And now I'm un-signing off on it. Problem?" },
-    { sp: 'you', t: 'No problem, Derek.', mood: 'quiet' },
+    { sp: 'you', t: 'No problem, Lou.', mood: 'quiet' },
     { sp: 'derek', t: 'Great. Oh, and I told the partners the new model was my idea. Team player, right?' },
     { sp: 'n', t: 'You were nine the first time you saw it on TV.\nA final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing.' },
     { sp: 'n', t: 'The room went silent. His opponent folded. He never showed.\nHe made it look like he could see the future.' },
@@ -6302,14 +6302,14 @@ const DR_SCENES = {
     ] },
   ], end: 'hub' },
   p_quit: { place: 'office', beats: [
-    { sp: 'you', t: 'Derek? Redo it yourself.' },
+    { sp: 'you', t: 'Lou? Redo it yourself.' },
     { sp: 'n', t: 'The elevator ride down is the best thirty-four floors of your life.\nYou have $1,200 in savings and absolutely no plan B.' },
     { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
-    { sp: 'mom', t: 'YOU QUIT YOUR JOB?? CALL ME', text: true },
+    { sp: 'mom', t: 'BRO. YOU QUIT YOUR JOB?? CALL ME', text: true },
   ], end: 'c1' },
   p_keep: { place: 'office', beats: [
     { sp: 'n', t: 'You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL.' },
-    { sp: 'n', t: '$2,000 in savings. Days for Derek. Nights for the dream.' },
+    { sp: 'n', t: '$2,000 in savings. Days for Corporate Lou. Nights for the dream.' },
     { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
   ], end: 'c1' },
 
@@ -6319,7 +6319,7 @@ const DR_SCENES = {
     { sp: 'rosa', t: "New face. Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven." },
     { sp: 'lou', t: "Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast." },
     { sp: 'trent', t: "Cute hoodie. Did it come with the free seat?" },
-    { sp: 'n', t: "Trent Vale. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Riverside Classic all year." },
+    { sp: 'n', t: "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Riverside Classic all year." },
     { sp: 'n', t: 'Goal: win the Riverside Classic, or build your bankroll to $10,000.', goal: true },
   ], end: 'hub' },
   c2: { place: 'casino', title: 'Chapter 2', sub: 'The Circuit', beats: [
@@ -6354,7 +6354,7 @@ const DR_SCENES = {
   c6: { place: 'main', title: 'Chapter 6', sub: 'The Main Event', beats: [
     { sp: 'n', t: 'Eight thousand four hundred and two players. Ten thousand dollars each.\nOne of them will be on the cover of every poker magazine in the world.' },
     { sp: 'L:mizrockie', t: "Defending champ. If you want it, you'll have to take it from me." },
-    { sp: 'mom', t: 'IS THIS THE ONE ON TV?? SIT UP STRAIGHT', text: true },
+    { sp: 'mom', t: 'BRO YOU ARE ON TV?? SIT UP STRAIGHT', text: true },
     { sp: 'slick', t: "Nine-year-old you watched this on a fuzzy TV. Go show him how it ends." },
     { sp: 'n', t: 'Goal: win the Main Event.', goal: true },
   ], end: 'hub' },
@@ -6414,7 +6414,7 @@ Object.assign(DR_SCENES, {
   bracelet1: { place: 'vegas', title: 'Chapter 3', sub: 'Gold', beats: [
     { sp: 'n', t: 'They fasten the bracelet around your wrist and the room starts clapping before you realize it is for you.\nGold. Real gold. Your name in the record book forever.' },
     { sp: 'L:hellbent', t: "Lucky. If I had been at that final table, we'd be talking about my bracelet number eighteen." },
-    { sp: 'mom', t: 'IS THAT REAL GOLD?? YOUR AUNT SAW IT ON THE INTERNET', text: true },
+    { sp: 'mom', t: 'IS THAT REAL GOLD?? THE WHOLE GROUP CHAT SAW IT', text: true },
     { sp: 'slick', t: 'Nine-year-old you is screaming right now. Let him.', text: true },
   ], end: 'hub' },
   tour1: { place: 'tv', title: 'Chapter 4', sub: 'The interview', beats: [
@@ -6433,7 +6433,7 @@ Object.assign(DR_SCENES, {
   derek: { place: 'office', title: 'Meanwhile', sub: 'Floor 34', beats: [
     { sp: 'derek', t: "Hey buddy!! Long time. Saw your name on a poker site. Crazy! We're hiring a Senior Associate. Coffee?", text: true, choice: [
       { t: 'Leave him on read.', line: { sp: 'n', t: 'You put the phone face down and go back to studying bubble spots.' } },
-      { t: '"Redo it yourself, Derek."', line: { sp: 'n', t: 'Three dots appear. Then disappear. Then nothing, forever.' } },
+      { t: '"Redo it yourself, Lou."', line: { sp: 'n', t: 'Three dots appear. Then disappear. Then nothing, forever.' } },
     ] },
   ], end: 'hub' },
 });
@@ -8254,7 +8254,7 @@ function drFinish(quit) {
       else if (!ev.daily) drMoment(s, '🏅', `Won the ${ev.name}`);
       if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { if (!s.legends[run.boss]) drMoment(s, '🂡', `Beat ${drLegend(run.boss).name} heads-up`); s.legends[run.boss] = true; res.beat = run.boss; }
       if (run.boss === 'ghost') drMoment(s, '🕶️', 'Beat The Ghost for the world title');
-      if (run.boss === 'trent') { s.flags.trentW = (s.flags.trentW || 0) + 1; drMoment(s, '😏', `Beat Trent Vale heads-up (${s.flags.trentW} and counting)`); }
+      if (run.boss === 'trent') { s.flags.trentW = (s.flags.trentW || 0) + 1; drMoment(s, '😏', `Beat Mustich heads-up (${s.flags.trentW} and counting)`); }
       if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
       const once = (id) => { if (!s.story[id] && !s.queue.includes(id)) s.queue.push(id); };
       if (ev.title === 'room' && run.boss === 'trent') once('trentbeat');
