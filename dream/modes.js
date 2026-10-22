@@ -310,7 +310,7 @@ function drModeHubHTML() {
 function drSngResultsHTML() {
   const r = DR.last, ev = r.ev, s = DR.st, f = DR_SNG[ev.fmt];
   const headline = ev.review ? `Mistake review · ${r.fixed || 0} of ${r.n} fixed` : r.mode === 'challenge' ? `Daily Challenge · ${r.acc}%` : ev.drill ? `Drill complete · ${r.acc}%` : r.place === 1 ? 'You won the table' : r.place <= ev.paid ? `${drOrd(r.place)} place, in the money` : r.place === ev.paid + 1 ? 'Bubble' : `Out in ${drOrd(r.place)}`;
-  const acc = r.n ? Math.round(((r.counts.perfect + r.counts.good) / r.n) * 100) : 0;
+
   let card = '';
   if (ev.review) card = `<p class="drres-sub">${r.deck ? `${r.deck} spot${r.deck === 1 ? '' : 's'} left in your deck. The ones you missed stay for next time.` : 'Deck cleared. Every leak you saved is fixed.'}</p>`;
   else if (r.mode === 'challenge') card = `<div class="drchal-grid big">${r.grid || ''}</div><div class="drrow">${drBtn('gold sm', 'data-dr="chshare"', 'Share your score')}</div><small id="drShareMsg" class="drhint"></small>`;

@@ -306,7 +306,8 @@ async function drDeal(rng, d = 0.3) {
     for (const c of order) {
       const opts = drCombosOf(c).filter(([a, b]) => !used.has(a) && !used.has(b)); if (!opts.length) continue;
       hands[hero] = opts[(rng() * opts.length) | 0].slice();
-      const pi = pool.findIndex((r) => r.c === c), sp = { seats, hands, hero, path, res, cls: c, diff: d, hard: pool.length > 1 ? 1 - pi / (pool.length - 1) : 0.5 };
+      const grid = Array.from({ length: 169 }, (_, k) => { const st = res.strat[k]; if (!st) return '.'; const m = Math.max(...st); return m >= 0.55 ? String(st.indexOf(m)) : '.'; }).join('');
+      const pi = pool.findIndex((r) => r.c === c), sp = { seats, hands, hero, path, res, cls: c, diff: d, hard: pool.length > 1 ? 1 - pi / (pool.length - 1) : 0.5, grid };
       if (path.length || rng() < 0.45) return sp; // favour spots with action in front of you
       fallback = fallback || sp; break;
     }

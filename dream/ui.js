@@ -442,7 +442,7 @@ function drResultsHTML() {
   else if (r.prize > 0) { headline = `${drOrd(r.place)} place`; sub = `of ${drMoney(ev.field)} · ${r.place === r.paid ? 'a min-cash, but a cash' : r.place <= 9 ? 'a final table finish' : 'in the money'}`; }
   else { headline = r.place === r.paid + 1 ? 'Bubble boy' : `${drOrd(r.place)} place`; sub = r.place === r.paid + 1 ? 'One spot from the money. It happens to everyone once.' : `of ${drMoney(ev.field)} · out before the money`; }
   if (r.cooler) sub = `${sub} · coolered`;
-  const acc = r.n ? Math.round(((r.counts.perfect + r.counts.good) / r.n) * 100) : 0;
+
   const confetti = r.titles.length ? `<div class="drconfetti" aria-hidden="true">${Array.from({ length: 36 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--d:${(i % 7) * 0.35}s;--c:${['#f4dfa6', '#d9b36c', '#e8705a', '#5aa9de', '#f3ecdc'][i % 5]};--r:${(i * 53) % 360}deg"></i>`).join('')}</div>` : '';
   return `<section class="drres pl-${ev.venue} ${r.titles.length ? 'champ' : ''}">${confetti}
     <div class="drkicker">${esc(ev.name)}</div>

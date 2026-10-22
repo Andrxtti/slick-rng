@@ -6959,7 +6959,8 @@ async function drDeal(rng, d = 0.3) {
     for (const c of order) {
       const opts = drCombosOf(c).filter(([a, b]) => !used.has(a) && !used.has(b)); if (!opts.length) continue;
       hands[hero] = opts[(rng() * opts.length) | 0].slice();
-      const pi = pool.findIndex((r) => r.c === c), sp = { seats, hands, hero, path, res, cls: c, diff: d, hard: pool.length > 1 ? 1 - pi / (pool.length - 1) : 0.5 };
+      const grid = Array.from({ length: 169 }, (_, k) => { const st = res.strat[k]; if (!st) return '.'; const m = Math.max(...st); return m >= 0.55 ? String(st.indexOf(m)) : '.'; }).join('');
+      const pi = pool.findIndex((r) => r.c === c), sp = { seats, hands, hero, path, res, cls: c, diff: d, hard: pool.length > 1 ? 1 - pi / (pool.length - 1) : 0.5, grid };
       if (path.length || rng() < 0.45) return sp; // favour spots with action in front of you
       fallback = fallback || sp; break;
     }
@@ -7469,7 +7470,7 @@ function drModeHubHTML() {
 function drSngResultsHTML() {
   const r = DR.last, ev = r.ev, s = DR.st, f = DR_SNG[ev.fmt];
   const headline = ev.review ? `Mistake review · ${r.fixed || 0} of ${r.n} fixed` : r.mode === 'challenge' ? `Daily Challenge · ${r.acc}%` : ev.drill ? `Drill complete · ${r.acc}%` : r.place === 1 ? 'You won the table' : r.place <= ev.paid ? `${drOrd(r.place)} place, in the money` : r.place === ev.paid + 1 ? 'Bubble' : `Out in ${drOrd(r.place)}`;
-  const acc = r.n ? Math.round(((r.counts.perfect + r.counts.good) / r.n) * 100) : 0;
+
   let card = '';
   if (ev.review) card = `<p class="drres-sub">${r.deck ? `${r.deck} spot${r.deck === 1 ? '' : 's'} left in your deck. The ones you missed stay for next time.` : 'Deck cleared. Every leak you saved is fixed.'}</p>`;
   else if (r.mode === 'challenge') card = `<div class="drchal-grid big">${r.grid || ''}</div><div class="drrow">${drBtn('gold sm', 'data-dr="chshare"', 'Share your score')}</div><small id="drShareMsg" class="drhint"></small>`;
@@ -8265,7 +8266,7 @@ function drResultsHTML() {
   else if (r.prize > 0) { headline = `${drOrd(r.place)} place`; sub = `of ${drMoney(ev.field)} · ${r.place === r.paid ? 'a min-cash, but a cash' : r.place <= 9 ? 'a final table finish' : 'in the money'}`; }
   else { headline = r.place === r.paid + 1 ? 'Bubble boy' : `${drOrd(r.place)} place`; sub = r.place === r.paid + 1 ? 'One spot from the money. It happens to everyone once.' : `of ${drMoney(ev.field)} · out before the money`; }
   if (r.cooler) sub = `${sub} · coolered`;
-  const acc = r.n ? Math.round(((r.counts.perfect + r.counts.good) / r.n) * 100) : 0;
+
   const confetti = r.titles.length ? `<div class="drconfetti" aria-hidden="true">${Array.from({ length: 36 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--d:${(i % 7) * 0.35}s;--c:${['#f4dfa6', '#d9b36c', '#e8705a', '#5aa9de', '#f3ecdc'][i % 5]};--r:${(i * 53) % 360}deg"></i>`).join('')}</div>` : '';
   return `<section class="drres pl-${ev.venue} ${r.titles.length ? 'champ' : ''}">${confetti}
     <div class="drkicker">${esc(ev.name)}</div>
