@@ -1,4 +1,4 @@
-const CACHE = 'cf-beta-dream-9412f84b77';
+const CACHE = 'cf-beta-dream-7fe8fa718f';
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', 'manifest.webmanifest'])).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith('cf-beta-dream-') && k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', (e) => {
