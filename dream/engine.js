@@ -324,8 +324,8 @@ const DR_LABELS = {
   excellent: { n: 'Excellent', icon: '👍', c: '#a6d785', score: 95, tier: 'perfect', life: 8, line: 'Basically as good as the best play.' },
   good: { n: 'Good', icon: '✓', c: '#c9d47a', score: 82, tier: 'good', life: 5, line: 'A play the solver makes too.' },
   inaccuracy: { n: 'Inaccuracy', icon: '?!', c: '#f2c14e', score: 45, tier: 'close', life: -4, line: 'Not a disaster, but it leaks value.' },
-  mistake: { n: 'Mistake', icon: '?', c: '#f08a4b', score: 15, tier: 'bad', life: -30, line: 'This costs real money over time.' },
-  blunder: { n: 'Blunder', icon: '??', c: '#e5484d', score: 0, tier: 'bad', life: -44, line: 'A big leak. Study this one.' },
+  mistake: { n: 'Mistake', icon: '?', c: '#f08a4b', score: 15, tier: 'bad', life: -36, line: 'This costs real money over time.' },
+  blunder: { n: 'Blunder', icon: '??', c: '#e5484d', score: 0, tier: 'bad', life: -50, line: 'A big leak. Study this one.' },
 };
 const DR_LOSS_STEPS = { bb: [0.05, 0.2, 0.6, 1.5], icm: [0.015, 0.06, 0.18, 0.5] };
 function drLabelFor(strat, ev, j, unit, hard, kind) {
@@ -340,9 +340,11 @@ function drLabelFor(strat, ev, j, unit, hard, kind) {
   if (mine >= 0.6 || j === sb) lab = (lab === 'best' || lab === 'excellent') ? lab : 'best';
   else if (mine >= 0.25 && ['inaccuracy', 'mistake', 'blunder'].includes(lab)) lab = 'good';
   else if (mine < 0.05 && (lab === 'best' || lab === 'excellent' || lab === 'good')) lab = 'inaccuracy';
+  // the solver has a clear answer and you picked something it almost never does: that's a real error, not a slip
+  if (mine <= 0.12 && fmax >= 0.7) lab = fmax >= 0.88 && mine <= 0.04 && (loss == null || loss > T[0]) ? (lab === 'blunder' || loss == null || loss > T[1] ? 'blunder' : 'mistake') : lab === 'blunder' ? 'blunder' : 'mistake';
   // special finds in the hardest spots
   // rare on purpose: only the very closest spots, and Brilliant only for a brave play the solver doesn't make on autopilot
-  if (lab === 'best' && hard >= 0.9) lab = (['allin', 'raise', 'raiseB'].includes(kind) || kind === 'call') && mine <= 0.85 ? 'brilliant' : 'great';
+  if (lab === 'best' && hard >= 0.95) lab = (['allin', 'raise', 'raiseB'].includes(kind) || kind === 'call') && mine <= 0.8 ? 'brilliant' : 'great';
   return { lab, loss, bestIdx: best };
 }
 function drAnswer(k) {
@@ -434,7 +436,13 @@ function drPlace(run, ev) {
   // you survived the whole thing: your decisions (and a little luck) decide the top spots
   const winT = 0.6 + 0.04 * Math.log10(N) + 0.01 * Math.min(6, ev.ch), luck = (rng() - 0.5) * 0.12, score = pct + luck + (run.stack - 100) / 1000;
   run.luck = luck;
-  return score >= winT ? 1 : score >= winT - 0.12 ? 2 : score >= winT - 0.22 ? 3 : between(4, Math.min(9, N));
+  if (score >= winT) return 1;
+  if (score >= winT - 0.12) return 2;
+  if (score >= winT - 0.22) return 3;
+  if (score >= winT - 0.36) return between(4, Math.min(9, N));
+  // you survived on fumes: poor decisions late in the day cost you the deep run
+  if (score >= winT - 0.55) return between(Math.min(10, P), Math.max(10, P));
+  return between(P + 1, Math.max(P + 2, Math.round(P * 1.3)));
 }
 
 function drFinish(quit) {
