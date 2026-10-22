@@ -3,7 +3,7 @@
 A story-career version of the Confirmed Fire Poker trainer. This build replaces the Punch-Out Arena
 in the trainer slot so the test group can compare the two as separate apps.
 
-**Story:** a post-grad stuck in a corporate job (Floor 34, Derek the boss) meets a stranger at the Lucky Seven
+**Story:** a post-grad stuck in a corporate job (Floor 34, Corporate Lou the boss) meets a stranger at the Lucky Seven
 Diner at 2:13 AM. The stranger (Slick) gives him a free seat into the Riverside Local Championship. From there:
 Card room grind → Circuit rings → Summer bracelets → Tour titles → Titan high rollers → the Main Event against
 The Ghost (our own GOAT) → Legacy (beat every legend, pass 14 bracelets).

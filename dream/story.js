@@ -10,7 +10,7 @@ const DR_SCENES = {
     { sp: 'derek', t: 'The Henderson deck. Redo it. All of it. On my desk by eight.' },
     { sp: 'you', t: 'I sent it Friday. You signed off on it.' },
     { sp: 'derek', t: "And now I'm un-signing off on it. Problem?" },
-    { sp: 'you', t: 'No problem, Derek.', mood: 'quiet' },
+    { sp: 'you', t: 'No problem, Lou.', mood: 'quiet' },
     { sp: 'derek', t: 'Great. Oh, and I told the partners the new model was my idea. Team player, right?' },
     { sp: 'n', t: 'You were nine the first time you saw it on TV.\nA final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing.' },
     { sp: 'n', t: 'The room went silent. His opponent folded. He never showed.\nHe made it look like he could see the future.' },
@@ -50,14 +50,14 @@ const DR_SCENES = {
     ] },
   ], end: 'hub' },
   p_quit: { place: 'office', beats: [
-    { sp: 'you', t: 'Derek? Redo it yourself.' },
+    { sp: 'you', t: 'Lou? Redo it yourself.' },
     { sp: 'n', t: 'The elevator ride down is the best thirty-four floors of your life.\nYou have $1,200 in savings and absolutely no plan B.' },
     { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
-    { sp: 'mom', t: 'YOU QUIT YOUR JOB?? CALL ME', text: true },
+    { sp: 'mom', t: 'BRO. YOU QUIT YOUR JOB?? CALL ME', text: true },
   ], end: 'c1' },
   p_keep: { place: 'office', beats: [
     { sp: 'n', t: 'You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL.' },
-    { sp: 'n', t: '$2,000 in savings. Days for Derek. Nights for the dream.' },
+    { sp: 'n', t: '$2,000 in savings. Days for Corporate Lou. Nights for the dream.' },
     { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
   ], end: 'c1' },
 
@@ -67,7 +67,7 @@ const DR_SCENES = {
     { sp: 'rosa', t: "New face. Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven." },
     { sp: 'lou', t: "Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast." },
     { sp: 'trent', t: "Cute hoodie. Did it come with the free seat?" },
-    { sp: 'n', t: "Trent Vale. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Riverside Classic all year." },
+    { sp: 'n', t: "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Riverside Classic all year." },
     { sp: 'n', t: 'Goal: win the Riverside Classic, or build your bankroll to $10,000.', goal: true },
   ], end: 'hub' },
   c2: { place: 'casino', title: 'Chapter 2', sub: 'The Circuit', beats: [
@@ -102,7 +102,7 @@ const DR_SCENES = {
   c6: { place: 'main', title: 'Chapter 6', sub: 'The Main Event', beats: [
     { sp: 'n', t: 'Eight thousand four hundred and two players. Ten thousand dollars each.\nOne of them will be on the cover of every poker magazine in the world.' },
     { sp: 'L:mizrockie', t: "Defending champ. If you want it, you'll have to take it from me." },
-    { sp: 'mom', t: 'IS THIS THE ONE ON TV?? SIT UP STRAIGHT', text: true },
+    { sp: 'mom', t: 'BRO YOU ARE ON TV?? SIT UP STRAIGHT', text: true },
     { sp: 'slick', t: "Nine-year-old you watched this on a fuzzy TV. Go show him how it ends." },
     { sp: 'n', t: 'Goal: win the Main Event.', goal: true },
   ], end: 'hub' },
@@ -162,7 +162,7 @@ Object.assign(DR_SCENES, {
   bracelet1: { place: 'vegas', title: 'Chapter 3', sub: 'Gold', beats: [
     { sp: 'n', t: 'They fasten the bracelet around your wrist and the room starts clapping before you realize it is for you.\nGold. Real gold. Your name in the record book forever.' },
     { sp: 'L:hellbent', t: "Lucky. If I had been at that final table, we'd be talking about my bracelet number eighteen." },
-    { sp: 'mom', t: 'IS THAT REAL GOLD?? YOUR AUNT SAW IT ON THE INTERNET', text: true },
+    { sp: 'mom', t: 'IS THAT REAL GOLD?? THE WHOLE GROUP CHAT SAW IT', text: true },
     { sp: 'slick', t: 'Nine-year-old you is screaming right now. Let him.', text: true },
   ], end: 'hub' },
   tour1: { place: 'tv', title: 'Chapter 4', sub: 'The interview', beats: [
@@ -181,7 +181,7 @@ Object.assign(DR_SCENES, {
   derek: { place: 'office', title: 'Meanwhile', sub: 'Floor 34', beats: [
     { sp: 'derek', t: "Hey buddy!! Long time. Saw your name on a poker site. Crazy! We're hiring a Senior Associate. Coffee?", text: true, choice: [
       { t: 'Leave him on read.', line: { sp: 'n', t: 'You put the phone face down and go back to studying bubble spots.' } },
-      { t: '"Redo it yourself, Derek."', line: { sp: 'n', t: 'Three dots appear. Then disappear. Then nothing, forever.' } },
+      { t: '"Redo it yourself, Lou."', line: { sp: 'n', t: 'Three dots appear. Then disappear. Then nothing, forever.' } },
     ] },
   ], end: 'hub' },
 });
