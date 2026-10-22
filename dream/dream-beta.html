@@ -1492,6 +1492,14 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 .dream .drdeck { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px; background: linear-gradient(135deg, rgba(240, 138, 75, .14), transparent 65%), var(--card); border-color: rgba(240, 138, 75, .45); }
 .dream .drdeck b { display: block; font-family: var(--disp); font-size: 19px; color: var(--cream); margin: 2px 0; } .dream .drdeck small { color: var(--mute); font-size: 12px; line-height: 1.35; display: block; }
 .dream .drdeck.empty { background: var(--card); border-color: var(--line); } .dream .drdeck.empty b { font-size: 16px; }
+.dream .drodds { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px 10px; align-items: baseline; padding: 10px 12px; border-radius: 12px; background: rgba(0, 0, 0, .28); border: 1px dashed var(--line2); }
+.dream .drodds span { font-family: var(--disp); font-style: italic; color: var(--gold); font-size: 14px; }
+.dream .drodds b { font-weight: 500; font-size: 13.5px; color: var(--cream); } .dream .drodds i { font-style: normal; color: var(--gold2); font-size: 13px; }
+.dream .drodds small { grid-column: 1 / -1; color: var(--mute); font-size: 12px; }
+@media (max-width: 420px) { .dream .drodds { grid-template-columns: auto minmax(0, 1fr); } .dream .drodds i { grid-column: 2; } }
+/* your player is alive: an occasional blink on the life card */
+.dream .drblink { transform-box: fill-box; transform-origin: center; animation: drBlink 6.5s infinite; }
+@keyframes drBlink { 0%, 95.5%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.08); } }
 
 </style>
 
@@ -6948,7 +6956,8 @@ function drLabelFor(strat, ev, j, unit, hard, kind) {
   else if (mine >= 0.25 && ['inaccuracy', 'mistake', 'blunder'].includes(lab)) lab = 'good';
   else if (mine < 0.05 && (lab === 'best' || lab === 'excellent' || lab === 'good')) lab = 'inaccuracy';
   // special finds in the hardest spots
-  if (lab === 'best' && hard >= 0.7) lab = ['allin', 'raise', 'raiseB'].includes(kind) || (kind === 'call' && hard >= 0.8) ? 'brilliant' : 'great';
+  // rare on purpose: only the very closest spots, and Brilliant only for a brave play the solver doesn't make on autopilot
+  if (lab === 'best' && hard >= 0.9) lab = (['allin', 'raise', 'raiseB'].includes(kind) || kind === 'call') && mine <= 0.85 ? 'brilliant' : 'great';
   return { lab, loss, bestIdx: best };
 }
 function drAnswer(k) {
@@ -6966,6 +6975,7 @@ function drAnswer(k) {
   const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
   const best = g.bestIdx, hero = v.seats[sp.hero];
   const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(strat[best] * 100), myF: Math.round(strat[j] * 100),
+    odds: (() => { const o = v.opts.find((x) => x.k === 'call'), m = o && /([\d.]+)/.exec(o.t), amt = m ? +m[1] - (hero.put || 0) : 0; return amt > 0 && v.pot > 0 ? { call: Math.round(amt * 10) / 10, pot: Math.round(v.pot * 10) / 10, need: Math.round((amt / (v.pot + amt)) * 100) } : null; })(),
     lab: g.lab, loss: g.loss, unit, mix: sp.res.actions.map((a, i) => [lab(i), Math.round(strat[i] * 100)]), facing: sp.path.filter((e) => e.k !== 'fold').length };
   if (window.__drLog) window.__drLog.push({ ...hand, tier, stage: run.stages[run.si], d: sp.diff, acts: sp.res.actions.map((x) => x.k).join('/'), facing: sp.path.filter((e) => e.k !== 'fold').map((e) => e.k).join('-') || 'first in' });
   const r = { j, pts, rel, ok, tier, lab: g.lab, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand };
@@ -7934,7 +7944,7 @@ function drHubHTML() {
   const tab = DR.tab || 'events';
   const fresh = (s.newItems || []).length;
   return `${drModeBar()}<section class="drlife hm-${s.eq.home}">
-      <div class="drlife-av">${drAvatarSVG(s)}</div>
+      <div class="drlife-av">${drAvatarSVG(s, { blink: true })}</div>
       <div class="drlife-info">
         <div class="drkicker">${esc(chd.n)} · ${esc(chd.t)}</div>
         <div class="drlife-name">${esc(s.name)}</div>
@@ -8121,6 +8131,7 @@ function drRunHTML() {
     const lossTxt = h.loss == null ? '' : h.loss <= 1e-9 ? 'No value lost' : `−${h.unit === 'icm' ? `${h.loss.toFixed(h.loss < 0.1 ? 3 : 2)}% of the prize pool` : h.unit === 'bbicm' ? `${h.loss.toFixed(2)} bb of tournament equity` : `${h.loss.toFixed(2)} bb`}`;
     const mood = r.tier === 'perfect' ? 'smile' : r.tier === 'bad' ? 'frown' : 'flat';
     html += `<div class="drverdict t-${r.tier} l-${r.lab}" style="--lc:${L.c}"><div class="drverdict-face">${drAvatarSVG(DR.st, { face: true, mouth: mood })}</div><div><span class="drlab"><i>${L.icon}</i>${esc(L.n)}</span><small>${esc(L.line)}${lossTxt ? ` · <span class="mono">${lossTxt}</span>` : ''}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < -20 ? 'Life ▼▼' : d < 0 ? 'Life ▼' : 'Life ='}</span></div>
+      ${h.odds && (h.cat === 'Facing a jam' || h.cat === 'Facing a raise' || h.cat === 'Facing a 3-bet or more') ? `<div class="drodds"><span>Pot odds</span><b>Call ${fmt(h.odds.call)} to win ${fmt(h.odds.pot)}</b><i class="mono">${h.odds.need}% equity needed</i>${['bubble', 'satbubble', 'deep', 'final'].includes(r.stage) ? '<small>ICM: busting costs more than chips here, so you need more than this.</small>' : ''}</div>` : ''}
       ${run.combo >= 3 && r.tier !== 'bad' ? `<div class="drcombo">🔥 ${run.combo} in a row</div>` : ''}
       <div class="drmix">${sp.res.actions.map((a, k) => `<div class="${k === r.j ? 'mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><i style="--w:${(r.strat[k] * 100).toFixed(1)}%"></i><b class="mono">${Math.round(r.strat[k] * 100)}%</b></div>`).join('')}</div>
       ${drTip(r) ? `<div class="drtip">${drSpeaker({ sp: 'slick' }).av}<p>${esc(drTip(r))}</p></div>` : ''}

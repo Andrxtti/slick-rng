@@ -500,3 +500,11 @@
 .dream .drdeck { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px; background: linear-gradient(135deg, rgba(240, 138, 75, .14), transparent 65%), var(--card); border-color: rgba(240, 138, 75, .45); }
 .dream .drdeck b { display: block; font-family: var(--disp); font-size: 19px; color: var(--cream); margin: 2px 0; } .dream .drdeck small { color: var(--mute); font-size: 12px; line-height: 1.35; display: block; }
 .dream .drdeck.empty { background: var(--card); border-color: var(--line); } .dream .drdeck.empty b { font-size: 16px; }
+.dream .drodds { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px 10px; align-items: baseline; padding: 10px 12px; border-radius: 12px; background: rgba(0, 0, 0, .28); border: 1px dashed var(--line2); }
+.dream .drodds span { font-family: var(--disp); font-style: italic; color: var(--gold); font-size: 14px; }
+.dream .drodds b { font-weight: 500; font-size: 13.5px; color: var(--cream); } .dream .drodds i { font-style: normal; color: var(--gold2); font-size: 13px; }
+.dream .drodds small { grid-column: 1 / -1; color: var(--mute); font-size: 12px; }
+@media (max-width: 420px) { .dream .drodds { grid-template-columns: auto minmax(0, 1fr); } .dream .drodds i { grid-column: 2; } }
+/* your player is alive: an occasional blink on the life card */
+.dream .drblink { transform-box: fill-box; transform-origin: center; animation: drBlink 6.5s infinite; }
+@keyframes drBlink { 0%, 95.5%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.08); } }

@@ -340,7 +340,8 @@ function drLabelFor(strat, ev, j, unit, hard, kind) {
   else if (mine >= 0.25 && ['inaccuracy', 'mistake', 'blunder'].includes(lab)) lab = 'good';
   else if (mine < 0.05 && (lab === 'best' || lab === 'excellent' || lab === 'good')) lab = 'inaccuracy';
   // special finds in the hardest spots
-  if (lab === 'best' && hard >= 0.7) lab = ['allin', 'raise', 'raiseB'].includes(kind) || (kind === 'call' && hard >= 0.8) ? 'brilliant' : 'great';
+  // rare on purpose: only the very closest spots, and Brilliant only for a brave play the solver doesn't make on autopilot
+  if (lab === 'best' && hard >= 0.9) lab = (['allin', 'raise', 'raiseB'].includes(kind) || kind === 'call') && mine <= 0.85 ? 'brilliant' : 'great';
   return { lab, loss, bestIdx: best };
 }
 function drAnswer(k) {
@@ -358,6 +359,7 @@ function drAnswer(k) {
   const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
   const best = g.bestIdx, hero = v.seats[sp.hero];
   const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(strat[best] * 100), myF: Math.round(strat[j] * 100),
+    odds: (() => { const o = v.opts.find((x) => x.k === 'call'), m = o && /([\d.]+)/.exec(o.t), amt = m ? +m[1] - (hero.put || 0) : 0; return amt > 0 && v.pot > 0 ? { call: Math.round(amt * 10) / 10, pot: Math.round(v.pot * 10) / 10, need: Math.round((amt / (v.pot + amt)) * 100) } : null; })(),
     lab: g.lab, loss: g.loss, unit, mix: sp.res.actions.map((a, i) => [lab(i), Math.round(strat[i] * 100)]), facing: sp.path.filter((e) => e.k !== 'fold').length };
   if (window.__drLog) window.__drLog.push({ ...hand, tier, stage: run.stages[run.si], d: sp.diff, acts: sp.res.actions.map((x) => x.k).join('/'), facing: sp.path.filter((e) => e.k !== 'fold').map((e) => e.k).join('-') || 'first in' });
   const r = { j, pts, rel, ok, tier, lab: g.lab, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand };

@@ -171,7 +171,7 @@ function drHubHTML() {
   const tab = DR.tab || 'events';
   const fresh = (s.newItems || []).length;
   return `${drModeBar()}<section class="drlife hm-${s.eq.home}">
-      <div class="drlife-av">${drAvatarSVG(s)}</div>
+      <div class="drlife-av">${drAvatarSVG(s, { blink: true })}</div>
       <div class="drlife-info">
         <div class="drkicker">${esc(chd.n)} · ${esc(chd.t)}</div>
         <div class="drlife-name">${esc(s.name)}</div>
@@ -358,6 +358,7 @@ function drRunHTML() {
     const lossTxt = h.loss == null ? '' : h.loss <= 1e-9 ? 'No value lost' : `−${h.unit === 'icm' ? `${h.loss.toFixed(h.loss < 0.1 ? 3 : 2)}% of the prize pool` : h.unit === 'bbicm' ? `${h.loss.toFixed(2)} bb of tournament equity` : `${h.loss.toFixed(2)} bb`}`;
     const mood = r.tier === 'perfect' ? 'smile' : r.tier === 'bad' ? 'frown' : 'flat';
     html += `<div class="drverdict t-${r.tier} l-${r.lab}" style="--lc:${L.c}"><div class="drverdict-face">${drAvatarSVG(DR.st, { face: true, mouth: mood })}</div><div><span class="drlab"><i>${L.icon}</i>${esc(L.n)}</span><small>${esc(L.line)}${lossTxt ? ` · <span class="mono">${lossTxt}</span>` : ''}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < -20 ? 'Life ▼▼' : d < 0 ? 'Life ▼' : 'Life ='}</span></div>
+      ${h.odds && (h.cat === 'Facing a jam' || h.cat === 'Facing a raise' || h.cat === 'Facing a 3-bet or more') ? `<div class="drodds"><span>Pot odds</span><b>Call ${fmt(h.odds.call)} to win ${fmt(h.odds.pot)}</b><i class="mono">${h.odds.need}% equity needed</i>${['bubble', 'satbubble', 'deep', 'final'].includes(r.stage) ? '<small>ICM: busting costs more than chips here, so you need more than this.</small>' : ''}</div>` : ''}
       ${run.combo >= 3 && r.tier !== 'bad' ? `<div class="drcombo">🔥 ${run.combo} in a row</div>` : ''}
       <div class="drmix">${sp.res.actions.map((a, k) => `<div class="${k === r.j ? 'mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><i style="--w:${(r.strat[k] * 100).toFixed(1)}%"></i><b class="mono">${Math.round(r.strat[k] * 100)}%</b></div>`).join('')}</div>
       ${drTip(r) ? `<div class="drtip">${drSpeaker({ sp: 'slick' }).av}<p>${esc(drTip(r))}</p></div>` : ''}
