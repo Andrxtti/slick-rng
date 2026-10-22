@@ -6391,6 +6391,15 @@ const DR_SCENES = {
 
 // more beats along the way, triggered by milestones
 Object.assign(DR_SCENES, {
+  badbeat: { place: 'diner', title: 'Bad beat', sub: 'The cards do not care', beats: [
+    { sp: 'n', t: 'Lucky Seven Diner. Same stool, same pie. The feeling is not the same.' },
+    { sp: 'you', t: "I did everything right. Every decision. And I'm out." },
+    { sp: 'slick', t: 'Then you had a good day. You just did not get paid for it.' },
+    { sp: 'slick', t: 'Over one hand, the cards pay whoever they like. Over ten thousand, they pay whoever studied. Play for the ten thousand.' },
+    { sp: 'trent', t: 'Heard you got coolered. Brutal. Maybe this game just isn’t for everyone.', text: true },
+    { sp: 'you', t: "He's right about one thing. It isn't for everyone." },
+    { sp: 'slick', t: 'Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list.', goal: true },
+  ], end: 'hub' },
   trentbeat: { place: 'cardroom', title: 'Chapter 1', sub: 'The Riverside Classic', beats: [
     { sp: 'n', t: 'The last card hits the felt. The Riverside Classic is yours.' },
     { sp: 'trent', t: "Enjoy it. Dad says the Classic is a rounding error." },
@@ -8263,6 +8272,7 @@ function drFinish(quit) {
     const keys = Object.keys(s.daily).sort(); if (keys.length > 120) keys.slice(0, keys.length - 120).forEach((k) => delete s.daily[k]);
   }
   if (ev.id === 'local' && !s.story.p_after) s.queue.push('p_after');
+  if (run.cooler && s.ch >= 1 && !s.story.badbeat && !s.queue.includes('badbeat')) s.queue.push('badbeat');
   if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');
   res.after = s.br;
   res.unlocked = drUnlocks(s);
@@ -8644,7 +8654,7 @@ const DR_FRAMES = {
 const DR_TITLES_COS = {
   none: 'No title', grinder: 'Grinder', reg: 'The Reg', shark: 'Shark', highroller: 'High Roller', crusher: 'Crusher', livinglegend: 'Living Legend',
   professor: 'The Professor', ironwill: 'Iron Will', herocaller: 'Hero Caller', icm: 'ICM Scientist', heater: 'Heater', giantkiller: 'Giant Killer',
-  closer: 'The Closer', robot: 'Robot', neverdead: 'Never Dead', taskmaster: 'Taskmaster', satshark: 'Satellite Shark',
+  closer: 'The Closer', robot: 'Robot', neverdead: 'Never Dead', taskmaster: 'Taskmaster', satshark: 'Satellite Shark', thickskin: 'Thick Skin', bounceback: 'Bounce Back',
 };
 const DR_COS_KINDS = [['back', 'Card backs', DR_BACKS, 'classic'], ['felt', 'Table felt', DR_FELTS, 'green'], ['frame', 'Avatar frame', DR_FRAMES, 'none'], ['title', 'Title', DR_TITLES_COS, 'none']];
 
@@ -8692,6 +8702,8 @@ const DR_ACH = [
   { id: 'legends', n: 'Legend Slayer', d: 'Legends beaten heads-up', t: [1, 8, 25], f: (p, s) => Object.keys(s.legends || {}).length, gold: ['title', 'giantkiller'] },
   { id: 'flawless', n: 'Flawless', d: 'Games at 100% accuracy (6+ decisions)', t: [1, 5, 20], f: (p) => p.st.flawless, gold: ['title', 'robot'] },
   { id: 'comeback', n: 'Comeback Kid', d: 'Won after running on fumes', t: [1, 3, 10], f: (p) => p.st.comeback, gold: ['title', 'neverdead'] },
+  { id: 'coolers', n: 'Thick Skin', d: 'Coolered while playing 85%+ accurate', t: [1, 5, 15], f: (p) => p.st.cleanBeats || 0, gold: ['title', 'thickskin'] },
+  { id: 'bounce', n: 'Bounce Back', d: 'Won the very next event after a cooler', t: [1, 3, 10], f: (p) => p.st.bounce || 0, gold: ['title', 'bounceback'] },
   { id: 'seats', n: 'Satellite Shark', d: 'Satellite seats won', t: [1, 5, 15], f: (p) => p.st.seats, gold: ['title', 'satshark'] },
   { id: 'league', n: 'League Regular', d: 'League games played', t: [10, 50, 150], f: (p, s) => (s.m && s.m.league.played) || 0 },
   { id: 'ranked', n: 'Ladder Climber', d: 'Best ranked tier (Silver, Gold, Diamond)', t: [1, 2, 4], f: (p, s) => (s.rk ? DR_TIERS.indexOf(drTier(s.rk.peak || 1000)) : 0), fmt: (v) => (DR_TIERS[v] || DR_TIERS[0])[1] },
@@ -8807,6 +8819,9 @@ function drEventDone(res, run) {
   if (kind === 'sng' && ev.mode === 'casual') xp = Math.round(xp * 0.6);
   drGainXp(s, xp, out);
   if (won) { p.st.wins++; if (run.fumes) p.st.comeback++; }
+  // coolers: part of the game. Count them, reward taking them well, reward the bounce back
+  if (res.cooler) { p.st.coolers = (p.st.coolers || 0) + 1; if (res.acc >= 85) p.st.cleanBeats = (p.st.cleanBeats || 0) + 1; p.lastCool = true; }
+  else if (!ev.drill && !ev.review && res.mode !== 'challenge') { if (won && p.lastCool) p.st.bounce = (p.st.bounce || 0) + 1; p.lastCool = false; }
   if (kind === 'sat' && res.ticket) p.st.seats++;
   if (cashed && run.stages.includes('bubble') && run.si >= run.stages.indexOf('bubble')) p.st.bubble++;
   if (res.acc === 100 && res.n >= 6) p.st.flawless++;
@@ -9218,12 +9233,21 @@ function drClosetHTML() {
   const all = [...DR_ITEMS.filter((x) => x.id !== 'none'), ...DR_LG_ITEMS], have = all.filter((x) => drOwns(s, x.slot, x.id)).length;
   return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${dr3LiveOK() ? dr3LiveHTML(s, s.name) : drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div>${bar}<div class="drslot"><div class="dritems">${grid}</div>${dyes}</div></div>`;
 }
+const DR_COOLER_LINES = [
+  "You played it right. That's all you control. People insist on calling it luck.",
+  'Write it down and let it go. The next hand does not know about this one.',
+  'Every legend has a list of these longer than their list of titles.',
+  'Bad beats are the tax on getting your money in good. Pay it and keep playing.',
+  'That one stings. Good. It means you care. Now go show the deck it was wrong.',
+];
+function drCoolerLine() { const n = (drPg(DR.st).st.coolers || 0); return (n ? `That's cooler number ${n + 1}. ` : '') + DR_COOLER_LINES[n % DR_COOLER_LINES.length]; }
 function drTrophiesHTML() {
   const s = DR.st, acc = s.dec ? Math.round(((s.perfect + s.good) / s.dec) * 100) : 0;
   return `<div class="drstats">
       <div><small>Events played</small><b class="mono">${s.played}</b></div><div><small>Cashes</small><b class="mono">${s.cashes}</b></div>
       <div><small>Final tables</small><b class="mono">${s.ft}</b></div><div><small>Peak bankroll</small><b class="mono">$${drMoneyShort(s.peak)}</b></div>
       <div><small>Decisions</small><b class="mono">${s.dec}</b></div><div><small>Solver-approved</small><b class="mono">${acc}%</b></div>
+      <div><small>Coolers taken</small><b class="mono">${drPg(s).st.coolers || 0}</b></div><div><small>Bounce-backs</small><b class="mono">${drPg(s).st.bounce || 0}</b></div>
     </div>
     ${s.ch >= 1 ? (() => { const b = drPoyBoard(s), me = b.findIndex((r) => r.me), top = b.slice(0, 8), show = me >= 8 ? [...top, b[me]] : top;
       return `<div class="drpoy"><div class="drkicker">Player of the Year race · ${new Date().toLocaleDateString(undefined, { month: 'long' })}</div>
@@ -9296,7 +9320,7 @@ function drRunHTML() {
     </section>`;
   }
   if (run.state === 'cooler') return `${head}<section class="drstagecard cooler pl-${ev.venue}"><div class="drkicker">Cooler</div><h2 class="drh">${esc(run.cooler)}</h2>
-      <div class="drsay">${drSpeaker({ sp: 'slick' }).av}<div><b>Slick</b><p>You played it right. That's all you control. People insist on calling it luck.</p></div></div>
+      <div class="drsay">${drSpeaker({ sp: 'slick' }).av}<div><b>Slick</b><p>${esc(drCoolerLine())}</p></div></div>
       ${drBtn('gold big', 'data-dr="coolerdone"', 'See where you finished ▸')}</section>`;
   if (run.state === 'dealing') return `${head}<section class="drspot dim"><div class="drdealing"><span></span><span></span><span></span></div><small class="drhint">Dealing…</small></section>`;
   const sp = run.spot, keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
