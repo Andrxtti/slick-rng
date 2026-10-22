@@ -2070,7 +2070,11 @@ class PreflopSolver {
     this.plo = cfg.game === 'plo';
     if (this.plo) PLO.init();
     this.NC = this.plo ? PLO.B : NCLASS; this.EQ = this.plo ? PLO.EQ : EQ169;
-    this.nodes = []; this.buildTree();
+    // memory guard: each decision node costs ~4KB, so a capped build simplifies the tree step by step until it fits
+    for (;;) {
+      this.nodes = [];
+      try { this.buildTree(); break; } catch (e) { if (!cfg.maxNodes || (cfg.lite || 0) >= 3) throw e; cfg.lite = (cfg.lite || 0) + 1; }
+    }
     let off = 0;
     let eoff = 0, woff = 0;
     for (const nd of this.nodes) if (nd.kind === 'act') { nd.off = off; off += this.NC * 2 * nd.actions.length; nd.evOff = eoff; eoff += this.NC * nd.actions.length; nd.ewOff = woff; woff += this.NC; }
@@ -2126,9 +2130,9 @@ class PreflopSolver {
           // open-limp: short stacks from any seat (late seats at any depth). Over-limp behind one limper:
           // short stacks, from any seat at 6-handed or fewer, from CO/BTN on bigger tables (keeps the tree in memory)
           const canOpen = limpers < 1 && (short || late), canOver = limpers === 1 && short && (n <= 6 || late);
-          if (cfg.names[p] === 'SB' || (cfg.allowLimps && (canOpen || canOver))) o.push({ k: 'call' });
+          if (cfg.names[p] === 'SB' || (cfg.allowLimps && !cfg.lite && (canOpen || canOver))) o.push({ k: 'call' });
         }
-        else if (s.level === 1) { if (callers < 2 || cfg.names[p] === 'BB') o.push({ k: 'call' }); }
+        else if (s.level === 1) { if (callers < (cfg.lite ? 1 : 2) || cfg.names[p] === 'BB') o.push({ k: 'call' }); }
         else if (inVol) o.push({ k: 'call' });
       } else o.push({ k: 'check' });
       if (!others) return o;
@@ -2141,11 +2145,12 @@ class PreflopSolver {
         if (potTo >= st[p] * 0.95) o.push({ k: 'allin', to: st[p], L }); else o.push({ k: 'raise', to: Math.round(potTo * 10) / 10, L });
         return o;
       }
-      if (L <= 3 && (s.level < 2 || inVol)) {
+      // lite trees (phones, trainer): cold players vs an open don't flat-3-bet-size, and 4-bets are jams
+      if (L <= 3 && (s.level < 2 || inVol) && !(cfg.lite >= 2 && s.level === 1 && !inVol) && !(cfg.lite >= 3 && s.level >= 2)) {
         const to = sizeFor(s, L); if (to < st[p] * 0.95) o.push({ k: 'raise', to, L });
         // commit-but-not-all-in: raise to everything except 1bb (short stacks)
         const keep = st[p] - 1;
-        if (cfg.leave1 && L <= 2 && st[p] <= 40 && keep > to * 1.25 && keep > s.bet + s.lastRaise) o.push({ k: 'raiseB', to: keep, L });
+        if (cfg.leave1 && !cfg.lite && L <= 2 && st[p] <= 40 && keep > to * 1.25 && keep > s.bet + s.lastRaise) o.push({ k: 'raiseB', to: keep, L });
       }
       if (L === 4 && inVol && st[p] > 150) { const to = sizeFor(s, L); if (to < st[p] * 0.95) o.push({ k: 'raise', to, L }); }
       o.push({ k: 'allin', to: st[p], L });
@@ -2171,7 +2176,7 @@ class PreflopSolver {
       }
       const os = opts(s, p);
       const id = this.nodes.length; this.nodes.push({ kind: 'act', player: p, actions: os, children: [], level: s.level, bet: s.bet, put: s.put.slice() });
-      if (this.nodes.length > 400000) throw new Error('Preflop tree too large. Use fewer players or bigger sizes.');
+      if (this.nodes.length > (cfg.maxNodes && (cfg.lite || 0) < 3 ? cfg.maxNodes : 400000)) throw new Error('Preflop tree too large. Use fewer players or bigger sizes.');
       for (const a of os) this.nodes[id].children.push(build(apply(s, p, a)));
       return id;
     };
@@ -2496,7 +2501,7 @@ if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typ
       else if (m.cmd === 'ev') self.postMessage({ type: 'ev', ev: solver.estimateEV(m.samples || 30000) });
       // ---- preflop solver (runs in its own worker)
       else if (m.cmd === 'pfBuild') {
-        pfRunning = false; pf = new PreflopSolver(m.cfg); pfKey = m.key;
+        pfRunning = false; pf = null; pf = new PreflopSolver(m.cfg); pfKey = m.key;
         self.postMessage({ type: 'pfBuilt', key: pfKey, nodes: pf.nodes.length });
       } else if (m.cmd === 'pfSolve') { pfDeadline = Date.now() + m.seconds * 1000; pfRunning = true; pfLoop(); }
       else if (m.cmd === 'pfStop') { pfRunning = false; if (pf) self.postMessage({ type: 'pfProgress', key: pfKey, iters: pf.iters, done: true }); }
@@ -3559,7 +3564,11 @@ const worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/java
 const PF_SECONDS_NLH = 150, PF_DEEP = 80, PF_EXACTISH = 30;
 // PLO has more hand buckets and slower showdowns, so it gets a longer solve
 let PF_SECONDS = PF_SECONDS_NLH;
-const PF_N = Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 1));
+// phones get two solver threads at most: each thread holds its own copy of the tree in memory
+const PF_PHONE = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+const PF_N = Math.max(1, Math.min(PF_PHONE ? 2 : 4, (navigator.hardwareConcurrency || 2) - 1));
+// trainer spots cap the tree (phones tighter): a 9-handed full tree can need a gigabyte per thread
+const PF_TRAIN_NODES = PF_PHONE ? 30000 : 60000;
 const pfWorkers = Array.from({ length: PF_N }, () => new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' }))));
 let pfGen = 0, pfKey = null, pfTimer = null, pfState = { iters: 0, done: false, solving: false, t0: 0, error: null, deep: false };
 const pfCache = new Map(), pfAsked = new Set(), pfParts = new Map(), pfIters = new Array(PF_N).fill(0), pfDoneW = new Array(PF_N).fill(false);
@@ -3572,7 +3581,7 @@ function pfConfig() {
     if (S.game === 'icm') { const left = Math.max(S.left, n); payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others: Array(left - n).fill(S.stack) }; }
     if (icmOn()) { const t = S.t222, mdl = icmModel(), pays = mdl.pays; if (mdl.left >= n && pays.length) { payoff = { type: 'icm', payouts: pays, others: Array(mdl.left - n).fill(mdl.g) }; if (pkoOn()) { payoff.bounties = seats.map((x) => bountyPct(x)); payoff.bountyFrac = bountyFrac(); } } }
     return { names: seats.map((x) => x.pos), stacks: seats.map((x) => stackOf(x)), posts: seats.map((x) => Math.min(x.put, stackOf(x))),
-      ante: seats.reduce((a, x) => a + deadOf(x), 0), sizes: { ...S.sz }, hu: T.hu, payoff, postOrder, allowLimps: S.game === '222', leave1: S.game !== 'cash' && S.variant !== 'plo', game: S.variant === 'plo' ? 'plo' : 'nlh' };
+      ante: seats.reduce((a, x) => a + deadOf(x), 0), sizes: { ...S.sz }, hu: T.hu, payoff, postOrder, allowLimps: S.game === '222', leave1: S.game !== 'cash' && S.variant !== 'plo', game: S.variant === 'plo' ? 'plo' : 'nlh', ...(typeof TR !== 'undefined' && TR.random ? { maxNodes: PF_TRAIN_NODES } : {}) };
   });
 }
 // Deep stacks need postflop play solved inside the preflop solve; until the native build
