@@ -109,7 +109,7 @@ const DR_SCENES = {
   c7: { place: 'hall', title: 'Legacy', sub: 'The Hall of Legends', beats: [
     { sp: 'n', t: "Your picture hangs in the Hall of Legends now. Next to men you used to watch on a fuzzy TV." },
     { sp: 'ghost', t: "Fourteen bracelets. That's the number. Come take it." },
-    { sp: 'n', t: "Goal: beat every legend and pass The Ghost's fourteen bracelets.", goal: true },
+    { sp: 'n', t: "Goal: beat every legend and pass Bio The Ghost's fourteen bracelets.", goal: true },
   ], end: 'hub' },
 
   // ------------------------------------------------------------ beats along the way
@@ -128,7 +128,7 @@ const DR_SCENES = {
   champ: { place: 'main', title: 'World Champion', beats: [
     { sp: 'n', t: 'Confetti. Cameras. A bracelet the size of a doorknob.\nSomewhere, a nine-year-old with a fuzzy TV is losing his mind.' },
     { sp: 'ghost', t: 'Good game, kid.' },
-    { sp: 'n', t: 'He takes off his glasses. For the first time anyone can remember, The Ghost smiles.' },
+    { sp: 'n', t: 'He takes off his glasses. For the first time anyone can remember, Bio The Ghost smiles.' },
     { sp: 'ghost', t: "Now you'll find out the hard part. Everyone will be hunting you." },
     { sp: 'derek', t: 'Hey buddy! Long time! Saw you on TV. Listen, about that promotion…', text: true },
     { sp: 'n', t: 'You leave him on read.' },

@@ -33,7 +33,7 @@ const DR_PEOPLE = {
   trent:  { name: 'Mustich', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'slick', hairC: 4, facial: 'none', eyeC: 3 }, eq: { outfit: 'blazer', eyes: 'aviator', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
   lou:    { name: 'Tommy "The Nose" Maio', role: 'Riverside regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'bald', hairC: 6, facial: 'beard' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'cap', chain: 'none', patch: 'none' } },
   host:   { name: 'Miles Gnomey', role: 'Stream host', c: '#f878b8', look: { skin: 3, hair: 'quiff', hairC: 1, facial: 'stubble' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
-  ghost:  { name: 'The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
+  ghost:  { name: 'Bio The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
   mom:    { name: 'David Pec', role: 'Your best friend. Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'fade', hairC: 1, facial: 'stubble' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
 };
 
@@ -97,7 +97,7 @@ const DR_CHAPTERS = [
   { n: 'Chapter 5', t: 'High Roller', place: 'titan', goal: 'Win 2 Titan titles and build a $5,000,000 bankroll', test: (s) => s.titles.titan >= 2 && s.br >= 5e6,
     prog: (s) => [(Math.min(2, s.titles.titan) / 2 + Math.min(1, s.br / 5e6)) / 2, `🔱 ${Math.min(2, s.titles.titan)}/2 Titans · $${drMoneyShort(s.br)} of $5M`] },
   { n: 'Chapter 6', t: 'The Main Event', place: 'main', goal: 'Win the Main Event', test: (s) => s.titles.me > 0, prog: (s) => [s.titles.me ? 1 : 0, s.titles.me ? 'World Champion' : 'not yet'] },
-  { n: 'Legacy', t: 'The Hall of Legends', place: 'hall', goal: "Beat every legend and pass The Ghost's 14 bracelets", test: () => false,
+  { n: 'Legacy', t: 'The Hall of Legends', place: 'hall', goal: "Beat every legend and pass Bio The Ghost's 14 bracelets", test: () => false,
     prog: (s) => [(Object.keys(s.legends).length / DR_LEGENDS.length + Math.min(1, s.titles.bracelet / 15)) / 2, `${Object.keys(s.legends).length}/${DR_LEGENDS.length} legends · ${s.titles.bracelet}/15 bracelets`] },
 ];
 

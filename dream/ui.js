@@ -308,7 +308,7 @@ function drLegendsHTML() {
       <b>${beat || met ? esc(L.name) : '???'}</b><small>“${esc(L.nick)}”${beat || met ? '' : ` · ${esc(DR_CHAPTERS[Math.min(7, L.ch)].t)}`}</small>${beat || met ? `<p>${esc(L.style)}</p>` : ''}<span class="drlegend-st">${beat ? 'Beaten' : met ? 'Met at a final table' : 'Not met yet'}</span></div>`;
   };
   return `<p class="drhint">Every legend is a tribute. Beat one heads-up for the title and their card turns gold.</p>
-    <div class="drlegend ghost ${s.titles.me ? 'beat' : ''}"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><b>The Ghost</b><small>“The GOAT”</small><p>Fourteen bracelets. Never explains. The man from the fuzzy TV.</p><span class="drlegend-st">${s.titles.me ? 'Beaten for the world title' : 'Final boss of the Main Event'}</span></div>
+    <div class="drlegend ghost ${s.titles.me ? 'beat' : ''}"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><b>Bio The Ghost</b><small>“The GOAT”</small><p>Fourteen bracelets. Never explains. The man from the fuzzy TV.</p><span class="drlegend-st">${s.titles.me ? 'Beaten for the world title' : 'Final boss of the Main Event'}</span></div>
     ${eras.map((e) => `<div class="drkicker drera">${e}</div><div class="drlegends">${DR_LEGENDS.filter((L) => L.era === e).map(card).join('')}</div>`).join('')}`;
 }
 function drStoryHTML() {
@@ -376,7 +376,7 @@ function drRunHTML() {
     <div class="drtable">${(() => {
       // at the final table, the boss sits in the biggest stack that isn't you
       let bossSeat = -1, bossName = '';
-      if (stage === 'final' && run.boss) { bossName = run.boss === 'ghost' ? 'The Ghost' : (DR_PEOPLE[run.boss] || drLegend(run.boss) || {}).name || ''; let big = -1; v.seats.forEach((x, k) => { if (k !== sp.hero && x.stack > big) { big = x.stack; bossSeat = k; } }); }
+      if (stage === 'final' && run.boss) { bossName = run.boss === 'ghost' ? 'Bio The Ghost' : (DR_PEOPLE[run.boss] || drLegend(run.boss) || {}).name || ''; let big = -1; v.seats.forEach((x, k) => { if (k !== sp.hero && x.stack > big) { big = x.stack; bossSeat = k; } }); }
       // seats around an oval, clockwise from you at the bottom
       const n = v.seats.length;
       const seats = v.seats.map((x, k) => {
@@ -476,7 +476,7 @@ function drResultsHTML() {
     <div class="drkicker">${esc(ev.name)}</div>
     <h1 class="drres-h">${esc(headline)}</h1><p class="drres-sub">${esc(sub)}</p>
     ${titleHTML}
-    ${r.titles.includes('me') && r.boss === 'ghost' ? `<div class="drbeat"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><div><div class="drkicker">Heads-up for the world title</div><b>You beat The Ghost</b><small>Fourteen bracelets, and he finally smiled.</small></div></div>` : ''}
+    ${r.titles.includes('me') && r.boss === 'ghost' ? `<div class="drbeat"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><div><div class="drkicker">Heads-up for the world title</div><b>You beat Bio The Ghost</b><small>Fourteen bracelets, and he finally smiled.</small></div></div>` : ''}
     ${beat ? `<div class="drbeat">${drLegendFace(beat)}<div><div class="drkicker">Legend beaten</div><b>${esc(beat.name)}</b><small>“${esc(beat.nick)}” · card added to your Legends</small></div></div>` : r.met && r.met !== 'ghost' && drLegend(r.met) ? `<div class="drbeat met">${drLegendFace(drLegend(r.met))}<div><div class="drkicker">You shared a final table with</div><b>${esc(drLegend(r.met).name)}</b><small>Beat them heads-up to win their card</small></div></div>` : ''}
     ${r.ticket ? `<div class="drwin"><div class="drwin-icon">🎟</div><div><div class="drkicker">Seat won</div><b>${esc(drEvent(r.ticket).name)}</b><small>Buy-in $${drMoney(drEvent(r.ticket).buyin)}, paid for.</small></div></div>` : ''}
     <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → <span data-count="${r.before}:${r.after}">$${drMoney(r.after)}</span></b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>

@@ -5959,7 +5959,7 @@ const DR_PEOPLE = {
   trent:  { name: 'Mustich', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'slick', hairC: 4, facial: 'none', eyeC: 3 }, eq: { outfit: 'blazer', eyes: 'aviator', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
   lou:    { name: 'Tommy "The Nose" Maio', role: 'Riverside regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'bald', hairC: 6, facial: 'beard' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'cap', chain: 'none', patch: 'none' } },
   host:   { name: 'Miles Gnomey', role: 'Stream host', c: '#f878b8', look: { skin: 3, hair: 'quiff', hairC: 1, facial: 'stubble' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
-  ghost:  { name: 'The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
+  ghost:  { name: 'Bio The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
   mom:    { name: 'David Pec', role: 'Your best friend. Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'fade', hairC: 1, facial: 'stubble' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
 };
 
@@ -6023,7 +6023,7 @@ const DR_CHAPTERS = [
   { n: 'Chapter 5', t: 'High Roller', place: 'titan', goal: 'Win 2 Titan titles and build a $5,000,000 bankroll', test: (s) => s.titles.titan >= 2 && s.br >= 5e6,
     prog: (s) => [(Math.min(2, s.titles.titan) / 2 + Math.min(1, s.br / 5e6)) / 2, `🔱 ${Math.min(2, s.titles.titan)}/2 Titans · $${drMoneyShort(s.br)} of $5M`] },
   { n: 'Chapter 6', t: 'The Main Event', place: 'main', goal: 'Win the Main Event', test: (s) => s.titles.me > 0, prog: (s) => [s.titles.me ? 1 : 0, s.titles.me ? 'World Champion' : 'not yet'] },
-  { n: 'Legacy', t: 'The Hall of Legends', place: 'hall', goal: "Beat every legend and pass The Ghost's 14 bracelets", test: () => false,
+  { n: 'Legacy', t: 'The Hall of Legends', place: 'hall', goal: "Beat every legend and pass Bio The Ghost's 14 bracelets", test: () => false,
     prog: (s) => [(Object.keys(s.legends).length / DR_LEGENDS.length + Math.min(1, s.titles.bracelet / 15)) / 2, `${Object.keys(s.legends).length}/${DR_LEGENDS.length} legends · ${s.titles.bracelet}/15 bracelets`] },
 ];
 
@@ -6343,7 +6343,7 @@ const DR_SCENES = {
   c7: { place: 'hall', title: 'Legacy', sub: 'The Hall of Legends', beats: [
     { sp: 'n', t: "Your picture hangs in the Hall of Legends now. Next to men you used to watch on a fuzzy TV." },
     { sp: 'ghost', t: "Fourteen bracelets. That's the number. Come take it." },
-    { sp: 'n', t: "Goal: beat every legend and pass The Ghost's fourteen bracelets.", goal: true },
+    { sp: 'n', t: "Goal: beat every legend and pass Bio The Ghost's fourteen bracelets.", goal: true },
   ], end: 'hub' },
 
   // ------------------------------------------------------------ beats along the way
@@ -6362,7 +6362,7 @@ const DR_SCENES = {
   champ: { place: 'main', title: 'World Champion', beats: [
     { sp: 'n', t: 'Confetti. Cameras. A bracelet the size of a doorknob.\nSomewhere, a nine-year-old with a fuzzy TV is losing his mind.' },
     { sp: 'ghost', t: 'Good game, kid.' },
-    { sp: 'n', t: 'He takes off his glasses. For the first time anyone can remember, The Ghost smiles.' },
+    { sp: 'n', t: 'He takes off his glasses. For the first time anyone can remember, Bio The Ghost smiles.' },
     { sp: 'ghost', t: "Now you'll find out the hard part. Everyone will be hunting you." },
     { sp: 'derek', t: 'Hey buddy! Long time! Saw you on TV. Listen, about that promotion…', text: true },
     { sp: 'n', t: 'You leave him on read.' },
@@ -8235,7 +8235,7 @@ function drFinish(quit) {
       if (ev.title) { s.titles[ev.title]++; res.titles.push(ev.title); s.trophies.unshift({ t: ev.title, ev: ev.name, prize, d: Date.now() }); drMoment(s, DR_TITLES[ev.title].icon, `Won the ${ev.name} for $${drMoney(prize)}`); }
       else if (!ev.daily) drMoment(s, '🏅', `Won the ${ev.name}`);
       if (run.boss && DR_LEGENDS.some((l) => l.id === run.boss)) { if (!s.legends[run.boss]) drMoment(s, '🂡', `Beat ${drLegend(run.boss).name} heads-up`); s.legends[run.boss] = true; res.beat = run.boss; }
-      if (run.boss === 'ghost') drMoment(s, '🕶️', 'Beat The Ghost for the world title');
+      if (run.boss === 'ghost') drMoment(s, '🕶️', 'Beat Bio The Ghost for the world title');
       if (run.boss === 'trent') { s.flags.trentW = (s.flags.trentW || 0) + 1; drMoment(s, '😏', `Beat Mustich heads-up (${s.flags.trentW} and counting)`); }
       if (drTitleCount(s) === 1 && !s.story.firstwin) s.queue.push('firstwin');
       const once = (id) => { if (!s.story[id] && !s.queue.includes(id)) s.queue.push(id); };
@@ -9245,7 +9245,7 @@ function drLegendsHTML() {
       <b>${beat || met ? esc(L.name) : '???'}</b><small>“${esc(L.nick)}”${beat || met ? '' : ` · ${esc(DR_CHAPTERS[Math.min(7, L.ch)].t)}`}</small>${beat || met ? `<p>${esc(L.style)}</p>` : ''}<span class="drlegend-st">${beat ? 'Beaten' : met ? 'Met at a final table' : 'Not met yet'}</span></div>`;
   };
   return `<p class="drhint">Every legend is a tribute. Beat one heads-up for the title and their card turns gold.</p>
-    <div class="drlegend ghost ${s.titles.me ? 'beat' : ''}"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><b>The Ghost</b><small>“The GOAT”</small><p>Fourteen bracelets. Never explains. The man from the fuzzy TV.</p><span class="drlegend-st">${s.titles.me ? 'Beaten for the world title' : 'Final boss of the Main Event'}</span></div>
+    <div class="drlegend ghost ${s.titles.me ? 'beat' : ''}"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><b>Bio The Ghost</b><small>“The GOAT”</small><p>Fourteen bracelets. Never explains. The man from the fuzzy TV.</p><span class="drlegend-st">${s.titles.me ? 'Beaten for the world title' : 'Final boss of the Main Event'}</span></div>
     ${eras.map((e) => `<div class="drkicker drera">${e}</div><div class="drlegends">${DR_LEGENDS.filter((L) => L.era === e).map(card).join('')}</div>`).join('')}`;
 }
 function drStoryHTML() {
@@ -9313,7 +9313,7 @@ function drRunHTML() {
     <div class="drtable">${(() => {
       // at the final table, the boss sits in the biggest stack that isn't you
       let bossSeat = -1, bossName = '';
-      if (stage === 'final' && run.boss) { bossName = run.boss === 'ghost' ? 'The Ghost' : (DR_PEOPLE[run.boss] || drLegend(run.boss) || {}).name || ''; let big = -1; v.seats.forEach((x, k) => { if (k !== sp.hero && x.stack > big) { big = x.stack; bossSeat = k; } }); }
+      if (stage === 'final' && run.boss) { bossName = run.boss === 'ghost' ? 'Bio The Ghost' : (DR_PEOPLE[run.boss] || drLegend(run.boss) || {}).name || ''; let big = -1; v.seats.forEach((x, k) => { if (k !== sp.hero && x.stack > big) { big = x.stack; bossSeat = k; } }); }
       // seats around an oval, clockwise from you at the bottom
       const n = v.seats.length;
       const seats = v.seats.map((x, k) => {
@@ -9413,7 +9413,7 @@ function drResultsHTML() {
     <div class="drkicker">${esc(ev.name)}</div>
     <h1 class="drres-h">${esc(headline)}</h1><p class="drres-sub">${esc(sub)}</p>
     ${titleHTML}
-    ${r.titles.includes('me') && r.boss === 'ghost' ? `<div class="drbeat"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><div><div class="drkicker">Heads-up for the world title</div><b>You beat The Ghost</b><small>Fourteen bracelets, and he finally smiled.</small></div></div>` : ''}
+    ${r.titles.includes('me') && r.boss === 'ghost' ? `<div class="drbeat"><div class="drlegend-mono face">${drFaceOf(DR_PEOPLE.ghost)}</div><div><div class="drkicker">Heads-up for the world title</div><b>You beat Bio The Ghost</b><small>Fourteen bracelets, and he finally smiled.</small></div></div>` : ''}
     ${beat ? `<div class="drbeat">${drLegendFace(beat)}<div><div class="drkicker">Legend beaten</div><b>${esc(beat.name)}</b><small>“${esc(beat.nick)}” · card added to your Legends</small></div></div>` : r.met && r.met !== 'ghost' && drLegend(r.met) ? `<div class="drbeat met">${drLegendFace(drLegend(r.met))}<div><div class="drkicker">You shared a final table with</div><b>${esc(drLegend(r.met).name)}</b><small>Beat them heads-up to win their card</small></div></div>` : ''}
     ${r.ticket ? `<div class="drwin"><div class="drwin-icon">🎟</div><div><div class="drkicker">Seat won</div><b>${esc(drEvent(r.ticket).name)}</b><small>Buy-in $${drMoney(drEvent(r.ticket).buyin)}, paid for.</small></div></div>` : ''}
     <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → <span data-count="${r.before}:${r.after}">$${drMoney(r.after)}</span></b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
