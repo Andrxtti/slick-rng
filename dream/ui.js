@@ -49,9 +49,13 @@ function drCreateHTML() {
       <div class="drfield"><span>Hair</span><div class="drchips">${opts('hair', DR_HAIR, look.hair)}</div></div>
       <div class="drfield"><span>Hair color</span><div class="drsws">${sw('hairC', DR_HAIRC, look.hairC, 'hair')}</div></div>
       <div class="drfield"><span>Eye color</span><div class="drsws">${sw('eyeC', DR_EYEC, look.eyeC || 0, 'eye')}</div></div>
+      <div class="drfield"><span>Face shape</span><div class="drchips">${opts('face', DR_FACES, look.face)}</div></div>
+      <div class="drfield"><span>Age</span><div class="drchips">${opts('age', DR_AGES, look.age)}</div></div>
+      <div class="drfield"><span>Brows</span><div class="drchips">${opts('brows', DR_BROWS, look.brows)}</div></div>
+      <div class="drfield"><span>Freckles</span><div class="drchips">${opts('freck', [[0, 'None'], [1, 'Freckles']], look.freck ? 1 : 0)}</div></div>
       <div class="drfield"><span>Facial hair</span><div class="drchips">${opts('facial', DR_FACIAL, look.facial)}</div></div>
       <div class="drrow">${drBtn('ghost', 'data-dr="title"', 'Back')}${drBtn('gold big', 'data-dr="begin"', 'Clock in →')}</div>
-      <p class="drhint">Clothes, jewelry, your home and your ride come later. You have to earn those.</p>
+      <p class="drhint">You start with the basics. Clothes, jewelry, your home and your ride unlock as you play, and cosmetics never change how the game plays.</p>
     </div>
   </section>`;
 }
@@ -247,18 +251,22 @@ function drRarity(it) {
 }
 function drClosetHTML() {
   const s = DR.st, fresh = new Set(s.newItems || []);
-  const html = DR_SLOTS.map(([slot, label]) => {
-    const cur = drSeasonFor(drMonth()).key;
-    const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))];
-    return `<div class="drslot"><div class="drkicker">${label}</div><div class="dritems">${items.map((it) => {
-      const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it);
-      const rar = drRarity(it);
-      return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''} r-${rar}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : `<i class="drrar">${rar}</i>`}</button>`;
-    }).join('')}</div></div>`;
+  const cat = DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0], slot = cat[2], cur = drSeasonFor(drMonth()).key;
+  const inCat = (x) => slot !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === cat[0];
+  const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))].filter(inCat);
+  const newIn = (c) => [...DR_ITEMS, ...DR_LG_ITEMS].some((x) => x.slot === c[2] && (c[2] !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === c[0]) && fresh.has(drItemKey(x)));
+  const bar = `<div class="drcats" role="tablist">${DR_CATS.map((c) => `<button class="drcat" role="tab" data-dr="ccat" data-v="${c[0]}" aria-pressed="${c[0] === cat[0]}">${c[1]}${newIn(c) ? '<i class="drnew">•</i>' : ''}</button>`).join('')}</div>`;
+  const grid = items.map((it) => {
+    const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it), rar = drRarity(it);
+    return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''} r-${rar}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : `<i class="drrar">${rar}</i>`}</button>`;
   }).join('');
-  if (fresh.size) { s.newItems = []; drSave(); }
+  const worn = s.eq[slot], dyeable = (slot === 'outfit' || slot === 'head') && DR_DYEABLE[worn] && !DR_LG_ITEMS.some((x) => x.slot === slot && x.id === worn);
+  const dyes = dyeable ? `<div class="drdye"><div class="drkicker">Colour</div><div class="drsws">${DR_DYES.map((c, i) => `<button class="drsw ${c ? '' : 'orig'}" style="--c:${c || '#888'}" data-dr="dye" data-v="${i}" aria-pressed="${(s.dye[worn] || 0) === i}" aria-label="${c ? 'Dye ' + i : 'Original colour'}"></button>`).join('')}</div></div>` : '';
+  // seen: clear the New badges for the category you just looked at
+  const seen = items.map(drItemKey).filter((k) => fresh.has(k));
+  if (seen.length) { s.newItems = (s.newItems || []).filter((k) => !seen.includes(k)); drSave(); }
   const all = [...DR_ITEMS.filter((x) => x.id !== 'none'), ...DR_LG_ITEMS], have = all.filter((x) => drOwns(s, x.slot, x.id)).length;
-  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div><div class="drslots">${html}</div></div>`;
+  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div>${bar}<div class="drslot"><div class="dritems">${grid}</div>${dyes}</div></div>`;
 }
 function drTrophiesHTML() {
   const s = DR.st, acc = s.dec ? Math.round(((s.perfect + s.good) / s.dec) * 100) : 0;
@@ -473,7 +481,7 @@ document.addEventListener('click', (e) => {
   if (a === 'newyes') { DR.st = drDefault(); drSave(); DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'create'; drRender(); return; }
   if (a === 'newno') { $('drNewConfirm').hidden = true; return; }
   if (a === 'title') { DR.view = 'title'; drRender(); return; }
-  if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' || f === 'eyeC' ? +b.dataset.v : b.dataset.v; drRender(); return; }
+  if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' || f === 'eyeC' ? +b.dataset.v : f === 'freck' ? b.dataset.v === '1' : b.dataset.v; drRender(); return; }
   if (a === 'begin') {
     const n = (($('drName') || {}).value || '').trim();
     const st = drDefault(); st.made = true; st.name = n || 'Rookie'; st.look = { ...DR.draft.look };
@@ -501,6 +509,8 @@ document.addEventListener('click', (e) => {
     drSave(); drRender(); return;
   }
   if (a === 'replay') { const id = b.dataset.id; DR.sc = { id, i: 0, extra: [], replay: true }; DR.view = 'scene'; drRender(); scrollTo(0, 0); return; }
+  if (a === 'ccat') { DR.ccat = b.dataset.v; drRender(); return; }
+  if (a === 'dye') { const w = s.eq[(DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0])[2]]; if (+b.dataset.v) s.dye[w] = +b.dataset.v; else delete s.dye[w]; drSave(); drRender(); return; }
   if (a === 'equip') { s.eq[b.dataset.s] = b.dataset.v; drSave(); drRender(); return; }
   if (a === 'play') { drStart(b.dataset.id); return; }
   if (a === 'deal') { drHand(); return; }

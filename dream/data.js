@@ -154,6 +154,15 @@ const drEvent = (id) => (id === 'daily' ? DR_DAILY : DR_EVENTS.find((e) => e.id 
 const DR_ITEMS = [
   // outfits
   { slot: 'outfit', id: 'office', name: 'Clearance-rack office fit', req: 'Where it all started', test: () => true },
+  { slot: 'outfit', id: 'tee', name: 'Plain black tee', req: 'Where it all started', test: () => true },
+  { slot: 'outfit', id: 'cardigan', name: 'Study-group cardigan', req: 'Play 3 sessions', test: (s) => s.played >= 3 },
+  { slot: 'outfit', id: 'jersey', name: 'Lucky number 7 jersey', req: 'Make 100 decisions', test: (s) => s.dec >= 100 },
+  { slot: 'outfit', id: 'denim', name: 'Denim trucker jacket', req: 'Win a session at $1/$2', test: (s) => !!s.flags.cashWin },
+  { slot: 'outfit', id: 'track', name: 'Retro track jacket', req: 'Daily Grind streak of 3 days', test: (s) => (s.bestStreak || 0) >= 3 },
+  { slot: 'outfit', id: 'vest', name: 'Argyle sweater vest', req: 'Peak bankroll of $10,000', test: (s) => s.peak >= 10000 },
+  { slot: 'outfit', id: 'varsity', name: 'Varsity letterman', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
+  { slot: 'outfit', id: 'leather', name: 'Worn leather jacket', req: 'Peak bankroll of $50,000', test: (s) => s.peak >= 50000 },
+  { slot: 'outfit', id: 'fleece', name: 'Trail fleece', req: 'Reach the Summer', test: (s) => s.ch >= 3 },
   { slot: 'outfit', id: 'hoodie', name: 'The lucky hoodie', req: 'Play your first tournament', test: (s) => s.played >= 1 },
   { slot: 'outfit', id: 'polo', name: 'Card-room quarter-zip', req: 'Reach Chapter 1', test: (s) => s.ch >= 1 },
   { slot: 'outfit', id: 'bomber', name: 'Black bomber jacket', req: 'Win any tournament', test: (s) => drTitleCount(s) >= 1 },
@@ -164,15 +173,44 @@ const DR_ITEMS = [
   // eyewear
   { slot: 'eyes', id: 'none', name: 'No eyewear', req: '', test: () => true },
   { slot: 'eyes', id: 'readers', name: 'Blue-light readers', req: 'Where it all started', test: () => true },
+  { slot: 'eyes', id: 'round', name: 'Wire round frames', req: 'Make 50 decisions', test: (s) => s.dec >= 50 },
+  { slot: 'eyes', id: 'thick', name: 'Thick black frames', req: 'Play 2 sessions', test: (s) => s.played >= 2 },
+  { slot: 'eyes', id: 'sport', name: 'Wraparound sport shades', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
   { slot: 'eyes', id: 'tinted', name: 'Tinted table glasses', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
   { slot: 'eyes', id: 'aviator', name: 'Gold aviators', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
   { slot: 'eyes', id: 'shades', name: "Slick's 8-bit shades", req: 'Win any title', test: (s) => drTitleCount(s) >= 1 },
   // head
   { slot: 'head', id: 'none', name: 'Nothing', req: '', test: () => true },
-  { slot: 'head', id: 'cap', name: 'Riverside ballcap', req: 'Play 5 sessions', test: (s) => s.played >= 5 },
+  { slot: 'head', id: 'cap', name: 'Backwards ballcap', req: 'Play 5 sessions', test: (s) => s.played >= 5 },
+  { slot: 'head', id: 'snap', name: 'Flat-brim snapback', req: 'Reach Chapter 1', test: (s) => s.ch >= 1 },
+  { slot: 'head', id: 'bucket', name: 'Cream bucket hat', req: 'Play 10 sessions', test: (s) => s.played >= 10 },
+  { slot: 'head', id: 'cowboy', name: 'Texas hat', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
+  { slot: 'head', id: 'fedora', name: 'High-roller fedora', req: 'Peak bankroll of $500,000', test: (s) => s.peak >= 500000 },
   { slot: 'head', id: 'phones', name: 'Noise-cancelling cans', req: 'Make 100 decisions', test: (s) => s.dec >= 100 },
   { slot: 'head', id: 'beanie', name: 'Vegas pool beanie', req: 'Reach the Summer', test: (s) => s.ch >= 3 },
   { slot: 'head', id: 'visor', name: "Old-school dealer's visor", req: 'Daily Grind streak of 7 days', test: (s) => (s.bestStreak || 0) >= 7 },
+  // earrings
+  { slot: 'ear', id: 'none', name: 'None', req: '', test: () => true },
+  { slot: 'ear', id: 'stud', name: 'Silver studs', req: 'Peak bankroll of $2,500', test: (s) => s.peak >= 2500 },
+  { slot: 'ear', id: 'hoop', name: 'Gold hoops', req: 'Peak bankroll of $15,000', test: (s) => s.peak >= 15000 },
+  { slot: 'ear', id: 'diamond', name: 'Diamond studs', req: 'Peak bankroll of $75,000', test: (s) => s.peak >= 75000 },
+  // rings
+  { slot: 'ring', id: 'none', name: 'None', req: '', test: () => true },
+  { slot: 'ring', id: 'signet', name: 'Silver signet', req: 'Peak bankroll of $20,000', test: (s) => s.peak >= 20000 },
+  { slot: 'ring', id: 'gold', name: 'Gold band', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
+  { slot: 'ring', id: 'pinky', name: 'Diamond pinky ring', req: 'Peak bankroll of $500,000', test: (s) => s.peak >= 500000 },
+  { slot: 'ring', id: 'champ', name: 'Champion ring', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
+  // bracelets
+  { slot: 'wrist', id: 'none', name: 'None', req: '', test: () => true },
+  { slot: 'wrist', id: 'beads', name: 'Bead bracelet', req: 'Play 4 sessions', test: (s) => s.played >= 4 },
+  { slot: 'wrist', id: 'gold', name: 'Gold cuff', req: 'Peak bankroll of $40,000', test: (s) => s.peak >= 40000 },
+  { slot: 'wrist', id: 'tennis', name: 'Diamond tennis bracelet', req: 'Peak bankroll of $400,000', test: (s) => s.peak >= 400000 },
+  // sleeve patches
+  { slot: 'sleeve', id: 'none', name: 'Bare sleeve', req: '', test: () => true },
+  { slot: 'sleeve', id: 'grind', name: 'Daily Grind sleeve', req: 'Daily Grind streak of 5 days', test: (s) => (s.bestStreak || 0) >= 5 },
+  { slot: 'sleeve', id: 'site', name: 'Online site sleeve', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
+  { slot: 'sleeve', id: 'energy', name: 'Energy drink sleeve', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
+  { slot: 'sleeve', id: 'global', name: 'Global ambassador sleeve', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
   // watches
   { slot: 'watch', id: 'digital', name: 'Gas-station digital', req: 'Where it all started', test: () => true },
   { slot: 'watch', id: 'steel', name: 'Steel diver', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
@@ -183,6 +221,8 @@ const DR_ITEMS = [
   { slot: 'chain', id: 'none', name: 'No chain', req: '', test: () => true },
   { slot: 'chain', id: 'silver', name: 'Thin silver chain', req: 'Peak bankroll of $10,000', test: (s) => s.peak >= 10000 },
   { slot: 'chain', id: 'cuban', name: 'Gold Cuban link', req: 'Peak bankroll of $100,000', test: (s) => s.peak >= 100000 },
+  { slot: 'chain', id: 'rope', name: 'Rope chain & pendant', req: 'Peak bankroll of $250,000', test: (s) => s.peak >= 250000 },
+  { slot: 'chain', id: 'layered', name: 'Layered chains', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
   { slot: 'chain', id: 'iced', name: 'Iced Cuban link', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
   // homes
   { slot: 'home', id: 'studio', name: 'Studio over the laundromat', req: 'Where it all started', test: () => true },
@@ -206,7 +246,10 @@ const DR_ITEMS = [
   { slot: 'patch', id: 'energy', name: 'Energy drink sponsor', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
   { slot: 'patch', id: 'global', name: 'Global brand ambassador', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
 ];
-const DR_SLOTS = [['outfit', 'Outfit'], ['eyes', 'Eyewear'], ['head', 'Head'], ['watch', 'Watch'], ['chain', 'Chain'], ['home', 'Home'], ['ride', 'Ride'], ['patch', 'Sponsor']];
+const DR_SLOTS = [['outfit', 'Outfit'], ['eyes', 'Eyewear'], ['head', 'Headwear'], ['ear', 'Earrings'], ['chain', 'Chain'], ['ring', 'Ring'], ['wrist', 'Bracelet'], ['watch', 'Watch'], ['patch', 'Chest patch'], ['sleeve', 'Sleeve patch'], ['home', 'Home'], ['ride', 'Ride']];
+// the closet's category bar: picking one shows its items (outfits split by what they are)
+const DR_OUTFIT_CAT = { office: 'shirts', tee: 'shirts', polo: 'shirts', flannel: 'shirts', hoodie: 'street', jersey: 'street', track: 'street', varsity: 'street', denim: 'street', fleece: 'street', ugly: 'street', bomber: 'jackets', leather: 'jackets', cardigan: 'jackets', blazer: 'jackets', vest: 'formal', suit: 'formal', designer: 'formal', tux: 'formal', vampire: 'formal' };
+const DR_CATS = [['shirts', 'Shirts', 'outfit'], ['street', 'Streetwear', 'outfit'], ['jackets', 'Jackets', 'outfit'], ['formal', 'Formal', 'outfit'], ['head', 'Headwear', 'head'], ['eyes', 'Eyewear', 'eyes'], ['chain', 'Chains', 'chain'], ['ear', 'Earrings', 'ear'], ['ring', 'Rings', 'ring'], ['wrist', 'Bracelets', 'wrist'], ['watch', 'Watches', 'watch'], ['patch', 'Chest patch', 'patch'], ['sleeve', 'Sleeve patch', 'sleeve'], ['home', 'Home', 'home'], ['ride', 'Ride', 'ride']];
 const DR_RIDE_ICON = { bus: '🚌', hatch: '🚗', coupe: '🏎️', sedan: '🚘', super: '🏎️', jet: '🛩️' };
 const DR_HOME_ICON = { studio: '🧺', apt: '🏢', condo: '🌆', penthouse: '🌃', mansion: '🏛️', island: '🏝️' };
 const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' },

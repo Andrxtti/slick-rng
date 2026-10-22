@@ -15,7 +15,7 @@ function drDefault() {
   return { v: 1, made: false, name: '', look: { ...DR_LOOK_DEFAULT }, br: 0, peak: 0, ch: 0, story: {}, queue: [], job: null,
     titles: { local: 0, room: 0, ring: 0, bracelet: 0, tour: 0, glo: 0, titan: 0, me: 0 }, legends: {}, met: {}, events: {},
     dec: 0, perfect: 0, good: 0, close: 0, mistakes: 0, played: 0, cashes: 0, ft: 0, flags: {},
-    eq: { outfit: 'office', eyes: 'readers', head: 'none', watch: 'digital', chain: 'none', home: 'studio', ride: 'bus', patch: 'none' },
+    eq: { outfit: 'office', eyes: 'readers', head: 'none', ear: 'none', ring: 'none', wrist: 'none', watch: 'digital', chain: 'none', home: 'studio', ride: 'bus', patch: 'none', sleeve: 'none' }, dye: {},
     owned: {}, newItems: [], debt: 0, ledger: [], trophies: [], lastEvent: null };
 }
 function drLoad() {
@@ -23,7 +23,7 @@ function drLoad() {
     const v = JSON.parse(localStorage.getItem(DR_KEY) || 'null');
     if (!v || v.v !== 1) return drDefault();
     const d = drDefault();
-    return { ...d, ...v, titles: { ...d.titles, ...(v.titles || {}) }, eq: { ...d.eq, ...(v.eq || {}) }, look: { ...d.look, ...(v.look || {}) }, flags: v.flags || {} };
+    return { ...d, ...v, titles: { ...d.titles, ...(v.titles || {}) }, eq: { ...d.eq, ...(v.eq || {}) }, look: { ...d.look, ...(v.look || {}) }, dye: { ...(v.dye || {}) }, flags: v.flags || {} };
   } catch { return drDefault(); }
 }
 function drSave() { try { localStorage.setItem(DR_KEY, JSON.stringify(DR.st)); } catch { /* storage unavailable */ } }
@@ -72,7 +72,7 @@ function drUnlocks(s) {
     const cur = DR_ITEMS.findIndex((x) => x.slot === it.slot && x.id === s.eq[it.slot]), mine = DR_ITEMS.indexOf(it);
     // never swap out league gear you chose to wear
     const wearingLeague = DR_LG_ITEMS.some((x) => x.slot === it.slot && x.id === s.eq[it.slot]);
-    if (it.id !== 'none' && mine > cur && it.slot !== 'head' && !wearingLeague) s.eq[it.slot] = it.id;
+    if (it.id !== 'none' && mine > cur && it.slot !== 'head' && it.slot !== 'sleeve' && !wearingLeague) s.eq[it.slot] = it.id;
   }
   s.newItems = [...(s.newItems || []), ...fresh.map(drItemKey)];
   return fresh;

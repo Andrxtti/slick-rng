@@ -545,3 +545,13 @@
 .dream .drrange-key { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--cream); margin-bottom: 6px; }
 .dream .drrange-key span { display: inline-flex; align-items: center; gap: 5px; } .dream .drrange-key i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 .dream .drrange small { display: block; padding-bottom: 10px; }
+
+/* closet categories */
+.dream .drcats { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 8px; margin: 0 -2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.dream .drcats::-webkit-scrollbar { display: none; }
+.dream .drcat { flex: 0 0 auto; position: relative; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .14); background: rgba(255, 255, 255, .05); color: inherit; font: 600 13px/1 inherit; cursor: pointer; white-space: nowrap; }
+.dream .drcat[aria-pressed="true"] { background: var(--gold2); color: #1a1408; border-color: var(--gold2); }
+.dream .drcat .drnew { position: absolute; top: 3px; right: 6px; width: 8px; height: 8px; padding: 0; border-radius: 50%; background: #ff6a4a; font-size: 0; }
+.dream .drdye { margin-top: 12px; }
+.dream .drdye .drsw { width: 30px; height: 30px; }
+.dream .drsw.orig { background: conic-gradient(#b3262c, #d98a2b, #1e6b45, #24427e, #6b3fa0, #b3262c); }

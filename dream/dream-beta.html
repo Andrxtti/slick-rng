@@ -1538,6 +1538,16 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 .dream .drrange-key span { display: inline-flex; align-items: center; gap: 5px; } .dream .drrange-key i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 .dream .drrange small { display: block; padding-bottom: 10px; }
 
+/* closet categories */
+.dream .drcats { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 8px; margin: 0 -2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.dream .drcats::-webkit-scrollbar { display: none; }
+.dream .drcat { flex: 0 0 auto; position: relative; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .14); background: rgba(255, 255, 255, .05); color: inherit; font: 600 13px/1 inherit; cursor: pointer; white-space: nowrap; }
+.dream .drcat[aria-pressed="true"] { background: var(--gold2); color: #1a1408; border-color: var(--gold2); }
+.dream .drcat .drnew { position: absolute; top: 3px; right: 6px; width: 8px; height: 8px; padding: 0; border-radius: 50%; background: #ff6a4a; font-size: 0; }
+.dream .drdye { margin-top: 12px; }
+.dream .drdye .drsw { width: 30px; height: 30px; }
+.dream .drsw.orig { background: conic-gradient(#b3262c, #d98a2b, #1e6b45, #24427e, #6b3fa0, #b3262c); }
+
 </style>
 
 <header class="top">
@@ -6060,6 +6070,15 @@ const drEvent = (id) => (id === 'daily' ? DR_DAILY : DR_EVENTS.find((e) => e.id 
 const DR_ITEMS = [
   // outfits
   { slot: 'outfit', id: 'office', name: 'Clearance-rack office fit', req: 'Where it all started', test: () => true },
+  { slot: 'outfit', id: 'tee', name: 'Plain black tee', req: 'Where it all started', test: () => true },
+  { slot: 'outfit', id: 'cardigan', name: 'Study-group cardigan', req: 'Play 3 sessions', test: (s) => s.played >= 3 },
+  { slot: 'outfit', id: 'jersey', name: 'Lucky number 7 jersey', req: 'Make 100 decisions', test: (s) => s.dec >= 100 },
+  { slot: 'outfit', id: 'denim', name: 'Denim trucker jacket', req: 'Win a session at $1/$2', test: (s) => !!s.flags.cashWin },
+  { slot: 'outfit', id: 'track', name: 'Retro track jacket', req: 'Daily Grind streak of 3 days', test: (s) => (s.bestStreak || 0) >= 3 },
+  { slot: 'outfit', id: 'vest', name: 'Argyle sweater vest', req: 'Peak bankroll of $10,000', test: (s) => s.peak >= 10000 },
+  { slot: 'outfit', id: 'varsity', name: 'Varsity letterman', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
+  { slot: 'outfit', id: 'leather', name: 'Worn leather jacket', req: 'Peak bankroll of $50,000', test: (s) => s.peak >= 50000 },
+  { slot: 'outfit', id: 'fleece', name: 'Trail fleece', req: 'Reach the Summer', test: (s) => s.ch >= 3 },
   { slot: 'outfit', id: 'hoodie', name: 'The lucky hoodie', req: 'Play your first tournament', test: (s) => s.played >= 1 },
   { slot: 'outfit', id: 'polo', name: 'Card-room quarter-zip', req: 'Reach Chapter 1', test: (s) => s.ch >= 1 },
   { slot: 'outfit', id: 'bomber', name: 'Black bomber jacket', req: 'Win any tournament', test: (s) => drTitleCount(s) >= 1 },
@@ -6070,15 +6089,44 @@ const DR_ITEMS = [
   // eyewear
   { slot: 'eyes', id: 'none', name: 'No eyewear', req: '', test: () => true },
   { slot: 'eyes', id: 'readers', name: 'Blue-light readers', req: 'Where it all started', test: () => true },
+  { slot: 'eyes', id: 'round', name: 'Wire round frames', req: 'Make 50 decisions', test: (s) => s.dec >= 50 },
+  { slot: 'eyes', id: 'thick', name: 'Thick black frames', req: 'Play 2 sessions', test: (s) => s.played >= 2 },
+  { slot: 'eyes', id: 'sport', name: 'Wraparound sport shades', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
   { slot: 'eyes', id: 'tinted', name: 'Tinted table glasses', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
   { slot: 'eyes', id: 'aviator', name: 'Gold aviators', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
   { slot: 'eyes', id: 'shades', name: "Slick's 8-bit shades", req: 'Win any title', test: (s) => drTitleCount(s) >= 1 },
   // head
   { slot: 'head', id: 'none', name: 'Nothing', req: '', test: () => true },
-  { slot: 'head', id: 'cap', name: 'Riverside ballcap', req: 'Play 5 sessions', test: (s) => s.played >= 5 },
+  { slot: 'head', id: 'cap', name: 'Backwards ballcap', req: 'Play 5 sessions', test: (s) => s.played >= 5 },
+  { slot: 'head', id: 'snap', name: 'Flat-brim snapback', req: 'Reach Chapter 1', test: (s) => s.ch >= 1 },
+  { slot: 'head', id: 'bucket', name: 'Cream bucket hat', req: 'Play 10 sessions', test: (s) => s.played >= 10 },
+  { slot: 'head', id: 'cowboy', name: 'Texas hat', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
+  { slot: 'head', id: 'fedora', name: 'High-roller fedora', req: 'Peak bankroll of $500,000', test: (s) => s.peak >= 500000 },
   { slot: 'head', id: 'phones', name: 'Noise-cancelling cans', req: 'Make 100 decisions', test: (s) => s.dec >= 100 },
   { slot: 'head', id: 'beanie', name: 'Vegas pool beanie', req: 'Reach the Summer', test: (s) => s.ch >= 3 },
   { slot: 'head', id: 'visor', name: "Old-school dealer's visor", req: 'Daily Grind streak of 7 days', test: (s) => (s.bestStreak || 0) >= 7 },
+  // earrings
+  { slot: 'ear', id: 'none', name: 'None', req: '', test: () => true },
+  { slot: 'ear', id: 'stud', name: 'Silver studs', req: 'Peak bankroll of $2,500', test: (s) => s.peak >= 2500 },
+  { slot: 'ear', id: 'hoop', name: 'Gold hoops', req: 'Peak bankroll of $15,000', test: (s) => s.peak >= 15000 },
+  { slot: 'ear', id: 'diamond', name: 'Diamond studs', req: 'Peak bankroll of $75,000', test: (s) => s.peak >= 75000 },
+  // rings
+  { slot: 'ring', id: 'none', name: 'None', req: '', test: () => true },
+  { slot: 'ring', id: 'signet', name: 'Silver signet', req: 'Peak bankroll of $20,000', test: (s) => s.peak >= 20000 },
+  { slot: 'ring', id: 'gold', name: 'Gold band', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
+  { slot: 'ring', id: 'pinky', name: 'Diamond pinky ring', req: 'Peak bankroll of $500,000', test: (s) => s.peak >= 500000 },
+  { slot: 'ring', id: 'champ', name: 'Champion ring', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
+  // bracelets
+  { slot: 'wrist', id: 'none', name: 'None', req: '', test: () => true },
+  { slot: 'wrist', id: 'beads', name: 'Bead bracelet', req: 'Play 4 sessions', test: (s) => s.played >= 4 },
+  { slot: 'wrist', id: 'gold', name: 'Gold cuff', req: 'Peak bankroll of $40,000', test: (s) => s.peak >= 40000 },
+  { slot: 'wrist', id: 'tennis', name: 'Diamond tennis bracelet', req: 'Peak bankroll of $400,000', test: (s) => s.peak >= 400000 },
+  // sleeve patches
+  { slot: 'sleeve', id: 'none', name: 'Bare sleeve', req: '', test: () => true },
+  { slot: 'sleeve', id: 'grind', name: 'Daily Grind sleeve', req: 'Daily Grind streak of 5 days', test: (s) => (s.bestStreak || 0) >= 5 },
+  { slot: 'sleeve', id: 'site', name: 'Online site sleeve', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
+  { slot: 'sleeve', id: 'energy', name: 'Energy drink sleeve', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
+  { slot: 'sleeve', id: 'global', name: 'Global ambassador sleeve', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
   // watches
   { slot: 'watch', id: 'digital', name: 'Gas-station digital', req: 'Where it all started', test: () => true },
   { slot: 'watch', id: 'steel', name: 'Steel diver', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
@@ -6089,6 +6137,8 @@ const DR_ITEMS = [
   { slot: 'chain', id: 'none', name: 'No chain', req: '', test: () => true },
   { slot: 'chain', id: 'silver', name: 'Thin silver chain', req: 'Peak bankroll of $10,000', test: (s) => s.peak >= 10000 },
   { slot: 'chain', id: 'cuban', name: 'Gold Cuban link', req: 'Peak bankroll of $100,000', test: (s) => s.peak >= 100000 },
+  { slot: 'chain', id: 'rope', name: 'Rope chain & pendant', req: 'Peak bankroll of $250,000', test: (s) => s.peak >= 250000 },
+  { slot: 'chain', id: 'layered', name: 'Layered chains', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
   { slot: 'chain', id: 'iced', name: 'Iced Cuban link', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
   // homes
   { slot: 'home', id: 'studio', name: 'Studio over the laundromat', req: 'Where it all started', test: () => true },
@@ -6112,7 +6162,10 @@ const DR_ITEMS = [
   { slot: 'patch', id: 'energy', name: 'Energy drink sponsor', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
   { slot: 'patch', id: 'global', name: 'Global brand ambassador', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
 ];
-const DR_SLOTS = [['outfit', 'Outfit'], ['eyes', 'Eyewear'], ['head', 'Head'], ['watch', 'Watch'], ['chain', 'Chain'], ['home', 'Home'], ['ride', 'Ride'], ['patch', 'Sponsor']];
+const DR_SLOTS = [['outfit', 'Outfit'], ['eyes', 'Eyewear'], ['head', 'Headwear'], ['ear', 'Earrings'], ['chain', 'Chain'], ['ring', 'Ring'], ['wrist', 'Bracelet'], ['watch', 'Watch'], ['patch', 'Chest patch'], ['sleeve', 'Sleeve patch'], ['home', 'Home'], ['ride', 'Ride']];
+// the closet's category bar: picking one shows its items (outfits split by what they are)
+const DR_OUTFIT_CAT = { office: 'shirts', tee: 'shirts', polo: 'shirts', flannel: 'shirts', hoodie: 'street', jersey: 'street', track: 'street', varsity: 'street', denim: 'street', fleece: 'street', ugly: 'street', bomber: 'jackets', leather: 'jackets', cardigan: 'jackets', blazer: 'jackets', vest: 'formal', suit: 'formal', designer: 'formal', tux: 'formal', vampire: 'formal' };
+const DR_CATS = [['shirts', 'Shirts', 'outfit'], ['street', 'Streetwear', 'outfit'], ['jackets', 'Jackets', 'outfit'], ['formal', 'Formal', 'outfit'], ['head', 'Headwear', 'head'], ['eyes', 'Eyewear', 'eyes'], ['chain', 'Chains', 'chain'], ['ear', 'Earrings', 'ear'], ['ring', 'Rings', 'ring'], ['wrist', 'Bracelets', 'wrist'], ['watch', 'Watches', 'watch'], ['patch', 'Chest patch', 'patch'], ['sleeve', 'Sleeve patch', 'sleeve'], ['home', 'Home', 'home'], ['ride', 'Ride', 'ride']];
 const DR_RIDE_ICON = { bus: '🚌', hatch: '🚗', coupe: '🏎️', sedan: '🚘', super: '🏎️', jet: '🛩️' };
 const DR_HOME_ICON = { studio: '🧺', apt: '🏢', condo: '🌆', penthouse: '🌃', mansion: '🏛️', island: '🏝️' };
 const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' },
@@ -6357,260 +6410,416 @@ function drMeetLine(id) {
 }
 
 // ================================================================ THE DREAM: your player, drawn
-// A vector bust at the table: face and hair from the creator; outfit, eyewear, headwear, chain,
-// watch, sponsor patch, bracelets and rings from what you've earned; chips from your bankroll.
+// A stylized vector bust at the table. The creator sets the body (skin, face, age, hair, eyes, brows,
+// facial hair, freckles); gear sets the look (outfit, headwear, eyewear, chains, earrings, watch,
+// bracelets, rings, chest and sleeve sponsor patches), and most clothes and hats can be re-dyed.
+// Title bracelets and rings show up on your wrists and fingers as you win them.
 
-const DR_SKIN = ['#ffe0c2', '#f2c6a0', '#e2a676', '#c98852', '#a96a3c', '#87502c', '#663a1f', '#452514'];
-const DR_HAIRC = ['#17130f', '#3e2717', '#6e4526', '#a8743a', '#e6c46e', '#b8432a', '#8e8e8e', '#ececec'];
-const DR_HAIR = [['wavy', 'Wavy'], ['short', 'Textured crop'], ['fade', 'Fade'], ['slick', 'Slicked back'], ['curly', 'Curls'], ['locs', 'Locs'], ['long', 'Long'], ['buzz', 'Buzz'], ['bun', 'Man bun'], ['bald', 'Bald']];
-const DR_EYEC = ['#4a2f1c', '#2c1d12', '#7a5a2a', '#3f6e8c', '#4f7a48', '#6e7680'];
-const DR_FACIAL = [['none', 'Clean'], ['stubble', 'Stubble'], ['mustache', 'Mustache'], ['goatee', 'Goatee'], ['beard', 'Full beard']];
-const DR_LOOK_DEFAULT = { skin: 2, hair: 'wavy', hairC: 0, facial: 'none', eyeC: 0 };
+const DR_SKIN = ['#ffe3c8', '#f6cfab', '#e9b48a', '#d49a6a', '#b97c4c', '#9a6038', '#784626', '#55301a', '#3c2010'];
+const DR_HAIRC = ['#141010', '#3a2416', '#64402a', '#9a6a3a', '#d6b06a', '#f1e2b6', '#b4472a', '#8e8e8e', '#efefef', '#3a6fd8', '#e86fae', '#d4433a', '#2ab3a6', '#8d4fd6'];
+const DR_EYEC = ['#4a2f1c', '#2c1d12', '#7a5a2a', '#3f6e8c', '#4f7a48', '#6e7680', '#5b8fb9'];
+const DR_HAIR = [['short', 'Textured crop'], ['wavy', 'Wavy flow'], ['curtains', 'Curtains'], ['fade', 'High fade'], ['waves', '360 waves'], ['twists', 'Twists'], ['curly', 'Curly top'], ['locs', 'Locs'], ['slick', 'Slicked back'], ['mullet', 'Modern mullet'], ['long', 'Long'], ['bun', 'Man bun'], ['buzz', 'Buzz'], ['bald', 'Bald']];
+const DR_FACIAL = [['none', 'Clean'], ['stubble', 'Stubble'], ['mustache', 'Thin mustache'], ['goatee', 'Goatee'], ['chin', 'Chin strap'], ['beard', 'Short beard']];
+const DR_BROWS = [['natural', 'Natural'], ['thick', 'Thick'], ['slit', 'Slit'], ['arched', 'Arched']];
+const DR_FACES = [['oval', 'Oval'], ['round', 'Round'], ['angular', 'Sharp jaw']];
+const DR_AGES = [['young', '20s'], ['adult', '30s'], ['old', '50s+']];
+const DR_LOOK_DEFAULT = { skin: 2, hair: 'short', hairC: 1, facial: 'none', eyeC: 0, brows: 'natural', face: 'oval', age: 'young', freck: false };
+// clothes and hats you can re-dye once you own them (index 0 = the item's own colour)
+const DR_DYES = [null, '#17171a', '#efeee9', '#24427e', '#b3262c', '#1e6b45', '#6b3fa0', '#d98a2b', '#8a8f98', '#e8a6c2', '#c9a03e', '#3cbcd0', '#5a3a22'];
 
 function drShade(hex, f) {
   const n = parseInt(hex.slice(1), 16), c = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
   return '#' + c.map((v) => Math.round(f < 0 ? v * (1 + f) : v + (255 - v) * f).toString(16).padStart(2, '0')).join('');
 }
 
-function drOutfitSVG(id, patch) {
-  const torso = (fill, stroke) => `<path d="M14 222 C18 178 46 160 76 154 L124 154 C154 160 182 178 186 222 Z" fill="${fill}" stroke="${stroke || drShade(fill, -0.35)}" stroke-width="1.5"/>`;
-  const fold = (c) => `<path d="M52 176 C60 190 62 206 60 222 M148 176 C140 190 138 206 140 222" stroke="${c}" stroke-width="2" fill="none" opacity=".55"/>`;
+// ---------------------------------------------------------------- outfits
+const DR_OUTFIT_BASE = { office: '#cdd8e6', hoodie: '#5f636b', tee: '#1c1c20', varsity: '#1f3566', bomber: '#2a2d22', track: '#16161a', cardigan: '#6a2232', vest: '#c9b98a', denim: '#4a6fa0', leather: '#1a1716', fleece: '#7d8590', jersey: '#b3262c', polo: '#1f2a44', blazer: '#3b3f47', suit: '#1b2442', designer: '#4a1426', tux: '#121214', vampire: '#141216', flannel: '#a3262a', ugly: '#1d6b3a' };
+const DR_DYEABLE = { hoodie: 1, tee: 1, varsity: 1, bomber: 1, track: 1, cardigan: 1, vest: 1, fleece: 1, jersey: 1, polo: 1, cap: 1, snap: 1, beanie: 1, bucket: 1 };
+function drOutfitSVG(id, c) {
+  const torso = (fill, stroke) => `<path d="M12 222 C16 180 44 162 74 156 L126 156 C156 162 184 180 188 222 Z" fill="${fill}" stroke="${stroke || drShade(fill, -0.38)}" stroke-width="1.4"/>`;
+  const folds = (col, o = 0.5) => `<path d="M48 178 C56 192 58 208 56 222 M152 178 C144 192 142 208 144 222 M78 196 C84 204 86 214 86 222" stroke="${col}" stroke-width="1.8" fill="none" opacity="${o}"/>`;
+  const tee = (col) => `<path d="M86 155 C90 163 110 163 114 155 L114 222 L86 222 Z" fill="${col}"/><path d="M86 155 C90 163 110 163 114 155" stroke="${drShade(col, -0.25)}" stroke-width="2.2" fill="none"/>`;
+  const dk = drShade(c, -0.3), lt = drShade(c, 0.18);
   let s = '';
-  if (id === 'office') {
-    s = torso('#cdd8e6', '#93a3b8') + fold('#a9b8cc')
-      + `<path d="M84 154 L100 172 L116 154 L111 150 L100 162 L89 150 Z" fill="#f4f7fb" stroke="#93a3b8"/>`
-      + `<path d="M97 164 L103 164 L106 200 L100 210 L94 200 Z" fill="#7a1f2b" transform="rotate(8 100 180)"/>`
-      + `<path d="M82 156 L96 196 M118 156 L104 196" stroke="#2457b8" stroke-width="3" fill="none"/><rect x="92" y="194" width="16" height="20" rx="2" fill="#f4f7fb" stroke="#2457b8"/><rect x="95" y="198" width="10" height="3" fill="#2457b8"/>`;
-  } else if (id === 'hoodie') {
-    s = `<path d="M66 160 C70 140 130 140 134 160 C120 152 80 152 66 160 Z" fill="#555960"/>` + torso('#6b6f76') + fold('#5a5d63')
-      + `<path d="M74 158 C86 172 114 172 126 158" stroke="#4d5056" stroke-width="5" fill="none"/>`
-      + `<path d="M92 166 L90 196 M108 166 L110 196" stroke="#e9e5dc" stroke-width="2.2" stroke-linecap="round"/><circle cx="90" cy="197" r="2" fill="#bbb"/><circle cx="110" cy="197" r="2" fill="#bbb"/>`;
-  } else if (id === 'polo') {
-    s = torso('#1f2a44') + fold('#2c3a5c')
-      + `<path d="M82 152 L100 168 L118 152 L120 162 L100 178 L80 162 Z" fill="#26345a" stroke="#141c30"/>`
-      + `<path d="M100 168 L100 222" stroke="#c9ccd4" stroke-width="2"/><rect x="97" y="176" width="6" height="8" rx="1" fill="#c9ccd4"/>`;
-  } else if (id === 'bomber') {
-    s = torso('#1b1b1e', '#000') + fold('#2c2c31')
-      + `<path d="M78 152 C88 160 112 160 122 152 L124 160 C112 168 88 168 76 160 Z" fill="#2a2a2e"/><path d="M78 155 L122 155" stroke="#3d3d42" stroke-dasharray="2 2"/>`
-      + `<path d="M100 162 L100 222" stroke="#5c5c64" stroke-width="2.5"/>`
-      + `<text x="128" y="186" font-family="Georgia,serif" font-style="italic" font-size="7" fill="#d9b36c">Champions</text>`;
-  } else if (id === 'blazer') {
-    s = torso('#3b3f47') + `<path d="M86 152 L100 168 L114 152 L114 222 L86 222 Z" fill="#ece8df"/>`
-      + `<path d="M84 152 L98 200 L86 222 L60 222 C64 196 70 172 84 152 Z M116 152 L102 200 L114 222 L140 222 C136 196 130 172 116 152 Z" fill="#30333a" stroke="#1d1f24"/>` + fold('#2a2d33');
-  } else if (id === 'suit' || id === 'designer' || id === 'tux') {
-    const c = id === 'suit' ? '#1b2442' : id === 'designer' ? '#4a1426' : '#121214', lap = id === 'tux' ? '#26262a' : drShade(c, -0.25), shirt = id === 'designer' ? '#141416' : '#f7f6f2';
-    s = torso(c) + `<path d="M86 152 L100 168 L114 152 L114 222 L86 222 Z" fill="${shirt}"/>`
-      + (id === 'suit' ? `<path d="M97 166 L103 166 L105 204 L100 212 L95 204 Z" fill="#8a1c24"/>` : id === 'tux' ? `<path d="M90 162 L100 166 L110 162 L110 172 L100 168 L90 172 Z" fill="#000"/><circle cx="100" cy="167" r="2" fill="#222"/>` : `<path d="M90 152 L100 172 L110 152" stroke="#2a2a2e" stroke-width="2" fill="none"/>`)
-      + `<path d="M84 152 L98 204 L88 222 L58 222 C62 196 68 172 84 152 Z M116 152 L102 204 L112 222 L142 222 C138 196 132 172 116 152 Z" fill="${lap}" stroke="${drShade(c, -0.5)}"/>` + fold(drShade(c, 0.12))
-      + (id !== 'tux' ? `<path d="M64 196 l10 -3 l0 5 Z" fill="#f7f6f2" opacity=".85"/>` : '');
+  switch (id) {
+    case 'office':
+      s = torso(c, '#93a3b8') + folds('#a9b8cc') + `<path d="M84 154 L100 172 L116 154 L111 150 L100 162 L89 150 Z" fill="#f4f7fb" stroke="#93a3b8"/>`
+        + `<path d="M97 164 L103 164 L106 200 L100 210 L94 200 Z" fill="#7a1f2b" transform="rotate(6 100 182)"/>`
+        + `<path d="M82 156 L96 196 M118 156 L104 196" stroke="#2457b8" stroke-width="3" fill="none"/><rect x="92" y="194" width="16" height="20" rx="2" fill="#f4f7fb" stroke="#2457b8"/><rect x="95" y="198" width="10" height="3" fill="#2457b8"/>`; break;
+    case 'hoodie':
+      s = `<path d="M64 166 C62 146 80 138 100 138 C120 138 138 146 136 166 C126 156 74 156 64 166 Z" fill="${dk}"/>` + torso(c) + folds(dk)
+        + `<path d="M72 160 C84 176 116 176 128 160" stroke="${dk}" stroke-width="6" fill="none"/><path d="M76 160 C86 172 114 172 124 160" stroke="${lt}" stroke-width="1.2" fill="none" opacity=".6"/>`
+        + `<path d="M92 170 C91 182 90 190 89 198 M108 170 C109 182 110 190 111 198" stroke="#ece8de" stroke-width="2.2" stroke-linecap="round"/><rect x="87.6" y="197" width="3" height="5" rx="1" fill="#d6d1c4"/><rect x="109.6" y="197" width="3" height="5" rx="1" fill="#d6d1c4"/>`
+        + `<path d="M64 212 C80 206 120 206 136 212" stroke="${dk}" stroke-width="2" fill="none"/>`; break;
+    case 'tee':
+      s = torso(c) + folds(lt, 0.25) + `<path d="M84 155 C88 166 112 166 116 155" stroke="${drShade(c, 0.12)}" stroke-width="3.4" fill="none"/>`
+        + `<g transform="translate(100 196)"><circle r="13" fill="none" stroke="${drShade(c, 0.75)}" stroke-width="1.6"/><path d="M0 -8 C3 -4 9 -1 7 4 C6 7 2 7 0.8 4.6 L2.4 9 L-2.4 9 L-0.8 4.6 C-2 7 -6 7 -7 4 C-9 -1 -3 -4 0 -8 Z" fill="${drShade(c, 0.75)}"/></g>`; break;
+    case 'varsity':
+      s = torso(c) + folds(dk) + `<path d="M62 170 C60 186 60 200 62 222 M138 170 C140 186 140 200 138 222" stroke="#efe6cf" stroke-width="10" fill="none" opacity=".95"/>`
+        + tee('#efeee9') + `<path d="M80 154 C88 168 112 168 120 154" stroke="#efe6cf" stroke-width="6" fill="none"/><path d="M80 154 C88 168 112 168 120 154" stroke="${c}" stroke-width="2" fill="none"/>`
+        + `<path d="M100 166 V222" stroke="${dk}" stroke-width="1.5"/>` + [176, 190, 204, 218].map((y) => `<circle cx="104" cy="${y}" r="1.8" fill="#efe6cf"/>`).join('')
+        + `<g transform="translate(76 186)"><rect x="-9" y="-11" width="18" height="22" rx="3" fill="#efe6cf"/><text x="0" y="6" text-anchor="middle" font-family="Georgia,serif" font-weight="900" font-size="17" fill="${c}">C</text></g>`; break;
+    case 'bomber':
+      s = torso(c, '#000') + folds(lt, 0.35) + `<path d="M78 152 C88 162 112 162 122 152 L124 160 C112 170 88 170 76 160 Z" fill="${dk}"/><path d="M78 155 L122 155" stroke="${lt}" stroke-dasharray="2 2"/>`
+        + `<path d="M100 162 L100 222" stroke="#c9ccd4" stroke-width="2.2"/><path d="M96 162 L96 222" stroke="#d98a2b" stroke-width="2" opacity=".85"/><rect x="98.4" y="168" width="3.2" height="7" rx="1" fill="#c9ccd4"/>`; break;
+    case 'track':
+      s = torso(c) + folds(lt, 0.3) + `<path d="M86 150 L100 162 L114 150 L116 160 L100 170 L84 160 Z" fill="${dk}" stroke="${drShade(c, 0.4)}" stroke-width=".8"/><path d="M100 162 V222" stroke="#c9ccd4" stroke-width="2"/>`
+        + `<path d="M40 172 C50 166 60 162 72 158 M44 178 C54 172 64 168 76 164 M160 172 C150 166 140 162 128 158 M156 178 C146 172 136 168 124 164" stroke="#f3f3f3" stroke-width="2.6" fill="none"/>`; break;
+    case 'cardigan':
+      s = torso(c) + `<path d="M84 152 L100 168 L116 152 L116 222 L84 222 Z" fill="#f1f0ea"/><path d="M84 152 L92 160 L100 166 L108 160 L116 152" stroke="#c9c6bb" fill="none"/>`
+        + `<path d="M98 166 L102 166 L104 176 L100 180 L96 176 Z" fill="#2a4a8a"/>`
+        + `<path d="M84 152 C90 170 92 196 92 222 L76 222 C76 200 78 176 84 152 Z M116 152 C110 170 108 196 108 222 L124 222 C124 200 122 176 116 152 Z" fill="${dk}" opacity=".55"/>` + folds(dk)
+        + [180, 194, 208].map((y) => `<circle cx="91" cy="${y}" r="2" fill="${lt}" stroke="${dk}" stroke-width=".6"/>`).join('')
+        + `<path d="M52 196 l9 -2 l-1 9 Z" fill="${dk}"/>`; break;
+    case 'vest':
+      s = torso('#eef0f4', '#b8bfca') + `<path d="M84 154 L100 172 L116 154 L111 150 L100 162 L89 150 Z" fill="#fbfcfe" stroke="#b8bfca"/>`
+        + `<path d="M72 160 C78 160 84 164 100 196 C116 164 122 160 128 160 C136 180 136 204 132 222 L68 222 C64 204 64 180 72 160 Z" fill="${c}" stroke="${dk}" stroke-width="1.2"/>`
+        + `<g opacity=".55">${[[84, 200], [100, 212], [116, 200], [92, 216], [108, 216]].map(([x, y]) => `<path d="M${x} ${y - 7} L${x + 6} ${y} L${x} ${y + 7} L${x - 6} ${y} Z" fill="${dk}"/>`).join('')}<path d="M70 184 L130 222 M130 184 L70 222" stroke="${lt}" stroke-width=".8"/></g>`
+        + `<path d="M92 164 L100 168 L108 164 L108 172 L100 168 L92 172 Z" fill="#b3262c"/><circle cx="100" cy="168" r="1.8" fill="#7a1a1f"/>`; break;
+    case 'denim':
+      s = torso(c) + tee('#efeee9') + `<path d="M84 152 L98 176 L90 222 L62 222 C64 196 70 172 84 152 Z M116 152 L102 176 L110 222 L138 222 C136 196 130 172 116 152 Z" fill="${c}" stroke="${dk}"/>`
+        + `<path d="M84 152 L94 168 L86 172 Z M116 152 L106 168 L114 172 Z" fill="${dk}"/>` + folds(dk)
+        + `<path d="M66 190 H86 V200 H66 Z M114 190 H134 V200 H114 Z" fill="none" stroke="#e8c48a" stroke-width=".9" stroke-dasharray="1.6 1.4"/><circle cx="76" cy="195" r="1.4" fill="#c9a03e"/><circle cx="124" cy="195" r="1.4" fill="#c9a03e"/>`; break;
+    case 'leather':
+      s = torso(c, '#000') + tee('#2a2a2e') + `<path d="M84 152 L104 182 L96 222 L60 222 C62 196 68 172 84 152 Z M116 152 L108 172 L116 222 L140 222 C138 196 132 172 116 152 Z" fill="${c}" stroke="#000"/>`
+        + `<path d="M86 156 L98 176 L88 180 Z M116 156 L110 170 L118 174 Z" fill="#2a2523"/><path d="M104 182 L96 222" stroke="#c9ccd4" stroke-width="1.6"/>` + folds('#3a3432', 0.7)
+        + `<path d="M60 184 C68 180 76 180 82 184 M140 184 C132 180 124 180 118 184" stroke="#c9ccd4" stroke-width="1.2" fill="none"/><circle cx="70" cy="168" r="1.6" fill="#c9ccd4"/><circle cx="130" cy="168" r="1.6" fill="#c9ccd4"/>`; break;
+    case 'fleece':
+      s = torso('#2a2c31') + `<path d="M86 155 C90 163 110 163 114 155" stroke="#3a3c42" stroke-width="2.4" fill="none"/>`
+        + `<path d="M70 160 C80 154 88 150 92 150 L100 168 L108 150 C112 150 120 154 130 160 C136 182 136 204 134 222 L66 222 C64 204 64 182 70 160 Z" fill="${c}" stroke="${dk}"/>`
+        + `<path d="M92 150 L100 168 L108 150 L106 146 L100 156 L94 146 Z" fill="${dk}"/><path d="M100 168 V222" stroke="${dk}" stroke-width="2"/>` + folds(dk, 0.35)
+        + `<path d="M74 176 H90 M110 176 H126" stroke="${dk}" stroke-width="1.4"/><rect x="72" y="182" width="12" height="7" rx="1.5" fill="#d9603a"/>`; break;
+    case 'jersey':
+      s = torso(c) + `<path d="M84 152 L100 172 L116 152" fill="#f3f3f3" stroke="#f3f3f3" stroke-width="3"/><path d="M84 152 L100 172 L116 152" fill="none" stroke="${dk}" stroke-width="1"/>`
+        + `<path d="M58 166 C56 186 58 206 60 222 M142 166 C144 186 142 206 140 222" stroke="#f3f3f3" stroke-width="4" fill="none"/>`
+        + `<text x="100" y="206" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="26" fill="#f3f3f3" stroke="${dk}" stroke-width="1.2">7</text>`; break;
+    case 'polo':
+      s = torso(c) + folds(lt, 0.3) + `<path d="M82 152 L100 168 L118 152 L120 162 L100 178 L80 162 Z" fill="${lt}" stroke="${dk}"/><path d="M100 168 L100 222" stroke="#c9ccd4" stroke-width="2"/><rect x="97" y="176" width="6" height="8" rx="1" fill="#c9ccd4"/>`; break;
+    case 'blazer':
+      s = torso(c) + tee('#17171a') + `<path d="M84 152 L98 200 L86 222 L60 222 C64 196 70 172 84 152 Z M116 152 L102 200 L114 222 L140 222 C136 196 130 172 116 152 Z" fill="${drShade(c, -0.12)}" stroke="${dk}"/>` + folds(dk); break;
+    case 'suit': case 'designer': case 'tux': {
+      const lap = id === 'tux' ? '#26262a' : drShade(c, -0.25), shirt = id === 'designer' ? '#141416' : '#f7f6f2';
+      s = torso(c) + `<path d="M86 152 L100 168 L114 152 L114 222 L86 222 Z" fill="${shirt}"/>`
+        + (id === 'suit' ? `<path d="M97 166 L103 166 L105 204 L100 212 L95 204 Z" fill="#8a1c24"/>` : id === 'tux' ? `<path d="M90 162 L100 166 L110 162 L110 172 L100 168 L90 172 Z" fill="#000"/><circle cx="100" cy="167" r="2" fill="#222"/>` : `<path d="M90 152 L100 172 L110 152" stroke="#2a2a2e" stroke-width="2" fill="none"/>`)
+        + `<path d="M84 152 L98 204 L88 222 L58 222 C62 196 68 172 84 152 Z M116 152 L102 204 L112 222 L142 222 C138 196 132 172 116 152 Z" fill="${lap}" stroke="${drShade(c, -0.5)}"/>` + folds(drShade(c, 0.12))
+        + (id !== 'tux' ? `<path d="M64 196 l10 -3 l0 5 Z" fill="#f7f6f2" opacity=".85"/>` : ''); break;
+    }
+    case 'vampire':
+      s = `<path d="M30 222 C34 186 50 166 70 158 L60 132 C76 146 88 152 100 154 C112 152 124 146 140 132 L130 158 C150 166 166 186 170 222 Z" fill="#8a0f1e" stroke="#4a0610" stroke-width="1.5"/>`
+        + torso('#141216', '#000') + `<path d="M86 152 L100 168 L114 152 L114 222 L86 222 Z" fill="#f4efe6"/><path d="M92 158 C96 166 104 166 108 158 L104 172 L96 172 Z" fill="#f4efe6" stroke="#cfc6b6"/>`
+        + `<path d="M84 152 L98 204 L88 222 L58 222 C62 196 68 172 84 152 Z M116 152 L102 204 L112 222 L142 222 C138 196 132 172 116 152 Z" fill="#1f1a22" stroke="#000"/><circle cx="100" cy="176" r="4" fill="#b8142a" stroke="#e3b94f"/>`; break;
+    case 'flannel':
+      s = torso('#a3262a') + `<g opacity=".55" stroke="#1b0d0d">${[40, 64, 88, 112, 136, 160].map((x) => `<path d="M${x} 160 V222" stroke-width="5"/>`).join('')}${[172, 192, 212].map((y) => `<path d="M20 ${y} H180" stroke-width="5"/>`).join('')}</g>`
+        + `<path d="M82 152 L100 168 L118 152 L120 162 L100 178 L80 162 Z" fill="#7e1b1e" stroke="#3a0c0c"/><path d="M100 170 L100 222" stroke="#3a0c0c" stroke-width="2"/>${[184, 198, 212].map((y) => `<circle cx="104" cy="${y}" r="1.6" fill="#e9e5dc"/>`).join('')}`; break;
+    case 'ugly':
+      s = torso('#1d6b3a') + folds('#175a30') + `<path d="M24 196 H176" stroke="#c2362a" stroke-width="9"/><g fill="#f3ecdc">${[34, 54, 74, 94, 114, 134, 154].map((x) => `<path d="M${x} 196 l4 -4 l4 4 l-4 4 Z"/>`).join('')}</g>`
+        + `<path d="M78 152 C88 162 112 162 122 152 L124 160 C112 170 88 170 76 160 Z" fill="#c2362a"/>`; break;
+    default: s = torso(c);
   }
-  else if (id === 'vampire') {
-    s = `<path d="M30 222 C34 186 50 166 70 158 L60 132 C76 146 88 152 100 154 C112 152 124 146 140 132 L130 158 C150 166 166 186 170 222 Z" fill="#8a0f1e" stroke="#4a0610" stroke-width="1.5"/>`
-      + torso('#141216', '#000') + `<path d="M86 152 L100 168 L114 152 L114 222 L86 222 Z" fill="#f4efe6"/><path d="M92 158 C96 166 104 166 108 158 L104 172 L96 172 Z" fill="#f4efe6" stroke="#cfc6b6"/>`
-      + `<path d="M84 152 L98 204 L88 222 L58 222 C62 196 68 172 84 152 Z M116 152 L102 204 L112 222 L142 222 C138 196 132 172 116 152 Z" fill="#1f1a22" stroke="#000"/><circle cx="100" cy="176" r="4" fill="#b8142a" stroke="#e3b94f"/>`;
-  } else if (id === 'flannel') {
-    s = torso('#a3262a') + `<g opacity=".55" stroke="#1b0d0d">${[40, 64, 88, 112, 136, 160].map((x) => `<path d="M${x} 160 V222" stroke-width="5"/>`).join('')}${[172, 192, 212].map((y) => `<path d="M20 ${y} H180" stroke-width="5"/>`).join('')}</g>`
-      + `<path d="M82 152 L100 168 L118 152 L120 162 L100 178 L80 162 Z" fill="#7e1b1e" stroke="#3a0c0c"/><path d="M100 170 L100 222" stroke="#3a0c0c" stroke-width="2"/>${[184, 198, 212].map((y) => `<circle cx="104" cy="${y}" r="1.6" fill="#e9e5dc"/>`).join('')}`;
-  } else if (id === 'ugly') {
-    s = torso('#1d6b3a') + fold('#175a30') + `<path d="M24 196 H176" stroke="#c2362a" stroke-width="9"/><g fill="#f3ecdc">${[34, 54, 74, 94, 114, 134, 154].map((x) => `<path d="M${x} 196 l4 -4 l4 4 l-4 4 Z"/>`).join('')}</g>`
-      + `<path d="M78 152 C88 162 112 162 122 152 L124 160 C112 170 88 170 76 160 Z" fill="#c2362a"/><g fill="#f3ecdc">${[[60, 176], [100, 182], [140, 176], [80, 212], [120, 212]].map(([x, y]) => `<path d="M${x} ${y - 5} L${x + 1.4} ${y - 1.4} L${x + 5} ${y} L${x + 1.4} ${y + 1.4} L${x} ${y + 5} L${x - 1.4} ${y + 1.4} L${x - 5} ${y} L${x - 1.4} ${y - 1.4} Z"/>`).join('')}</g>`;
-  }
-  const p = DR_PATCH[patch];
-  if (p) s += `<g transform="translate(44 172) rotate(6)"><rect width="30" height="13" rx="2" fill="#0c0c0c" stroke="${p.c}" stroke-width="1.4"/><text x="15" y="9.6" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="6.6" fill="${p.c}">${p.t}</text></g>`;
   return s;
 }
+// sponsor patches: chest and sleeve
+function drPatchSVG(pid, x, y, rot, scale = 1) {
+  const p = DR_PATCH[pid]; if (!p) return '';
+  const w = Math.max(26, p.t.length * 4.3 + 8);
+  return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${scale})"><rect x="${-w / 2}" y="-7" width="${w}" height="14" rx="3.5" fill="${p.bg || '#0c0c0c'}" stroke="${p.c}" stroke-width="1.4"/><rect x="${-w / 2 + 1.6}" y="-5.4" width="${w - 3.2}" height="10.8" rx="2.4" fill="none" stroke="${p.c}" stroke-width=".5" stroke-dasharray="1 1" opacity=".7"/><text x="0" y="2.6" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="6.8" fill="${p.c}">${p.t}</text></g>`;
+}
 
-// hair: drawn as shaded masses (dark underside, base, highlight strands), light from the upper left
+// ---------------------------------------------------------------- hair
 function drHairSVG(style, c, back, id) {
-  const d = drShade(c, -0.38), dd = drShade(c, -0.6), l = drShade(c, 0.28), g = `url(#${id}h)`;
+  const d = drShade(c, -0.38), dd = drShade(c, -0.6), l = drShade(c, 0.3), g = `url(#${id}h)`;
   if (back) {
-    if (style === 'long') return `<path d="M64 92 C58 128 62 158 74 170 L126 170 C138 158 142 128 136 92 Z" fill="${d}"/><path d="M70 120 C68 140 72 156 80 166 M130 120 C132 140 128 156 120 166" stroke="${dd}" stroke-width="2" fill="none" opacity=".6"/>`;
-    if (style === 'curly') return `<path d="M58 98 C50 124 60 140 72 146 L128 146 C140 140 150 124 142 98 Z" fill="${d}"/>`;
+    if (style === 'long') return `<path d="M64 90 C58 126 62 158 74 172 L126 172 C138 158 142 126 136 90 Z" fill="${d}"/><path d="M70 120 C68 140 72 158 80 168 M130 120 C132 140 128 158 120 168" stroke="${dd}" stroke-width="2" fill="none" opacity=".6"/>`;
+    if (style === 'mullet') return `<path d="M66 100 C62 124 66 142 78 150 L122 150 C134 142 138 124 134 100 Z" fill="${d}"/><path d="M72 124 C72 136 76 144 82 148 M128 124 C128 136 124 144 118 148" stroke="${dd}" stroke-width="1.6" fill="none" opacity=".6"/>`;
+    if (style === 'curly') return `<path d="M60 96 C54 118 62 132 70 136 L130 136 C138 132 146 118 140 96 Z" fill="${d}" opacity=".9"/>`;
     if (style === 'locs') return `<g stroke="${d}" stroke-width="6.5" stroke-linecap="round" fill="none">${[66, 72, 78, 122, 128, 134].map((x, i) => `<path d="M${x} 96 C${x - 2 + i} 120 ${x + 2} 140 ${x + (i < 3 ? -2 : 2)} ${152 + (i % 3) * 6}"/>`).join('')}</g>`;
-    if (style === 'bun') return `<circle cx="100" cy="46" r="12" fill="${g}" stroke="${dd}" stroke-width="1"/><path d="M92 42 C96 38 104 38 108 42 M90 49 C96 53 104 53 110 49" stroke="${l}" stroke-width="1.4" fill="none" opacity=".7"/><path d="M90 54 C96 58 104 58 110 54" stroke="${dd}" stroke-width="3" fill="none"/>`;
+    if (style === 'bun') return `<circle cx="100" cy="45" r="12.5" fill="${g}" stroke="${dd}" stroke-width="1"/><path d="M91 41 C96 37 104 37 109 41 M89 48 C96 52 104 52 111 48" stroke="${l}" stroke-width="1.4" fill="none" opacity=".7"/><path d="M90 54 C96 58 104 58 110 54" stroke="${dd}" stroke-width="3" fill="none"/>`;
     return '';
   }
-  const side = (op) => `<path d="M68 92 C67 100 68 106 69 112 L72 112 C71 104 71 98 72 92 Z M132 92 C133 100 132 106 131 112 L128 112 C129 104 129 98 128 92 Z" fill="${c}" opacity="${op}"/>`;
+  const side = (op, w = 4) => `<path d="M67 90 C66 100 67 106 68 113 L${68 + w} 113 C${67 + w} 104 ${67 + w} 98 ${68 + w} 90 Z M133 90 C134 100 133 106 132 113 L${132 - w} 113 C${133 - w} 104 ${133 - w} 98 ${132 - w} 90 Z" fill="${c}" opacity="${op}"/>`;
+  const fadeSides = `<path d="M67 88 C66 98 67 106 69 114 L74 114 C72 104 72 96 73 88 Z M133 88 C134 98 133 106 131 114 L126 114 C128 104 128 96 127 88 Z" fill="${c}" opacity=".28"/>`;
   switch (style) {
-    case 'short': return `${side(0.9)}<path d="M67 96 C64 70 79 53 100 52 C122 52 136 68 133 96 C131 86 128 80 124 76 C119 80 112 81 106 78 C99 82 90 82 83 78 C77 81 71 87 67 96 Z" fill="${g}"/>
-      <path d="M76 70 l5 -6 M84 66 l6 -7 M93 63 l6 -7 M103 62 l6 -6 M113 64 l5 -6 M121 68 l4 -5" stroke="${l}" stroke-width="2" stroke-linecap="round" opacity=".55"/>
-      <path d="M83 78 C90 82 99 82 106 78 C112 81 119 80 124 76" stroke="${dd}" stroke-width="1.6" fill="none" opacity=".6"/>`;
+    case 'short': {
+      // textured crop: a choppy fringe over the forehead
+      const fringe = [[74, 82], [80, 86], [86, 81], [92, 86], [98, 82], [104, 87], [110, 82], [116, 86], [122, 81], [127, 85]];
+      return `${fadeSides}<path d="M68 92 C64 66 80 52 100 52 C121 52 136 66 132 92 C130 86 128 82 127 85 L${fringe.map(([x, y]) => `${x} ${y}`).reverse().join(' L ')} C72 84 70 88 68 92 Z" fill="${g}"/>
+        <path d="M78 64 l6 -7 M88 60 l6 -7 M98 58 l6 -6 M108 59 l6 -6 M118 63 l5 -6 M84 72 l6 -6 M96 70 l6 -6 M108 71 l6 -5" stroke="${l}" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+        <path d="M${fringe.map(([x, y]) => `${x} ${y}`).join(' L ')}" stroke="${dd}" stroke-width="1.2" fill="none" opacity=".55"/>`;
+    }
     case 'wavy': return `${side(0.85)}<path d="M66 100 C58 66 80 46 104 48 C130 50 144 70 135 100 C132 86 127 78 119 74 C112 84 97 88 84 83 C78 89 71 94 66 100 Z" fill="${g}"/>
       <path d="M74 74 C82 60 98 56 108 62 M88 80 C98 72 112 70 122 76 M104 52 C118 52 130 60 133 74" stroke="${l}" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".55"/>
       <path d="M84 83 C97 88 112 84 119 74" stroke="${dd}" stroke-width="2" fill="none" opacity=".7"/>`;
-    case 'fade': return `<path d="M68 90 C68 100 69 108 71 114 L73 114 C72 106 72 98 73 90 Z M132 90 C132 100 131 108 129 114 L127 114 C128 106 128 98 127 90 Z" fill="${c}" opacity=".35"/>
-      <path d="M70 90 C68 66 84 55 100 55 C117 55 133 66 130 90 C126 82 120 76 112 75 L88 75 C80 76 74 82 70 90 Z" fill="${g}"/>
-      <path d="M70 90 C74 84 80 80 88 79 L112 79 C120 80 126 84 130 90" stroke="${c}" stroke-width="3" fill="none" opacity=".35"/>
-      <path d="M82 66 C92 60 108 60 118 66" stroke="${l}" stroke-width="2" fill="none" opacity=".5"/>`;
-    case 'slick': return `${side(0.9)}<path d="M67 94 C64 64 84 51 102 51 C123 51 137 64 133 94 C131 82 126 74 119 71 C107 67 93 67 82 71 C75 75 70 84 67 94 Z" fill="${g}"/>
-      <path d="M80 64 C94 57 112 57 126 66 M78 71 C94 63 114 63 129 74 M86 59 C98 54 110 54 120 58" stroke="${l}" stroke-width="1.8" fill="none" opacity=".75"/>
-      <path d="M82 71 C93 67 107 67 119 71" stroke="${dd}" stroke-width="1.4" fill="none" opacity=".6"/>`;
+    case 'curtains': return `${side(0.9)}<path d="M67 100 C62 64 82 50 100 50 C118 50 138 64 133 100 C131 90 127 84 121 80 C114 78 106 74 101 62 C96 74 86 78 79 80 C73 84 69 90 67 100 Z" fill="${g}"/>
+      <path d="M101 62 C99 72 92 80 82 86 M101 62 C104 72 110 80 120 86" stroke="${dd}" stroke-width="1.6" fill="none" opacity=".75"/>
+      <path d="M100 52 L101 62 M86 58 C80 64 76 72 74 80 M114 58 C120 64 124 72 126 80" stroke="${l}" stroke-width="1.8" fill="none" opacity=".55"/>`;
+    case 'fade': return `<path d="M68 90 C68 100 69 108 71 114 L74 114 C73 106 73 98 74 90 Z M132 90 C132 100 131 108 129 114 L126 114 C127 106 127 98 126 90 Z" fill="${c}" opacity=".3"/>
+      <path d="M70 86 C68 62 84 51 100 51 C117 51 133 62 130 86 C126 79 120 75 112 74 L88 74 C80 75 74 79 70 86 Z" fill="${g}"/>
+      <path d="M70 86 C68 92 68 98 69 104 M130 86 C132 92 132 98 131 104" stroke="${c}" stroke-width="3" fill="none" opacity=".3"/>
+      <path d="M82 62 C92 56 108 56 118 62" stroke="${l}" stroke-width="2" fill="none" opacity=".5"/>`;
+    case 'waves': {
+      let w = ''; for (let i = 0; i < 6; i++) w += `<path d="M${74 + i * 2} ${80 - i * 4} C${86 + i} ${70 - i * 4} ${114 - i} ${70 - i * 4} ${126 - i * 2} ${80 - i * 4}" stroke="${l}" stroke-width="1.3" fill="none" opacity="${(0.55 - i * 0.05).toFixed(2)}"/>`;
+      return `${side(0.75, 3)}<path d="M69 90 C67 66 83 55 100 55 C117 55 133 66 131 90 C127 82 120 78 112 77 L88 77 C80 78 73 82 69 90 Z" fill="${c}"/>${w}`;
+    }
+    case 'twists': {
+      let t = ''; const pts = [[74, 76], [82, 68], [90, 63], [100, 61], [110, 63], [118, 68], [126, 76], [80, 78], [92, 71], [104, 70], [116, 72], [88, 80], [100, 78], [112, 79]];
+      for (const [x, y] of pts) t += `<path d="M${x - 2.6} ${y + 8} C${x - 3} ${y} ${x - 2} ${y - 7} ${x} ${y - 9} C${x + 2} ${y - 7} ${x + 3} ${y} ${x + 2.6} ${y + 8} Z" fill="${g}" stroke="${dd}" stroke-width=".7"/><path d="M${x - 1.6} ${y + 4} L${x + 1.6} ${y + 1} M${x - 1.6} ${y - 1} L${x + 1.6} ${y - 4}" stroke="${l}" stroke-width=".8" opacity=".7"/>`;
+      return `${fadeSides}<path d="M70 90 C68 70 84 58 100 58 C117 58 132 70 130 90 C126 84 120 80 112 79 L88 79 C80 80 74 84 70 90 Z" fill="${d}"/>${t}`;
+    }
     case 'curly': {
-      // a curly silhouette, then rows of small tight coils over it
-      let coils = '', r = 0;
+      let coils = '', r = 3;
       const rnd = () => { r = (r * 9301 + 49297) % 233280; return r / 233280; };
-      for (let row = 0; row < 5; row++) {
-        const y = 54 + row * 8.5, half = [22, 32, 36, 37, 37][row];
+      for (let row = 0; row < 4; row++) {
+        const y = 52 + row * 8, half = [20, 30, 34, 35][row];
         for (let x = 100 - half; x <= 100 + half; x += 6.4) {
-          if (row >= 3 && x > 76 && x < 124) continue; // keep the forehead clear
+          if (row >= 3 && x > 78 && x < 122) continue;
           const xx = x + (row % 2) * 3.2 + (rnd() - 0.5) * 1.6, yy = y + (rnd() - 0.5) * 2;
           coils += `<circle cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" r="4.3" fill="${g}"/><path d="M${(xx - 2.6).toFixed(1)} ${(yy + 0.6).toFixed(1)} a2.8 2.8 0 1 1 4.6 1.4" stroke="${dd}" stroke-width=".9" fill="none" opacity=".75"/><path d="M${(xx - 1.8).toFixed(1)} ${(yy - 1.6).toFixed(1)} a2 2 0 0 1 2.6 -.6" stroke="${l}" stroke-width=".9" fill="none" opacity=".75"/>`;
         }
       }
-      return `<path d="M62 104 C56 70 78 48 100 48 C122 48 144 70 138 104 C134 92 128 84 122 80 C112 76 88 76 78 80 C72 84 66 92 62 104 Z" fill="${d}"/>${coils}`;
+      return `${fadeSides}<path d="M64 96 C58 66 80 46 100 46 C120 46 142 66 136 96 C132 86 126 80 120 78 C110 74 90 74 80 78 C74 80 68 86 64 96 Z" fill="${d}"/>${coils}`;
+    }
+    case 'locs': return `<path d="M67 96 C64 66 82 53 100 53 C120 53 137 66 133 96 C129 82 118 74 100 73 C82 74 71 82 67 96 Z" fill="${g}"/>${[74, 82, 90, 98, 106, 114, 122].map((x) => `<path d="M${x} 60 C${x + 1} 66 ${x - 1} 72 ${x} 78" stroke="${dd}" stroke-width="1.2" fill="none" opacity=".7"/>`).join('')}`;
+    case 'slick': return `${side(0.9)}<path d="M67 94 C64 64 84 51 102 51 C123 51 137 64 133 94 C131 82 126 74 119 71 C107 67 93 67 82 71 C75 75 70 84 67 94 Z" fill="${g}"/>
+      <path d="M80 64 C94 57 112 57 126 66 M78 71 C94 63 114 63 129 74 M86 59 C98 54 110 54 120 58" stroke="${l}" stroke-width="1.8" fill="none" opacity=".75"/>`;
+    case 'mullet': {
+      const fringe = [[74, 84], [82, 80], [90, 85], [98, 80], [106, 85], [114, 80], [122, 84], [128, 82]];
+      return `${side(0.95, 5)}<path d="M67 96 C62 66 80 52 100 52 C121 52 137 66 133 96 C131 88 129 84 128 82 L${fringe.map(([x, y]) => `${x} ${y}`).reverse().join(' L ')} C70 86 68 90 67 96 Z" fill="${g}"/>
+        <path d="M80 62 l6 -6 M92 58 l6 -6 M104 58 l6 -6 M116 61 l6 -6" stroke="${l}" stroke-width="2" stroke-linecap="round" opacity=".5"/>`;
     }
     case 'long': return `<path d="M66 106 C58 66 80 50 100 51 C120 50 142 66 134 106 L133 134 C128 120 126 102 122 88 C114 78 106 72 100 66 C94 72 86 78 78 88 C74 102 72 120 67 134 Z" fill="${g}"/>
-      <path d="M100 56 L100 68 M90 60 C84 72 78 88 74 110 M110 60 C116 72 122 88 126 110" stroke="${l}" stroke-width="1.8" fill="none" opacity=".55"/>
-      <path d="M78 88 C86 78 94 72 100 66 C106 72 114 78 122 88" stroke="${dd}" stroke-width="1.6" fill="none" opacity=".6"/>`;
-    case 'buzz': return `<path d="M70 94 C68 70 84 59 100 59 C117 59 133 70 130 94 C127 85 121 79 114 77 L86 77 C79 79 73 85 70 94 Z" fill="${c}" opacity=".55"/><path d="M70 94 C68 70 84 59 100 59 C117 59 133 70 130 94 C127 85 121 79 114 77 L86 77 C79 79 73 85 70 94 Z" fill="url(#${id}st)"/>`;
+      <path d="M100 56 L100 68 M90 60 C84 72 78 88 74 110 M110 60 C116 72 122 88 126 110" stroke="${l}" stroke-width="1.8" fill="none" opacity=".55"/>`;
+    case 'buzz': return `<path d="M70 92 C68 68 84 58 100 58 C117 58 133 68 130 92 C127 83 121 77 114 76 L86 76 C79 77 73 83 70 92 Z" fill="${c}" opacity=".5"/><path d="M70 92 C68 68 84 58 100 58 C117 58 133 68 130 92 C127 83 121 77 114 76 L86 76 C79 77 73 83 70 92 Z" fill="url(#${id}st)"/>`;
     case 'bun': return `${side(0.9)}<path d="M67 96 C64 66 82 54 100 54 C120 54 137 66 133 96 C129 80 117 71 100 71 C83 71 71 80 67 96 Z" fill="${g}"/><path d="M80 64 C92 58 108 58 120 64 M76 72 C90 64 110 64 124 72" stroke="${l}" stroke-width="1.6" fill="none" opacity=".7"/>`;
-    case 'locs': return `<path d="M67 96 C64 66 82 53 100 53 C120 53 137 66 133 96 C129 82 118 74 100 73 C82 74 71 82 67 96 Z" fill="${g}"/>${[74, 82, 90, 98, 106, 114, 122].map((x) => `<path d="M${x} 60 C${x + 1} 66 ${x - 1} 72 ${x} 78" stroke="${dd}" stroke-width="1.2" fill="none" opacity=".7"/>`).join('')}`;
-    case 'bald': return `<ellipse cx="88" cy="70" rx="13" ry="7" fill="#fff" opacity=".18" transform="rotate(-18 88 70)"/>`;
+    case 'bald': return `<ellipse cx="88" cy="68" rx="13" ry="7" fill="#fff" opacity=".18" transform="rotate(-18 88 68)"/>`;
     default: return '';
   }
 }
 
-// facial hair: shaped masses in the hair colour, with grain; stubble is a stipple
+// ---------------------------------------------------------------- facial hair
 function drFacialSVG(style, c, id) {
   const d = drShade(c, -0.35), l = drShade(c, 0.25);
-  const stache = `<path d="M87 126 C91 121.5 97 121.5 100 124 C103 121.5 109 121.5 113 126 C109 128.4 104 127.6 100 126.6 C96 127.6 91 128.4 87 126 Z" fill="url(#${id}h)" stroke="${d}" stroke-width=".7"/><path d="M90 125 C93 123.6 96 123.6 98.4 124.6 M101.6 124.6 C104 123.6 107 123.6 110 125" stroke="${l}" stroke-width=".8" fill="none" opacity=".7"/>`;
-  if (style === 'stubble') return `<path d="M72 112 C73 132 86 147 100 148 C114 147 127 132 128 112 C124 124 118 134 108 136 C104 133 96 133 92 136 C82 134 76 124 72 112 Z M88 125 C93 122 107 122 112 125 C108 127 92 127 88 125 Z" fill="${c}" opacity=".2"/><path d="M72 112 C73 132 86 147 100 148 C114 147 127 132 128 112 C124 124 118 134 108 136 C104 133 96 133 92 136 C82 134 76 124 72 112 Z M88 125 C93 122 107 122 112 125 C108 127 92 127 88 125 Z" fill="url(#${id}st)" opacity=".85"/>`;
-  if (style === 'mustache') return stache;
-  if (style === 'goatee') return `<path d="M93 133.5 C96 136.5 104 136.5 107 133.5 C107 141 104 146 100 147 C96 146 93 141 93 133.5 Z" fill="url(#${id}h)" stroke="${d}" stroke-width=".7"/><path d="M89 127 C89.5 131 91 133 93 133.5 M111 127 C110.5 131 109 133 107 133.5" stroke="${c}" stroke-width="2.2" fill="none" stroke-linecap="round"/>${stache}<path d="M98 137 L98 144 M102 137 L102 144" stroke="${l}" stroke-width=".8" opacity=".6"/>`;
-  if (style === 'beard-top') return stache;
-  if (style === 'beard' || style === 'beard-base') return `<path d="M69 104 C68 126 80 152 100 155 C120 152 132 126 131 104 C128 116 124 126 117 131 C111 134 106 131.5 100 131.5 C94 131.5 89 134 83 131 C76 126 72 116 69 104 Z" fill="url(#${id}h)" stroke="${d}" stroke-width=".8"/>
-    <path d="M78 128 C82 138 88 144 94 148 M122 128 C118 138 112 144 106 148 M100 138 L100 152 M86 136 C88 142 92 146 96 150 M114 136 C112 142 108 146 104 150" stroke="${l}" stroke-width="1" fill="none" opacity=".5"/>
-    <path d="M72 116 C76 128 82 133 86 134 M128 116 C124 128 118 133 114 134" stroke="${d}" stroke-width="1" fill="none" opacity=".7"/>${style === 'beard' ? stache : ''}`;
+  const stache = (thin) => thin ? `<path d="M89 123.6 C93 121.6 98 122 100 123.2 C102 122 107 121.6 111 123.6 C107 124.6 103 124.4 100 124.2 C97 124.4 93 124.6 89 123.6 Z" fill="${c}" opacity=".9"/>`
+    : `<path d="M87 124 C91 119.5 97 119.5 100 122 C103 119.5 109 119.5 113 124 C109 126.4 104 125.6 100 124.6 C96 125.6 91 126.4 87 124 Z" fill="url(#${id}h)" stroke="${d}" stroke-width=".7"/>`;
+  const stub = 'M72 110 C73 130 86 144 100 145 C114 144 127 130 128 110 C124 122 118 131 108 133 C104 130 96 130 92 133 C82 131 76 122 72 110 Z M88 123 C93 120 107 120 112 123 C108 125 92 125 88 123 Z';
+  if (style === 'stubble') return `<path d="${stub}" fill="${c}" opacity=".18"/><path d="${stub}" fill="url(#${id}st)" opacity=".85"/>`;
+  if (style === 'mustache') return stache(true);
+  if (style === 'goatee') return `<path d="M93 131 C96 134 104 134 107 131 C107 138 104 143 100 144 C96 143 93 138 93 131 Z" fill="url(#${id}h)" stroke="${d}" stroke-width=".7"/><path d="M89 125 C89.5 129 91 131 93 131.5 M111 125 C110.5 129 109 131 107 131.5" stroke="${c}" stroke-width="2" fill="none" stroke-linecap="round"/>${stache(false)}`;
+  if (style === 'chin') return `<path d="M70 106 C70 128 84 145 100 146 C116 145 130 128 130 106 L127 106 C126 124 114 140 100 141 C86 140 74 124 73 106 Z" fill="${c}"/><path d="M96 134 C98 137 102 137 104 134" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  if (style === 'beard-top') return stache(false);
+  if (style === 'beard-base') return `<path d="M69 102 C68 124 80 148 100 151 C120 148 132 124 131 102 C128 114 124 124 117 128 C111 131 106 129 100 129 C94 129 89 131 83 128 C76 124 72 114 69 102 Z" fill="url(#${id}h)" stroke="${d}" stroke-width=".8"/>
+    <path d="M78 126 C82 136 88 142 94 146 M122 126 C118 136 112 142 106 146 M100 136 L100 148" stroke="${l}" stroke-width="1" fill="none" opacity=".5"/>`;
   return '';
 }
 
+// ---------------------------------------------------------------- eyewear
 function drEyewearSVG(id) {
-  if (id === 'readers') return `<g fill="none" stroke="#2b2b2b" stroke-width="1.6"><rect x="78" y="98" width="18" height="12" rx="4"/><rect x="104" y="98" width="18" height="12" rx="4"/><path d="M96 103 L104 103 M78 102 L70 100 M122 102 L130 100"/></g>`;
-  if (id === 'tinted') return `<g><rect x="77" y="97" width="20" height="14" rx="5" fill="#c9a27a" opacity=".55" stroke="#c9b9a0" stroke-width="1.4"/><rect x="103" y="97" width="20" height="14" rx="5" fill="#c9a27a" opacity=".55" stroke="#c9b9a0" stroke-width="1.4"/><path d="M97 103 L103 103" stroke="#c9b9a0" stroke-width="1.4"/></g>`;
-  if (id === 'aviator') return `<defs><linearGradient id="avl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#6e5a3a"/></linearGradient></defs><g stroke="#d9b36c" stroke-width="1.6"><path d="M76 98 L97 98 L95 110 C92 116 80 116 78 110 Z" fill="url(#avl)"/><path d="M103 98 L124 98 L122 110 C120 116 108 116 105 110 Z" fill="url(#avl)"/><path d="M97 99 L103 99" fill="none"/></g>`;
+  if (id === 'readers') return `<g fill="none" stroke="#2b2b2b" stroke-width="1.6"><rect x="76" y="96" width="20" height="13" rx="4"/><rect x="104" y="96" width="20" height="13" rx="4"/><path d="M96 101 L104 101 M76 100 L68 98 M124 100 L132 98"/></g>`;
+  if (id === 'round') return `<g fill="rgba(200,230,255,.08)" stroke="#1d1d22" stroke-width="2"><circle cx="86" cy="102" r="9.6"/><circle cx="114" cy="102" r="9.6"/></g><path d="M95.6 100 C98 98.4 102 98.4 104.4 100 M76.4 100 L68 98 M123.6 100 L132 98" stroke="#1d1d22" stroke-width="2" fill="none"/><path d="M80 97 C82 95 85 94.4 87 94.6 M108 97 C110 95 113 94.4 115 94.6" stroke="#fff" stroke-width="1" opacity=".5" fill="none"/>`;
+  if (id === 'thick') return `<g fill="rgba(200,230,255,.06)" stroke="#121214" stroke-width="3.4"><rect x="74.5" y="94.5" width="22" height="15" rx="3.5"/><rect x="103.5" y="94.5" width="22" height="15" rx="3.5"/></g><path d="M96.5 100 L103.5 100" stroke="#121214" stroke-width="3"/><path d="M78 98 L84 97" stroke="#fff" stroke-width="1.2" opacity=".45"/>`;
+  if (id === 'tinted') return `<g><rect x="75" y="95" width="22" height="15" rx="5" fill="#c9a27a" opacity=".55" stroke="#c9b9a0" stroke-width="1.4"/><rect x="103" y="95" width="22" height="15" rx="5" fill="#c9a27a" opacity=".55" stroke="#c9b9a0" stroke-width="1.4"/><path d="M97 101 L103 101" stroke="#c9b9a0" stroke-width="1.4"/></g>`;
+  if (id === 'aviator') return `<defs><linearGradient id="avl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#6e5a3a"/></linearGradient></defs><g stroke="#d9b36c" stroke-width="1.6"><path d="M74 96 L97 96 L95 108 C92 115 79 115 76 108 Z" fill="url(#avl)"/><path d="M103 96 L126 96 L124 108 C121 115 108 115 105 108 Z" fill="url(#avl)"/><path d="M97 97 L103 97" fill="none"/></g>`;
+  if (id === 'sport') return `<defs><linearGradient id="spg" x1="0" x2="1"><stop offset="0" stop-color="#ff5e3a"/><stop offset=".5" stop-color="#ffd23a"/><stop offset="1" stop-color="#3cbcd0"/></linearGradient></defs><path d="M66 98 C76 92 124 92 134 98 L132 106 C122 112 108 110 100 104 C92 110 78 112 68 106 Z" fill="url(#spg)" opacity=".9" stroke="#111" stroke-width="1.6"/><path d="M72 98 C84 95 116 95 128 98" stroke="#fff" stroke-width="1" opacity=".6" fill="none"/>`;
   if (id === 'shades') {
     // the deal-with-it 8-bit shades, built from pixels
     const P = 3, rows = ['KKKKKKKKKKKKKKKK', '.KwwKKK..KwwKKK.', '..KwwKK...KwwKK.', '...KKK.....KKK..'];
     let r = '';
-    rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') r += `<rect x="${76 + x * P}" y="${97 + y * P}" width="${P}" height="${P}" fill="${ch === 'K' ? '#050505' : '#fff'}"/>`; }));
+    rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') r += `<rect x="${76 + x * P}" y="${95 + y * P}" width="${P}" height="${P}" fill="${ch === 'K' ? '#050505' : '#fff'}"/>`; }));
     return `<g shape-rendering="crispEdges">${r}</g>`;
   }
-  if (id === 'masq') return `<path d="M72 100 C78 92 92 94 98 101 C100 103 100 103 102 101 C108 94 122 92 128 100 C126 110 116 114 108 110 C104 108 96 108 92 110 C84 114 74 110 72 100 Z" fill="#2a0b3a" stroke="#e3b94f" stroke-width="1.4"/><ellipse cx="87" cy="104" rx="5" ry="3" fill="#0b0609"/><ellipse cx="113" cy="104" rx="5" ry="3" fill="#0b0609"/><path d="M128 98 C136 88 140 80 138 72" stroke="#ff7a1a" stroke-width="2.4" fill="none"/>`;
-  if (id === 'amber') return `<g><rect x="77" y="97" width="20" height="14" rx="6" fill="#e08a1e" opacity=".7" stroke="#6a3a10" stroke-width="1.8"/><rect x="103" y="97" width="20" height="14" rx="6" fill="#e08a1e" opacity=".7" stroke="#6a3a10" stroke-width="1.8"/><path d="M97 103 L103 103" stroke="#6a3a10" stroke-width="1.8"/></g>`;
-  if (id === 'snow') return `<g><rect x="72" y="95" width="56" height="18" rx="9" fill="#cfefff" stroke="#f3f6fa" stroke-width="2.4"/><rect x="74" y="97" width="52" height="14" rx="7" fill="url(#snowg)"/><defs><linearGradient id="snowg" x1="0" x2="1"><stop offset="0" stop-color="#7fd0ff"/><stop offset=".5" stop-color="#c79bff"/><stop offset="1" stop-color="#ffb37f"/></linearGradient></defs><path d="M72 104 L66 102 M128 104 L134 102" stroke="#f3f6fa" stroke-width="3"/></g>`;
+  if (id === 'masq') return `<path d="M72 98 C78 90 92 92 98 99 C100 101 100 101 102 99 C108 92 122 90 128 98 C126 108 116 112 108 108 C104 106 96 106 92 108 C84 112 74 108 72 98 Z" fill="#2a0b3a" stroke="#e3b94f" stroke-width="1.4"/><ellipse cx="86" cy="102" rx="5" ry="3" fill="#0b0609"/><ellipse cx="114" cy="102" rx="5" ry="3" fill="#0b0609"/><path d="M128 96 C136 86 140 78 138 70" stroke="#ff7a1a" stroke-width="2.4" fill="none"/>`;
+  if (id === 'amber') return `<g><rect x="75" y="95" width="22" height="15" rx="6" fill="#e08a1e" opacity=".7" stroke="#6a3a10" stroke-width="1.8"/><rect x="103" y="95" width="22" height="15" rx="6" fill="#e08a1e" opacity=".7" stroke="#6a3a10" stroke-width="1.8"/><path d="M97 101 L103 101" stroke="#6a3a10" stroke-width="1.8"/></g>`;
+  if (id === 'snow') return `<g><rect x="70" y="93" width="60" height="18" rx="9" fill="#cfefff" stroke="#f3f6fa" stroke-width="2.4"/><rect x="72" y="95" width="56" height="14" rx="7" fill="url(#snowg)"/><defs><linearGradient id="snowg" x1="0" x2="1"><stop offset="0" stop-color="#7fd0ff"/><stop offset=".5" stop-color="#c79bff"/><stop offset="1" stop-color="#ffb37f"/></linearGradient></defs><path d="M70 102 L64 100 M130 102 L136 100" stroke="#f3f6fa" stroke-width="3"/></g>`;
   return '';
 }
 
-function drHeadwearSVG(id, hairStyle) {
-  if (id === 'cap') return `<path d="M66 86 C66 58 86 50 100 50 C116 50 134 58 134 86 Z" fill="#1d3b2c"/><path d="M64 86 C80 80 120 80 136 86 C136 92 64 92 64 86 Z" fill="#14281e"/><text x="100" y="76" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="9" fill="#d9b36c">R</text>`;
-  if (id === 'visor') return `<path d="M64 84 C80 74 120 74 136 84 L132 92 C118 86 82 86 68 92 Z" fill="#1e8f4a" opacity=".78" stroke="#0d4f28" stroke-width="1.2"/><path d="M68 84 C84 80 116 80 132 84" stroke="#dff5e6" stroke-width="1" fill="none" opacity=".5"/>`;
-  if (id === 'pumpkin') return `<path d="M64 88 C60 54 82 44 100 44 C118 44 140 54 136 88 Z" fill="#ff7a1a" stroke="#b44c0a" stroke-width="1.5"/><path d="M84 50 C80 64 80 76 82 88 M116 50 C120 64 120 76 118 88 M100 44 V88" stroke="#d9600f" stroke-width="2" fill="none"/><path d="M98 44 C98 36 102 32 108 30" stroke="#3f6b2a" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M82 66 l6 -6 l6 6 Z M106 66 l6 -6 l6 6 Z M84 76 Q100 86 116 76 l-4 4 l-4 -3 l-4 3 l-4 -3 l-4 3 l-4 -3 Z" fill="#2a1406"/>`;
-  if (id === 'pilgrim') return `<rect x="74" y="30" width="52" height="52" rx="3" fill="#1a1a1c"/><path d="M58 86 C70 78 130 78 142 86 C142 92 58 92 58 86 Z" fill="#1a1a1c"/><rect x="74" y="66" width="52" height="9" fill="#5a3a20"/><rect x="92" y="64" width="16" height="13" rx="1" fill="none" stroke="#e3b94f" stroke-width="2.6"/>`;
-  if (id === 'santa') return `<path d="M68 86 C70 56 92 44 112 48 C130 52 144 70 150 98 L138 100 C132 82 124 70 114 66 C106 70 92 78 68 86 Z" fill="#c2141e"/><circle cx="146" cy="102" r="8" fill="#f7f6f2"/><rect x="62" y="80" width="76" height="13" rx="6" fill="#f7f6f2"/>`;
-  if (id === 'beanie') return `<path d="M66 88 C64 58 84 48 100 48 C118 48 136 58 134 88 Z" fill="#b8432a"/><rect x="64" y="80" width="72" height="12" rx="5" fill="#8a2f1d"/><circle cx="100" cy="46" r="7" fill="#e9e5dc"/>`;
-  return '';
-}
-
-function drEyeSVG(cx, cy, flip, ec, id, k, blink) {
-  // almond eye, coloured iris, upper lid and crease; flip mirrors for the right eye
-  const m = (x) => (flip ? 2 * cx - x : x), P = (pts) => pts.map(([x, y]) => `${m(x).toFixed(1)} ${y}`);
-  const [a, b, c2, d] = [P([[cx - 8, cy]]), P([[cx - 5, cy - 4.6]]), P([[cx + 5, cy - 4.2]]), P([[cx + 8, cy - 0.6]])];
-  const shape = `M${a} C${b} ${c2} ${d} C${P([[cx + 4.6, cy + 3.4]])} ${P([[cx - 4, cy + 3.6]])} ${a} Z`;
-  const ix = m(cx + 0.4);
-  return `<defs><clipPath id="${id}e${k}"><path d="${shape}"/></clipPath><radialGradient id="${id}i${k}"><stop offset=".25" stop-color="${drShade(ec, 0.25)}"/><stop offset="1" stop-color="${drShade(ec, -0.45)}"/></radialGradient></defs>
-    <g${blink}><path d="${shape}" fill="#f6f1ea"/><g clip-path="url(#${id}e${k})"><circle cx="${ix}" cy="${cy - 0.2}" r="3.9" fill="url(#${id}i${k})"/><circle cx="${ix}" cy="${cy - 0.2}" r="1.7" fill="#0d0907"/><circle cx="${(ix - 1.3).toFixed(1)}" cy="${cy - 1.5}" r="1" fill="#fff"/><circle cx="${(ix + 1.4).toFixed(1)}" cy="${cy + 1}" r=".45" fill="#fff" opacity=".8"/><path d="M${P([[cx - 9, cy - 5]])} L${P([[cx + 9, cy - 5]])} L${P([[cx + 9, cy - 1.6]])} C${P([[cx + 3, cy - 3.2]])} ${P([[cx - 3, cy - 3.4]])} ${P([[cx - 9, cy - 1.4]])} Z" fill="#000" opacity=".16"/></g>
-    <path d="M${P([[cx - 8.6, cy + 0.4]])} C${P([[cx - 5, cy - 5.2]])} ${P([[cx + 5, cy - 4.8]])} ${P([[cx + 8.8, cy - 0.4]])}" stroke="#1a110b" stroke-width="1.7" fill="none" stroke-linecap="round"/>
-    <path d="M${P([[cx - 6.5, cy - 6.6]])} C${P([[cx - 2, cy - 8.4]])} ${P([[cx + 3, cy - 8.2]])} ${P([[cx + 7, cy - 5.6]])}" stroke="#000" stroke-width=".8" fill="none" opacity=".18"/>
-    <path d="M${P([[cx - 5, cy + 4]])} C${P([[cx - 1, cy + 5.2]])} ${P([[cx + 3, cy + 5]])} ${P([[cx + 6, cy + 3.4]])}" stroke="#000" stroke-width=".7" fill="none" opacity=".14"/></g>`;
-}
-
-function drAvatarSVG(st, opt = {}) {
-  const look = { ...DR_LOOK_DEFAULT, ...(st.look || {}) }, eq = st.eq || {};
-  const skin = DR_SKIN[look.skin] || DR_SKIN[2], sk2 = drShade(skin, -0.18), sk3 = drShade(skin, -0.32), skL = drShade(skin, 0.16);
-  const hc = DR_HAIRC[look.hairC] || DR_HAIRC[0], ec = DR_EYEC[look.eyeC || 0] || DR_EYEC[0];
-  const lip = drShade(look.skin >= 5 ? '#6a3428' : '#b8645a', look.skin >= 5 ? 0 : -0.1 * (look.skin / 4));
-  const titles = st.titles || {}, br = st.br || 0, id = 'a' + Math.random().toString(36).slice(2, 7);
-  const face = opt.face;
-  const bracelets = Math.min(4, titles.bracelet || 0), rings = Math.min(4, (titles.ring || 0) + (titles.me || 0));
-  const HEAD = 'M100 56 C120 56 132 70 132 92 C132 103 131 111 128 119 C125 131 116 143 104 147.5 Q100 149 96 147.5 C84 143 75 131 72 119 C69 111 68 103 68 92 C68 70 80 56 100 56 Z';
-  let s = `<svg class="dravsvg" viewBox="${face ? '50 46 100 100' : '0 30 200 192'}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(st.name || 'Your player')}">`;
-  s += `<defs>
-    <radialGradient id="${id}f" cx="38%" cy="34%" r="78%"><stop offset="0" stop-color="${skL}"/><stop offset=".55" stop-color="${skin}"/><stop offset="1" stop-color="${sk2}"/></radialGradient>
-    <linearGradient id="${id}h" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="${drShade(hc, 0.18)}"/><stop offset=".55" stop-color="${hc}"/><stop offset="1" stop-color="${drShade(hc, -0.4)}"/></linearGradient>
-    <linearGradient id="${id}t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".14"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient>
-    <linearGradient id="${id}n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sk3}"/><stop offset=".5" stop-color="${sk2}"/></linearGradient>
-    <pattern id="${id}st" width="7" height="7" patternUnits="userSpaceOnUse">${[[0.6, 0.9], [2.9, 0.4], [5.2, 1.3], [1.7, 2.6], [4.1, 3.1], [6.3, 3.6], [0.4, 4.4], [2.6, 5.2], [4.9, 5.6], [6.4, 6.4], [1.4, 6.6], [3.6, 2], [5.8, 4.8]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${0.34 + (i % 3) * 0.06}" fill="${drShade(hc, -0.15)}" opacity="${0.65 + (i % 4) * 0.1}"/>`).join('')}</pattern>
-    <clipPath id="${id}hd"><path d="${HEAD}"/></clipPath></defs>`;
-  s += drHairSVG(look.hair, hc, true, id);
-  // neck: shadowed under the jaw
-  s += `<path d="M87 128 L113 128 L115 160 C107 166 93 166 85 160 Z" fill="url(#${id}n)"/><path d="M88 150 C94 154 106 154 112 150" stroke="${sk3}" stroke-width="1" fill="none" opacity=".5"/>`;
-  s += drOutfitSVG(eq.outfit || 'office', eq.patch);
-  s += `<path d="M14 222 C18 178 46 160 76 154 L124 154 C154 160 182 178 186 222 Z" fill="url(#${id}t)" pointer-events="none"/>`;
-  if (eq.head === 'phones') s += `<path d="M72 160 C70 144 130 144 128 160" stroke="#222" stroke-width="5" fill="none"/><rect x="64" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/><rect x="122" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/>`;
-  if (eq.chain && eq.chain !== 'none') {
-    const c = eq.chain === 'silver' ? '#c9ccd4' : eq.chain === 'bones' ? 'none' : eq.chain === 'lights' ? '#1d4a22' : '#e3b94f', w = eq.chain === 'silver' || eq.chain === 'lights' ? 1.6 : eq.chain === 'wishbone' ? 1.4 : 3.4;
-    s += `<path d="M84 156 C88 176 112 176 116 156" stroke="${c}" stroke-width="${w}" fill="none" ${['iced', 'cuban'].includes(eq.chain) ? 'stroke-dasharray="3 1.4"' : ''}/>`;
-    if (['cuban', 'iced'].includes(eq.chain)) s += `<path d="M84 156 C88 176 112 176 116 156" stroke="#fff6cf" stroke-width=".8" fill="none" opacity=".6" stroke-dasharray="1.5 2.9"/>`;
-    if (eq.chain === 'bones') s += [[86, 162], [91, 168], [97, 171], [103, 171], [109, 168], [114, 162]].map(([x, y]) => `<g transform="translate(${x} ${y})"><rect x="-2.6" y="-1" width="5.2" height="2" fill="#efe8d6"/><circle cx="-2.6" cy="-1" r="1.2" fill="#efe8d6"/><circle cx="-2.6" cy="1" r="1.2" fill="#efe8d6"/><circle cx="2.6" cy="-1" r="1.2" fill="#efe8d6"/><circle cx="2.6" cy="1" r="1.2" fill="#efe8d6"/></g>`).join('') + `<circle cx="100" cy="178" r="4.4" fill="#efe8d6"/><circle cx="98.4" cy="177" r="1.1" fill="#111"/><circle cx="101.6" cy="177" r="1.1" fill="#111"/>`;
-    if (eq.chain === 'wishbone') s += `<path d="M100 186 L94 174 M100 186 L106 174 M100 186 L100 190" stroke="#e3b94f" stroke-width="2.4" stroke-linecap="round" fill="none"/>`;
-    if (eq.chain === 'lights') s += [[86, 162], [90, 168], [95, 171], [100, 172], [105, 171], [110, 168], [114, 162]].map(([x, y], i) => `<ellipse cx="${x}" cy="${y + 2}" rx="1.6" ry="2.4" fill="${['#ff4f4f', '#5cbf64', '#ffd23a', '#5aa9de'][i % 4]}"/>`).join('');
-    if (eq.chain === 'iced') s += [[90, 168], [100, 172], [110, 168], [95, 171], [105, 171]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.2" fill="#fff"/>`).join('');
+// ---------------------------------------------------------------- headwear (a back layer, then the front)
+const DR_HAT_BASE = { cap: '#17171a', snap: '#24427e', beanie: '#b3262c', bucket: '#d8cfb4', cowboy: '#8a5a32', fedora: '#2a2522', visor: '#1e8f4a' };
+function drHeadwearSVG(id, c, back) {
+  const dk = drShade(c, -0.32), lt = drShade(c, 0.22);
+  if (back) {
+    if (id === 'cap') return `<path d="M80 50 C90 40 110 40 120 50 L118 55 C108 47 92 47 82 55 Z" fill="${drShade(c, -0.45)}"/>`;
+    return '';
   }
-  // ears
-  s += `<g fill="${sk2}"><path d="M69 98 C62 95 60 104 62 110 C63 116 67 120 71 118 Z"/><path d="M131 98 C138 95 140 104 138 110 C137 116 133 120 129 118 Z"/></g>
-    <path d="M67 102 C64 104 64 110 67 114 M133 102 C136 104 136 110 133 114" stroke="${sk3}" stroke-width="1.2" fill="none" opacity=".7"/>`;
+  switch (id) {
+    case 'cap': // worn backwards: the snap strap opening sits on your forehead
+      return `<path d="M64 86 C63 58 82 46 100 46 C118 46 137 58 136 86 C128 82 114 80 100 80 C86 80 72 82 64 86 Z" fill="${c}" stroke="${dk}" stroke-width="1"/>
+        <path d="M100 46 V80 M82 50 C80 60 79 70 80 81 M118 50 C120 60 121 70 120 81" stroke="${dk}" stroke-width="1" opacity=".7" fill="none"/>
+        <path d="M86 81 C86 72 91 67 100 67 C109 67 114 72 114 81 Z" fill="#0b0a09" opacity=".55"/><path d="M84 79 H116" stroke="${dk}" stroke-width="3"/><path d="M88 79 H112" stroke="${lt}" stroke-width="1.2" stroke-dasharray="2 1.6"/>
+        <circle cx="100" cy="46.5" r="2.4" fill="${dk}"/><path d="M72 62 C80 54 92 51 100 51" stroke="${lt}" stroke-width="2.2" fill="none" opacity=".45"/>
+        <path d="M63 85 C74 80 126 80 137 85 L137 88 C126 84 74 84 63 88 Z" fill="${dk}"/>`;
+    case 'snap': // flat brim, forward, with the sticker still on
+      return `<path d="M65 84 C64 56 83 45 100 45 C117 45 136 56 135 84 Z" fill="${c}" stroke="${dk}" stroke-width="1"/>
+        <path d="M100 45 V84 M82 49 C80 60 79 72 80 84 M118 49 C120 60 121 72 120 84" stroke="${dk}" stroke-width="1" opacity=".7" fill="none"/>
+        <rect x="88" y="60" width="24" height="14" rx="2" fill="${lt}" opacity=".9"/><text x="100" y="71" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="9" font-weight="900" fill="${dk}">CF</text>
+        <path d="M58 84 C74 78 126 78 142 84 L144 91 C126 88 74 88 56 91 Z" fill="${dk}"/><path d="M58 84 C74 79 126 79 142 84" stroke="${lt}" stroke-width="1.2" fill="none" opacity=".7"/>
+        <circle cx="128" cy="85.5" r="3" fill="#d9b36c" stroke="#8f6f33" stroke-width=".6"/><circle cx="100" cy="45.5" r="2.4" fill="${dk}"/>`;
+    case 'beanie':
+      return `<path d="M65 88 C62 56 82 44 100 44 C118 44 138 56 135 88 Z" fill="${c}"/>${[74, 81, 88, 95, 102, 109, 116, 123].map((x) => `<path d="M${x + 2} 50 C${x} 62 ${x} 74 ${x + 1} 84" stroke="${dk}" stroke-width="1.6" fill="none" opacity=".5"/>`).join('')}
+        <rect x="63" y="78" width="74" height="13" rx="5" fill="${dk}"/>${[68, 74, 80, 86, 92, 98, 104, 110, 116, 122, 128].map((x) => `<path d="M${x} 79 V90" stroke="${drShade(c, -0.5)}" stroke-width="1.2"/>`).join('')}
+        <rect x="92" y="81" width="16" height="7" rx="1.5" fill="#efeee9"/><text x="100" y="86.8" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="5" fill="${dk}">CF</text>`;
+    case 'bucket':
+      return `<path d="M70 82 C70 56 84 46 100 46 C116 46 130 56 130 82 Z" fill="${c}" stroke="${dk}"/><path d="M58 92 C66 80 134 80 142 92 C138 96 62 96 58 92 Z" fill="${dk}"/><path d="M60 91 C70 84 130 84 140 91" stroke="${lt}" stroke-width="1" fill="none" stroke-dasharray="2 2"/><path d="M71 76 H129" stroke="${dk}" stroke-width="1.2" stroke-dasharray="2 2"/>`;
+    case 'cowboy':
+      return `<path d="M72 80 C70 58 82 42 92 46 C96 50 104 50 108 46 C118 42 130 58 128 80 Z" fill="${c}" stroke="${dk}"/><path d="M92 46 C96 54 104 54 108 46" stroke="${dk}" stroke-width="1.6" fill="none"/><rect x="71" y="72" width="58" height="7" fill="${dk}"/>
+        <path d="M44 74 C52 90 70 88 100 88 C130 88 148 90 156 74 C150 92 130 96 100 96 C70 96 50 92 44 74 Z" fill="${c}" stroke="${dk}"/><circle cx="100" cy="75.5" r="2" fill="#c9ccd4"/>`;
+    case 'fedora':
+      return `<path d="M72 82 C70 58 84 46 100 46 C116 46 130 58 128 82 Z" fill="${c}"/><path d="M90 50 C96 56 104 56 110 50" stroke="${dk}" stroke-width="2" fill="none"/><rect x="71" y="72" width="58" height="8" fill="#141210"/>
+        <path d="M54 88 C64 78 136 78 146 88 C140 92 60 92 54 88 Z" fill="${dk}"/>`;
+    case 'visor': return `<path d="M64 82 C80 72 120 72 136 82 L132 90 C118 84 82 84 68 90 Z" fill="${c}" opacity=".85" stroke="${dk}" stroke-width="1.2"/><path d="M68 82 C84 78 116 78 132 82" stroke="#dff5e6" stroke-width="1" fill="none" opacity=".5"/>`;
+    case 'pumpkin': return `<path d="M64 88 C60 54 82 44 100 44 C118 44 140 54 136 88 Z" fill="#ff7a1a" stroke="#b44c0a" stroke-width="1.5"/><path d="M84 50 C80 64 80 76 82 88 M116 50 C120 64 120 76 118 88 M100 44 V88" stroke="#d9600f" stroke-width="2" fill="none"/><path d="M98 44 C98 36 102 32 108 30" stroke="#3f6b2a" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M82 66 l6 -6 l6 6 Z M106 66 l6 -6 l6 6 Z M84 76 Q100 86 116 76 l-4 4 l-4 -3 l-4 3 l-4 -3 l-4 3 l-4 -3 Z" fill="#2a1406"/>`;
+    case 'pilgrim': return `<rect x="74" y="30" width="52" height="52" rx="3" fill="#1a1a1c"/><path d="M58 86 C70 78 130 78 142 86 C142 92 58 92 58 86 Z" fill="#1a1a1c"/><rect x="74" y="66" width="52" height="9" fill="#5a3a20"/><rect x="92" y="64" width="16" height="13" rx="1" fill="none" stroke="#e3b94f" stroke-width="2.6"/>`;
+    case 'santa': return `<path d="M68 86 C70 56 92 44 112 48 C130 52 144 70 150 98 L138 100 C132 82 124 70 114 66 C106 70 92 78 68 86 Z" fill="#c2141e"/><circle cx="146" cy="102" r="8" fill="#f7f6f2"/><rect x="62" y="80" width="76" height="13" rx="6" fill="#f7f6f2"/>`;
+    default: return '';
+  }
+}
+
+// ---------------------------------------------------------------- chains, earrings, eyes
+function drChainSVG(id) {
+  if (!id || id === 'none') return '';
+  const gold = '#e3b94f', hi = '#fff3c4';
+  const curve = (dy = 0) => `M84 ${156 + dy} C88 ${176 + dy} 112 ${176 + dy} 116 ${156 + dy}`;
+  if (id === 'silver') return `<path d="${curve()}" stroke="#c9ccd4" stroke-width="1.6" fill="none"/>`;
+  if (id === 'cuban' || id === 'iced') return `<path d="${curve()}" stroke="${gold}" stroke-width="3.6" fill="none" stroke-dasharray="3 1.2"/><path d="${curve()}" stroke="${hi}" stroke-width=".8" fill="none" opacity=".7" stroke-dasharray="1.5 2.9"/>${id === 'iced' ? [[89, 167], [94, 171], [100, 172.5], [106, 171], [111, 167]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3" fill="#fff"/>`).join('') : ''}`;
+  if (id === 'rope') return `<path d="${curve(2)}" stroke="${gold}" stroke-width="2.4" fill="none"/><path d="${curve(2)}" stroke="#a37a1f" stroke-width="2.4" fill="none" stroke-dasharray="1.2 1.6"/>
+    <g transform="translate(100 177)"><path d="M0 -1 C2 1 5 2.6 4 6 C3.4 8 1 8 .4 6.6 L1.4 9.6 L-1.4 9.6 L-.4 6.6 C-1 8 -3.4 8 -4 6 C-5 2.6 -2 1 0 -1 Z" fill="#141414" stroke="${gold}" stroke-width=".9"/></g>`;
+  if (id === 'layered') return `<path d="${curve(-2)}" stroke="${gold}" stroke-width="1.2" fill="none"/><path d="${curve(5)}" stroke="${gold}" stroke-width="3.4" fill="none" stroke-dasharray="3 1.2"/><path d="${curve(5)}" stroke="${hi}" stroke-width=".7" fill="none" opacity=".6" stroke-dasharray="1.5 2.9"/>
+    <g transform="translate(100 171)"><circle r="5.2" fill="${gold}" stroke="#8f6f33" stroke-width=".8"/><circle r="3.4" fill="none" stroke="#8f6f33" stroke-width=".6"/><text y="1.8" text-anchor="middle" font-family="Georgia,serif" font-weight="900" font-size="5" fill="#5a3f10">CF</text></g>`;
+  if (id === 'bones') return [[86, 162], [91, 168], [97, 171], [103, 171], [109, 168], [114, 162]].map(([x, y]) => `<g transform="translate(${x} ${y})"><rect x="-2.6" y="-1" width="5.2" height="2" fill="#efe8d6"/><circle cx="-2.6" cy="-1" r="1.2" fill="#efe8d6"/><circle cx="-2.6" cy="1" r="1.2" fill="#efe8d6"/><circle cx="2.6" cy="-1" r="1.2" fill="#efe8d6"/><circle cx="2.6" cy="1" r="1.2" fill="#efe8d6"/></g>`).join('') + `<circle cx="100" cy="178" r="4.4" fill="#efe8d6"/><circle cx="98.4" cy="177" r="1.1" fill="#111"/><circle cx="101.6" cy="177" r="1.1" fill="#111"/>`;
+  if (id === 'wishbone') return `<path d="${curve()}" stroke="${gold}" stroke-width="1.4" fill="none"/><path d="M100 186 L94 174 M100 186 L106 174 M100 186 L100 190" stroke="${gold}" stroke-width="2.4" stroke-linecap="round" fill="none"/>`;
+  if (id === 'lights') return `<path d="${curve()}" stroke="#1d4a22" stroke-width="1.6" fill="none"/>` + [[86, 162], [90, 168], [95, 171], [100, 172], [105, 171], [110, 168], [114, 162]].map(([x, y], i) => `<ellipse cx="${x}" cy="${y + 2}" rx="1.6" ry="2.4" fill="${['#ff4f4f', '#5cbf64', '#ffd23a', '#5aa9de'][i % 4]}"/>`).join('');
+  return '';
+}
+function drEarSVG(id) {
+  if (!id || id === 'none') return '';
+  const at = [[63.5, 113], [136.5, 113]];
+  if (id === 'stud') return at.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.6" fill="#d8dbe2" stroke="#8a8f98" stroke-width=".5"/>`).join('');
+  if (id === 'diamond') return at.map(([x, y]) => `<path d="M${x} ${y - 2.4} L${x + 2.2} ${y} L${x} ${y + 2.4} L${x - 2.2} ${y} Z" fill="#f4fbff" stroke="#9fd0ff" stroke-width=".6"/><circle cx="${x - 0.6}" cy="${y - 0.6}" r=".5" fill="#fff"/>`).join('');
+  if (id === 'hoop') return at.map(([x, y]) => `<circle cx="${x}" cy="${y + 3}" r="3.6" fill="none" stroke="#e3b94f" stroke-width="1.3"/>`).join('');
+  return '';
+}
+function drEyeSVG(cx, cy, flip, ec, id, k, blink, sc) {
+  // almond eye, coloured iris, upper lid, a little wing; flip mirrors for the right eye; sc scales for age
+  const m = (x) => (flip ? 2 * cx - x : x), P = (pts) => pts.map(([x, y]) => `${m(cx + (x - cx) * sc).toFixed(1)} ${(cy + (y - cy) * sc).toFixed(1)}`);
+  const [a, b, c2, d] = [P([[cx - 8.6, cy]]), P([[cx - 5.4, cy - 5]]), P([[cx + 5.4, cy - 4.6]]), P([[cx + 8.6, cy - 0.6]])];
+  const shape = `M${a} C${b} ${c2} ${d} C${P([[cx + 5, cy + 3.8]])} ${P([[cx - 4.4, cy + 4]])} ${a} Z`;
+  const ix = +m(cx + 0.4).toFixed(1), ir = 4.4 * sc;
+  return `<defs><clipPath id="${id}e${k}"><path d="${shape}"/></clipPath><radialGradient id="${id}i${k}"><stop offset=".2" stop-color="${drShade(ec, 0.3)}"/><stop offset="1" stop-color="${drShade(ec, -0.45)}"/></radialGradient></defs>
+    <g${blink}><path d="${shape}" fill="#f7f3ec"/><g clip-path="url(#${id}e${k})"><circle cx="${ix}" cy="${cy - 0.2}" r="${ir.toFixed(2)}" fill="url(#${id}i${k})"/><circle cx="${ix}" cy="${cy - 0.2}" r="${(ir * 0.43).toFixed(2)}" fill="#0d0907"/><circle cx="${(ix - 1.5).toFixed(1)}" cy="${(cy - 1.7).toFixed(1)}" r="${(1.15 * sc).toFixed(2)}" fill="#fff"/><circle cx="${(ix + 1.5).toFixed(1)}" cy="${(cy + 1.1).toFixed(1)}" r=".5" fill="#fff" opacity=".8"/><path d="M${P([[cx - 10, cy - 6]])} L${P([[cx + 10, cy - 6]])} L${P([[cx + 10, cy - 1.8]])} C${P([[cx + 3, cy - 3.6]])} ${P([[cx - 3, cy - 3.8]])} ${P([[cx - 10, cy - 1.6]])} Z" fill="#000" opacity=".15"/></g>
+    <path d="M${P([[cx - 9.2, cy + 0.4]])} C${P([[cx - 5.4, cy - 5.6]])} ${P([[cx + 5.4, cy - 5.2]])} ${P([[cx + 9.4, cy - 0.4]])}" stroke="#1a110b" stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <path d="M${P([[cx + 7.6, cy - 2.4]])} L${P([[cx + 10.4, cy - 3.6]])}" stroke="#1a110b" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M${P([[cx - 6.5, cy - 7.4]])} C${P([[cx - 2, cy - 9.2]])} ${P([[cx + 3, cy - 9]])} ${P([[cx + 7, cy - 6.4]])}" stroke="#000" stroke-width=".8" fill="none" opacity=".16"/></g>`;
+}
+
+// ---------------------------------------------------------------- the whole player
+const DR_HEADS = {
+  oval: 'M100 55 C121 55 133 70 133 91 C133 103 131 113 127 122 C122 134 112 143 100 145 C88 143 78 134 73 122 C69 113 67 103 67 91 C67 70 79 55 100 55 Z',
+  round: 'M100 55 C122 55 135 70 135 92 C135 106 132 117 126 126 C119 137 110 143 100 144 C90 143 81 137 74 126 C68 117 65 106 65 92 C65 70 78 55 100 55 Z',
+  angular: 'M100 55 C121 55 133 70 133 91 C133 103 132 112 129 120 L118 137 C112 143 106 145 100 145 C94 145 88 143 82 137 L71 120 C68 112 67 103 67 91 C67 70 79 55 100 55 Z',
+};
+const DR_FULL_HATS = ['beanie', 'cowboy', 'fedora', 'bucket', 'pumpkin', 'pilgrim', 'santa'];
+function drAvatarSVG(st, opt = {}) {
+  const look = { ...DR_LOOK_DEFAULT, ...(st.look || {}) }, eq = st.eq || {}, dye = st.dye || {};
+  const hair = DR_HAIR.some((h) => h[0] === look.hair) ? look.hair : 'short';
+  const skin = DR_SKIN[look.skin] || DR_SKIN[2], sk2 = drShade(skin, -0.16), sk3 = drShade(skin, -0.3), skL = drShade(skin, 0.18);
+  const hc = DR_HAIRC[look.hairC] || DR_HAIRC[0], ec = DR_EYEC[look.eyeC || 0] || DR_EYEC[0];
+  const lip = drShade(look.skin >= 5 ? '#6a3428' : '#c0685c', look.skin >= 5 ? 0 : -0.08 * (look.skin / 4));
+  const titles = st.titles || {}, br = st.br || 0, id = 'a' + Math.random().toString(36).slice(2, 7);
+  const face = opt.face, age = look.age || 'young', esc2 = typeof esc === 'function' ? esc : (x) => x;
+  const outfit = eq.outfit || 'office', oc = DR_DYES[dye[outfit]] || DR_OUTFIT_BASE[outfit] || '#3b3f47';
+  const hat = eq.head && eq.head !== 'none' && eq.head !== 'phones' ? eq.head : null, hcol = hat ? DR_DYES[dye[hat]] || DR_HAT_BASE[hat] || '#222' : null;
+  const bracelets = Math.min(4, titles.bracelet || 0), rings = Math.min(3, (titles.ring || 0) + (titles.me || 0));
+  const HEAD = DR_HEADS[look.face] || DR_HEADS.oval, eyeSc = age === 'young' ? 1.04 : age === 'old' ? 0.9 : 0.97;
+  let s = `<svg class="dravsvg" viewBox="${face ? '50 44 100 100' : '0 30 200 192'}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc2(st.name || 'Your player')}">`;
+  s += `<defs>
+    <radialGradient id="${id}f" cx="38%" cy="32%" r="80%"><stop offset="0" stop-color="${skL}"/><stop offset=".55" stop-color="${skin}"/><stop offset="1" stop-color="${sk2}"/></radialGradient>
+    <linearGradient id="${id}h" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="${drShade(hc, 0.2)}"/><stop offset=".55" stop-color="${hc}"/><stop offset="1" stop-color="${drShade(hc, -0.42)}"/></linearGradient>
+    <linearGradient id="${id}t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".68" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient>
+    <linearGradient id="${id}n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sk3}"/><stop offset=".55" stop-color="${sk2}"/></linearGradient>
+    <pattern id="${id}st" width="7" height="7" patternUnits="userSpaceOnUse">${[[0.6, 0.9], [2.9, 0.4], [5.2, 1.3], [1.7, 2.6], [4.1, 3.1], [6.3, 3.6], [0.4, 4.4], [2.6, 5.2], [4.9, 5.6], [6.4, 6.4], [1.4, 6.6], [3.6, 2], [5.8, 4.8]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${(0.34 + (i % 3) * 0.06).toFixed(2)}" fill="${drShade(hc, -0.15)}" opacity="${(0.65 + (i % 4) * 0.1).toFixed(2)}"/>`).join('')}</pattern>
+    <clipPath id="${id}hd"><path d="${HEAD}"/></clipPath><clipPath id="${id}hb"><rect x="0" y="88" width="200" height="80"/></clipPath></defs>`;
+  if (hat) s += drHeadwearSVG(hat, hcol, true);
+  if (!hat || !DR_FULL_HATS.includes(hat) || hair === 'long' || hair === 'locs' || hair === 'mullet') s += drHairSVG(hair, hc, true, id);
+  // neck: slimmer when young, shadowed under the jaw
+  s += `<path d="M${age === 'young' ? 89 : 87} 128 L${age === 'young' ? 111 : 113} 128 L114 160 C106 166 94 166 86 160 Z" fill="url(#${id}n)"/>`;
+  s += drOutfitSVG(outfit, oc);
+  s += `<path d="M12 222 C16 180 44 162 74 156 L126 156 C156 162 184 180 188 222 Z" fill="url(#${id}t)" pointer-events="none"/>`;
+  if (eq.patch && eq.patch !== 'none') s += drPatchSVG(eq.patch, 128, 182, -4);
+  if (eq.head === 'phones') s += `<path d="M72 160 C70 144 130 144 128 160" stroke="#222" stroke-width="5" fill="none"/><rect x="64" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/><rect x="122" y="150" width="14" height="18" rx="6" fill="#2b2b2e"/><rect x="66" y="153" width="3" height="11" rx="1.5" fill="#3cbcd0"/>`;
+  s += drChainSVG(eq.chain);
+  // ears and earrings
+  s += `<g fill="${sk2}"><path d="M68.5 96 C61 93 59 103 61 110 C62 116 66 120 70.5 117 Z"/><path d="M131.5 96 C139 93 141 103 139 110 C138 116 134 120 129.5 117 Z"/></g>
+    <path d="M66 101 C63 103 63 109 66 113 M134 101 C137 103 137 109 134 113" stroke="${sk3}" stroke-width="1.2" fill="none" opacity=".7"/>`;
+  s += drEarSVG(eq.ear);
   // head with form shading: light from the upper left
   s += `<path d="${HEAD}" fill="url(#${id}f)"/>
     <g clip-path="url(#${id}hd)">
-      <path d="M113 56 C127 62 133 78 133 94 C133 116 124 140 104 149 C117 134 122 116 121 98 C120 80 118 66 113 56 Z" fill="${sk3}" opacity=".32"/>
-      <path d="M74 118 C80 134 90 144 100 146 C110 144 120 134 126 118 C120 136 110 150 100 150 C90 150 80 136 74 118 Z" fill="${sk3}" opacity=".35"/>
-      <ellipse cx="88" cy="73" rx="14" ry="6.5" fill="#fff" opacity=".13" transform="rotate(-12 88 73)"/>
-      <ellipse cx="81" cy="115" rx="7" ry="4" fill="#e0705a" opacity=".13"/><ellipse cx="119" cy="115" rx="7" ry="4" fill="#e0705a" opacity=".1"/>
-      <path d="M76 110 C78 118 82 122 86 123" stroke="${sk3}" stroke-width="1.2" fill="none" opacity=".25"/><path d="M124 110 C122 118 118 122 114 123" stroke="${sk3}" stroke-width="1.2" fill="none" opacity=".3"/>
+      <path d="M113 55 C127 61 134 77 134 93 C134 115 125 139 104 148 C117 133 122 115 121 97 C120 79 118 65 113 55 Z" fill="${sk3}" opacity=".3"/>
+      <path d="M74 118 C80 133 90 142 100 144 C110 142 120 133 126 118 C120 136 110 149 100 149 C90 149 80 136 74 118 Z" fill="${sk3}" opacity=".32"/>
+      <ellipse cx="88" cy="72" rx="14" ry="6.5" fill="#fff" opacity=".13" transform="rotate(-12 88 72)"/>
+      <ellipse cx="80" cy="114" rx="7.5" ry="4.2" fill="#e8705a" opacity="${age === 'young' ? 0.16 : 0.1}"/><ellipse cx="120" cy="114" rx="7.5" ry="4.2" fill="#e8705a" opacity="${age === 'young' ? 0.13 : 0.08}"/>
+      ${age === 'old' ? `<path d="M80 70 C90 67 110 67 120 70 M84 75 C94 72.5 106 72.5 116 75" stroke="${sk3}" stroke-width=".9" fill="none" opacity=".5"/><path d="M90 118 C88 124 88 128 90 132 M110 118 C112 124 112 128 110 132" stroke="${sk3}" stroke-width="1" fill="none" opacity=".45"/>` : age === 'adult' ? `<path d="M76 108 C78 116 82 120 86 121 M124 108 C122 116 118 120 114 121" stroke="${sk3}" stroke-width="1.1" fill="none" opacity=".22"/>` : ''}
     </g>`;
+  if (look.freck) s += `<g fill="${drShade(skin, -0.42)}" opacity=".5">${[[78, 110], [82, 112], [80, 115], [85, 114], [76, 113], [122, 110], [118, 112], [120, 115], [115, 114], [124, 113], [97, 109], [103, 109]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".75"/>`).join('')}</g>`;
   if (look.facial === 'beard') s += drFacialSVG('beard-base', hc, id);
   if (look.facial === 'stubble') s += drFacialSVG('stubble', hc, id);
-  // eyes and brows: a little confident, one brow a touch higher
+  // eyes and brows
   const blink = opt.blink ? ' class="drblink"' : '';
-  s += drEyeSVG(87, 103, false, ec, id, 0, blink) + drEyeSVG(113, 103, true, ec, id, 1, blink);
-  const bc = drShade(hc, look.hairC >= 6 ? -0.25 : 0.04);
-  s += `<path d="M77 94.5 C82 90.6 90 90 96.5 92.6 C96.8 93.6 96.4 94.4 95.6 94.4 C89.5 93 83 93.8 78 96.6 C77 96.4 76.6 95.4 77 94.5 Z" fill="${bc}"/>
-    <path d="M123 93.6 C118 89.4 110 89 103.5 91.8 C103.2 92.8 103.6 93.6 104.4 93.6 C110.5 92 117 92.8 122 95.6 C123 95.4 123.4 94.4 123 93.6 Z" fill="${bc}"/>`;
-  // nose: bridge shadow on the far side, soft tip, nostrils
-  s += `<path d="M103.5 99 C104.6 106 105.6 112 107 116.5" stroke="${sk3}" stroke-width="1.5" fill="none" opacity=".45" stroke-linecap="round"/>
-    <path d="M94.5 116.5 C95.5 120.8 104.5 120.8 105.8 116.5" stroke="${sk3}" stroke-width="1.5" fill="none" opacity=".7" stroke-linecap="round"/>
-    <ellipse cx="96.8" cy="118.6" rx="1.6" ry=".9" fill="${drShade(skin, -0.5)}" opacity=".55"/><ellipse cx="103.4" cy="118.6" rx="1.6" ry=".9" fill="${drShade(skin, -0.5)}" opacity=".55"/>
-    <ellipse cx="99" cy="116" rx="2.2" ry="1.4" fill="#fff" opacity=".2"/>`;
-  // mouth: a poker smirk by default
+  s += drEyeSVG(86, 102, false, ec, id, 0, blink, eyeSc) + drEyeSVG(114, 102, true, ec, id, 1, blink, eyeSc);
+  if (age === 'old') s += `<path d="M78 108 C82 110 88 110 92 108.6 M122 108 C118 110 112 110 108 108.6" stroke="${sk3}" stroke-width=".9" fill="none" opacity=".55"/>`;
+  const bc = drShade(hc, look.hairC >= 7 && look.hairC <= 8 ? -0.3 : 0.02), bw = look.brows === 'thick' ? 1.5 : 1;
+  const browL = look.brows === 'arched' ? 'M76 92 C80 86.5 89 86 96.5 89.4 C96.8 90.4 96.4 91.2 95.6 91.2 C89.5 89.6 82 90 77 93.8 C76 93.6 75.6 92.8 76 92 Z' : `M76 92.4 C81 ${88.6 - bw} 89.5 ${88 - bw} 96.5 90.4 C96.8 91.4 96.4 92.2 95.6 92.2 C89.5 ${(90.8 - bw * 0.3).toFixed(2)} 82.5 91.6 77 94.4 C76 94.2 75.6 93.2 76 92.4 Z`;
+  const browR = look.brows === 'arched' ? 'M124 91 C120 85.5 111 85 103.5 88.4 C103.2 89.4 103.6 90.2 104.4 90.2 C110.5 88.6 118 89 123 92.8 C124 92.6 124.4 91.8 124 91 Z' : `M124 91.4 C119 ${87.4 - bw} 110.5 ${87 - bw} 103.5 89.6 C103.2 90.6 103.6 91.4 104.4 91.4 C110.5 ${(89.8 - bw * 0.3).toFixed(2)} 117.5 90.6 123 93.4 C124 93.2 124.4 92.2 124 91.4 Z`;
+  s += `<path d="${browL}" fill="${bc}"/><path d="${browR}" fill="${bc}"/>`;
+  if (look.brows === 'slit') s += `<path d="M117 86 L115.4 93.6 M119.6 86.6 L118 94.2" stroke="${skin}" stroke-width="1.3"/>`;
+  // nose: small and soft
+  const ny = age === 'young' ? 0 : 1;
+  s += `<path d="M103.5 ${99 + ny} C104.4 ${105 + ny} 105.2 ${110 + ny} 106.2 ${114 + ny}" stroke="${sk3}" stroke-width="1.4" fill="none" opacity=".4" stroke-linecap="round"/>
+    <path d="M95.5 ${114.5 + ny} C96.5 ${118.4 + ny} 104 ${118.4 + ny} 105 ${114.5 + ny}" stroke="${sk3}" stroke-width="1.5" fill="none" opacity=".7" stroke-linecap="round"/>
+    <ellipse cx="97.4" cy="${116.6 + ny}" rx="1.4" ry=".8" fill="${drShade(skin, -0.5)}" opacity=".55"/><ellipse cx="102.8" cy="${116.6 + ny}" rx="1.4" ry=".8" fill="${drShade(skin, -0.5)}" opacity=".55"/>
+    <ellipse cx="99" cy="${113.6 + ny}" rx="2.2" ry="1.4" fill="#fff" opacity=".22"/>`;
+  // mouth: a confident smirk by default
   const mouth = opt.mouth || (opt.smile ? 'smile' : 'smug');
-  if (mouth === 'frown') s += `<path d="M92 133 C96 129.6 104.6 129.6 109 133" stroke="${drShade(lip, -0.42)}" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M94 134 C98 132.6 103 132.6 107 134" stroke="${lip}" stroke-width="1.2" fill="none" opacity=".5"/>`;
-  else if (mouth === 'smile') s += `<path d="M89 127.5 C95 135.5 106 135.5 112 127 C106 130 95 130.4 89 127.5 Z" fill="#fff"/><path d="M89 127.5 C95 135.5 106 135.5 112 127" stroke="${drShade(lip, -0.35)}" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M93 132.6 C97 134.6 104 134.6 108 132" stroke="${lip}" stroke-width="1.4" fill="none" opacity=".6"/>`;
-  else s += `<path d="M91.5 131 C95 134.4 103 134.6 107.5 130.6 C103 132 96 132.4 91.5 131 Z" fill="${lip}" opacity=".55"/>
-    <path d="${mouth === 'flat' ? 'M90.5 129.4 C95 130.6 103 130.6 109.5 129' : 'M90.5 129.6 C95.5 130.8 103 130.2 110.5 126.8'}" stroke="${drShade(lip, -0.42)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-    <path d="M96 126.4 C98 127.3 102 127.3 104 126.4" stroke="${sk3}" stroke-width=".9" fill="none" opacity=".35"/><ellipse cx="100" cy="136.8" rx="5" ry="1.4" fill="${sk3}" opacity=".18"/>`;
-  if (look.facial !== 'stubble' && look.facial !== 'none') s += drFacialSVG(look.facial === 'beard' ? 'beard-top' : look.facial, hc, id);
-  s += drHairSVG(look.hair, hc, false, id);
-  s += drEyewearSVG(eq.eyes);
-  s += drHeadwearSVG(eq.head, look.hair);
+  if (mouth === 'frown') s += `<path d="M92 131 C96 127.6 104.6 127.6 109 131" stroke="${drShade(lip, -0.42)}" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M94 132 C98 130.6 103 130.6 107 132" stroke="${lip}" stroke-width="1.2" fill="none" opacity=".5"/>`;
+  else if (mouth === 'smile') s += `<path d="M89 125.5 C95 133.5 106 133.5 112 125 C106 128 95 128.4 89 125.5 Z" fill="#fff"/><path d="M89 125.5 C95 133.5 106 133.5 112 125" stroke="${drShade(lip, -0.35)}" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M93 130.6 C97 132.6 104 132.6 108 130" stroke="${lip}" stroke-width="1.4" fill="none" opacity=".6"/>`;
+  else s += `<path d="M91.5 129 C95 132.4 103 132.6 107.5 128.6 C103 130 96 130.4 91.5 129 Z" fill="${lip}" opacity=".55"/>
+    <path d="${mouth === 'flat' ? 'M90.5 127.4 C95 128.6 103 128.6 109.5 127' : 'M90.5 127.6 C95.5 128.8 103 128.2 110.5 124.8'}" stroke="${drShade(lip, -0.42)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M96 124.4 C98 125.3 102 125.3 104 124.4" stroke="${sk3}" stroke-width=".9" fill="none" opacity=".35"/><ellipse cx="100" cy="134.8" rx="5" ry="1.4" fill="${sk3}" opacity=".18"/>`;
+  if (['mustache', 'goatee', 'chin'].includes(look.facial)) s += drFacialSVG(look.facial, hc, id);
+  if (look.facial === 'beard') s += drFacialSVG('beard-top', hc, id);
+  // hair under the hat: caps sit on top; full hats only let long hair show below the brim
+  if (!hat || ((hat === 'cap' || hat === 'snap') && !['curly', 'twists', 'bun'].includes(hair)) || hat === 'visor') s += drHairSVG(hair, hc, false, id);
+  else if (DR_FULL_HATS.includes(hat) && ['long', 'locs', 'curtains', 'wavy', 'mullet'].includes(hair)) s += `<g clip-path="url(#${id}hb)">${drHairSVG(hair, hc, false, id)}</g>`;
+  if (eq.eyes && eq.eyes !== 'none') s += drEyewearSVG(eq.eyes);
+  if (hat) s += drHeadwearSVG(hat, hcol, false);
   if (!face) {
     // the table, your arms, cards, watch, bracelets, rings, chips
     s += `<path d="M0 194 L200 194 L200 222 L0 222 Z" fill="#0e4d39"/><path d="M0 188 C60 182 140 182 200 188 L200 197 C140 191 60 191 0 197 Z" fill="#3a2414"/><path d="M0 189 C60 183 140 183 200 189" stroke="#6a4626" stroke-width="1.2" fill="none"/>`;
-    const sleeve = { office: '#cdd8e6', hoodie: '#6b6f76', polo: '#1f2a44', bomber: '#1b1b1e', blazer: '#3b3f47', suit: '#1b2442', designer: '#4a1426', tux: '#121214', vampire: '#141216', flannel: '#a3262a', ugly: '#1d6b3a' }[eq.outfit || 'office'] || '#3b3f47';
+    const sleeve = { varsity: '#efe6cf', vest: '#eef0f4', fleece: '#2a2c31', tee: skin, jersey: skin, office: '#cdd8e6' }[outfit] || oc;
     s += `<path d="M10 222 C20 204 46 192 74 190 L80 202 C58 206 40 212 30 222 Z" fill="${sleeve}" stroke="${drShade(sleeve, -0.35)}"/><path d="M14 218 C24 206 44 198 70 194" stroke="#fff" stroke-width="1.4" fill="none" opacity=".12"/>`;
     s += `<path d="M190 222 C180 204 154 192 126 190 L120 202 C142 206 160 212 170 222 Z" fill="${drShade(sleeve, -0.12)}" stroke="${drShade(sleeve, -0.35)}"/>`;
+    if (outfit === 'tee' || outfit === 'jersey') s += `<path d="M10 222 C14 214 22 208 30 204 L36 212 C30 214 24 218 20 222 Z M190 222 C186 214 178 208 170 204 L164 212 C170 214 176 218 180 222 Z" fill="${oc}"/>`;
+    if (outfit === 'track') s += `<path d="M14 214 C30 202 50 196 74 194 M16 219 C32 207 52 200 76 198" stroke="#f3f3f3" stroke-width="2" fill="none"/>`;
+    if (eq.sleeve && eq.sleeve !== 'none') s += drPatchSVG(eq.sleeve, 158, 206, -24, 0.85);
     s += `<g><rect x="86" y="196" width="15" height="21" rx="2" fill="#f7f3e8" stroke="#bbb" transform="rotate(-8 93 206)"/><rect x="98" y="196" width="15" height="21" rx="2" fill="#f7f3e8" stroke="#bbb" transform="rotate(7 105 206)"/><path d="M92 200 l3 4 l-3 4 l-3 -4 Z" fill="#c2362a" transform="rotate(-8 93 206)"/><text x="101.5" y="205" font-family="Georgia,serif" font-size="7" font-weight="700" fill="#141414" transform="rotate(7 105 206)">A</text></g>`;
-    // hands resting on the cards: knuckles, thumb, shading
     const hand = (cx, flip) => { const f = flip ? -1 : 1, X = (x) => cx + f * x;
       return `<path d="M${X(-13)} 199 C${X(-13)} 192 ${X(-6)} 190 ${X(2)} 191 C${X(9)} 192 ${X(13)} 196 ${X(12)} 201 C${X(11)} 206 ${X(4)} 208 ${X(-3)} 207.5 C${X(-10)} 207 ${X(-13)} 204 ${X(-13)} 199 Z" fill="${skin}" stroke="${sk3}" stroke-width=".9"/>
         <path d="M${X(-6)} 192.5 L${X(-6.6)} 199 M${X(-1)} 191.6 L${X(-1.4)} 199.6 M${X(4)} 191.8 L${X(4.2)} 199.6" stroke="${sk3}" stroke-width=".8" opacity=".55"/>
-        <path d="M${X(-12)} 201 C${X(-6)} 205 ${X(4)} 205 ${X(11)} 201" stroke="${sk3}" stroke-width=".8" fill="none" opacity=".35"/>
         <path d="M${X(10)} 196 C${X(14)} 196 ${X(16)} 199 ${X(14)} 202" stroke="${sk3}" stroke-width="1" fill="${sk2}"/>`; };
     s += hand(86, false) + hand(114, true);
+    // title rings on your left hand, your own ring on the right
+    for (let k = 0; k < rings; k++) s += `<rect x="${78 + k * 5}" y="193" width="3.6" height="2.6" rx=".9" fill="#e8c35a" stroke="#fff" stroke-width=".4"/><circle cx="${79.8 + k * 5}" cy="192.6" r="1.1" fill="#b9f2ff"/>`;
+    const ring = eq.ring && eq.ring !== 'none' ? eq.ring : null;
+    if (ring) { const rc = { signet: '#c9ccd4', gold: '#e3b94f', pinky: '#f4fbff', champ: '#e3b94f' }[ring] || '#e3b94f';
+      s += `<rect x="111" y="192.6" width="${ring === 'champ' ? 6 : 3.8}" height="${ring === 'champ' ? 4.4 : 2.6}" rx="1" fill="${rc}" stroke="${ring === 'pinky' ? '#9fd0ff' : '#8f6f33'}" stroke-width=".5"/>${ring === 'champ' ? '<circle cx="114" cy="194.8" r="1.4" fill="#c2362a"/>' : ring === 'pinky' ? '<circle cx="112.9" cy="193.9" r=".8" fill="#fff"/>' : ''}`; }
     // watch (left wrist)
-    const wt = eq.watch || 'digital', band = { digital: '#222', steel: '#b9bec7', gold: '#d9b36c', iced: '#e9edf2', hyper: '#1a1a1a' }[wt], face2 = { digital: '#3f5f3a', steel: '#1d3b6e', gold: '#f3e2b0', iced: '#f8fbff', hyper: '#2c2c2c' }[wt];
+    const wt = eq.watch || 'digital', band = { digital: '#222', steel: '#b9bec7', gold: '#d9b36c', iced: '#e9edf2', hyper: '#1a1a1a' }[wt] || '#222', face2 = { digital: '#3f5f3a', steel: '#1d3b6e', gold: '#f3e2b0', iced: '#f8fbff', hyper: '#2c2c2c' }[wt] || '#3f5f3a';
     s += `<g transform="rotate(-18 72 198)"><rect x="66" y="190" width="10" height="17" rx="2" fill="${band}"/><circle cx="71" cy="198.5" r="5.6" fill="${face2}" stroke="${band}" stroke-width="2"/><path d="M71 198.5 L71 195.4 M71 198.5 L73.2 199.6" stroke="#222" stroke-width=".7"/>${wt === 'iced' ? '<circle cx="71" cy="198.5" r="6.6" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="1 1.2"/>' : ''}${wt === 'hyper' ? '<circle cx="71" cy="198.5" r="2.4" fill="none" stroke="#d9b36c" stroke-width="1"/>' : ''}</g>`;
-    for (let k = 0; k < bracelets; k++) s += `<rect x="${124 + k * 3.4}" y="${190 - k * 0.6}" width="2.6" height="16" rx="1.2" fill="#e8c35a" stroke="#9a7a2a" stroke-width=".5" transform="rotate(18 128 198)"/>`;
-    for (let k = 0; k < rings; k++) s += `<rect x="${92 + k * 5}" y="196.4" width="3.2" height="2.2" rx=".8" fill="#e8c35a" stroke="#fff" stroke-width=".4"/>`;
+    // your bracelet, then a gold band for every title bracelet (right wrist)
+    const wr = eq.wrist && eq.wrist !== 'none' ? eq.wrist : null;
+    if (wr === 'beads') s += `<g transform="rotate(18 128 198)">${[0, 1, 2, 3, 4, 5].map((k) => `<circle cx="121.6" cy="${190 + k * 3}" r="1.7" fill="${['#2a2a2e', '#7a5a3a', '#2a2a2e', '#c9a03e', '#2a2a2e', '#7a5a3a'][k]}"/>`).join('')}</g>`;
+    if (wr === 'gold') s += `<rect x="120" y="189" width="3.4" height="17" rx="1.6" fill="#e3b94f" stroke="#8f6f33" stroke-width=".5" stroke-dasharray="2 .8" transform="rotate(18 128 198)"/>`;
+    if (wr === 'tennis') s += `<g transform="rotate(18 128 198)"><rect x="120.2" y="189" width="2.6" height="17" rx="1.2" fill="#d8dbe2"/>${[0, 1, 2, 3, 4].map((k) => `<circle cx="121.5" cy="${191 + k * 3.3}" r="1" fill="#fff"/>`).join('')}</g>`;
+    for (let k = 0; k < bracelets; k++) s += `<rect x="${125 + k * 3.4}" y="${190 - k * 0.6}" width="2.6" height="16" rx="1.2" fill="#e8c35a" stroke="#9a7a2a" stroke-width=".5" transform="rotate(18 128 198)"/>`;
     // chips: the stack grows with your bankroll
     const tiers = [0, 1000, 10000, 50000, 250000, 1e6, 5e6], lv = tiers.filter((t) => br >= t).length;
     const cols = ['#f3ecdc', '#c2362a', '#2a6fdb', '#1e8f4a', '#141414', '#7a3fc0', '#e3b94f'];
@@ -6668,7 +6877,7 @@ function drDefault() {
   return { v: 1, made: false, name: '', look: { ...DR_LOOK_DEFAULT }, br: 0, peak: 0, ch: 0, story: {}, queue: [], job: null,
     titles: { local: 0, room: 0, ring: 0, bracelet: 0, tour: 0, glo: 0, titan: 0, me: 0 }, legends: {}, met: {}, events: {},
     dec: 0, perfect: 0, good: 0, close: 0, mistakes: 0, played: 0, cashes: 0, ft: 0, flags: {},
-    eq: { outfit: 'office', eyes: 'readers', head: 'none', watch: 'digital', chain: 'none', home: 'studio', ride: 'bus', patch: 'none' },
+    eq: { outfit: 'office', eyes: 'readers', head: 'none', ear: 'none', ring: 'none', wrist: 'none', watch: 'digital', chain: 'none', home: 'studio', ride: 'bus', patch: 'none', sleeve: 'none' }, dye: {},
     owned: {}, newItems: [], debt: 0, ledger: [], trophies: [], lastEvent: null };
 }
 function drLoad() {
@@ -6676,7 +6885,7 @@ function drLoad() {
     const v = JSON.parse(localStorage.getItem(DR_KEY) || 'null');
     if (!v || v.v !== 1) return drDefault();
     const d = drDefault();
-    return { ...d, ...v, titles: { ...d.titles, ...(v.titles || {}) }, eq: { ...d.eq, ...(v.eq || {}) }, look: { ...d.look, ...(v.look || {}) }, flags: v.flags || {} };
+    return { ...d, ...v, titles: { ...d.titles, ...(v.titles || {}) }, eq: { ...d.eq, ...(v.eq || {}) }, look: { ...d.look, ...(v.look || {}) }, dye: { ...(v.dye || {}) }, flags: v.flags || {} };
   } catch { return drDefault(); }
 }
 function drSave() { try { localStorage.setItem(DR_KEY, JSON.stringify(DR.st)); } catch { /* storage unavailable */ } }
@@ -6725,7 +6934,7 @@ function drUnlocks(s) {
     const cur = DR_ITEMS.findIndex((x) => x.slot === it.slot && x.id === s.eq[it.slot]), mine = DR_ITEMS.indexOf(it);
     // never swap out league gear you chose to wear
     const wearingLeague = DR_LG_ITEMS.some((x) => x.slot === it.slot && x.id === s.eq[it.slot]);
-    if (it.id !== 'none' && mine > cur && it.slot !== 'head' && !wearingLeague) s.eq[it.slot] = it.id;
+    if (it.id !== 'none' && mine > cur && it.slot !== 'head' && it.slot !== 'sleeve' && !wearingLeague) s.eq[it.slot] = it.id;
   }
   s.newItems = [...(s.newItems || []), ...fresh.map(drItemKey)];
   return fresh;
@@ -7881,9 +8090,13 @@ function drCreateHTML() {
       <div class="drfield"><span>Hair</span><div class="drchips">${opts('hair', DR_HAIR, look.hair)}</div></div>
       <div class="drfield"><span>Hair color</span><div class="drsws">${sw('hairC', DR_HAIRC, look.hairC, 'hair')}</div></div>
       <div class="drfield"><span>Eye color</span><div class="drsws">${sw('eyeC', DR_EYEC, look.eyeC || 0, 'eye')}</div></div>
+      <div class="drfield"><span>Face shape</span><div class="drchips">${opts('face', DR_FACES, look.face)}</div></div>
+      <div class="drfield"><span>Age</span><div class="drchips">${opts('age', DR_AGES, look.age)}</div></div>
+      <div class="drfield"><span>Brows</span><div class="drchips">${opts('brows', DR_BROWS, look.brows)}</div></div>
+      <div class="drfield"><span>Freckles</span><div class="drchips">${opts('freck', [[0, 'None'], [1, 'Freckles']], look.freck ? 1 : 0)}</div></div>
       <div class="drfield"><span>Facial hair</span><div class="drchips">${opts('facial', DR_FACIAL, look.facial)}</div></div>
       <div class="drrow">${drBtn('ghost', 'data-dr="title"', 'Back')}${drBtn('gold big', 'data-dr="begin"', 'Clock in →')}</div>
-      <p class="drhint">Clothes, jewelry, your home and your ride come later. You have to earn those.</p>
+      <p class="drhint">You start with the basics. Clothes, jewelry, your home and your ride unlock as you play, and cosmetics never change how the game plays.</p>
     </div>
   </section>`;
 }
@@ -8079,18 +8292,22 @@ function drRarity(it) {
 }
 function drClosetHTML() {
   const s = DR.st, fresh = new Set(s.newItems || []);
-  const html = DR_SLOTS.map(([slot, label]) => {
-    const cur = drSeasonFor(drMonth()).key;
-    const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))];
-    return `<div class="drslot"><div class="drkicker">${label}</div><div class="dritems">${items.map((it) => {
-      const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it);
-      const rar = drRarity(it);
-      return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''} r-${rar}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : `<i class="drrar">${rar}</i>`}</button>`;
-    }).join('')}</div></div>`;
+  const cat = DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0], slot = cat[2], cur = drSeasonFor(drMonth()).key;
+  const inCat = (x) => slot !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === cat[0];
+  const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))].filter(inCat);
+  const newIn = (c) => [...DR_ITEMS, ...DR_LG_ITEMS].some((x) => x.slot === c[2] && (c[2] !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === c[0]) && fresh.has(drItemKey(x)));
+  const bar = `<div class="drcats" role="tablist">${DR_CATS.map((c) => `<button class="drcat" role="tab" data-dr="ccat" data-v="${c[0]}" aria-pressed="${c[0] === cat[0]}">${c[1]}${newIn(c) ? '<i class="drnew">•</i>' : ''}</button>`).join('')}</div>`;
+  const grid = items.map((it) => {
+    const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it), rar = drRarity(it);
+    return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''} r-${rar}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : `<i class="drrar">${rar}</i>`}</button>`;
   }).join('');
-  if (fresh.size) { s.newItems = []; drSave(); }
+  const worn = s.eq[slot], dyeable = (slot === 'outfit' || slot === 'head') && DR_DYEABLE[worn] && !DR_LG_ITEMS.some((x) => x.slot === slot && x.id === worn);
+  const dyes = dyeable ? `<div class="drdye"><div class="drkicker">Colour</div><div class="drsws">${DR_DYES.map((c, i) => `<button class="drsw ${c ? '' : 'orig'}" style="--c:${c || '#888'}" data-dr="dye" data-v="${i}" aria-pressed="${(s.dye[worn] || 0) === i}" aria-label="${c ? 'Dye ' + i : 'Original colour'}"></button>`).join('')}</div></div>` : '';
+  // seen: clear the New badges for the category you just looked at
+  const seen = items.map(drItemKey).filter((k) => fresh.has(k));
+  if (seen.length) { s.newItems = (s.newItems || []).filter((k) => !seen.includes(k)); drSave(); }
   const all = [...DR_ITEMS.filter((x) => x.id !== 'none'), ...DR_LG_ITEMS], have = all.filter((x) => drOwns(s, x.slot, x.id)).length;
-  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div><div class="drslots">${html}</div></div>`;
+  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div>${bar}<div class="drslot"><div class="dritems">${grid}</div>${dyes}</div></div>`;
 }
 function drTrophiesHTML() {
   const s = DR.st, acc = s.dec ? Math.round(((s.perfect + s.good) / s.dec) * 100) : 0;
@@ -8305,7 +8522,7 @@ document.addEventListener('click', (e) => {
   if (a === 'newyes') { DR.st = drDefault(); drSave(); DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'create'; drRender(); return; }
   if (a === 'newno') { $('drNewConfirm').hidden = true; return; }
   if (a === 'title') { DR.view = 'title'; drRender(); return; }
-  if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' || f === 'eyeC' ? +b.dataset.v : b.dataset.v; drRender(); return; }
+  if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' || f === 'eyeC' ? +b.dataset.v : f === 'freck' ? b.dataset.v === '1' : b.dataset.v; drRender(); return; }
   if (a === 'begin') {
     const n = (($('drName') || {}).value || '').trim();
     const st = drDefault(); st.made = true; st.name = n || 'Rookie'; st.look = { ...DR.draft.look };
@@ -8333,6 +8550,8 @@ document.addEventListener('click', (e) => {
     drSave(); drRender(); return;
   }
   if (a === 'replay') { const id = b.dataset.id; DR.sc = { id, i: 0, extra: [], replay: true }; DR.view = 'scene'; drRender(); scrollTo(0, 0); return; }
+  if (a === 'ccat') { DR.ccat = b.dataset.v; drRender(); return; }
+  if (a === 'dye') { const w = s.eq[(DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0])[2]]; if (+b.dataset.v) s.dye[w] = +b.dataset.v; else delete s.dye[w]; drSave(); drRender(); return; }
   if (a === 'equip') { s.eq[b.dataset.s] = b.dataset.v; drSave(); drRender(); return; }
   if (a === 'play') { drStart(b.dataset.id); return; }
   if (a === 'deal') { drHand(); return; }
