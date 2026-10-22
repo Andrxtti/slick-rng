@@ -278,12 +278,21 @@ function drClosetHTML() {
   const all = [...DR_ITEMS.filter((x) => x.id !== 'none'), ...DR_LG_ITEMS], have = all.filter((x) => drOwns(s, x.slot, x.id)).length;
   return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${dr3LiveOK() ? dr3LiveHTML(s, s.name) : drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div>${bar}<div class="drslot"><div class="dritems">${grid}</div>${dyes}</div></div>`;
 }
+const DR_COOLER_LINES = [
+  "You played it right. That's all you control. People insist on calling it luck.",
+  'Write it down and let it go. The next hand does not know about this one.',
+  'Every legend has a list of these longer than their list of titles.',
+  'Bad beats are the tax on getting your money in good. Pay it and keep playing.',
+  'That one stings. Good. It means you care. Now go show the deck it was wrong.',
+];
+function drCoolerLine() { const n = (drPg(DR.st).st.coolers || 0); return (n ? `That's cooler number ${n + 1}. ` : '') + DR_COOLER_LINES[n % DR_COOLER_LINES.length]; }
 function drTrophiesHTML() {
   const s = DR.st, acc = s.dec ? Math.round(((s.perfect + s.good) / s.dec) * 100) : 0;
   return `<div class="drstats">
       <div><small>Events played</small><b class="mono">${s.played}</b></div><div><small>Cashes</small><b class="mono">${s.cashes}</b></div>
       <div><small>Final tables</small><b class="mono">${s.ft}</b></div><div><small>Peak bankroll</small><b class="mono">$${drMoneyShort(s.peak)}</b></div>
       <div><small>Decisions</small><b class="mono">${s.dec}</b></div><div><small>Solver-approved</small><b class="mono">${acc}%</b></div>
+      <div><small>Coolers taken</small><b class="mono">${drPg(s).st.coolers || 0}</b></div><div><small>Bounce-backs</small><b class="mono">${drPg(s).st.bounce || 0}</b></div>
     </div>
     ${s.ch >= 1 ? (() => { const b = drPoyBoard(s), me = b.findIndex((r) => r.me), top = b.slice(0, 8), show = me >= 8 ? [...top, b[me]] : top;
       return `<div class="drpoy"><div class="drkicker">Player of the Year race · ${new Date().toLocaleDateString(undefined, { month: 'long' })}</div>
@@ -356,7 +365,7 @@ function drRunHTML() {
     </section>`;
   }
   if (run.state === 'cooler') return `${head}<section class="drstagecard cooler pl-${ev.venue}"><div class="drkicker">Cooler</div><h2 class="drh">${esc(run.cooler)}</h2>
-      <div class="drsay">${drSpeaker({ sp: 'slick' }).av}<div><b>Slick</b><p>You played it right. That's all you control. People insist on calling it luck.</p></div></div>
+      <div class="drsay">${drSpeaker({ sp: 'slick' }).av}<div><b>Slick</b><p>${esc(drCoolerLine())}</p></div></div>
       ${drBtn('gold big', 'data-dr="coolerdone"', 'See where you finished ▸')}</section>`;
   if (run.state === 'dealing') return `${head}<section class="drspot dim"><div class="drdealing"><span></span><span></span><span></span></div><small class="drhint">Dealing…</small></section>`;
   const sp = run.spot, keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;

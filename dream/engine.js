@@ -518,6 +518,7 @@ function drFinish(quit) {
     const keys = Object.keys(s.daily).sort(); if (keys.length > 120) keys.slice(0, keys.length - 120).forEach((k) => delete s.daily[k]);
   }
   if (ev.id === 'local' && !s.story.p_after) s.queue.push('p_after');
+  if (run.cooler && s.ch >= 1 && !s.story.badbeat && !s.queue.includes('badbeat')) s.queue.push('badbeat');
   if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');
   res.after = s.br;
   res.unlocked = drUnlocks(s);

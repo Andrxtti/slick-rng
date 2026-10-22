@@ -139,6 +139,15 @@ const DR_SCENES = {
 
 // more beats along the way, triggered by milestones
 Object.assign(DR_SCENES, {
+  badbeat: { place: 'diner', title: 'Bad beat', sub: 'The cards do not care', beats: [
+    { sp: 'n', t: 'Lucky Seven Diner. Same stool, same pie. The feeling is not the same.' },
+    { sp: 'you', t: "I did everything right. Every decision. And I'm out." },
+    { sp: 'slick', t: 'Then you had a good day. You just did not get paid for it.' },
+    { sp: 'slick', t: 'Over one hand, the cards pay whoever they like. Over ten thousand, they pay whoever studied. Play for the ten thousand.' },
+    { sp: 'trent', t: 'Heard you got coolered. Brutal. Maybe this game just isn’t for everyone.', text: true },
+    { sp: 'you', t: "He's right about one thing. It isn't for everyone." },
+    { sp: 'slick', t: 'Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list.', goal: true },
+  ], end: 'hub' },
   trentbeat: { place: 'cardroom', title: 'Chapter 1', sub: 'The Riverside Classic', beats: [
     { sp: 'n', t: 'The last card hits the felt. The Riverside Classic is yours.' },
     { sp: 'trent', t: "Enjoy it. Dad says the Classic is a rounding error." },

@@ -34,7 +34,7 @@ const DR_FRAMES = {
 const DR_TITLES_COS = {
   none: 'No title', grinder: 'Grinder', reg: 'The Reg', shark: 'Shark', highroller: 'High Roller', crusher: 'Crusher', livinglegend: 'Living Legend',
   professor: 'The Professor', ironwill: 'Iron Will', herocaller: 'Hero Caller', icm: 'ICM Scientist', heater: 'Heater', giantkiller: 'Giant Killer',
-  closer: 'The Closer', robot: 'Robot', neverdead: 'Never Dead', taskmaster: 'Taskmaster', satshark: 'Satellite Shark',
+  closer: 'The Closer', robot: 'Robot', neverdead: 'Never Dead', taskmaster: 'Taskmaster', satshark: 'Satellite Shark', thickskin: 'Thick Skin', bounceback: 'Bounce Back',
 };
 const DR_COS_KINDS = [['back', 'Card backs', DR_BACKS, 'classic'], ['felt', 'Table felt', DR_FELTS, 'green'], ['frame', 'Avatar frame', DR_FRAMES, 'none'], ['title', 'Title', DR_TITLES_COS, 'none']];
 
@@ -82,6 +82,8 @@ const DR_ACH = [
   { id: 'legends', n: 'Legend Slayer', d: 'Legends beaten heads-up', t: [1, 8, 25], f: (p, s) => Object.keys(s.legends || {}).length, gold: ['title', 'giantkiller'] },
   { id: 'flawless', n: 'Flawless', d: 'Games at 100% accuracy (6+ decisions)', t: [1, 5, 20], f: (p) => p.st.flawless, gold: ['title', 'robot'] },
   { id: 'comeback', n: 'Comeback Kid', d: 'Won after running on fumes', t: [1, 3, 10], f: (p) => p.st.comeback, gold: ['title', 'neverdead'] },
+  { id: 'coolers', n: 'Thick Skin', d: 'Coolered while playing 85%+ accurate', t: [1, 5, 15], f: (p) => p.st.cleanBeats || 0, gold: ['title', 'thickskin'] },
+  { id: 'bounce', n: 'Bounce Back', d: 'Won the very next event after a cooler', t: [1, 3, 10], f: (p) => p.st.bounce || 0, gold: ['title', 'bounceback'] },
   { id: 'seats', n: 'Satellite Shark', d: 'Satellite seats won', t: [1, 5, 15], f: (p) => p.st.seats, gold: ['title', 'satshark'] },
   { id: 'league', n: 'League Regular', d: 'League games played', t: [10, 50, 150], f: (p, s) => (s.m && s.m.league.played) || 0 },
   { id: 'ranked', n: 'Ladder Climber', d: 'Best ranked tier (Silver, Gold, Diamond)', t: [1, 2, 4], f: (p, s) => (s.rk ? DR_TIERS.indexOf(drTier(s.rk.peak || 1000)) : 0), fmt: (v) => (DR_TIERS[v] || DR_TIERS[0])[1] },
@@ -197,6 +199,9 @@ function drEventDone(res, run) {
   if (kind === 'sng' && ev.mode === 'casual') xp = Math.round(xp * 0.6);
   drGainXp(s, xp, out);
   if (won) { p.st.wins++; if (run.fumes) p.st.comeback++; }
+  // coolers: part of the game. Count them, reward taking them well, reward the bounce back
+  if (res.cooler) { p.st.coolers = (p.st.coolers || 0) + 1; if (res.acc >= 85) p.st.cleanBeats = (p.st.cleanBeats || 0) + 1; p.lastCool = true; }
+  else if (!ev.drill && !ev.review && res.mode !== 'challenge') { if (won && p.lastCool) p.st.bounce = (p.st.bounce || 0) + 1; p.lastCool = false; }
   if (kind === 'sat' && res.ticket) p.st.seats++;
   if (cashed && run.stages.includes('bubble') && run.si >= run.stages.indexOf('bubble')) p.st.bubble++;
   if (res.acc === 100 && res.n >= 6) p.st.flawless++;
