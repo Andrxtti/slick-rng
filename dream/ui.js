@@ -341,7 +341,7 @@ function drRunHTML() {
   const sp = run.spot, keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
   const hero = v.seats[sp.hero], label = (a) => { const o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
   const pgx = drPg(DR.st), felt = DR_FELTS[pgx.eq.felt] || DR_FELTS.green, back = DR_BACKS[pgx.eq.back] || DR_BACKS.classic;
-  let html = `${head}<section class="drspot" style="--felt:${felt.c};--trim:${felt.trim || 'transparent'};--back:${back.bg};--backbd:${back.bd}">
+  let html = `${head}<section class="drspot st-${run.state}" style="--felt:${felt.c};--trim:${felt.trim || 'transparent'};--back:${back.bg};--backbd:${back.bd}">
     <div class="drspot-head"><span class="drkicker">Hand ${run.results.length + (run.state === 'answered' ? 0 : 1)}</span><span class="drhint">${esc(trCategory(v))}</span></div>
     <div class="drseats">${(() => {
       // at the final table, the boss sits in the biggest stack that isn't you
@@ -352,7 +352,7 @@ function drRunHTML() {
     <div class="drhero"><div class="drcards">${trCardHTML(sp.hands[sp.hero][0])}${trCardHTML(sp.hands[sp.hero][1])}</div><div><b>${hero.pos} · your move</b><small class="mono">pot ${fmt(v.pot)} bb</small></div></div>`;
   if (run.state === 'play') html += `<div class="dropts">${sp.res.actions.map((a, k) => drBtn('opt', `data-dr="ans" data-k="${a.k}"`, `<span class="kbd">${k + 1}</span>${esc(label(a))}`)).join('')}</div>`;
   else {
-    const r = run.results[run.results.length - 1], per = ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS;
+    const r = run.results[run.results.length - 1], per = run.per || (ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS);
     const lastHand = run.h === per - 1 && run.si === run.stages.length - 1;
     const L = DR_LABELS[r.lab] || DR_LABELS.good, d = r.after - r.before, h = r.hand;
     const lossTxt = h.loss == null ? '' : h.loss <= 1e-9 ? 'No value lost' : `−${h.unit === 'icm' ? `${h.loss.toFixed(h.loss < 0.1 ? 3 : 2)}% of the prize pool` : h.unit === 'bbicm' ? `${h.loss.toFixed(2)} bb of tournament equity` : `${h.loss.toFixed(2)} bb`}`;
@@ -420,6 +420,7 @@ function drResultsHTML() {
     <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → <span data-count="${r.before}:${r.after}">$${drMoney(r.after)}</span></b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
     ${r.streak ? `<div class="drstreak">🔥 Daily Grind streak: <b>${r.streak} day${r.streak === 1 ? '' : 's'}</b></div>` : ''}
     ${drProgHTML(r.prog)}
+    ${r.saved ? `<div class="drstreak">📌 ${r.saved} mistake${r.saved === 1 ? '' : 's'} saved to your deck for review</div>` : ''}
     ${drReviewHTML(r)}
     ${r.unlocked.length ? `<div class="drunlocks"><div class="drkicker">Unlocked</div>${r.unlocked.map((it) => `<div class="drunlock"><b>${esc(it.name)}</b><small>${esc(DR_SLOTS.find((x) => x[0] === it.slot)[1])} · ${esc(it.req)}</small></div>`).join('')}</div>` : ''}
     <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${ev.daily ? '' : drBtn('ghost', `data-dr="play" data-id="${ev.id}" ${drAfford(s, ev) && ev.id !== 'local' ? '' : 'disabled'}`, 'Play it again')}</div>
@@ -450,6 +451,7 @@ document.addEventListener('click', (e) => {
   if (a === 'coseq') { const p = drPg(s); p.eq[b.dataset.kind] = b.dataset.id; drSave(); drRender(); return; }
   if (a === 'drill') { drDrillStart(b.dataset.k); return; }
   if (a === 'challenge') { drChallengeStart(); return; }
+  if (a === 'review') { drReviewStart(); return; }
   if (a === 'chshare') { const t = drChallengeText(s); const done = (m) => { const el = $('drShareMsg'); if (el) el.textContent = m; }; if (navigator.share) navigator.share({ text: t }).catch(() => {}); else { try { navigator.clipboard.writeText(t); done('Copied. Paste it to your group.'); } catch { done(t); } } return; }
   if (a === 'savecopy') { const t = $('drSaveCode'); if (t) { t.select(); try { navigator.clipboard.writeText(t.value); } catch { document.execCommand('copy'); } const m = $('drSaveMsg'); if (m) m.textContent = 'Copied.'; } return; }
   if (a === 'saveload') { const t = $('drLoadCode'), err = drImportCode(t && t.value), m = $('drSaveMsg'); if (err) { if (m) m.textContent = err; return; } DR.view = 'hub'; DR.mode = 'story'; drRender(); scrollTo(0, 0); return; }

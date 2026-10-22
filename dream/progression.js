@@ -170,6 +170,13 @@ function drTrack(r, run) {
   const out = run.prog;
   const sc = DR_LABELS[r.lab] ? DR_LABELS[r.lab].score : good ? 85 : 20;
   for (const k of drSkillKeys(h, r.stage)) { const a = (p.sk[k] = p.sk[k] || []); a.push(sc); if (a.length > 30) a.shift(); }
+  // the mistake deck: save every Mistake or Blunder as the exact spot; fixing it in a review clears it
+  const sp = run.spot, ref = sp && sp.ref;
+  if (ref) {
+    p.mis = p.mis || []; const key = (x) => `${x.g}|${x.t}|${x.n}|${x.c}`, i = p.mis.findIndex((x) => key(x) === key(ref));
+    if (run.ev.review) { if (good && i >= 0) { p.mis.splice(i, 1); run.fixed = (run.fixed || 0) + 1; } }
+    else if (r.tier === 'bad' && i < 0) { p.mis.push({ ...ref, lab: r.lab, d: Date.now() }); if (p.mis.length > 60) p.mis.shift(); run.saved = (run.saved || 0) + 1; }
+  }
   if (r.tier === 'perfect') { p.st.textbook++; drQuestBump(s, 'textbook', 1, out); }
   if (r.lab === 'brilliant' || r.lab === 'great') { p.st.finds++; drQuestBump(s, 'find', 1, out); }
   if (h.cat === 'Facing a jam' && good) { if (h.mineK === 'fold') p.st.jamFold++; else p.st.jamCall++; drQuestBump(s, 'jam', 1, out); }
@@ -199,7 +206,8 @@ function drEventDone(res, run) {
   if (kind === 'sng' && ev.mode === 'league') drQuestBump(s, 'league', 1, out);
   if (kind === 'sng' && ev.mode === 'ranked') drQuestBump(s, 'ranked', 1, out);
   if (ev.daily) drQuestBump(s, 'grind', 1, out);
-  if (ev.drill) drQuestBump(s, 'drill', 1, out);
+  if (ev.drill || ev.review) drQuestBump(s, 'drill', 1, out);
+  res.fixed = run.fixed || 0; res.saved = run.saved || 0; res.deck = (p.mis || []).length;
   if (res.acc >= 85 && res.n >= 5) drQuestBump(s, 'acc', 1, out);
   drRankedCos(s, out); drCheckAch(s, out);
   out.lvl = drLevelOf(p.xp); out.xp = p.xp - out.xp0;
@@ -230,7 +238,7 @@ function drProfileHTML() {
   const s = DR.st, p = drPg(s), L = drLevelOf(p.xp), tab = DR.ptab || 'quests', weak = drWeakest(p);
   if (p.news.length) { p.news = []; drSave(); }
   const next = Object.entries(DR_ROAD).filter(([l]) => +l > L.lvl).slice(0, 4);
-  const body = tab === 'skills' ? `<p class="drhint">Accuracy over your last 30 decisions of each kind, from every mode. Drills deal only that kind of spot, so you can fix a leak fast.</p>
+  const body = tab === 'skills' ? `${drDeckCard(s)}<p class="drhint">Accuracy over your last 30 decisions of each kind, from every mode. Drills deal only that kind of spot, so you can fix a leak fast.</p>
       <div class="drskills">${DR_SKILLS.map(([k, n, d]) => { const acc = drSkillAcc(p, k), cnt = (p.sk[k] || []).length, st = drSkillStars(p, k);
         return `<div class="drskill ${k === weak ? 'weak' : ''}"><div><b>${esc(n)}</b><small>${esc(d)}</small></div><div class="drstars">${[1, 2, 3].map((i) => `<i class="${i <= st ? 'on' : ''}">★</i>`).join('')}</div>
           <div class="drskill-acc"><b class="mono">${acc == null ? '–' : acc + '%'}</b><small>${cnt < 8 ? `${cnt}/8 to rate` : `${cnt} decisions`}</small></div>${k === 'short' ? '' : drBtn(k === weak ? 'gold sm' : 'ghost sm', `data-dr="drill" data-k="${k}" ${s.ch >= 1 ? '' : 'disabled'}`, k === weak ? 'Drill your leak' : 'Drill')}</div>`; }).join('')}</div>`
@@ -282,6 +290,24 @@ function drDrillStart(kind) {
   if (S.variant !== 'nlh') setVariant('nlh');
   DR.run = { ev, stages: kind === 'icm' ? ['bubble', 'final', 'bubble'] : ['early', 'bubble', 'final'], si: 0, h: 0, stack: 100, results: [], total: 0, rng, state: 'loading', spot: null, boss: null, fails: 0, bust: false, combo: 0, t0: performance.now(), tip: 0, noBust: true };
   DR.view = 'run'; drRender(); drTable();
+}
+
+// ---------------------------------------------------------------- the mistake deck
+const DR_GID_STAGE = { ring: 'early', bubble: 'bubble', shove: 'final', sat: 'satbubble', cash: 'cash' };
+function drReviewStart() {
+  const s = DR.st, p = drPg(s); if (DR.run || !(p.mis || []).length) return;
+  const queue = p.mis.slice(0, 9).filter((it) => DR_GID_STAGE[it.g]);
+  if (!queue.length) return;
+  drModeState(s);
+  const ev = drSngEvent('casual', 'sng9'); ev.review = true; ev.id = 'review'; ev.name = 'Mistake review';
+  DR.saved = snapSetup(); TR.random = true; window.__trRand = true;
+  if (S.variant !== 'nlh') setVariant('nlh');
+  DR.run = { ev, queue, stages: queue.map((it) => DR_GID_STAGE[it.g]), per: 1, si: 0, h: 0, stack: 100, results: [], total: 0, rng: arRng(`review|${Date.now()}`), state: 'loading', spot: null, boss: null, fails: 0, bust: false, combo: 0, t0: performance.now(), tip: 0, noBust: true };
+  DR.view = 'run'; drRender(); drTable();
+}
+function drDeckCard(s) {
+  const n = (drPg(s).mis || []).length;
+  return `<section class="drdeck ${n ? '' : 'empty'}"><div><div class="drkicker">Your mistake deck</div><b>${n ? `${n} spot${n === 1 ? '' : 's'} to fix` : 'Nothing to fix right now'}</b><small>${n ? 'Every Mistake or Blunder is saved as the exact spot. Get it right in a review and it leaves the deck.' : 'Mistakes and Blunders from any mode land here for review.'}</small></div>${n ? drBtn('gold sm', 'data-dr="review"', `Review ${Math.min(9, n)} ▸`) : ''}</section>`;
 }
 
 // ---------------------------------------------------------------- backup codes

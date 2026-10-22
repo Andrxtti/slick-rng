@@ -472,3 +472,31 @@
 .dream .drverdict > div:nth-child(2) { min-width: 0; }
 .dream .drunlock.cos > div, .dream .drunlock.ach > div { display: grid; gap: 1px; min-width: 0; }
 .dream .drunlock.cos small, .dream .drunlock.ach small { color: var(--mute); font-size: 12px; }
+
+/* ---------------------------------------------------------------- visual pass: quieter labels, one moment at the table */
+.dream .drkicker { font-family: var(--disp); font-style: italic; font-size: 14px; letter-spacing: .01em; text-transform: none; color: var(--gold); font-weight: 500; line-height: 1.3; }
+/* the deal: your two cards slide in and turn over; the grade stamps onto the felt */
+.dream .drspot.st-play .drcards .trcard { animation: drDeal .42s cubic-bezier(.2, .8, .2, 1) both; transform-origin: 50% 100%; }
+.dream .drspot.st-play .drcards .trcard:nth-child(2) { animation-delay: .09s; }
+@keyframes drDeal { from { opacity: 0; transform: translate(-40px, -26px) rotate(-14deg) scale(.86); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+.dream .drverdict { animation: drStamp .34s cubic-bezier(.2, 1.35, .4, 1) both; }
+.dream .drverdict.l-brilliant, .dream .drverdict.l-great { animation: drStamp .34s cubic-bezier(.2, 1.35, .4, 1) both, drGlow 1.6s .3s ease-out both; }
+.dream .drverdict.l-mistake, .dream .drverdict.l-blunder { animation: drStamp .3s cubic-bezier(.2, 1.35, .4, 1) both, drShake .35s .28s ease both; }
+@keyframes drStamp { from { opacity: 0; transform: scale(1.14) rotate(-1.2deg); } to { opacity: 1; transform: none; } }
+@keyframes drGlow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--lc) 70%, transparent); } 100% { box-shadow: 0 0 0 18px transparent; } }
+.dream .drverdict-face { animation: drIn .3s .12s both; }
+/* results: XP fills, the accuracy ring draws, the level-up pops */
+.dream .drprog .drbar.xp i, .dream .drprofile-top .drbar.xp i { animation: drGrow 1.1s .25s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes drGrow { from { width: 0; } }
+.dream .dracc-ring circle + circle { animation: drRing 1.2s .2s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes drRing { from { stroke-dasharray: 0 314.2; } }
+.dream .drwin.lvl { animation: drPop .55s .7s cubic-bezier(.2, 1.4, .4, 1) both; border-color: var(--gold2); background: radial-gradient(ellipse at 20% 50%, rgba(244, 223, 166, .28), transparent 70%), var(--card); }
+@keyframes drPop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+.dream .drunlock.cos { animation: drIn .35s both; }
+.dream .drunlock.cos:nth-of-type(2) { animation-delay: .9s; } .dream .drunlock.cos:nth-of-type(3) { animation-delay: 1s; } .dream .drunlock.cos:nth-of-type(4) { animation-delay: 1.1s; }
+@media (prefers-reduced-motion: reduce) { .dream *, .dream *::before, .dream *::after { animation: none !important; transition: none !important; } }
+.dream .drdrills { padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.dream .drprof { grid-template-columns: 54px minmax(0, 1fr); }
+.dream .drdeck { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px; background: linear-gradient(135deg, rgba(240, 138, 75, .14), transparent 65%), var(--card); border-color: rgba(240, 138, 75, .45); }
+.dream .drdeck b { display: block; font-family: var(--disp); font-size: 19px; color: var(--cream); margin: 2px 0; } .dream .drdeck small { color: var(--mute); font-size: 12px; line-height: 1.35; display: block; }
+.dream .drdeck.empty { background: var(--card); border-color: var(--line); } .dream .drdeck.empty b { font-size: 16px; }

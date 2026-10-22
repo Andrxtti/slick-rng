@@ -156,6 +156,15 @@ async function drTable() {
   const run = DR.run; if (!run) return;
   run.state = 'loading'; run.spot = null; drRender();
   const stage = run.stages[run.si];
+  if (run.ev.review) {
+    // the mistake deck: rebuild the exact table you got wrong
+    const item = run.queue[run.si], t = item && drLib()[item.g] && drLib()[item.g][item.t];
+    if (!t) { drFinish(); return; }
+    window.__pfHold = true; applySetup(t.s);
+    run.lib = t; run.libRef = { g: item.g, t: item.t }; run.libSeats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
+    await sleep(350); if (DR.run !== run) return;
+    run.state = 'ready'; drRender(); return;
+  }
   const libGid = DR_STAGE[stage].gid, pool = typeof drLib === 'function' && drLib()[libGid];
   if (pool && pool.length) {
     // a pre-solved table: no waiting, no phone CPU, answers from a long offline solve
@@ -163,7 +172,7 @@ async function drTable() {
     const fresh = pool.map((_, i) => i).filter((i) => !run.usedTables.includes(libGid + i)), pickFrom = fresh.length ? fresh : pool.map((_, i) => i);
     const ti = pickFrom[(run.rng() * pickFrom.length) | 0]; run.usedTables.push(libGid + ti);
     window.__pfHold = true; applySetup(pool[ti].s);
-    run.lib = pool[ti]; run.seenNodes = new Set(); run.libSeats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
+    run.lib = pool[ti]; run.libRef = { g: libGid, t: ti }; run.seenNodes = new Set(); run.libSeats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
     await sleep(500); if (DR.run !== run) return;
     run.state = 'ready'; drRender(); return;
   }
@@ -187,7 +196,11 @@ async function drHand() {
   run.state = 'dealing'; drRender();
   if (run.lib) {
     await sleep(350); if (DR.run !== run) return;
-    run.spot = drLibDeal(run, drDifficulty(run)); run.state = 'play'; drRender(); return;
+    if (run.ev.review) { const it = run.queue[run.si], node = run.lib.n[it.n], row = node && node.r.find((r) => r[0] === it.c);
+      if (!row || node.p.join(',') !== it.p) { drFinish(); return; }
+      run.spot = drBuildSpot(run, node, it.n, row, 0.5); }
+    else run.spot = drLibDeal(run, drDifficulty(run));
+    run.state = 'play'; drRender(); return;
   }
   const sp = await drDeal(run.rng, drDifficulty(run)); if (DR.run !== run) return;
   if (!sp) { if (++run.fails > 3) { drFinish(); return; } drTable(); return; }
@@ -240,7 +253,7 @@ function drLibDeal(run, d) {
   const tot = list.reduce((a, x) => a + Math.sqrt(x.n.w), 0); let x = rng() * tot, pick = list[0];
   for (const it of list) { x -= Math.sqrt(it.n.w); if (x < 0) { pick = it; break; } }
   seen.add(pick.i);
-  if (pick.t && pick.t !== run.lib) { window.__pfHold = true; applySetup(pick.t.s); run.lib = pick.t; run.seenNodes = new Set(); run.libSeats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos }))); }
+  if (pick.t && pick.t !== run.lib) { const g = DR_STAGE[run.stages[run.si]].gid; window.__pfHold = true; applySetup(pick.t.s); run.lib = pick.t; run.libRef = { g, t: drLib()[g].indexOf(pick.t) }; run.seenNodes = new Set(); run.libSeats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos }))); }
   const node = pick.n, lib2 = run.lib;
   // half the time the right play is to fold, half the time it's to play: folding everything can't win
   const fi = node.a.indexOf('fold'), isFold = (r) => r[1].indexOf(Math.max(...r[1])) === fi;
@@ -249,15 +262,19 @@ function drLibDeal(run, d) {
   // rows run hardest-first: difficulty slides the window from the clear end toward the razor-thin end
   const L = rows.length, start = Math.round((1 - d) * 0.55 * L), width = Math.max(2, Math.round(0.45 * L));
   const window_ = rows.slice(Math.max(0, Math.min(start, L - 2)), Math.min(L, start + width));
-  const row = window_[(rng() * window_.length) | 0], [cls, strat] = row;
-  // deal the cards: your hand from that class, everyone else random
+  const row = window_[(rng() * window_.length) | 0];
+  return drBuildSpot(run, node, pick.i >= 0 ? pick.i : lib2.n.indexOf(node), row, d);
+}
+// a spot from a library table: your hand from the row's class, everyone else random
+function drBuildSpot(run, node, ni, row, d) {
+  const rng = run.rng, lib2 = run.lib, [cls, strat] = row;
   const combos = drCombosOf(cls), [a, b] = combos[(rng() * combos.length) | 0];
   const deck = Array.from({ length: 52 }, (_, i) => i).filter((c) => c !== a && c !== b);
   for (let i = deck.length - 1; i > 0; i--) { const j = (rng() * (i + 1)) | 0; [deck[i], deck[j]] = [deck[j], deck[i]]; }
   const seats = run.libSeats, hands = seats.map((_, i) => (i === node.h ? [a, b] : [deck[2 * i], deck[2 * i + 1]]));
   const st = [], evs = []; st[cls] = strat; evs[cls] = row[2] || null;
   const idx = node.r.indexOf(row), hard = node.r.length > 1 ? 1 - idx / (node.r.length - 1) : 0.5;
-  return { seats, hands, hero: node.h, path: node.p.map((k) => ({ k })), res: { actions: node.a.map((k) => ({ k })), strat: st, ev: evs }, cls, diff: d, hard, unit: lib2.u === 'icm' && lib2.k ? 'bbicm' : lib2.u || 'bb', evScale: lib2.u === 'icm' && lib2.k ? lib2.k : 1 };
+  return { ref: run.libRef ? { ...run.libRef, n: ni, c: cls, p: node.p.join(',') } : null, seats, hands, hero: node.h, path: node.p.map((k) => ({ k })), res: { actions: node.a.map((k) => ({ k })), strat: st, ev: evs }, cls, diff: d, hard, unit: lib2.u === 'icm' && lib2.k ? 'bbicm' : lib2.u || 'bb', evScale: lib2.u === 'icm' && lib2.k ? lib2.k : 1 };
 }
 async function drDeal(rng, d = 0.3) {
   const seats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
@@ -357,7 +374,7 @@ const drAccuracy = (results) => (results.length ? Math.round(results.reduce((a, 
 function drNext() {
   const run = DR.run; if (!run || run.state !== 'answered') return;
   if (run.bust) { drFinish(); return; }
-  const per = run.ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS;
+  const per = run.per || (run.ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS);
   if (++run.h < per) { drHand(); return; }
   run.h = 0;
   if (run.si + 1 < run.stages.length) {

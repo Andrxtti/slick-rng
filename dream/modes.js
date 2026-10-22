@@ -230,7 +230,7 @@ function drProfileStrip(s) {
   const t = drTier(s.rk.r), sz = drSeasonFor(drMonth()), mp = s.lg.pts.m[drMonth()] || 0;
   return `<section class="drprof"><div class="drprof-av" style="${drFrameStyle(s)}">${drAvatarSVG(s, { face: true })}</div>
     <div><b>${esc(s.name)}</b>${drTitleBadge(s)}<small>${t[2]} ${t[1]} · <span class="mono">${s.rk.r}</span> · ${sz.icon} <span class="mono">${drMoney(mp)}</span> league pts</small></div>
-    ${drLevelChip(s)}</section>${drTodayBar(s)}`;
+    </section>${drTodayBar(s)}`;
 }
 function drFmtCard(mode, fmt, cta) {
   const f = DR_SNG[fmt], st = DR.st.m[mode];
@@ -254,7 +254,7 @@ function drDivBoardHTML(s, rows) {
   return `<div class="drdiv-h" style="--dc:${col}"><span class="drdiv-chip"></span><div><b>${esc(name)} league</b><small>${up ? `Top ${up} move up` : 'The top division'}${div > 0 ? ` · bottom ${DR_DEMOTE} drop` : ''} · resets Monday</small></div></div><div class="drpoy-list">${html}</div>`;
 }
 function drCasualHTML(s) {
-  return `${drChallengeCard(s)}<section class="drmodehead"><div class="drkicker">Casual</div><h2 class="drh">No pressure. Just poker.</h2>
+  return `${drChallengeCard(s)}${drDeckCard(s)}<section class="drmodehead"><div class="drkicker">Casual</div><h2 class="drh">No pressure. Just poker.</h2>
     <p>Quick sit-and-gos on real solver spots. Nothing is on the line: no bankroll, no rating, no rewards. Warm up, try a new line, learn.</p>
     <small class="mono">${s.m.casual.played} played · ${s.m.casual.wins} won</small></section>
     ${(() => { const p = drPg(s), w = drWeakest(p), sk = DR_SKILLS.filter(([k]) => k !== 'short');
@@ -305,10 +305,11 @@ function drModeHubHTML() {
 }
 function drSngResultsHTML() {
   const r = DR.last, ev = r.ev, s = DR.st, f = DR_SNG[ev.fmt];
-  const headline = r.mode === 'challenge' ? `Daily Challenge · ${r.acc}%` : ev.drill ? `Drill complete · ${r.acc}%` : r.place === 1 ? 'You won the table' : r.place <= ev.paid ? `${drOrd(r.place)} place, in the money` : r.place === ev.paid + 1 ? 'Bubble' : `Out in ${drOrd(r.place)}`;
+  const headline = ev.review ? `Mistake review · ${r.fixed || 0} of ${r.n} fixed` : r.mode === 'challenge' ? `Daily Challenge · ${r.acc}%` : ev.drill ? `Drill complete · ${r.acc}%` : r.place === 1 ? 'You won the table' : r.place <= ev.paid ? `${drOrd(r.place)} place, in the money` : r.place === ev.paid + 1 ? 'Bubble' : `Out in ${drOrd(r.place)}`;
   const acc = r.n ? Math.round(((r.counts.perfect + r.counts.good) / r.n) * 100) : 0;
   let card = '';
-  if (r.mode === 'challenge') card = `<div class="drchal-grid big">${r.grid || ''}</div><div class="drrow">${drBtn('gold sm', 'data-dr="chshare"', 'Share your score')}</div><small id="drShareMsg" class="drhint"></small>`;
+  if (ev.review) card = `<p class="drres-sub">${r.deck ? `${r.deck} spot${r.deck === 1 ? '' : 's'} left in your deck. The ones you missed stay for next time.` : 'Deck cleared. Every leak you saved is fixed.'}</p>`;
+  else if (r.mode === 'challenge') card = `<div class="drchal-grid big">${r.grid || ''}</div><div class="drrow">${drBtn('gold sm', 'data-dr="chshare"', 'Share your score')}</div><small id="drShareMsg" class="drhint"></small>`;
   else if (ev.drill) card = `<p class="drres-sub">${r.acc >= 85 ? 'That leak is closing. Keep drilling it until the stars fill in.' : 'This is exactly the spot to keep working on.'}</p>`;
   else if (r.mode === 'casual') card = `<div class="drmoney"><div><small>Casual</small><b>Just for fun</b></div><div><small>Casual record</small><b class="mono">${s.m.casual.wins} W · ${s.m.casual.played} played</b></div></div>`;
   if (r.mode === 'ranked') { const t = drTier(r.r1); card = `${r.tierUp ? `<div class="drwin"><div class="drwin-icon">${r.tierUp[2]}</div><div><div class="drkicker">Ranked up</div><b>${esc(r.tierUp[1])}</b><small>Season emblem upgraded</small></div></div>` : ''}
@@ -320,8 +321,9 @@ function drSngResultsHTML() {
     <h1 class="drres-h">${esc(headline)}</h1><p class="drres-sub">${esc(`of ${f.field} · ${f.paid} paid${r.cooler ? ' · coolered' : ''}${r.place === 1 && r.luck > 0.03 ? ' · ran hot, earned it' : ''}`)}</p>
     ${card}
     ${drProgHTML(r.prog)}
+    ${r.saved && !ev.review ? `<div class="drstreak">📌 ${r.saved} mistake${r.saved === 1 ? '' : 's'} saved to your deck for review</div>` : ''}
     ${drReviewHTML(r)}
     ${r.unlocked.length ? `<div class="drunlocks"><div class="drkicker">League exclusive unlocked</div>${r.unlocked.map((it) => `<div class="drunlock"><b>${esc(it.name)}</b><small>${esc(drLgReq(it))}</small></div>`).join('')}</div>` : ''}
-    <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${r.mode === 'challenge' ? '' : ev.drill ? drBtn('ghost', `data-dr="drill" data-k="${ev.drill}"`, 'Drill again') : drBtn('ghost', `data-dr="sng" data-m="${r.mode}" data-f="${ev.fmt}"`, 'Play again')}</div>
+    <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${r.mode === 'challenge' ? '' : ev.review ? (r.deck ? drBtn('ghost', 'data-dr="review"', 'Review more') : '') : ev.drill ? drBtn('ghost', `data-dr="drill" data-k="${ev.drill}"`, 'Drill again') : drBtn('ghost', `data-dr="sng" data-m="${r.mode}" data-f="${ev.fmt}"`, 'Play again')}</div>
   </section>`;
 }
