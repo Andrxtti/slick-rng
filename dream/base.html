@@ -3564,7 +3564,7 @@ function pfConfig() {
     if (S.game === 'icm') { const left = Math.max(S.left, n); payoff = { type: 'icm', payouts: FT_PAY.slice(0, left), others: Array(left - n).fill(S.stack) }; }
     if (icmOn()) { const t = S.t222, mdl = icmModel(), pays = mdl.pays; if (mdl.left >= n && pays.length) { payoff = { type: 'icm', payouts: pays, others: Array(mdl.left - n).fill(mdl.g) }; if (pkoOn()) { payoff.bounties = seats.map((x) => bountyPct(x)); payoff.bountyFrac = bountyFrac(); } } }
     return { names: seats.map((x) => x.pos), stacks: seats.map((x) => stackOf(x)), posts: seats.map((x) => Math.min(x.put, stackOf(x))),
-      ante: seats.reduce((a, x) => a + deadOf(x), 0), sizes: { ...S.sz }, hu: T.hu, payoff, postOrder, allowLimps: S.game === '222', leave1: S.game !== 'cash' && S.variant !== 'plo', game: S.variant === 'plo' ? 'plo' : 'nlh', ...(typeof TR !== 'undefined' && TR.random ? { maxNodes: PF_TRAIN_NODES } : {}) };
+      ante: seats.reduce((a, x) => a + deadOf(x), 0), sizes: { ...S.sz }, hu: T.hu, payoff, postOrder, allowLimps: S.game === '222', leave1: S.game !== 'cash' && S.variant !== 'plo', game: S.variant === 'plo' ? 'plo' : 'nlh', ...(typeof TR !== 'undefined' && TR.random ? { maxNodes: window.__pfNodes || PF_TRAIN_NODES } : {}) };
   });
 }
 // Deep stacks need postflop play solved inside the preflop solve; until the native build
@@ -3573,8 +3573,9 @@ function pfIsDeep(cfg) { if (cfg.game === 'plo') return false; const st = [...cf
 function pfEnsure() {
   const cfg = pfConfig(), key = JSON.stringify(cfg);
   if (key === pfKey) return;
+  if (window.__pfHold) return; // the trainer is showing a pre-solved spot: don't burn the phone's CPU
   pfKey = key; pfCache.clear(); pfAsked.clear(); pfParts.clear(); pfIters.fill(0); pfDoneW.fill(false);
-  PF_SECONDS = cfg.game === 'plo' ? 360 : PF_SECONDS_NLH;
+  PF_SECONDS = window.__pfSec || (cfg.game === 'plo' ? 360 : PF_SECONDS_NLH);
   const deep = pfIsDeep(cfg);
   const st2 = [...cfg.stacks].sort((a, b) => b - a), effTop = st2[1] || st2[0];
   pfState = { iters: 0, done: false, solving: !deep, t0: performance.now(), error: null, deep, mid: !deep && effTop > PF_EXACTISH && cfg.game !== 'plo' };

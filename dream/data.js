@@ -30,10 +30,10 @@ const DR_PEOPLE = {
   slick:  { name: 'Slick', role: 'The stranger from the diner', c: '#5aa9de', img: 'slick' },
   derek:  { name: 'Derek', role: 'Your manager', c: '#9aa6b2', look: { skin: 1, hair: 'slick', hairC: 2, facial: 'none' }, eq: { outfit: 'suit', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smug' },
   rosa:   { name: 'Rosa', role: 'Floor manager, Riverside', c: '#e8704f', look: { skin: 4, hair: 'long', hairC: 0, facial: 'none' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'silver', patch: 'none' } },
-  trent:  { name: 'Trent Vale', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'slick', hairC: 4, facial: 'none' }, eq: { outfit: 'blazer', eyes: 'aviator', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
+  trent:  { name: 'Trent Vale', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'slick', hairC: 4, facial: 'none', eyeC: 3 }, eq: { outfit: 'blazer', eyes: 'aviator', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
   lou:    { name: 'Big Lou', role: 'Riverside regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'bald', hairC: 6, facial: 'beard' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'cap', chain: 'none', patch: 'none' } },
   host:   { name: 'Mara Quinn', role: 'Stream host', c: '#f878b8', look: { skin: 3, hair: 'long', hairC: 5, facial: 'none' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
-  ghost:  { name: 'The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee' }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
+  ghost:  { name: 'The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
   mom:    { name: 'Mom', role: 'Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'bun', hairC: 6, facial: 'none' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
 };
 
@@ -78,8 +78,8 @@ function drLegendLook(L) {
   let h = 2166136261; for (const ch of L.id) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
   const r = (n) => { h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0; return h % n; };
   const old = L.era === 'Old school', young = L.era === 'Rising star' || L.era === 'Online';
-  const hair = old ? ['bald', 'short', 'slick', 'buzz'][r(4)] : ['short', 'fade', 'wavy', 'curly', 'slick', 'buzz', 'long', 'bun'][r(8)];
-  return { look: { skin: r(8), hair, hairC: old ? [6, 7, 0][r(3)] : [0, 1, 2, 3, 4][r(5)], facial: old ? ['mustache', 'beard', 'none', 'goatee'][r(4)] : ['none', 'none', 'stubble', 'goatee', 'beard'][r(5)] },
+  const hair = old ? ['bald', 'short', 'slick', 'buzz'][r(4)] : ['short', 'fade', 'wavy', 'curly', 'slick', 'buzz', 'long', 'bun', 'locs'][r(9)];
+  return { look: { skin: r(8), hair, hairC: old ? [6, 7, 0][r(3)] : [0, 1, 2, 3, 4][r(5)], facial: old ? ['mustache', 'beard', 'none', 'goatee'][r(4)] : ['none', 'none', 'stubble', 'goatee', 'beard'][r(5)], eyeC: [0, 0, 1, 2, 3, 4, 5][r(7)] },
     eq: { outfit: old ? ['suit', 'blazer', 'polo'][r(3)] : young ? ['hoodie', 'bomber', 'polo', 'blazer'][r(4)] : ['suit', 'designer', 'blazer', 'bomber'][r(4)],
       eyes: ['none', 'none', 'tinted', 'aviator', 'readers'][r(5)], head: old ? ['none', 'cap'][r(2)] : young ? ['none', 'phones', 'cap', 'beanie'][r(4)] : 'none', chain: ['none', 'none', 'silver', 'cuban'][r(4)], patch: 'none' } };
 }

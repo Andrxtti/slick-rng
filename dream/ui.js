@@ -48,6 +48,7 @@ function drCreateHTML() {
       <div class="drfield"><span>Skin tone</span><div class="drsws">${sw('skin', DR_SKIN, look.skin, 'skin')}</div></div>
       <div class="drfield"><span>Hair</span><div class="drchips">${opts('hair', DR_HAIR, look.hair)}</div></div>
       <div class="drfield"><span>Hair color</span><div class="drsws">${sw('hairC', DR_HAIRC, look.hairC, 'hair')}</div></div>
+      <div class="drfield"><span>Eye color</span><div class="drsws">${sw('eyeC', DR_EYEC, look.eyeC || 0, 'eye')}</div></div>
       <div class="drfield"><span>Facial hair</span><div class="drchips">${opts('facial', DR_FACIAL, look.facial)}</div></div>
       <div class="drrow">${drBtn('ghost', 'data-dr="title"', 'Back')}${drBtn('gold big', 'data-dr="begin"', 'Clock in →')}</div>
       <p class="drhint">Clothes, jewelry, your home and your ride come later. You have to earn those.</p>
@@ -402,7 +403,7 @@ document.addEventListener('click', (e) => {
   if (a === 'newyes') { DR.st = drDefault(); drSave(); DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'create'; drRender(); return; }
   if (a === 'newno') { $('drNewConfirm').hidden = true; return; }
   if (a === 'title') { DR.view = 'title'; drRender(); return; }
-  if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' ? +b.dataset.v : b.dataset.v; drRender(); return; }
+  if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' || f === 'eyeC' ? +b.dataset.v : b.dataset.v; drRender(); return; }
   if (a === 'begin') {
     const n = (($('drName') || {}).value || '').trim();
     const st = drDefault(); st.made = true; st.name = n || 'Rookie'; st.look = { ...DR.draft.look };

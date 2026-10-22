@@ -157,6 +157,18 @@ async function drTable() {
   const run = DR.run; if (!run) return;
   run.state = 'loading'; run.spot = null; drRender();
   const stage = run.stages[run.si];
+  const libGid = DR_STAGE[stage].gid, pool = typeof DR_LIB !== 'undefined' && DR_LIB[libGid];
+  if (pool && pool.length) {
+    // a pre-solved table: no waiting, no phone CPU, answers from a long offline solve
+    run.usedTables = run.usedTables || [];
+    const fresh = pool.map((_, i) => i).filter((i) => !run.usedTables.includes(libGid + i)), pickFrom = fresh.length ? fresh : pool.map((_, i) => i);
+    const ti = pickFrom[(run.rng() * pickFrom.length) | 0]; run.usedTables.push(libGid + ti);
+    window.__pfHold = true; applySetup(pool[ti].s);
+    run.lib = pool[ti]; run.seenNodes = new Set(); run.libSeats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
+    await sleep(500); if (DR.run !== run) return;
+    run.state = 'ready'; drRender(); return;
+  }
+  run.lib = null; window.__pfHold = false;
   for (let attempt = 0; attempt < 3; attempt++) {
     const gid = DR_STAGE[stage].gid, setup = arSetup(gid === 'sat' ? 'bubble' : gid, run.rng);
     // satellite bubble: every seat pays the same, so ICM squeezes hardest here
@@ -174,24 +186,109 @@ async function drTable() {
 async function drHand() {
   const run = DR.run; if (!run) return;
   run.state = 'dealing'; drRender();
-  const sp = await drDeal(run.rng); if (DR.run !== run) return;
+  if (run.lib) {
+    await sleep(350); if (DR.run !== run) return;
+    run.spot = drLibDeal(run, drDifficulty(run)); run.state = 'play'; drRender(); return;
+  }
+  const sp = await drDeal(run.rng, drDifficulty(run)); if (DR.run !== run) return;
   if (!sp) { if (++run.fails > 3) { drFinish(); return; } drTable(); return; }
   run.spot = sp; run.state = 'play'; drRender();
 }
-// a good teaching spot: the solver has a clear opinion, and the action before you is something real
-// people do (not five players all-in in front of you because a half-solved tree said so)
-async function drDeal(rng) {
-  let last = null;
-  for (let t = 0; t < 10; t++) {
-    const sp = await arDeal(rng); if (!sp) return last;
-    last = sp;
-    const strat = sp.res.strat[sp.cls], k = strat.length, hi = Math.max(...strat), lo = Math.min(...strat);
-    const flat = k >= 2 && hi - lo < 0.22;
-    let jams = 0, callsAfterJam = 0; for (const e of sp.path) { if (e.k === 'allin') jams++; else if (jams && e.k === 'call') callsAfterJam++; }
-    const chaos = jams + callsAfterJam >= 3 || jams >= 2;
-    if (!flat && !chaos) return sp;
+// ---------------------------------------------------------------- picking the hand you're dealt
+// Every hand is a real decision. At your seat the solver ranks all 169 starting hands by how close
+// the right play is to the next-best play (the EV gap). Trash that's an instant fold and monsters that
+// play themselves are never dealt. Difficulty narrows the pool: early in the story you get clear but
+// meaningful spots (AJo under the gun, 99 facing a jam); later only the razor-thin ones.
+let DR_COMBOS = null;
+function drCombosOf(cls) {
+  if (!DR_COMBOS) { DR_COMBOS = Array.from({ length: 169 }, () => []); for (let a = 1; a < 52; a++) for (let b = 0; b < a; b++) DR_COMBOS[Engine.CLASS_OF[Engine.comboIndex(a, b)]].push([a, b]); }
+  return DR_COMBOS[cls];
+}
+// 0 = the local card room, 1 = the Hall of Legends
+function drDifficulty(run) {
+  const ev = run.ev, stage = run.stages[Math.min(run.si, run.stages.length - 1)];
+  let d;
+  if (ev.kind === 'sng') d = ev.mode === 'casual' ? 0.4 : ev.mode === 'league' ? 0.6 : Math.max(0.3, Math.min(1, 0.35 + ((DR.st.rk || { r: 1000 }).r - 1000) / 1500));
+  else if (ev.daily) d = 0.15 + 0.11 * Math.min(7, DR.st.ch);
+  else d = [0.12, 0.22, 0.36, 0.5, 0.64, 0.78, 0.9, 1][Math.min(7, ev.id === 'main' ? 6 : ev.ch || 0)];
+  if (stage === 'final' || stage === 'deep') d += 0.08;
+  if (run.boss) d += 0.05;
+  return Math.max(0, Math.min(1, d));
+}
+function drCandidates(res, d) {
+  const rows = [];
+  for (let c = 0; c < 169; c++) {
+    const st = res.strat[c], ev = res.ev && res.ev[c]; if (!st || !ev) continue;
+    const top = Math.max(...st); if (top < 0.6) continue; // a coin-flip mix has no "right answer" to learn
+    const e = ev.slice().sort((x, y) => y - x), gap = e[0] - (e[1] == null ? e[0] : e[1]);
+    if (!(gap >= 0)) continue;
+    rows.push({ c, gap, top });
   }
-  return last;
+  rows.sort((x, y) => x.gap - y.gap);
+  const n = Math.max(8, Math.round(42 - 32 * d)); // easy: the 42 closest hands; legend: the 10 closest
+  return rows.slice(0, n);
+}
+// a hand from a pre-solved table: a real situation (weighted by how often it happens), then a hand that
+// makes it a decision. Each situation's hands are stored hardest-first; difficulty picks the window.
+function drLibDeal(run, d) {
+  const lib = run.lib, rng = run.rng, seen = (run.seenNodes = run.seenNodes || new Set());
+  const nodes = lib.n.map((n, i) => ({ n, i })).filter((x) => !seen.has(x.i));
+  const list = nodes.length ? nodes : lib.n.map((n, i) => ({ n, i }));
+  const tot = list.reduce((a, x) => a + Math.sqrt(x.n.w), 0); let x = rng() * tot, pick = list[0];
+  for (const it of list) { x -= Math.sqrt(it.n.w); if (x < 0) { pick = it; break; } }
+  seen.add(pick.i);
+  // half the time the right play is to fold, half the time it's to play: folding everything can't win
+  const fi = node.a.indexOf('fold'), isFold = (r) => r[1].indexOf(Math.max(...r[1])) === fi;
+  const folds = node.r.filter(isFold), plays = node.r.filter((r) => !isFold(r));
+  const want = rng() < 0.5 ? plays : folds, rows = want.length >= 2 ? want : node.r;
+  const node_ = pick.n, L = rows.length, start = Math.round((1 - d) * 0.55 * L), width = Math.max(2, Math.round(0.45 * L));
+  const window_ = rows.slice(Math.max(0, Math.min(start, L - 2)), Math.min(L, start + width));
+  const node = node_;
+  const [cls, strat] = window_[(rng() * window_.length) | 0];
+  // deal the cards: your hand from that class, everyone else random
+  const combos = drCombosOf(cls), [a, b] = combos[(rng() * combos.length) | 0];
+  const deck = Array.from({ length: 52 }, (_, i) => i).filter((c) => c !== a && c !== b);
+  for (let i = deck.length - 1; i > 0; i--) { const j = (rng() * (i + 1)) | 0; [deck[i], deck[j]] = [deck[j], deck[i]]; }
+  const seats = run.libSeats, hands = seats.map((_, i) => (i === node.h ? [a, b] : [deck[2 * i], deck[2 * i + 1]]));
+  const st = []; st[cls] = strat;
+  return { seats, hands, hero: node.h, path: node.p.map((k) => ({ k })), res: { actions: node.a.map((k) => ({ k })), strat: st, ev: null }, cls, diff: d };
+}
+async function drDeal(rng, d = 0.3) {
+  const seats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
+  const clsOf = (h) => Engine.CLASS_OF[Engine.comboIndex(h[0], h[1])];
+  let fallback = null;
+  for (let tries = 0; tries < 30; tries++) {
+    const deck = Array.from({ length: 52 }, (_, i) => i);
+    for (let i = 0; i < seats.length * 2; i++) { const j = i + ((rng() * (52 - i)) | 0); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+    const hands = seats.map((_, i) => [deck[2 * i], deck[2 * i + 1]]);
+    const hero = (rng() * seats.length) | 0, path = [];
+    let res = null;
+    for (let step = 0; step < 40; step++) {
+      res = await pfQueryAsync(path);
+      if (!res.ok || res.terminal || res.player === hero) break;
+      const strat = res.strat[clsOf(hands[res.player])]; let x = rng(), a = strat.length - 1;
+      for (let i = 0; i < strat.length; i++) { x -= strat[i]; if (x < 0) { a = i; break; } }
+      path.push({ k: res.actions[a].k });
+    }
+    if (!(res && res.ok && !res.terminal && res.player === hero)) continue;
+    // real tables, not solver chaos: no three-way all-in pileups in front of you
+    let jams = 0, callsAfterJam = 0; for (const e of path) { if (e.k === 'allin') jams++; else if (jams && e.k === 'call') callsAfterJam++; }
+    if (jams + callsAfterJam >= 3 || jams >= 2) continue;
+    // the big blind with a free check is not a decision
+    if (!res.actions.some((a) => a.k === 'fold')) continue;
+    const pool = drCandidates(res, d); if (pool.length < 4) continue;
+    // deal yourself one of the hands that makes this spot a real decision
+    const used = new Set(hands.flat().filter((_, i) => Math.floor(i / 2) !== hero));
+    const order = pool.map((r) => r.c).sort(() => rng() - 0.5);
+    for (const c of order) {
+      const opts = drCombosOf(c).filter(([a, b]) => !used.has(a) && !used.has(b)); if (!opts.length) continue;
+      hands[hero] = opts[(rng() * opts.length) | 0].slice();
+      const sp = { seats, hands, hero, path, res, cls: c, diff: d };
+      if (path.length || rng() < 0.45) return sp; // favour spots with action in front of you
+      fallback = fallback || sp; break;
+    }
+  }
+  return fallback;
 }
 function drAnswer(k) {
   const run = DR.run; if (!run || run.state !== 'play') return;
@@ -206,6 +303,7 @@ function drAnswer(k) {
   const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
   const best = strat.indexOf(fmax), hero = v.seats[sp.hero];
   const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
+  if (window.__drLog) window.__drLog.push({ ...hand, tier, stage: run.stages[run.si], d: sp.diff, acts: sp.res.actions.map((x) => x.k).join('/'), facing: sp.path.filter((e) => e.k !== 'fold').map((e) => e.k).join('-') || 'first in' });
   run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand });
   if (run.stack <= 0) run.bust = true;
   arSfx(tier === 'bad' ? 'bad' : tier); arBuzz(tier);
@@ -239,6 +337,7 @@ function drTip(r) {
   return loose ? 'Against a 3-bet or more, only the top of your range keeps going.' : "You're folding too much to aggression. This hand wants to continue.";
 }
 function drRestore() {
+  window.__pfHold = false;
   if (DR.saved) { applySetup(DR.saved); DR.saved = null; }
   TR.random = false; window.__trRand = false;
 }
