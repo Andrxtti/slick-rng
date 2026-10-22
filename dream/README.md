@@ -33,3 +33,28 @@ homes, rides, sponsor patches) are milestone-based only — nothing is bought, n
 - Chip swing per decision: `DR_DELTA` in engine.js
 - Win threshold: `winT` in `drPlace` (rises with field size and chapter)
 - Cooler odds: `drCoolerRoll`
+
+## Overhaul (Oct 22)
+
+### Hands: the pre-solved library (`spots.js`)
+- Tables are solved offline for ~4 minutes each (headless Chromium, `gen.py` in the session scratchpad), then harvested:
+  first decisions plus "second decisions" (you opened, now face a 3-bet or jam), with every hand class's strategy and action EVs.
+- `pack.py` keeps real situations (frequent lines, clean re-raise spots), drops autopilot hands (trash nobody plays,
+  premiums with nobody raising) and orders each situation's hands hardest-first by EV gap.
+- `drLibDeal` deals from it: difficulty (`drDifficulty`: chapter, stage, boss, rating) picks the window, half the hands
+  are right-to-fold and half right-to-play, so folding everything cannot win. Phones never solve (`window.__pfHold`).
+- Live solving remains only as a fallback for stages with no library tables.
+
+### Grading (`drLabelFor`)
+Chess.com-style labels from EV loss (bb, or % of prize pool with ICM): Brilliant, Great, Best, Excellent, Good,
+Inaccuracy, Mistake, Blunder. Mixed strategies are respected (a play the solver makes 25%+ is never worse than Good).
+Event accuracy is the average decision score; the results screen has a full game review.
+
+### Progression (`progression.js`)
+- Career level from XP in every mode (decisions, finishes, quests, achievements); a level road of table cosmetics
+  (card backs, felts, avatar frames, titles). Clothes stay Storyline-only; seasonal gear stays League-only;
+  ranked tiers unlock ranked cosmetics.
+- 3 daily quests (same for everyone that day), 18 tiered achievements, 6 tracked skills with stars and drills.
+- Leagues: Duolingo-style weekly 30-player divisions by chip colour with promotion and demotion.
+- Daily Challenge: 9 hands seeded by the date, one attempt, shareable emoji grid.
+- Backup codes to move a career between devices.

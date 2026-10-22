@@ -13,7 +13,7 @@ function drRender() {
   if (DR.view === 'hub' && s.made && s.ch === 0 && !s.story.p_diner && !DR.run) { drPlayScene(s.story.p_office ? 'p_diner' : 'p_office'); return; }
   box.className = 'dream v-' + DR.view;
   box.innerHTML = DR.view === 'title' ? drTitleHTML() : DR.view === 'create' ? drCreateHTML() : DR.view === 'scene' ? drSceneHTML()
-    : DR.view === 'run' ? drRunHTML() : DR.view === 'results' ? (DR.last && DR.last.sng ? drSngResultsHTML() : drResultsHTML()) : DR.mode && DR.mode !== 'story' ? drModeHubHTML() : drHubHTML();
+    : DR.view === 'profile' ? drProfileHTML() : DR.view === 'run' ? drRunHTML() : DR.view === 'results' ? (DR.last && DR.last.sng ? drSngResultsHTML() : drResultsHTML()) : DR.mode && DR.mode !== 'story' ? drModeHubHTML() : drHubHTML();
   if (DR.view === 'scene') drType();
   if (DR.view === 'results') drCountUp();
   const nm = $('drName'); if (nm) nm.oninput = () => { DR.draft.name = nm.value.slice(0, 18); const p = $('drPrevName'); if (p) p.textContent = nm.value || 'You'; };
@@ -159,6 +159,12 @@ function drTitleStrip(s) {
   return `<div class="drtitles">${k.map((t) => `<div class="drtl ${s.titles[t] ? 'on' : ''}" title="${DR_TITLES[t].plural}"><b>${DR_TITLES[t].icon}</b><span class="mono">${s.titles[t]}</span><small>${DR_TITLES[t].plural}</small></div>`).join('')}
     <div class="drtl ${Object.keys(s.legends).length ? 'on' : ''}"><b>🂡</b><span class="mono">${Object.keys(s.legends).length}</span><small>Legends beaten</small></div></div>`;
 }
+// one tap to your profile: level, XP and today's quests
+function drTodayBar(s) {
+  const p = drPg(s), L = drLevelOf(p.xp), done = p.q.list.filter((q) => q.done).length;
+  return `<button class="drtoday" data-dr="profile"><span class="drlvl"><b>${L.lvl}</b><span><i style="width:${((L.into / L.need) * 100).toFixed(1)}%"></i></span></span>
+    <span class="drtoday-t"><b>Career level ${L.lvl}</b><small>${done}/3 daily quests${p.news.length ? ` · ${p.news.length} new unlock${p.news.length > 1 ? 's' : ''}` : ''}</small></span><span class="drtoday-q">${p.q.list.map((q) => `<i class="${q.done ? 'on' : ''}"></i>`).join('')}</span><span aria-hidden="true">›</span></button>`;
+}
 function drHubHTML() {
   const s = DR.st, chd = DR_CHAPTERS[Math.min(7, s.ch)], pr = chd.prog ? chd.prog(s) : [s.story.p_after ? 1 : 0, ''];
   const home = DR_ITEMS.find((x) => x.slot === 'home' && x.id === s.eq.home), ride = DR_ITEMS.find((x) => x.slot === 'ride' && x.id === s.eq.ride);
@@ -169,19 +175,20 @@ function drHubHTML() {
       <div class="drlife-info">
         <div class="drkicker">${esc(chd.n)} · ${esc(chd.t)}</div>
         <div class="drlife-name">${esc(s.name)}</div>
-        <div class="drlife-rep">${esc(drRep(s))}</div>
+        <div class="drlife-rep">${esc(drRep(s))}${drTitleBadge(s)}</div>
         <div class="drbank"><small>Bankroll</small><b class="mono">$${drMoney(s.br)}</b>${s.debt > 0 ? `<span class="drdebt">Owes Slick $${drMoney(s.debt)}</span>` : ''}</div>
         <div class="drlifestyle"><span>${DR_HOME_ICON[s.eq.home] || '🏠'} ${esc(home ? home.name : '')}</span><span>${DR_RIDE_ICON[s.eq.ride] || '🚗'} ${esc(ride ? ride.name : '')}</span></div>
       </div>
     </section>
     ${!s.flags.howto && s.ch >= 1 ? `<section class="drhowto"><div class="drsay">${drSpeaker({ sp: 'slick' }).av}<div><b>How this works</b>
-      <p>Every event is a run of real solver spots. Your <b>tournament life</b> bar grows with textbook decisions and drops hard on mistakes; three or four can send you home. Your <b>bankroll</b> is your score: it decides what you can enter, so don't bet the dream on one shot. Titles, cashes and a bigger roll unlock clothes, jewelry, a better place and a better ride. Win every chapter's goal and the next stop opens.</p></div></div>
+      <p>Every hand is a real decision from a long solver run, graded like a chess engine grades moves: <b>Best</b>, <b>Inaccuracy</b>, <b>Mistake</b>, <b>Blunder</b>, and the rare <b>Brilliant</b>. Good decisions grow your <b>tournament life</b>; a couple of blunders send you home. Your <b>bankroll</b> decides what you can enter. Titles and a bigger roll unlock clothes, jewelry, a better place and a better ride. Every decision in every mode also earns <b>career XP</b> toward table cosmetics. It gets harder as you climb.</p></div></div>
       ${drBtn('gold sm', 'data-dr="howto"', 'Got it')}</section>` : ''}
     ${drTitleStrip(s)}
     <section class="drgoal">
       <div><div class="drkicker">${esc(chd.n)} goal</div><b>${esc(chd.goal)}</b><div class="drbar"><i style="width:${(pr[0] * 100).toFixed(1)}%"></i></div><small>${esc(pr[1])}</small></div>
-      ${drBtn('ghost sm', `data-dr="replay" data-id="${s.ch === 0 ? 'p_diner' : 'c' + Math.min(7, s.ch)}"`, '▶ Story')}
+      <div class="drgoal-btns">${(() => { const id = s.ch >= 1 ? drPick(s) : null, ev = id && drEvent(id); return ev && drAfford(s, ev) ? drBtn('gold sm', `data-dr="play" data-id="${ev.id}"`, `Play ${esc(ev.name.replace(/^(WCS|Circuit|Royal Tour) /, ''))} ▸`) : ''; })()}${drBtn('ghost sm', `data-dr="replay" data-id="${s.ch === 0 ? 'p_diner' : 'c' + Math.min(7, s.ch)}"`, '▶ Story')}</div>
     </section>
+    ${drTodayBar(s)}
     <nav class="drtabs" role="tablist">${[['events', 'Schedule'], ['closet', `Closet${fresh ? ` <i class="drnew">${fresh}</i>` : ''}`], ['trophies', 'Trophies'], ['legends', 'Legends'], ['story', 'Story']].map(([k, n]) => `<button role="tab" data-dr="tab" data-t="${k}" aria-selected="${tab === k}">${n}</button>`).join('')}</nav>
     <div class="drtabbody">${tab === 'closet' ? drClosetHTML() : tab === 'trophies' ? drTrophiesHTML() : tab === 'legends' ? drLegendsHTML() : tab === 'story' ? drStoryHTML() : drEventsHTML()}</div>`;
 }
@@ -227,6 +234,15 @@ function drEventsHTML() {
       <div><b>Story-only gear</b><small>Everything in this closet comes from your career. League exclusives live in Leagues.</small></div>
       <div><b>Story chapters 7+</b><small>Rivalries, sponsorship deals and the Hall of Legends ceremony.</small></div></div></div>`;
 }
+// rarity reads straight off what it takes to earn an item
+function drRarity(it) {
+  if (it.league) return 'limited';
+  const src = String(it.test);
+  if (/titles\.me|meft|island|hyper/.test(src) || /me >= 1/.test(src)) return 'legendary';
+  if (/bracelet|titan|tour|1e6|2e6|5e6/.test(src)) return 'epic';
+  if (/ring|circuit|peak >= (2|5|1)\d{4,5}|ch >= [23]|streak|bestStreak/.test(src)) return 'rare';
+  return 'common';
+}
 function drClosetHTML() {
   const s = DR.st, fresh = new Set(s.newItems || []);
   const html = DR_SLOTS.map(([slot, label]) => {
@@ -234,11 +250,13 @@ function drClosetHTML() {
     const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))];
     return `<div class="drslot"><div class="drkicker">${label}</div><div class="dritems">${items.map((it) => {
       const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it);
-      return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : ''}</button>`;
+      const rar = drRarity(it);
+      return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''} r-${rar}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : `<i class="drrar">${rar}</i>`}</button>`;
     }).join('')}</div></div>`;
   }).join('');
   if (fresh.size) { s.newItems = []; drSave(); }
-  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${drAvatarSVG(s)}</div><div class="drslots">${html}</div></div>`;
+  const all = [...DR_ITEMS.filter((x) => x.id !== 'none'), ...DR_LG_ITEMS], have = all.filter((x) => drOwns(s, x.slot, x.id)).length;
+  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div><div class="drslots">${html}</div></div>`;
 }
 function drTrophiesHTML() {
   const s = DR.st, acc = s.dec ? Math.round(((s.perfect + s.good) / s.dec) * 100) : 0;
@@ -322,22 +340,25 @@ function drRunHTML() {
   if (run.state === 'dealing') return `${head}<section class="drspot dim"><div class="drdealing"><span></span><span></span><span></span></div><small class="drhint">Dealing…</small></section>`;
   const sp = run.spot, keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
   const hero = v.seats[sp.hero], label = (a) => { const o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
-  let html = `${head}<section class="drspot">
+  const pgx = drPg(DR.st), felt = DR_FELTS[pgx.eq.felt] || DR_FELTS.green, back = DR_BACKS[pgx.eq.back] || DR_BACKS.classic;
+  let html = `${head}<section class="drspot" style="--felt:${felt.c};--trim:${felt.trim || 'transparent'};--back:${back.bg};--backbd:${back.bd}">
     <div class="drspot-head"><span class="drkicker">Hand ${run.results.length + (run.state === 'answered' ? 0 : 1)}</span><span class="drhint">${esc(trCategory(v))}</span></div>
     <div class="drseats">${(() => {
       // at the final table, the boss sits in the biggest stack that isn't you
       let bossSeat = -1, bossName = '';
       if (stage === 'final' && run.boss) { bossName = run.boss === 'ghost' ? 'The Ghost' : (DR_PEOPLE[run.boss] || drLegend(run.boss) || {}).name || ''; let big = -1; v.seats.forEach((x, k) => { if (k !== sp.hero && x.stack > big) { big = x.stack; bossSeat = k; } }); }
-      return v.seats.map((x, k) => `<div class="drseat ${k === sp.hero ? 'me' : ''} ${x.folded ? 'fold' : ''} ${k === bossSeat ? 'boss' : ''}"><b>${x.pos}</b>${k === bossSeat ? `<small class="drbossname">${esc(bossName)}</small>` : ''}<small class="mono">${fmt(x.stack - x.put)}bb</small><small>${esc(x.acts.join(' · ') || (k === sp.hero ? 'you' : ''))}</small></div>`).join('');
+      return v.seats.map((x, k) => `<div class="drseat ${k === sp.hero ? 'me' : ''} ${x.folded ? 'fold' : ''} ${k === bossSeat ? 'boss' : ''}">${k !== sp.hero && !x.folded ? '<span class="drseat-cards"><i></i><i></i></span>' : ''}<b>${x.pos}</b>${k === bossSeat ? `<small class="drbossname">${esc(bossName)}</small>` : ''}<small class="mono">${fmt(x.stack - x.put)}bb</small><small>${esc(x.acts.join(' · ') || (k === sp.hero ? 'you' : ''))}</small></div>`).join('');
     })()}</div>
     <div class="drhero"><div class="drcards">${trCardHTML(sp.hands[sp.hero][0])}${trCardHTML(sp.hands[sp.hero][1])}</div><div><b>${hero.pos} · your move</b><small class="mono">pot ${fmt(v.pot)} bb</small></div></div>`;
   if (run.state === 'play') html += `<div class="dropts">${sp.res.actions.map((a, k) => drBtn('opt', `data-dr="ans" data-k="${a.k}"`, `<span class="kbd">${k + 1}</span>${esc(label(a))}`)).join('')}</div>`;
   else {
     const r = run.results[run.results.length - 1], per = ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS;
     const lastHand = run.h === per - 1 && run.si === run.stages.length - 1;
-    const big = { perfect: 'Textbook.', good: 'Solid.', close: 'Playable.', bad: 'Mistake.' }[r.tier], sub = { perfect: "The solver's favourite play.", good: 'A play the solver makes too.', close: 'The solver mixes it in, but prefers something else.', bad: 'The solver (almost) never does this.' }[r.tier];
-    const d = r.after - r.before;
-    html += `<div class="drverdict t-${r.tier}"><div><b>${big}</b><small>${sub}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < 0 ? 'Life ▼▼' : 'Life ='}</span></div>
+    const L = DR_LABELS[r.lab] || DR_LABELS.good, d = r.after - r.before, h = r.hand;
+    const lossTxt = h.loss == null ? '' : h.loss <= 1e-9 ? 'No value lost' : `−${h.unit === 'icm' ? `${h.loss.toFixed(h.loss < 0.1 ? 3 : 2)}% of the prize pool` : h.unit === 'bbicm' ? `${h.loss.toFixed(2)} bb of tournament equity` : `${h.loss.toFixed(2)} bb`}`;
+    const mood = r.tier === 'perfect' ? 'smile' : r.tier === 'bad' ? 'frown' : 'flat';
+    html += `<div class="drverdict t-${r.tier} l-${r.lab}" style="--lc:${L.c}"><div class="drverdict-face">${drAvatarSVG(DR.st, { face: true, mouth: mood })}</div><div><span class="drlab"><i>${L.icon}</i>${esc(L.n)}</span><small>${esc(L.line)}${lossTxt ? ` · <span class="mono">${lossTxt}</span>` : ''}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < -20 ? 'Life ▼▼' : d < 0 ? 'Life ▼' : 'Life ='}</span></div>
+      ${run.combo >= 3 && r.tier !== 'bad' ? `<div class="drcombo">🔥 ${run.combo} in a row</div>` : ''}
       <div class="drmix">${sp.res.actions.map((a, k) => `<div class="${k === r.j ? 'mine' : ''}"><span>${esc(label(a))}${k === r.j ? ' · you' : ''}</span><i style="--w:${(r.strat[k] * 100).toFixed(1)}%"></i><b class="mono">${Math.round(r.strat[k] * 100)}%</b></div>`).join('')}</div>
       ${drTip(r) ? `<div class="drtip">${drSpeaker({ sp: 'slick' }).av}<p>${esc(drTip(r))}</p></div>` : ''}
       ${run.bust ? `<div class="drbust">${ev.kind === 'cash' ? 'Felted. That session is over.' : 'Busted. Your tournament is over.'}</div>` : ''}
@@ -356,6 +377,21 @@ function drCountUp() {
     const step = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = '$' + drMoney(a + (b - a) * e); if (k < 1 && el.isConnected) requestAnimationFrame(step); };
     requestAnimationFrame(step);
   });
+}
+// the post-game review: accuracy, label counts, then every decision you made
+function drReviewHTML(r) {
+  const all = r.all || [], acc = r.acc != null ? r.acc : drAccuracy(all), n = all.length;
+  const order = ['brilliant', 'great', 'best', 'excellent', 'good', 'inaccuracy', 'mistake', 'blunder'];
+  const cnt = {}; all.forEach((x) => { cnt[x.lab] = (cnt[x.lab] || 0) + 1; });
+  const ring = `<svg viewBox="0 0 120 120" class="dracc-ring" aria-hidden="true"><circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,.1)" stroke-width="12" fill="none"/><circle cx="60" cy="60" r="50" stroke="${acc >= 85 ? '#8bd17c' : acc >= 65 ? '#f2c14e' : '#e5484d'}" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="${(acc / 100) * 314.2} 314.2" transform="rotate(-90 60 60)"/></svg>`;
+  const verdict = acc >= 95 ? 'Solver-level poker.' : acc >= 85 ? 'Strong, disciplined play.' : acc >= 70 ? 'Solid, with a few leaks.' : acc >= 50 ? 'Some costly spots. Review them.' : 'Rough one. The review is where you get better.';
+  const row = (x, i) => { const h = x.hand, L = DR_LABELS[x.lab] || DR_LABELS.good;
+    const loss = h.loss == null || h.loss <= 1e-9 ? '' : `−${h.unit === 'icm' ? h.loss.toFixed(2) + '%' : h.loss.toFixed(2) + 'bb'}`; // bbicm shows as bb
+    return `<details class="drrev-row" ${x.tier === 'bad' && i < 40 ? '' : ''}><summary><i class="drrev-ic" style="--lc:${L.c}">${L.icon}</i><span class="drkey-cards">${h.cards.map((c) => `<span class="mono s-${SUITS[c & 3]}">${RANKS[c >> 2]}${SYM[SUITS[c & 3]]}</span>`).join('')}</span><span class="drrev-what"><b>${esc(h.pos)} · ${esc(h.bb)}bb</b><small>${esc(h.cat)}</small></span><span class="drrev-play"><small>You</small><b>${esc(h.mine)}</b></span>${loss ? `<span class="mono drrev-loss">${loss}</span>` : ''}</summary>
+      <div class="drrev-body"><div class="drmix">${(h.mix || []).map(([t, f]) => `<div class="${t === h.mine ? 'mine' : ''}"><span>${esc(t)}${t === h.mine ? ' · you' : ''}</span><i style="--w:${f}%"></i><b class="mono">${f}%</b></div>`).join('')}</div>${drTip({ tier: x.tier, stage: x.stage, hand: h }) ? `<p class="drhint">${esc(drTip({ tier: x.tier, stage: x.stage, hand: h }))}</p>` : ''}</div></details>`; };
+  return `<div class="drreview"><div class="drreview-top"><div class="dracc">${ring}<b class="mono">${acc}</b><small>Accuracy</small></div><div><div class="drkicker">Game review</div><b class="drreview-v">${verdict}</b>
+      <div class="drlabs">${order.filter((k) => cnt[k]).map((k) => `<span style="--lc:${DR_LABELS[k].c}"><i>${DR_LABELS[k].icon}</i>${cnt[k]} ${esc(DR_LABELS[k].n)}</span>`).join('')}</div>${r.bestCombo >= 3 ? `<small class="drhint">Best run: ${r.bestCombo} good decisions in a row</small>` : ''}</div></div>
+    ${n ? `<div class="drrev-list">${all.map(row).join('')}</div><small class="drhint">Tap any hand to see the solver's full mix.</small>` : ''}</div>`;
 }
 function drKeysHTML(keys) {
   const r = { keys };
@@ -383,9 +419,8 @@ function drResultsHTML() {
     ${r.ticket ? `<div class="drwin"><div class="drwin-icon">🎟</div><div><div class="drkicker">Seat won</div><b>${esc(drEvent(r.ticket).name)}</b><small>Buy-in $${drMoney(drEvent(r.ticket).buyin)}, paid for.</small></div></div>` : ''}
     <div class="drmoney">${ev.kind === 'sat' ? '' : `<div><small>${ev.kind === 'cash' ? 'Cashed out' : 'Prize'}</small><b class="mono">$${drMoney(r.prize)}</b></div>`}<div><small>Bankroll</small><b class="mono">$${drMoney(r.before)} → <span data-count="${r.before}:${r.after}">$${drMoney(r.after)}</span></b></div>${r.repaid ? `<div><small>Paid back to Slick</small><b class="mono">$${drMoney(r.repaid)}</b></div>` : ''}</div>
     ${r.streak ? `<div class="drstreak">🔥 Daily Grind streak: <b>${r.streak} day${r.streak === 1 ? '' : 's'}</b></div>` : ''}
-    <div class="drdec"><div class="drkicker">Your decisions · ${acc}% solver-approved</div>
-      <div class="drdec-row"><span class="t-perfect">${r.counts.perfect} textbook</span><span class="t-good">${r.counts.good} solid</span><span class="t-close">${r.counts.close} playable</span><span class="t-bad">${r.counts.bad} mistake${r.counts.bad === 1 ? '' : 's'}</span></div></div>
-    ${drKeysHTML(r.keys)}
+    ${drProgHTML(r.prog)}
+    ${drReviewHTML(r)}
     ${r.unlocked.length ? `<div class="drunlocks"><div class="drkicker">Unlocked</div>${r.unlocked.map((it) => `<div class="drunlock"><b>${esc(it.name)}</b><small>${esc(DR_SLOTS.find((x) => x[0] === it.slot)[1])} · ${esc(it.req)}</small></div>`).join('')}</div>` : ''}
     <div class="drrow">${drBtn('gold big', 'data-dr="hub"', 'Continue ▸')}${ev.daily ? '' : drBtn('ghost', `data-dr="play" data-id="${ev.id}" ${drAfford(s, ev) && ev.id !== 'local' ? '' : 'disabled'}`, 'Play it again')}</div>
   </section>`;
@@ -410,6 +445,14 @@ document.addEventListener('click', (e) => {
     DR.st = st; drUnlocks(st); st.newItems = []; drSave(); drPlayScene('p_office'); return;
   }
   if (a === 'tab') { DR.tab = b.dataset.t; drRender(); return; }
+  if (a === 'profile') { DR.view = 'profile'; DR.ptab = DR.ptab || 'quests'; drRender(); scrollTo(0, 0); return; }
+  if (a === 'ptab') { DR.ptab = b.dataset.t; drRender(); return; }
+  if (a === 'coseq') { const p = drPg(s); p.eq[b.dataset.kind] = b.dataset.id; drSave(); drRender(); return; }
+  if (a === 'drill') { drDrillStart(b.dataset.k); return; }
+  if (a === 'challenge') { drChallengeStart(); return; }
+  if (a === 'chshare') { const t = drChallengeText(s); const done = (m) => { const el = $('drShareMsg'); if (el) el.textContent = m; }; if (navigator.share) navigator.share({ text: t }).catch(() => {}); else { try { navigator.clipboard.writeText(t); done('Copied. Paste it to your group.'); } catch { done(t); } } return; }
+  if (a === 'savecopy') { const t = $('drSaveCode'); if (t) { t.select(); try { navigator.clipboard.writeText(t.value); } catch { document.execCommand('copy'); } const m = $('drSaveMsg'); if (m) m.textContent = 'Copied.'; } return; }
+  if (a === 'saveload') { const t = $('drLoadCode'), err = drImportCode(t && t.value), m = $('drSaveMsg'); if (err) { if (m) m.textContent = err; return; } DR.view = 'hub'; DR.mode = 'story'; drRender(); scrollTo(0, 0); return; }
   if (a === 'mode') { DR.mode = b.dataset.m; if (DR.mode === 'story') DR.tab = 'events'; drRender(); return; }
   if (a === 'closet') { DR.mode = 'story'; DR.tab = 'closet'; drRender(); const t = document.querySelector('#dream .drtabs'); if (t) t.scrollIntoView({ block: 'start' }); return; }
   if (a === 'sng') { drSngStart(b.dataset.m, b.dataset.f); return; }

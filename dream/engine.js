@@ -131,7 +131,6 @@ function drCoolerRoll(run) {
   const ev = run.ev, p = Math.max(0.02, Math.min(0.22, 0.05 + 0.025 * Math.log10(ev.field) - (run.stack - 100) / 700));
   return run.rng() < p;
 }
-const DR_DELTA = { perfect: 10, good: 6, close: 1, bad: -36 };
 
 function drPickBoss(s, ev, rng) {
   if (ev.boss) return ev.boss;
@@ -157,7 +156,7 @@ async function drTable() {
   const run = DR.run; if (!run) return;
   run.state = 'loading'; run.spot = null; drRender();
   const stage = run.stages[run.si];
-  const libGid = DR_STAGE[stage].gid, pool = typeof DR_LIB !== 'undefined' && DR_LIB[libGid];
+  const libGid = DR_STAGE[stage].gid, pool = typeof drLib === 'function' && drLib()[libGid];
   if (pool && pool.length) {
     // a pre-solved table: no waiting, no phone CPU, answers from a long offline solve
     run.usedTables = run.usedTables || [];
@@ -174,7 +173,7 @@ async function drTable() {
     // satellite bubble: every seat pays the same, so ICM squeezes hardest here
     if (gid === 'sat') { const t = setup.t222; t.payouts = Array(Math.max(1, t.paid)).fill('1').join(','); t.pko = { on: false, b: {}, frac: 75 }; }
     applySetup(setup); run.t0 = performance.now();
-    while (performance.now() - run.t0 < AR_SOLVE_MS) {
+    while (performance.now() - run.t0 < (window.__drSolveMs || AR_SOLVE_MS)) {
       await sleep(250); if (DR.run !== run) return;
       if (pfState.done || pfState.error || pfState.deep) break;
       const bar = $('drLoadBar'); if (bar) bar.style.width = `${Math.min(100, ((performance.now() - run.t0) / AR_SOLVE_MS) * 100)}%`;
@@ -232,26 +231,33 @@ function drCandidates(res, d) {
 // makes it a decision. Each situation's hands are stored hardest-first; difficulty picks the window.
 function drLibDeal(run, d) {
   const lib = run.lib, rng = run.rng, seen = (run.seenNodes = run.seenNodes || new Set());
-  const nodes = lib.n.map((n, i) => ({ n, i })).filter((x) => !seen.has(x.i));
+  const drill = run.ev.drill && run.ev.drill !== 'icm' ? run.ev.drill : null, kindOk = (x) => !drill || drNodeKind(x.n) === drill;
+  let nodes = lib.n.map((n, i) => ({ n, i })).filter((x) => !seen.has(x.i) && kindOk(x));
+  if (!nodes.length) nodes = lib.n.map((n, i) => ({ n, i })).filter(kindOk);
+  // a drill table with none of that spot: look across every table of this stage
+  if (!nodes.length && drill) { const pool = drLib()[DR_STAGE[run.stages[run.si]].gid] || []; for (const t of pool) t.n.forEach((n, i) => { if (drNodeKind(n) === drill) nodes.push({ n, i: -1, t }); }); }
   const list = nodes.length ? nodes : lib.n.map((n, i) => ({ n, i }));
   const tot = list.reduce((a, x) => a + Math.sqrt(x.n.w), 0); let x = rng() * tot, pick = list[0];
   for (const it of list) { x -= Math.sqrt(it.n.w); if (x < 0) { pick = it; break; } }
   seen.add(pick.i);
+  if (pick.t && pick.t !== run.lib) { window.__pfHold = true; applySetup(pick.t.s); run.lib = pick.t; run.seenNodes = new Set(); run.libSeats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos }))); }
+  const node = pick.n, lib2 = run.lib;
   // half the time the right play is to fold, half the time it's to play: folding everything can't win
   const fi = node.a.indexOf('fold'), isFold = (r) => r[1].indexOf(Math.max(...r[1])) === fi;
   const folds = node.r.filter(isFold), plays = node.r.filter((r) => !isFold(r));
   const want = rng() < 0.5 ? plays : folds, rows = want.length >= 2 ? want : node.r;
-  const node_ = pick.n, L = rows.length, start = Math.round((1 - d) * 0.55 * L), width = Math.max(2, Math.round(0.45 * L));
+  // rows run hardest-first: difficulty slides the window from the clear end toward the razor-thin end
+  const L = rows.length, start = Math.round((1 - d) * 0.55 * L), width = Math.max(2, Math.round(0.45 * L));
   const window_ = rows.slice(Math.max(0, Math.min(start, L - 2)), Math.min(L, start + width));
-  const node = node_;
-  const [cls, strat] = window_[(rng() * window_.length) | 0];
+  const row = window_[(rng() * window_.length) | 0], [cls, strat] = row;
   // deal the cards: your hand from that class, everyone else random
   const combos = drCombosOf(cls), [a, b] = combos[(rng() * combos.length) | 0];
   const deck = Array.from({ length: 52 }, (_, i) => i).filter((c) => c !== a && c !== b);
   for (let i = deck.length - 1; i > 0; i--) { const j = (rng() * (i + 1)) | 0; [deck[i], deck[j]] = [deck[j], deck[i]]; }
   const seats = run.libSeats, hands = seats.map((_, i) => (i === node.h ? [a, b] : [deck[2 * i], deck[2 * i + 1]]));
-  const st = []; st[cls] = strat;
-  return { seats, hands, hero: node.h, path: node.p.map((k) => ({ k })), res: { actions: node.a.map((k) => ({ k })), strat: st, ev: null }, cls, diff: d };
+  const st = [], evs = []; st[cls] = strat; evs[cls] = row[2] || null;
+  const idx = node.r.indexOf(row), hard = node.r.length > 1 ? 1 - idx / (node.r.length - 1) : 0.5;
+  return { seats, hands, hero: node.h, path: node.p.map((k) => ({ k })), res: { actions: node.a.map((k) => ({ k })), strat: st, ev: evs }, cls, diff: d, hard, unit: lib2.u === 'icm' && lib2.k ? 'bbicm' : lib2.u || 'bb', evScale: lib2.u === 'icm' && lib2.k ? lib2.k : 1 };
 }
 async function drDeal(rng, d = 0.3) {
   const seats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
@@ -283,33 +289,71 @@ async function drDeal(rng, d = 0.3) {
     for (const c of order) {
       const opts = drCombosOf(c).filter(([a, b]) => !used.has(a) && !used.has(b)); if (!opts.length) continue;
       hands[hero] = opts[(rng() * opts.length) | 0].slice();
-      const sp = { seats, hands, hero, path, res, cls: c, diff: d };
+      const pi = pool.findIndex((r) => r.c === c), sp = { seats, hands, hero, path, res, cls: c, diff: d, hard: pool.length > 1 ? 1 - pi / (pool.length - 1) : 0.5 };
       if (path.length || rng() < 0.45) return sp; // favour spots with action in front of you
       fallback = fallback || sp; break;
     }
   }
   return fallback;
 }
+// ---------------------------------------------------------------- grading, Chess.com style
+// Every decision gets a label from how much value it gave up versus the solver's best play
+// (bb, or % of the prize pool when ICM is on), with mixed-strategy plays always respected.
+const DR_LABELS = {
+  brilliant: { n: 'Brilliant', icon: '!!', c: '#2ec4b6', score: 100, tier: 'perfect', life: 12, line: 'The hard, brave play, and the right one.' },
+  great: { n: 'Great find', icon: '!', c: '#5aa9de', score: 100, tier: 'perfect', life: 11, line: 'A close spot most players miss. You found it.' },
+  best: { n: 'Best', icon: '★', c: '#8bd17c', score: 100, tier: 'perfect', life: 10, line: "The solver's favourite play." },
+  excellent: { n: 'Excellent', icon: '👍', c: '#a6d785', score: 95, tier: 'perfect', life: 8, line: 'Basically as good as the best play.' },
+  good: { n: 'Good', icon: '✓', c: '#c9d47a', score: 82, tier: 'good', life: 5, line: 'A play the solver makes too.' },
+  inaccuracy: { n: 'Inaccuracy', icon: '?!', c: '#f2c14e', score: 45, tier: 'close', life: -4, line: 'Not a disaster, but it leaks value.' },
+  mistake: { n: 'Mistake', icon: '?', c: '#f08a4b', score: 15, tier: 'bad', life: -30, line: 'This costs real money over time.' },
+  blunder: { n: 'Blunder', icon: '??', c: '#e5484d', score: 0, tier: 'bad', life: -44, line: 'A big leak. Study this one.' },
+};
+const DR_LOSS_STEPS = { bb: [0.05, 0.2, 0.6, 1.5], icm: [0.015, 0.06, 0.18, 0.5] };
+function drLabelFor(strat, ev, j, unit, hard, kind) {
+  const fmax = Math.max(...strat), sb = strat.indexOf(fmax), mine = strat[j];
+  let loss = null, best = sb;
+  if (ev && ev.length === strat.length && ev.every((x) => Number.isFinite(x))) { best = ev.indexOf(Math.max(...ev)); loss = Math.max(0, ev[best] - ev[j]); }
+  const T = DR_LOSS_STEPS[unit] || DR_LOSS_STEPS.bb;
+  let lab;
+  if (loss === null) { const rel = fmax > 0 ? mine / fmax : 0; lab = mine < 0.05 ? (rel < 0.02 ? 'blunder' : 'mistake') : rel >= 0.9 ? 'best' : rel >= 0.5 ? 'good' : 'inaccuracy'; }
+  else lab = loss <= 1e-9 ? 'best' : loss <= T[0] ? 'excellent' : loss <= T[1] ? 'good' : loss <= T[2] ? 'inaccuracy' : loss <= T[3] ? 'mistake' : 'blunder';
+  // the solver's mix is the truth: a play it makes often is never worse than Good
+  if (mine >= 0.6 || j === sb) lab = (lab === 'best' || lab === 'excellent') ? lab : 'best';
+  else if (mine >= 0.25 && ['inaccuracy', 'mistake', 'blunder'].includes(lab)) lab = 'good';
+  else if (mine < 0.05 && (lab === 'best' || lab === 'excellent' || lab === 'good')) lab = 'inaccuracy';
+  // special finds in the hardest spots
+  if (lab === 'best' && hard >= 0.7) lab = ['allin', 'raise', 'raiseB'].includes(kind) || (kind === 'call' && hard >= 0.8) ? 'brilliant' : 'great';
+  return { lab, loss, bestIdx: best };
+}
 function drAnswer(k) {
   const run = DR.run; if (!run || run.state !== 'play') return;
   const sp = run.spot, j = sp.res.actions.findIndex((x) => x.k === k); if (j < 0) return;
-  const strat = sp.res.strat[sp.cls], fmax = Math.max(...strat), rel = fmax > 0 ? strat[j] / fmax : 0, ok = strat[j] >= 0.05;
-  const tier = !ok ? 'bad' : rel >= 0.9 ? 'perfect' : rel >= 0.5 ? 'good' : 'close';
-  const pts = ok ? Math.round(100 * rel) : -Math.round(100 * (1 - rel));
-  const before = run.stack; run.stack = Math.max(0, Math.min(200, run.stack + DR_DELTA[tier]));
-  run.combo = ok ? run.combo + 1 : 0;
-  // remember the hand so the results screen can replay the key moments
+  const strat = sp.res.strat[sp.cls], fmax = Math.max(...strat), rel = fmax > 0 ? strat[j] / fmax : 0;
+  const unit = sp.unit || (pfConfig().payoff.type === 'icm' ? 'icm' : 'bb'), ev = sp.res.ev && sp.res.ev[sp.cls];
+  const evS = ev && sp.evScale && sp.evScale !== 1 ? ev.map((x) => x * sp.evScale) : ev;
+  const g = drLabelFor(strat, evS, j, unit === 'bbicm' ? 'bb' : unit, sp.hard == null ? 0.4 : sp.hard, k), L = DR_LABELS[g.lab];
+  const tier = L.tier, ok = tier !== 'bad', pts = L.score - (tier === 'bad' ? 60 : 0);
+  const before = run.stack; run.stack = Math.max(0, Math.min(200, run.stack + L.life));
+  run.combo = ok && tier !== 'close' ? run.combo + 1 : 0; run.bestCombo = Math.max(run.bestCombo || 0, run.combo);
+  // remember the hand so the results screen can replay it
   const keep = TR.spot; TR.spot = sp; const v = trSpotView(); TR.spot = keep;
   const lab = (i) => { const a = sp.res.actions[i], o = v.opts.find((x) => x.k === a.k); return o ? o.t : a.k; };
-  const best = strat.indexOf(fmax), hero = v.seats[sp.hero];
-  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(fmax * 100), myF: Math.round(strat[j] * 100) };
+  const best = g.bestIdx, hero = v.seats[sp.hero];
+  const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(strat[best] * 100), myF: Math.round(strat[j] * 100),
+    lab: g.lab, loss: g.loss, unit, mix: sp.res.actions.map((a, i) => [lab(i), Math.round(strat[i] * 100)]), facing: sp.path.filter((e) => e.k !== 'fold').length };
   if (window.__drLog) window.__drLog.push({ ...hand, tier, stage: run.stages[run.si], d: sp.diff, acts: sp.res.actions.map((x) => x.k).join('/'), facing: sp.path.filter((e) => e.k !== 'fold').map((e) => e.k).join('-') || 'first in' });
-  run.total += pts; run.results.push({ j, pts, rel, ok, tier, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand });
-  if (run.stack <= 0) run.bust = true;
+  const r = { j, pts, rel, ok, tier, lab: g.lab, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand };
+  run.total += pts; run.results.push(r);
+  if (typeof drTrack === 'function') drTrack(r, run);
+  if (run.stack <= 0 && !run.noBust) run.bust = true;
+  if (run.noBust) run.stack = Math.max(1, run.stack);
   arSfx(tier === 'bad' ? 'bad' : tier); arBuzz(tier);
   run.state = 'answered'; drRender();
-  if (matchMedia('(max-width: 760px)').matches) { const v = document.querySelector('#dream .drverdict'); if (v) v.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  if (matchMedia('(max-width: 760px)').matches) { const vv = document.querySelector('#dream .drverdict'); if (vv) vv.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 }
+// accuracy for an event, Chess.com style: the average decision score
+const drAccuracy = (results) => (results.length ? Math.round(results.reduce((a, r) => a + (DR_LABELS[r.lab] ? DR_LABELS[r.lab].score : r.ok ? 80 : 10), 0) / results.length) : 0);
 function drNext() {
   const run = DR.run; if (!run || run.state !== 'answered') return;
   if (run.bust) { drFinish(); return; }
@@ -318,7 +362,7 @@ function drNext() {
   run.h = 0;
   if (run.si + 1 < run.stages.length) {
     // between levels, the cards can still beat you
-    if (run.ev.kind !== 'cash' && drCoolerRoll(run)) { run.bust = true; run.cooler = DR_COOLERS[(run.rng() * DR_COOLERS.length) | 0]; run.state = 'cooler'; drRender(); return; }
+    if (run.ev.kind !== 'cash' && !run.noBust && !run.ev.drill && drCoolerRoll(run)) { run.bust = true; run.cooler = DR_COOLERS[(run.rng() * DR_COOLERS.length) | 0]; run.state = 'cooler'; drRender(); return; }
     run.si++; run.tip++; drTable();
   } else { run.si++; drFinish(); }
 }
@@ -382,7 +426,7 @@ function drFinish(quit) {
   const rec = s.events[ev.id] || (s.events[ev.id] = { played: 0, cashes: 0, wins: 0, best: null, cash: 0, net: 0 });
   rec.played++;
   const keyHands = run.results.filter((r) => r.hand).map((r) => r).sort((a, b) => a.pts - b.pts);
-  const res = { ev, n, pct, counts, before0: 0, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
+  const res = { ev, n, pct, counts, all: run.results.map((x) => ({ lab: x.lab, tier: x.tier, stage: x.stage, hand: x.hand })), acc: drAccuracy(run.results), bestCombo: run.bestCombo || 0, before0: 0, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
   if (ev.kind === 'sat') {
     const place = drPlace(run, ev); res.place = place; res.paid = ev.seats;
     rec.best = rec.best ? Math.min(rec.best, place) : place;
@@ -433,6 +477,7 @@ function drFinish(quit) {
   res.after = s.br;
   res.unlocked = drUnlocks(s);
   drProgress(s);
+  drEventDone(res, run);
   drSave();
   DR.last = res; DR.view = 'results'; drRender(); scrollTo(0, 0);
   arSfx(res.titles.length ? 'win' : res.prize > 0 || res.net > 0 ? 'good' : 'loss');

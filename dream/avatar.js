@@ -225,7 +225,8 @@ function drAvatarSVG(st, opt = {}) {
     <ellipse cx="99" cy="116" rx="2.2" ry="1.4" fill="#fff" opacity=".2"/>`;
   // mouth: a poker smirk by default
   const mouth = opt.mouth || (opt.smile ? 'smile' : 'smug');
-  if (mouth === 'smile') s += `<path d="M89 127.5 C95 135.5 106 135.5 112 127 C106 130 95 130.4 89 127.5 Z" fill="#fff"/><path d="M89 127.5 C95 135.5 106 135.5 112 127" stroke="${drShade(lip, -0.35)}" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M93 132.6 C97 134.6 104 134.6 108 132" stroke="${lip}" stroke-width="1.4" fill="none" opacity=".6"/>`;
+  if (mouth === 'frown') s += `<path d="M92 133 C96 129.6 104.6 129.6 109 133" stroke="${drShade(lip, -0.42)}" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M94 134 C98 132.6 103 132.6 107 134" stroke="${lip}" stroke-width="1.2" fill="none" opacity=".5"/>`;
+  else if (mouth === 'smile') s += `<path d="M89 127.5 C95 135.5 106 135.5 112 127 C106 130 95 130.4 89 127.5 Z" fill="#fff"/><path d="M89 127.5 C95 135.5 106 135.5 112 127" stroke="${drShade(lip, -0.35)}" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M93 132.6 C97 134.6 104 134.6 108 132" stroke="${lip}" stroke-width="1.4" fill="none" opacity=".6"/>`;
   else s += `<path d="M91.5 131 C95 134.4 103 134.6 107.5 130.6 C103 132 96 132.4 91.5 131 Z" fill="${lip}" opacity=".55"/>
     <path d="${mouth === 'flat' ? 'M90.5 129.4 C95 130.6 103 130.6 109.5 129' : 'M90.5 129.6 C95.5 130.8 103 130.2 110.5 126.8'}" stroke="${drShade(lip, -0.42)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
     <path d="M96 126.4 C98 127.3 102 127.3 104 126.4" stroke="${sk3}" stroke-width=".9" fill="none" opacity=".35"/><ellipse cx="100" cy="136.8" rx="5" ry="1.4" fill="${sk3}" opacity=".18"/>`;

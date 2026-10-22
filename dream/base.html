@@ -3539,7 +3539,19 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('rang
 function setView(v) { view = v; $('tabPre').setAttribute('aria-pressed', v === 'pre'); $('tabPost').setAttribute('aria-pressed', v === 'post'); renderNode(); }
 
 // ---------------------------------------------------------------- solver worker
-const worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+// solver threads start on first use, not at page load: each one compiles the whole engine,
+// so a phone that only opens the trainer never pays for them
+const SRC_URL = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
+class LazyWorker {
+  constructor() { this.w = null; this._om = null; }
+  get onmessage() { return this._om; }
+  set onmessage(f) { this._om = f; if (this.w) this.w.onmessage = f; }
+  postMessage(m) {
+    if (!this.w) { if (m && (m.cmd === 'stop' || m.cmd === 'pfStop')) return; this.w = new Worker(SRC_URL); this.w.onmessage = this._om; }
+    this.w.postMessage(m);
+  }
+}
+const worker = new LazyWorker();
 
 // ---------------------------------------------------------------- GTO preflop solver (parallel workers)
 // Several workers solve the same tree independently; their average strategies are
@@ -3552,7 +3564,7 @@ const PF_PHONE = typeof matchMedia === 'function' && matchMedia('(pointer: coars
 const PF_N = Math.max(1, Math.min(PF_PHONE ? 2 : 4, (navigator.hardwareConcurrency || 2) - 1));
 // trainer spots cap the tree (phones tighter): a 9-handed full tree can need a gigabyte per thread
 const PF_TRAIN_NODES = PF_PHONE ? 30000 : 60000;
-const pfWorkers = Array.from({ length: PF_N }, () => new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' }))));
+const pfWorkers = Array.from({ length: PF_N }, () => new LazyWorker());
 let pfGen = 0, pfKey = null, pfTimer = null, pfState = { iters: 0, done: false, solving: false, t0: 0, error: null, deep: false };
 const pfCache = new Map(), pfAsked = new Set(), pfParts = new Map(), pfIters = new Array(PF_N).fill(0), pfDoneW = new Array(PF_N).fill(false);
 function pfConfig() {
@@ -3624,7 +3636,7 @@ pfWorkers.forEach((w, wi) => (w.onmessage = (ev) => {
   }
 }));
 // ---------------------------------------------------------------- chip-only comparison solve (for the ICM vs chips overlay)
-const pfcWorker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+const pfcWorker = new LazyWorker();
 let pfcKey = null, pfcGen = 0, pfcState = { done: false };
 const pfcCache = new Map(), pfcAsked = new Set();
 function pfcEnsure() {
