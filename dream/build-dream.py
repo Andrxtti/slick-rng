@@ -21,7 +21,7 @@ js = '\n'.join((root / f).read_text(encoding='utf-8') for f in ['data.js', 'stor
 rep("AR = { st: arLoad(), view: 'hub', tab: 'ranked', period: 'week', run: null, saved: null, last: null };",
     "AR = { st: arLoad(), view: 'hub', tab: 'ranked', period: 'week', run: null, saved: null, last: null };\n" + js +
     "\nDR = { st: drLoad(), view: 'title', tab: 'events', run: null, sc: null, last: null, saved: null, draft: { name: '', look: { ...DR_LOOK_DEFAULT } } };\n"
-    "if (DR.st.made) DR.view = 'hub';\nwindow.__dream = { get DR() { return DR; }, drPlayScene, drRender, drAdvance, drUnlocks, drStart, drProgress, drSave, drFinish, drStagesFor, drCoolerRoll, drDefault, drAvailable, drAfford, drPick, drAdd, drRisk, drSngStart, drLgSettle, drModeState, drLgBoard, drSeasonFor, DR_LG_ITEMS }; // for automated play-testing\n")
+    "if (DR.st.made) DR.view = 'hub';\nwindow.__dream = { get DR() { return DR; }, drPlayScene, drRender, drAdvance, drUnlocks, drStart, drProgress, drSave, drFinish, drStagesFor, drCoolerRoll, drDefault, drAvailable, drAfford, drPick, drAdd, drRisk, drSngStart, drLgSettle, drModeState, drLgBoard, drSeasonFor, DR_LG_ITEMS, _solve: (gid, seed) => { TR.random = true; window.__trRand = true; applySetup(arSetup(gid, arRng(seed))); }, _pf: () => pfState, _seats: () => T.seats.length }; // for automated play-testing\n")
 rep("  if (m !== 'trainer') arLeave();\n  if (m === 'trainer') { trRender(); arRender(); }",
     "  if (m !== 'trainer') { arLeave(); drLeave(); }\n  if (m === 'trainer') { trRender(); arRender(); drRender(); }")
 rep("$('goTrainer').onclick = () => showVariants('trainer');", "$('goTrainer').onclick = () => { setVariant('nlh'); setMode('trainer'); hideLaunch(); };")
