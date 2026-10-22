@@ -307,8 +307,9 @@ function drStoryHTML() {
 function drHudHTML(run) {
   const ev = run.ev, stage = run.stages[Math.min(run.si, run.stages.length - 1)];
   const N = ev.field, P = ev.kind !== 'cash' ? drPaid(ev) : 0;
-  const left = ev.kind === 'cash' ? null : stage === 'early' ? Math.max(P * 3, Math.round(N * (1 - 0.15 * (run.h + 1)))) : stage === 'middle' ? Math.max(P + 4, Math.round(N * (0.45 - 0.08 * run.h)))
-    : stage === 'bubble' || stage === 'satbubble' ? P + 1 + (stage === 'satbubble' ? 2 - run.h : 0) - (stage === 'bubble' && run.h > 0 ? run.h : 0) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.08 * run.h))) : Math.max(2, 9 - run.h * 3);
+  const f = run.h / drPer(run);
+  const left = ev.kind === 'cash' ? null : stage === 'early' ? Math.max(P * 3, Math.round(N * (0.85 - 0.35 * f))) : stage === 'middle' ? Math.max(P + 4, Math.round(N * (0.45 - 0.24 * f)))
+    : stage === 'satbubble' ? P + 3 - run.h : stage === 'bubble' ? Math.max(P - 2, P + 1 - run.h) : stage === 'deep' ? Math.max(10, Math.round(P * (0.3 - 0.24 * f))) : Math.max(2, Math.round(9 - 7 * f));
   const leftN = left == null ? null : Math.min(N, left);
   const status = run.stack >= 150 ? 'Dominating' : run.stack >= 110 ? 'Strong' : run.stack >= 75 ? 'Healthy' : run.stack >= 40 ? 'Hanging on' : 'On fumes. Careful.';
   const cashUp = drCashNet(run, 0);
@@ -376,7 +377,7 @@ function drRunHTML() {
   if (run.state === 'play' && !DR.st.dec && !run.results.length) html += `<div class="drtip first">${drSpeaker({ sp: 'slick' }).av}<p>You're in the <b>${esc(hero.pos)}</b> with these two cards. Everyone before you has acted; their moves are on the seats. Tap the play you'd make. The solver grades it instantly, the way a chess engine grades a move.</p></div>`;
   if (run.state === 'play') html += `<div class="dropts">${sp.res.actions.map((a, k) => drBtn('opt', `data-dr="ans" data-k="${a.k}"`, `<span class="kbd">${k + 1}</span>${esc(label(a))}`)).join('')}</div>`;
   else {
-    const r = run.results[run.results.length - 1], per = run.per || (ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS);
+    const r = run.results[run.results.length - 1], per = drPer(run);
     const lastHand = run.h === per - 1 && run.si === run.stages.length - 1;
     const L = DR_LABELS[r.lab] || DR_LABELS.good, d = r.after - r.before, h = r.hand;
     const lossTxt = h.loss == null ? '' : h.loss <= 1e-9 ? 'No value lost' : `−${h.unit === 'icm' ? `${h.loss.toFixed(h.loss < 0.1 ? 3 : 2)}% of the prize pool` : h.unit === 'bbicm' ? `${h.loss.toFixed(2)} bb of tournament equity` : `${h.loss.toFixed(2)} bb`}`;

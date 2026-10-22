@@ -112,13 +112,27 @@ function drProgress(s) {
 // ---------------------------------------------------------------- an event
 const DR_STAGE = { early: { gid: 'ring', label: 'Early', long: 'Early levels' }, middle: { gid: 'ring', label: 'Middle', long: 'Middle levels' }, bubble: { gid: 'bubble', label: 'Bubble', long: 'The bubble' },
   deep: { gid: 'shove', label: 'Deep', long: 'Deep run' }, satbubble: { gid: 'sat', label: 'Bubble', long: 'Satellite bubble' }, final: { gid: 'shove', label: 'Final', long: 'Final table' }, cash: { gid: 'cash', label: 'Cash', long: 'Cash session' } };
-// bigger fields mean longer days: more levels to survive before the final table
-function drStagesFor(ev) {
-  if (ev.kind === 'sng') return ev.stagesFix.slice();
-  if (ev.kind === 'cash') return ['cash'];
-  if (ev.kind === 'sat') return ['early', 'satbubble'];
-  return ev.field < 150 ? ['early', 'bubble', 'final'] : ev.field < 1500 ? ['early', 'middle', 'bubble', 'final'] : ['early', 'middle', 'bubble', 'deep', 'final'];
+// bigger fields mean longer days: more levels to survive before the final table.
+// The story also moves the focus: early chapters are mostly deep-stacked early levels,
+// the middle chapters live in the middle stages, and the late chapters are ICM poker
+// (bubble, deep run, final table).
+function drStagesFor(ev) { return drPlanFor(ev).stages; }
+function drPlanFor(ev, ch) {
+  if (ev.kind === 'sng') return { stages: ev.stagesFix.slice() };
+  if (ev.kind === 'cash') return { stages: ['cash'] };
+  if (ev.kind === 'sat') return { stages: ['early', 'satbubble'] };
+  const c = ch == null ? ((typeof DR !== 'undefined' && DR.st && DR.st.ch) || 0) : ch, big = ev.field >= 1500;
+  const plan = c <= 1 ? [['early', 4], ['middle', 2], ['bubble', 1], ['final', 1]]
+    : c === 2 ? [['early', 2], ['middle', 4], ['bubble', 1], ['final', 1]]
+    : c === 3 ? [['early', 1], ['middle', 3], ['bubble', 2], ['final', 2]]
+    : c === 4 ? [['early', 1], ['middle', 1], ['bubble', 3], ...(big ? [['deep', 2]] : []), ['final', 3]]
+    : [['early', 1], ['bubble', 3], ['deep', 2], ['final', 4]];
+  return { stages: plan.map((p) => p[0]), perS: plan.map((p) => p[1]) };
 }
+// hands to play at the current stage
+function drPer(run) { return run.per || (run.perS && run.perS[Math.min(run.si, run.perS.length - 1)]) || (run.ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS); }
+// which pre-solved tables fit a stage: early levels are deep stacks, the final table is the last nine
+const DR_STAGE_FIT = { early: (t) => t.avg >= 32, middle: (t) => t.avg < 32, deep: (t) => t.left > 9, final: (t) => t.left <= 9 };
 // poker is poker: even perfect play gets coolered sometimes. A bigger stack survives more of them.
 const DR_COOLERS = [
   'Kings into aces. All the chips go in, and you never had a chance.',
@@ -148,7 +162,8 @@ function drStart(id) {
   const seed = ev.daily ? `daily|${drToday()}` : `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
   DR.saved = snapSetup(); TR.random = true; window.__trRand = true;
   if (S.variant !== 'nlh') setVariant('nlh');
-  DR.run = { ev, stages: drStagesFor(ev), si: 0, h: 0, stack: 100, results: [], total: 0, rng,
+  const plan = drPlanFor(ev);
+  DR.run = { ev, stages: plan.stages, perS: plan.perS, si: 0, h: 0, stack: 100, results: [], total: 0, rng,
     state: 'loading', spot: null, boss: drPickBoss(s, ev, rng), fails: 0, bust: false, combo: 0, t0: performance.now(), tip: 0 };
   DR.view = 'run'; drRender(); drTable();
 }
@@ -169,7 +184,8 @@ async function drTable() {
   if (pool && pool.length) {
     // a pre-solved table: no waiting, no phone CPU, answers from a long offline solve
     run.usedTables = run.usedTables || [];
-    const fresh = pool.map((_, i) => i).filter((i) => !run.usedTables.includes(libGid + i)), pickFrom = fresh.length ? fresh : pool.map((_, i) => i);
+    const fit = DR_STAGE_FIT[stage], all = pool.map((_, i) => i).filter((i) => !fit || !pool[i].s.t222 || fit(pool[i].s.t222)), okI = all.length ? all : pool.map((_, i) => i);
+    const fresh = okI.filter((i) => !run.usedTables.includes(libGid + i)), pickFrom = fresh.length ? fresh : okI;
     const ti = pickFrom[(run.rng() * pickFrom.length) | 0]; run.usedTables.push(libGid + ti);
     window.__pfHold = true; applySetup(pool[ti].s);
     run.lib = pool[ti]; run.libRef = { g: libGid, t: ti }; run.seenNodes = new Set(); run.libSeats = withHist([], () => T.seats.map((x) => ({ id: x.id, pos: x.pos })));
@@ -380,7 +396,7 @@ const drAccuracy = (results) => (results.length ? Math.round(results.reduce((a, 
 function drNext() {
   const run = DR.run; if (!run || run.state !== 'answered') return;
   if (run.bust) { drFinish(); return; }
-  const per = run.per || (run.ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS);
+  const per = drPer(run);
   if (++run.h < per) { drHand(); return; }
   run.h = 0;
   if (run.si + 1 < run.stages.length) {
@@ -430,7 +446,7 @@ function drPlace(run, ev) {
     if (stage === 'middle') return between(P + 2, Math.max(P + 2, Math.round(N * 0.45)));
     if (stage === 'bubble') return run.h === 0 && !run.cooler ? P + 1 : between(Math.min(P, 10), P);
     if (stage === 'deep') return between(10, Math.max(10, Math.min(P, Math.round(P * 0.3))));
-    const ranges = [[7, 9], [4, 6], [2, 3]], [a, b] = ranges[Math.min(2, run.h)];
+    const ranges = [[7, 9], [4, 6], [2, 3]], [a, b] = ranges[Math.min(2, Math.floor((run.h * 3) / drPer(run)))];
     return between(Math.min(a, N), Math.min(b, N));
   }
   // you survived the whole thing: your decisions (and a little luck) decide the top spots
