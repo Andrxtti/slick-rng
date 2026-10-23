@@ -21,6 +21,10 @@ namespace CFDream.UI
         {
             if (I != null || FindAnyObjectByType<DreamApp>() != null) return;
             Application.targetFrameRate = 60;
+            // turn with the phone: portrait or either landscape, never upside down
+            Screen.autorotateToPortrait = true; Screen.autorotateToPortraitUpsideDown = false;
+            Screen.autorotateToLandscapeLeft = true; Screen.autorotateToLandscapeRight = true;
+            if (!Application.isEditor || Screen.orientation != ScreenOrientation.AutoRotation) Screen.orientation = ScreenOrientation.AutoRotation;
             var go = new GameObject("The Dream"); go.SetActive(false); DontDestroyOnLoad(go);
             var ps = ScriptableObject.CreateInstance<PanelSettings>();
             ps.name = "Dream Panel";

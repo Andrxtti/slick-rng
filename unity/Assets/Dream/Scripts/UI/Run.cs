@@ -123,7 +123,7 @@ namespace CFDream.UI
                 for (int i = 0; i < sp.acts.Count; i++)
                 {
                     int k = i; string lab = sp.Label(i);
-                    var btn = U.Btn(lab, () => Game.Answer(k), "opt-btn " + ActCls(sp.acts[i]));
+                    var btn = U.Btn(lab, () => Game.Answer(k), "opt-btn " + ActCls(sp.acts[i], lab));
                     opts.Add(btn);
                 }
                 col.Add(opts);
@@ -132,7 +132,16 @@ namespace CFDream.UI
             return col;
         }
 
-        static string ActCls(string a) => a == "fold" ? "act-fold" : a == "call" ? "act-call" : a == "allin" ? "act-jam" : "act-raise";
+        // colour by what the button says: fold, passive (call, limp, check), raise, all in
+        static string ActCls(string a, string label = null)
+        {
+            var l = (label ?? "").Trim().ToLowerInvariant();
+            if (l.StartsWith("fold") || a == "fold") return "act-fold";
+            if (l.StartsWith("call") || l.StartsWith("limp") || l.StartsWith("check")) return "act-call";
+            if (l.Contains("all in") || l.Contains("all-in") || l.StartsWith("jam") || l.StartsWith("shove")) return "act-jam";
+            if (l.StartsWith("raise") || l.StartsWith("bet") || l.StartsWith("3-bet") || l.StartsWith("4-bet") || l.StartsWith("iso")) return "act-raise";
+            return a == "call" ? "act-call" : a == "allin" ? "act-jam" : "act-raise";
+        }
 
         static string Odds(Spot sp)
         {
@@ -248,7 +257,7 @@ namespace CFDream.UI
             foreach (var t in res.titles) moments.Add(Banner(DB.TitleIcon(t), DB.TitleName(t), "A title for the trophy room.", C.Gold));
             if (res.beat != null) moments.Add(Banner("🂡", "Beat " + J.S(DB.Legend(res.beat), "name", res.beat), "Heads-up, for the title.", C.Violet));
             else if (res.met != null && DB.Legend(res.met) != null) moments.Add(Banner("🤝", "Final table with " + J.S(DB.Legend(res.met), "name", res.met), "They'll remember your face.", C.Violet));
-            foreach (var it in res.unlocked) { var m = Fashion.MetaOf(it.slot, it.id); var g = Fashion.Grade(m.grade); moments.Add(Banner("✦", "Unlocked: " + it.name, (m.brand ?? "") + " · " + g.name, C.H(g.color))); }
+            foreach (var it in res.unlocked) { var m = Fashion.MetaOf(it.slot, it.id); var g = Fashion.Grade(m.grade); moments.Add(Banner("✦", "Unlocked: " + it.name, (string.IsNullOrEmpty(m.brand) ? "" : m.brand + " · ") + g.name, C.H(g.color), ClosetView.Art(s, it.slot, it.id, 56, 48))); }
             body.Add(moments);
 
             var p = res.prog;
@@ -301,10 +310,11 @@ namespace CFDream.UI
             return page;
         }
 
-        static VisualElement Banner(string icon, string title, string sub, Color c)
+        static VisualElement Banner(string icon, string title, string sub, Color c, VisualElement art = null)
         {
-            var b = U.Row().Cls("banner").Border(C.A(c, 0.5f)).Bg(C.A(c, 0.1f));
-            b.Add(U.T(icon, "banner-i").Fg(c));
+            var b = U.Row().Cls("banner").Bg(C.A(c, 0.12f));
+            if (art != null) { var pic = U.Div("banner-pic").NoPick(); pic.Add(art); b.Add(pic); }
+            else b.Add(U.T(icon, "banner-i").Fg(c));
             var l = U.Col().Grow(); l.style.marginLeft = 10; l.Add(U.T(title, "banner-t", Fonts.Semi).Fg(c)); if (!string.IsNullOrEmpty(sub)) l.Add(U.Hint(sub)); b.Add(l);
             Screens.Enter(b, 120);
             return b;

@@ -8,6 +8,7 @@
 .landscape .column { max-width: 1180px; }
 .landscape .screen.narrow { max-width: 560px; align-self: center; }
 .two-pane { flex-direction: row; }
+.row.two-pane { align-items: stretch; }
 .two-pane .pane-left { width: 42%; max-width: 420px; flex-shrink: 0; }
 .two-pane .main-scroll { flex-grow: 1; }
 .run.two-pane .pane-left { width: 56%; max-width: 640px; padding: 12px 6px 10px 14px; }
@@ -300,7 +301,8 @@ Label.mix-p { font-size: 13px; width: 40px; -unity-text-align: middle-right; }
 /* results */
 .res-hero { background-color: #1f1a12; }
 Label.res-big { font-size: 52px; margin-top: 2px; }
-.banner { padding: 12px; border-radius: 14px; border-width: 1px; margin-bottom: 10px; }
+.banner { padding: 12px; border-radius: 18px; border-width: 0; margin-bottom: 10px; }
+.banner-pic { width: 64px; height: 54px; border-radius: 12px; background-color: rgba(0, 0, 0, 0.25); align-items: center; justify-content: center; flex-shrink: 0; }
 Label.banner-i { font-size: 22px; width: 30px; -unity-text-align: middle-center; }
 Label.banner-t { font-size: 15px; }
 .keyhand { padding: 8px 0; border-bottom-width: 1px; border-color: #2a241b; }
