@@ -42,7 +42,13 @@ namespace CFDream.Character
         readonly HashSet<VisualElement> views = new HashSet<VisualElement>();
         float yaw = -12, spin; bool dragging;
         public bool HasBody => body != null && body.Ready;
-        public RenderTexture Texture => rt;
+        public RenderTexture Texture => framing == "room" && roomRt != null ? roomRt : rt;
+        // your place: the room, life in it (walking, using things) and its own render texture shaped like the view
+        HomeRoom room; HomeLife life; RenderTexture roomRt; Vector3 roomPos; float roomYaw; bool hasRoomPos;
+        public bool InRoom => framing == "room";
+        public HomeLife Life => life;
+        public HomeRoom Room => room;
+        public Camera Cam => cam;
         public Transform Pivot => pivot;
         public BodyFit Fit => body?.Fit;
         public event Action Changed;
@@ -84,6 +90,7 @@ namespace CFDream.Character
         void Frame(float height, string mode = null)
         {
             framing = mode ?? framing;
+            if (framing == "room") { FrameRoom(); return; }
             float lookY, dist;
             switch (framing)
             {
@@ -94,7 +101,77 @@ namespace CFDream.Character
             cam.transform.localPosition = new Vector3(0, lookY, dist);
             cam.transform.LookAt(transform.TransformPoint(new Vector3(0, lookY - 0.04f * (framing == "face" ? 0.3f : 1), 0)));
         }
-        public void Framing(string mode) { if (mode != framing) Frame(bodyH, mode); }
+        public void Framing(string mode, string tier = null, float aspect = 0)
+        {
+            if (mode == "room") { EnterRoom(tier ?? room?.tier ?? "studio", aspect); return; }
+            if (framing == "room") ExitRoom();
+            if (mode != framing) Frame(bodyH, mode);
+        }
+
+        // ------------------------------------------------------------ your place
+        void EnterRoom(string tier, float aspect)
+        {
+            if (room == null || room.tier != tier)
+            {
+                if (room != null) Destroy(room.root);
+                room = HomeRoom.Build(tier, transform, Layer); hasRoomPos = false; pivot.localPosition = Vector3.zero;
+                if (room == null) return;
+            }
+            room.root.SetActive(true);
+            if (hasRoomPos) { pivot.localPosition = roomPos; pivot.localRotation = Quaternion.Euler(0, roomYaw, 0); }
+            if (life == null) life = gameObject.AddComponent<HomeLife>();
+            life.enabled = true;
+            if (framing != "room") life.Init(this, room);
+            RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 0.62f));
+            framing = "room"; cam.targetTexture = roomRt; FrameRoom();
+            cam.enabled = views.Count > 0 && HasBody;
+        }
+        void ExitRoom()
+        {
+            if (room != null) { roomPos = pivot.localPosition; roomYaw = pivot.localEulerAngles.y; hasRoomPos = true; room.root.SetActive(false); }
+            if (life != null) life.enabled = false;
+            pivot.localPosition = Vector3.zero; cam.targetTexture = rt; cam.fieldOfView = 22; framing = "bust";
+        }
+        public void RoomTexture(float aspect)
+        {
+            int h = 1280, w = Mathf.Clamp(Mathf.RoundToInt(h * aspect), 400, 2560);
+            if (roomRt != null && roomRt.width == w && roomRt.height == h) return;
+            if (roomRt != null) { if (cam.targetTexture == roomRt) cam.targetTexture = null; roomRt.Release(); }
+            roomRt = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32) { name = "Room", antiAliasing = 1, useMipMap = false };
+            roomRt.Create();
+            if (framing == "room") { cam.targetTexture = roomRt; FrameRoom(); }
+        }
+        // a three-quarter view from the open front corner, as close as it can get with the whole room in shot
+        void FrameRoom()
+        {
+            if (room == null) return;
+            float aspect = cam.targetTexture != null ? cam.targetTexture.width / (float)cam.targetTexture.height : 0.62f;
+            cam.fieldOfView = Mathf.Clamp(2 * Mathf.Atan(Mathf.Tan(29f * Mathf.Deg2Rad) / aspect) * Mathf.Rad2Deg, 34f, 80f);
+            var target = new Vector3(room.W * 0.04f, 0.7f, -room.D * 0.06f);
+            var dir = new Vector3(0.45f, 0.9f, 1f).normalized;
+            float W = room.W / 2, D = room.D / 2, H = room.H;
+            var pts = new[] { new Vector3(-W, 0, -D), new Vector3(W, 0, -D), new Vector3(-W, 0, D), new Vector3(W, 0, D), new Vector3(-W, H, -D), new Vector3(W, H, -D), new Vector3(-W, H, D) };
+            bool Fits(float dist)
+            {
+                cam.transform.localPosition = target + dir * dist; cam.transform.LookAt(transform.TransformPoint(target));
+                foreach (var p in pts) { var v = cam.WorldToViewportPoint(transform.TransformPoint(p)); if (v.z <= 0 || v.x < 0.02f || v.x > 0.98f || v.y < 0.02f || v.y > 0.97f) return false; }
+                return true;
+            }
+            float lo = 1.5f, hi = 40f;
+            for (int i = 0; i < 22; i++) { float mid = (lo + hi) / 2; if (Fits(mid)) hi = mid; else lo = mid; }
+            Fits(hi);
+            cam.farClipPlane = hi + 30;
+        }
+        // a tap on the room view (viewport coordinates): use what's there, or walk to the spot
+        public void TapRoom(Vector2 uv)
+        {
+            if (room == null || life == null) return;
+            var ray = cam.ViewportPointToRay(new Vector3(uv.x, uv.y, 0));
+            if (!Physics.Raycast(ray, out var hit, 200f, 1 << Layer)) return;
+            foreach (var u in room.uses) if (u.tr != null && (hit.transform == u.tr || hit.transform.IsChildOf(u.tr))) { life.Use(u.id); return; }
+            life.WalkTo(transform.InverseTransformPoint(hit.point));
+        }
+        public Vector3 Viewport(Vector3 world) => cam.WorldToViewportPoint(world);
         float bodyH = 1.7f;
         // frame the body actually built: eye height plus the crown of the head (UMA's default man is about 1.95 m)
         void Measure()
@@ -114,8 +191,11 @@ namespace CFDream.Character
         void LateUpdate()
         {
             if (views.Count == 0 || pivot == null) return;
-            if (!dragging) { spin *= 0.92f; yaw += spin; yaw = Mathf.LerpAngle(yaw, -12 + Mathf.Sin(Time.time * 0.6f) * 4, 0.01f); }
-            pivot.localRotation = Quaternion.Euler(0, yaw, 0);
+            if (framing != "room")   // in your place, walking decides which way you face
+            {
+                if (!dragging) { spin *= 0.92f; yaw += spin; yaw = Mathf.LerpAngle(yaw, -12 + Mathf.Sin(Time.time * 0.6f) * 4, 0.01f); }
+                pivot.localRotation = Quaternion.Euler(0, yaw, 0);
+            }
             foreach (var v in views) v.MarkDirtyRepaint();
         }
 
@@ -204,7 +284,7 @@ namespace CFDream.Character
             foreach (var t in go.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer;
         }
 
-        void OnDestroy() { body?.Dispose(); if (rt != null) rt.Release(); if (inst == this) inst = null; }
+        void OnDestroy() { body?.Dispose(); if (rt != null) rt.Release(); if (roomRt != null) roomRt.Release(); if (inst == this) inst = null; }
     }
 
     // ------------------------------------------------------------ the on-screen view
@@ -213,29 +293,38 @@ namespace CFDream.Character
     public class CharacterView : VisualElement
     {
         readonly CharacterSpec spec; readonly VisualElement fallback;
-        bool down; float lastX; int pid = -1;
-
+        bool down; float lastX; Vector2 downAt; int pid = -1;
         readonly string framing;
+        public string Tier;                 // "room" views: which home
+        bool Room => framing == "room";
+
         public CharacterView(CharacterSpec spec, VisualElement fallback2D, float width, float height, string framing = "bust")
         {
             this.spec = spec; fallback = fallback2D; this.framing = framing;
-            style.width = width; style.height = height; style.flexShrink = 0;
+            if (width > 0) style.width = width; if (height > 0) style.height = height; style.flexShrink = 0;
             AddToClassList("char-view");
             if (!Bodies.Available) { if (fallback != null) Add(fallback); return; }
             RegisterCallback<AttachToPanelEvent>(e => Bind());
             RegisterCallback<DetachFromPanelEvent>(e => CharacterStage.Instance?.Detach(this));
-            RegisterCallback<PointerDownEvent>(e => { down = true; pid = e.pointerId; lastX = e.position.x; this.CapturePointer(pid); });
-            RegisterCallback<PointerMoveEvent>(e => { if (!down || e.pointerId != pid) return; CharacterStage.Instance?.Drag(e.position.x - lastX); lastX = e.position.x; });
-            RegisterCallback<PointerUpEvent>(e => { if (e.pointerId != pid) return; down = false; this.ReleasePointer(pid); CharacterStage.Instance?.Release(); });
+            RegisterCallback<PointerDownEvent>(e => { down = true; pid = e.pointerId; lastX = e.position.x; downAt = e.position; this.CapturePointer(pid); });
+            RegisterCallback<PointerMoveEvent>(e =>
+            {
+                if (!down || e.pointerId != pid || Room) return;
+                CharacterStage.Instance?.Drag(e.position.x - lastX); lastX = e.position.x;
+            });
+            RegisterCallback<PointerUpEvent>(e =>
+            {
+                if (e.pointerId != pid) return; down = false; this.ReleasePointer(pid); CharacterStage.Instance?.Release();
+                if (Room && Vector2.Distance(e.position, downAt) < 14) CharacterStage.Instance?.TapRoom(ToUV(this.WorldToLocal(e.position)));
+            });
         }
 
         void Bind()
         {
             var st = CharacterStage.Get();
-            st.Framing(framing);
+            st.Framing(framing, Tier, Aspect());
             st.Attach(this);
-            style.backgroundImage = new StyleBackground(Background.FromRenderTexture(st.Texture));
-            style.backgroundSize = new BackgroundSize(BackgroundSizeType.Contain);
+            SetTexture(st);
             st.Show(spec);
             if (!st.HasBody && fallback != null && fallback.parent == null) Add(fallback);
             Action onChanged = null;
@@ -243,6 +332,18 @@ namespace CFDream.Character
             st.Changed += onChanged;
             RegisterCallback<DetachFromPanelEvent>(e => st.Changed -= onChanged);
             if (st.HasBody && fallback != null && fallback.parent == this) Remove(fallback);
+            // a room view's texture follows the view's shape
+            if (Room) RegisterCallback<GeometryChangedEvent>(e => { if (Aspect() > 0 && st.InRoom) { st.RoomTexture(Aspect()); SetTexture(st); } });
         }
+        void SetTexture(CharacterStage st)
+        {
+            style.backgroundImage = new StyleBackground(Background.FromRenderTexture(st.Texture));
+            style.backgroundSize = new BackgroundSize(BackgroundSizeType.Contain);
+        }
+        float Aspect() { var r = layout; return r.width > 10 && r.height > 10 ? r.width / r.height : 0; }
+
+        // the room texture matches the view's shape, so view and viewport map straight across
+        public Vector2 ToUV(Vector2 local) { var r = contentRect; return new Vector2(local.x / Mathf.Max(1, r.width), 1 - local.y / Mathf.Max(1, r.height)); }
+        public Vector2 FromViewport(Vector3 vp) { var r = contentRect; return new Vector2(vp.x * r.width, (1 - vp.y) * r.height); }
     }
 }

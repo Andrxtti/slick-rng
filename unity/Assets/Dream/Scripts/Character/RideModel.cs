@@ -4,8 +4,6 @@
 // named "wheel..." and it's used instead.
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -25,8 +23,6 @@ namespace CFDream.Character
         public static readonly Dictionary<string, string> Paint = new Dictionary<string, string>
         { { "hatch", "#8a8f98" }, { "coupe", "#c0222b" }, { "sedan", "#141b33" }, { "super", "#f08a1c" }, { "bus", "#2f6fb0" }, { "jet", "#ecebef" } };
 
-        struct Part { public string name; public Vector3 pivot; public Mesh mesh; public string[] mats; }
-        static readonly Dictionary<string, Part[]> cache = new Dictionary<string, Part[]>();
 
         public static RideRig Build(string id, Transform parent, int layer, Color? paint = null)
         {
@@ -40,7 +36,7 @@ namespace CFDream.Character
             }
             else
             {
-                var parts = Load(id) ?? Load("hatch");
+                var parts = DrmMesh.Load("Dream/Rides/" + id) ?? DrmMesh.Load("Dream/Rides/hatch");
                 rig.root = new GameObject("Ride " + id); rig.root.transform.SetParent(parent, false);
                 var col = paint ?? Hex(Paint.TryGetValue(id, out var h) ? h : "#8a8f98");
                 foreach (var p in parts)
@@ -83,44 +79,6 @@ namespace CFDream.Character
             }
         }
 
-        // DRM1: parts { name, pivot, positions, normals, submeshes { material, indices } }
-        static Part[] Load(string id)
-        {
-            if (cache.TryGetValue(id, out var c)) return c;
-            var ta = Resources.Load<TextAsset>("Dream/Rides/" + id);
-            if (ta == null) return null;
-            try
-            {
-                using (var br = new BinaryReader(new MemoryStream(ta.bytes)))
-                {
-                    if (Encoding.ASCII.GetString(br.ReadBytes(4)) != "DRM1") throw new Exception("not a DRM1 mesh");
-                    int n = br.ReadInt32(); var parts = new Part[n];
-                    for (int k = 0; k < n; k++)
-                    {
-                        var p = new Part { name = Str(br), pivot = V3(br) };
-                        int vc = br.ReadInt32();
-                        var pos = new Vector3[vc]; var nor = new Vector3[vc];
-                        for (int i = 0; i < vc; i++) pos[i] = V3(br);
-                        for (int i = 0; i < vc; i++) nor[i] = V3(br);
-                        int sc = br.ReadInt32(); p.mats = new string[sc];
-                        var mesh = new Mesh { name = id + " " + p.name, indexFormat = vc > 65000 ? IndexFormat.UInt32 : IndexFormat.UInt16 };
-                        mesh.vertices = pos; mesh.normals = nor; mesh.subMeshCount = sc;
-                        for (int s = 0; s < sc; s++)
-                        {
-                            p.mats[s] = Str(br); int ic = br.ReadInt32(); var idx = new int[ic];
-                            for (int i = 0; i < ic; i++) idx[i] = br.ReadInt32();
-                            mesh.SetTriangles(idx, s, false);
-                        }
-                        mesh.RecalculateBounds();
-                        p.mesh = mesh; parts[k] = p;
-                    }
-                    cache[id] = parts; return parts;
-                }
-            }
-            catch (Exception e) { Debug.LogWarning($"[Dream] ride {id}: {e.Message}"); return null; }
-        }
-        static string Str(BinaryReader br) { int l = br.ReadInt32(); return Encoding.UTF8.GetString(br.ReadBytes(l)); }
-        static Vector3 V3(BinaryReader br) => new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
         static Color Hex(string h) => ColorUtility.TryParseHtmlString(h, out var c) ? c : Color.gray;
     }
 }

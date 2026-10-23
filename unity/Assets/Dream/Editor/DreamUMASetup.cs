@@ -2,8 +2,10 @@
 // still compiles without UMA) and makes Resources/Dream/UMARefs, which points at UMA's character prefab and a
 // standing idle. Runs by itself after scripts load; also Dream > Set up 3D characters.
 using System;
+using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEditor.Build;
 using UnityEngine;
 
@@ -14,6 +16,8 @@ namespace CFDream.EditorTools
     {
         const string Define = "DREAM_UMA", RefsPath = "Assets/Dream/Resources/Dream/UMARefs.asset";
         const string AvatarPrefab = "Assets/UMA/Core/Defaults/UMADynamicCharacterAvatar.prefab", Idle = "Assets/UMA/UMA3/Animation/IdleController.controller";
+        // our own controller: UMA's idle and walk, a Speed parameter, and IK on so hands can reach things
+        const string MovePath = "Assets/Dream/Anim/DreamMove.controller", WalkClip = "Assets/UMA/UMA3/Animation/Chal_Walk.anim";
         static readonly NamedBuildTarget[] Targets = { NamedBuildTarget.Standalone, NamedBuildTarget.WebGL, NamedBuildTarget.iOS, NamedBuildTarget.Android };
 
         static DreamUMASetup() { EditorApplication.delayCall += () => Sync(false); }
@@ -41,12 +45,37 @@ namespace CFDream.EditorTools
             else if (log) Debug.LogWarning("[Dream] UMA isn't in the project. Import UMA 3 from the Package Manager (My Assets) first.");
         }
 
+        static RuntimeAnimatorController EnsureMove()
+        {
+            var c = AssetDatabase.LoadAssetAtPath<AnimatorController>(MovePath);
+            if (c != null) return c;
+            var idleCtrl = AssetDatabase.LoadAssetAtPath<AnimatorController>(Idle);
+            var idle = idleCtrl != null && idleCtrl.layers.Length > 0 ? idleCtrl.layers[0].stateMachine.defaultState?.motion : null;
+            var walk = AssetDatabase.LoadAssetAtPath<AnimationClip>(WalkClip);
+            if (idle == null || walk == null) { Debug.LogWarning("[Dream] UMA's idle or walk animation is missing; characters will stand still"); return null; }
+            Directory.CreateDirectory(Path.GetDirectoryName(MovePath));
+            c = AnimatorController.CreateAnimatorControllerAtPath(MovePath);
+            c.AddParameter("Speed", AnimatorControllerParameterType.Float);
+            var layers = c.layers; layers[0].iKPass = true; c.layers = layers;
+            var sm = c.layers[0].stateMachine;
+            var si = sm.AddState("Idle"); si.motion = idle;
+            var sw = sm.AddState("Walk"); sw.motion = walk;
+            sm.defaultState = si;
+            var a = si.AddTransition(sw); a.hasExitTime = false; a.duration = 0.15f; a.AddCondition(AnimatorConditionMode.Greater, 0.1f, "Speed");
+            var b = sw.AddTransition(si); b.hasExitTime = false; b.duration = 0.2f; b.AddCondition(AnimatorConditionMode.Less, 0.1f, "Speed");
+            EditorUtility.SetDirty(c); AssetDatabase.SaveAssets();
+            Debug.Log("[Dream] Made " + MovePath);
+            return c;
+        }
+
         static void EnsureRefs(bool log)
         {
             var refs = AssetDatabase.LoadAssetAtPath<CFDream.Character.DreamUMARefs>(RefsPath);
             bool fresh = refs == null, changed = fresh;
             if (fresh) refs = ScriptableObject.CreateInstance<CFDream.Character.DreamUMARefs>();
             if (refs.avatar == null) { refs.avatar = AssetDatabase.LoadAssetAtPath<GameObject>(AvatarPrefab); changed |= refs.avatar != null; }
+            var move = EnsureMove();
+            if (move != null && refs.idle != move) { refs.idle = move; changed = true; }
             if (refs.idle == null) { refs.idle = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(Idle); changed |= refs.idle != null; }
             if (fresh) AssetDatabase.CreateAsset(refs, RefsPath);
             if (changed) { EditorUtility.SetDirty(refs); AssetDatabase.SaveAssets(); }

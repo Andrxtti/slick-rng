@@ -191,6 +191,21 @@ namespace CFDream.Character
             cache[key] = m; return m;
         }
 
+        // a picture on a surface: floors, rugs, screens and the view out the window. glow > 0 makes it light itself.
+        public static Material Textured(Texture tex, Color tint, float smooth = 0.4f, Vector2? tiling = null, float glow = 0, bool transparent = false)
+        {
+            var m = new Material(Template(transparent)) { name = "Dream tex " + (tex != null ? tex.name : "none") };
+            Set(m, tint, 0f, smooth);
+            if (tex != null)
+            {
+                m.SetTexture("_BaseMap", tex); if (m.HasProperty("_MainTex")) m.SetTexture("_MainTex", tex);
+                if (tiling.HasValue) { m.SetTextureScale("_BaseMap", tiling.Value); if (m.HasProperty("_MainTex")) m.SetTextureScale("_MainTex", tiling.Value); }
+            }
+            if (glow > 0 && tex != null) { m.EnableKeyword("_EMISSION"); m.SetTexture("_EmissionMap", tex); m.SetColor("_EmissionColor", Color.white * glow); m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None; }
+            else if (m.HasProperty("_EmissionColor")) m.SetColor("_EmissionColor", Color.black);
+            return m;
+        }
+
         static void Set(Material m, Color c, float metal, float smooth)
         {
             if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);

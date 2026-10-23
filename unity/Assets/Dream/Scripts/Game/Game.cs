@@ -14,7 +14,7 @@ namespace CFDream
     {
         public static State State;
         public static View View = View.Title;
-        public static string Tab = "calendar", ClosetCat = "shirts", ProfileTab = "quests";
+        public static string Tab = "home", ClosetCat = "shirts", ProfileTab = "quests";
         public static Run Run;
         public static Trip Trip;
         public static Result Last;
@@ -29,7 +29,7 @@ namespace CFDream
         {
             // Play mode can start without a script reload, so nothing from the last session may linger here
             Run = null; Last = null; Scene = null; Morning = null; Trip = null; Restyle = false; Draft = new Look(); DraftName = "";
-            View = View.Title; Tab = "calendar"; ClosetCat = "shirts"; CalSel = -1; CalWk = 0;
+            View = View.Title; Tab = "home"; ClosetCat = "shirts"; CalSel = -1; CalWk = 0;
             DB.Load();
             State = State.Load();
             Calendar.Migrate(State);

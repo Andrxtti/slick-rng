@@ -11,7 +11,8 @@ namespace CFDream.UI
 {
     public static class HubView
     {
-        static readonly (string id, string n, string icon)[] Tabs = { ("calendar", "Play", "play"), ("closet", "Closet", "closet"), ("career", "Career", "career"), ("story", "Story", "story") };
+        // Home is your place; its laptop ("calendar") is the hub: tonight's games, the calendar, money
+        static readonly (string id, string n, string icon)[] Tabs = { ("home", "Home", "home"), ("closet", "Closet", "closet"), ("career", "Career", "career"), ("story", "Story", "story") };
 
         public static VisualElement Build()
         {
@@ -23,7 +24,8 @@ namespace CFDream.UI
                 case "closet": body.Add(ClosetView.Build(s)); break;
                 case "career": body.Add(Simple("Career", s, CareerView.Build(s))); break;
                 case "story": body.Add(Simple("Story", s, StoryTab(s))); break;
-                default: body.Add(Home(s)); break;
+                case "calendar": body.Add(Laptop(s, true)); break;
+                default: body.Add(HomeScreen.Build(s)); break;
             }
             page.Add(body);
             page.Add(NavBar(s));
@@ -47,7 +49,7 @@ namespace CFDream.UI
             var bar = U.Row().Cls("navbar");
             foreach (var (id, n, icon) in Tabs)
             {
-                bool on = Game.Tab == id;
+                bool on = Game.Tab == id || (id == "home" && Game.Tab == "calendar");
                 var t = U.Col().Cls("nav-b", on ? "on" : "");
                 t.Add(new Icon(icon, 24, on ? C.Gold : C.Mute));
                 t.Add(U.T(n, "nav-t", on ? Fonts.Semi : Fonts.Medium).NoPick());
@@ -79,7 +81,26 @@ namespace CFDream.UI
             return main;
         }
 
-        static VisualElement Header(State s)
+        // the laptop: tonight, the calendar, money and the job, in a browser window with a way back home
+        public static VisualElement Laptop(State s, bool chrome)
+        {
+            var main = Screens.Scroll(); var pad = U.Div("pad-top");
+            if (DreamApp.Landscape) pad.AddToClassList("narrow-col");
+            if (chrome)
+            {
+                var bar = U.Row().Cls("laptop-bar");
+                var back = U.Row().Cls("laptop-back"); back.Add(new Icon("chev-l", 16, C.Gold)); back.Add(U.T("Home", "laptop-back-t", Fonts.Semi).NoPick());
+                back.Tap(() => Game.SetTab("home")); bar.Add(back);
+                var url = U.Row().Cls("laptop-url").Grow(); url.Add(U.T("cfdream.app", "laptop-url-t", Fonts.Medium).NoPick()); bar.Add(url);
+                pad.Add(bar);
+            }
+            pad.Add(Header(s));
+            var rest = U.Div("pad"); rest.Add(Chapter(s)); rest.Add(CalendarTab(s)); rest.Add(U.Space(24));
+            pad.Add(rest); main.Add(pad);
+            return main;
+        }
+
+        public static VisualElement Header(State s)
         {
             var row = U.Row().Cls("home-head");
             var lv = Progression.LevelOf(s.pg.xp);
