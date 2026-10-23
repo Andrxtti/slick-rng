@@ -40,6 +40,7 @@ namespace CFDream.UI
         {
             Fonts.Load();
             EnsureEventSystem();
+            QuietCamera();
             root = doc.rootVisualElement;
             root.style.position = Position.Absolute; root.style.left = 0; root.style.right = 0; root.style.top = 0; root.style.bottom = 0;
             var sheet = Resources.Load<StyleSheet>("Dream/dream"); if (sheet != null) root.styleSheets.Add(sheet); else Debug.LogWarning("[Dream] dream.uss not found in Resources/Dream");
@@ -70,6 +71,14 @@ namespace CFDream.UI
             var rb = RuntimePanelUtils.ScreenToPanel(root.panel, new Vector2(Screen.width - sa.xMax, sa.yMin));
             root.style.paddingLeft = lt.x; root.style.paddingTop = lt.y; root.style.paddingRight = rb.x; root.style.paddingBottom = rb.y;
             home.style.top = 10 + lt.y; home.style.right = 12 + rb.x;
+        }
+
+        // The UI covers the whole screen, so the 3D camera behind it is only burning battery. Turn it off until the 3D
+        // character arrives; the panel clears the screen itself.
+        void QuietCamera()
+        {
+            if (ps != null) { ps.clearColor = true; ps.colorClearValue = C.Ink; }
+            foreach (var cam in Camera.allCameras) cam.enabled = false;
         }
 
         static void EnsureEventSystem()

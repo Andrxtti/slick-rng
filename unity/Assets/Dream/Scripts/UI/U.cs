@@ -35,6 +35,7 @@ namespace CFDream.UI
     public static class Fonts
     {
         public static Font Body, Medium, Semi, Bold, Disp, Mono, MonoB, Sym, Emoji;
+        public static bool EmojiOk; // false where colour emoji can't be drawn (the web build): text drops them instead of showing boxes
         static readonly Dictionary<Font, StyleFontDefinition> defs = new Dictionary<Font, StyleFontDefinition>();
         static Type faType;
         public static string Report = "";
@@ -74,6 +75,7 @@ namespace CFDream.UI
                 defs[f] = fa != null && TryDef(fa, out var d) ? new StyleFontDefinition(d) : new StyleFontDefinition(FontDefinition.FromFont(f));
             }
             Report += sym != null ? " suits ok;" : " suits via plain font;";
+            EmojiOk = emo != null;
             Report += emo != null ? " emoji ok;" : " emoji unavailable;";
             Debug.Log("[Dream] Fonts:" + Report);
         }
@@ -177,7 +179,7 @@ namespace CFDream.UI
 
         public static Label T(string text, string cls = null, Font f = null)
         {
-            var l = new Label(text ?? "") { enableRichText = true };
+            var l = new Label(Fonts.EmojiOk ? text ?? "" : NoEmoji(text)) { enableRichText = true };
             l.Cls("t", cls); Fonts.Use(l, f ?? Fonts.Body); return l;
         }
         public static Label H1(string t) => T(t, "h1", Fonts.Disp);
@@ -237,6 +239,24 @@ namespace CFDream.UI
             return s;
         }
         public static VisualElement Divider() => Div("divider");
+
+        // emoji live outside the basic plane (surrogate pairs) plus a few joiners; card suits and ★ ✓ are kept
+        public static string NoEmoji(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return s ?? "";
+            var sb = new System.Text.StringBuilder(s.Length); bool cut = false;
+            for (int i = 0; i < s.Length; i++)
+            {
+                char c = s[i];
+                if (char.IsHighSurrogate(c) && i + 1 < s.Length && char.IsLowSurrogate(s[i + 1])) { i++; cut = true; continue; }
+                if (c == '\uFE0F' || c == '\u200D' || c == '\u20E3') { cut = true; continue; }
+                sb.Append(c);
+            }
+            if (!cut) return s;
+            var r = sb.ToString().Trim();
+            while (r.Contains("  ")) r = r.Replace("  ", " ");
+            return r;
+        }
 
         public static string Money(double n) => (n < 0 ? "−$" : "$") + Fmt.Money(Math.Abs(n));
         public static string Signed(double n) => (n < 0 ? "−$" : "+$") + Fmt.Money(Math.Abs(n));
