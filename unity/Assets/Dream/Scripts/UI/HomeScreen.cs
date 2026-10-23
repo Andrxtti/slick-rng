@@ -115,7 +115,11 @@ namespace CFDream.UI
             string news = s.cal.inv != null ? "You've got an invite" : s.cal.meet != null ? "Slick wants to meet" : sl.left > 0 ? $"{sl.left} game{(sl.left == 1 ? "" : "s")} left tonight" : "No games left tonight";
             l.Add(U.T(news, "room-news", Fonts.Medium).NoPick().Fg(s.cal.inv != null || s.cal.meet != null ? C.Gold2 : C.Mute));
             bar.Add(l);
-            bar.Add(U.Btn("💻 Laptop", () => CharacterStage.Instance?.Life?.Use("laptop"), "gold"));
+            bar.Add(U.Btn("💻 Laptop", () =>
+            {
+                var life = CharacterStage.Instance != null ? CharacterStage.Instance.Life : null;
+                if (life != null && life.isActiveAndEnabled && life.Room != null) life.Use("laptop"); else Game.SetTab("calendar");
+            }, "gold"));
             return bar;
         }
 

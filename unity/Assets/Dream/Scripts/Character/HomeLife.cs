@@ -74,11 +74,17 @@ namespace CFDream.Character
             }
             else if (arrived != null) { var cb = arrived; arrived = null; cb.Invoke(); }
             st.Pivot.localRotation = Quaternion.Euler(0, yaw, 0);
-            if (an != null) an.SetFloat("Speed", moving ? 1f : 0f);
+            if (an != null && HasSpeed(an)) an.SetFloat("Speed", moving ? 1f : 0f);
             if (room.shadow != null) room.shadow.localPosition = new Vector3(st.Pivot.localPosition.x, 0, st.Pivot.localPosition.z);
             Fish(dt); Tv(dt);
         }
 
+        Animator speedFor; bool speedOk;
+        bool HasSpeed(Animator an)
+        {
+            if (an != speedFor) { speedFor = an; speedOk = false; foreach (var p in an.parameters) if (p.name == "Speed") speedOk = true; }
+            return speedOk;
+        }
         Animator Anim() { var r = st.BodyRoot; return r != null ? r.GetComponentInChildren<Animator>() : null; }
         Gestures Hands()
         {
