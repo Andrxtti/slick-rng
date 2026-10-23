@@ -27,6 +27,8 @@ namespace CFDream.UI
         }
 
         public static VisualElement Page(string cls = null) => U.Div("screen").Cls(cls);
+        // in landscape, screens that read like a page stay a centred phone-width column
+        public static VisualElement Narrow(string cls = null) => Page(cls).Cls("narrow");
         public static ScrollView Scroll()
         {
             var sv = new ScrollView(ScrollViewMode.Vertical) { name = "main" };
@@ -38,7 +40,7 @@ namespace CFDream.UI
 
         public static VisualElement ErrorView(Exception e)
         {
-            var s = Page("pad");
+            var s = Narrow("pad");
             s.Add(U.Kicker("Something broke"));
             s.Add(U.H2("The Dream hit an error"));
             s.Add(U.P(U.Esc(e.GetBaseException().Message)).Mt(8));
@@ -51,7 +53,7 @@ namespace CFDream.UI
         // ------------------------------------------------------------ title
         static VisualElement Title()
         {
-            var s = Page("title-screen");
+            var s = Narrow("title-screen");
             var glow = new VisualElement().Cls("title-glow").NoPick();
             glow.generateVisualContent += mgc =>
             {
@@ -92,6 +94,8 @@ namespace CFDream.UI
             var d = Game.Draft; bool re = Game.Restyle;
             var fig = re ? new Fig { look = d, eq = Game.State.eq, dye = Game.State.dye, fin = Game.State.fin } : Fig.Of(d, new State().eq);
             var s = Page("create");
+            bool land = DreamApp.Landscape;
+            if (land) s.AddToClassList("two-pane");
             var top = U.Div("create-top");
             var portrait = new Portrait(fig, 150);
             top.Add(portrait);
@@ -138,8 +142,11 @@ namespace CFDream.UI
                 }
             }
             body.Add(sc);
-            body.Add(U.Space(90));
-            sv.Add(body); s.Add(sv);
+            body.Add(U.Space(land ? 24 : 90));
+            sv.Add(body);
+            VisualElement left = null;
+            if (land) { left = U.Col().Cls("pane-left"); left.Add(top); s.Add(left); } // Add re-parents top out of s
+            s.Add(sv);
 
             var foot = U.Row().Cls("footer");
             if (re)
@@ -152,7 +159,7 @@ namespace CFDream.UI
                 foot.Add(U.Btn("Randomize", () => { Randomize(d); Changed(); }, "ghost grow"));
                 foot.Add(U.Btn("Start the story", () => Game.Begin(Game.DraftName), "gold grow"));
             }
-            s.Add(foot);
+            if (land) { left.Add(U.Spring()); left.Add(foot); } else s.Add(foot);
             return s;
         }
         static IEnumerable<string> Pairs(object g)
@@ -228,7 +235,7 @@ namespace CFDream.UI
             var sc = Game.Scene; if (sc == null) { Game.View = View.Hub; return HubView.Build(); }
             var def = DB.Scenes[sc.id]; var b = Game.CurrentBeat(); var st = Game.State;
             var tint = Tint(def.place);
-            var s = Page("scene");
+            var s = Narrow("scene");
             s.style.backgroundColor = C.Mix(C.Ink, tint, 0.1f); Backdrop = C.Mix(C.Ink, tint, 0.1f);
             var glow = new VisualElement().Cls("scene-glow").NoPick();
             glow.generateVisualContent += mgc =>

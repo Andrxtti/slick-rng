@@ -9,6 +9,7 @@ namespace CFDream.UI
     public class DreamApp : MonoBehaviour
     {
         public static DreamApp I;
+        public static bool Landscape; // wider than tall: screens switch to two-pane layouts
         PanelSettings ps;
         UIDocument doc;
         VisualElement root, column, home, modal, toast;
@@ -24,10 +25,8 @@ namespace CFDream.UI
             var ps = ScriptableObject.CreateInstance<PanelSettings>();
             ps.name = "Dream Panel";
             ps.themeStyleSheet = Resources.Load<ThemeStyleSheet>("Dream/DreamTheme");
-            ps.scaleMode = PanelScaleMode.ScaleWithScreenSize;
-            ps.referenceResolution = new Vector2Int(430, 932);
-            ps.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
-            ps.match = Screen.width > Screen.height ? 1f : 0f;
+            ps.scaleMode = PanelScaleMode.ConstantPixelSize;
+            ps.scale = UiScale();
             ps.sortingOrder = 10;
             var d = go.AddComponent<UIDocument>(); d.panelSettings = ps;
             var app = go.AddComponent<DreamApp>(); app.ps = ps;
@@ -58,13 +57,23 @@ namespace CFDream.UI
 
         void Update() => ApplyScreen(false);
 
-        // phones are portrait: match width; in the editor's landscape Game view, match height and keep a phone-width column
+        // One scale for both orientations: a phone is 430 units on its short side and 932 on its long side, whichever way
+        // it's held, so text and buttons stay the same size when you rotate. Desktops and tablets get the smaller fit.
+        static float UiScale()
+        {
+            float w = Mathf.Max(1, Screen.width), h = Mathf.Max(1, Screen.height);
+            return Mathf.Max(0.5f, Mathf.Min(Mathf.Min(w, h) / 430f, Mathf.Max(w, h) / 932f));
+        }
+
         void ApplyScreen(bool force)
         {
             if (root == null) return;
             if (!force && Screen.width == lastW && Screen.height == lastH && Screen.safeArea == lastSafe) return;
             lastW = Screen.width; lastH = Screen.height; lastSafe = Screen.safeArea;
-            if (ps != null) ps.match = Screen.width > Screen.height ? 1f : 0f;
+            if (ps != null) ps.scale = UiScale();
+            bool land = Screen.width > Screen.height * 1.15f;
+            root.EnableInClassList("landscape", land);
+            if (land != Landscape) { Landscape = land; if (!force && Game.State != null) RenderNow(); }
             if (root.panel == null) return;
             var sa = Screen.safeArea;
             var lt = RuntimePanelUtils.ScreenToPanel(root.panel, new Vector2(sa.xMin, Screen.height - sa.yMax));
@@ -109,7 +118,8 @@ namespace CFDream.UI
             column.Add(view);
             root.style.backgroundColor = Screens.Backdrop;
             var v = Game.View;
-            home.Show(v == View.Run || v == View.Results || v == View.Profile || (v == View.Create && Game.Restyle));
+            bool showHome = v == View.Run || v == View.Results || v == View.Profile || (v == View.Create && Game.Restyle);
+            home.Show(showHome); root.EnableInClassList("has-home", showHome);
             if (same)
             {
                 var nsv = column.Q<ScrollView>("main"); var off = lastScroll;

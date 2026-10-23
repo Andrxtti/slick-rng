@@ -30,12 +30,12 @@ namespace CFDream.EditorTools
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, AppId);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, AppId);
 
-            // portrait only: the whole UI is laid out for a phone held upright
-            PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+            // portrait or landscape: the screens switch to two-pane layouts when the phone is turned sideways
+            PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
             PlayerSettings.allowedAutorotateToPortrait = true;
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
-            PlayerSettings.allowedAutorotateToLandscapeLeft = false;
-            PlayerSettings.allowedAutorotateToLandscapeRight = false;
+            PlayerSettings.allowedAutorotateToLandscapeLeft = true;
+            PlayerSettings.allowedAutorotateToLandscapeRight = true;
 
             // Android: 64-bit IL2CPP (what the Play Store requires), Android 10 and newer
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
@@ -50,7 +50,7 @@ namespace CFDream.EditorTools
             PlayerSettings.SplashScreen.backgroundColor = new Color32(11, 10, 8, 255);
             Icons();
             AssetDatabase.SaveAssets();
-            Debug.Log($"[Dream] Mobile settings applied: {Product} ({AppId}) {Version}, portrait, ARM64, Android 10+, iOS 15+");
+            Debug.Log($"[Dream] Mobile settings applied: {Product} ({AppId}) {Version}, portrait + landscape, ARM64, Android 10+, iOS 15+");
         }
 
         static void Icons()

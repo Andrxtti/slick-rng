@@ -19,9 +19,15 @@ namespace CFDream.UI
             var page = Screens.Page("hub");
             var sv = Screens.Scroll();
             var body = U.Div("pad");
-            body.Add(Header(s));
-            body.Add(Chapter(s));
-            body.Add(TabBar(s));
+            if (DreamApp.Landscape)
+            {
+                page.AddToClassList("two-pane");
+                var leftSv = new ScrollView(ScrollViewMode.Vertical); leftSv.AddToClassList("pane-left");
+                leftSv.verticalScrollerVisibility = ScrollerVisibility.Hidden; leftSv.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
+                var lb = U.Div("pad"); lb.Add(Header(s)); lb.Add(Chapter(s)); lb.Add(TabBar(s)); leftSv.Add(lb);
+                page.Add(leftSv);
+            }
+            else { body.Add(Header(s)); body.Add(Chapter(s)); body.Add(TabBar(s)); }
             switch (Game.Tab)
             {
                 case "closet": body.Add(ClosetView.Build(s)); break;

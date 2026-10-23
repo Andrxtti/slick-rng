@@ -4,6 +4,19 @@
 
 .app { background-color: #0b0a08; color: #f3ecdc; flex-direction: column; align-items: center; }
 .column { flex-grow: 1; width: 100%; max-width: 520px; }
+/* landscape: two panes side by side; page-like screens stay a centred phone-width column */
+.landscape .column { max-width: 1180px; }
+.landscape .screen.narrow { max-width: 560px; align-self: center; }
+.two-pane { flex-direction: row; }
+.two-pane .pane-left { width: 42%; max-width: 420px; flex-shrink: 0; }
+.two-pane .main-scroll { flex-grow: 1; }
+.run.two-pane .pane-left { width: 56%; max-width: 640px; padding: 12px 6px 10px 14px; }
+.table.table-wide { flex-grow: 1; height: auto; min-height: 200px; }
+/* the Home button sits top-right: in two-pane screens keep the right pane clear of it */
+.landscape.has-home .two-pane .main-scroll .pad { padding-top: 58px; }
+.create.two-pane .pane-left { background-color: #13110d; border-right-width: 1px; border-color: #3a3226; }
+.create.two-pane .create-top { flex-direction: column; align-items: center; border-bottom-width: 0; background-color: rgba(0, 0, 0, 0); }
+.create.two-pane .create-top > .col { width: 100%; margin-top: 10px; }
 .screen { flex-grow: 1; width: 100%; }
 .main-scroll { flex-grow: 1; }
 .pad { padding: 14px 14px 0 14px; }

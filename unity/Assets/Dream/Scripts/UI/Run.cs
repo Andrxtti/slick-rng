@@ -13,7 +13,9 @@ namespace CFDream.UI
         public static VisualElement Build()
         {
             var run = Game.Run; if (run == null) { Game.View = View.Hub; return HubView.Build(); }
+            if (DreamApp.Landscape && run.spot != null && (run.state == "play" || run.state == "answered")) return Wide(run);
             var page = Screens.Page("run");
+            if (DreamApp.Landscape) page.AddToClassList("narrow");
             var sv = Screens.Scroll(); var body = U.Div("pad");
             body.Add(Header(run));
             switch (run.state)
@@ -84,11 +86,24 @@ namespace CFDream.UI
             return c;
         }
 
-        static VisualElement Hand(Run run)
+        static VisualElement Wide(Run run)
+        {
+            var page = Screens.Page("run two-pane");
+            var left = U.Col().Cls("pane-left table-pane");
+            left.Add(Header(run));
+            var table = new TableView(run.spot); table.AddToClassList("table-wide"); left.Add(table);
+            page.Add(left);
+            var sv = Screens.Scroll(); sv.AddToClassList("pane-right");
+            var body = U.Div("pad"); body.Add(Hand(run, false)); body.Add(U.Space(24));
+            sv.Add(body); page.Add(sv);
+            return page;
+        }
+
+        static VisualElement Hand(Run run, bool withTable = true)
         {
             var sp = run.spot; var col = U.Col(); if (sp == null) return col;
             bool answered = run.state == "answered"; var last = answered ? run.results.LastOrDefault() : null;
-            var table = new TableView(sp); col.Add(table);
+            if (withTable) col.Add(new TableView(sp));
 
             var hero = sp.seats[sp.hero];
             var hr = U.Row().Cls("hero-row");
@@ -196,7 +211,7 @@ namespace CFDream.UI
             var res = Game.Last; var s = Game.State;
             if (res == null) { Game.View = View.Hub; return HubView.Build(); }
             var ev = res.ev;
-            var page = Screens.Page("results");
+            var page = Screens.Narrow("results");
             var sv = Screens.Scroll(); var body = U.Div("pad");
             body.Add(U.Space(46)); // room for the Home button
 
