@@ -3,6 +3,7 @@
 //   Dream > Build Android APK             a phone-installable APK in C:\Dev\Builds
 //   Dream > Build Android APK (dev)       same, with logs you can read over USB
 //   Dream > Build iOS Xcode project       for a Mac (or a cloud build) to sign and ship
+//   Dream > Build Web (iPhone Safari)     a web version to play on any phone; Add to Home Screen
 // Also works from the command line: Unity.exe -batchmode -quit -projectPath "<project>" -executeMethod CFDream.EditorTools.DreamBuild.BuildAndroid
 using System;
 using System.IO;
@@ -98,13 +99,26 @@ namespace CFDream.EditorTools
         [MenuItem("Dream/Build iOS Xcode project", priority = 22)]
         public static void BuildIOS() => Build(BuildTarget.iOS, false);
 
+        [MenuItem("Dream/Build Web (iPhone Safari)", priority = 23)]
+        public static void BuildWeb() => Build(BuildTarget.WebGL, false);
+
+        // the web version: our own phone-first page (safe area, home-screen icon), gzip that works on any static host
+        static void WebSettings()
+        {
+            PlayerSettings.WebGL.template = "PROJECT:Dream";
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
+            PlayerSettings.WebGL.decompressionFallback = true;
+            PlayerSettings.WebGL.dataCaching = true;
+            PlayerSettings.WebGL.nameFilesAsHashes = false;
+        }
+
         [MenuItem("Dream/Open builds folder", priority = 40)]
         public static void OpenBuilds() { Directory.CreateDirectory(OutDir); EditorUtility.RevealInFinder(OutDir + Path.DirectorySeparatorChar); }
 
         static void Build(BuildTarget target, bool dev)
         {
             var group = BuildPipeline.GetBuildTargetGroup(target);
-            string name = target == BuildTarget.Android ? "Android" : "iOS";
+            string name = target == BuildTarget.Android ? "Android" : target == BuildTarget.WebGL ? "Web" : "iOS";
             if (!BuildPipeline.IsBuildTargetSupported(group, target))
             {
                 string msg = $"{name} Build Support isn't installed for this Unity version.\n\nUnity Hub → Installs → ⚙ on {Application.unityVersion} → Add modules → {name} Build Support" + (target == BuildTarget.Android ? " (with OpenJDK and Android SDK & NDK Tools)." : ".");
@@ -118,9 +132,11 @@ namespace CFDream.EditorTools
                 return;
             }
             if (target == BuildTarget.Android) EditorUserBuildSettings.buildAppBundle = false;
+            if (target == BuildTarget.WebGL) WebSettings();
 
             Directory.CreateDirectory(OutDir);
-            string path = target == BuildTarget.Android ? Path.Combine(OutDir, $"TheDream-{Version}{(dev ? "-dev" : "")}.apk") : Path.Combine(OutDir, "TheDream-iOS");
+            string path = target == BuildTarget.Android ? Path.Combine(OutDir, $"TheDream-{Version}{(dev ? "-dev" : "")}.apk")
+                : target == BuildTarget.WebGL ? Path.Combine(OutDir, "TheDream-Web") : Path.Combine(OutDir, "TheDream-iOS");
             var scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
             if (scenes.Length == 0) scenes = new[] { "Assets/Scenes/SampleScene.unity" };
             var opts = new BuildPlayerOptions
