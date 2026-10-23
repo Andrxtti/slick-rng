@@ -22,6 +22,7 @@ namespace CFDream.UI
                 case View.Scene: return SceneView();
                 case View.Run: return RunView.Build();
                 case View.Results: return ResultsView.Build();
+                case View.Transit: return TransitView.Build();
                 default: return Title();
             }
         }

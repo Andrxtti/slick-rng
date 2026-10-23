@@ -5,7 +5,10 @@ using System.Linq;
 
 namespace CFDream
 {
-    public enum View { Title, Create, Hub, Scene, Run, Results, Profile }
+    public enum View { Title, Create, Hub, Scene, Run, Results, Profile, Transit }
+
+    // getting to the game: "drive" (your ride), "fly" (out of town or your jet) or "online" (the CF Poker client)
+    public class Trip { public string kind, ride; public EventDef ev; }
 
     public static class Game
     {
@@ -13,6 +16,7 @@ namespace CFDream
         public static View View = View.Title;
         public static string Tab = "calendar", ClosetCat = "shirts", ProfileTab = "quests";
         public static Run Run;
+        public static Trip Trip;
         public static Result Last;
         public static ScenePlay Scene;
         public static Look Draft = new Look(); public static string DraftName = ""; public static bool Restyle;
@@ -24,7 +28,7 @@ namespace CFDream
         public static void Boot()
         {
             // Play mode can start without a script reload, so nothing from the last session may linger here
-            Run = null; Last = null; Scene = null; Morning = null; Restyle = false; Draft = new Look(); DraftName = "";
+            Run = null; Last = null; Scene = null; Morning = null; Trip = null; Restyle = false; Draft = new Look(); DraftName = "";
             View = View.Title; Tab = "calendar"; ClosetCat = "shirts"; CalSel = -1; CalWk = 0;
             DB.Load();
             State = State.Load();
@@ -116,7 +120,23 @@ namespace CFDream
         {
             if (Run != null) return;
             var run = Play.Start(id, reentry); if (run == null) { Render(); return; }
-            Run = run; Morning = null; View = View.Run; NextTable();
+            Run = run; Morning = null;
+            // a short cutscene on the way, except for another bullet in an event you're already at
+            if (!reentry) { Trip = new Trip { kind = TripKind(run.ev), ride = State.Eq("ride"), ev = run.ev }; View = View.Transit; Render(); return; }
+            View = View.Run; NextTable();
+        }
+        static string TripKind(EventDef ev)
+        {
+            if (!Play.LiveEv(ev)) return "online";
+            return Calendar.TravelFor(State, ev) > 0 || State.Eq("ride") == "jet" ? "fly" : "drive";
+        }
+        // the cutscene is over (or skipped): take your seat
+        public static void Arrive()
+        {
+            if (View != View.Transit) return;
+            Trip = null;
+            if (Run == null) { Hub(); return; }
+            View = View.Run; NextTable();
         }
         public static void NextTable() { var run = Run; if (run == null) return; Play.PickTable(run); run.state = "ready"; Render(); }
         public static void Deal() { var run = Run; if (run == null) return; run.spot = Play.Deal(run); run.state = "play"; Render(); }
