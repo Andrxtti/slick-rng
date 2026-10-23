@@ -83,7 +83,12 @@ namespace CFDream.UI
                         Vector3 at;
                         if (sayWho == "me") { var head = st.Bone(HumanBodyBones.Head); at = head != null ? head.position + Vector3.up * 0.42f : st.Pivot.position + Vector3.up * 2.2f; }
                         else { var u = room.Use(sayWho); at = u != null ? u.Anchor + Vector3.up * 0.25f : st.Pivot.position + Vector3.up * 2.2f; }
-                        var p = view.FromViewport(st.Viewport(at)); bubble.style.left = p.x; bubble.style.top = p.y;
+                        var p = view.FromViewport(st.Viewport(at));
+                        // keep the whole bubble on screen
+                        float bw = bubble.resolvedStyle.width, bh = bubble.resolvedStyle.height, vw = view.contentRect.width;
+                        if (!float.IsNaN(bw) && bw > 0) p.x = Mathf.Clamp(p.x, bw / 2 + 8, Mathf.Max(bw / 2 + 8, vw - bw / 2 - 8));
+                        if (!float.IsNaN(bh) && bh > 0) p.y = Mathf.Max(p.y, bh + 8);
+                        bubble.style.left = p.x; bubble.style.top = p.y;
                     }
                 }
                 // smoke drifting up from your head, and the room going soft for a bit

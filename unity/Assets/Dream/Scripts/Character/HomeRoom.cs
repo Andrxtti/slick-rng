@@ -67,7 +67,7 @@ namespace CFDream.Character
                 var g = new GameObject("Window"); g.layer = layer; g.transform.SetParent(r.root.transform, false);
                 if (leftWall) { g.transform.localPosition = new Vector3(-r.W / 2 + 0.012f, y, z); g.transform.localRotation = Quaternion.Euler(0, 90, 0); }
                 else g.transform.localPosition = new Vector3(x, y, -r.D / 2 + 0.012f);
-                Quad(g.transform, "View", new Vector3(-ww / 2, -hh / 2, 0), new Vector3(ww / 2, -hh / 2, 0), new Vector3(ww / 2, hh / 2, 0), new Vector3(-ww / 2, hh / 2, 0), viewMat, layer, Vector2.one);
+                Quad(g.transform, "View", new Vector3(-ww / 2, -hh / 2, 0), new Vector3(ww / 2, -hh / 2, 0), new Vector3(ww / 2, hh / 2, 0), new Vector3(-ww / 2, hh / 2, 0), viewMat, layer, Vector2.one, true);
                 var fm = Mats.Get(trim, 0, 0.5f); float t = 0.06f;
                 Box(g.transform, new Vector3(0, hh / 2 + t / 2, 0.02f), new Vector3(ww + 2 * t, t, 0.06f), fm, layer);
                 Box(g.transform, new Vector3(0, -hh / 2 - t / 2, 0.03f), new Vector3(ww + 2 * t, t, 0.1f), fm, layer);
@@ -114,7 +114,7 @@ namespace CFDream.Character
                     var q = new Vector3[4]; for (int i = 0; i < 4; i++) q[i] = V3(sc[i]);
                     bool tv = pid != "laptop";
                     var m = tv ? Mats.Get(Hex("#0b0d10"), 0f, 0.92f) : Mats.Textured(Tex("laptop_screen"), Color.white, 0.8f, null, 1.3f);
-                    var sq = Quad(go.transform, "Screen", q[0], q[1], q[2], q[3], m, layer, Vector2.one);
+                    var sq = Quad(go.transform, "Screen", q[0], q[1], q[2], q[3], m, layer, Vector2.one, true);
                     if (tv)
                     {
                         r.tvScreen = sq.GetComponent<Renderer>(); r.tvOff = m;
@@ -292,12 +292,15 @@ namespace CFDream.Character
         }
 
         // ------------------------------------------------------------ helpers
-        static GameObject Quad(Transform parent, string name, Vector3 a, Vector3 b, Vector3 c, Vector3 d, Material m, int layer, Vector2 uv)
+        // flipU: pictures seen from the front (windows, screens). Unity's axes put the props' -x on the viewer's right,
+        // so their pictures run right to left unless the texture is turned round.
+        static GameObject Quad(Transform parent, string name, Vector3 a, Vector3 b, Vector3 c, Vector3 d, Material m, int layer, Vector2 uv, bool flipU = false)
         {
             var go = new GameObject(name); go.layer = layer; go.transform.SetParent(parent, false);
             var mesh = new Mesh { name = name };
             mesh.vertices = new[] { a, b, c, d };
-            mesh.uv = new[] { new Vector2(0, 0), new Vector2(uv.x, 0), new Vector2(uv.x, uv.y), new Vector2(0, uv.y) };
+            mesh.uv = flipU ? new[] { new Vector2(uv.x, 0), new Vector2(0, 0), new Vector2(0, uv.y), new Vector2(uv.x, uv.y) }
+                            : new[] { new Vector2(0, 0), new Vector2(uv.x, 0), new Vector2(uv.x, uv.y), new Vector2(0, uv.y) };
             mesh.triangles = new[] { 0, 1, 2, 0, 2, 3 };   // corners go bottom-left, bottom-right, top-right, top-left as seen from the lit side
             mesh.RecalculateNormals(); mesh.RecalculateBounds();
             // face the side we want lit: towards the room's open front and up
