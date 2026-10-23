@@ -560,3 +560,119 @@
 .dream .dr3live:active { cursor: grabbing; }
 
 .dream .pl-cftilt { background: radial-gradient(ellipse at 50% -10%, rgba(255, 70, 70, .28), transparent 55%), radial-gradient(ellipse at 50% 125%, rgba(120, 40, 160, .45), transparent 60%), #0c0a12; }
+
+/* ================================================================ fashion: grades, inspect card, fits, light effects */
+.dream .dritem[class*=" g-"] { border-left: 3px solid var(--gc); } .dream .dritem.g-standard { border-left-color: var(--line2); }
+.dream .dritem .drrar { color: var(--gc, var(--faint)); }
+.dream .dritem.g-legendary:not(.locked) { background: linear-gradient(135deg, rgba(240, 194, 90, .14), transparent 60%), var(--card); }
+.dream .dritem.g-iconic:not(.locked) { background: linear-gradient(135deg, rgba(255, 90, 110, .16), transparent 55%), var(--card); }
+.dream .dritem.g-iconic .drrar { text-shadow: 0 0 8px rgba(255, 90, 110, .6); }
+.dream .dritem .drmk { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.dream .dritem .drpips { position: absolute; right: 8px; bottom: 8px; }
+.dream .dritem .drcert { position: absolute; right: 8px; top: 20px; font-style: normal; font-size: 11px; }
+.dream .drpips { display: inline-flex; gap: 3px; vertical-align: middle; }
+.dream .drpips i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--gold3); }
+.dream .drpips i.on { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 6px rgba(217, 179, 108, .7); }
+.dream .drslot { display: grid; gap: 10px; align-content: start; }
+.dream .drinsp { border: 1px solid var(--line2); border-top: 3px solid var(--gc); border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px;
+  background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--gc) 16%, transparent), transparent 60%), var(--card); }
+.dream .drinsp-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.dream .drgrade { font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gc); }
+.dream .drbrand { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+.dream .drinsp-name { font-family: var(--disp); font-size: 21px; font-weight: 600; line-height: 1.15; }
+.dream .drinsp.g-iconic .drinsp-name { text-shadow: 0 0 14px rgba(255, 90, 110, .45); }
+.dream .drinsp-story { margin: 0; font-size: 13px; color: var(--cream); opacity: .86; font-style: italic; }
+.dream .drlv { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 8px; align-items: center; margin-top: 2px; }
+.dream .drlv b { font-size: 13px; color: var(--gold2); } .dream .drlv small { grid-column: 1 / -1; font-size: 11.5px; color: var(--mute); } .dream .drlv .drbar { grid-column: 1 / -1; }
+.dream .drtags { display: flex; gap: 6px; flex-wrap: wrap; }
+.dream .drtag { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line2); color: var(--cream); }
+.dream .drtag.gold { border-color: var(--gold); color: var(--gold2); background: rgba(217, 179, 108, .12); }
+.dream .drtag.fx { border-color: color-mix(in srgb, var(--gc) 60%, transparent); color: var(--gc); }
+.dream .drinsp-rec, .dream .drinsp-prov { font-size: 11.5px; color: var(--mute); }
+.dream .drinsp .drsws { display: flex; flex-wrap: wrap; gap: 6px; }
+.dream .drinsp .drsw { width: 28px; height: 28px; }
+.dream .drsw:disabled { opacity: .28; cursor: not-allowed; filter: saturate(.4); }
+.dream .drsw.prem { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .22); }
+.dream .drsw.metal { background: radial-gradient(circle at 35% 30%, #fff 0 8%, var(--c) 30%, color-mix(in srgb, var(--c) 55%, #000) 100%); }
+.dream .drfitcard { display: grid; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--line); }
+.dream .drfit { display: flex; gap: 10px; align-items: center; }
+.dream .drfit > b { font-size: 26px; color: var(--gold2); min-width: 2ch; }
+.dream .drfit small { display: block; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
+.dream .drfit span { font-family: var(--disp); font-size: 17px; font-weight: 600; }
+.dream .drfit-set { font-size: 11px; color: var(--mute); }
+.dream .drfits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.dream .drfitslot { position: relative; display: grid; }
+.dream .drfitbtn { display: grid; gap: 1px; padding: 6px 4px; border-radius: 10px; border: 1px solid var(--line2); background: var(--card2); color: var(--cream); cursor: pointer; font-family: var(--font-body); }
+.dream .drfitbtn b { font-size: 12px; } .dream .drfitbtn small { font-size: 10px; color: var(--mute); }
+.dream .drfitbtn.empty { border-style: dashed; background: transparent; }
+.dream .drfitre { position: absolute; top: -6px; right: -4px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line2); background: var(--ink2); color: var(--mute); font-size: 11px; line-height: 1; cursor: pointer; padding: 0; }
+.dream .drunlock.wearup { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; border-color: var(--gc); background: linear-gradient(90deg, color-mix(in srgb, var(--gc) 18%, transparent), transparent); }
+.dream .drunlock.wearup > div { display: grid; gap: 1px; min-width: 0; }
+
+/* light that catches on gear: drawn over the 3D render at points projected from the model */
+.dream .drfxw { position: relative; display: block; }
+.dream .drfx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.dream .drfx i { position: absolute; width: 0; height: 0; font-style: normal; }
+.dream .drfx i::before, .dream .drfx i::after { content: ''; position: absolute; pointer-events: none; }
+/* glint: a four-point star on diamonds */
+.dream .drfx .fx-glint::before, .dream .drfx .fx-glint::after { left: -9px; top: -1px; width: 18px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 50%, rgba(255, 255, 255, 0)); opacity: 0; animation: drGlint 2.8s var(--d, 0s) ease-in-out infinite; }
+.dream .drfx .fx-glint::after { transform: rotate(90deg); animation-name: drGlint2; }
+@keyframes drGlint { 0%, 62%, 100% { opacity: 0; transform: scale(.2); } 74% { opacity: 1; transform: scale(1.25); } 86% { opacity: .5; transform: scale(.7); } }
+@keyframes drGlint2 { 0%, 62%, 100% { opacity: 0; transform: rotate(90deg) scale(.2); } 74% { opacity: 1; transform: rotate(90deg) scale(1.25); } 86% { opacity: .5; transform: rotate(90deg) scale(.7); } }
+/* sheen: gold catching a light as you move */
+.dream .drfx .fx-sheen::before { left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 244, 214, .95) 0 12%, rgba(255, 214, 140, .45) 35%, rgba(255, 214, 140, 0) 70%);
+  mix-blend-mode: screen; opacity: 0; animation: drSheen 3.6s var(--d, 0s) ease-in-out infinite; }
+@keyframes drSheen { 0%, 55%, 100% { opacity: 0; transform: scale(.5); } 70% { opacity: 1; transform: scale(1.1); } 85% { opacity: .2; transform: scale(.8); } }
+/* holo: a holographic patch */
+.dream .drfx .fx-holo::before { left: -16px; top: -7px; width: 32px; height: 14px; border-radius: 3px; mix-blend-mode: screen; opacity: .75;
+  background: linear-gradient(105deg, transparent 15%, rgba(110, 230, 255, .6) 32%, rgba(255, 120, 220, .6) 48%, rgba(255, 238, 120, .6) 64%, transparent 82%); background-size: 260% 100%; animation: drHolo 3s linear infinite; }
+@keyframes drHolo { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+/* thread: gold thread in a mastered piece */
+.dream .drfx .fx-thread::before { left: -14px; top: -5px; width: 28px; height: 10px; border-radius: 6px; mix-blend-mode: screen;
+  background: linear-gradient(90deg, transparent, rgba(255, 226, 150, .9), transparent); background-size: 200% 100%; opacity: 0; animation: drThread 4s var(--d, 0s) ease-in-out infinite; }
+@keyframes drThread { 0%, 50%, 100% { opacity: 0; background-position: 120% 0; } 60% { opacity: 1; } 80% { opacity: .8; background-position: -120% 0; } }
+@media (prefers-reduced-motion: reduce) { .dream .drfx i::before, .dream .drfx i::after { animation: none !important; opacity: 0 !important; } }
+.dream .dritem .drmk span { color: var(--gc); font-weight: 700; }
+.dream .dritem b { padding-right: 14px; }
+@media (min-width: 641px) { .dream .drcloset-top { display: contents; } .dream .drcloset-prev { grid-row: 1 / span 2; } .dream .drcloset-top > .drcats, .dream .drcloset > .drslot { grid-column: 2; } }
+.dream .dritem .drcert { top: auto; bottom: 6px; right: 40px; }
+/* phones: a compact sticky strip, your player beside the fit rating, so the list scrolls under it */
+@media (max-width: 640px) {
+  .dream .drcloset-top { position: sticky; top: 58px; z-index: 4; display: grid; gap: 4px; background: var(--ink); padding-bottom: 2px; box-shadow: 0 12px 20px -8px rgba(0, 0, 0, .7); }
+  .dream .drcloset-prev { position: static; max-width: none; justify-self: stretch; display: grid; grid-template-columns: 128px minmax(0, 1fr); align-items: center; background: var(--ink2); }
+  .dream .drcloset-top .drcats { padding-bottom: 4px; }
+  .dream .drcloset-av { width: 128px; }
+  .dream .drcloset-side { display: grid; gap: 4px; min-width: 0; }
+  .dream .drcloset-side .drfitcard { border-top: 0; padding: 8px 10px 2px 4px; gap: 5px; }
+  .dream .drcloset-side .drfit > b { font-size: 22px; } .dream .drcloset-side .drfit span { font-size: 15px; }
+  .dream .drcloset-side .drfit-set { font-size: 10px; line-height: 1.25; }
+  .dream .drcloset-side .drfitbtn { padding: 4px 2px; } .dream .drcloset-side .drfitbtn small { font-size: 9px; }
+  .dream .drcloset-side .drcoll { padding: 2px 10px 8px 4px; gap: 2px; }
+}
+/* face sculpting */
+.dream .drsculpt { border: 1px solid var(--line2); border-radius: 14px; background: var(--card); padding: 0 12px; }
+.dream .drsculpt summary { cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 12px 0; font-weight: 600; list-style: none; }
+.dream .drsculpt summary::-webkit-details-marker { display: none; }
+.dream .drsculpt summary::after { content: '▾'; color: var(--gold); margin-left: 8px; } .dream .drsculpt[open] summary::after { content: '▴'; }
+.dream .drsculpt summary small { margin-left: auto; color: var(--mute); font-weight: 400; font-size: 12px; }
+.dream .drsc-g { display: grid; gap: 4px; padding-bottom: 10px; }
+.dream .drsc { display: grid; grid-template-columns: 96px minmax(0, 1fr) 30px; gap: 10px; align-items: center; font-size: 13px; }
+.dream .drsc span { color: var(--mute); }
+.dream .drsc output { font-family: var(--font-mono); font-size: 12px; text-align: right; color: var(--gold2); }
+.dream .drsc input[type=range] { width: 100%; accent-color: var(--gold); height: 28px; }
+.dream .drsculpt .drrow { padding-bottom: 12px; }
+.dream .drrestyle { justify-self: start; margin: 0 12px; background: none; border: 0; color: var(--gold2); font-size: 12.5px; cursor: pointer; padding: 6px 0; font-family: var(--font-body); }
+@media (max-width: 640px) { .dream .drcloset-side .drrestyle { margin: 0 4px; padding: 0; font-size: 11.5px; } }
+/* while sculpting on a phone, keep a close-up of your face pinned at the top */
+.dream .drcreate { overflow: clip; }
+@media (max-width: 720px) {
+  .dream .drcreate.sculpting .drcreate-prev { position: sticky; top: 58px; z-index: 5; min-height: 0; padding: 6px 12px 4px; background: var(--ink2); box-shadow: 0 10px 18px -6px rgba(0, 0, 0, .7); }
+  .dream .drcreate.sculpting .drcreate-prev .drcard-av { width: 230px; height: 186px; overflow: hidden; }
+  .dream .drcreate.sculpting .drcreate-prev .drcard-av > * { transform: scale(1.42); transform-origin: 50% 9%; }
+  .dream .drcreate.sculpting .drcreate-prev b, .dream .drcreate.sculpting .drcreate-prev small { display: none; }
+}
+/* on a heater: five good decisions in a row and your face starts to glow */
+.dream .drverdict-face.heat { box-shadow: 0 0 0 2px #ff9a3a, 0 0 18px 4px rgba(255, 122, 26, .55); animation: drHeat 1.6s ease-in-out infinite; }
+@keyframes drHeat { 50% { box-shadow: 0 0 0 2px #ffcf5a, 0 0 26px 8px rgba(255, 150, 40, .7); } }
+@media (prefers-reduced-motion: reduce) { .dream .drverdict-face.heat { animation: none; } }

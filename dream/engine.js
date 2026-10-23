@@ -66,7 +66,7 @@ function drUnlocks(s) {
   for (const it of DR_ITEMS) {
     const k = drItemKey(it);
     if (s.owned[k] || !it.test(s)) continue;
-    s.owned[k] = true;
+    s.owned[k] = true; drGot(s, k, it.req === 'Where it all started' ? 'Day one' : DR.gotAt || 'Storyline');
     if (it.req && it.req !== 'Where it all started' && it.id !== 'none') fresh.push(it);
     // wear the newest thing you earn: later in the list is the upgrade
     const cur = DR_ITEMS.findIndex((x) => x.slot === it.slot && x.id === s.eq[it.slot]), mine = DR_ITEMS.indexOf(it);
@@ -525,7 +525,7 @@ function drFinish(quit) {
   if (run.cooler && s.ch >= 1 && !s.story.badbeat && !s.queue.includes('badbeat')) s.queue.push('badbeat');
   if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');
   res.after = s.br;
-  res.unlocked = drUnlocks(s);
+  DR.gotAt = ev.name; res.unlocked = drUnlocks(s); DR.gotAt = null;
   drProgress(s);
   drEventDone(res, run);
   drSave();

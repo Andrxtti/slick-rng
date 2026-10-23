@@ -24,7 +24,8 @@ function drRender() {
     throw e;
   }
   if (DR.view === 'scene') drType();
-  if ($('dr3live')) { DR3.liveState = () => (DR.view === 'create' ? { name: DR.draft.name || 'You', look: DR.draft.look, eq: drDefault().eq, dye: {}, titles: {}, br: 0 } : DR.st); try { dr3Mount(); } catch (e) { DR3.ok = false; } }
+  if ($('dr3live')) { DR3.liveState = () => (DR.view === 'create' ? (DR.draft.restyle ? { ...DR.st, name: DR.draft.name || DR.st.name, look: DR.draft.look } : { name: DR.draft.name || 'You', look: DR.draft.look, eq: drDefault().eq, dye: {}, titles: {}, br: 0 }) : DR.st); try { dr3Mount(); } catch (e) { DR3.ok = false; } }
+  if (DR.view === 'create') drSculptBind();
   if (DR.view === 'results') drCountUp();
   const nm = $('drName'); if (nm) nm.oninput = () => { DR.draft.name = nm.value.slice(0, 18); const p = $('drPrevName'); if (p) p.textContent = nm.value || 'You'; };
 }
@@ -47,13 +48,13 @@ function drTitleHTML() {
   </section>`;
 }
 function drCreateHTML() {
-  const d = DR.draft, look = d.look, prev = { name: d.name || 'You', look, eq: drDefault().eq, titles: {}, br: 0 };
+  const d = DR.draft, look = d.look, prev = d.restyle ? { ...DR.st, name: d.name || DR.st.name, look } : { name: d.name || 'You', look, eq: drDefault().eq, titles: {}, br: 0 };
   const sw = (field, list, cur, kind) => list.map((c, i) => `<button class="drsw ${kind}" style="--c:${c}" data-dr="look" data-f="${field}" data-v="${i}" aria-pressed="${cur === i}" aria-label="${field} ${i + 1}"></button>`).join('');
   const opts = (field, list, cur) => list.map(([v, n]) => `<button class="drchip" data-dr="look" data-f="${field}" data-v="${v}" aria-pressed="${cur === v}">${n}</button>`).join('');
-  return `<section class="drcreate">
-    <div class="drcreate-prev pl-office"><div class="drcard-av">${dr3LiveOK() ? dr3LiveHTML(prev, d.name) : drAvatarSVG(prev)}</div><b id="drPrevName">${esc(d.name || 'You')}</b><small>Associate Analyst · Floor 34</small></div>
+  return `<section class="drcreate ${DR.sculptOpen ? 'sculpting' : ''}">
+    <div class="drcreate-prev pl-office"><div class="drcard-av" id="drCreateAv">${dr3LiveOK() ? dr3LiveHTML(prev, d.name) : drAvatarSVG(prev)}</div><b id="drPrevName">${esc(d.name || 'You')}</b><small>${d.restyle ? 'Drag to turn around' : 'Associate Analyst · Floor 34'}</small></div>
     <div class="drcreate-form">
-      <h2 class="drh">Who are you?</h2>
+      <h2 class="drh">${d.restyle ? 'Change your look' : 'Who are you?'}</h2>
       <label class="drfield"><span>Your name</span><input id="drName" maxlength="18" value="${esc(d.name)}" placeholder="Your name" autocomplete="off"></label>
       <div class="drfield"><span>Skin tone</span><div class="drsws">${sw('skin', DR_SKIN, look.skin, 'skin')}</div></div>
       <div class="drfield"><span>Hair</span><div class="drchips">${opts('hair', DR_HAIR, look.hair)}</div></div>
@@ -64,8 +65,9 @@ function drCreateHTML() {
       <div class="drfield"><span>Brows</span><div class="drchips">${opts('brows', DR_BROWS, look.brows)}</div></div>
       <div class="drfield"><span>Freckles</span><div class="drchips">${opts('freck', [[0, 'None'], [1, 'Freckles']], look.freck ? 1 : 0)}</div></div>
       <div class="drfield"><span>Facial hair</span><div class="drchips">${opts('facial', DR_FACIAL, look.facial)}</div></div>
-      <div class="drrow">${drBtn('ghost', 'data-dr="title"', 'Back')}${drBtn('gold big', 'data-dr="begin"', 'Clock in →')}</div>
-      <p class="drhint">You start with the basics. Clothes, jewelry, your home and your ride unlock as you play, and cosmetics never change how the game plays.</p>
+      ${drSculptHTML(look)}
+      <div class="drrow">${d.restyle ? drBtn('ghost', 'data-dr="restyleno"', 'Cancel') + drBtn('gold big', 'data-dr="restyleok"', 'Save my look') : drBtn('ghost', 'data-dr="title"', 'Back') + drBtn('gold big', 'data-dr="begin"', 'Clock in →')}</div>
+      <p class="drhint">${d.restyle ? 'Your gear stays on. Only your face, hair and features change.' : 'You start with the basics. Clothes, jewelry, your home and your ride unlock as you play, and cosmetics never change how the game plays.'}</p>
     </div>
   </section>`;
 }
@@ -251,33 +253,6 @@ function drEventsHTML() {
       <div><b>Story chapters 7+</b><small>Rivalries, sponsorship deals and the Hall of Legends ceremony.</small></div></div></div>`;
 }
 // rarity reads straight off what it takes to earn an item
-function drRarity(it) {
-  if (it.league) return 'limited';
-  const src = String(it.test);
-  if (/titles\.me|meft|island|hyper/.test(src) || /me >= 1/.test(src)) return 'legendary';
-  if (/bracelet|titan|tour|1e6|2e6|5e6/.test(src)) return 'epic';
-  if (/ring|circuit|peak >= (2|5|1)\d{4,5}|ch >= [23]|streak|bestStreak/.test(src)) return 'rare';
-  return 'common';
-}
-function drClosetHTML() {
-  const s = DR.st, fresh = new Set(s.newItems || []);
-  const cat = DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0], slot = cat[2], cur = drSeasonFor(drMonth()).key;
-  const inCat = (x) => slot !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === cat[0];
-  const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))].filter(inCat);
-  const newIn = (c) => [...DR_ITEMS, ...DR_LG_ITEMS].some((x) => x.slot === c[2] && (c[2] !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === c[0]) && fresh.has(drItemKey(x)));
-  const bar = `<div class="drcats" role="tablist">${DR_CATS.map((c) => `<button class="drcat" role="tab" data-dr="ccat" data-v="${c[0]}" aria-pressed="${c[0] === cat[0]}">${c[1]}${newIn(c) ? '<i class="drnew">•</i>' : ''}</button>`).join('')}</div>`;
-  const grid = items.map((it) => {
-    const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it), rar = drRarity(it);
-    return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''} r-${rar}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : `<i class="drrar">${rar}</i>`}</button>`;
-  }).join('');
-  const worn = s.eq[slot], dyeable = (slot === 'outfit' || slot === 'head') && DR_DYEABLE[worn] && !DR_LG_ITEMS.some((x) => x.slot === slot && x.id === worn);
-  const dyes = dyeable ? `<div class="drdye"><div class="drkicker">Colour</div><div class="drsws">${DR_DYES.map((c, i) => `<button class="drsw ${c ? '' : 'orig'}" style="--c:${c || '#888'}" data-dr="dye" data-v="${i}" aria-pressed="${(s.dye[worn] || 0) === i}" aria-label="${c ? 'Dye ' + i : 'Original colour'}"></button>`).join('')}</div></div>` : '';
-  // seen: clear the New badges for the category you just looked at
-  const seen = items.map(drItemKey).filter((k) => fresh.has(k));
-  if (seen.length) { s.newItems = (s.newItems || []).filter((k) => !seen.includes(k)); drSave(); }
-  const all = [...DR_ITEMS.filter((x) => x.id !== 'none'), ...DR_LG_ITEMS], have = all.filter((x) => drOwns(s, x.slot, x.id)).length;
-  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${dr3LiveOK() ? dr3LiveHTML(s, s.name) : drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div>${bar}<div class="drslot"><div class="dritems">${grid}</div>${dyes}</div></div>`;
-}
 const DR_COOLER_LINES = [
   "You played it right. That's all you control. People insist on calling it luck.",
   'Write it down and let it go. The next hand does not know about this one.',
@@ -400,7 +375,7 @@ function drRunHTML() {
     const L = DR_LABELS[r.lab] || DR_LABELS.good, d = r.after - r.before, h = r.hand;
     const lossTxt = h.loss == null ? '' : h.loss <= 1e-9 ? 'No value lost' : `−${h.unit === 'icm' ? `${h.loss.toFixed(h.loss < 0.1 ? 3 : 2)}% of the prize pool` : h.unit === 'bbicm' ? `${h.loss.toFixed(2)} bb of tournament equity` : `${h.loss.toFixed(2)} bb`}`;
     const mood = r.tier === 'perfect' ? 'smile' : r.tier === 'bad' ? 'frown' : 'flat';
-    html += `<div class="drverdict t-${r.tier} l-${r.lab}" style="--lc:${L.c}"><div class="drverdict-face">${drAvatarSVG(DR.st, { face: true, mouth: mood })}</div><div><span class="drlab"><i>${L.icon}</i>${esc(L.n)}</span><small>${esc(L.line)}${lossTxt ? ` · <span class="mono">${lossTxt}</span>` : ''}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < -20 ? 'Life ▼▼' : d < 0 ? 'Life ▼' : 'Life ='}</span></div>
+    html += `<div class="drverdict t-${r.tier} l-${r.lab}" style="--lc:${L.c}"><div class="drverdict-face ${run.combo >= 5 && r.tier !== 'bad' ? 'heat' : ''}">${drAvatarSVG(DR.st, { face: true, mouth: mood })}</div><div><span class="drlab"><i>${L.icon}</i>${esc(L.n)}</span><small>${esc(L.line)}${lossTxt ? ` · <span class="mono">${lossTxt}</span>` : ''}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < -20 ? 'Life ▼▼' : d < 0 ? 'Life ▼' : 'Life ='}</span></div>
       ${h.odds && (h.cat === 'Facing a jam' || h.cat === 'Facing a raise' || h.cat === 'Facing a 3-bet or more') ? `<div class="drodds"><span>Pot odds</span><b>Call ${fmt(h.odds.call)} to win ${fmt(h.odds.pot)}</b><i class="mono">${h.odds.need}% equity needed</i>${['bubble', 'satbubble', 'deep', 'final'].includes(r.stage) ? '<small>ICM: busting costs more than chips here, so you need more than this.</small>' : ''}</div>` : ''}
       ${drRangeHTML(h)}
       ${run.combo >= 3 && r.tier !== 'bad' ? `<div class="drcombo">🔥 ${run.combo} in a row</div>` : ''}
@@ -501,6 +476,11 @@ document.addEventListener('click', (e) => {
   if (a === 'newyes') { DR.st = drDefault(); drSave(); DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'create'; drRender(); return; }
   if (a === 'newno') { $('drNewConfirm').hidden = true; return; }
   if (a === 'title') { DR.view = 'title'; drRender(); return; }
+  if (a === 'sculpt0') { DR.draft.look.sc = {}; drRender(); return; }
+  if (a === 'sculptrnd') { const r = () => Math.round((Math.random() * 2 - 1) * 7) / 10; DR.draft.look.sc = Object.fromEntries(DR_SCULPT.flatMap((g) => g[1]).map(([k]) => [k, r()])); drRender(); return; }
+  if (a === 'restyle') { DR.draft = { name: s.name, look: JSON.parse(JSON.stringify(s.look)), restyle: true }; DR.view = 'create'; drRender(); scrollTo(0, 0); return; }
+  if (a === 'restyleno') { DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'hub'; DR.tab = 'closet'; drRender(); return; }
+  if (a === 'restyleok') { s.look = JSON.parse(JSON.stringify(DR.draft.look)); const n = (($('drName') || {}).value || '').trim(); if (n) s.name = n.slice(0, 18); DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; drSave(); DR.view = 'hub'; DR.tab = 'closet'; drRender(); return; }
   if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' || f === 'eyeC' ? +b.dataset.v : f === 'freck' ? b.dataset.v === '1' : b.dataset.v; drRender(); return; }
   if (a === 'begin') {
     const n = (($('drName') || {}).value || '').trim();
@@ -530,7 +510,10 @@ document.addEventListener('click', (e) => {
   }
   if (a === 'replay') { const id = b.dataset.id; DR.sc = { id, i: 0, extra: [], replay: true }; DR.view = 'scene'; drRender(); scrollTo(0, 0); return; }
   if (a === 'ccat') { DR.ccat = b.dataset.v; drRender(); return; }
-  if (a === 'dye') { const w = s.eq[(DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0])[2]]; if (+b.dataset.v) s.dye[w] = +b.dataset.v; else delete s.dye[w]; drSave(); drRender(); return; }
+  if (a === 'dye') { const sl = (DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0])[2], w = s.eq[sl], o = drDyeOpts(s, sl, w), v = +b.dataset.v; if (!o || !(o[v] || {}).ok) return; if (v) s.dye[w] = v; else delete s.dye[w]; drSave(); drRender(); return; }
+  if (a === 'fin') { const sl = (DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0])[2], w = s.eq[sl], k = sl + ':' + w, v = +b.dataset.v; if (!drHasFinish(sl, w)) return; if (v >= 0 && drWearLv(s, k) < 1) return; s.fin = s.fin || {}; if (v >= 0) s.fin[k] = v; else delete s.fin[k]; drSave(); drRender(); return; }
+  if (a === 'fitsave') { drFitSave(s, +b.dataset.i); drSave(); drRender(); return; }
+  if (a === 'fitwear') { drFitWear(s, +b.dataset.i); drSave(); drRender(); return; }
   if (a === 'equip') { s.eq[b.dataset.s] = b.dataset.v; drSave(); drRender(); return; }
   if (a === 'play') { drStart(b.dataset.id); return; }
   if (a === 'deal') { drHand(); return; }

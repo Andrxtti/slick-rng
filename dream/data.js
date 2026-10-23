@@ -214,7 +214,7 @@ const DR_ITEMS = [
   // sleeve patches
   { slot: 'sleeve', id: 'none', name: 'Bare sleeve', req: '', test: () => true },
   { slot: 'sleeve', id: 'grind', name: 'Daily Grind sleeve', req: 'Daily Grind streak of 5 days', test: (s) => (s.bestStreak || 0) >= 5 },
-  { slot: 'sleeve', id: 'site', name: 'Online site sleeve', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
+  { slot: 'sleeve', id: 'site', name: 'CF Tilt Poker sleeve', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
   { slot: 'sleeve', id: 'energy', name: 'Energy drink sleeve', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
   { slot: 'sleeve', id: 'global', name: 'Global ambassador sleeve', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
   // watches
@@ -248,7 +248,7 @@ const DR_ITEMS = [
   { slot: 'patch', id: 'none', name: 'Unsponsored', req: 'Where it all started', test: () => true },
   { slot: 'patch', id: 'grind', name: 'Daily Grind patch', req: 'Daily Grind streak of 3 days', test: (s) => (s.bestStreak || 0) >= 3 },
   { slot: 'patch', id: 'tavern', name: "Rusty's Tavern", req: 'Win a session at $1/$2', test: (s) => !!s.flags.cashWin },
-  { slot: 'patch', id: 'site', name: 'Online site patch', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
+  { slot: 'patch', id: 'site', name: 'CF Tilt Poker patch', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
   { slot: 'patch', id: 'energy', name: 'Energy drink sponsor', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
   { slot: 'patch', id: 'global', name: 'Global brand ambassador', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
 ];
@@ -258,7 +258,7 @@ const DR_OUTFIT_CAT = { office: 'shirts', tee: 'shirts', polo: 'shirts', flannel
 const DR_CATS = [['shirts', 'Shirts', 'outfit'], ['street', 'Streetwear', 'outfit'], ['jackets', 'Jackets', 'outfit'], ['formal', 'Formal', 'outfit'], ['head', 'Headwear', 'head'], ['eyes', 'Eyewear', 'eyes'], ['chain', 'Chains', 'chain'], ['ear', 'Earrings', 'ear'], ['ring', 'Rings', 'ring'], ['wrist', 'Bracelets', 'wrist'], ['watch', 'Watches', 'watch'], ['patch', 'Chest patch', 'patch'], ['sleeve', 'Sleeve patch', 'sleeve'], ['home', 'Home', 'home'], ['ride', 'Ride', 'ride']];
 const DR_RIDE_ICON = { bus: '🚌', hatch: '🚗', coupe: '🏎️', sedan: '🚘', super: '🏎️', jet: '🛩️' };
 const DR_HOME_ICON = { studio: '🧺', apt: '🏢', condo: '🌆', penthouse: '🌃', mansion: '🏛️', island: '🏝️' };
-const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' },
+const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'CF TILT', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' },
   boo: { t: 'BOO!', c: '#ff7a1a' }, harvest: { t: 'HARVEST', c: '#d9893a' }, frost: { t: 'FROST', c: '#7fd0ff' } };
 
 // the line under your name, earned as you climb

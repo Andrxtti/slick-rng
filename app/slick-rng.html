@@ -1553,6 +1553,122 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 
 .dream .pl-cftilt { background: radial-gradient(ellipse at 50% -10%, rgba(255, 70, 70, .28), transparent 55%), radial-gradient(ellipse at 50% 125%, rgba(120, 40, 160, .45), transparent 60%), #0c0a12; }
 
+/* ================================================================ fashion: grades, inspect card, fits, light effects */
+.dream .dritem[class*=" g-"] { border-left: 3px solid var(--gc); } .dream .dritem.g-standard { border-left-color: var(--line2); }
+.dream .dritem .drrar { color: var(--gc, var(--faint)); }
+.dream .dritem.g-legendary:not(.locked) { background: linear-gradient(135deg, rgba(240, 194, 90, .14), transparent 60%), var(--card); }
+.dream .dritem.g-iconic:not(.locked) { background: linear-gradient(135deg, rgba(255, 90, 110, .16), transparent 55%), var(--card); }
+.dream .dritem.g-iconic .drrar { text-shadow: 0 0 8px rgba(255, 90, 110, .6); }
+.dream .dritem .drmk { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.dream .dritem .drpips { position: absolute; right: 8px; bottom: 8px; }
+.dream .dritem .drcert { position: absolute; right: 8px; top: 20px; font-style: normal; font-size: 11px; }
+.dream .drpips { display: inline-flex; gap: 3px; vertical-align: middle; }
+.dream .drpips i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--gold3); }
+.dream .drpips i.on { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 6px rgba(217, 179, 108, .7); }
+.dream .drslot { display: grid; gap: 10px; align-content: start; }
+.dream .drinsp { border: 1px solid var(--line2); border-top: 3px solid var(--gc); border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px;
+  background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--gc) 16%, transparent), transparent 60%), var(--card); }
+.dream .drinsp-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.dream .drgrade { font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gc); }
+.dream .drbrand { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+.dream .drinsp-name { font-family: var(--disp); font-size: 21px; font-weight: 600; line-height: 1.15; }
+.dream .drinsp.g-iconic .drinsp-name { text-shadow: 0 0 14px rgba(255, 90, 110, .45); }
+.dream .drinsp-story { margin: 0; font-size: 13px; color: var(--cream); opacity: .86; font-style: italic; }
+.dream .drlv { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 8px; align-items: center; margin-top: 2px; }
+.dream .drlv b { font-size: 13px; color: var(--gold2); } .dream .drlv small { grid-column: 1 / -1; font-size: 11.5px; color: var(--mute); } .dream .drlv .drbar { grid-column: 1 / -1; }
+.dream .drtags { display: flex; gap: 6px; flex-wrap: wrap; }
+.dream .drtag { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line2); color: var(--cream); }
+.dream .drtag.gold { border-color: var(--gold); color: var(--gold2); background: rgba(217, 179, 108, .12); }
+.dream .drtag.fx { border-color: color-mix(in srgb, var(--gc) 60%, transparent); color: var(--gc); }
+.dream .drinsp-rec, .dream .drinsp-prov { font-size: 11.5px; color: var(--mute); }
+.dream .drinsp .drsws { display: flex; flex-wrap: wrap; gap: 6px; }
+.dream .drinsp .drsw { width: 28px; height: 28px; }
+.dream .drsw:disabled { opacity: .28; cursor: not-allowed; filter: saturate(.4); }
+.dream .drsw.prem { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .22); }
+.dream .drsw.metal { background: radial-gradient(circle at 35% 30%, #fff 0 8%, var(--c) 30%, color-mix(in srgb, var(--c) 55%, #000) 100%); }
+.dream .drfitcard { display: grid; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--line); }
+.dream .drfit { display: flex; gap: 10px; align-items: center; }
+.dream .drfit > b { font-size: 26px; color: var(--gold2); min-width: 2ch; }
+.dream .drfit small { display: block; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
+.dream .drfit span { font-family: var(--disp); font-size: 17px; font-weight: 600; }
+.dream .drfit-set { font-size: 11px; color: var(--mute); }
+.dream .drfits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.dream .drfitslot { position: relative; display: grid; }
+.dream .drfitbtn { display: grid; gap: 1px; padding: 6px 4px; border-radius: 10px; border: 1px solid var(--line2); background: var(--card2); color: var(--cream); cursor: pointer; font-family: var(--font-body); }
+.dream .drfitbtn b { font-size: 12px; } .dream .drfitbtn small { font-size: 10px; color: var(--mute); }
+.dream .drfitbtn.empty { border-style: dashed; background: transparent; }
+.dream .drfitre { position: absolute; top: -6px; right: -4px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line2); background: var(--ink2); color: var(--mute); font-size: 11px; line-height: 1; cursor: pointer; padding: 0; }
+.dream .drunlock.wearup { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; border-color: var(--gc); background: linear-gradient(90deg, color-mix(in srgb, var(--gc) 18%, transparent), transparent); }
+.dream .drunlock.wearup > div { display: grid; gap: 1px; min-width: 0; }
+
+/* light that catches on gear: drawn over the 3D render at points projected from the model */
+.dream .drfxw { position: relative; display: block; }
+.dream .drfx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.dream .drfx i { position: absolute; width: 0; height: 0; font-style: normal; }
+.dream .drfx i::before, .dream .drfx i::after { content: ''; position: absolute; pointer-events: none; }
+/* glint: a four-point star on diamonds */
+.dream .drfx .fx-glint::before, .dream .drfx .fx-glint::after { left: -9px; top: -1px; width: 18px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 50%, rgba(255, 255, 255, 0)); opacity: 0; animation: drGlint 2.8s var(--d, 0s) ease-in-out infinite; }
+.dream .drfx .fx-glint::after { transform: rotate(90deg); animation-name: drGlint2; }
+@keyframes drGlint { 0%, 62%, 100% { opacity: 0; transform: scale(.2); } 74% { opacity: 1; transform: scale(1.25); } 86% { opacity: .5; transform: scale(.7); } }
+@keyframes drGlint2 { 0%, 62%, 100% { opacity: 0; transform: rotate(90deg) scale(.2); } 74% { opacity: 1; transform: rotate(90deg) scale(1.25); } 86% { opacity: .5; transform: rotate(90deg) scale(.7); } }
+/* sheen: gold catching a light as you move */
+.dream .drfx .fx-sheen::before { left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 244, 214, .95) 0 12%, rgba(255, 214, 140, .45) 35%, rgba(255, 214, 140, 0) 70%);
+  mix-blend-mode: screen; opacity: 0; animation: drSheen 3.6s var(--d, 0s) ease-in-out infinite; }
+@keyframes drSheen { 0%, 55%, 100% { opacity: 0; transform: scale(.5); } 70% { opacity: 1; transform: scale(1.1); } 85% { opacity: .2; transform: scale(.8); } }
+/* holo: a holographic patch */
+.dream .drfx .fx-holo::before { left: -16px; top: -7px; width: 32px; height: 14px; border-radius: 3px; mix-blend-mode: screen; opacity: .75;
+  background: linear-gradient(105deg, transparent 15%, rgba(110, 230, 255, .6) 32%, rgba(255, 120, 220, .6) 48%, rgba(255, 238, 120, .6) 64%, transparent 82%); background-size: 260% 100%; animation: drHolo 3s linear infinite; }
+@keyframes drHolo { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+/* thread: gold thread in a mastered piece */
+.dream .drfx .fx-thread::before { left: -14px; top: -5px; width: 28px; height: 10px; border-radius: 6px; mix-blend-mode: screen;
+  background: linear-gradient(90deg, transparent, rgba(255, 226, 150, .9), transparent); background-size: 200% 100%; opacity: 0; animation: drThread 4s var(--d, 0s) ease-in-out infinite; }
+@keyframes drThread { 0%, 50%, 100% { opacity: 0; background-position: 120% 0; } 60% { opacity: 1; } 80% { opacity: .8; background-position: -120% 0; } }
+@media (prefers-reduced-motion: reduce) { .dream .drfx i::before, .dream .drfx i::after { animation: none !important; opacity: 0 !important; } }
+.dream .dritem .drmk span { color: var(--gc); font-weight: 700; }
+.dream .dritem b { padding-right: 14px; }
+@media (min-width: 641px) { .dream .drcloset-top { display: contents; } .dream .drcloset-prev { grid-row: 1 / span 2; } .dream .drcloset-top > .drcats, .dream .drcloset > .drslot { grid-column: 2; } }
+.dream .dritem .drcert { top: auto; bottom: 6px; right: 40px; }
+/* phones: a compact sticky strip, your player beside the fit rating, so the list scrolls under it */
+@media (max-width: 640px) {
+  .dream .drcloset-top { position: sticky; top: 58px; z-index: 4; display: grid; gap: 4px; background: var(--ink); padding-bottom: 2px; box-shadow: 0 12px 20px -8px rgba(0, 0, 0, .7); }
+  .dream .drcloset-prev { position: static; max-width: none; justify-self: stretch; display: grid; grid-template-columns: 128px minmax(0, 1fr); align-items: center; background: var(--ink2); }
+  .dream .drcloset-top .drcats { padding-bottom: 4px; }
+  .dream .drcloset-av { width: 128px; }
+  .dream .drcloset-side { display: grid; gap: 4px; min-width: 0; }
+  .dream .drcloset-side .drfitcard { border-top: 0; padding: 8px 10px 2px 4px; gap: 5px; }
+  .dream .drcloset-side .drfit > b { font-size: 22px; } .dream .drcloset-side .drfit span { font-size: 15px; }
+  .dream .drcloset-side .drfit-set { font-size: 10px; line-height: 1.25; }
+  .dream .drcloset-side .drfitbtn { padding: 4px 2px; } .dream .drcloset-side .drfitbtn small { font-size: 9px; }
+  .dream .drcloset-side .drcoll { padding: 2px 10px 8px 4px; gap: 2px; }
+}
+/* face sculpting */
+.dream .drsculpt { border: 1px solid var(--line2); border-radius: 14px; background: var(--card); padding: 0 12px; }
+.dream .drsculpt summary { cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 12px 0; font-weight: 600; list-style: none; }
+.dream .drsculpt summary::-webkit-details-marker { display: none; }
+.dream .drsculpt summary::after { content: '▾'; color: var(--gold); margin-left: 8px; } .dream .drsculpt[open] summary::after { content: '▴'; }
+.dream .drsculpt summary small { margin-left: auto; color: var(--mute); font-weight: 400; font-size: 12px; }
+.dream .drsc-g { display: grid; gap: 4px; padding-bottom: 10px; }
+.dream .drsc { display: grid; grid-template-columns: 96px minmax(0, 1fr) 30px; gap: 10px; align-items: center; font-size: 13px; }
+.dream .drsc span { color: var(--mute); }
+.dream .drsc output { font-family: var(--font-mono); font-size: 12px; text-align: right; color: var(--gold2); }
+.dream .drsc input[type=range] { width: 100%; accent-color: var(--gold); height: 28px; }
+.dream .drsculpt .drrow { padding-bottom: 12px; }
+.dream .drrestyle { justify-self: start; margin: 0 12px; background: none; border: 0; color: var(--gold2); font-size: 12.5px; cursor: pointer; padding: 6px 0; font-family: var(--font-body); }
+@media (max-width: 640px) { .dream .drcloset-side .drrestyle { margin: 0 4px; padding: 0; font-size: 11.5px; } }
+/* while sculpting on a phone, keep a close-up of your face pinned at the top */
+.dream .drcreate { overflow: clip; }
+@media (max-width: 720px) {
+  .dream .drcreate.sculpting .drcreate-prev { position: sticky; top: 58px; z-index: 5; min-height: 0; padding: 6px 12px 4px; background: var(--ink2); box-shadow: 0 10px 18px -6px rgba(0, 0, 0, .7); }
+  .dream .drcreate.sculpting .drcreate-prev .drcard-av { width: 230px; height: 186px; overflow: hidden; }
+  .dream .drcreate.sculpting .drcreate-prev .drcard-av > * { transform: scale(1.42); transform-origin: 50% 9%; }
+  .dream .drcreate.sculpting .drcreate-prev b, .dream .drcreate.sculpting .drcreate-prev small { display: none; }
+}
+/* on a heater: five good decisions in a row and your face starts to glow */
+.dream .drverdict-face.heat { box-shadow: 0 0 0 2px #ff9a3a, 0 0 18px 4px rgba(255, 122, 26, .55); animation: drHeat 1.6s ease-in-out infinite; }
+@keyframes drHeat { 50% { box-shadow: 0 0 0 2px #ffcf5a, 0 0 26px 8px rgba(255, 150, 40, .7); } }
+@media (prefers-reduced-motion: reduce) { .dream .drverdict-face.heat { animation: none; } }
+
 </style>
 
 <header class="top">
@@ -6571,7 +6687,7 @@ const DR_ITEMS = [
   // sleeve patches
   { slot: 'sleeve', id: 'none', name: 'Bare sleeve', req: '', test: () => true },
   { slot: 'sleeve', id: 'grind', name: 'Daily Grind sleeve', req: 'Daily Grind streak of 5 days', test: (s) => (s.bestStreak || 0) >= 5 },
-  { slot: 'sleeve', id: 'site', name: 'Online site sleeve', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
+  { slot: 'sleeve', id: 'site', name: 'CF Tilt Poker sleeve', req: 'Cash in a Circuit event', test: (s) => !!s.flags.circuitCash },
   { slot: 'sleeve', id: 'energy', name: 'Energy drink sleeve', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
   { slot: 'sleeve', id: 'global', name: 'Global ambassador sleeve', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
   // watches
@@ -6605,7 +6721,7 @@ const DR_ITEMS = [
   { slot: 'patch', id: 'none', name: 'Unsponsored', req: 'Where it all started', test: () => true },
   { slot: 'patch', id: 'grind', name: 'Daily Grind patch', req: 'Daily Grind streak of 3 days', test: (s) => (s.bestStreak || 0) >= 3 },
   { slot: 'patch', id: 'tavern', name: "Rusty's Tavern", req: 'Win a session at $1/$2', test: (s) => !!s.flags.cashWin },
-  { slot: 'patch', id: 'site', name: 'Online site patch', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
+  { slot: 'patch', id: 'site', name: 'CF Tilt Poker patch', req: 'Win a Circuit ring', test: (s) => s.titles.ring >= 1 },
   { slot: 'patch', id: 'energy', name: 'Energy drink sponsor', req: 'Win a gold bracelet', test: (s) => s.titles.bracelet >= 1 },
   { slot: 'patch', id: 'global', name: 'Global brand ambassador', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
 ];
@@ -6615,7 +6731,7 @@ const DR_OUTFIT_CAT = { office: 'shirts', tee: 'shirts', polo: 'shirts', flannel
 const DR_CATS = [['shirts', 'Shirts', 'outfit'], ['street', 'Streetwear', 'outfit'], ['jackets', 'Jackets', 'outfit'], ['formal', 'Formal', 'outfit'], ['head', 'Headwear', 'head'], ['eyes', 'Eyewear', 'eyes'], ['chain', 'Chains', 'chain'], ['ear', 'Earrings', 'ear'], ['ring', 'Rings', 'ring'], ['wrist', 'Bracelets', 'wrist'], ['watch', 'Watches', 'watch'], ['patch', 'Chest patch', 'patch'], ['sleeve', 'Sleeve patch', 'sleeve'], ['home', 'Home', 'home'], ['ride', 'Ride', 'ride']];
 const DR_RIDE_ICON = { bus: '🚌', hatch: '🚗', coupe: '🏎️', sedan: '🚘', super: '🏎️', jet: '🛩️' };
 const DR_HOME_ICON = { studio: '🧺', apt: '🏢', condo: '🌆', penthouse: '🌃', mansion: '🏛️', island: '🏝️' };
-const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'POKR.IO', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' },
+const DR_PATCH = { none: null, grind: { t: 'GRIND', c: '#5cbf64' }, tavern: { t: "RUSTY'S", c: '#b8432a' }, site: { t: 'CF TILT', c: '#1f5ae8' }, energy: { t: 'VOLT', c: '#b8f018' }, global: { t: 'APEX', c: '#f3ecdc' },
   boo: { t: 'BOO!', c: '#ff7a1a' }, harvest: { t: 'HARVEST', c: '#d9893a' }, frost: { t: 'FROST', c: '#7fd0ff' } };
 
 // the line under your name, earned as you climb
@@ -7311,7 +7427,7 @@ function drAvatarSVG2D(st, opt = {}) {
 // One shared WebGL renderer draws every character; results are cached as images so lists and tables stay light.
 // If WebGL is missing the old flat renderer (avatar.js) takes over.
 
-const DR3 = { R: null, ok: null, cache: new Map(), env: null, canvasKey: '' };
+const DR3 = { R: null, ok: null, cache: new Map(), fxCache: new Map(), env: null, canvasKey: '', metal: null, metalR: 0.2 };
 const dr3Hash = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
 const dr3Rng = (seed) => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
 const dr3Sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
@@ -7402,7 +7518,7 @@ function dr3Neck(S) {
 }
 
 // ---------------------------------------------------------------- outfits (the front of the shirt is painted; collars and cuffs are 3D)
-function dr3OutTex(id, c, skinHex) {
+function dr3OutTex(id, c, skinHex, mono) {
   const W = 1024, Hh = 800, cv = document.createElement('canvas'); cv.width = W; cv.height = Hh; const g = cv.getContext('2d');
   const X = (x) => (x / 2.1 * 0.5 + 0.5) * W, Y = (y) => (-1.25 - y) / 1.9 * Hh, sh = (f) => '#' + new THREE.Color(c).multiplyScalar(f).getHexString();
   const poly = (pts, fill, stroke, lw = 3) => { g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)))); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.stroke(); } };
@@ -7420,7 +7536,7 @@ function dr3OutTex(id, c, skinHex) {
     case 'hoodie': collar = 'hood'; poly([[-0.5, -2.45], [0.5, -2.45], [0.7, -3.1], [-0.7, -3.1]], sh(0.86), sh(0.6), 4); ln([-0.2, -1.55], [-0.26, -2.35], '#ece8de', 6); ln([0.2, -1.55], [0.26, -2.35], '#ece8de', 6); break;
     case 'tee': collar = 'crew'; g.strokeStyle = '#ece8de'; g.lineWidth = 6; g.beginPath(); g.arc(X(0), Y(-2.3), 70, 0, 7); g.stroke(); g.fillStyle = '#ece8de'; g.beginPath(); g.moveTo(X(0), Y(-2.12)); g.bezierCurveTo(X(0.15), Y(-2.28), X(0.28), Y(-2.34), X(0.22), Y(-2.42)); g.lineTo(X(0.03), Y(-2.4)); g.lineTo(X(0.06), Y(-2.52)); g.lineTo(X(-0.06), Y(-2.52)); g.lineTo(X(-0.03), Y(-2.4)); g.lineTo(X(-0.22), Y(-2.42)); g.bezierCurveTo(X(-0.28), Y(-2.34), X(-0.15), Y(-2.28), X(0), Y(-2.12)); g.fill(); break;
     case 'varsity': collar = 'rib'; sleeve = '#efe6cf'; vneck(0.42, -1.85, '#efeee9'); ln([0, -1.85], [0, -3.2], sh(0.6), 3); for (let y = -2.1; y > -3.1; y -= 0.22) { g.fillStyle = '#efe6cf'; g.beginPath(); g.arc(X(0.06), Y(y), 5, 0, 7); g.fill(); }
-      poly([[-0.9, -2.2], [-0.62, -2.2], [-0.62, -2.62], [-0.9, -2.62]], '#efe6cf'); txt('C', -0.76, -2.55, 72, c, 'Georgia,serif'); break;
+      poly([[-0.9, -2.2], [-0.62, -2.2], [-0.62, -2.62], [-0.9, -2.62]], '#efe6cf'); txt(mono ? mono.slice(0, 1) : 'C', -0.76, -2.55, 72, c, 'Georgia,serif'); break;
     case 'bomber': collar = 'rib'; ln([0, -1.5], [0, -3.2], '#c9ccd4', 6); ln([-0.05, -1.5], [-0.05, -3.2], '#d98a2b', 3); poly([[0.55, -2.6], [1.05, -2.6], [1.05, -2.62], [0.55, -2.62]], sh(0.5), sh(0.5), 3); break;
     case 'track': collar = 'turtle'; ln([0, -1.5], [0, -3.2], '#c9ccd4', 5); for (const s of [-1, 1]) { ln([s * 1.0, -1.6], [s * 1.55, -2.0], '#f3f3f3', 12); ln([s * 0.9, -1.75], [s * 1.5, -2.2], '#f3f3f3', 12); ln([s * 0.72, -1.95], [s * 1.62, -2.7], '#f3f3f3', 10); } break;
     case 'cardigan': collar = 'rib'; vneck(0.5, -2.1, '#f1f0ea'); poly([[-0.07, -1.3], [0.07, -1.3], [0.1, -1.6], [-0.1, -1.6]], '#2a4a8a'); for (const y of [-2.3, -2.55, -2.8]) { g.fillStyle = sh(1.5); g.beginPath(); g.arc(X(0.12), Y(y), 7, 0, 7); g.fill(); } ln([0, -2.1], [0, -3.2], sh(0.55), 3); break;
@@ -7445,6 +7561,8 @@ function dr3OutTex(id, c, skinHex) {
     case 'flannel': collar = 'polo'; g.globalAlpha = 0.5; g.fillStyle = '#1b0d0d'; for (let x = -2; x < 2; x += 0.3) g.fillRect(X(x), 0, 30, Hh); for (let y = -1.2; y > -3.4; y -= 0.3) g.fillRect(0, Y(y), W, 30); g.globalAlpha = 1; ln([0, -1.4], [0, -3.2], '#3a0c0c', 4); g.fillStyle = '#e9e5dc'; for (const y of [-1.7, -2.1, -2.5, -2.9]) { g.beginPath(); g.arc(X(0.03), Y(y), 7, 0, 7); g.fill(); } break;
     case 'ugly': collar = 'rib'; g.fillStyle = '#c2362a'; g.fillRect(0, Y(-2.3), W, 70); g.fillStyle = '#f3ecdc'; for (let x = -1.8; x < 1.9; x += 0.26) poly([[x, -2.32], [x + 0.08, -2.4], [x, -2.48], [x - 0.08, -2.4]], '#f3ecdc'); break;
   }
+  // Signature: your initials stitched in gold thread on the chest
+  if (mono && id !== 'varsity') { g.save(); g.font = `italic 700 ${mono.length > 1 ? 44 : 50}px Georgia,'Bodoni Moda',serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 4; g.strokeStyle = 'rgba(0,0,0,.4)'; g.strokeText(mono, X(-1.0), Y(-2.5)); g.fillStyle = '#e2bf72'; g.fillText(mono, X(-1.0), Y(-2.5)); g.restore(); }
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return { tex: t, collar, sleeve };
 }
 function dr3Collar(kind, S, colHex, root) {
@@ -7559,8 +7677,9 @@ function dr3Eyewear(id, hit) {
 }
 
 // ---------------------------------------------------------------- jewelry
-const DR3_GOLD = () => new THREE.MeshStandardMaterial({ color: 0xe3b94f, metalness: 1, roughness: 0.2, envMapIntensity: 1.7 });
-const DR3_SILVER = () => new THREE.MeshStandardMaterial({ color: 0xd2d6de, metalness: 1, roughness: 0.18, envMapIntensity: 1.7 });
+// DR3.metal (set while one piece is built) re-finishes it: white gold, rose gold, black chrome
+const DR3_GOLD = () => new THREE.MeshStandardMaterial({ color: DR3.metal != null ? DR3.metal : 0xe3b94f, metalness: 1, roughness: DR3.metal != null ? DR3.metalR : 0.2, envMapIntensity: 1.7 });
+const DR3_SILVER = () => new THREE.MeshStandardMaterial({ color: DR3.metal != null ? DR3.metal : 0xd2d6de, metalness: 1, roughness: DR3.metal != null ? DR3.metalR : 0.18, envMapIntensity: 1.7 });
 const DR3_GEM = () => new THREE.MeshStandardMaterial({ color: 0xf4fbff, metalness: 0.1, roughness: 0.02, envMapIntensity: 3.2, emissive: 0x555a60 });
 function dr3ChainPath(drop, y0 = -1.27, rx = 0.46, rz = 0.46) {
   const pts = []; for (let i = 0; i < 28; i++) { const t = i / 28 * Math.PI * 2, fr = Math.max(0, Math.cos(t)), sag = drop * Math.pow(fr, 1.4); const p = new THREE.Vector3(Math.sin(t) * (rx + sag * 0.6), y0 - sag, Math.cos(t) * (rz + sag * 0.3 * (fr > 0 ? 1 : 0)) - 0.05); dr3Collide(p, 0.035); pts.push(p); }
@@ -7581,18 +7700,19 @@ function dr3Pendant(txt, mat) {
   const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); g.fillStyle = '#e3b94f'; g.fillRect(0, 0, 128, 128); g.strokeStyle = '#8f6f33'; g.lineWidth = 8; g.beginPath(); g.arc(64, 64, 56, 0, 7); g.stroke(); g.fillStyle = '#5a3f10'; g.font = '900 54px Georgia,serif'; g.textAlign = 'center'; g.fillText(txt, 64, 82);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; const m = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.035, 28), [mat, new THREE.MeshStandardMaterial({ map: t, metalness: 0.85, roughness: 0.28, envMapIntensity: 1.5 }), mat]); m.rotation.x = Math.PI / 2; return m;
 }
-function dr3Chain(id) {
+function dr3Chain(id, mono) {
   const grp = new THREE.Group(); if (!id || id === 'none') return grp;
+  const mark = (c) => { grp.userData.pts = [c.getPoint(0), c.getPoint(0.075), c.getPoint(0.925)]; return c; };
   const gold = DR3_GOLD();
   const onChest = (m, curve, fr) => { const p = curve.getPoint(fr); m.position.copy(p).add(new THREE.Vector3(0, -0.12, 0.05)); dr3Collide(m.position, 0.07); grp.add(m); };
   const bottom = (curve) => { let best = curve.getPoint(0), bi = 0; for (let i = 0; i < 40; i++) { const p = curve.getPoint(i / 40); if (p.y < best.y) { best = p; bi = i / 40; } } return bi; };
-  if (id === 'silver') { const c = dr3ChainPath(0.38), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.016, 6, true), DR3_SILVER()); t.castShadow = true; grp.add(t); }
-  else if (id === 'cuban' || id === 'iced') { const c = dr3ChainPath(0.62); grp.add(dr3Links(c, 76, gold, 0.056, 1.5, id === 'iced')); }
-  else if (id === 'rope') { const c = dr3ChainPath(0.85), b = new Dr3Bld(); const pts = c.getSpacedPoints(120); b.tube(pts.concat([pts[0]]), 0.03, 0xe3b94f, 6, { r: 0.016, k: 150 }); const m = new THREE.Mesh(b.geo(false), gold); m.castShadow = true; grp.add(m); const pend = dr3Pendant('CF', gold); onChest(pend, c, bottom(c)); }
-  else if (id === 'layered') { const c1 = dr3ChainPath(0.36, -1.24), c2 = dr3ChainPath(0.8, -1.3, 0.5, 0.5); const t = new THREE.Mesh(new THREE.TubeGeometry(c1, 80, 0.014, 6, true), gold); grp.add(t); grp.add(dr3Links(c2, 84, gold, 0.052, 1.5)); const pend = dr3Pendant('CF', gold); onChest(pend, c2, bottom(c2)); }
+  if (id === 'silver') { const c = mark(dr3ChainPath(0.38)), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.016, 6, true), DR3_SILVER()); t.castShadow = true; grp.add(t); }
+  else if (id === 'cuban' || id === 'iced') { const c = mark(dr3ChainPath(0.62)); grp.add(dr3Links(c, 76, gold, 0.056, 1.5, id === 'iced')); }
+  else if (id === 'rope') { const c = mark(dr3ChainPath(0.85)), b = new Dr3Bld(); const pts = c.getSpacedPoints(120); b.tube(pts.concat([pts[0]]), 0.03, 0xe3b94f, 6, { r: 0.016, k: 150 }); const m = new THREE.Mesh(b.geo(false), gold); m.castShadow = true; grp.add(m); const pend = dr3Pendant(mono || 'CF', gold); onChest(pend, c, bottom(c)); }
+  else if (id === 'layered') { const c1 = dr3ChainPath(0.36, -1.24), c2 = mark(dr3ChainPath(0.8, -1.3, 0.5, 0.5)); const t = new THREE.Mesh(new THREE.TubeGeometry(c1, 80, 0.014, 6, true), gold); grp.add(t); grp.add(dr3Links(c2, 84, gold, 0.052, 1.5)); const pend = dr3Pendant(mono || 'CF', gold); onChest(pend, c2, bottom(c2)); }
   else if (id === 'bones') { const c = dr3ChainPath(0.55), bm = new THREE.MeshStandardMaterial({ color: 0xefe8d6, roughness: 0.6 }), n = 22, im = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.03, 0.09, 4, 8), bm, n), mt = new THREE.Matrix4(), q = new THREE.Quaternion(); const ps = c.getSpacedPoints(n); for (let i = 0; i < n; i++) { const tg = ps[(i + 1) % n].clone().sub(ps[i]).normalize(); q.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tg); mt.compose(ps[i], q, new THREE.Vector3(1, 1, 1)); im.setMatrixAt(i, mt); } grp.add(im);
     const sk = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 12), bm); onChest(sk, c, bottom(c)); }
-  else if (id === 'wishbone') { const c = dr3ChainPath(0.6), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.015, 6, true), gold); grp.add(t); const w = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.022, 8, 20, Math.PI), gold); w.rotation.z = Math.PI; onChest(w, c, bottom(c)); }
+  else if (id === 'wishbone') { const c = mark(dr3ChainPath(0.6)), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.015, 6, true), gold); grp.add(t); const w = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.022, 8, 20, Math.PI), gold); w.rotation.z = Math.PI; onChest(w, c, bottom(c)); }
   else if (id === 'lights') { const c = dr3ChainPath(0.55), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.012, 6, true), new THREE.MeshStandardMaterial({ color: 0x1d4a22 })); grp.add(t); const cols = [0xff4f4f, 0x5cbf64, 0xffd23a, 0x5aa9de], n = 20; c.getSpacedPoints(n).forEach((p, i) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), new THREE.MeshStandardMaterial({ color: cols[i % 4], emissive: cols[i % 4], emissiveIntensity: 0.9, roughness: 0.3 })); b.position.copy(p).add(new THREE.Vector3(0, -0.05, 0)); grp.add(b); }); }
   return grp;
 }
@@ -7635,6 +7755,11 @@ function dr3Patch(pid) {
 function dr3Build(st, opt) {
   const look = { ...DR_LOOK_DEFAULT, ...(st.look || {}) }, eq = st.eq || {}, dye = st.dye || {}, titles = st.titles || {}, face = !!opt.face;
   const S = dr3Skin(look), scene = new THREE.Scene(); scene.environment = DR3.env;
+  // gear: metal finishes, monogram, and the points that catch the light (drawn as an overlay after the render)
+  const GL = typeof drGearLook === 'function' ? drGearLook(st) : { mono: '', fx: {} }, FX = GL.fx || {}, anchors = [];
+  // each point faces a direction (in the body's frame) so a turned body hides the side you can't see
+  const anc = (parent, pos, fx, k, n) => { if (!fx || !pos) return; const o = new THREE.Object3D(); o.position.copy(pos); parent.add(o); anchors.push({ o, fx, k, n: n || new THREE.Vector3(0, 0, 1) }); };
+  const metalOn = (slot) => { const f = typeof drFinishHex === 'function' ? drFinishHex(st, slot) : null; DR3.metal = f ? new THREE.Color(f[1]).getHex() : null; DR3.metalR = f ? f[2] : 0.2; }, metalOff = () => { DR3.metal = null; };
   // lights: warm key with soft shadows, cool fill, hot rim from behind
   const key = new THREE.DirectionalLight(0xfff0dc, 1.7); key.position.set(-3.2, 4.4, 6.5); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -0.0005; key.shadow.normalBias = 0.025;
   const sc = key.shadow.camera; sc.left = -3.5; sc.right = 3.5; sc.top = 3.5; sc.bottom = -4; sc.near = 1; sc.far = 18; scene.add(key);
@@ -7650,19 +7775,24 @@ function dr3Build(st, opt) {
   // facial hair shell on top of the skin
   if (look.facial && look.facial !== 'none') chr.add(dr3Beard(H, head, look, fc.userData.hit));
   if (hat && hat !== 'phones') { const col = DR_DYES[dye[hat]] || DR3_HAT_COL[hat] || '#222'; const h3 = dr3Hat(hat, col, Math.min(1.5, hair.vol), look); chr.add(h3); } else if (hat === 'phones') chr.add(dr3Hat('phones', '#222', 1, look));
-  if (eq.eyes && eq.eyes !== 'none') chr.add(dr3Eyewear(eq.eyes, fc.userData.hit));
-  chr.add(dr3Ear(eq.ear, { [-1]: fc.userData['ear-1'], 1: fc.userData['ear1'] }));
+  if (eq.eyes && eq.eyes !== 'none') { chr.add(dr3Eyewear(eq.eyes, fc.userData.hit)); anc(chr, new THREE.Vector3(-0.47, 0.15, 1.05), FX.eyes, 'eyes'); }
+  metalOn('ear'); chr.add(dr3Ear(eq.ear, { [-1]: fc.userData['ear-1'], 1: fc.userData['ear1'] })); metalOff();
+  if (FX.ear) for (const sd of [-1, 1]) { const ep = fc.userData['ear' + sd]; if (ep) anc(chr, ep.clone().add(new THREE.Vector3(sd * 0.04, eq.ear === 'hoop' ? -0.2 : 0, 0.04)), FX.ear, 'ear' + sd, new THREE.Vector3(sd, 0, 0.45)); }
+  if (hat && FX.head) anc(chr, new THREE.Vector3(0.32, 0.74, 0.86), FX.head, 'head');
   chr.add(dr3Neck(S));
   // torso and clothes
-  const outfit = eq.outfit || 'office', oc = DR_DYES[dye[outfit]] || DR_OUTFIT_BASE[outfit] || '#3b3f47', ot = dr3OutTex(outfit, oc, S.hex);
+  const outfit = eq.outfit || 'office', oc = DR_DYES[dye[outfit]] || DR_OUTFIT_BASE[outfit] || '#3b3f47', ot = dr3OutTex(outfit, oc, S.hex, GL.mono);
   const tm = new THREE.MeshStandardMaterial({ map: ot.tex, roughness: outfit === 'leather' ? 0.38 : 0.85, metalness: outfit === 'leather' ? 0.12 : 0, envMapIntensity: outfit === 'leather' ? 1 : 0.35 });
   const torso = new THREE.Mesh(dr3TorsoGeo(), tm); torso.castShadow = true; torso.receiveShadow = true; chr.add(torso); torso.updateMatrixWorld(true);
   dr3Collar(ot.collar, S, new THREE.Color(oc).multiplyScalar(outfit === 'varsity' ? 0 : 1).add(outfit === 'varsity' ? new THREE.Color('#efe6cf') : new THREE.Color(0)).getHex(), chr);
-  chr.add(dr3Chain(eq.chain));
+  metalOn('chain'); const chn = dr3Chain(eq.chain, GL.monoChain); metalOff(); chr.add(chn);
+  if (FX.chain && chn.userData.pts) chn.userData.pts.forEach((pt, i) => anc(chr, pt.clone().add(new THREE.Vector3(0, -0.02, 0.06)), FX.chain, 'chain' + i));
   const sleeveHex = ot.sleeve === oc ? oc : ot.sleeve, slm = new THREE.MeshStandardMaterial({ color: sleeveHex, roughness: outfit === 'leather' ? 0.4 : 0.85, metalness: outfit === 'leather' ? 0.12 : 0, envMapIntensity: 0.4 });
   const arms = new THREE.Group(); chr.add(arms);
   const ray = new THREE.Raycaster(), chestHit = (x, y) => { ray.set(new THREE.Vector3(x, y, 6), new THREE.Vector3(0, 0, -1)); const h = ray.intersectObject(torso, false)[0]; return h ? h.point : new THREE.Vector3(x, y, 0.9); };
-  if (eq.patch && eq.patch !== 'none') { const pm = dr3Patch(eq.patch); if (pm) { const p = chestHit(0.78, -2.15); pm.position.set(p.x, p.y, p.z + 0.012); pm.rotation.y = 0.22; pm.rotation.z = 0.04; chr.add(pm); } }
+  if (eq.patch && eq.patch !== 'none') { const pm = dr3Patch(eq.patch); if (pm) { const p = chestHit(0.78, -2.15); pm.position.set(p.x, p.y, p.z + 0.012); pm.rotation.y = 0.22; pm.rotation.z = 0.04; chr.add(pm); anc(chr, pm.position.clone().add(new THREE.Vector3(0, 0, 0.04)), FX.patch, 'patch'); } }
+  // the monogram sits at x -0.77, y -2.11 (texture -1.0, -2.5)
+  if (FX.outfit) { const op = FX.outfit === 'thread' ? chestHit(-0.77, outfit === 'varsity' ? -2.2 : -2.11) : chestHit(-0.5, -1.9); anc(chr, op.clone().add(new THREE.Vector3(0, 0, 0.05)), FX.outfit, 'outfit'); }
   if (!face) {
     const bank = st.br || 0, wrists = {};
     for (const s of [-1, 1]) {
@@ -7671,24 +7801,27 @@ function dr3Build(st, opt) {
       arms.add(dr3Limb(sh, el, 0.33, slm)); arms.add(dr3Limb(el, wr, 0.255, shorts ? skm : slm));
       if (shorts) { arms.add(dr3Limb(sh, sh.clone().lerp(el, 0.7), 0.345, slm)); }
       const hd = dr3Hand(S, s); hd.position.copy(wr).add(new THREE.Vector3(0, -0.02, 0.1)); hd.scale.setScalar(1.25); hd.lookAt(new THREE.Vector3(s * 0.2, -2.4, 2.4)); arms.add(hd); wrists[s] = hd;
-      if (eq.sleeve && eq.sleeve !== 'none' && s === 1) { const pm = dr3Patch(eq.sleeve); if (pm) { pm.scale.setScalar(0.8); const mid = sh.clone().lerp(el, 0.42); pm.position.set(mid.x + 0.38, mid.y, mid.z + 0.08); pm.rotation.y = Math.PI / 2 - 0.15; arms.add(pm); } }
+      if (eq.sleeve && eq.sleeve !== 'none' && s === 1) { const pm = dr3Patch(eq.sleeve); if (pm) { pm.scale.setScalar(0.8); const mid = sh.clone().lerp(el, 0.42); pm.position.set(mid.x + 0.38, mid.y, mid.z + 0.08); pm.rotation.y = Math.PI / 2 - 0.15; arms.add(pm); anc(arms, pm.position.clone().add(new THREE.Vector3(0.05, 0, 0)), FX.sleeve, 'sleeve', new THREE.Vector3(1, 0, 0.2)); } }
     }
     // watch (left hand), bracelets (right), rings
     const wt = eq.watch || 'digital', PAL = { digital: ['#222', '#3f5f3a'], steel: ['#b9bec7', '#1d3b6e'], gold: ['#d9b36c', '#f3e2b0'], iced: ['#e9edf2', '#f8fbff'], hyper: ['#1a1a1a', '#2c2c2c'] }[wt] || ['#222', '#3f5f3a'];
-    const hl = wrists[-1], hr = wrists[1], bm = new THREE.MeshStandardMaterial({ color: PAL[0], metalness: wt === 'digital' ? 0.1 : 0.9, roughness: wt === 'digital' ? 0.6 : 0.25, envMapIntensity: 1.2 });
+    metalOn('watch'); const wfin = wt === 'digital' ? null : DR3.metal; metalOff();
+    const hl = wrists[-1], hr = wrists[1], bm = new THREE.MeshStandardMaterial({ color: wfin != null ? wfin : PAL[0], metalness: wt === 'digital' ? 0.1 : 0.9, roughness: wt === 'digital' ? 0.6 : 0.25, envMapIntensity: 1.2 });
     const strap = new THREE.Mesh(new THREE.TorusGeometry(0.215, 0.05, 10, 32), bm); strap.position.set(0, 0, -0.1); strap.castShadow = true; hl.add(strap);
     const wc = document.createElement('canvas'); wc.width = wc.height = 128; const wg = wc.getContext('2d'); wg.fillStyle = PAL[1]; wg.fillRect(0, 0, 128, 128); wg.strokeStyle = wt === 'digital' ? '#9fe69a' : '#e8e8e8'; wg.lineWidth = 5; if (wt === 'digital') { wg.font = '900 40px monospace'; wg.fillStyle = '#9fe69a'; wg.textAlign = 'center'; wg.fillText('8:00', 64, 76); } else { for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283; wg.beginPath(); wg.moveTo(64 + Math.cos(a) * 46, 64 + Math.sin(a) * 46); wg.lineTo(64 + Math.cos(a) * 56, 64 + Math.sin(a) * 56); wg.stroke(); } wg.lineWidth = 6; wg.beginPath(); wg.moveTo(64, 64); wg.lineTo(64, 28); wg.moveTo(64, 64); wg.lineTo(86, 74); wg.stroke(); }
     const wtex = new THREE.CanvasTexture(wc); wtex.colorSpace = THREE.SRGBColorSpace;
     const wf = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.07, 32), [bm, new THREE.MeshStandardMaterial({ map: wtex, roughness: 0.2, metalness: 0.2, envMapIntensity: 1.4 }), bm]); wf.position.set(0, 0.255, -0.1); wf.castShadow = true; hl.add(wf);
     if (wt === 'iced') { const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.025, 6, 32), DR3_GEM()); ring.rotation.x = Math.PI / 2; ring.position.set(0, 0.29, -0.1); ring.scale.setScalar(0.85); hl.add(ring); }
-    const wr = eq.wrist && eq.wrist !== 'none' ? eq.wrist : null;
+    anc(hl, new THREE.Vector3(0.05, 0.31, -0.05), FX.watch, 'watch');
+    const wr = eq.wrist && eq.wrist !== 'none' ? eq.wrist : null; metalOn('wrist');
     if (wr === 'gold') { const t = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.05, 10, 32), DR3_GOLD()); t.position.z = -0.12; t.castShadow = true; hr.add(t); }
     if (wr === 'beads') { for (let i = 0; i < 22; i++) { const a = i / 22 * 6.283, b = new THREE.Mesh(new THREE.SphereGeometry(0.052, 10, 8), new THREE.MeshStandardMaterial({ color: [0x2a2a2e, 0x7a5a3a, 0x2a2a2e, 0xc9a03e][i % 4], roughness: 0.4 })); b.position.set(Math.cos(a) * 0.215, Math.sin(a) * 0.215, -0.1); hr.add(b); } }
     if (wr === 'tennis') { const t = new THREE.Mesh(new THREE.TorusGeometry(0.215, 0.02, 8, 40), DR3_SILVER()); t.position.z = -0.1; hr.add(t); for (let i = 0; i < 18; i++) { const a = i / 18 * 6.283, b = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), DR3_GEM()); b.position.set(Math.cos(a) * 0.225, Math.sin(a) * 0.225, -0.1); hr.add(b); } }
+    metalOff(); anc(hr, new THREE.Vector3(0.18, 0.14, -0.1), FX.wrist, 'wrist');
     for (let k = 0; k < Math.min(4, titles.bracelet || 0); k++) { const t = new THREE.Mesh(new THREE.TorusGeometry(0.225, 0.028, 8, 32), DR3_GOLD()); t.position.z = -0.2 - k * 0.07; t.castShadow = true; hr.add(t); }
     const rings = Math.min(3, (titles.ring || 0) + (titles.me || 0)); for (let k = 0; k < rings; k++) { const fp = hl.userData.fp[k]; const t = new THREE.Mesh(new THREE.TorusGeometry(0.049, 0.014, 8, 18), DR3_GOLD()); t.position.copy(fp).add(new THREE.Vector3(0, 0, 0.02 * k)); hl.add(t); const g = new THREE.Mesh(new THREE.OctahedronGeometry(0.022), DR3_GEM()); g.position.copy(fp).add(new THREE.Vector3(0, 0.05, 0.02 * k)); hl.add(g); }
     const ring = eq.ring && eq.ring !== 'none' ? eq.ring : null;
-    if (ring) { const fp = hr.userData.fp[ring === 'pinky' ? 0 : 2], mat = ring === 'signet' || ring === 'pinky' ? DR3_SILVER() : DR3_GOLD(); const t = new THREE.Mesh(new THREE.TorusGeometry(0.05, ring === 'champ' ? 0.02 : 0.015, 8, 18), mat); t.position.copy(fp); hr.add(t);
+    if (ring) { const fp = hr.userData.fp[ring === 'pinky' ? 0 : 2]; metalOn('ring'); const mat = ring === 'signet' || ring === 'pinky' ? DR3_SILVER() : DR3_GOLD(); metalOff(); anc(hr, fp.clone().add(new THREE.Vector3(0, 0.07, 0)), FX.ring, 'ring'); const t = new THREE.Mesh(new THREE.TorusGeometry(0.05, ring === 'champ' ? 0.02 : 0.015, 8, 18), mat); t.position.copy(fp); hr.add(t);
       if (ring === 'signet') { const sq = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.06), mat); sq.position.copy(fp).add(new THREE.Vector3(0, 0.055, 0)); hr.add(sq); } if (ring === 'pinky') { const gm = new THREE.Mesh(new THREE.OctahedronGeometry(0.035), DR3_GEM()); gm.position.copy(fp).add(new THREE.Vector3(0, 0.06, 0)); hr.add(gm); } if (ring === 'champ') { const gm = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.05, 0.1), new THREE.MeshStandardMaterial({ color: 0xc2362a, roughness: 0.1, metalness: 0.2, envMapIntensity: 2 })); gm.position.copy(fp).add(new THREE.Vector3(0, 0.07, 0)); hr.add(gm); } }
     // the table, cards and chips stay put while you turn
     const table = new THREE.Group(); scene.add(table);
@@ -7699,7 +7832,7 @@ function dr3Build(st, opt) {
     const tiers = [0, 1000, 10000, 50000, 250000, 1e6, 5e6], lv = tiers.filter((t) => bank >= t).length, cols = ['#f3ecdc', '#c2362a', '#2a6fdb', '#1e8f4a', '#141414', '#7a3fc0', '#e3b94f'], mats = cols.map(dr3Chip);
     for (let c = 0; c < Math.min(3, Math.ceil(lv / 2)); c++) { const h = Math.max(2, lv * 2 - c * 3); for (let k = 0; k < h; k++) { const ch = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.065, 28), mats[(k + c) % Math.min(cols.length, lv + 1)]); ch.position.set(1.2 + c * 0.47, -2.55 + 0.034 + k * 0.067, 2.4 - c * 0.14); ch.rotation.y = k * 0.7; ch.castShadow = true; ch.receiveShadow = true; table.add(ch); } }
   }
-  return { scene, chr, look };
+  return { scene, chr, look, anchors };
 }
 // ---------------------------------------------------------------- render, snapshot, mount
 function dr3Cam(opt) {
@@ -7707,36 +7840,48 @@ function dr3Cam(opt) {
   if (face) { cam.position.set(0, 0.1, 6.6); cam.lookAt(0, opt.cy == null ? -0.03 : opt.cy, 0); } else { cam.position.set(0, 0.5, 7.9); cam.lookAt(0, -0.95, 0); }
   return cam;
 }
+function dr3FxPos(B, cam) {
+  const out = []; if (!B.anchors || !B.anchors.length) return out; B.scene.updateMatrixWorld(true); const v = new THREE.Vector3(), q = B.chr.getWorldQuaternion(new THREE.Quaternion());
+  for (const a of B.anchors) { a.o.getWorldPosition(v); v.project(cam); const nz = a.n.clone().applyQuaternion(q).z; out.push({ fx: a.fx, k: a.k, x: +((v.x + 1) * 50).toFixed(2), y: +((1 - v.y) * 50).toFixed(2), vis: nz > -0.05 }); }
+  return out;
+}
+function dr3FxHTML(list) { return list && list.length ? `<span class="drfx" aria-hidden="true">${list.filter((p) => p.vis).map((p, i) => `<i class="fx-${p.fx}" style="left:${p.x}%;top:${p.y}%;--d:${((i * 0.61) % 2.6).toFixed(2)}s"></i>`).join('')}</span>` : ''; }
 function dr3Dispose(scene) { scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; for (const m of ms) { for (const k of ['map']) if (m[k]) m[k].dispose(); m.dispose(); } }); }
 function dr3Draw(st, opt) {
   const B = dr3Build(st, opt), R = DR3.R, cam = dr3Cam(opt); R.setSize(opt.w, opt.h, false); R.setPixelRatio(1);
   B.chr.rotation.y = opt.ang || 0; B.chr.rotation.x = 0;
-  R.render(B.scene, cam); dr3Dispose(B.scene); return R.domElement;
+  R.render(B.scene, cam); DR3.lastFx = dr3FxPos(B, cam); dr3Dispose(B.scene); return R.domElement;
 }
-function dr3Key(st, opt) { return JSON.stringify([opt.fov, opt.cy, st.look, st.eq, st.dye, st.titles, Math.min(7, [0, 1000, 10000, 50000, 250000, 1e6, 5e6].filter((t) => (st.br || 0) >= t).length), opt.face, opt.mouth, opt.blink, opt.ang, opt.w, opt.h]); }
+function dr3Key(st, opt) { return JSON.stringify([opt.fov, opt.cy, st.look, st.eq, st.dye, st.fin || 0, typeof drGearLook === 'function' && !opt.face ? drGearLook(st) : 0, st.titles, Math.min(7, [0, 1000, 10000, 50000, 250000, 1e6, 5e6].filter((t) => (st.br || 0) >= t).length), opt.face, opt.mouth, opt.blink, opt.ang, opt.w, opt.h]); }
 function dr3Snap(st, opt) {
   const k = dr3Key(st, opt); let u = DR3.cache.get(k); if (u) return u;
-  const cv = dr3Draw(st, opt); u = cv.toDataURL('image/png'); if (DR3.cache.size > 60) DR3.cache.delete(DR3.cache.keys().next().value); DR3.cache.set(k, u); return u;
+  const cv = dr3Draw(st, opt); u = cv.toDataURL('image/png'); if (DR3.cache.size > 60) { const old = DR3.cache.keys().next().value; DR3.cache.delete(old); DR3.fxCache.delete(old); } DR3.cache.set(k, u); DR3.fxCache.set(k, DR3.lastFx || []); return u;
 }
 function drAvatarSVG(st, opt = {}) {
   if (!dr3Init() || window.__dr2d) return drAvatarSVG2D(st, opt);
   try {
-    const face = !!opt.face, w = face ? 240 : 480, h = face ? 240 : 520, url = dr3Snap(st, { ...opt, w, h });
-    return `<img class="dravsvg dr3img" src="${url}" width="${w}" height="${h}" alt="${(typeof esc === 'function' ? esc : (x) => x)(st.name || 'Your player')}" draggable="false">`;
+    const face = !!opt.face, w = face ? 240 : 480, h = face ? 240 : 520, o2 = { ...opt, w, h }, url = dr3Snap(st, o2);
+    const img = `<img class="dravsvg dr3img" src="${url}" width="${w}" height="${h}" alt="${(typeof esc === 'function' ? esc : (x) => x)(st.name || 'Your player')}" draggable="false">`;
+    const fx = !face && opt.fx !== false ? DR3.fxCache.get(dr3Key(st, o2)) : null;
+    return fx && fx.some((p) => p.vis) ? `<span class="drfxw">${img}${dr3FxHTML(fx)}</span>` : img;
   } catch (e) { DR3.ok = false; return drAvatarSVG2D(st, opt); }
 }
 function dr3LiveOK() { return !window.__dr2d && dr3Init(); }
-function dr3LiveHTML(st, alt) { return `<canvas id="dr3live" class="dravsvg dr3live" width="440" height="480" role="img" aria-label="${alt || 'Your player'}"></canvas>`; }
+function dr3LiveHTML(st, alt) { return `<span class="drfxw live"><canvas id="dr3live" class="dravsvg dr3live" width="440" height="480" role="img" aria-label="${alt || 'Your player'}"></canvas><span class="drfx" id="dr3fx" aria-hidden="true"></span></span>`; }
 // the live builder view: drag to turn the character around
 function dr3Mount() {
   const cv = document.getElementById('dr3live'); if (!cv || !dr3Init()) return;
+  // re-mounting the same canvas (sculpt sliders) retires the previous build and its animation loop
+  const gen = cv._gen = (cv._gen || 0) + 1; if (cv._B) { try { dr3Dispose(cv._B.scene); } catch (e) { /* already gone */ } cv._B = null; }
   const st = cv._st = cv._st || null; const get = () => (typeof DR3.liveState === 'function' ? DR3.liveState() : null); const S0 = get(); if (!S0) return;
   const w = 440, h = 480; cv.width = w; cv.height = h; const ctx = cv.getContext('2d');
   let ang = DR3.ang || 0, vel = 0, drag = false, lx = 0, raf = 0, idle = 0, t0 = performance.now();
-  const o = { w, h, mouth: 'smug' }, B = dr3Build(S0, o), camL = dr3Cam(o);
-  const paint = (a) => { if (!document.body.contains(cv)) { if (B) { dr3Dispose(B.scene); } return; } const R = DR3.R; R.setSize(w, h, false); R.setPixelRatio(1); B.chr.rotation.y = a; R.render(B.scene, camL); ctx.clearRect(0, 0, w, h); ctx.drawImage(R.domElement, 0, 0); };
-  const tick = (now) => { if (!document.body.contains(cv)) return; if (!drag) { idle = now - t0; const swing = Math.sin(idle / 1400) * 0.28; if (idle < 4000) { paint(ang + swing * Math.max(0, 1 - idle / 4000)); raf = requestAnimationFrame(tick); return; } return; } };
-  paint(ang); raf = requestAnimationFrame(tick);
+  const o = { w, h, mouth: 'smug' }, B = dr3Build(S0, o), camL = dr3Cam(o); cv._B = B;
+  const fxEl = document.getElementById('dr3fx'); let spans = null;
+  const fxPaint = () => { if (!fxEl || !B.anchors.length) return; const P = dr3FxPos(B, camL); if (!spans) { fxEl.innerHTML = P.map((p, i) => `<i class="fx-${p.fx}" style="--d:${((i * 0.61) % 2.6).toFixed(2)}s"></i>`).join(''); spans = [...fxEl.children]; } P.forEach((p, i) => { const e = spans[i]; e.style.left = p.x + '%'; e.style.top = p.y + '%'; e.style.visibility = p.vis ? '' : 'hidden'; }); };
+  const paint = (a) => { if (cv._gen !== gen) return; if (!document.body.contains(cv)) { if (B) { dr3Dispose(B.scene); } return; } const R = DR3.R; R.setSize(w, h, false); R.setPixelRatio(1); B.chr.rotation.y = a; R.render(B.scene, camL); ctx.clearRect(0, 0, w, h); ctx.drawImage(R.domElement, 0, 0); fxPaint(); };
+  const tick = (now) => { if (cv._gen !== gen || !document.body.contains(cv)) return; if (!drag) { idle = now - t0; const swing = Math.sin(idle / 1400) * 0.28; if (idle < 4000) { paint(ang + swing * Math.max(0, 1 - idle / 4000)); raf = requestAnimationFrame(tick); return; } return; } };
+  paint(ang); if (gen === 1) raf = requestAnimationFrame(tick);
   const down = (e) => { drag = true; lx = e.clientX; cv.setPointerCapture && cv.setPointerCapture(e.pointerId); };
   const move = (e) => { if (!drag) return; ang += (e.clientX - lx) * 0.011; lx = e.clientX; DR3.ang = ang; if (!cv._busy) { cv._busy = true; requestAnimationFrame(() => { paint(ang); cv._busy = false; }); } };
   const up = () => { drag = false; };
@@ -7772,8 +7917,16 @@ function dr3Ring(S, y) {
   }
   return { wx, zf, zb };
 }
+// face sculpting: look.sc holds sliders in -1..1; every feature reads its numbers from here
+function dr3Feat(look) {
+  const sc = (look && look.sc) || {}, k = (n) => Math.max(-1, Math.min(1, +sc[n] || 0));
+  return { fw: k('fw'), jw: k('jw'), ch: k('ch'), cb: k('cb'), cf: k('cf'), nw: 1 + 0.36 * k('nw'), nl: 1.4 * k('nl'), nb: k('nb'), lp: 1 + 0.45 * k('lp'), mw: 1 + 0.16 * k('mw'),
+    es: 1 + 0.12 * k('es'), ex: 0.34 + 0.032 * k('ep'), tilt: 0.06 * k('et'), bh: 0.035 * k('bh'), er: 1 + 0.24 * k('er') };
+}
 function dr3Head(look, opt) {
-  const S = DR3_SHAPE[look.face] || DR3_SHAPE.oval, age = look.age || 'young', old = age === 'old', yng = age === 'young';
+  const S0 = DR3_SHAPE[look.face] || DR3_SHAPE.oval, F = dr3Feat(look), age = look.age || 'young', old = age === 'old', yng = age === 'young';
+  // the face's own shape with width and jaw applied, so painting and hair follow the sculpted head
+  const S = { k: S0.k.map(([y, w]) => [y, w * (1 + 0.06 * F.fw) * (1 + 0.13 * F.jw * dr3Ss(-0.35, -0.85, y))]), yc: S0.yc, rec: S0.rec * (1 - 0.45 * F.ch) };
   const C = 144, R = 118, N = 2.3, pos = new Float32Array((C + 1) * (R + 1) * 3), uv = new Float32Array((C + 1) * (R + 1) * 2), idx = [];
   for (let j = 0; j <= R; j++) {
     const y = -Math.cos(Math.PI * j / R), r = dr3Ring(S, y);
@@ -7793,27 +7946,28 @@ function dr3Head(look, opt) {
   weld();
   // the mouth line and its lift: smile, smug (one side), frown, flat
   const mouth = (opt && opt.mouth) || (opt && opt.smile ? 'smile' : 'smug');
-  const lift = (x) => { const u = Math.min(1, Math.abs(x) / 0.24), q = u * u; return mouth === 'smile' ? 0.052 * q : mouth === 'frown' ? -0.04 * q : mouth === 'smug' ? (x > 0 ? 0.058 * q : 0.004 * q) : 0.002 * q; };
+  const lift = (x) => { const u = Math.min(1, Math.abs(x) / (0.24 * F.mw)), q = u * u; return mouth === 'smile' ? 0.052 * q : mouth === 'frown' ? -0.04 * q : mouth === 'smug' ? (x > 0 ? 0.058 * q : 0.004 * q) : 0.002 * q; };
   const N0 = g.attributes.normal, P = g.attributes.position;
   for (let k = 0; k < P.count; k++) {
     const X = P.getX(k), Y = P.getY(k), Z = P.getZ(k), ax = Math.abs(X);
     const fm = dr3Ss(0.02, 0.32, Z); if (fm <= 0) continue;
     let a = 0;
-    a += 0.05 * dr3G2(ax, Y, 0.3, 0.3, 0.28, 0.075) * (old ? 1.25 : 1);                  // brow ridge
-    a -= (0.052 + (old ? 0.015 : 0)) * dr3G2(ax, Y, 0.34, 0.035, 0.17, 0.115);               // eye sockets
-    a += (yng ? 0.055 : old ? 0.03 : 0.045) * dr3G2(ax, Y, 0.57, -0.2, 0.22, 0.17);          // cheekbones
-    a += (yng ? 0.018 : old ? -0.03 : 0) * dr3G2(ax, Y, 0.5, -0.4, 0.17, 0.14);              // cheek fullness / hollow
-    const br = Math.max(0, Math.min(1, (0.12 - Y) / 0.42)); a += (0.014 + 0.095 * Math.pow(br, 1.2)) * Math.exp(-((ax / 0.062) ** 2)) * dr3Ss(0.16, 0.06, Y) * dr3Ss(-0.4, -0.3, Y) * 1; // nose bridge
-    a += 0.135 * dr3G2(ax, Y, 0, -0.365, 0.1, 0.085);                                          // tip
-    a += 0.07 * dr3G2(ax, Y, 0.15, -0.39, 0.07, 0.06);                                         // wings
-    a -= 0.04 * dr3G2(ax, Y, 0.075, -0.445, 0.03, 0.02);                                       // nostrils
-    a -= 0.03 * dr3G2(ax, Y, 0, -0.47, 0.12, 0.025);                                           // under the nose
-    a += 0.05 * dr3G2(ax, Y, 0, -0.598, 0.2, 0.034);                                           // upper lip
-    a += 0.058 * dr3G2(ax, Y, 0, -0.69, 0.17, 0.045);                                          // lower lip
-    a -= 0.04 * dr3G2(ax, Y, 0, -0.648, 0.21, 0.011);                                          // the mouth line
+    const nl = 0.04 * F.nl;
+    a += 0.05 * dr3G2(ax, Y, 0.3, 0.3 + F.bh, 0.28, 0.075) * (old ? 1.25 : 1);             // brow ridge
+    a -= (0.052 + (old ? 0.015 : 0)) * dr3G2(ax, Y, F.ex, 0.035, 0.17 * F.es, 0.115 * F.es);  // eye sockets
+    a += (yng ? 0.055 : old ? 0.03 : 0.045) * (1 + 0.9 * F.cb) * dr3G2(ax, Y, 0.57 * (1 + 0.06 * F.fw), -0.2, 0.22, 0.17); // cheekbones
+    a += ((yng ? 0.018 : old ? -0.03 : 0) + 0.032 * F.cf) * dr3G2(ax, Y, 0.5, -0.4, 0.17, 0.14); // cheek fullness / hollow
+    const br = Math.max(0, Math.min(1, (0.12 - Y) / (0.42 + nl))); a += (0.014 + 0.095 * (1 + 0.55 * F.nb) * Math.pow(br, 1.2)) * Math.exp(-((ax / (0.062 * F.nw)) ** 2)) * dr3Ss(0.16, 0.06, Y) * dr3Ss(-0.4 - nl, -0.3 - nl, Y); // nose bridge
+    a += 0.135 * (1 + 0.25 * F.nb) * dr3G2(ax, Y, 0, -0.365 - nl, 0.1 * F.nw, 0.085);       // tip
+    a += 0.07 * dr3G2(ax, Y, 0.15 * F.nw, -0.39 - nl, 0.07 * F.nw, 0.06);                    // wings
+    a -= 0.04 * dr3G2(ax, Y, 0.075 * F.nw, -0.445 - nl, 0.03, 0.02);                         // nostrils
+    a -= 0.03 * dr3G2(ax, Y, 0, -0.47 - nl * 0.75, 0.12, 0.025);                             // under the nose
+    a += 0.05 * F.lp * dr3G2(ax, Y, 0, -0.598, 0.2 * F.mw, 0.034);                          // upper lip
+    a += 0.058 * F.lp * dr3G2(ax, Y, 0, -0.69, 0.17 * F.mw, 0.045);                         // lower lip
+    a -= 0.04 * dr3G2(ax, Y, 0, -0.648, 0.21 * F.mw, 0.011);                                // the mouth line
     a -= 0.016 * dr3G2(ax, Y, 0, -0.53, 0.04, 0.07);                                           // philtrum
     a -= 0.03 * dr3G2(ax, Y, 0, -0.775, 0.14, 0.028);                                          // under the lip
-    a += 0.065 * dr3G2(ax, Y, 0, -0.9, 0.19, 0.09);                                            // chin
+    a += 0.065 * (1 + 0.6 * F.ch) * dr3G2(ax, Y, 0, -0.9 - 0.02 * F.ch, 0.19, 0.09);       // chin
     a -= (old ? 0.022 : 0.01) * dr3G2(ax, Y, 0.3, -0.52, 0.07, 0.2);                           // smile lines
     const nx = N0.getX(k), ny = N0.getY(k), nz = N0.getZ(k);
     let dy = lift(X) * dr3G2(ax, Y, 0, -0.645, 0.4, 0.075) * fm;
@@ -7821,7 +7975,7 @@ function dr3Head(look, opt) {
   }
   weld();
   const tex = (x, y, W, Hh) => { const r = dr3Ring(S, y), s = Math.min(1, Math.abs(x) / Math.max(0.01, r.wx)) ** (N / 2), ph = Math.asin(Math.sign(x) * s); return [(0.5 + ph / (Math.PI * 2)) * W, (1 - (y + 1) / 2) * Hh]; };
-  return { g, S, tex, lift, mouth, ring: (y) => dr3Ring(S, y), C, R };
+  return { g, S, F, tex, lift, mouth, ring: (y) => dr3Ring(S, y), C, R };
 }
 
 // ---------------------------------------------------------------- painted skin
@@ -7835,7 +7989,7 @@ function dr3Grain() {
 function dr3SkinTex(look, skinHex, H, scalp, beard) {
   const W = 2048, Hh = 1024, c = document.createElement('canvas'); c.width = W; c.height = Hh; const g = c.getContext('2d');
   const sk = new THREE.Color(skinHex), deep = look.skin >= 5, light = look.skin <= 1, age = look.age || 'young', old = age === 'old', yng = age === 'young';
-  const rng = dr3Rng(dr3Hash(JSON.stringify(look)) ^ 7), P = (x, y) => H.tex(x, y, W, Hh), UX = (W / (Math.PI * 2)) / 0.9, UY = Hh / 2;
+  const rng = dr3Rng(dr3Hash(JSON.stringify(look)) ^ 7), P = (x, y) => H.tex(x, y, W, Hh), UX = (W / (Math.PI * 2)) / 0.9, UY = Hh / 2, F = H.F || dr3Feat(look), nl = 0.04 * F.nl, lpP = 1 + (F.lp - 1) * 0.8;
   g.fillStyle = skinHex; g.fillRect(0, 0, W, Hh);
   const blot = (x, y, rx, ry, col, a) => { const [px, py] = P(x, y); g.save(); g.translate(px, py); g.scale(1, ry / rx); const gr = g.createRadialGradient(0, 0, 0, 0, 0, rx * UX); gr.addColorStop(0, col.replace('A', a)); gr.addColorStop(1, col.replace('A', 0)); g.fillStyle = gr; g.fillRect(-rx * UX, -rx * UX, rx * UX * 2, rx * UX * 2); g.restore(); };
   const warm = deep ? 'rgba(80,28,20,A)' : light ? 'rgba(232,120,110,A)' : 'rgba(214,100,84,A)';
@@ -7843,24 +7997,25 @@ function dr3SkinTex(look, skinHex, H, scalp, beard) {
   for (let k = 0; k < 70; k++) { const x = (rng() - 0.5) * 1.5, y = -0.9 + rng() * 1.5, r = 0.12 + rng() * 0.2; blot(x, y, r, r * 1.2, rng() < 0.5 ? 'rgba(255,230,210,A)' : 'rgba(120,60,50,A)', 0.04 + rng() * 0.04); }
   blot(0, 0.72, 0.5, 0.45, 'rgba(255,245,235,A)', deep ? 0.07 : 0.12);          // forehead light
   blot(0.58, -0.22, 0.3, 0.26, warm, yng ? 0.34 : 0.2); blot(-0.58, -0.22, 0.3, 0.26, warm, yng ? 0.34 : 0.2); // cheeks
-  blot(0, -0.38, 0.17, 0.14, warm, 0.26);                                           // nose tip
+  blot(0, -0.38 - nl, 0.17 * F.nw, 0.14, warm, 0.26);                                // nose tip
   blot(0, -0.1, 0.2, 0.3, 'rgba(255,240,230,A)', deep ? 0.04 : 0.1);                // nose bridge sheen
-  for (const s of [-1, 1]) { blot(s * 0.34, 0.03, 0.27, 0.19, deep ? 'rgba(40,16,12,A)' : 'rgba(150,80,90,A)', old ? 0.3 : 0.2); blot(s * 0.34, -0.1, 0.22, 0.08, 'rgba(110,60,70,A)', old ? 0.24 : yng ? 0.05 : 0.14); } // eye sockets and bags
+  for (const s of [-1, 1]) { blot(s * F.ex, 0.03, 0.27 * F.es, 0.19 * F.es, deep ? 'rgba(40,16,12,A)' : 'rgba(150,80,90,A)', old ? 0.3 : 0.2); blot(s * F.ex, -0.1 * F.es, 0.22 * F.es, 0.08, 'rgba(110,60,70,A)', old ? 0.24 : yng ? 0.05 : 0.14); } // eye sockets and bags
   blot(0, -0.8, 0.3, 0.12, 'rgba(60,24,24,A)', 0.14); blot(0, -0.98, 0.5, 0.2, 'rgba(50,22,20,A)', 0.22); // under the lip, under the jaw
   // lips
   const my = (x) => -0.648 + H.lift(x), lipC = deep ? [112, 52, 50] : light ? [206, 112, 112] : [186, 100, 96], lc = (f, a) => `rgba(${lipC.map((v) => Math.round(Math.min(255, v * f))).join(',')},${a})`;
   const poly = (pts, fill) => { g.beginPath(); pts.forEach(([x, y], i) => { const [px, py] = P(x, y); i ? g.lineTo(px, py) : g.moveTo(px, py); }); g.closePath(); g.fillStyle = fill; g.fill(); };
   const up = [], lo = [];
-  for (let t = -1; t <= 1.001; t += 0.05) { const x = t * 0.225, bow = Math.abs(t) < 0.45 ? 0.012 * (1 - Math.abs(t) / 0.45) * (Math.abs(t) < 0.12 ? -1 : 1) : 0; up.push([x, my(x) + 0.05 * Math.sqrt(Math.max(0, 1 - t * t)) + bow]); lo.push([x, my(x) - 0.068 * Math.pow(Math.max(0, 1 - t * t), 0.7)]); }
-  const mid = []; for (let t = -1; t <= 1.001; t += 0.05) mid.push([t * 0.225, my(t * 0.225) + 0.003]);
+  const LW = 0.225 * F.mw;
+  for (let t = -1; t <= 1.001; t += 0.05) { const x = t * LW, bow = Math.abs(t) < 0.45 ? 0.012 * (1 - Math.abs(t) / 0.45) * (Math.abs(t) < 0.12 ? -1 : 1) : 0; up.push([x, my(x) + 0.05 * lpP * Math.sqrt(Math.max(0, 1 - t * t)) + bow]); lo.push([x, my(x) - 0.068 * lpP * Math.pow(Math.max(0, 1 - t * t), 0.7)]); }
+  const mid = []; for (let t = -1; t <= 1.001; t += 0.05) mid.push([t * LW, my(t * LW) + 0.003]);
   poly([...up, ...mid.slice().reverse()], lc(1.05, 0.95)); poly([...mid, ...lo.slice().reverse()], lc(1.12, 0.95));
   const open = H.mouth === 'smile';
-  if (open) { const top = [], bot = []; for (let t = -0.8; t <= 0.801; t += 0.05) { const x = t * 0.225; top.push([x, my(x) + 0.0]); bot.push([x, my(x) - 0.03 * Math.sqrt(1 - t * t / 0.7)]); } poly([...top, ...bot.slice().reverse()], '#f6f2ea'); const g1 = g.createLinearGradient(0, P(0, my(0))[1], 0, P(0, my(0) - 0.03)[1]); }
+  if (open) { const top = [], bot = []; for (let t = -0.8; t <= 0.801; t += 0.05) { const x = t * LW; top.push([x, my(x) + 0.0]); bot.push([x, my(x) - 0.03 * Math.sqrt(1 - t * t / 0.7)]); } poly([...top, ...bot.slice().reverse()], '#f6f2ea'); const g1 = g.createLinearGradient(0, P(0, my(0))[1], 0, P(0, my(0) - 0.03)[1]); }
   g.lineCap = 'round'; g.strokeStyle = lc(0.38, 0.9); g.lineWidth = 5; g.beginPath(); mid.forEach(([x, y], i) => { const [px, py] = P(x, y); i ? g.lineTo(px, py) : g.moveTo(px, py); }); g.stroke();
   const [hx, hy] = P(-0.04, my(0) - 0.04), hg = g.createRadialGradient(hx, hy, 0, hx, hy, 40); hg.addColorStop(0, 'rgba(255,230,230,.28)'); hg.addColorStop(1, 'rgba(255,230,230,0)'); g.fillStyle = hg; g.fillRect(hx - 60, hy - 40, 120, 80);
   // nostrils and the shadow under the nose
-  for (const s of [-1, 1]) { const [px, py] = P(s * 0.078, -0.443); g.fillStyle = 'rgba(40,16,14,.55)'; g.beginPath(); g.ellipse(px, py, 11, 6.5, s * 0.3, 0, 7); g.fill(); }
-  blot(0, -0.47, 0.13, 0.04, 'rgba(60,24,22,A)', 0.3);
+  for (const s of [-1, 1]) { const [px, py] = P(s * 0.078 * F.nw, -0.443 - nl); g.fillStyle = 'rgba(40,16,14,.55)'; g.beginPath(); g.ellipse(px, py, 11, 6.5, s * 0.3, 0, 7); g.fill(); }
+  blot(0, -0.47 - nl * 0.75, 0.13 * F.nw, 0.04, 'rgba(60,24,22,A)', 0.3);
   if (look.freck) for (let k = 0; k < 220; k++) { const lat = k % 3; let x, y; if (lat) { x = (rng() < 0.5 ? -1 : 1) * (0.14 + rng() * 0.42); y = -0.38 + rng() * 0.28; if (Math.abs(x) < 0.15) x *= 2; } else { x = (rng() - 0.5) * 0.2; y = -0.32 + rng() * 0.38; } const [px, py] = P(x, y); g.fillStyle = `rgba(${deep ? '60,30,16' : '152,86,48'},${0.25 + rng() * 0.35})`; g.beginPath(); g.arc(px, py, 2 + rng() * 3.2, 0, 7); g.fill(); }
   g.strokeStyle = 'rgba(80,44,34,.16)'; g.lineCap = 'round';
   if (!yng) { g.lineWidth = old ? 5 : 3; for (let k = 0; k < (old ? 4 : 2); k++) { g.beginPath(); for (let t = -1; t <= 1.001; t += 0.1) { const x = t * 0.5, y = 0.38 + k * 0.07 + (old ? 0.012 : 0) * Math.sin(t * 5 + k); const [px, py] = P(x, y); t < -0.99 ? g.moveTo(px, py) : g.lineTo(px, py); } g.stroke(); }
@@ -7897,7 +8052,7 @@ function dr3Face(H, mesh, look, S, opt) {
   const grp = new THREE.Group(), ray = new THREE.Raycaster(), age = look.age || 'young';
   const hit = (x, y) => { ray.set(new THREE.Vector3(x, y, 6), new THREE.Vector3(0, 0, -1)); const h = ray.intersectObject(mesh, false)[0]; return h ? { p: h.point.clone(), n: h.face.normal.clone() } : { p: new THREE.Vector3(x, y, 0.8), n: new THREE.Vector3(0, 0, 1) }; };
   const ec = DR_EYEC[look.eyeC || 0] || DR_EYEC[0], eyeMat = new THREE.MeshStandardMaterial({ map: dr3EyeTex(ec), roughness: 0.16, metalness: 0, envMapIntensity: 1.1 });
-  const R = 0.172, EX = 0.34, EY = 0.035;
+  const F = H.F || dr3Feat(look), R = 0.172 * F.es, EX = F.ex, EY = 0.035;
   for (const s of [-1, 1]) {
     const h = hit(s * EX, EY), e = new THREE.Group(); e.position.set(s * EX, EY, h.p.z - R * 0.93);
     const ball = new THREE.Mesh(new THREE.SphereGeometry(R, 48, 32), eyeMat); ball.rotation.y = -s * 0.1 + 0.0; e.add(ball);
@@ -7906,7 +8061,7 @@ function dr3Face(H, mesh, look, S, opt) {
     const cl2 = new THREE.Mesh(new THREE.CircleGeometry(0.009, 10), new THREE.MeshBasicMaterial({ color: 0xffffff })); cl2.position.set(0.048, -0.04, R * 1.02); cl2.lookAt(0.15, -0.1, 1); e.add(cl2);
     grp.add(e);
     // brows: tapered ribbons that follow the skull
-    const bt = look.brows || 'natural', by = bt === 'arched' ? [0.205, 0.255, 0.3, 0.285, 0.225] : bt === 'thick' ? [0.21, 0.24, 0.255, 0.24, 0.205] : [0.21, 0.24, 0.26, 0.245, 0.205], bx = [0.1, 0.19, 0.29, 0.4, 0.5];
+    const bt = look.brows || 'natural', by = (bt === 'arched' ? [0.205, 0.255, 0.3, 0.285, 0.225] : bt === 'thick' ? [0.21, 0.24, 0.255, 0.24, 0.205] : [0.21, 0.24, 0.26, 0.245, 0.205]).map((v) => v + F.bh), bx = [0.1, 0.19, 0.29, 0.4, 0.5].map((v) => v + (F.ex - 0.34));
     const hcol = new THREE.Color(DR_HAIRC[look.hairC] || DR_HAIRC[0]).multiplyScalar(look.hairC >= 7 && look.hairC <= 8 ? 0.55 : 0.78);
     const pts2 = bx.map((x, i) => { const hh = hit(s * x, by[i]); return hh.p.addScaledVector(hh.n, 0.012); });
     const bb = new Dr3Bld(), thick = bt === 'thick' ? 1.4 : bt === 'slit' ? 1.05 : 1.0, prof = (f) => (0.018 + 0.034 * Math.sin(Math.PI * Math.min(1, f * 0.9 + 0.1))) * thick;
@@ -7914,8 +8069,8 @@ function dr3Face(H, mesh, look, S, opt) {
     grp.add(new THREE.Mesh(bb.geo(false), new THREE.MeshStandardMaterial({ color: hcol, roughness: 0.72 })));
     // ears
     const rr = new THREE.Raycaster(new THREE.Vector3(s * 6, -0.12, -0.05), new THREE.Vector3(-s, 0, 0)), eh = rr.intersectObject(mesh, false)[0], ex2 = eh ? eh.point.x : s * 0.88;
-    const ear = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 18), S.flat); ear.scale.set(0.055, 0.215, 0.135); ear.position.set(ex2 + s * 0.025, -0.1, -0.06); ear.rotation.set(0, s * 0.4, s * -0.12); ear.castShadow = true; grp.add(ear);
-    const inner = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12), new THREE.MeshStandardMaterial({ color: S.color.clone().multiplyScalar(0.76), roughness: 0.7 })); inner.scale.set(0.028, 0.135, 0.075); inner.position.set(ex2 + s * 0.065, -0.1, -0.035); inner.rotation.copy(ear.rotation); grp.add(inner);
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 18), S.flat); ear.scale.set(0.055 * F.er, 0.215 * F.er, 0.135 * F.er); ear.position.set(ex2 + s * 0.025, -0.1, -0.06); ear.rotation.set(0, s * 0.4, s * -0.12); ear.castShadow = true; grp.add(ear);
+    const inner = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12), new THREE.MeshStandardMaterial({ color: S.color.clone().multiplyScalar(0.76), roughness: 0.7 })); inner.scale.set(0.028 * F.er, 0.135 * F.er, 0.075 * F.er); inner.position.set(ex2 + s * 0.065, -0.1, -0.035); inner.rotation.copy(ear.rotation); grp.add(inner);
     grp.userData['ear' + s] = new THREE.Vector3(ex2 + s * 0.04, -0.24, -0.06);
   }
   grp.userData.hit = hit; return grp;
@@ -7924,7 +8079,8 @@ function dr3Face(H, mesh, look, S, opt) {
 function dr3HeadMat(map, S, look, opt) {
   const age = look.age || 'young', blink = opt && opt.blink;
   const mat = new THREE.MeshPhysicalMaterial({ map, roughness: 0.56, metalness: 0, sheen: 0.45, sheenColor: S.color.clone().lerp(new THREE.Color(0xff9a80), 0.25), sheenRoughness: 0.55, envMapIntensity: 0.45, emissive: S.color.clone().multiplyScalar(0.018) });
-  const U = { uEx: { value: 0.34 }, uEy: { value: 0.035 }, uW: { value: 0.215 }, uHu: { value: blink ? 0.0 : age === 'young' ? 0.105 : age === 'old' ? 0.075 : 0.09 }, uHl: { value: blink ? 0.0 : age === 'old' ? 0.05 : 0.066 }, uTilt: { value: age === 'old' ? -0.03 : 0.07 }, uSss: { value: new THREE.Color(0xff6a4a).multiplyScalar(look.skin >= 5 ? 0.1 : 0.14) } };
+  const F = dr3Feat(look);
+  const U = { uEx: { value: F.ex }, uEy: { value: 0.035 }, uW: { value: 0.215 * F.es }, uHu: { value: blink ? 0.0 : (age === 'young' ? 0.105 : age === 'old' ? 0.075 : 0.09) * F.es }, uHl: { value: blink ? 0.0 : (age === 'old' ? 0.05 : 0.066) * F.es }, uTilt: { value: (age === 'old' ? -0.03 : 0.07) + F.tilt }, uSss: { value: new THREE.Color(0xff6a4a).multiplyScalar(look.skin >= 5 ? 0.1 : 0.14) } };
   mat.onBeforeCompile = (sh) => {
     Object.assign(sh.uniforms, U);
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vObjP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvObjP = position;');
@@ -8258,7 +8414,7 @@ function drUnlocks(s) {
   for (const it of DR_ITEMS) {
     const k = drItemKey(it);
     if (s.owned[k] || !it.test(s)) continue;
-    s.owned[k] = true;
+    s.owned[k] = true; drGot(s, k, it.req === 'Where it all started' ? 'Day one' : DR.gotAt || 'Storyline');
     if (it.req && it.req !== 'Where it all started' && it.id !== 'none') fresh.push(it);
     // wear the newest thing you earn: later in the list is the upgrade
     const cur = DR_ITEMS.findIndex((x) => x.slot === it.slot && x.id === s.eq[it.slot]), mine = DR_ITEMS.indexOf(it);
@@ -8717,7 +8873,7 @@ function drFinish(quit) {
   if (run.cooler && s.ch >= 1 && !s.story.badbeat && !s.queue.includes('badbeat')) s.queue.push('badbeat');
   if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');
   res.after = s.br;
-  res.unlocked = drUnlocks(s);
+  DR.gotAt = ev.name; res.unlocked = drUnlocks(s); DR.gotAt = null;
   drProgress(s);
   drEventDone(res, run);
   drSave();
@@ -8833,7 +8989,7 @@ function drRankBoard(s) {
 // ---------------------------------------------------------------- grants: when a day, week or month closes
 function drLgGrant(s, it, why) {
   const k = drItemKey(it); if (s.owned[k]) return null;
-  s.owned[k] = true; s.newItems = [...(s.newItems || []), k]; s.lg.news.push({ item: k, why });
+  s.owned[k] = true; drGot(s, k, why); s.newItems = [...(s.newItems || []), k]; s.lg.news.push({ item: k, why });
   drMoment(s, '🏆', `League exclusive: ${it.name} (${why})`); return it;
 }
 function drLgSettle(s) {
@@ -9096,7 +9252,7 @@ const DR_FRAMES = {
 const DR_TITLES_COS = {
   none: 'No title', grinder: 'Grinder', reg: 'The Reg', shark: 'Shark', highroller: 'High Roller', crusher: 'Crusher', livinglegend: 'Living Legend',
   professor: 'The Professor', ironwill: 'Iron Will', herocaller: 'Hero Caller', icm: 'ICM Scientist', heater: 'Heater', giantkiller: 'Giant Killer',
-  closer: 'The Closer', robot: 'Robot', neverdead: 'Never Dead', taskmaster: 'Taskmaster', satshark: 'Satellite Shark', thickskin: 'Thick Skin', bounceback: 'Bounce Back',
+  closer: 'The Closer', robot: 'Robot', tastemaker: 'Tastemaker', iconicfit: 'Fit Check Legend', neverdead: 'Never Dead', taskmaster: 'Taskmaster', satshark: 'Satellite Shark', thickskin: 'Thick Skin', bounceback: 'Bounce Back',
 };
 const DR_COS_KINDS = [['back', 'Card backs', DR_BACKS, 'classic'], ['felt', 'Table felt', DR_FELTS, 'green'], ['frame', 'Avatar frame', DR_FRAMES, 'none'], ['title', 'Title', DR_TITLES_COS, 'none']];
 
@@ -9153,6 +9309,8 @@ const DR_ACH = [
   { id: 'quests', n: 'Taskmaster', d: 'Daily quests completed', t: [10, 60, 200], f: (p) => p.st.quests, gold: ['title', 'taskmaster'] },
   { id: 'bracelets', n: 'Jewelry Box', d: 'Gold bracelets (Storyline)', t: [1, 5, 15], f: (p, s) => (s.titles && s.titles.bracelet) || 0 },
   { id: 'collector', n: 'Collector', d: 'Cosmetics and gear owned', t: [8, 20, 40], f: (p, s) => Object.keys(p.cos).length + Object.keys(s.owned || {}).length },
+  { id: 'signature', n: 'Signature Style', d: 'Pieces broken in to Signature', t: [1, 5, 15], f: (p, s) => Object.keys(s.wear || {}).filter((k) => drWearLv(s, k) >= 2).length, gold: ['title', 'tastemaker'] },
+  { id: 'drip', n: 'Dripping', d: 'Best fit rating', t: [45, 70, 90], f: (p, s) => Math.max(p.st.bestFit || 0, drFitScore(s).score), gold: ['title', 'iconicfit'] },
 ];
 const DR_ACH_XP = [50, 150, 400];
 
@@ -9247,6 +9405,7 @@ function drTrack(r, run) {
   if (good && ['bubble', 'satbubble', 'deep', 'final'].includes(r.stage)) drQuestBump(s, 'icm', 1, out);
   p.st.bestCombo = Math.max(p.st.bestCombo, run.combo || 0); drQuestBump(s, 'combo', run.combo || 0, out);
   if ((run.stack || 0) < 40) run.fumes = true;
+  drWearDecision(s, good, out, run);
   drGainXp(s, Math.round(sc / 10), out);
 }
 // after every finished event, any mode
@@ -9261,10 +9420,12 @@ function drEventDone(res, run) {
   if (kind === 'sng' && ev.mode === 'casual') xp = Math.round(xp * 0.6);
   drGainXp(s, xp, out);
   if (won) { p.st.wins++; if (run.fumes) p.st.comeback++; }
+  if (!ev.drill && !ev.review && res.mode !== 'challenge') drWearEvent(s, res, run, { cashed, won, ft: kind !== 'cash' && !!run.stages && run.stages.includes('final') && run.si >= run.stages.length - 1 && (!run.bust || res.place <= 9) });
   // coolers: part of the game. Count them, reward taking them well, reward the bounce back
   if (res.cooler) { p.st.coolers = (p.st.coolers || 0) + 1; if (res.acc >= 85) p.st.cleanBeats = (p.st.cleanBeats || 0) + 1; p.lastCool = true; }
   else if (!ev.drill && !ev.review && res.mode !== 'challenge') { if (won && p.lastCool) p.st.bounce = (p.st.bounce || 0) + 1; p.lastCool = false; }
   if (kind === 'sat' && res.ticket) p.st.seats++;
+  p.st.bestFit = Math.max(p.st.bestFit || 0, drFitScore(s).score);
   if (cashed && run.stages.includes('bubble') && run.si >= run.stages.indexOf('bubble')) p.st.bubble++;
   if (res.acc === 100 && res.n >= 6) p.st.flawless++;
   if (kind !== 'sng') drQuestBump(s, 'story', 1, out);
@@ -9342,6 +9503,7 @@ function drProgHTML(out) {
   const L = out.lvl || drLevelOf(drPg(DR.st).xp);
   return `<div class="drprog">
     <div class="drprog-xp"><span class="drlvl big"><b>${L.lvl}</b></span><div><div class="drkicker">Career XP · +${drMoney(out.xp)}</div><div class="drbar xp"><i style="width:${((L.into / L.need) * 100).toFixed(1)}%"></i></div><small class="mono">${drMoney(L.into)} / ${drMoney(L.need)} to level ${L.lvl + 1}</small></div></div>
+    ${drWearUpsHTML(out.wear)}
     ${out.levels.length ? `<div class="drwin lvl"><div class="drwin-icon">⬆️</div><div><div class="drkicker">Level up</div><b>Career level ${out.levels[out.levels.length - 1]}</b></div></div>` : ''}
     ${out.cos.map((c) => `<div class="drunlock cos">${drCosSwatch(c.kind, c.id)}<div><b>${esc(drCosName(c.kind, c.id))}</b><small>${esc(DR_COS_KIND_N[c.kind])} · ${esc(c.why)}</small></div></div>`).join('')}
     ${out.quests.map((q) => `<div class="drstreak">✅ Quest done: ${esc(q.t)} · +${q.xp} XP</div>`).join('')}${out.bonus ? `<div class="drstreak">🌟 All three quests done today · +${DR_QUEST_BONUS} XP</div>` : ''}
@@ -9398,6 +9560,263 @@ function drImportCode(code) {
   } catch { return 'That code could not be read.'; }
 }
 
+// ================================================================ THE DREAM: fashion
+// Every piece has a grade, a maker, a line about what it says, a record of where you earned it and of what you
+// did while wearing it. Wear a piece while you play well and it breaks in: new colourways and metal finishes,
+// then your monogram, then a finish that catches the light. Nothing is bought. Everything is earned at the table.
+
+const DR_GRADE = {
+  standard: ['Standard', '#a3a9b2', 1], rare: ['Rare', '#5b9cf5', 3], elite: ['Elite', '#b582f7', 6],
+  legendary: ['Legendary', '#f0c25a', 10], iconic: ['Iconic', '#ff5a6e', 15],
+};
+// fictional makers, real-world feel
+const DR_BRANDS = {
+  valuemart: 'ValueMart', campus: 'Campus Co-op', drift: 'Drift Supply', feltkings: 'Felt Kings', northline: 'Northline',
+  riverside: 'Riverside Card Room', castellane: 'Castellane', vellard: 'Maison Vellard', noir: 'Atelier Noir',
+  lumen: 'Lumen Optical', rayden: 'Rayden', ridgeline: 'Ridgeline', slick: "Slick's", lonestar: 'Lone Star Hatters', sonder: 'Sonder Audio',
+  quikset: 'Quikset', ostrander: 'Ostrander', valcour: 'Valcour', kade: 'Kade & Co.', marlowe: 'Marlowe Diamond', wcs: 'WCS Official',
+  grind: 'The Daily Grind', rusty: "Rusty's Tavern", cftilt: 'CF Tilt Poker', volt: 'VOLT Energy', apex: 'APEX',
+  metro: 'Metro Transit', kestrel: 'Kestrel', sabre: 'Sabre', adler: 'Adler', veloce: 'Veloce', altair: 'Altair Jets',
+  league: 'League exclusive', home: '',
+};
+// slot:id → [grade, maker, what it says, effect it always has]
+const DR_META = {
+  'outfit:office': ['standard', 'valuemart', 'Clearance rack, week one at the firm. Everyone starts somewhere.'],
+  'outfit:tee': ['standard', 'valuemart', 'Bought in a three-pack. The uniform of people with somewhere better to be.'],
+  'outfit:cardigan': ['standard', 'campus', 'Study-group chic. You read the books before you played the hands.'],
+  'outfit:hoodie': ['standard', 'drift', 'You wore it to your first tournament. You will never throw it away.'],
+  'outfit:jersey': ['rare', 'feltkings', 'Lucky number 7. Earned with your first hundred decisions.'],
+  'outfit:polo': ['rare', 'riverside', 'Riverside house merch. They only hand it to the regulars.'],
+  'outfit:denim': ['rare', 'drift', 'Earned the night you first beat the $1/$2 game.'],
+  'outfit:track': ['rare', 'drift', 'Three Daily Grinds in a row. Grinders recognize grinders.'],
+  'outfit:vest': ['rare', 'castellane', 'Your first $10,000 bankroll. Dress like you plan to keep it.'],
+  'outfit:fleece': ['rare', 'northline', 'For a desert summer that runs on casino air conditioning.'],
+  'outfit:varsity': ['elite', 'feltkings', 'Circuit casher. The letter on the chest stands for Cashed.'],
+  'outfit:leather': ['elite', 'vellard', '$50,000 bankroll. Broken in by a hundred 3 a.m. sessions.'],
+  'outfit:bomber': ['elite', 'drift', 'Your first trophy. The jacket they photographed you in.'],
+  'outfit:blazer': ['elite', 'castellane', 'Circuit regulars dress for the cameras.'],
+  'outfit:suit': ['legendary', 'castellane', 'Tailored the week you won your first gold bracelet.'],
+  'outfit:designer': ['legendary', 'vellard', 'Seven figures. The label nobody needs to read.'],
+  'outfit:tux': ['iconic', 'noir', 'Fitted only for players who make the Main Event final table.', 'sheen'],
+  'outfit:vampire': ['elite', 'league', 'Haunted Felt League champion. It only comes back in October.'],
+  'outfit:flannel': ['elite', 'league', 'Harvest Cup champion. One month a year, one winner a month.'],
+  'outfit:ugly': ['elite', 'league', 'Frostbite Series champion. Ugly on purpose. Rare on purpose.'],
+  'eyes:readers': ['standard', 'lumen', 'Blue-light readers for twelve hours of spreadsheets a day.'],
+  'eyes:round': ['standard', 'rayden', 'Wire frames. You look like you know the math. You do.'],
+  'eyes:thick': ['standard', 'rayden', 'Thick black frames. Serious study, serious face.'],
+  'eyes:sport': ['rare', 'ridgeline', 'Wraparounds for long days under casino lights.'],
+  'eyes:tinted': ['rare', 'rayden', 'Tinted so nobody reads your eyes at a Circuit final table.'],
+  'eyes:aviator': ['elite', 'rayden', 'Gold aviators. Circuit ring winners only.', 'sheen'],
+  'eyes:shades': ['legendary', 'slick', 'Slick hands his 8-bit shades to people who win. Nobody else.'],
+  'eyes:masq': ['rare', 'league', 'Haunted Felt League top 10.'], 'eyes:amber': ['rare', 'league', 'Harvest Cup top 10.'], 'eyes:snow': ['rare', 'league', 'Frostbite Series top 10.'],
+  'head:cap': ['standard', 'drift', 'Backwards, like you have been here before.'],
+  'head:bucket': ['standard', 'drift', 'Ten sessions in. The hat of someone who stays.'],
+  'head:snap': ['rare', 'riverside', 'Riverside snapback. The card room knows your name now.'],
+  'head:phones': ['rare', 'sonder', 'Noise-cancelling. The table talks, you do not hear it.'],
+  'head:beanie': ['rare', 'northline', 'Vegas pool beanie. Summer Series veterans only.'],
+  'head:visor': ['rare', 'riverside', 'An old dealer gave it to you after seven straight Daily Grinds.'],
+  'head:cowboy': ['elite', 'lonestar', 'A Circuit ring and a Texas hat. Old-school respect.'],
+  'head:fedora': ['legendary', 'vellard', 'High-roller fedora. $500,000 bankroll and the nerve to wear it.'],
+  'head:pumpkin': ['rare', 'league', 'Haunted Felt League daily winner.'], 'head:pilgrim': ['rare', 'league', 'Harvest Cup daily winner.'], 'head:santa': ['rare', 'league', 'Frostbite Series daily winner.'],
+  'ear:stud': ['standard', 'kade', 'Your first jewelry. Small, but it is yours.'],
+  'ear:hoop': ['rare', 'kade', 'Gold hoops. $15,000 bankroll and some confidence.'],
+  'ear:diamond': ['elite', 'marlowe', 'Diamond studs. They catch every light in the room.', 'glint'],
+  'ring:signet': ['rare', 'kade', 'Silver signet. The first thing you bought with poker money.'],
+  'ring:gold': ['elite', 'kade', 'Gold band, bought the night of your first bracelet.'],
+  'ring:pinky': ['legendary', 'marlowe', 'Diamond pinky ring. Half a million and it shows.', 'glint'],
+  'ring:champ': ['iconic', 'wcs', 'World champion ring. One is made each year.', 'glint'],
+  'wrist:beads': ['standard', 'drift', 'Bead bracelet. Four sessions in and it already feels lucky.'],
+  'wrist:gold': ['elite', 'kade', 'Gold cuff. Heavy enough that you notice it on every bet.', 'sheen'],
+  'wrist:tennis': ['legendary', 'marlowe', 'Diamond tennis bracelet. A line of light on your wrist.', 'glint'],
+  'watch:digital': ['standard', 'quikset', 'Gas-station digital. It always says 8:00, start of the shift.'],
+  'watch:steel': ['rare', 'ostrander', 'Steel diver. The first real watch you ever owned.'],
+  'watch:gold': ['legendary', 'ostrander', 'Gold Presidential. A quarter of a million bankroll on your wrist.', 'sheen'],
+  'watch:iced': ['legendary', 'valcour', 'Iced-out chrono. Two million and every diamond is real.', 'glint'],
+  'watch:hyper': ['iconic', 'valcour', 'Hypercar tourbillon. Made for world champions, a few a year.', 'glint'],
+  'chain:silver': ['standard', 'kade', 'Thin silver chain. Quiet. For now.'],
+  'chain:cuban': ['elite', 'kade', 'Gold Cuban link. Six figures and the whole room knows.', 'sheen'],
+  'chain:rope': ['elite', 'kade', 'Rope chain with the CF pendant, for the people who backed you.', 'sheen'],
+  'chain:layered': ['legendary', 'kade', 'Layered gold, for a gold bracelet winner.', 'sheen'],
+  'chain:iced': ['legendary', 'marlowe', 'Iced Cuban link. A million dollars of light.', 'glint'],
+  'chain:bones': ['rare', 'league', 'Haunted Felt League weekly winner.'], 'chain:wishbone': ['elite', 'league', 'Harvest Cup weekly winner.', 'sheen'], 'chain:lights': ['rare', 'league', 'Frostbite Series weekly winner.'],
+  'patch:grind': ['rare', 'grind', 'Three-day Daily Grind streak. Sponsored by showing up.'],
+  'patch:tavern': ['standard', 'rusty', "Rusty's backs you after your first $1/$2 win. Free wings."],
+  'patch:site': ['rare', 'cftilt', 'CF Tilt Poker signs Circuit ring winners.'],
+  'patch:energy': ['legendary', 'volt', 'VOLT sponsors gold bracelet winners only.'],
+  'patch:global': ['iconic', 'apex', 'Global brand ambassador. Signed the week you won the Main Event.', 'holo'],
+  'patch:boo': ['rare', 'league', 'Played the Haunted Felt League.'], 'patch:harvest': ['rare', 'league', 'Played the Harvest Cup.'], 'patch:frost': ['rare', 'league', 'Played the Frostbite Series.'],
+  'sleeve:grind': ['rare', 'grind', 'Five-day Daily Grind streak.'],
+  'sleeve:site': ['rare', 'cftilt', 'CF Tilt Poker sleeve for Circuit cashers.'],
+  'sleeve:energy': ['legendary', 'volt', 'VOLT sleeve. Bracelet winners only.'],
+  'sleeve:global': ['iconic', 'apex', 'APEX ambassador sleeve. World champions only.', 'holo'],
+  'home:studio': ['standard', 'home', 'Above the laundromat. The dryers hum all night.'],
+  'home:apt': ['rare', 'home', 'Downtown one-bedroom. Your own front door.'],
+  'home:condo': ['elite', 'home', 'High-rise condo. The city looks small from up here.'],
+  'home:penthouse': ['legendary', 'home', 'Strip penthouse. You can see the casino where it started.'],
+  'home:mansion': ['legendary', 'home', 'Hills mansion. Five million and a gate.'],
+  'home:island': ['iconic', 'home', 'A private island. Bought with a Main Event title.'],
+  'ride:bus': ['standard', 'metro', 'Monthly pass. Route 34 to the office and back.'],
+  'ride:hatch': ['standard', 'kestrel', "'09 Kestrel hatchback. It starts most mornings."],
+  'ride:coupe': ['rare', 'sabre', 'Used Sabre coupe. Loud, fast, a little late on payments.'],
+  'ride:sedan': ['elite', 'adler', 'Adler super-sedan. German, quiet, very quick.'],
+  'ride:super': ['legendary', 'veloce', 'Veloce supercar. Italian, red, two million.'],
+  'ride:jet': ['iconic', 'altair', 'A share of an Altair jet. Titans do not fly commercial.'],
+};
+const DR_WEARABLE = ['outfit', 'eyes', 'head', 'ear', 'chain', 'ring', 'wrist', 'watch', 'patch', 'sleeve'];
+const drMeta = (slot, id) => { const m = DR_META[slot + ':' + id]; return m ? { g: m[0], brand: DR_BRANDS[m[1]] || '', story: m[2], fx: m[3] || null } : { g: 'standard', brand: '', story: '', fx: null }; };
+const drGradeOf = (slot, id) => drMeta(slot, id).g;
+
+// ---------------------------------------------------------------- wear: what you did in it, and how broken in it is
+const DR_WEAR_AT = [0, 25, 100, 300]; // good decisions made while wearing it
+const DR_WEAR_N = ['New', 'Broken in', 'Signature', 'Mastered'];
+const DR_WEAR_GIVES = ['', 'New colourways and metal finishes', 'Your monogram, stitched or engraved', 'A finish that catches the light'];
+const drWearKey = (slot, id) => slot + ':' + id;
+function drWearRec(s, key) { s.wear = s.wear || {}; return s.wear[key] || (s.wear[key] = { g: 0, e: 0, c: 0, f: 0, w: 0, t: [] }); }
+function drWearLv(s, key) { const g = ((s.wear || {})[key] || {}).g || 0; let l = 0; while (l < 3 && g >= DR_WEAR_AT[l + 1]) l++; return l; }
+const drWorn = (s) => DR_WEARABLE.map((slot) => [slot, s.eq[slot]]).filter(([, id]) => id && id !== 'none');
+// after every graded decision
+// the gear you sat down in counts for the whole event, even if the results unlock and equip something new
+function drWearDecision(s, good, out, run) {
+  if (run && !run.worn) run.worn = drWorn(s);
+  if (!good) return;
+  for (const [slot, id] of (run && run.worn) || drWorn(s)) {
+    const k = drWearKey(slot, id), r = drWearRec(s, k), before = drWearLv(s, k); r.g++;
+    const after = drWearLv(s, k);
+    if (after > before && out) { out.wear = out.wear || []; out.wear.push({ slot, id, lv: after }); }
+  }
+}
+// after every finished event
+function drWearEvent(s, res, run, flags) {
+  for (const [slot, id] of run.worn || drWorn(s)) {
+    const r = drWearRec(s, drWearKey(slot, id)); r.e++;
+    if (flags.cashed) r.c++; if (flags.ft) r.f++;
+    if (flags.won) { r.w++; if (res.ev.title || res.ev.kind === 'mtt') { r.t.unshift(res.ev.name); if (r.t.length > 5) r.t.pop(); } }
+  }
+}
+// where and when you earned it
+function drGot(s, key, at) { s.got = s.got || {}; if (!s.got[key]) s.got[key] = { d: Date.now(), at: at || '' }; }
+
+// ---------------------------------------------------------------- colourways and metal finishes
+// extra colourways added to the dye list (older saves keep their indices)
+DR_DYES.push('#efe3c8', '#b4874e', '#24402f', '#5e1b2d', '#46505e', '#0f2a44');
+const DR_DYE_BASIC = 13; // indices below this are the original twelve (plus "own colour")
+const DR_FINISH = [['Yellow gold', '#e3b94f', 0.2], ['White gold', '#e4e7ec', 0.16], ['Rose gold', '#e7a487', 0.2], ['Black chrome', '#2e2e34', 0.24]];
+const DR_METAL_SLOTS = { chain: 1, ring: 1, wrist: 1, watch: 1, ear: 1 };
+const DR_NO_FINISH = { 'wrist:beads': 1, 'watch:digital': 1, 'chain:bones': 1, 'chain:lights': 1 };
+const DR_BASE_METAL = { 'chain:silver': '#d2d6de', 'ring:signet': '#d2d6de', 'ring:pinky': '#d2d6de', 'ear:stud': '#d2d6de', 'ear:diamond': '#d2d6de', 'wrist:tennis': '#d2d6de', 'watch:steel': '#b9bec7', 'watch:iced': '#e9edf2', 'watch:hyper': '#26262a' };
+const drHasFinish = (slot, id) => !!DR_METAL_SLOTS[slot] && id !== 'none' && !DR_NO_FINISH[slot + ':' + id];
+// the metal colour to draw a piece in, or null for its own
+function drFinishHex(st, slot) { const id = (st.eq || {})[slot], f = (st.fin || {})[slot + ':' + id]; return f != null && DR_FINISH[f] ? DR_FINISH[f] : null; }
+const drIsLeague = (slot, id) => DR_LG_ITEMS.some((x) => x.slot === slot && x.id === id);
+// which colours this piece can wear right now
+function drDyeOpts(s, slot, id) {
+  if ((slot !== 'outfit' && slot !== 'head') || id === 'none' || drIsLeague(slot, id)) return null;
+  const lv = drWearLv(s, drWearKey(slot, id)), basic = !!DR_DYEABLE[id];
+  return DR_DYES.map((c, i) => ({ i, c, ok: i === 0 || (i < DR_DYE_BASIC ? basic || lv >= 1 : lv >= 1), prem: i >= DR_DYE_BASIC }));
+}
+const drInitials = (n) => (n || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || 'CF';
+// what the renderer needs to know about the player's gear (finishes, monogram, light-catching effects)
+function drGearLook(st) {
+  const lv = (slot) => { const id = (st.eq || {})[slot]; return id && id !== 'none' && st.wear ? drWearLv(st, drWearKey(slot, id)) : 0; };
+  const fx = {};
+  for (const slot of DR_WEARABLE) { const id = (st.eq || {})[slot]; if (!id || id === 'none') continue; const m = drMeta(slot, id), l = lv(slot); const f = l >= 3 ? (m.fx === 'glint' ? 'glint' : slot === 'outfit' || slot === 'head' ? 'thread' : m.fx || 'sheen') : m.fx; if (f) fx[slot] = f; }
+  return { mono: lv('outfit') >= 2 ? drInitials(st.name) : '', monoChain: lv('chain') >= 2 ? drInitials(st.name) : '', fx };
+}
+
+// ---------------------------------------------------------------- fit rating and maker sets
+const DR_FIT_N = [[92, 'Iconic'], [80, 'Red carpet'], [65, 'Dripping'], [45, 'Sharp'], [25, 'Clean'], [0, 'Off the rack']];
+function drFitScore(s) {
+  let pts = 0; const makers = {};
+  for (const [slot, id] of drWorn(s)) { const m = drMeta(slot, id), l = drWearLv(s, drWearKey(slot, id)); pts += DR_GRADE[m.g][2] + [0, 1, 2, 4][l]; const mk = (DR_META[slot + ':' + id] || [])[1]; if (mk && mk !== 'league') makers[mk] = (makers[mk] || 0) + 1; }
+  const sets = Object.entries(makers).filter(([, n]) => n >= 3).map(([mk, n]) => ({ mk, n }));
+  pts += sets.reduce((a, x) => a + 3 * x.n, 0);
+  const score = Math.max(1, Math.min(99, Math.round((pts * 99) / 140)));
+  return { score, name: DR_FIT_N.find(([t]) => score >= t)[1], sets };
+}
+
+// ---------------------------------------------------------------- saved fits
+const DR_FIT_SLOTS = 4;
+function drFitSave(s, i) { s.fits = s.fits || []; const eq = {}; for (const k of DR_WEARABLE) eq[k] = s.eq[k]; s.fits[i] = { eq, dye: { ...s.dye }, fin: { ...(s.fin || {}) }, d: Date.now() }; }
+function drFitWear(s, i) { const f = (s.fits || [])[i]; if (!f) return; for (const k of DR_WEARABLE) if (f.eq[k] && (f.eq[k] === 'none' || drOwns(s, k, f.eq[k]))) s.eq[k] = f.eq[k]; s.dye = { ...s.dye, ...f.dye }; s.fin = { ...(s.fin || {}), ...f.fin }; }
+
+// ---------------------------------------------------------------- the closet
+const drDate = (d) => new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+function drPips(l) { return `<span class="drpips" aria-label="${DR_WEAR_N[l]}">${[1, 2, 3].map((i) => `<i class="${i <= l ? 'on' : ''}"></i>`).join('')}</span>`; }
+function drInspectHTML(s, slot, id) {
+  if (!id || id === 'none') return '';
+  const it = [...DR_ITEMS, ...DR_LG_ITEMS].find((x) => x.slot === slot && x.id === id); if (!it) return '';
+  const k = drWearKey(slot, id), m = drMeta(slot, id), G = DR_GRADE[m.g], worn = DR_WEARABLE.includes(slot), r = (s.wear || {})[k] || { g: 0, e: 0, c: 0, f: 0, w: 0, t: [] }, l = drWearLv(s, k), got = (s.got || {})[k];
+  const next = l < 3 ? DR_WEAR_AT[l + 1] : null, base = DR_WEAR_AT[l];
+  const lvl = worn ? `<div class="drlv">${drPips(l)}<b>${DR_WEAR_N[l]}</b>${next ? `<small>${r.g - base}/${next - base} good decisions in it until ${DR_WEAR_N[l + 1]}: ${DR_WEAR_GIVES[l + 1].toLowerCase()}</small><div class="drbar"><i style="width:${Math.min(100, ((r.g - base) / (next - base)) * 100).toFixed(1)}%"></i></div>` : '<small>Fully broken in. It is part of you now.</small>'}</div>` : '';
+  const tags = [r.t.length ? `<span class="drtag gold">Title-winning ×${r.w}</span>` : r.w ? `<span class="drtag gold">Winner ×${r.w}</span>` : '', r.f ? `<span class="drtag">Final table ×${r.f}</span>` : '', r.c ? `<span class="drtag">Cashed ×${r.c}</span>` : ''].join('');
+  const rec = worn && r.e ? `<small class="drinsp-rec">Worn for ${r.e} event${r.e === 1 ? '' : 's'}${r.t.length ? ` · won the ${r.t.slice(0, 2).map(esc).join(' and the ')} in it` : ''}</small>` : worn ? '<small class="drinsp-rec">Not worn in an event yet.</small>' : '';
+  const prov = got ? `Earned ${drDate(got.d)}${got.at ? ' · ' + esc(got.at) : ''}` : it.req && it.req !== 'Where it all started' ? `Earned: ${esc(it.req)}` : 'With you from day one';
+  const dyes = drDyeOpts(s, slot, id), fin = drHasFinish(slot, id);
+  const sw = dyes ? `<div class="drkicker">Colourway${l < 1 && dyes.some((x) => !x.ok) ? ' · more unlock when it is Broken in' : ''}</div><div class="drsws">${dyes.map((x) => `<button class="drsw ${x.c ? '' : 'orig'} ${x.prem ? 'prem' : ''}" style="--c:${x.c || '#888'}" data-dr="dye" data-v="${x.i}" aria-pressed="${(s.dye[id] || 0) === x.i}" aria-label="${x.c ? 'Colourway ' + x.i : 'Original colour'}" ${x.ok ? '' : 'disabled'}></button>`).join('')}</div>` : '';
+  const fs = fin ? `<div class="drkicker">Metal finish${l < 1 ? ' · unlocks when it is Broken in' : ''}</div><div class="drsws">${[null, ...DR_FINISH].map((f, i) => `<button class="drsw metal" style="--c:${f ? f[1] : DR_BASE_METAL[k] || '#e3b94f'}" data-dr="fin" data-v="${i - 1}" aria-pressed="${((s.fin || {})[k] ?? -1) === i - 1}" aria-label="${f ? f[0] : 'Original metal'}" title="${f ? f[0] : 'Original'}" ${l >= 1 || !f ? '' : 'disabled'}></button>`).join('')}</div>` : '';
+  return `<div class="drinsp g-${m.g}" style="--gc:${G[1]}">
+    <div class="drinsp-top"><span class="drgrade">${G[0]}</span>${m.brand ? `<span class="drbrand">${esc(m.brand)}</span>` : ''}${m.fx ? '<span class="drtag fx">✦ Catches the light</span>' : ''}</div>
+    <b class="drinsp-name">${esc(it.name)}</b><p class="drinsp-story">${esc(m.story)}</p>
+    ${lvl}${tags ? `<div class="drtags">${tags}</div>` : ''}${rec}<small class="drinsp-prov">${prov}</small>${sw}${fs}</div>`;
+}
+function drFitsHTML(s) {
+  const f = drFitScore(s), fits = s.fits || [];
+  return `<div class="drfitcard"><div class="drfit"><b class="mono">${f.score}</b><div><small>Fit rating</small><span>${f.name}</span></div></div>
+    ${f.sets.length ? `<small class="drfit-set">${f.sets.map((x) => `Full ${esc(DR_BRANDS[x.mk])} fit · ${x.n} pieces`).join(' · ')}</small>` : '<small class="drfit-set">Wear 3 pieces from one maker for a set bonus.</small>'}
+    <div class="drfits">${Array.from({ length: DR_FIT_SLOTS }, (_, i) => fits[i] ? `<div class="drfitslot"><button class="drfitbtn" data-dr="fitwear" data-i="${i}"><b>Fit ${i + 1}</b><small>Wear</small></button><button class="drfitre" data-dr="fitsave" data-i="${i}" aria-label="Save what you are wearing as Fit ${i + 1}" title="Save over">↻</button></div>` : `<button class="drfitbtn empty" data-dr="fitsave" data-i="${i}"><b>+</b><small>Save fit</small></button>`).join('')}</div></div>`;
+}
+function drClosetHTML() {
+  const s = DR.st, fresh = new Set(s.newItems || []);
+  const cat = DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0], slot = cat[2], cur = drSeasonFor(drMonth()).key;
+  const inCat = (x) => slot !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === cat[0];
+  const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))].filter(inCat);
+  const newIn = (c) => [...DR_ITEMS, ...DR_LG_ITEMS].some((x) => x.slot === c[2] && (c[2] !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === c[0]) && fresh.has(drItemKey(x)));
+  const bar = `<div class="drcats" role="tablist">${DR_CATS.map((c) => `<button class="drcat" role="tab" data-dr="ccat" data-v="${c[0]}" aria-pressed="${c[0] === cat[0]}">${c[1]}${newIn(c) ? '<i class="drnew">•</i>' : ''}</button>`).join('')}</div>`;
+  const grid = items.map((it) => {
+    const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it), m = drMeta(slot, it.id), none = it.id === 'none';
+    const l = own && DR_WEARABLE.includes(slot) && !none ? drWearLv(s, k) : 0, r = (s.wear || {})[k], gl = '';
+    const cert = r && r.w ? '<i class="drcert" title="Won in this">🏆</i>' : r && r.f ? '<i class="drcert" title="Final-table worn">◆</i>' : '';
+    return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''} ${none ? '' : 'g-' + m.g}" style="--gc:${DR_GRADE[m.g][1]}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b>${!none ? `<small class="drmk"><span>${DR_GRADE[m.g][0]}</span>${m.brand && m.brand !== DR_BRANDS.league ? ' · ' + esc(m.brand) : ''}</small>` : ''}<small>${own ? (on ? 'Wearing' : 'Tap to wear') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : gl}${own && l ? drPips(l) : ''}${cert}</button>`;
+  }).join('');
+  const seen = items.map(drItemKey).filter((k) => fresh.has(k));
+  if (seen.length) { s.newItems = (s.newItems || []).filter((k) => !seen.includes(k)); drSave(); }
+  const all = [...DR_ITEMS.filter((x) => x.id !== 'none'), ...DR_LG_ITEMS], have = all.filter((x) => drOwns(s, x.slot, x.id)).length;
+  return `<div class="drcloset"><div class="drcloset-top"><div class="drcloset-prev hm-${s.eq.home}"><div class="drcloset-av">${dr3LiveOK() ? dr3LiveHTML(s, s.name) : drAvatarSVG(s)}</div><div class="drcloset-side">${drFitsHTML(s)}<button class="drlink drrestyle" data-dr="restyle">Change your look ›</button><div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div></div>${bar}</div><div class="drslot">${drInspectHTML(s, slot, s.eq[slot])}<div class="dritems">${grid}</div></div></div>`;
+}
+// level-ups shown on the results screen
+function drWearUpsHTML(list) {
+  if (!list || !list.length) return '';
+  return list.map((x) => { const it = [...DR_ITEMS, ...DR_LG_ITEMS].find((i) => i.slot === x.slot && i.id === x.id); return `<div class="drunlock wearup g-${drGradeOf(x.slot, x.id)}" style="--gc:${DR_GRADE[drGradeOf(x.slot, x.id)][1]}">${drPips(x.lv)}<div><b>${esc(it ? it.name : x.id)}: ${DR_WEAR_N[x.lv]}</b><small>${esc(DR_WEAR_GIVES[x.lv])}</small></div></div>`; }).join('');
+}
+
+// ---------------------------------------------------------------- face sculpting (creator)
+const DR_SCULPT = [
+  ['Face', [['fw', 'Face width'], ['jw', 'Jaw'], ['ch', 'Chin'], ['cb', 'Cheekbones'], ['cf', 'Cheeks']]],
+  ['Nose', [['nw', 'Width'], ['nl', 'Length'], ['nb', 'Bridge']]],
+  ['Mouth', [['lp', 'Lips'], ['mw', 'Width']]],
+  ['Eyes', [['es', 'Size'], ['ep', 'Spacing'], ['et', 'Tilt'], ['bh', 'Brow height']]],
+  ['Ears', [['er', 'Size']]],
+];
+function drSculptHTML(look) {
+  const sc = look.sc || {}, v = (k) => Math.round((+sc[k] || 0) * 10);
+  return `<details class="drsculpt" ${DR.sculptOpen ? 'open' : ''}><summary><span>Sculpt your face</span><small>${Object.values(sc).some((x) => +x) ? 'Customized' : '15 sliders'}</small></summary>
+    ${DR_SCULPT.map(([g, list]) => `<div class="drsc-g"><div class="drkicker">${g}</div>${list.map(([k, n]) => `<label class="drsc"><span>${n}</span><input type="range" min="-10" max="10" step="1" value="${v(k)}" data-sc="${k}" aria-label="${g} ${n}"><output>${v(k) > 0 ? '+' : ''}${v(k)}</output></label>`).join('')}</div>`).join('')}
+    <div class="drrow">${drBtn('ghost sm', 'data-dr="sculptrnd"', 'Shuffle')}${drBtn('ghost sm', 'data-dr="sculpt0"', 'Reset')}</div></details>`;
+}
+// sliders reshape the live 3D preview without re-rendering the form (so dragging never stops)
+function drSculptBind() {
+  const det = document.querySelector('#dream .drsculpt'); if (det) det.ontoggle = () => { DR.sculptOpen = det.open; const sec = det.closest('.drcreate'); if (sec) sec.classList.toggle('sculpting', det.open); };
+  let pend = 0, last = 0;
+  const redraw = () => { pend = 0; last = performance.now(); if ($('dr3live')) { try { dr3Mount(); } catch (e) { /* keep the old frame */ } } else { const av = $('drCreateAv'), d = DR.draft; if (av) av.innerHTML = drAvatarSVG(d.restyle ? { ...DR.st, look: d.look } : { name: d.name || 'You', look: d.look, eq: drDefault().eq, titles: {}, br: 0 }); } };
+  document.querySelectorAll('#dream input[data-sc]').forEach((el) => {
+    el.oninput = () => {
+      const k = el.dataset.sc, val = +el.value; DR.draft.look.sc = { ...(DR.draft.look.sc || {}), [k]: val / 10 };
+      const o = el.parentNode.querySelector('output'); if (o) o.textContent = (val > 0 ? '+' : '') + val;
+      if (!pend) pend = setTimeout(redraw, Math.max(0, 140 - (performance.now() - last)));
+    };
+  });
+}
+
 // ================================================================ THE DREAM: screens
 // title → creator → story scenes → life hub (schedule, closet, trophies, legends, story) → event → results
 
@@ -9424,7 +9843,8 @@ function drRender() {
     throw e;
   }
   if (DR.view === 'scene') drType();
-  if ($('dr3live')) { DR3.liveState = () => (DR.view === 'create' ? { name: DR.draft.name || 'You', look: DR.draft.look, eq: drDefault().eq, dye: {}, titles: {}, br: 0 } : DR.st); try { dr3Mount(); } catch (e) { DR3.ok = false; } }
+  if ($('dr3live')) { DR3.liveState = () => (DR.view === 'create' ? (DR.draft.restyle ? { ...DR.st, name: DR.draft.name || DR.st.name, look: DR.draft.look } : { name: DR.draft.name || 'You', look: DR.draft.look, eq: drDefault().eq, dye: {}, titles: {}, br: 0 }) : DR.st); try { dr3Mount(); } catch (e) { DR3.ok = false; } }
+  if (DR.view === 'create') drSculptBind();
   if (DR.view === 'results') drCountUp();
   const nm = $('drName'); if (nm) nm.oninput = () => { DR.draft.name = nm.value.slice(0, 18); const p = $('drPrevName'); if (p) p.textContent = nm.value || 'You'; };
 }
@@ -9447,13 +9867,13 @@ function drTitleHTML() {
   </section>`;
 }
 function drCreateHTML() {
-  const d = DR.draft, look = d.look, prev = { name: d.name || 'You', look, eq: drDefault().eq, titles: {}, br: 0 };
+  const d = DR.draft, look = d.look, prev = d.restyle ? { ...DR.st, name: d.name || DR.st.name, look } : { name: d.name || 'You', look, eq: drDefault().eq, titles: {}, br: 0 };
   const sw = (field, list, cur, kind) => list.map((c, i) => `<button class="drsw ${kind}" style="--c:${c}" data-dr="look" data-f="${field}" data-v="${i}" aria-pressed="${cur === i}" aria-label="${field} ${i + 1}"></button>`).join('');
   const opts = (field, list, cur) => list.map(([v, n]) => `<button class="drchip" data-dr="look" data-f="${field}" data-v="${v}" aria-pressed="${cur === v}">${n}</button>`).join('');
-  return `<section class="drcreate">
-    <div class="drcreate-prev pl-office"><div class="drcard-av">${dr3LiveOK() ? dr3LiveHTML(prev, d.name) : drAvatarSVG(prev)}</div><b id="drPrevName">${esc(d.name || 'You')}</b><small>Associate Analyst · Floor 34</small></div>
+  return `<section class="drcreate ${DR.sculptOpen ? 'sculpting' : ''}">
+    <div class="drcreate-prev pl-office"><div class="drcard-av" id="drCreateAv">${dr3LiveOK() ? dr3LiveHTML(prev, d.name) : drAvatarSVG(prev)}</div><b id="drPrevName">${esc(d.name || 'You')}</b><small>${d.restyle ? 'Drag to turn around' : 'Associate Analyst · Floor 34'}</small></div>
     <div class="drcreate-form">
-      <h2 class="drh">Who are you?</h2>
+      <h2 class="drh">${d.restyle ? 'Change your look' : 'Who are you?'}</h2>
       <label class="drfield"><span>Your name</span><input id="drName" maxlength="18" value="${esc(d.name)}" placeholder="Your name" autocomplete="off"></label>
       <div class="drfield"><span>Skin tone</span><div class="drsws">${sw('skin', DR_SKIN, look.skin, 'skin')}</div></div>
       <div class="drfield"><span>Hair</span><div class="drchips">${opts('hair', DR_HAIR, look.hair)}</div></div>
@@ -9464,8 +9884,9 @@ function drCreateHTML() {
       <div class="drfield"><span>Brows</span><div class="drchips">${opts('brows', DR_BROWS, look.brows)}</div></div>
       <div class="drfield"><span>Freckles</span><div class="drchips">${opts('freck', [[0, 'None'], [1, 'Freckles']], look.freck ? 1 : 0)}</div></div>
       <div class="drfield"><span>Facial hair</span><div class="drchips">${opts('facial', DR_FACIAL, look.facial)}</div></div>
-      <div class="drrow">${drBtn('ghost', 'data-dr="title"', 'Back')}${drBtn('gold big', 'data-dr="begin"', 'Clock in →')}</div>
-      <p class="drhint">You start with the basics. Clothes, jewelry, your home and your ride unlock as you play, and cosmetics never change how the game plays.</p>
+      ${drSculptHTML(look)}
+      <div class="drrow">${d.restyle ? drBtn('ghost', 'data-dr="restyleno"', 'Cancel') + drBtn('gold big', 'data-dr="restyleok"', 'Save my look') : drBtn('ghost', 'data-dr="title"', 'Back') + drBtn('gold big', 'data-dr="begin"', 'Clock in →')}</div>
+      <p class="drhint">${d.restyle ? 'Your gear stays on. Only your face, hair and features change.' : 'You start with the basics. Clothes, jewelry, your home and your ride unlock as you play, and cosmetics never change how the game plays.'}</p>
     </div>
   </section>`;
 }
@@ -9651,33 +10072,6 @@ function drEventsHTML() {
       <div><b>Story chapters 7+</b><small>Rivalries, sponsorship deals and the Hall of Legends ceremony.</small></div></div></div>`;
 }
 // rarity reads straight off what it takes to earn an item
-function drRarity(it) {
-  if (it.league) return 'limited';
-  const src = String(it.test);
-  if (/titles\.me|meft|island|hyper/.test(src) || /me >= 1/.test(src)) return 'legendary';
-  if (/bracelet|titan|tour|1e6|2e6|5e6/.test(src)) return 'epic';
-  if (/ring|circuit|peak >= (2|5|1)\d{4,5}|ch >= [23]|streak|bestStreak/.test(src)) return 'rare';
-  return 'common';
-}
-function drClosetHTML() {
-  const s = DR.st, fresh = new Set(s.newItems || []);
-  const cat = DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0], slot = cat[2], cur = drSeasonFor(drMonth()).key;
-  const inCat = (x) => slot !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === cat[0];
-  const items = [...DR_ITEMS.filter((x) => x.slot === slot), ...DR_LG_ITEMS.filter((x) => x.slot === slot && (drOwns(s, slot, x.id) || x.season === cur))].filter(inCat);
-  const newIn = (c) => [...DR_ITEMS, ...DR_LG_ITEMS].some((x) => x.slot === c[2] && (c[2] !== 'outfit' || (DR_OUTFIT_CAT[x.id] || 'formal') === c[0]) && fresh.has(drItemKey(x)));
-  const bar = `<div class="drcats" role="tablist">${DR_CATS.map((c) => `<button class="drcat" role="tab" data-dr="ccat" data-v="${c[0]}" aria-pressed="${c[0] === cat[0]}">${c[1]}${newIn(c) ? '<i class="drnew">•</i>' : ''}</button>`).join('')}</div>`;
-  const grid = items.map((it) => {
-    const own = drOwns(s, slot, it.id), on = s.eq[slot] === it.id, k = drItemKey(it), rar = drRarity(it);
-    return `<button class="dritem ${own ? '' : 'locked'} ${on ? 'on' : ''} ${it.league ? 'lg' : ''} r-${rar}" data-dr="equip" data-s="${slot}" data-v="${it.id}" ${own ? '' : 'disabled'}>${fresh.has(k) ? '<i class="drnew">New</i>' : ''}<b>${esc(it.name)}</b><small>${own ? (on ? 'Wearing' : 'Tap to use') : '🔒 ' + esc(it.league ? drLgReq(it) : it.req)}</small>${it.league ? '<i class="drlgtag">League</i>' : `<i class="drrar">${rar}</i>`}</button>`;
-  }).join('');
-  const worn = s.eq[slot], dyeable = (slot === 'outfit' || slot === 'head') && DR_DYEABLE[worn] && !DR_LG_ITEMS.some((x) => x.slot === slot && x.id === worn);
-  const dyes = dyeable ? `<div class="drdye"><div class="drkicker">Colour</div><div class="drsws">${DR_DYES.map((c, i) => `<button class="drsw ${c ? '' : 'orig'}" style="--c:${c || '#888'}" data-dr="dye" data-v="${i}" aria-pressed="${(s.dye[worn] || 0) === i}" aria-label="${c ? 'Dye ' + i : 'Original colour'}"></button>`).join('')}</div></div>` : '';
-  // seen: clear the New badges for the category you just looked at
-  const seen = items.map(drItemKey).filter((k) => fresh.has(k));
-  if (seen.length) { s.newItems = (s.newItems || []).filter((k) => !seen.includes(k)); drSave(); }
-  const all = [...DR_ITEMS.filter((x) => x.id !== 'none'), ...DR_LG_ITEMS], have = all.filter((x) => drOwns(s, x.slot, x.id)).length;
-  return `<div class="drcloset"><div class="drcloset-prev hm-${s.eq.home}">${dr3LiveOK() ? dr3LiveHTML(s, s.name) : drAvatarSVG(s)}<div class="drcoll"><small>Collection</small><b class="mono">${have}/${all.length}</b><div class="drbar"><i style="width:${((have / all.length) * 100).toFixed(1)}%"></i></div></div></div>${bar}<div class="drslot"><div class="dritems">${grid}</div>${dyes}</div></div>`;
-}
 const DR_COOLER_LINES = [
   "You played it right. That's all you control. People insist on calling it luck.",
   'Write it down and let it go. The next hand does not know about this one.',
@@ -9800,7 +10194,7 @@ function drRunHTML() {
     const L = DR_LABELS[r.lab] || DR_LABELS.good, d = r.after - r.before, h = r.hand;
     const lossTxt = h.loss == null ? '' : h.loss <= 1e-9 ? 'No value lost' : `−${h.unit === 'icm' ? `${h.loss.toFixed(h.loss < 0.1 ? 3 : 2)}% of the prize pool` : h.unit === 'bbicm' ? `${h.loss.toFixed(2)} bb of tournament equity` : `${h.loss.toFixed(2)} bb`}`;
     const mood = r.tier === 'perfect' ? 'smile' : r.tier === 'bad' ? 'frown' : 'flat';
-    html += `<div class="drverdict t-${r.tier} l-${r.lab}" style="--lc:${L.c}"><div class="drverdict-face">${drAvatarSVG(DR.st, { face: true, mouth: mood })}</div><div><span class="drlab"><i>${L.icon}</i>${esc(L.n)}</span><small>${esc(L.line)}${lossTxt ? ` · <span class="mono">${lossTxt}</span>` : ''}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < -20 ? 'Life ▼▼' : d < 0 ? 'Life ▼' : 'Life ='}</span></div>
+    html += `<div class="drverdict t-${r.tier} l-${r.lab}" style="--lc:${L.c}"><div class="drverdict-face ${run.combo >= 5 && r.tier !== 'bad' ? 'heat' : ''}">${drAvatarSVG(DR.st, { face: true, mouth: mood })}</div><div><span class="drlab"><i>${L.icon}</i>${esc(L.n)}</span><small>${esc(L.line)}${lossTxt ? ` · <span class="mono">${lossTxt}</span>` : ''}</small></div><span class="mono drdelta ${d >= 0 ? 'up' : 'down'}">${ev.kind === 'cash' ? `${d >= 0 ? '+' : '−'}$${drMoney(Math.abs(drCashNet({ ev, stack: r.after }, 0) - drCashNet({ ev, stack: r.before }, 0)))}` : d > 0 ? 'Life ▲' : d < -20 ? 'Life ▼▼' : d < 0 ? 'Life ▼' : 'Life ='}</span></div>
       ${h.odds && (h.cat === 'Facing a jam' || h.cat === 'Facing a raise' || h.cat === 'Facing a 3-bet or more') ? `<div class="drodds"><span>Pot odds</span><b>Call ${fmt(h.odds.call)} to win ${fmt(h.odds.pot)}</b><i class="mono">${h.odds.need}% equity needed</i>${['bubble', 'satbubble', 'deep', 'final'].includes(r.stage) ? '<small>ICM: busting costs more than chips here, so you need more than this.</small>' : ''}</div>` : ''}
       ${drRangeHTML(h)}
       ${run.combo >= 3 && r.tier !== 'bad' ? `<div class="drcombo">🔥 ${run.combo} in a row</div>` : ''}
@@ -9901,6 +10295,11 @@ document.addEventListener('click', (e) => {
   if (a === 'newyes') { DR.st = drDefault(); drSave(); DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'create'; drRender(); return; }
   if (a === 'newno') { $('drNewConfirm').hidden = true; return; }
   if (a === 'title') { DR.view = 'title'; drRender(); return; }
+  if (a === 'sculpt0') { DR.draft.look.sc = {}; drRender(); return; }
+  if (a === 'sculptrnd') { const r = () => Math.round((Math.random() * 2 - 1) * 7) / 10; DR.draft.look.sc = Object.fromEntries(DR_SCULPT.flatMap((g) => g[1]).map(([k]) => [k, r()])); drRender(); return; }
+  if (a === 'restyle') { DR.draft = { name: s.name, look: JSON.parse(JSON.stringify(s.look)), restyle: true }; DR.view = 'create'; drRender(); scrollTo(0, 0); return; }
+  if (a === 'restyleno') { DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; DR.view = 'hub'; DR.tab = 'closet'; drRender(); return; }
+  if (a === 'restyleok') { s.look = JSON.parse(JSON.stringify(DR.draft.look)); const n = (($('drName') || {}).value || '').trim(); if (n) s.name = n.slice(0, 18); DR.draft = { name: '', look: { ...DR_LOOK_DEFAULT } }; drSave(); DR.view = 'hub'; DR.tab = 'closet'; drRender(); return; }
   if (a === 'look') { const f = b.dataset.f; DR.draft.look[f] = f === 'skin' || f === 'hairC' || f === 'eyeC' ? +b.dataset.v : f === 'freck' ? b.dataset.v === '1' : b.dataset.v; drRender(); return; }
   if (a === 'begin') {
     const n = (($('drName') || {}).value || '').trim();
@@ -9930,7 +10329,10 @@ document.addEventListener('click', (e) => {
   }
   if (a === 'replay') { const id = b.dataset.id; DR.sc = { id, i: 0, extra: [], replay: true }; DR.view = 'scene'; drRender(); scrollTo(0, 0); return; }
   if (a === 'ccat') { DR.ccat = b.dataset.v; drRender(); return; }
-  if (a === 'dye') { const w = s.eq[(DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0])[2]]; if (+b.dataset.v) s.dye[w] = +b.dataset.v; else delete s.dye[w]; drSave(); drRender(); return; }
+  if (a === 'dye') { const sl = (DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0])[2], w = s.eq[sl], o = drDyeOpts(s, sl, w), v = +b.dataset.v; if (!o || !(o[v] || {}).ok) return; if (v) s.dye[w] = v; else delete s.dye[w]; drSave(); drRender(); return; }
+  if (a === 'fin') { const sl = (DR_CATS.find((c) => c[0] === DR.ccat) || DR_CATS[0])[2], w = s.eq[sl], k = sl + ':' + w, v = +b.dataset.v; if (!drHasFinish(sl, w)) return; if (v >= 0 && drWearLv(s, k) < 1) return; s.fin = s.fin || {}; if (v >= 0) s.fin[k] = v; else delete s.fin[k]; drSave(); drRender(); return; }
+  if (a === 'fitsave') { drFitSave(s, +b.dataset.i); drSave(); drRender(); return; }
+  if (a === 'fitwear') { drFitWear(s, +b.dataset.i); drSave(); drRender(); return; }
   if (a === 'equip') { s.eq[b.dataset.s] = b.dataset.v; drSave(); drRender(); return; }
   if (a === 'play') { drStart(b.dataset.id); return; }
   if (a === 'deal') { drHand(); return; }

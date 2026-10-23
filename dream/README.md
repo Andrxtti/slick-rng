@@ -24,6 +24,11 @@ homes, rides, sponsor patches) are milestone-based only — nothing is bought, n
 - `story.js` — every scene and milestone beat
 - `avatar.js` — the drawn player/characters; `props.js` — scene backdrops
 - `engine.js` — state, events, scoring (`DR_DELTA`), coolers, placement (`drPlace`), payouts, unlocks
+- `fashion.js` — the closet as a fashion system: grades (Standard → Iconic), fictional makers, a line per item,
+  where/when you earned it, what you did in it (events, cashes, final tables, titles), break-in levels from good
+  decisions while worn (Broken in → colourways and metal finishes, Signature → monogram, Mastered → animated finish),
+  fit rating with maker-set bonuses, 4 saved fits, and face sculpting (15 sliders, also reachable later via
+  "Change your look" in the closet)
 - `ui.js` — screens; `dream.css` — styles
 - `build-dream.py` — builds `app/slick-rng.html` from `base.html` (the trainer-work app) + these files
 - `build-beta-pages.py` — writes `docs/beta/dream/` and `docs/beta/arena/` for GitHub Pages testing

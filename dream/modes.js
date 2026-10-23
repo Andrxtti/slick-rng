@@ -105,7 +105,7 @@ function drRankBoard(s) {
 // ---------------------------------------------------------------- grants: when a day, week or month closes
 function drLgGrant(s, it, why) {
   const k = drItemKey(it); if (s.owned[k]) return null;
-  s.owned[k] = true; s.newItems = [...(s.newItems || []), k]; s.lg.news.push({ item: k, why });
+  s.owned[k] = true; drGot(s, k, why); s.newItems = [...(s.newItems || []), k]; s.lg.news.push({ item: k, why });
   drMoment(s, '🏆', `League exclusive: ${it.name} (${why})`); return it;
 }
 function drLgSettle(s) {

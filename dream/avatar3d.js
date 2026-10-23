@@ -3,7 +3,7 @@
 // One shared WebGL renderer draws every character; results are cached as images so lists and tables stay light.
 // If WebGL is missing the old flat renderer (avatar.js) takes over.
 
-const DR3 = { R: null, ok: null, cache: new Map(), env: null, canvasKey: '' };
+const DR3 = { R: null, ok: null, cache: new Map(), fxCache: new Map(), env: null, canvasKey: '', metal: null, metalR: 0.2 };
 const dr3Hash = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
 const dr3Rng = (seed) => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
 const dr3Sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
@@ -94,7 +94,7 @@ function dr3Neck(S) {
 }
 
 // ---------------------------------------------------------------- outfits (the front of the shirt is painted; collars and cuffs are 3D)
-function dr3OutTex(id, c, skinHex) {
+function dr3OutTex(id, c, skinHex, mono) {
   const W = 1024, Hh = 800, cv = document.createElement('canvas'); cv.width = W; cv.height = Hh; const g = cv.getContext('2d');
   const X = (x) => (x / 2.1 * 0.5 + 0.5) * W, Y = (y) => (-1.25 - y) / 1.9 * Hh, sh = (f) => '#' + new THREE.Color(c).multiplyScalar(f).getHexString();
   const poly = (pts, fill, stroke, lw = 3) => { g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)))); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.stroke(); } };
@@ -112,7 +112,7 @@ function dr3OutTex(id, c, skinHex) {
     case 'hoodie': collar = 'hood'; poly([[-0.5, -2.45], [0.5, -2.45], [0.7, -3.1], [-0.7, -3.1]], sh(0.86), sh(0.6), 4); ln([-0.2, -1.55], [-0.26, -2.35], '#ece8de', 6); ln([0.2, -1.55], [0.26, -2.35], '#ece8de', 6); break;
     case 'tee': collar = 'crew'; g.strokeStyle = '#ece8de'; g.lineWidth = 6; g.beginPath(); g.arc(X(0), Y(-2.3), 70, 0, 7); g.stroke(); g.fillStyle = '#ece8de'; g.beginPath(); g.moveTo(X(0), Y(-2.12)); g.bezierCurveTo(X(0.15), Y(-2.28), X(0.28), Y(-2.34), X(0.22), Y(-2.42)); g.lineTo(X(0.03), Y(-2.4)); g.lineTo(X(0.06), Y(-2.52)); g.lineTo(X(-0.06), Y(-2.52)); g.lineTo(X(-0.03), Y(-2.4)); g.lineTo(X(-0.22), Y(-2.42)); g.bezierCurveTo(X(-0.28), Y(-2.34), X(-0.15), Y(-2.28), X(0), Y(-2.12)); g.fill(); break;
     case 'varsity': collar = 'rib'; sleeve = '#efe6cf'; vneck(0.42, -1.85, '#efeee9'); ln([0, -1.85], [0, -3.2], sh(0.6), 3); for (let y = -2.1; y > -3.1; y -= 0.22) { g.fillStyle = '#efe6cf'; g.beginPath(); g.arc(X(0.06), Y(y), 5, 0, 7); g.fill(); }
-      poly([[-0.9, -2.2], [-0.62, -2.2], [-0.62, -2.62], [-0.9, -2.62]], '#efe6cf'); txt('C', -0.76, -2.55, 72, c, 'Georgia,serif'); break;
+      poly([[-0.9, -2.2], [-0.62, -2.2], [-0.62, -2.62], [-0.9, -2.62]], '#efe6cf'); txt(mono ? mono.slice(0, 1) : 'C', -0.76, -2.55, 72, c, 'Georgia,serif'); break;
     case 'bomber': collar = 'rib'; ln([0, -1.5], [0, -3.2], '#c9ccd4', 6); ln([-0.05, -1.5], [-0.05, -3.2], '#d98a2b', 3); poly([[0.55, -2.6], [1.05, -2.6], [1.05, -2.62], [0.55, -2.62]], sh(0.5), sh(0.5), 3); break;
     case 'track': collar = 'turtle'; ln([0, -1.5], [0, -3.2], '#c9ccd4', 5); for (const s of [-1, 1]) { ln([s * 1.0, -1.6], [s * 1.55, -2.0], '#f3f3f3', 12); ln([s * 0.9, -1.75], [s * 1.5, -2.2], '#f3f3f3', 12); ln([s * 0.72, -1.95], [s * 1.62, -2.7], '#f3f3f3', 10); } break;
     case 'cardigan': collar = 'rib'; vneck(0.5, -2.1, '#f1f0ea'); poly([[-0.07, -1.3], [0.07, -1.3], [0.1, -1.6], [-0.1, -1.6]], '#2a4a8a'); for (const y of [-2.3, -2.55, -2.8]) { g.fillStyle = sh(1.5); g.beginPath(); g.arc(X(0.12), Y(y), 7, 0, 7); g.fill(); } ln([0, -2.1], [0, -3.2], sh(0.55), 3); break;
@@ -137,6 +137,8 @@ function dr3OutTex(id, c, skinHex) {
     case 'flannel': collar = 'polo'; g.globalAlpha = 0.5; g.fillStyle = '#1b0d0d'; for (let x = -2; x < 2; x += 0.3) g.fillRect(X(x), 0, 30, Hh); for (let y = -1.2; y > -3.4; y -= 0.3) g.fillRect(0, Y(y), W, 30); g.globalAlpha = 1; ln([0, -1.4], [0, -3.2], '#3a0c0c', 4); g.fillStyle = '#e9e5dc'; for (const y of [-1.7, -2.1, -2.5, -2.9]) { g.beginPath(); g.arc(X(0.03), Y(y), 7, 0, 7); g.fill(); } break;
     case 'ugly': collar = 'rib'; g.fillStyle = '#c2362a'; g.fillRect(0, Y(-2.3), W, 70); g.fillStyle = '#f3ecdc'; for (let x = -1.8; x < 1.9; x += 0.26) poly([[x, -2.32], [x + 0.08, -2.4], [x, -2.48], [x - 0.08, -2.4]], '#f3ecdc'); break;
   }
+  // Signature: your initials stitched in gold thread on the chest
+  if (mono && id !== 'varsity') { g.save(); g.font = `italic 700 ${mono.length > 1 ? 44 : 50}px Georgia,'Bodoni Moda',serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 4; g.strokeStyle = 'rgba(0,0,0,.4)'; g.strokeText(mono, X(-1.0), Y(-2.5)); g.fillStyle = '#e2bf72'; g.fillText(mono, X(-1.0), Y(-2.5)); g.restore(); }
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return { tex: t, collar, sleeve };
 }
 function dr3Collar(kind, S, colHex, root) {
@@ -251,8 +253,9 @@ function dr3Eyewear(id, hit) {
 }
 
 // ---------------------------------------------------------------- jewelry
-const DR3_GOLD = () => new THREE.MeshStandardMaterial({ color: 0xe3b94f, metalness: 1, roughness: 0.2, envMapIntensity: 1.7 });
-const DR3_SILVER = () => new THREE.MeshStandardMaterial({ color: 0xd2d6de, metalness: 1, roughness: 0.18, envMapIntensity: 1.7 });
+// DR3.metal (set while one piece is built) re-finishes it: white gold, rose gold, black chrome
+const DR3_GOLD = () => new THREE.MeshStandardMaterial({ color: DR3.metal != null ? DR3.metal : 0xe3b94f, metalness: 1, roughness: DR3.metal != null ? DR3.metalR : 0.2, envMapIntensity: 1.7 });
+const DR3_SILVER = () => new THREE.MeshStandardMaterial({ color: DR3.metal != null ? DR3.metal : 0xd2d6de, metalness: 1, roughness: DR3.metal != null ? DR3.metalR : 0.18, envMapIntensity: 1.7 });
 const DR3_GEM = () => new THREE.MeshStandardMaterial({ color: 0xf4fbff, metalness: 0.1, roughness: 0.02, envMapIntensity: 3.2, emissive: 0x555a60 });
 function dr3ChainPath(drop, y0 = -1.27, rx = 0.46, rz = 0.46) {
   const pts = []; for (let i = 0; i < 28; i++) { const t = i / 28 * Math.PI * 2, fr = Math.max(0, Math.cos(t)), sag = drop * Math.pow(fr, 1.4); const p = new THREE.Vector3(Math.sin(t) * (rx + sag * 0.6), y0 - sag, Math.cos(t) * (rz + sag * 0.3 * (fr > 0 ? 1 : 0)) - 0.05); dr3Collide(p, 0.035); pts.push(p); }
@@ -273,18 +276,19 @@ function dr3Pendant(txt, mat) {
   const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); g.fillStyle = '#e3b94f'; g.fillRect(0, 0, 128, 128); g.strokeStyle = '#8f6f33'; g.lineWidth = 8; g.beginPath(); g.arc(64, 64, 56, 0, 7); g.stroke(); g.fillStyle = '#5a3f10'; g.font = '900 54px Georgia,serif'; g.textAlign = 'center'; g.fillText(txt, 64, 82);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; const m = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.035, 28), [mat, new THREE.MeshStandardMaterial({ map: t, metalness: 0.85, roughness: 0.28, envMapIntensity: 1.5 }), mat]); m.rotation.x = Math.PI / 2; return m;
 }
-function dr3Chain(id) {
+function dr3Chain(id, mono) {
   const grp = new THREE.Group(); if (!id || id === 'none') return grp;
+  const mark = (c) => { grp.userData.pts = [c.getPoint(0), c.getPoint(0.075), c.getPoint(0.925)]; return c; };
   const gold = DR3_GOLD();
   const onChest = (m, curve, fr) => { const p = curve.getPoint(fr); m.position.copy(p).add(new THREE.Vector3(0, -0.12, 0.05)); dr3Collide(m.position, 0.07); grp.add(m); };
   const bottom = (curve) => { let best = curve.getPoint(0), bi = 0; for (let i = 0; i < 40; i++) { const p = curve.getPoint(i / 40); if (p.y < best.y) { best = p; bi = i / 40; } } return bi; };
-  if (id === 'silver') { const c = dr3ChainPath(0.38), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.016, 6, true), DR3_SILVER()); t.castShadow = true; grp.add(t); }
-  else if (id === 'cuban' || id === 'iced') { const c = dr3ChainPath(0.62); grp.add(dr3Links(c, 76, gold, 0.056, 1.5, id === 'iced')); }
-  else if (id === 'rope') { const c = dr3ChainPath(0.85), b = new Dr3Bld(); const pts = c.getSpacedPoints(120); b.tube(pts.concat([pts[0]]), 0.03, 0xe3b94f, 6, { r: 0.016, k: 150 }); const m = new THREE.Mesh(b.geo(false), gold); m.castShadow = true; grp.add(m); const pend = dr3Pendant('CF', gold); onChest(pend, c, bottom(c)); }
-  else if (id === 'layered') { const c1 = dr3ChainPath(0.36, -1.24), c2 = dr3ChainPath(0.8, -1.3, 0.5, 0.5); const t = new THREE.Mesh(new THREE.TubeGeometry(c1, 80, 0.014, 6, true), gold); grp.add(t); grp.add(dr3Links(c2, 84, gold, 0.052, 1.5)); const pend = dr3Pendant('CF', gold); onChest(pend, c2, bottom(c2)); }
+  if (id === 'silver') { const c = mark(dr3ChainPath(0.38)), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.016, 6, true), DR3_SILVER()); t.castShadow = true; grp.add(t); }
+  else if (id === 'cuban' || id === 'iced') { const c = mark(dr3ChainPath(0.62)); grp.add(dr3Links(c, 76, gold, 0.056, 1.5, id === 'iced')); }
+  else if (id === 'rope') { const c = mark(dr3ChainPath(0.85)), b = new Dr3Bld(); const pts = c.getSpacedPoints(120); b.tube(pts.concat([pts[0]]), 0.03, 0xe3b94f, 6, { r: 0.016, k: 150 }); const m = new THREE.Mesh(b.geo(false), gold); m.castShadow = true; grp.add(m); const pend = dr3Pendant(mono || 'CF', gold); onChest(pend, c, bottom(c)); }
+  else if (id === 'layered') { const c1 = dr3ChainPath(0.36, -1.24), c2 = mark(dr3ChainPath(0.8, -1.3, 0.5, 0.5)); const t = new THREE.Mesh(new THREE.TubeGeometry(c1, 80, 0.014, 6, true), gold); grp.add(t); grp.add(dr3Links(c2, 84, gold, 0.052, 1.5)); const pend = dr3Pendant(mono || 'CF', gold); onChest(pend, c2, bottom(c2)); }
   else if (id === 'bones') { const c = dr3ChainPath(0.55), bm = new THREE.MeshStandardMaterial({ color: 0xefe8d6, roughness: 0.6 }), n = 22, im = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.03, 0.09, 4, 8), bm, n), mt = new THREE.Matrix4(), q = new THREE.Quaternion(); const ps = c.getSpacedPoints(n); for (let i = 0; i < n; i++) { const tg = ps[(i + 1) % n].clone().sub(ps[i]).normalize(); q.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tg); mt.compose(ps[i], q, new THREE.Vector3(1, 1, 1)); im.setMatrixAt(i, mt); } grp.add(im);
     const sk = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 12), bm); onChest(sk, c, bottom(c)); }
-  else if (id === 'wishbone') { const c = dr3ChainPath(0.6), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.015, 6, true), gold); grp.add(t); const w = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.022, 8, 20, Math.PI), gold); w.rotation.z = Math.PI; onChest(w, c, bottom(c)); }
+  else if (id === 'wishbone') { const c = mark(dr3ChainPath(0.6)), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.015, 6, true), gold); grp.add(t); const w = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.022, 8, 20, Math.PI), gold); w.rotation.z = Math.PI; onChest(w, c, bottom(c)); }
   else if (id === 'lights') { const c = dr3ChainPath(0.55), t = new THREE.Mesh(new THREE.TubeGeometry(c, 80, 0.012, 6, true), new THREE.MeshStandardMaterial({ color: 0x1d4a22 })); grp.add(t); const cols = [0xff4f4f, 0x5cbf64, 0xffd23a, 0x5aa9de], n = 20; c.getSpacedPoints(n).forEach((p, i) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), new THREE.MeshStandardMaterial({ color: cols[i % 4], emissive: cols[i % 4], emissiveIntensity: 0.9, roughness: 0.3 })); b.position.copy(p).add(new THREE.Vector3(0, -0.05, 0)); grp.add(b); }); }
   return grp;
 }
@@ -327,6 +331,11 @@ function dr3Patch(pid) {
 function dr3Build(st, opt) {
   const look = { ...DR_LOOK_DEFAULT, ...(st.look || {}) }, eq = st.eq || {}, dye = st.dye || {}, titles = st.titles || {}, face = !!opt.face;
   const S = dr3Skin(look), scene = new THREE.Scene(); scene.environment = DR3.env;
+  // gear: metal finishes, monogram, and the points that catch the light (drawn as an overlay after the render)
+  const GL = typeof drGearLook === 'function' ? drGearLook(st) : { mono: '', fx: {} }, FX = GL.fx || {}, anchors = [];
+  // each point faces a direction (in the body's frame) so a turned body hides the side you can't see
+  const anc = (parent, pos, fx, k, n) => { if (!fx || !pos) return; const o = new THREE.Object3D(); o.position.copy(pos); parent.add(o); anchors.push({ o, fx, k, n: n || new THREE.Vector3(0, 0, 1) }); };
+  const metalOn = (slot) => { const f = typeof drFinishHex === 'function' ? drFinishHex(st, slot) : null; DR3.metal = f ? new THREE.Color(f[1]).getHex() : null; DR3.metalR = f ? f[2] : 0.2; }, metalOff = () => { DR3.metal = null; };
   // lights: warm key with soft shadows, cool fill, hot rim from behind
   const key = new THREE.DirectionalLight(0xfff0dc, 1.7); key.position.set(-3.2, 4.4, 6.5); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -0.0005; key.shadow.normalBias = 0.025;
   const sc = key.shadow.camera; sc.left = -3.5; sc.right = 3.5; sc.top = 3.5; sc.bottom = -4; sc.near = 1; sc.far = 18; scene.add(key);
@@ -342,19 +351,24 @@ function dr3Build(st, opt) {
   // facial hair shell on top of the skin
   if (look.facial && look.facial !== 'none') chr.add(dr3Beard(H, head, look, fc.userData.hit));
   if (hat && hat !== 'phones') { const col = DR_DYES[dye[hat]] || DR3_HAT_COL[hat] || '#222'; const h3 = dr3Hat(hat, col, Math.min(1.5, hair.vol), look); chr.add(h3); } else if (hat === 'phones') chr.add(dr3Hat('phones', '#222', 1, look));
-  if (eq.eyes && eq.eyes !== 'none') chr.add(dr3Eyewear(eq.eyes, fc.userData.hit));
-  chr.add(dr3Ear(eq.ear, { [-1]: fc.userData['ear-1'], 1: fc.userData['ear1'] }));
+  if (eq.eyes && eq.eyes !== 'none') { chr.add(dr3Eyewear(eq.eyes, fc.userData.hit)); anc(chr, new THREE.Vector3(-0.47, 0.15, 1.05), FX.eyes, 'eyes'); }
+  metalOn('ear'); chr.add(dr3Ear(eq.ear, { [-1]: fc.userData['ear-1'], 1: fc.userData['ear1'] })); metalOff();
+  if (FX.ear) for (const sd of [-1, 1]) { const ep = fc.userData['ear' + sd]; if (ep) anc(chr, ep.clone().add(new THREE.Vector3(sd * 0.04, eq.ear === 'hoop' ? -0.2 : 0, 0.04)), FX.ear, 'ear' + sd, new THREE.Vector3(sd, 0, 0.45)); }
+  if (hat && FX.head) anc(chr, new THREE.Vector3(0.32, 0.74, 0.86), FX.head, 'head');
   chr.add(dr3Neck(S));
   // torso and clothes
-  const outfit = eq.outfit || 'office', oc = DR_DYES[dye[outfit]] || DR_OUTFIT_BASE[outfit] || '#3b3f47', ot = dr3OutTex(outfit, oc, S.hex);
+  const outfit = eq.outfit || 'office', oc = DR_DYES[dye[outfit]] || DR_OUTFIT_BASE[outfit] || '#3b3f47', ot = dr3OutTex(outfit, oc, S.hex, GL.mono);
   const tm = new THREE.MeshStandardMaterial({ map: ot.tex, roughness: outfit === 'leather' ? 0.38 : 0.85, metalness: outfit === 'leather' ? 0.12 : 0, envMapIntensity: outfit === 'leather' ? 1 : 0.35 });
   const torso = new THREE.Mesh(dr3TorsoGeo(), tm); torso.castShadow = true; torso.receiveShadow = true; chr.add(torso); torso.updateMatrixWorld(true);
   dr3Collar(ot.collar, S, new THREE.Color(oc).multiplyScalar(outfit === 'varsity' ? 0 : 1).add(outfit === 'varsity' ? new THREE.Color('#efe6cf') : new THREE.Color(0)).getHex(), chr);
-  chr.add(dr3Chain(eq.chain));
+  metalOn('chain'); const chn = dr3Chain(eq.chain, GL.monoChain); metalOff(); chr.add(chn);
+  if (FX.chain && chn.userData.pts) chn.userData.pts.forEach((pt, i) => anc(chr, pt.clone().add(new THREE.Vector3(0, -0.02, 0.06)), FX.chain, 'chain' + i));
   const sleeveHex = ot.sleeve === oc ? oc : ot.sleeve, slm = new THREE.MeshStandardMaterial({ color: sleeveHex, roughness: outfit === 'leather' ? 0.4 : 0.85, metalness: outfit === 'leather' ? 0.12 : 0, envMapIntensity: 0.4 });
   const arms = new THREE.Group(); chr.add(arms);
   const ray = new THREE.Raycaster(), chestHit = (x, y) => { ray.set(new THREE.Vector3(x, y, 6), new THREE.Vector3(0, 0, -1)); const h = ray.intersectObject(torso, false)[0]; return h ? h.point : new THREE.Vector3(x, y, 0.9); };
-  if (eq.patch && eq.patch !== 'none') { const pm = dr3Patch(eq.patch); if (pm) { const p = chestHit(0.78, -2.15); pm.position.set(p.x, p.y, p.z + 0.012); pm.rotation.y = 0.22; pm.rotation.z = 0.04; chr.add(pm); } }
+  if (eq.patch && eq.patch !== 'none') { const pm = dr3Patch(eq.patch); if (pm) { const p = chestHit(0.78, -2.15); pm.position.set(p.x, p.y, p.z + 0.012); pm.rotation.y = 0.22; pm.rotation.z = 0.04; chr.add(pm); anc(chr, pm.position.clone().add(new THREE.Vector3(0, 0, 0.04)), FX.patch, 'patch'); } }
+  // the monogram sits at x -0.77, y -2.11 (texture -1.0, -2.5)
+  if (FX.outfit) { const op = FX.outfit === 'thread' ? chestHit(-0.77, outfit === 'varsity' ? -2.2 : -2.11) : chestHit(-0.5, -1.9); anc(chr, op.clone().add(new THREE.Vector3(0, 0, 0.05)), FX.outfit, 'outfit'); }
   if (!face) {
     const bank = st.br || 0, wrists = {};
     for (const s of [-1, 1]) {
@@ -363,24 +377,27 @@ function dr3Build(st, opt) {
       arms.add(dr3Limb(sh, el, 0.33, slm)); arms.add(dr3Limb(el, wr, 0.255, shorts ? skm : slm));
       if (shorts) { arms.add(dr3Limb(sh, sh.clone().lerp(el, 0.7), 0.345, slm)); }
       const hd = dr3Hand(S, s); hd.position.copy(wr).add(new THREE.Vector3(0, -0.02, 0.1)); hd.scale.setScalar(1.25); hd.lookAt(new THREE.Vector3(s * 0.2, -2.4, 2.4)); arms.add(hd); wrists[s] = hd;
-      if (eq.sleeve && eq.sleeve !== 'none' && s === 1) { const pm = dr3Patch(eq.sleeve); if (pm) { pm.scale.setScalar(0.8); const mid = sh.clone().lerp(el, 0.42); pm.position.set(mid.x + 0.38, mid.y, mid.z + 0.08); pm.rotation.y = Math.PI / 2 - 0.15; arms.add(pm); } }
+      if (eq.sleeve && eq.sleeve !== 'none' && s === 1) { const pm = dr3Patch(eq.sleeve); if (pm) { pm.scale.setScalar(0.8); const mid = sh.clone().lerp(el, 0.42); pm.position.set(mid.x + 0.38, mid.y, mid.z + 0.08); pm.rotation.y = Math.PI / 2 - 0.15; arms.add(pm); anc(arms, pm.position.clone().add(new THREE.Vector3(0.05, 0, 0)), FX.sleeve, 'sleeve', new THREE.Vector3(1, 0, 0.2)); } }
     }
     // watch (left hand), bracelets (right), rings
     const wt = eq.watch || 'digital', PAL = { digital: ['#222', '#3f5f3a'], steel: ['#b9bec7', '#1d3b6e'], gold: ['#d9b36c', '#f3e2b0'], iced: ['#e9edf2', '#f8fbff'], hyper: ['#1a1a1a', '#2c2c2c'] }[wt] || ['#222', '#3f5f3a'];
-    const hl = wrists[-1], hr = wrists[1], bm = new THREE.MeshStandardMaterial({ color: PAL[0], metalness: wt === 'digital' ? 0.1 : 0.9, roughness: wt === 'digital' ? 0.6 : 0.25, envMapIntensity: 1.2 });
+    metalOn('watch'); const wfin = wt === 'digital' ? null : DR3.metal; metalOff();
+    const hl = wrists[-1], hr = wrists[1], bm = new THREE.MeshStandardMaterial({ color: wfin != null ? wfin : PAL[0], metalness: wt === 'digital' ? 0.1 : 0.9, roughness: wt === 'digital' ? 0.6 : 0.25, envMapIntensity: 1.2 });
     const strap = new THREE.Mesh(new THREE.TorusGeometry(0.215, 0.05, 10, 32), bm); strap.position.set(0, 0, -0.1); strap.castShadow = true; hl.add(strap);
     const wc = document.createElement('canvas'); wc.width = wc.height = 128; const wg = wc.getContext('2d'); wg.fillStyle = PAL[1]; wg.fillRect(0, 0, 128, 128); wg.strokeStyle = wt === 'digital' ? '#9fe69a' : '#e8e8e8'; wg.lineWidth = 5; if (wt === 'digital') { wg.font = '900 40px monospace'; wg.fillStyle = '#9fe69a'; wg.textAlign = 'center'; wg.fillText('8:00', 64, 76); } else { for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283; wg.beginPath(); wg.moveTo(64 + Math.cos(a) * 46, 64 + Math.sin(a) * 46); wg.lineTo(64 + Math.cos(a) * 56, 64 + Math.sin(a) * 56); wg.stroke(); } wg.lineWidth = 6; wg.beginPath(); wg.moveTo(64, 64); wg.lineTo(64, 28); wg.moveTo(64, 64); wg.lineTo(86, 74); wg.stroke(); }
     const wtex = new THREE.CanvasTexture(wc); wtex.colorSpace = THREE.SRGBColorSpace;
     const wf = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.07, 32), [bm, new THREE.MeshStandardMaterial({ map: wtex, roughness: 0.2, metalness: 0.2, envMapIntensity: 1.4 }), bm]); wf.position.set(0, 0.255, -0.1); wf.castShadow = true; hl.add(wf);
     if (wt === 'iced') { const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.025, 6, 32), DR3_GEM()); ring.rotation.x = Math.PI / 2; ring.position.set(0, 0.29, -0.1); ring.scale.setScalar(0.85); hl.add(ring); }
-    const wr = eq.wrist && eq.wrist !== 'none' ? eq.wrist : null;
+    anc(hl, new THREE.Vector3(0.05, 0.31, -0.05), FX.watch, 'watch');
+    const wr = eq.wrist && eq.wrist !== 'none' ? eq.wrist : null; metalOn('wrist');
     if (wr === 'gold') { const t = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.05, 10, 32), DR3_GOLD()); t.position.z = -0.12; t.castShadow = true; hr.add(t); }
     if (wr === 'beads') { for (let i = 0; i < 22; i++) { const a = i / 22 * 6.283, b = new THREE.Mesh(new THREE.SphereGeometry(0.052, 10, 8), new THREE.MeshStandardMaterial({ color: [0x2a2a2e, 0x7a5a3a, 0x2a2a2e, 0xc9a03e][i % 4], roughness: 0.4 })); b.position.set(Math.cos(a) * 0.215, Math.sin(a) * 0.215, -0.1); hr.add(b); } }
     if (wr === 'tennis') { const t = new THREE.Mesh(new THREE.TorusGeometry(0.215, 0.02, 8, 40), DR3_SILVER()); t.position.z = -0.1; hr.add(t); for (let i = 0; i < 18; i++) { const a = i / 18 * 6.283, b = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), DR3_GEM()); b.position.set(Math.cos(a) * 0.225, Math.sin(a) * 0.225, -0.1); hr.add(b); } }
+    metalOff(); anc(hr, new THREE.Vector3(0.18, 0.14, -0.1), FX.wrist, 'wrist');
     for (let k = 0; k < Math.min(4, titles.bracelet || 0); k++) { const t = new THREE.Mesh(new THREE.TorusGeometry(0.225, 0.028, 8, 32), DR3_GOLD()); t.position.z = -0.2 - k * 0.07; t.castShadow = true; hr.add(t); }
     const rings = Math.min(3, (titles.ring || 0) + (titles.me || 0)); for (let k = 0; k < rings; k++) { const fp = hl.userData.fp[k]; const t = new THREE.Mesh(new THREE.TorusGeometry(0.049, 0.014, 8, 18), DR3_GOLD()); t.position.copy(fp).add(new THREE.Vector3(0, 0, 0.02 * k)); hl.add(t); const g = new THREE.Mesh(new THREE.OctahedronGeometry(0.022), DR3_GEM()); g.position.copy(fp).add(new THREE.Vector3(0, 0.05, 0.02 * k)); hl.add(g); }
     const ring = eq.ring && eq.ring !== 'none' ? eq.ring : null;
-    if (ring) { const fp = hr.userData.fp[ring === 'pinky' ? 0 : 2], mat = ring === 'signet' || ring === 'pinky' ? DR3_SILVER() : DR3_GOLD(); const t = new THREE.Mesh(new THREE.TorusGeometry(0.05, ring === 'champ' ? 0.02 : 0.015, 8, 18), mat); t.position.copy(fp); hr.add(t);
+    if (ring) { const fp = hr.userData.fp[ring === 'pinky' ? 0 : 2]; metalOn('ring'); const mat = ring === 'signet' || ring === 'pinky' ? DR3_SILVER() : DR3_GOLD(); metalOff(); anc(hr, fp.clone().add(new THREE.Vector3(0, 0.07, 0)), FX.ring, 'ring'); const t = new THREE.Mesh(new THREE.TorusGeometry(0.05, ring === 'champ' ? 0.02 : 0.015, 8, 18), mat); t.position.copy(fp); hr.add(t);
       if (ring === 'signet') { const sq = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.06), mat); sq.position.copy(fp).add(new THREE.Vector3(0, 0.055, 0)); hr.add(sq); } if (ring === 'pinky') { const gm = new THREE.Mesh(new THREE.OctahedronGeometry(0.035), DR3_GEM()); gm.position.copy(fp).add(new THREE.Vector3(0, 0.06, 0)); hr.add(gm); } if (ring === 'champ') { const gm = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.05, 0.1), new THREE.MeshStandardMaterial({ color: 0xc2362a, roughness: 0.1, metalness: 0.2, envMapIntensity: 2 })); gm.position.copy(fp).add(new THREE.Vector3(0, 0.07, 0)); hr.add(gm); } }
     // the table, cards and chips stay put while you turn
     const table = new THREE.Group(); scene.add(table);
@@ -391,7 +408,7 @@ function dr3Build(st, opt) {
     const tiers = [0, 1000, 10000, 50000, 250000, 1e6, 5e6], lv = tiers.filter((t) => bank >= t).length, cols = ['#f3ecdc', '#c2362a', '#2a6fdb', '#1e8f4a', '#141414', '#7a3fc0', '#e3b94f'], mats = cols.map(dr3Chip);
     for (let c = 0; c < Math.min(3, Math.ceil(lv / 2)); c++) { const h = Math.max(2, lv * 2 - c * 3); for (let k = 0; k < h; k++) { const ch = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.065, 28), mats[(k + c) % Math.min(cols.length, lv + 1)]); ch.position.set(1.2 + c * 0.47, -2.55 + 0.034 + k * 0.067, 2.4 - c * 0.14); ch.rotation.y = k * 0.7; ch.castShadow = true; ch.receiveShadow = true; table.add(ch); } }
   }
-  return { scene, chr, look };
+  return { scene, chr, look, anchors };
 }
 // ---------------------------------------------------------------- render, snapshot, mount
 function dr3Cam(opt) {
@@ -399,36 +416,48 @@ function dr3Cam(opt) {
   if (face) { cam.position.set(0, 0.1, 6.6); cam.lookAt(0, opt.cy == null ? -0.03 : opt.cy, 0); } else { cam.position.set(0, 0.5, 7.9); cam.lookAt(0, -0.95, 0); }
   return cam;
 }
+function dr3FxPos(B, cam) {
+  const out = []; if (!B.anchors || !B.anchors.length) return out; B.scene.updateMatrixWorld(true); const v = new THREE.Vector3(), q = B.chr.getWorldQuaternion(new THREE.Quaternion());
+  for (const a of B.anchors) { a.o.getWorldPosition(v); v.project(cam); const nz = a.n.clone().applyQuaternion(q).z; out.push({ fx: a.fx, k: a.k, x: +((v.x + 1) * 50).toFixed(2), y: +((1 - v.y) * 50).toFixed(2), vis: nz > -0.05 }); }
+  return out;
+}
+function dr3FxHTML(list) { return list && list.length ? `<span class="drfx" aria-hidden="true">${list.filter((p) => p.vis).map((p, i) => `<i class="fx-${p.fx}" style="left:${p.x}%;top:${p.y}%;--d:${((i * 0.61) % 2.6).toFixed(2)}s"></i>`).join('')}</span>` : ''; }
 function dr3Dispose(scene) { scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; for (const m of ms) { for (const k of ['map']) if (m[k]) m[k].dispose(); m.dispose(); } }); }
 function dr3Draw(st, opt) {
   const B = dr3Build(st, opt), R = DR3.R, cam = dr3Cam(opt); R.setSize(opt.w, opt.h, false); R.setPixelRatio(1);
   B.chr.rotation.y = opt.ang || 0; B.chr.rotation.x = 0;
-  R.render(B.scene, cam); dr3Dispose(B.scene); return R.domElement;
+  R.render(B.scene, cam); DR3.lastFx = dr3FxPos(B, cam); dr3Dispose(B.scene); return R.domElement;
 }
-function dr3Key(st, opt) { return JSON.stringify([opt.fov, opt.cy, st.look, st.eq, st.dye, st.titles, Math.min(7, [0, 1000, 10000, 50000, 250000, 1e6, 5e6].filter((t) => (st.br || 0) >= t).length), opt.face, opt.mouth, opt.blink, opt.ang, opt.w, opt.h]); }
+function dr3Key(st, opt) { return JSON.stringify([opt.fov, opt.cy, st.look, st.eq, st.dye, st.fin || 0, typeof drGearLook === 'function' && !opt.face ? drGearLook(st) : 0, st.titles, Math.min(7, [0, 1000, 10000, 50000, 250000, 1e6, 5e6].filter((t) => (st.br || 0) >= t).length), opt.face, opt.mouth, opt.blink, opt.ang, opt.w, opt.h]); }
 function dr3Snap(st, opt) {
   const k = dr3Key(st, opt); let u = DR3.cache.get(k); if (u) return u;
-  const cv = dr3Draw(st, opt); u = cv.toDataURL('image/png'); if (DR3.cache.size > 60) DR3.cache.delete(DR3.cache.keys().next().value); DR3.cache.set(k, u); return u;
+  const cv = dr3Draw(st, opt); u = cv.toDataURL('image/png'); if (DR3.cache.size > 60) { const old = DR3.cache.keys().next().value; DR3.cache.delete(old); DR3.fxCache.delete(old); } DR3.cache.set(k, u); DR3.fxCache.set(k, DR3.lastFx || []); return u;
 }
 function drAvatarSVG(st, opt = {}) {
   if (!dr3Init() || window.__dr2d) return drAvatarSVG2D(st, opt);
   try {
-    const face = !!opt.face, w = face ? 240 : 480, h = face ? 240 : 520, url = dr3Snap(st, { ...opt, w, h });
-    return `<img class="dravsvg dr3img" src="${url}" width="${w}" height="${h}" alt="${(typeof esc === 'function' ? esc : (x) => x)(st.name || 'Your player')}" draggable="false">`;
+    const face = !!opt.face, w = face ? 240 : 480, h = face ? 240 : 520, o2 = { ...opt, w, h }, url = dr3Snap(st, o2);
+    const img = `<img class="dravsvg dr3img" src="${url}" width="${w}" height="${h}" alt="${(typeof esc === 'function' ? esc : (x) => x)(st.name || 'Your player')}" draggable="false">`;
+    const fx = !face && opt.fx !== false ? DR3.fxCache.get(dr3Key(st, o2)) : null;
+    return fx && fx.some((p) => p.vis) ? `<span class="drfxw">${img}${dr3FxHTML(fx)}</span>` : img;
   } catch (e) { DR3.ok = false; return drAvatarSVG2D(st, opt); }
 }
 function dr3LiveOK() { return !window.__dr2d && dr3Init(); }
-function dr3LiveHTML(st, alt) { return `<canvas id="dr3live" class="dravsvg dr3live" width="440" height="480" role="img" aria-label="${alt || 'Your player'}"></canvas>`; }
+function dr3LiveHTML(st, alt) { return `<span class="drfxw live"><canvas id="dr3live" class="dravsvg dr3live" width="440" height="480" role="img" aria-label="${alt || 'Your player'}"></canvas><span class="drfx" id="dr3fx" aria-hidden="true"></span></span>`; }
 // the live builder view: drag to turn the character around
 function dr3Mount() {
   const cv = document.getElementById('dr3live'); if (!cv || !dr3Init()) return;
+  // re-mounting the same canvas (sculpt sliders) retires the previous build and its animation loop
+  const gen = cv._gen = (cv._gen || 0) + 1; if (cv._B) { try { dr3Dispose(cv._B.scene); } catch (e) { /* already gone */ } cv._B = null; }
   const st = cv._st = cv._st || null; const get = () => (typeof DR3.liveState === 'function' ? DR3.liveState() : null); const S0 = get(); if (!S0) return;
   const w = 440, h = 480; cv.width = w; cv.height = h; const ctx = cv.getContext('2d');
   let ang = DR3.ang || 0, vel = 0, drag = false, lx = 0, raf = 0, idle = 0, t0 = performance.now();
-  const o = { w, h, mouth: 'smug' }, B = dr3Build(S0, o), camL = dr3Cam(o);
-  const paint = (a) => { if (!document.body.contains(cv)) { if (B) { dr3Dispose(B.scene); } return; } const R = DR3.R; R.setSize(w, h, false); R.setPixelRatio(1); B.chr.rotation.y = a; R.render(B.scene, camL); ctx.clearRect(0, 0, w, h); ctx.drawImage(R.domElement, 0, 0); };
-  const tick = (now) => { if (!document.body.contains(cv)) return; if (!drag) { idle = now - t0; const swing = Math.sin(idle / 1400) * 0.28; if (idle < 4000) { paint(ang + swing * Math.max(0, 1 - idle / 4000)); raf = requestAnimationFrame(tick); return; } return; } };
-  paint(ang); raf = requestAnimationFrame(tick);
+  const o = { w, h, mouth: 'smug' }, B = dr3Build(S0, o), camL = dr3Cam(o); cv._B = B;
+  const fxEl = document.getElementById('dr3fx'); let spans = null;
+  const fxPaint = () => { if (!fxEl || !B.anchors.length) return; const P = dr3FxPos(B, camL); if (!spans) { fxEl.innerHTML = P.map((p, i) => `<i class="fx-${p.fx}" style="--d:${((i * 0.61) % 2.6).toFixed(2)}s"></i>`).join(''); spans = [...fxEl.children]; } P.forEach((p, i) => { const e = spans[i]; e.style.left = p.x + '%'; e.style.top = p.y + '%'; e.style.visibility = p.vis ? '' : 'hidden'; }); };
+  const paint = (a) => { if (cv._gen !== gen) return; if (!document.body.contains(cv)) { if (B) { dr3Dispose(B.scene); } return; } const R = DR3.R; R.setSize(w, h, false); R.setPixelRatio(1); B.chr.rotation.y = a; R.render(B.scene, camL); ctx.clearRect(0, 0, w, h); ctx.drawImage(R.domElement, 0, 0); fxPaint(); };
+  const tick = (now) => { if (cv._gen !== gen || !document.body.contains(cv)) return; if (!drag) { idle = now - t0; const swing = Math.sin(idle / 1400) * 0.28; if (idle < 4000) { paint(ang + swing * Math.max(0, 1 - idle / 4000)); raf = requestAnimationFrame(tick); return; } return; } };
+  paint(ang); if (gen === 1) raf = requestAnimationFrame(tick);
   const down = (e) => { drag = true; lx = e.clientX; cv.setPointerCapture && cv.setPointerCapture(e.pointerId); };
   const move = (e) => { if (!drag) return; ang += (e.clientX - lx) * 0.011; lx = e.clientX; DR3.ang = ang; if (!cv._busy) { cv._busy = true; requestAnimationFrame(() => { paint(ang); cv._busy = false; }); } };
   const up = () => { drag = false; };

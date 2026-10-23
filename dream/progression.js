@@ -34,7 +34,7 @@ const DR_FRAMES = {
 const DR_TITLES_COS = {
   none: 'No title', grinder: 'Grinder', reg: 'The Reg', shark: 'Shark', highroller: 'High Roller', crusher: 'Crusher', livinglegend: 'Living Legend',
   professor: 'The Professor', ironwill: 'Iron Will', herocaller: 'Hero Caller', icm: 'ICM Scientist', heater: 'Heater', giantkiller: 'Giant Killer',
-  closer: 'The Closer', robot: 'Robot', neverdead: 'Never Dead', taskmaster: 'Taskmaster', satshark: 'Satellite Shark', thickskin: 'Thick Skin', bounceback: 'Bounce Back',
+  closer: 'The Closer', robot: 'Robot', tastemaker: 'Tastemaker', iconicfit: 'Fit Check Legend', neverdead: 'Never Dead', taskmaster: 'Taskmaster', satshark: 'Satellite Shark', thickskin: 'Thick Skin', bounceback: 'Bounce Back',
 };
 const DR_COS_KINDS = [['back', 'Card backs', DR_BACKS, 'classic'], ['felt', 'Table felt', DR_FELTS, 'green'], ['frame', 'Avatar frame', DR_FRAMES, 'none'], ['title', 'Title', DR_TITLES_COS, 'none']];
 
@@ -91,6 +91,8 @@ const DR_ACH = [
   { id: 'quests', n: 'Taskmaster', d: 'Daily quests completed', t: [10, 60, 200], f: (p) => p.st.quests, gold: ['title', 'taskmaster'] },
   { id: 'bracelets', n: 'Jewelry Box', d: 'Gold bracelets (Storyline)', t: [1, 5, 15], f: (p, s) => (s.titles && s.titles.bracelet) || 0 },
   { id: 'collector', n: 'Collector', d: 'Cosmetics and gear owned', t: [8, 20, 40], f: (p, s) => Object.keys(p.cos).length + Object.keys(s.owned || {}).length },
+  { id: 'signature', n: 'Signature Style', d: 'Pieces broken in to Signature', t: [1, 5, 15], f: (p, s) => Object.keys(s.wear || {}).filter((k) => drWearLv(s, k) >= 2).length, gold: ['title', 'tastemaker'] },
+  { id: 'drip', n: 'Dripping', d: 'Best fit rating', t: [45, 70, 90], f: (p, s) => Math.max(p.st.bestFit || 0, drFitScore(s).score), gold: ['title', 'iconicfit'] },
 ];
 const DR_ACH_XP = [50, 150, 400];
 
@@ -185,6 +187,7 @@ function drTrack(r, run) {
   if (good && ['bubble', 'satbubble', 'deep', 'final'].includes(r.stage)) drQuestBump(s, 'icm', 1, out);
   p.st.bestCombo = Math.max(p.st.bestCombo, run.combo || 0); drQuestBump(s, 'combo', run.combo || 0, out);
   if ((run.stack || 0) < 40) run.fumes = true;
+  drWearDecision(s, good, out, run);
   drGainXp(s, Math.round(sc / 10), out);
 }
 // after every finished event, any mode
@@ -199,10 +202,12 @@ function drEventDone(res, run) {
   if (kind === 'sng' && ev.mode === 'casual') xp = Math.round(xp * 0.6);
   drGainXp(s, xp, out);
   if (won) { p.st.wins++; if (run.fumes) p.st.comeback++; }
+  if (!ev.drill && !ev.review && res.mode !== 'challenge') drWearEvent(s, res, run, { cashed, won, ft: kind !== 'cash' && !!run.stages && run.stages.includes('final') && run.si >= run.stages.length - 1 && (!run.bust || res.place <= 9) });
   // coolers: part of the game. Count them, reward taking them well, reward the bounce back
   if (res.cooler) { p.st.coolers = (p.st.coolers || 0) + 1; if (res.acc >= 85) p.st.cleanBeats = (p.st.cleanBeats || 0) + 1; p.lastCool = true; }
   else if (!ev.drill && !ev.review && res.mode !== 'challenge') { if (won && p.lastCool) p.st.bounce = (p.st.bounce || 0) + 1; p.lastCool = false; }
   if (kind === 'sat' && res.ticket) p.st.seats++;
+  p.st.bestFit = Math.max(p.st.bestFit || 0, drFitScore(s).score);
   if (cashed && run.stages.includes('bubble') && run.si >= run.stages.indexOf('bubble')) p.st.bubble++;
   if (res.acc === 100 && res.n >= 6) p.st.flawless++;
   if (kind !== 'sng') drQuestBump(s, 'story', 1, out);
@@ -280,6 +285,7 @@ function drProgHTML(out) {
   const L = out.lvl || drLevelOf(drPg(DR.st).xp);
   return `<div class="drprog">
     <div class="drprog-xp"><span class="drlvl big"><b>${L.lvl}</b></span><div><div class="drkicker">Career XP · +${drMoney(out.xp)}</div><div class="drbar xp"><i style="width:${((L.into / L.need) * 100).toFixed(1)}%"></i></div><small class="mono">${drMoney(L.into)} / ${drMoney(L.need)} to level ${L.lvl + 1}</small></div></div>
+    ${drWearUpsHTML(out.wear)}
     ${out.levels.length ? `<div class="drwin lvl"><div class="drwin-icon">⬆️</div><div><div class="drkicker">Level up</div><b>Career level ${out.levels[out.levels.length - 1]}</b></div></div>` : ''}
     ${out.cos.map((c) => `<div class="drunlock cos">${drCosSwatch(c.kind, c.id)}<div><b>${esc(drCosName(c.kind, c.id))}</b><small>${esc(DR_COS_KIND_N[c.kind])} · ${esc(c.why)}</small></div></div>`).join('')}
     ${out.quests.map((q) => `<div class="drstreak">✅ Quest done: ${esc(q.t)} · +${q.xp} XP</div>`).join('')}${out.bonus ? `<div class="drstreak">🌟 All three quests done today · +${DR_QUEST_BONUS} XP</div>` : ''}
