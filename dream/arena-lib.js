@@ -7,7 +7,9 @@ function arCombosOf(cls) {
   return AR_COMBOS[cls];
 }
 function arLibTable(run) {
-  const gid = run.tables[run.t], pool = typeof drLib === 'function' && drLib()[gid]; if (!pool || !pool.length) return null;
+  const gid = run.tables[run.t], all = typeof drLib === 'function' && drLib()[gid]; if (!all || !all.length) return null;
+  // the Arena is online play: every player antes
+  const online = all.filter((t) => !(t.s.t222 && t.s.t222.bbAnte)), pool = online.length ? online : all;
   run.usedT = run.usedT || []; const fresh = pool.filter((t) => !run.usedT.includes(t)), list = fresh.length ? fresh : pool;
   const t = list[(run.rng() * list.length) | 0]; run.usedT.push(t); return t;
 }

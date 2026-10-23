@@ -84,7 +84,7 @@ function drRep(s) { for (const [t, label] of DR_REPUTATION) if (t(s)) return typ
 const drToday = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const drDailyDone = (s) => !!(s.daily && s.daily[drToday()]);
 // the daily freeroll pays like a small tournament at your level, funded by the sponsor
-function drDailyEvent(s) { return { ...DR_DAILY, venue: DR_CHAPTERS[Math.max(1, Math.min(7, s.ch))].place, prizeBase: [15, 15, 60, 250, 1000, 4000, 2000, 5000][Math.min(7, s.ch)] }; }
+function drDailyEvent(s) { return { ...DR_DAILY, prizeBase: [15, 15, 60, 250, 1000, 4000, 2000, 5000][Math.min(7, s.ch)] }; }
 function drAvailable(s) {
   if (s.ch === 0) return DR_EVENTS.filter((e) => e.id === 'local');
   return DR_EVENTS.filter((e) => e.ch >= 1 && e.ch <= s.ch);
@@ -129,6 +129,9 @@ function drPlanFor(ev, ch) {
     : [['early', 1], ['bubble', 3], ['deep', 2], ['final', 4]];
   return { stages: plan.map((p) => p[0]), perS: plan.map((p) => p[1]) };
 }
+// antes: online (CF Tilt Poker, the Daily Grind, the online sit & go modes) = every player antes;
+// live events (card room, casino, Vegas, the tours, the Main) = one big-blind ante
+function drLiveEv(ev) { return !(ev.online || ev.daily || ev.kind === 'sng'); }
 // hands to play at the current stage
 function drPer(run) { return run.per || (run.perS && run.perS[Math.min(run.si, run.perS.length - 1)]) || (run.ev.kind === 'cash' ? DR_CASH_HANDS : DR_HANDS); }
 // which pre-solved tables fit a stage: early levels are deep stacks, the final table is the last nine
@@ -184,7 +187,8 @@ async function drTable() {
   if (pool && pool.length) {
     // a pre-solved table: no waiting, no phone CPU, answers from a long offline solve
     run.usedTables = run.usedTables || [];
-    const fit = DR_STAGE_FIT[stage], all = pool.map((_, i) => i).filter((i) => !fit || !pool[i].s.t222 || fit(pool[i].s.t222)), okI = all.length ? all : pool.map((_, i) => i);
+    const fit = DR_STAGE_FIT[stage], bb = drLiveEv(run.ev), anteOk = (i) => !pool[i].s.t222 || !!pool[i].s.t222.bbAnte === bb;
+    const all = pool.map((_, i) => i).filter((i) => anteOk(i) && (!fit || !pool[i].s.t222 || fit(pool[i].s.t222))), any = pool.map((_, i) => i).filter(anteOk), okI = all.length ? all : any.length ? any : pool.map((_, i) => i);
     const fresh = okI.filter((i) => !run.usedTables.includes(libGid + i)), pickFrom = fresh.length ? fresh : okI;
     const ti = pickFrom[(run.rng() * pickFrom.length) | 0]; run.usedTables.push(libGid + ti);
     window.__pfHold = true; applySetup(pool[ti].s);
@@ -194,7 +198,7 @@ async function drTable() {
   }
   run.lib = null; window.__pfHold = false;
   for (let attempt = 0; attempt < 3; attempt++) {
-    const gid = DR_STAGE[stage].gid, setup = arSetup(gid === 'sat' ? 'bubble' : gid, run.rng);
+    const gid = DR_STAGE[stage].gid, setup = arSetup(gid === 'sat' ? 'bubble' : gid, run.rng); if (setup.t222) setup.t222.bbAnte = drLiveEv(run.ev);
     // satellite bubble: every seat pays the same, so ICM squeezes hardest here
     if (gid === 'sat') { const t = setup.t222; t.payouts = Array(Math.max(1, t.paid)).fill('1').join(','); t.pko = { on: false, b: {}, frac: 75 }; }
     applySetup(setup); run.t0 = performance.now();
@@ -264,7 +268,7 @@ function drLibDeal(run, d) {
   let nodes = lib.n.map((n, i) => ({ n, i })).filter((x) => !x.n.bad && !seen.has(x.i) && kindOk(x));
   if (!nodes.length) nodes = lib.n.map((n, i) => ({ n, i })).filter((x) => !x.n.bad && kindOk(x));
   // a drill table with none of that spot: look across every table of this stage
-  if (!nodes.length && drill) { const pool = drLib()[DR_STAGE[run.stages[run.si]].gid] || []; for (const t of pool) t.n.forEach((n, i) => { if (!n.bad && drNodeKind(n) === drill) nodes.push({ n, i: -1, t }); }); }
+  if (!nodes.length && drill) { const pool = drLib()[DR_STAGE[run.stages[run.si]].gid] || []; for (const t of pool) { if (t.s.t222 && !!t.s.t222.bbAnte !== drLiveEv(run.ev)) continue; t.n.forEach((n, i) => { if (!n.bad && drNodeKind(n) === drill) nodes.push({ n, i: -1, t }); }); } }
   const list = nodes.length ? nodes : lib.n.map((n, i) => ({ n, i })).filter((x) => !x.n.bad);
   const tot = list.reduce((a, x) => a + Math.sqrt(x.n.w), 0); let x = rng() * tot, pick = list[0];
   for (const it of list) { x -= Math.sqrt(it.n.w); if (x < 0) { pick = it; break; } }

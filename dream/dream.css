@@ -558,3 +558,5 @@
 
 .dream .dr3live { width: 100%; height: auto; aspect-ratio: 440 / 480; display: block; cursor: grab; touch-action: pan-y; }
 .dream .dr3live:active { cursor: grabbing; }
+
+.dream .pl-cftilt { background: radial-gradient(ellipse at 50% -10%, rgba(255, 70, 70, .28), transparent 55%), radial-gradient(ellipse at 50% 125%, rgba(120, 40, 160, .45), transparent 60%), #0c0a12; }
