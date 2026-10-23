@@ -261,11 +261,11 @@ function drCandidates(res, d) {
 function drLibDeal(run, d) {
   const lib = run.lib, rng = run.rng, seen = (run.seenNodes = run.seenNodes || new Set());
   const drill = run.ev.drill && run.ev.drill !== 'icm' ? run.ev.drill : null, kindOk = (x) => !drill || drNodeKind(x.n) === drill;
-  let nodes = lib.n.map((n, i) => ({ n, i })).filter((x) => !seen.has(x.i) && kindOk(x));
-  if (!nodes.length) nodes = lib.n.map((n, i) => ({ n, i })).filter(kindOk);
+  let nodes = lib.n.map((n, i) => ({ n, i })).filter((x) => !x.n.bad && !seen.has(x.i) && kindOk(x));
+  if (!nodes.length) nodes = lib.n.map((n, i) => ({ n, i })).filter((x) => !x.n.bad && kindOk(x));
   // a drill table with none of that spot: look across every table of this stage
-  if (!nodes.length && drill) { const pool = drLib()[DR_STAGE[run.stages[run.si]].gid] || []; for (const t of pool) t.n.forEach((n, i) => { if (drNodeKind(n) === drill) nodes.push({ n, i: -1, t }); }); }
-  const list = nodes.length ? nodes : lib.n.map((n, i) => ({ n, i }));
+  if (!nodes.length && drill) { const pool = drLib()[DR_STAGE[run.stages[run.si]].gid] || []; for (const t of pool) t.n.forEach((n, i) => { if (!n.bad && drNodeKind(n) === drill) nodes.push({ n, i: -1, t }); }); }
+  const list = nodes.length ? nodes : lib.n.map((n, i) => ({ n, i })).filter((x) => !x.n.bad);
   const tot = list.reduce((a, x) => a + Math.sqrt(x.n.w), 0); let x = rng() * tot, pick = list[0];
   for (const it of list) { x -= Math.sqrt(it.n.w); if (x < 0) { pick = it; break; } }
   seen.add(pick.i);

@@ -307,8 +307,10 @@ function drDrillStart(kind) {
 
 // ---------------------------------------------------------------- the mistake deck
 const DR_GID_STAGE = { ring: 'early', bubble: 'bubble', shove: 'final', sat: 'satbubble', cash: 'cash' };
+// mistakes recorded on spots that later failed the library quality gate are not your mistakes: drop them
+function drMisClean(p) { if (!p.mis || typeof drLib !== 'function') return; p.mis = p.mis.filter((it) => { const t = drLib()[it.g] && drLib()[it.g][it.t], n = t && t.n[it.n]; return !(n && n.bad); }); }
 function drReviewStart() {
-  const s = DR.st, p = drPg(s); if (DR.run || !(p.mis || []).length) return;
+  const s = DR.st, p = drPg(s); drMisClean(p); if (DR.run || !(p.mis || []).length) return;
   const queue = p.mis.slice(0, 9).filter((it) => DR_GID_STAGE[it.g]);
   if (!queue.length) return;
   drModeState(s);
@@ -319,6 +321,7 @@ function drReviewStart() {
   DR.view = 'run'; drRender(); drTable();
 }
 function drDeckCard(s) {
+  drMisClean(drPg(s));
   const n = (drPg(s).mis || []).length;
   return `<section class="drdeck ${n ? '' : 'empty'}"><div><div class="drkicker">Your mistake deck</div><b>${n ? `${n} spot${n === 1 ? '' : 's'} to fix` : 'Nothing to fix right now'}</b><small>${n ? 'Every Mistake or Blunder is saved as the exact spot. Get it right in a review and it leaves the deck.' : 'Mistakes and Blunders from any mode land here for review.'}</small></div>${n ? drBtn('gold sm', 'data-dr="review"', `Review ${Math.min(9, n)} ▸`) : ''}</section>`;
 }

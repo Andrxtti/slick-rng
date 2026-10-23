@@ -13,7 +13,7 @@ function arLibTable(run) {
 }
 function arLibDeal(run) {
   const lib = run.lib, rng = run.rng, seen = (run.seenN = run.seenN || new Set());
-  let list = lib.n.map((n, i) => ({ n, i })).filter((x) => !seen.has(x.i)); if (!list.length) list = lib.n.map((n, i) => ({ n, i }));
+  let list = lib.n.map((n, i) => ({ n, i })).filter((x) => !x.n.bad && !seen.has(x.i)); if (!list.length) list = lib.n.map((n, i) => ({ n, i })).filter((x) => !x.n.bad);
   const tot = list.reduce((a, x) => a + Math.sqrt(x.n.w), 0); let x = rng() * tot, pick = list[0];
   for (const it of list) { x -= Math.sqrt(it.n.w); if (x < 0) { pick = it; break; } }
   seen.add(pick.i);
