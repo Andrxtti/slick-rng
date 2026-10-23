@@ -40,16 +40,16 @@ const DR_PEOPLE = {
 // era: old school, boom, online high stakes, high roller/GTO, rising stars
 const DR_LEGENDS = [
   { id: 'hungar', name: 'Stu Hungar', nick: 'The Comeback Kid', era: 'Old school', ch: 7, style: 'Reads you before you read your cards. Three-time world champ, a legend for a reason.', line: "Kid, I've seen this hand before. You haven't." },
-  { id: 'brunswick', name: 'Doyle Brunswick', nick: 'Texas Dally', era: 'Old school', ch: 3, style: 'The godfather. Aggressive before aggressive was cool. Loves ten-deuce.', line: 'Son, I was playing this game before your daddy could shuffle.' },
-  { id: 'chance', name: 'Johnny Chance', nick: 'The Express', era: 'Old school', ch: 3, style: 'Slow-plays monsters and lets you hang yourself.', line: 'Take your time. I always do.' },
-  { id: 'armadillo', name: 'Armadillo Slim', nick: 'The Talker', era: 'Old school', ch: 1, style: 'Spins yarns between hands and steals your blinds during the punchline.', line: "I've got more stories than you've got chips, partner." },
-  { id: 'moneybaker', name: 'Chris Moneybaker', nick: 'The Accountant', era: 'Boom', ch: 2, style: 'Won it all off an $86 satellite. Proof the dream is real.', line: 'I was you once. Spreadsheets and all. Play your game.' },
-  { id: 'hellbent', name: 'Phil Hellbent', nick: 'The Poker Bratt', era: 'Boom', ch: 3, style: 'Most bracelets ever, and he will tell you. Tight, then explodes when he loses.', line: 'If there were no luck in poker, I would win every single one of these.' },
-  { id: 'negrono', name: 'Danny Negrono', nick: 'Kid Pokey', era: 'Boom', ch: 3, style: 'Talks through every hand and usually says your cards out loud.', line: "I put you on ace-queen. Am I close? I'm close." },
+  { id: 'brunswick', name: 'Colt the Cowboy', nick: 'The One', era: 'Old school', ch: 3, style: 'The godfather. Aggressive before aggressive was cool. Loves ten-deuce.', line: 'Son, I was playing this game before your daddy could shuffle.' },
+  { id: 'chance', name: 'Chance Cage', nick: 'The Mirage', era: 'Old school', ch: 3, style: 'Slow-plays monsters and lets you hang yourself.', line: 'Take your time. I always do.' },
+  { id: 'armadillo', name: 'Armadillo Fatts', nick: 'The Talker', era: 'Old school', ch: 1, style: 'Spins yarns between hands and steals your blinds during the punchline.', line: "I've got more stories than you've got chips, partner." },
+  { id: 'moneybaker', name: 'Chris Schillings', nick: 'The Accountant', era: 'Boom', ch: 2, style: 'Won it all off an $86 satellite. Proof the dream is real.', line: 'I was you once. Spreadsheets and all. Play your game.' },
+  { id: 'hellbent', name: 'Phil Hellraiser', nick: 'Whine it In', era: 'Boom', ch: 3, style: 'Most bracelets ever, and he will tell you. Tight, then explodes when he loses.', line: 'If there were no luck in poker, I would win every single one of these.' },
+  { id: 'negrono', name: 'GG Negroni', nick: 'Young Poker', era: 'Boom', ch: 3, style: 'Talks through every hand and usually says your cards out loud.', line: "I put you on ace-queen. Am I close? I'm close." },
   { id: 'handsome', name: 'Gus Handsome', nick: 'The Great Dane', era: 'Boom', ch: 4, style: 'Plays any two cards, and makes it work just often enough.', line: 'Seven-four suited. My favourite hand. Today.' },
   { id: 'escandalo', name: 'Antonio Escandalo', nick: 'The Magician', era: 'Boom', ch: 4, style: 'Smooth, fearless, and the chips just seem to disappear.', line: 'Watch closely. Now your stack is gone.' },
-  { id: 'mouth', name: 'Mike Matusoh', nick: 'The Mouth', era: 'Boom', ch: 2, style: 'Never stops talking. Never stops jamming.', line: "You call this? You're not calling this. You're NOT calling this." },
-  { id: 'fargo', name: 'Sammy Fargo', nick: 'The Unlit Cigarette', era: 'Boom', ch: 2, style: 'Pure feel. Bets like he owns the casino.', line: 'Is a nice hand. Is not my hand, but is nice.' },
+  { id: 'mouth', name: 'Mouthy Michael', nick: 'The Yapper', era: 'Boom', ch: 2, style: 'Never stops talking. Never stops jamming.', line: "You call this? You're not calling this. You're NOT calling this." },
+  { id: 'fargo', name: 'Sammy Smokes', nick: 'The Unlit Cigarette', era: 'Boom', ch: 2, style: 'Pure feel. Bets like he owns the casino.', line: 'Is a nice hand. Is not my hand, but is nice.' },
   { id: 'sidle', name: 'Erik Sidle', nick: 'The Quiet Assassin', era: 'Boom', ch: 4, style: 'Thirty years at the top without saying thirty words.', line: '…' },
   { id: 'swan', name: 'Tom "hrrrm" Swan', nick: 'The Online Kid', era: 'Online', ch: 4, style: 'Six-figure bluffs with nothing, on purpose.', line: 'I have air. Do you want to find out?' },
   { id: 'antionius', name: 'Patrik Antionius', nick: 'The Finnish Ice', era: 'Online', ch: 5, style: 'Never blinks. Never tilts. Never stops.', line: 'Your move.' },
@@ -69,7 +69,7 @@ const DR_LEGENDS = [
   { id: 'daisies', name: 'Seth Daisies', nick: 'The Quarter-Million Man', era: 'Rising star', ch: 5, style: 'First bracelet was a $250K Super High Roller. Started at the top.', line: 'Go big or go home. I went big.' },
   { id: 'bindr', name: 'Bernhard Bindr', nick: 'The Breakout', era: 'Rising star', ch: 5, style: 'Came out of nowhere with a $10 million win. Like you.', line: 'Everyone was a nobody once.' },
   { id: 'punchline', name: 'Punnat Punchline', nick: 'The Bangkok Banker', era: 'Rising star', ch: 5, style: 'Three Titan titles in one year. All business.', line: 'This is my office.' },
-  { id: 'glazer', name: 'Benny Glazer', nick: 'The Triple Crown', era: 'Rising star', ch: 3, style: 'Three bracelets in one summer. Mixed-game wizard.', line: 'Pick a game. Any game.' },
+  { id: 'glazer', name: 'Nicky Parmesan', nick: 'Blocked', era: 'Rising star', ch: 3, style: 'Three bracelets in one summer. Mixed-game wizard.', line: 'Pick a game. Any game.' },
   { id: 'mizrockie', name: 'Michael Mizrockie', nick: 'The Grinder', era: 'Rising star', ch: 6, style: 'Won the Main Event and the Players Championship in the same summer. Defending champ.', line: "Defending champ. You'll have to take it from me." },
 ];
 const drLegend = (id) => DR_LEGENDS.find((l) => l.id === id);
