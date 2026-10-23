@@ -50,7 +50,7 @@ namespace CFDream.UI
             root.AddToClassList("app"); Fonts.Use(root, Fonts.Body);
             column = U.Div("column"); root.Add(column);
             home = HomeButton(); root.Add(home);
-            modal = U.Div("modal").Show(false); root.Add(modal);
+            modal = U.Div("modal").Show(false); modal.style.backgroundColor = new Color(0, 0, 0, 0.66f); root.Add(modal);
             toast = U.Div("toast").Show(false); root.Add(toast);
             ApplyScreen(true);
             Game.Render = RenderNow;
