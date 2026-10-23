@@ -15,7 +15,8 @@ namespace CFDream.Character
         public float scale = 0;                 // 0: work it out from shoulder width
         public float neckUp = 0.012f, neckR = 0.062f, neckDepth = 0.058f, neckFwd = 0.008f, chainDrop = 0.075f, chestLean = 0.045f;
         public float headUp = 0.085f, headFwd = 0.0f, headR = 0.098f;
-        public float eyeUp = 0.012f, eyeFwd = 0.094f, eyeGap = 0.032f;
+        public float eyeUp = 0.012f, eyeFwd = 0.094f, eyeGap = 0.032f, lensFwd = 0.024f; // lensFwd: eyeball centre to lens, with eye bones
+        public BodyFit Copy() => (BodyFit)MemberwiseClone();
         public float earSide = 0.077f, earUp = -0.032f, earBack = 0.004f;
         public float wristR = 0.030f, wristFlat = 0.022f, wristBack = 0.035f;
         public float fingerR = 0.0095f;
@@ -45,6 +46,8 @@ namespace CFDream.Character
                 c.s = l != null && r != null ? Mathf.Clamp(Vector3.Distance(l.position, r.position) / 0.33f, 0.6f, 1.6f) : 1;
             }
             c.fwd = st.Pivot.forward; c.up = st.Pivot.up; c.right = Vector3.Cross(c.up, c.fwd);
+            Transform le = c.B(HumanBodyBones.LeftEye), re = c.B(HumanBodyBones.RightEye);
+            if (le != null && re != null) { c.f = c.f.Copy(); c.f.eyeGap = Vector3.Distance(le.position, re.position) / 2 / c.s; } // lenses over the real eyes
 
             foreach (var w in spec.worn)
             {
@@ -61,6 +64,7 @@ namespace CFDream.Character
                         go.transform.position += c.right * def.offset.x + c.up * def.offset.y + c.fwd * def.offset.z;
                         go.transform.rotation = Quaternion.Euler(def.euler) * go.transform.rotation; go.transform.localScale *= def.scale;
                     }
+                    go.GetComponent<BoneFollow>()?.Pin();
                     list.Add(go);
                 }
                 catch (Exception e) { Debug.LogWarning($"[Dream] Couldn't build {w.Key}: {e.Message}"); }
@@ -85,9 +89,11 @@ namespace CFDream.Character
         // ------------------------------------------------------------ helpers
         static GameObject Root(Ctx c, string name, Transform bone)
         {
+            // beside the body, not inside its skeleton: UMA rebuilds its bones and wants their names unique
             var go = new GameObject(name);
+            go.transform.SetParent(c.st.Pivot, false);
             go.transform.position = bone.position; go.transform.rotation = Quaternion.identity;
-            go.transform.SetParent(bone, true);
+            go.AddComponent<BoneFollow>().Init(c.st, bone);
             return go;
         }
         static GameObject Part(GameObject root, Mesh mesh, Material mat, Vector3 pos, Quaternion rot, Vector3? scale = null)
@@ -284,6 +290,13 @@ namespace CFDream.Character
         static Vector3 HeadCentre(Ctx c, out Transform head)
         {
             head = c.B(HumanBodyBones.Head);
+            // a body with eye bones pins the face exactly: measure the rest of the head back from the eyes
+            Transform l = c.B(HumanBodyBones.LeftEye), r = c.B(HumanBodyBones.RightEye);
+            if (l != null && r != null)
+            {
+                var eyes = (l.position + r.position) / 2;
+                return eyes + c.fwd * c.M(c.f.lensFwd) - c.up * c.M(c.f.eyeUp) - c.fwd * c.M(c.f.eyeFwd);
+            }
             return head.position + c.up * c.M(c.f.headUp) + c.fwd * c.M(c.f.headFwd);
         }
 
@@ -473,10 +486,11 @@ namespace CFDream.Character
             HumanBodyBones hb = HumanBodyBones.Head;
             if (!string.IsNullOrEmpty(def.bone) && !Enum.TryParse(def.bone, true, out hb)) hb = HumanBodyBones.Head;
             var bone = c.B(hb) ?? c.B(HumanBodyBones.Head);
-            var go = UnityEngine.Object.Instantiate(src);
+            var go = UnityEngine.Object.Instantiate(src, c.st.Pivot, false);
             go.name = "Brand " + w.Key;
-            go.transform.SetParent(bone, false);
-            go.transform.localPosition = def.offset * c.s; go.transform.localRotation = Quaternion.Euler(def.euler); go.transform.localScale = Vector3.one * def.scale * c.s;
+            go.transform.position = bone.TransformPoint(def.offset * c.s); go.transform.rotation = bone.rotation * Quaternion.Euler(def.euler);
+            go.transform.localScale = Vector3.one * def.scale * c.s;
+            go.AddComponent<BoneFollow>().Init(c.st, bone);
             if (def.dyeable && w.dye.HasValue)
                 foreach (var r in go.GetComponentsInChildren<Renderer>())
                 {

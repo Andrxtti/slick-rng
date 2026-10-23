@@ -333,7 +333,11 @@ Label.hub-br-l { font-size: 11px; color: #a99d86; margin-top: 1px; }
 .hub-money.small Label.hub-br { font-size: 17px; }
 Label.debt { margin: 6px 0 0 0; }
 .page-head { padding: 6px 0 12px 0; align-items: center; }
-Label.page-title { font-size: 30px; color: #f3ecdc; }
+Label.page-title { font-size: 30px; color: #f3ecdc; white-space: nowrap; flex-shrink: 0; margin-right: 8px; }
+.page-head.stacked { align-items: stretch; }
+.page-head.stacked Label.page-title { font-size: 26px; margin-bottom: 6px; }
+.page-tools { align-items: center; flex-wrap: wrap; }
+.page-tools > * { margin-right: 8px; }
 .icon-btn { width: 40px; height: 40px; border-radius: 20px; background-color: #1a1712; align-items: center; justify-content: center; margin-left: 8px; flex-shrink: 0; }
 .icon-btn.down { scale: 0.92 0.92; }
 .sec-row { align-items: flex-end; margin: 18px 0 12px 0; }
@@ -352,6 +356,7 @@ Label.stage-hint-t { font-size: 12px; color: #a99d86; margin-left: 5px; }
 Label.fit-chip-n { font-size: 14px; color: #f4dfa6; margin-left: 6px; }
 Label.fit-chip-t { font-size: 13px; margin-left: 6px; white-space: nowrap; }
 .page-head .fit-chip { margin-left: 8px; }
+.page-tools .fit-chip { margin-left: 0; }
 .stage-panel { position: absolute; left: 16px; bottom: 12px; padding: 10px 12px; border-radius: 16px; background-color: rgba(19, 17, 13, 0.92); }
 Label.panel-k { font-size: 11px; letter-spacing: 1px; color: #d9b36c; }
 Label.panel-r { font-size: 12px; color: #a99d86; margin-left: 8px; }
@@ -410,6 +415,7 @@ Label.seg-t { font-size: 13px; color: #a99d86; }
 
 /* creator */
 .create { flex-direction: column; }
+.create.two-pane { flex-direction: row; }
 .create-head { padding: 10px 16px 0 16px; align-items: flex-end; flex-shrink: 0; }
 Label.create-k { font-size: 11px; letter-spacing: 1.5px; color: #d9b36c; }
 .name-row { align-items: center; border-bottom-width: 1px; border-color: #3a3226; margin-top: 2px; }

@@ -63,7 +63,7 @@ namespace CFDream.Character
             cam = cgo.AddComponent<Camera>();
             cam.cullingMask = 1 << Layer; cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = new Color(0, 0, 0, 0);
             cam.fieldOfView = 22; cam.nearClipPlane = 0.05f; cam.farClipPlane = 30; cam.allowHDR = false; cam.allowMSAA = true; cam.enabled = false;
-            rt = new RenderTexture(768, 960, 24, RenderTextureFormat.ARGB32) { name = "Character", antiAliasing = 4, useMipMap = false };
+            rt = new RenderTexture(768, 960, 24, RenderTextureFormat.ARGB32) { name = "Character", antiAliasing = 1, useMipMap = false }; // single-sample: UI Toolkit can't show a multisampled texture
             rt.Create(); cam.targetTexture = rt;
             Frame(1.7f);
             // a soft studio: warm key, cool fill, gold rim from behind
@@ -87,14 +87,23 @@ namespace CFDream.Character
             float lookY, dist;
             switch (framing)
             {
-                case "full": lookY = height * 0.53f; dist = height * 2.95f; break;
+                case "full": lookY = height * 0.52f; dist = height * 3.3f; break;
                 case "face": lookY = height * 0.925f; dist = height * 0.44f; break;
                 default: lookY = height * 0.78f; dist = height * 1.55f; break;
             }
             cam.transform.localPosition = new Vector3(0, lookY, dist);
             cam.transform.LookAt(transform.TransformPoint(new Vector3(0, lookY - 0.04f * (framing == "face" ? 0.3f : 1), 0)));
         }
-        public void Framing(string mode) { if (mode != framing) Frame(1.7f, mode); }
+        public void Framing(string mode) { if (mode != framing) Frame(bodyH, mode); }
+        float bodyH = 1.7f;
+        // frame the body actually built: eye height plus the crown of the head (UMA's default man is about 1.95 m)
+        void Measure()
+        {
+            var e = Bone(HumanBodyBones.LeftEye) ?? Bone(HumanBodyBones.Head);
+            if (e == null) return;
+            float h = Mathf.Clamp(transform.InverseTransformPoint(e.position).y + 0.13f, 1.2f, 2.4f);
+            if (Mathf.Abs(h - bodyH) > 0.01f) { bodyH = h; Frame(bodyH); }
+        }
 
         // ------------------------------------------------------------ views
         public void Attach(VisualElement v) { views.Add(v); cam.enabled = HasBody; }
@@ -127,14 +136,67 @@ namespace CFDream.Character
                 builtKey = key; if (pendingKey == key) pendingKey = null;
                 SetLayer(body.Root, Layer);
                 var keep = pivot.localRotation; pivot.localRotation = Quaternion.identity; // build pieces facing +Z
+                Measure();
                 Accessories.Dress(this, spec, accessories);
                 pivot.localRotation = keep;
                 foreach (var a in accessories) SetLayer(a, Layer);
                 cam.enabled = views.Count > 0;
+#if UNITY_EDITOR
+                Report();
+#endif
                 Changed?.Invoke();
             });
         }
+#if UNITY_EDITOR
+        // what the stage camera should be seeing, for Logs/dream_play.txt
+        void Report()
+        {
+            var rs = body.Root != null ? body.Root.GetComponentsInChildren<Renderer>(true) : new Renderer[0];
+            var sb = new System.Text.StringBuilder($"[Dream] stage: {rs.Length} renderers, {accessories.Count} accessories, views {views.Count}, cam {cam.enabled} at {cam.transform.position} looking {cam.transform.forward}, mask {cam.cullingMask}, pipeline {UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline?.name}");
+            foreach (var r in rs)
+                sb.Append($"\n  {r.name}: layer {r.gameObject.layer}, on {r.enabled && r.gameObject.activeInHierarchy}, bounds {r.bounds.center} size {r.bounds.size}, mats {r.sharedMaterials.Length}");
+            foreach (var r in rs)
+                foreach (var m in r.sharedMaterials)
+                    if (m != null)
+                    {
+                        sb.Append($"\n    {m.name} [{m.shader.name}]");
+                        for (int i = 0; i < m.shader.GetPropertyCount(); i++)
+                        {
+                            var pn = m.shader.GetPropertyName(i); var pt = m.shader.GetPropertyType(i);
+                            if (pt == UnityEngine.Rendering.ShaderPropertyType.Color) sb.Append($" {pn}={ColorUtility.ToHtmlStringRGBA(m.GetColor(pn))}");
+                            else if (pt == UnityEngine.Rendering.ShaderPropertyType.Texture) { var t = m.GetTexture(pn); if (t != null) sb.Append($" {pn}:{t.name}"); }
+                        }
+                    }
+            string P(HumanBodyBones b) { var t = Bone(b); return t ? t.position.ToString("F3") : "none"; }
+            sb.Append($"\n  hips {P(HumanBodyBones.Hips)}, neck {P(HumanBodyBones.Neck)}, head {P(HumanBodyBones.Head)}, eyes {P(HumanBodyBones.LeftEye)} {P(HumanBodyBones.RightEye)}, upper arms {P(HumanBodyBones.LeftUpperArm)} {P(HumanBodyBones.RightUpperArm)}, feet {P(HumanBodyBones.LeftFoot)}");
+            Debug.Log(sb.ToString());
+            StartCoroutine(Snap());
+        }
+        // save what the stage camera renders to Logs/stage.png, with a count of the pixels that aren't see-through
+        System.Collections.IEnumerator Snap()
+        {
+            for (int i = 0; i < 3; i++) yield return new WaitForEndOfFrame();
+            var prev = RenderTexture.active; RenderTexture.active = rt;
+            var tex = new Texture2D(rt.width, rt.height, TextureFormat.RGBA32, false);
+            tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0); tex.Apply();
+            RenderTexture.active = prev;
+            var px = tex.GetPixels32(); int solid = 0, coloured = 0;
+            foreach (var p in px) { if (p.a > 25) solid++; if (p.r + p.g + p.b > 30) coloured++; }
+            Debug.Log($"[Dream] stage render: {solid} of {px.Length} pixels solid, {coloured} coloured");
+            foreach (var v in views)
+            {
+                var bg = v.resolvedStyle.backgroundImage;
+                Debug.Log($"[Dream] view {v.GetType().Name}: world {v.worldBound}, rt {(bg.renderTexture != null ? bg.renderTexture.name : "none")}, tex {(bg.texture != null)}, display {v.resolvedStyle.display}, vis {v.resolvedStyle.visibility}, opacity {v.resolvedStyle.opacity}, tint {v.resolvedStyle.unityBackgroundImageTintColor}, children {v.childCount}, panel {(v.panel != null)}");
+                for (var p = v.parent; p != null; p = p.parent)
+                    if (p.resolvedStyle.opacity < 0.99f || p.resolvedStyle.display == DisplayStyle.None || p.resolvedStyle.visibility == Visibility.Hidden)
+                        Debug.Log($"[Dream]   hidden by {p.name}/{string.Join(".", p.GetClasses())}: opacity {p.resolvedStyle.opacity}, display {p.resolvedStyle.display}");
+            }
+            try { System.IO.File.WriteAllBytes(System.IO.Path.Combine(Application.dataPath, "..", "Logs", "stage.png"), tex.EncodeToPNG()); } catch (Exception) { }
+            Destroy(tex);
+        }
+#endif
         public Transform Bone(HumanBodyBones b) => body?.Bone(b);
+        public GameObject BodyRoot => body?.Root;
 
         static void SetLayer(GameObject go, int layer)
         {

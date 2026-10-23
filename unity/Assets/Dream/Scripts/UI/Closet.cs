@@ -26,7 +26,7 @@ namespace CFDream.UI
             string cur = Game.ClosetCat; string slot = "outfit";
             foreach (var o in cats) if (o is List<object> a && a.Count >= 3 && a[0] as string == cur) slot = a[2] as string;
 
-            var head = Bits.PageHead("Closet", s, Bits.FitChip(s), Bits.IconBtn("tag", () => Redeem(s), "Redeem a code"), Bits.IconBtn("bookmark", () => Fits(s), "Saved fits"));
+            var head = Bits.PageHead("Closet", s, Bits.FitChip(s), Bits.IconBtn("tag", () => Redeem(s), "Redeem a code"), Bits.IconBtn("bookmark", () => Fits(s), "Saved fits"), Bits.IconBtn("face", Game.StartRestyle, "Restyle your look"));
             var stage = Stage(s, land ? -1 : 290);
             var rail = Rail(s, cats, cur);
             var wearing = Wearing(s, slot, s.Eq(slot));

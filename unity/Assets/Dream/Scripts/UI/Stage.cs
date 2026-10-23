@@ -46,6 +46,13 @@ namespace CFDream.UI
             else view = portrait;
             holder.Add(view);
             st.Add(holder);
+            // a stage that fills its column: size the view to the stage once it's laid out (4:5, like the render)
+            if (height <= 0 && view is CharacterView)
+                st.RegisterCallback<GeometryChangedEvent>(e =>
+                {
+                    float hh = st.layout.height; if (hh < 40 || Mathf.Abs(view.resolvedStyle.height - hh) < 1) return;
+                    view.style.height = hh; view.style.width = Mathf.Min(hh * 0.8f, st.layout.width);
+                });
             refresh = () =>
             {
                 portrait.MarkDirtyRepaint();
@@ -143,6 +150,16 @@ namespace CFDream.UI
 
         public static VisualElement PageHead(string title, State s, params VisualElement[] right)
         {
+            // landscape panes are narrow: title on its own line, the controls under it
+            if (DreamApp.Landscape)
+            {
+                var col = U.Col().Cls("page-head", "stacked");
+                col.Add(U.T(title, "page-title", Fonts.Disp));
+                var tools = U.Row().Cls("page-tools");
+                foreach (var x in right) if (x != null) tools.Add(x);
+                col.Add(tools);
+                return col;
+            }
             var r = U.Row().Cls("page-head");
             r.Add(U.T(title, "page-title", Fonts.Disp).Grow());
             foreach (var x in right) if (x != null) r.Add(x);

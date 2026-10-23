@@ -19,3 +19,10 @@ MemoryCaptures/
 *.VC.db
 *.apk
 *.aab
+
+# UMA 3 comes from the Asset Store (1.4 GB): import it in Unity, not through git
+Assets/UMA/
+Assets/UMA.meta
+# made by Dream > Set up 3D characters, points at UMA assets
+Assets/Dream/Resources/Dream/UMARefs.asset
+Assets/Dream/Resources/Dream/UMARefs.asset.meta
