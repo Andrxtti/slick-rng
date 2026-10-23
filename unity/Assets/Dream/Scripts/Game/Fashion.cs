@@ -19,6 +19,7 @@ namespace CFDream
 
         public static Meta MetaOf(string slot, string id)
         {
+            var bm = Character.Wardrobe.MetaFor(slot, id); if (bm != null) return bm; // brand packs
             var m = J.L(DB.Obj("DR_META"), slot + ":" + id);
             if (m == null && slot == "patch" && id == "haunt") return new Meta { grade = "rare", brand = "Live event", story = "Live event exclusive: Haunted Riverside. Only during the real Halloween run." };
             if (m == null) return new Meta();

@@ -37,7 +37,7 @@ namespace CFDream.UI
             if (s.newItems.Count != before) s.Save();
             return col;
         }
-        static string CatOf(string outfitId) => J.S(DB.Obj("DR_OUTFIT_CAT"), outfitId, "shirts");
+        static string CatOf(string outfitId) => Character.Wardrobe.Category(outfitId) ?? J.S(DB.Obj("DR_OUTFIT_CAT"), outfitId, "shirts");
 
         // ------------------------------------------------------------ your fit
         static VisualElement FitCard(State s)

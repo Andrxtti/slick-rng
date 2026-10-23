@@ -49,6 +49,7 @@ namespace CFDream.EditorTools
 
             PlayerSettings.SplashScreen.backgroundColor = new Color32(11, 10, 8, 255);
             Icons();
+            Materials3D();
             AssetDatabase.SaveAssets();
             Debug.Log($"[Dream] Mobile settings applied: {Product} ({AppId}) {Version}, portrait + landscape, ARM64, Android 10+, iOS 15+");
         }
@@ -88,6 +89,32 @@ namespace CFDream.EditorTools
                 }
             }
             catch (Exception e) { Debug.LogWarning("[Dream] Adaptive icons skipped: " + e.GetBaseException().Message); }
+        }
+
+        // The 3D character's jewellery, glasses and hats tint copies of two materials. Keeping them as assets in
+        // Resources means the URP Lit shader (opaque and see-through) ships in every build.
+        [MenuItem("Dream/Set up 3D materials", priority = 2)]
+        public static void Materials3D()
+        {
+            const string dir = "Assets/Dream/Resources/Dream/Materials";
+            var sh = Shader.Find("Universal Render Pipeline/Lit");
+            if (sh == null) { Debug.LogWarning("[Dream] URP Lit shader not found; 3D materials skipped"); return; }
+            if (!AssetDatabase.IsValidFolder(dir)) { Directory.CreateDirectory(dir); AssetDatabase.Refresh(); }
+            Material Make(string name, bool glass)
+            {
+                string path = dir + "/" + name + ".mat";
+                var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (m == null) { m = new Material(sh); AssetDatabase.CreateAsset(m, path); }
+                m.shader = sh;
+                m.SetColor("_BaseColor", glass ? new Color(1, 1, 1, 0.15f) : Color.white);
+                m.SetFloat("_Smoothness", glass ? 0.95f : 0.5f);
+                if (glass) CFDream.Character.Mats.MakeTransparent(m);
+                m.EnableKeyword("_EMISSION"); m.SetColor("_EmissionColor", Color.black); // keep the glow variant
+                EditorUtility.SetDirty(m);
+                return m;
+            }
+            Make("Lit", false); Make("Glass", true);
+            AssetDatabase.SaveAssets();
         }
 
         [MenuItem("Dream/Build Android APK", priority = 20)]

@@ -90,6 +90,7 @@ namespace CFDream
                 ClassCombos.Add(combos);
             }
             Story.ApplyOverrides();
+            Character.Wardrobe.Load(); // built-in 3D pieces and brand packs (Resources/Brands/*/brand.json)
         }
 
         static Scene ParseScene(string id, Dictionary<string, object> d)

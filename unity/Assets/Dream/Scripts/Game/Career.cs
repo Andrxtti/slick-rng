@@ -47,6 +47,9 @@ namespace CFDream
             { "ride:bus", "" }, { "ride:hatch", "peak:5000" }, { "ride:coupe", "peak:50000" }, { "ride:sedan", "peak:250000" }, { "ride:super", "peak:2000000" }, { "ride:jet", "title:titan" },
             { "patch:none", "" }, { "patch:grind", "streak:3" }, { "patch:tavern", "flag:cashWin" }, { "patch:site", "title:ring" }, { "patch:energy", "title:bracelet" }, { "patch:global", "title:me" },
         };
+        // brand packs add their own items with the same rule codes (plus "redeem": only a code unlocks it)
+        public static void AddRule(string key, string rule) { Rule[key] = rule ?? "redeem"; }
+
         public static bool Test(State s, ItemDef it)
         {
             if (!Rule.TryGetValue(it.Key, out var r)) return false;
@@ -62,6 +65,10 @@ namespace CFDream
                 case "ch": return s.ch >= int.Parse(v);
                 case "titles": return s.TitleCount >= int.Parse(v);
                 case "title": return s.Title(v) >= 1;
+                case "level": return Progression.LevelOf(s.pg.xp).lvl >= int.Parse(v);
+                case "event": return s.events.TryGetValue(v, out var er) && er.played > 0;
+                case "won": return s.events.TryGetValue(v, out var ew) && ew.wins > 0;
+                case "redeem": return false;
             }
             return false;
         }
