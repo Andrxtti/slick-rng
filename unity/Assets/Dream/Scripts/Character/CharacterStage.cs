@@ -148,7 +148,9 @@ namespace CFDream.Character
             float aspect = cam.targetTexture != null ? cam.targetTexture.width / (float)cam.targetTexture.height : 0.62f;
             cam.fieldOfView = Mathf.Clamp(2 * Mathf.Atan(Mathf.Tan(29f * Mathf.Deg2Rad) / aspect) * Mathf.Rad2Deg, 34f, 80f);
             var target = new Vector3(room.W * 0.04f, 0.7f, -room.D * 0.06f);
-            var dir = new Vector3(0.45f, 0.9f, 1f).normalized;
+            // a phone held upright looks down more steeply, so the floor fills the tall screen
+            float tall = Mathf.Clamp01((1f - aspect) / 0.5f);
+            var dir = Vector3.Lerp(new Vector3(0.45f, 0.9f, 1f), new Vector3(0.3f, 1.55f, 1f), tall).normalized;
             float W = room.W / 2, D = room.D / 2, H = room.H;
             var pts = new[] { new Vector3(-W, 0, -D), new Vector3(W, 0, -D), new Vector3(-W, 0, D), new Vector3(W, 0, D), new Vector3(-W, H, -D), new Vector3(W, H, -D), new Vector3(-W, H, D) };
             bool Fits(float dist)

@@ -132,6 +132,7 @@ namespace CFDream.EditorTools
         // the web version: our own phone-first page (safe area, home-screen icon), gzip that works on any static host
         static void WebSettings()
         {
+            PlayerSettings.SplashScreen.show = false;   // the game has its own title screen; saves a few MB on the web
             PlayerSettings.WebGL.template = "PROJECT:Dream";
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
             PlayerSettings.WebGL.decompressionFallback = true;

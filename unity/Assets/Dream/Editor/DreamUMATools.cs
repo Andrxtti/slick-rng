@@ -79,10 +79,12 @@ namespace CFDream.EditorTools
             if (dcaP != null && dcaP.umaAdditionalRecipes != null)
                 foreach (var ar in dcaP.umaAdditionalRecipes) { KeepRecipe(ar); if (ar != null) sb.AppendLine("keep avatar recipe " + ar.name); }
             int wardrobe = 0;
+            var wanted = CFDream.Character.UMABody.Wanted().Select(n => n.Replace("_Recipe", "")).Distinct().ToList();
             foreach (var w in idx.GetAllAssets<UMAWardrobeRecipe>())
             {
                 if (w == null || w.compatibleRaces == null || !w.compatibleRaces.Any(KeepRaces.Contains)) continue;
                 if (DropWardrobe.Any(d => w.name.IndexOf(d, StringComparison.OrdinalIgnoreCase) >= 0)) continue;
+                if (!wanted.Any(n => w.name.StartsWith(n, StringComparison.OrdinalIgnoreCase))) continue;   // only what the game asks for
                 KeepRecipe(w); wardrobe++;
             }
             sb.AppendLine($"keep {wardrobe} wardrobe recipes");
@@ -114,9 +116,11 @@ namespace CFDream.EditorTools
         // UMA ships 4K textures; a phone browser needs a fraction of that. Caps every texture the trimmed library uses
         // at `size` for the web build only (an import override, so desktop and source files keep full resolution).
         [MenuItem("Dream/3D characters/Shrink UMA textures for web", priority = 8)]
-        public static void ShrinkForWeb() => Shrink("WebGL", 1024);
+        public static void ShrinkForWeb() { Shrink("WebGL", 1024, null); Shrink("WebGL", 512, Detail); }
+        // normal, gloss, AO and detail maps carry less you can see: they go smaller
+        static readonly string[] Detail = { "_NM", "_SG", "Normal", "Gloss", "Detail", "_AO", ".AO", "_N_", "Mask" };
 
-        static void Shrink(string platform, int size)
+        static void Shrink(string platform, int size, string[] only)
         {
             var idx = UMAAssetIndexer.Instance; if (idx == null) return;
             var paths = idx.SerializedItems.Where(ai => ai != null && !string.IsNullOrEmpty(ai._Path)).Select(ai => ai._Path).Distinct().ToArray();
@@ -128,6 +132,7 @@ namespace CFDream.EditorTools
                 foreach (var p in deps)
                 {
                     if (!(AssetImporter.GetAtPath(p) is TextureImporter ti)) continue;
+                    if (only != null && !only.Any(k => Path.GetFileName(p).IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0)) continue;
                     seen++;
                     var ps = ti.GetPlatformTextureSettings(platform);
                     if (ps.overridden && ps.maxTextureSize <= size) continue;

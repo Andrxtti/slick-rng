@@ -199,6 +199,14 @@ namespace CFDream.Character
         }
 
         // ------------------------------------------------------------ the wardrobe
+        // every wardrobe recipe the game can ask UMA for (the editor's library trim keeps these and drops the rest)
+        public static IEnumerable<string> Wanted()
+        {
+            foreach (var m in new[] { HairMap, BeardMap, BrowMap, TopMap }) foreach (var a in m.Values) foreach (var n in a) yield return n;
+            foreach (var n in new[] { "Senior_U_Wardrobe", "Adult_M_Wardrobe", "Freckled_Light_U_Wardrobe", "male_sweatpants_black_Recipe", "male_sportpants_alt_black_Recipe",
+                                      "male_shoes_tall_Recipe", "male_shoe_low_white.001_Recipe", "shoe_low_white_Recipe", "male_jacket_hive_Recipe", "male_hoodie_grey_Recipe" }) yield return n;
+        }
+
         static readonly Dictionary<string, string[]> HairMap = new Dictionary<string, string[]>
         {
             // UMA 3's own card hair first: it takes the hair colour. The older bb_ cuts stay as a fallback for the short styles.

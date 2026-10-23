@@ -68,6 +68,7 @@ namespace CFDream.UI
                 stage.Show(ride); stage.Begin();
                 float metres = stage.Rig.bounds.size.x;
                 float lenPx = metres * 100 * s;                    // the painting's scale: about 100 px a metre
+                lenPx = Mathf.Min(lenPx, cw * (ride == "bus" ? 0.95f : 0.72f));   // on a tall phone the painting is huge; keep the ride to the screen
                 carW = lenPx / Mathf.Max(0.2f, stage.LengthU); carH = carW / 2;
                 float lane = offY + laneY * s;
                 carTop = lane - (1 - stage.GroundV) * carH;

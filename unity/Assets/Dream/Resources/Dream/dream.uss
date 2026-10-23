@@ -452,10 +452,10 @@ Label.slider-l { width: 104px; font-size: 13px; color: #d6ccb8; }
 .trip-title { position: absolute; left: 0; right: 0; align-items: center; opacity: 0; translate: 0 10px; transition-property: opacity, translate; transition-duration: 0.6s, 0.6s; transition-timing-function: ease-out-cubic, ease-out-cubic; }
 .trip-title.in { opacity: 1; translate: 0 0; }
 .trip-title.land { align-items: flex-start; left: 6%; }
-Label.trip-k { font-size: 13px; letter-spacing: 5px; color: #7fe9ff; margin-bottom: 2px; }
+Label.trip-k { font-size: 13px; letter-spacing: 5px; color: #7fe9ff; margin-bottom: 2px; text-shadow: 0 1px 5px rgba(20, 0, 30, 0.9); }
 Label.trip-place { font-size: 40px; color: #fff3f9; -unity-font-style: bold; white-space: normal; }
 .trip-title.port Label.trip-place { font-size: 32px; -unity-text-align: middle-center; }
-Label.trip-sub { font-size: 14px; color: #ffc4e1; margin-top: 2px; }
+Label.trip-sub { font-size: 14px; color: #ffe4f1; margin-top: 2px; text-shadow: 0 1px 6px rgba(20, 0, 30, 0.95); }
 .trip-ride { position: absolute; right: 16px; align-items: center; background-color: rgba(10, 4, 20, 0.55); border-radius: 14px; padding: 5px 10px; }
 Label.trip-ride-t { font-size: 12px; color: #c9f6ff; margin-left: 6px; letter-spacing: 1px; }
 Label.skip-hint { position: absolute; right: 14px; top: 10px; font-size: 11px; color: rgba(255, 255, 255, 0.45); letter-spacing: 1px; }
@@ -478,7 +478,7 @@ Label.cf-ev { margin-top: 4px; font-size: 12px; color: #7d6e60; }
 .room-labels, .room-fx, .room-haze { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
 .room-haze { background-color: rgba(150, 110, 200, 1); opacity: 0; }
 .room-hud { position: absolute; left: 0; right: 0; top: 0; padding: 10px 16px 18px 16px; background-color: rgba(11, 10, 8, 0.55); }
-.room-chip { position: absolute; translate: -50% -100%; align-items: center; padding: 4px 9px 4px 6px; border-radius: 14px; background-color: rgba(19, 17, 13, 0.82); border-width: 1px; border-color: rgba(217, 179, 108, 0.45); }
+.room-chip { position: absolute; translate: -50% -100%; align-items: center; padding: 4px 10px; border-radius: 14px; background-color: rgba(19, 17, 13, 0.82); border-width: 1px; border-color: rgba(217, 179, 108, 0.45); }
 Label.room-chip-i { font-size: 13px; margin-right: 4px; }
 Label.room-chip-t { font-size: 12px; color: #f3ecdc; }
 .room-bubble { position: absolute; translate: -50% -100%; max-width: 230px; padding: 8px 12px; border-radius: 14px; background-color: rgba(248, 244, 236, 0.96); }
