@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="The Dream">
+  <meta name="theme-color" content="#0b0a08">
+  <title>The Dream</title>
+  <link rel="apple-touch-icon" href="TemplateData/icon-180.png">
+  <link rel="icon" type="image/png" href="TemplateData/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b0a08; overflow: hidden; overscroll-behavior: none;
+      -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+    /* the game lives inside the safe area; the notch and home bar stay dark */
+    #wrap { position: fixed; left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px);
+      top: env(safe-area-inset-top, 0px); bottom: env(safe-area-inset-bottom, 0px); }
+    #unity-canvas { width: 100%; height: 100%; display: block; background: #0b0a08; outline: none; }
+    #load { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #d9b36c; font: 600 11px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .22em; text-transform: uppercase; }
+    #load h1 { font: 400 40px/1.1 "Didot", "Bodoni 72", Georgia, serif; letter-spacing: 0; text-transform: none; color: #f4dfa6; margin: 10px 0 22px; }
+    #bar { width: 180px; height: 4px; background: #2b251c; border-radius: 2px; overflow: hidden; }
+    #fill { height: 100%; width: 0; background: #d9b36c; transition: width .2s; }
+    #note { margin-top: 14px; color: #6f6555; letter-spacing: .08em; text-transform: none; font-weight: 400; font-size: 12px; text-align: center; max-width: 80%; }
+    #note.err { color: #e8705a; }
+  </style>
+</head>
+<body>
+  <div id="wrap"><canvas id="unity-canvas" tabindex="-1"></canvas></div>
+  <div id="load"><div>Confirmed Fire</div><h1>The Dream</h1><div id="bar"><div id="fill"></div></div><div id="note">Loading the tables…</div></div>
+  <script>
+    var canvas = document.getElementById("unity-canvas"), load = document.getElementById("load"), fill = document.getElementById("fill"), note = document.getElementById("note");
+    var config = {
+      arguments: [],
+      dataUrl: "Build/TheDream-Web.data.unityweb",
+      frameworkUrl: "Build/TheDream-Web.framework.js.unityweb",
+      codeUrl: "Build/TheDream-Web.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "Confirmed Fire",
+      productName: "The Dream",
+      productVersion: "0.1.0",
+      // sharp text on retina phones without rendering more pixels than the GPU needs
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2.5),
+      matchWebGLToCanvasSize: true,
+      showBanner: function (msg, type) { if (type === "error") { note.textContent = msg; note.className = "err"; load.style.display = "flex"; } else console.warn(msg); },
+    };
+    if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(function () {});
+    // a pinch or double-tap zoom on iPhone would fight the game's own gestures
+    document.addEventListener("gesturestart", function (e) { e.preventDefault(); }, { passive: false });
+    var script = document.createElement("script");
+    script.src = "Build/TheDream-Web.loader.js";
+    script.onload = function () {
+      createUnityInstance(canvas, config, function (p) { fill.style.width = (100 * p) + "%"; })
+        .then(function () { load.style.display = "none"; })
+        .catch(function (m) { note.textContent = String(m); note.className = "err"; });
+    };
+    script.onerror = function () { note.textContent = "Couldn't load the game files. Check your connection and reload."; note.className = "err"; };
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>
