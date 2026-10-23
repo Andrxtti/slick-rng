@@ -89,78 +89,141 @@ namespace CFDream.UI
         // ------------------------------------------------------------ the character creator
         static List<object> Opt(string key) => DB.List(key) ?? new List<object>();
 
+        public static string CreateCat = "hair", HairMode = "style";
+        static readonly (string id, string label, string icon)[] CreateCats = { ("skin", "Skin", "skin"), ("face", "Face", "face"), ("hair", "Hair", "hair"), ("eyes", "Eyes", "eye"), ("beard", "Beard", "beard"), ("sculpt", "Sculpt", "sculpt") };
+
         static VisualElement Create()
         {
-            var d = Game.Draft; bool re = Game.Restyle;
-            var fig = re ? new Fig { look = d, eq = Game.State.eq, dye = Game.State.dye, fin = Game.State.fin } : Fig.Of(d, new State().eq);
-            var s = Page("create");
+            var d = Game.Draft; bool re = Game.Restyle; var st = Game.State;
+            var eq = re ? st.eq : new State().eq;
+            var fig = re ? new Fig { look = d, eq = st.eq, dye = st.dye, fin = st.fin } : Fig.Of(d, eq);
             bool land = DreamApp.Landscape;
-            if (land) s.AddToClassList("two-pane");
-            var top = U.Div("create-top");
-            var portrait = new Portrait(fig, 150);
-            top.Add(portrait);
-            var nameCol = U.Col().Grow();
-            nameCol.Add(U.Kicker(re ? "Restyle" : "Create your player"));
-            var tf = new TextField { value = Game.DraftName, maxLength = 18 }; tf.AddToClassList("name-field"); Fonts.Use(tf, Fonts.Semi);
-            tf.RegisterValueChangedCallback(e => Game.DraftName = e.newValue);
-            nameCol.Add(U.Hint("Your name").Mt(4)); nameCol.Add(tf);
-            nameCol.Add(U.Hint(re ? "Clothes stay on. Change your face, hair and body here." : "You'll earn every piece of clothing. This is just you.").Mt(6));
-            top.Add(nameCol);
-            s.Add(top);
-
-            var sv = Scroll(); var body = U.Div("pad");
+            var s = Page("create");
             void Changed() => Game.Render();
-            body.Add(Section("Skin tone", Swatches(Opt("DR_SKIN"), d.skin, i => { d.skin = i; Changed(); })));
-            body.Add(Section("Hair", Chips(Opt("DR_HAIR"), d.hair, v => { d.hair = v; Changed(); })));
-            body.Add(Section("Hair colour", Swatches(Opt("DR_HAIRC"), d.hairC, i => { d.hairC = i; Changed(); })));
-            body.Add(Section("Eye colour", Swatches(Opt("DR_EYEC"), d.eyeC, i => { d.eyeC = i; Changed(); })));
-            body.Add(Section("Brows", Chips(Opt("DR_BROWS"), d.brows, v => { d.brows = v; Changed(); })));
-            body.Add(Section("Face shape", Chips(Opt("DR_FACES"), d.face, v => { d.face = v; Changed(); })));
-            body.Add(Section("Facial hair", Chips(Opt("DR_FACIAL"), d.facial, v => { d.facial = v; Changed(); })));
-            body.Add(Section("Age", Chips(Opt("DR_AGES"), d.age, v => { d.age = v; Changed(); })));
-            var fr = U.Row().Cls("wrap"); fr.Add(Toggle("Freckles", d.freck, () => { d.freck = !d.freck; Changed(); })); body.Add(Section("Details", fr));
 
-            // sculpt: every slider redraws the portrait live without rebuilding the screen
-            var sc = U.Card("sculpt");
-            var head = U.Row(); head.Add(U.H3("Sculpt").Grow());
-            head.Add(U.Btn("Reset", () => { d.sc.Clear(); Changed(); }, "ghost small"));
-            head.Add(U.Btn("Random", () => { var r = new System.Random(); foreach (var g in Opt("DR_SCULPT")) foreach (var kv in Pairs(g)) d.sc[kv] = Math.Round(r.NextDouble() * 1.4 - 0.7, 2); Changed(); }, "ghost small"));
-            sc.Add(head);
+            // your name, and a dice for a random start
+            var head = U.Row().Cls("create-head");
+            var nameCol = U.Col().Grow();
+            nameCol.Add(U.T(re ? "Restyle" : "Create your player", "create-k", Fonts.Semi));
+            var nr = U.Row().Cls("name-row");
+            var tf = new TextField { value = Game.DraftName, maxLength = 18 }; tf.AddToClassList("name-field"); tf.AddToClassList("name-big"); Fonts.Use(tf, Fonts.Disp);
+            tf.RegisterValueChangedCallback(e => Game.DraftName = e.newValue);
+            tf.style.flexGrow = 1;
+            nr.Add(tf); nr.Add(new Icon("pencil", 18, C.Mute));
+            nameCol.Add(nr);
+            head.Add(nameCol);
+            if (!re) head.Add(Bits.IconBtn("dice", () => { Randomize(d); Changed(); }, "Randomize your look"));
+
+            // the stage: close on the face while you work on the head
+            Func<Character.CharacterSpec> spec = () => Character.CharacterSpec.From(d, eq, re ? st.dye : null, re ? st.fin : null, re ? st : null, Game.DraftName);
+            var stage = StageView.Make(fig, spec, land ? -1 : 270, CreateCat == "skin" ? "bust" : "face", out var refresh);
+
+            // what you're changing
+            var rail = U.Row().Cls("cat-rail");
+            foreach (var (id, label, icon) in CreateCats)
+            {
+                bool on = id == CreateCat;
+                var b = U.Col().Cls("cat-b", on ? "on" : "");
+                var ci = U.Div("cat-i").NoPick(); ci.Add(new Icon(icon, 22, on ? C.Ink : C.Mute)); b.Add(ci);
+                b.Add(U.T(label, "cat-t", on ? Fonts.Semi : Fonts.Medium).NoPick());
+                string k = id; b.Tap(() => { CreateCat = k; Changed(); });
+                rail.Add(b);
+            }
+
+            // the sheet: one category at a time, as pictures where it helps
+            var sheet = U.Col().Cls("sheet");
+            var sv = Scroll(); var body = U.Div("sheet-body");
+            switch (CreateCat)
+            {
+                case "skin":
+                    body.Add(SheetLabel("Skin tone")); body.Add(Swatches(Opt("DR_SKIN"), d.skin, i => { d.skin = i; Changed(); }));
+                    body.Add(SheetLabel("Age")); body.Add(Bits.Segmented(Options("DR_AGES"), d.age, v => { d.age = v; Changed(); }));
+                    body.Add(SheetLabel("Details")); var fr = U.Row().Cls("wrap"); fr.Add(Toggle("Freckles", d.freck, () => { d.freck = !d.freck; Changed(); })); body.Add(fr);
+                    break;
+                case "face":
+                    body.Add(SheetLabel("Face shape")); body.Add(LookTiles(d, eq, "DR_FACES", d.face, (l, v) => l.face = v, v => { d.face = v; Changed(); }));
+                    body.Add(SheetLabel("Brows")); body.Add(LookTiles(d, eq, "DR_BROWS", d.brows, (l, v) => l.brows = v, v => { d.brows = v; Changed(); }));
+                    break;
+                case "eyes":
+                    body.Add(SheetLabel("Eye colour")); body.Add(Swatches(Opt("DR_EYEC"), d.eyeC, i => { d.eyeC = i; Changed(); }));
+                    body.Add(SheetLabel("Shape")); body.Add(Sliders(d, "Eyes", refresh));
+                    break;
+                case "beard":
+                    body.Add(SheetLabel("Facial hair")); body.Add(LookTiles(d, eq, "DR_FACIAL", d.facial, (l, v) => l.facial = v, v => { d.facial = v; Changed(); }));
+                    break;
+                case "sculpt":
+                    {
+                        var hd = U.Row().Mt(2); hd.Add(U.Hint("Drag to shape the face. Small moves go a long way.").Grow());
+                        hd.Add(U.Btn("Reset", () => { d.sc.Clear(); Changed(); }, "small"));
+                        hd.Add(U.Btn("Random", () => { var r = new System.Random(); foreach (var g in Opt("DR_SCULPT")) foreach (var kv in Pairs(g)) d.sc[kv] = Math.Round(r.NextDouble() * 1.4 - 0.7, 2); Changed(); }, "small"));
+                        body.Add(hd);
+                        foreach (var g in Opt("DR_SCULPT")) if (g is List<object> gl && gl.Count >= 2 && gl[0] as string != "Eyes") { body.Add(SheetLabel(gl[0] as string)); body.Add(Sliders(d, gl[0] as string, refresh)); }
+                        break;
+                    }
+                default:
+                    body.Add(Bits.Segmented(new[] { ("style", "Style"), ("colour", "Colour") }, HairMode, v => { HairMode = v; Changed(); }));
+                    if (HairMode == "colour") body.Add(Swatches(Opt("DR_HAIRC"), d.hairC, i => { d.hairC = i; Changed(); }).Mt(14));
+                    else body.Add(LookTiles(d, eq, "DR_HAIR", d.hair, (l, v) => l.hair = v, v => { d.hair = v; Changed(); }).Mt(14));
+                    break;
+            }
+            body.Add(U.Space(12));
+            sv.Add(body); sheet.Add(sv);
+            var foot = U.Row().Cls("sheet-foot");
+            if (re) { foot.Add(U.Btn("Cancel", Game.CancelRestyle, "grow")); foot.Add(U.Btn("Save look", () => Game.SaveRestyle(Game.DraftName), "gold grow")); }
+            else foot.Add(U.Btn("Start the story", () => Game.Begin(Game.DraftName), "gold grow"));
+            sheet.Add(foot);
+
+            if (land)
+            {
+                s.AddToClassList("two-pane");
+                var left = U.Col().Cls("pane-left"); left.Add(head); left.Add(stage); s.Add(left);
+                var right = U.Col().Cls("grow"); right.Add(rail); right.Add(sheet); s.Add(right);
+            }
+            else { s.Add(head); s.Add(stage); s.Add(rail); s.Add(sheet); }
+            return s;
+        }
+
+        static Label SheetLabel(string t) => U.T(t, "sheet-label", Fonts.Semi);
+        static List<(string, string)> Options(string key)
+        {
+            var l = new List<(string, string)>();
+            foreach (var o in Opt(key)) if (o is List<object> kv && kv.Count >= 2) l.Add((kv[0] as string, kv[1] as string));
+            return l;
+        }
+        // one tile per option, each showing your face with that option
+        static VisualElement LookTiles(Look d, Dictionary<string, string> eq, string key, string sel, Action<Look, string> apply, Action<string> pick)
+        {
+            string outfit = "tee";
+            if (eq != null && eq.TryGetValue("outfit", out var worn) && !string.IsNullOrEmpty(worn) && worn != "none") outfit = worn;
+            var wear = new Dictionary<string, string> { { "outfit", outfit } };
+            var tiles = new List<VisualElement>();
+            foreach (var (id, label) in Options(key))
+            {
+                var l = d.Clone(); apply(l, id);
+                var pic = new Portrait(Fig.Of(l, wear), 66, false);
+                string v = id; tiles.Add(Bits.Tile(pic, label, id == sel, () => pick(v)));
+            }
+            return Bits.Tiles(tiles);
+        }
+        // sculpt sliders for one group; they reshape the face live without rebuilding the screen
+        static VisualElement Sliders(Look d, string group, Action refresh)
+        {
+            var col = U.Col().Cls("sliders");
             foreach (var g in Opt("DR_SCULPT"))
             {
-                var gl = g as List<object>; if (gl == null || gl.Count < 2) continue;
-                sc.Add(U.Kicker(gl[0] as string).Mt(10));
+                if (!(g is List<object> gl) || gl.Count < 2 || gl[0] as string != group) continue;
                 foreach (var item in gl[1] as List<object> ?? new List<object>())
                 {
-                    var kv = item as List<object>; if (kv == null || kv.Count < 2) continue;
+                    if (!(item is List<object> kv) || kv.Count < 2) continue;
                     string key = kv[0] as string, label = kv[1] as string;
                     var row = U.Row().Cls("slider-row");
-                    row.Add(U.T(label, "slider-l"));
+                    row.Add(U.T(label, "slider-l", Fonts.Medium));
                     var sl = new Slider(-1, 1) { value = (float)(d.sc.TryGetValue(key, out var v) ? v : 0) }; sl.AddToClassList("sculpt-slider"); sl.style.flexGrow = 1;
-                    sl.RegisterValueChangedCallback(e => { d.sc[key] = Math.Round(e.newValue, 2); portrait.MarkDirtyRepaint(); });
-                    row.Add(sl); sc.Add(row);
+                    sl.RegisterValueChangedCallback(e => { d.sc[key] = Math.Round(e.newValue, 2); refresh?.Invoke(); });
+                    row.Add(sl); col.Add(row);
                 }
             }
-            body.Add(sc);
-            body.Add(U.Space(land ? 24 : 90));
-            sv.Add(body);
-            VisualElement left = null;
-            if (land) { left = U.Col().Cls("pane-left"); left.Add(top); s.Add(left); } // Add re-parents top out of s
-            s.Add(sv);
-
-            var foot = U.Row().Cls("footer");
-            if (re)
-            {
-                foot.Add(U.Btn("Cancel", Game.CancelRestyle, "ghost grow"));
-                foot.Add(U.Btn("Save look", () => Game.SaveRestyle(Game.DraftName), "gold grow"));
-            }
-            else
-            {
-                foot.Add(U.Btn("Randomize", () => { Randomize(d); Changed(); }, "ghost grow"));
-                foot.Add(U.Btn("Start the story", () => Game.Begin(Game.DraftName), "gold grow"));
-            }
-            if (land) { left.Add(U.Spring()); left.Add(foot); } else s.Add(foot);
-            return s;
+            return col;
         }
         static IEnumerable<string> Pairs(object g)
         {
@@ -175,29 +238,14 @@ namespace CFDream.UI
             d.hair = Pick("DR_HAIR") ?? d.hair; d.facial = Pick("DR_FACIAL") ?? d.facial; d.brows = Pick("DR_BROWS") ?? d.brows; d.face = Pick("DR_FACES") ?? d.face;
             d.freck = r.NextDouble() < 0.2;
         }
-        static VisualElement Section(string title, VisualElement content)
-        {
-            var c = U.Div("section"); c.Add(U.Kicker(title)); c.Add(content); return c;
-        }
         static VisualElement Swatches(List<object> colors, int sel, Action<int> pick)
         {
             var row = U.Row().Cls("wrap swatches");
             for (int i = 0; i < colors.Count; i++)
             {
-                int k = i; var sw = U.Div("swatch").Bg(C.H(colors[i] as string));
-                if (i == sel) sw.AddToClassList("on");
+                int k = i; var sw = U.Div("swatch", "big").Bg(C.H(colors[i] as string));
+                if (i == sel) { sw.AddToClassList("on"); sw.Add(new Icon("check", 16, C.H(colors[i] as string).grayscale > 0.6f ? C.Ink : C.Cream, 2.6f)); }
                 sw.Tap(() => pick(k)); row.Add(sw);
-            }
-            return row;
-        }
-        static VisualElement Chips(List<object> opts, string sel, Action<string> pick)
-        {
-            var row = U.Row().Cls("wrap");
-            foreach (var o in opts)
-            {
-                var kv = o as List<object>; if (kv == null || kv.Count < 2) continue;
-                string id = kv[0] as string;
-                row.Add(Toggle(kv[1] as string, id == sel, () => pick(id)));
             }
             return row;
         }
@@ -254,7 +302,7 @@ namespace CFDream.UI
             head.Add(skip);
             s.Add(head);
 
-            var stage = U.Div("scene-stage");
+            var stage = U.Div("scene-stage"); var bottom = U.Div("scene-bottom");
             if (b != null)
             {
                 string text = Story.Text(sc.id, b, sc.i, st);
@@ -278,28 +326,35 @@ namespace CFDream.UI
                 }
                 else
                 {
+                    // the speaker stands on the stage; what they say sits at the bottom
+                    if (fig != null)
+                    {
+                        stage.AddToClassList("speaking");
+                        var spot = U.Div("scene-spot").NoPick();
+                        var big = new Portrait(fig, 230, false); big.AddToClassList("scene-figure"); spot.Add(big);
+                        if (Game.Scene != null && Game.Scene.i > 0 && sc.lastSp == b.sp) stage.Add(spot); else { Enter(spot); stage.Add(spot); }
+                    }
                     beat = U.Div("speech").Cls(b.sp == "you" ? "me" : "");
-                    var who = U.Row().Cls("speech-who");
-                    if (fig != null) who.Add(new Portrait(fig, 74));
-                    var nm = U.Col(); nm.style.marginLeft = 10;
+                    var nm = U.Row().Cls("speech-who");
                     nm.Add(U.T(name, "speech-name", Fonts.Semi).Fg(col));
-                    if (!string.IsNullOrEmpty(role)) nm.Add(U.Hint(role));
-                    who.Add(nm); beat.Add(who);
+                    if (!string.IsNullOrEmpty(role)) nm.Add(U.T(role, "speech-role"));
+                    beat.Add(nm);
                     beat.Add(U.T(U.Esc(text), "speech-t" + (b.big ? " big" : "") + (b.mood == "think" ? " think" : "")));
                 }
                 beat.AddToClassList("beat");
                 Enter(beat);
-                stage.Add(beat);
+                if (b.sp == "n" || b.text) stage.Add(beat); else bottom.Add(beat);
+                sc.lastSp = b.sp;
 
                 if (sc.extra.Count == 0 && b.choice != null)
                 {
                     var ch = U.Col().Cls("choices");
                     for (int i = 0; i < b.choice.Count; i++) { int k = i; ch.Add(U.Btn(b.choice[i].t, () => Game.Choose(k), i == 0 ? "gold wide" : "wide")); }
-                    stage.Add(ch);
+                    bottom.Add(ch);
                 }
-                else stage.Add(U.Hint("Tap to continue").Cls("center tap-hint"));
+                else bottom.Add(U.Hint("Tap to continue").Cls("center tap-hint"));
             }
-            s.Add(stage);
+            s.Add(stage); s.Add(bottom);
             if (b == null || b.choice == null || sc.extra.Count > 0) s.Tap(Game.Advance);
             var dots = U.Row().Cls("dots");
             int total = def.beats.Count; for (int i = 0; i < total; i++) dots.Add(U.Div("dot").Cls(i < sc.i ? "done" : i == sc.i ? "on" : ""));

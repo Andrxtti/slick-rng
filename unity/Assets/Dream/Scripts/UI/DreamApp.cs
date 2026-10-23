@@ -173,6 +173,19 @@ namespace CFDream.UI
             box.Add(row);
             m.Add(box);
         }
+        // a modal panel with a title, a close button and whatever `fill` puts in it
+        public static void Sheet(string title, Action<VisualElement> fill)
+        {
+            var m = I.modal; m.Clear(); m.Show(true);
+            var box = U.Card("modal-box");
+            var hd = U.Row(); hd.Add(U.H2(title).Grow());
+            var x = U.Div("icon-btn"); x.Add(new Icon("close", 18, C.Mute)); x.Tap(CloseModal); hd.Add(x);
+            box.Add(hd);
+            fill?.Invoke(box);
+            m.Add(box);
+        }
+        public static void CloseModal() { if (I != null) { I.modal.Clear(); I.modal.Show(false); } }
+
         public static void Toast(string text)
         {
             var t = I.toast; t.Clear(); t.Add(U.T(text, "toast-t", Fonts.Semi)); t.Show(true); t.RemoveFromClassList("gone");

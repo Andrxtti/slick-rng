@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace CFDream
 {
-    public class ScenePlay { public string id; public int i; public List<Beat> extra = new List<Beat>(); public bool replay; }
+    public class ScenePlay { public string id; public int i; public List<Beat> extra = new List<Beat>(); public bool replay; public string lastSp; }
 
     public static class Story
     {

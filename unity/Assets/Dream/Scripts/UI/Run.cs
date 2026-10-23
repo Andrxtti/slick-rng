@@ -118,12 +118,12 @@ namespace CFDream.UI
 
             if (!answered)
             {
-                col.Add(U.Kicker("Your play").Mt(12));
-                var opts = U.Col().Cls("options");
+                // actions side by side, like a real table: fold, call, raise
+                var opts = U.Row().Cls("options act-row").Mt(14);
                 for (int i = 0; i < sp.acts.Count; i++)
                 {
                     int k = i; string lab = sp.Label(i);
-                    var btn = U.Btn(lab, () => Game.Answer(k), "opt-btn wide " + ActCls(sp.acts[i]));
+                    var btn = U.Btn(lab, () => Game.Answer(k), "opt-btn " + ActCls(sp.acts[i]));
                     opts.Add(btn);
                 }
                 col.Add(opts);

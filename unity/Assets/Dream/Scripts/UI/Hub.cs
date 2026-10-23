@@ -11,85 +11,117 @@ namespace CFDream.UI
 {
     public static class HubView
     {
-        static readonly (string id, string n)[] Tabs = { ("calendar", "Calendar"), ("closet", "Closet"), ("career", "Career"), ("story", "Story") };
+        static readonly (string id, string n, string icon)[] Tabs = { ("calendar", "Play", "play"), ("closet", "Closet", "closet"), ("career", "Career", "career"), ("story", "Story", "story") };
 
         public static VisualElement Build()
         {
             var s = Game.State;
             var page = Screens.Page("hub");
-            var sv = Screens.Scroll();
-            var body = U.Div("pad");
-            if (DreamApp.Landscape)
-            {
-                page.AddToClassList("two-pane");
-                var leftSv = new ScrollView(ScrollViewMode.Vertical); leftSv.AddToClassList("pane-left");
-                leftSv.verticalScrollerVisibility = ScrollerVisibility.Hidden; leftSv.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
-                var lb = U.Div("pad"); lb.Add(Header(s)); lb.Add(Chapter(s)); lb.Add(TabBar(s)); leftSv.Add(lb);
-                page.Add(leftSv);
-            }
-            else { body.Add(Header(s)); body.Add(Chapter(s)); body.Add(TabBar(s)); }
+            var body = U.Div("hub-body");
             switch (Game.Tab)
             {
                 case "closet": body.Add(ClosetView.Build(s)); break;
-                case "career": body.Add(CareerView.Build(s)); break;
-                case "story": body.Add(StoryTab(s)); break;
-                default: body.Add(CalendarTab(s)); break;
+                case "career": body.Add(Simple("Career", s, CareerView.Build(s))); break;
+                case "story": body.Add(Simple("Story", s, StoryTab(s))); break;
+                default: body.Add(Home(s)); break;
             }
-            body.Add(U.Space(40));
-            sv.Add(body); page.Add(sv);
+            page.Add(body);
+            page.Add(NavBar(s));
             return page;
         }
 
-        // ------------------------------------------------------------ header
+        // a plain scrolling page with a title (career, story)
+        static VisualElement Simple(string title, State s, VisualElement content)
+        {
+            var sv = Screens.Scroll(); var pad = U.Div("pad");
+            if (DreamApp.Landscape) pad.AddToClassList("narrow-col");
+            pad.Add(Bits.PageHead(title, s, Bankroll(s, true)));
+            pad.Add(content); pad.Add(U.Space(24));
+            sv.Add(pad);
+            return sv;
+        }
+
+        // ------------------------------------------------------------ the tab bar, always at the bottom
+        static VisualElement NavBar(State s)
+        {
+            var bar = U.Row().Cls("navbar");
+            foreach (var (id, n, icon) in Tabs)
+            {
+                bool on = Game.Tab == id;
+                var t = U.Col().Cls("nav-b", on ? "on" : "");
+                t.Add(new Icon(icon, 24, on ? C.Gold : C.Mute));
+                t.Add(U.T(n, "nav-t", on ? Fonts.Semi : Fonts.Medium).NoPick());
+                if (id == "closet" && s.newItems.Count > 0) t.Add(U.Div("nav-dot").NoPick());
+                string k = id; t.Tap(() => { if (Game.Tab != k) Game.SetTab(k); });
+                bar.Add(t);
+            }
+            return bar;
+        }
+
+        // ------------------------------------------------------------ home: you, your stage, tonight
+        static VisualElement Home(State s)
+        {
+            bool land = DreamApp.Landscape;
+            var head = Header(s);
+            var stage = HomeStage(s, land ? -1 : 300);
+            var list = CalendarTab(s);
+            if (land)
+            {
+                var row = U.Row().Cls("two-pane grow");
+                var left = U.Col().Cls("pane-left"); left.Add(head); left.Add(stage); row.Add(left);
+                var sv = Screens.Scroll(); var pad = U.Div("pad"); pad.Add(Chapter(s)); pad.Add(list); pad.Add(U.Space(24)); sv.Add(pad); row.Add(sv);
+                return row;
+            }
+            var main = Screens.Scroll(); var b = U.Div("pad-top");
+            b.Add(head); b.Add(stage);
+            var rest = U.Div("pad"); rest.Add(Chapter(s)); rest.Add(list); rest.Add(U.Space(24));
+            b.Add(rest); main.Add(b);
+            return main;
+        }
+
         static VisualElement Header(State s)
         {
-            var h = U.Card("hub-head");
-            var row = U.Row();
-            var pt = new Portrait(Fig.Of(s), 64); pt.Tap(() => Game.SetTab("closet")); row.Add(pt);
-            var who = U.Col().Grow(); who.style.marginLeft = 10;
+            var row = U.Row().Cls("home-head");
+            var lv = Progression.LevelOf(s.pg.xp);
+            var ring = Bits.LevelRing(lv.lvl, lv.into / Math.Max(1, lv.need)); ring.Tap(() => Game.SetTab("career")); row.Add(ring);
+            var who = U.Col().Grow(); who.style.marginLeft = 12;
             who.Add(U.T(s.name, "hub-name", Fonts.Disp));
             var title = J.S(DB.Obj("DR_TITLES_COS"), s.pg.eq.TryGetValue("title", out var tt) ? tt : "none", "");
             who.Add(U.Hint(Career.Rep(s) + (tt != null && tt != "none" && !string.IsNullOrEmpty(title) ? " · " + title : "")));
-            var lv = Progression.LevelOf(s.pg.xp);
-            var lvr = U.Row().Mt(6); lvr.Add(U.Chip("Lv " + lv.lvl, C.Gold)); var xb = U.Bar(lv.into / Math.Max(1, lv.need), C.Gold, 5).Grow(); xb.style.marginLeft = 8; lvr.Add(xb);
-            who.Add(lvr);
             row.Add(who);
-            var money = U.Col().Cls("hub-money");
+            row.Add(Bankroll(s, false));
+            var col = U.Col(); col.Add(row);
+            if (s.debt > 0) col.Add(U.Hint($"You owe Slick {U.Money(s.debt)}. Half of every profit goes to him until it's paid.").Cls("debt").Fg(C.Red));
+            return col;
+        }
+
+        static VisualElement Bankroll(State s, bool small)
+        {
+            var money = U.Col().Cls("hub-money", small ? "small" : "");
             money.Add(U.Num(U.Money(s.br), "hub-br").Fg(s.br < 100 ? C.Red : C.Gold2));
-            money.Add(U.T("BANKROLL", "stat-l", Fonts.Bold));
-            row.Add(money);
-            h.Add(row);
-            if (s.debt > 0) h.Add(U.Hint($"You owe Slick {U.Money(s.debt)}. Half of every profit goes to him until it's paid.").Mt(8).Fg(C.Red));
-            return h;
+            money.Add(U.T("Bankroll", "hub-br-l", Fonts.Medium));
+            return money;
+        }
+
+        static VisualElement HomeStage(State s, float h)
+        {
+            var st = StageView.Make(Fig.Of(s), () => Character.CharacterSpec.From(s), h, "full", out _);
+            var chip = Bits.FitChip(s, () => Game.SetTab("closet")); chip.AddToClassList("stage-tl"); st.Add(chip);
+            return st;
         }
 
         static VisualElement Chapter(State s)
         {
             var ch = DB.Chapter(s.ch);
             var c = U.Card("chapter");
-            c.Add(U.Kicker($"{J.S(ch, "n")} · {J.S(ch, "t")}"));
-            c.Add(U.P(J.S(ch, "goal", "")).Cls("goal-t"));
             var pr = Career.ChapterProg(s);
-            if (s.ch >= 1)
-            {
-                c.Add(U.Bar(pr.frac, C.Gold, 6).Mt(8));
-                if (!string.IsNullOrEmpty(pr.text)) c.Add(U.Hint(pr.text).Mt(4));
-            }
+            var top = U.Row();
+            top.Add(U.T($"{J.S(ch, "n")} · {J.S(ch, "t")}", "panel-k", Fonts.Semi).Grow());
+            if (s.ch >= 1 && !string.IsNullOrEmpty(pr.text)) top.Add(U.T(pr.text, "panel-r"));
+            c.Add(top);
+            c.Add(U.P(J.S(ch, "goal", "")).Cls("goal-t"));
+            if (s.ch >= 1) c.Add(U.Bar(pr.frac, C.Gold, 4).Mt(8));
             return c;
-        }
-
-        static VisualElement TabBar(State s)
-        {
-            var bar = U.Row().Cls("tabs");
-            foreach (var (id, n) in Tabs)
-            {
-                var t = U.Div("tab").Cls(Game.Tab == id ? "on" : "");
-                t.Add(U.T(n, "tab-t", Fonts.Semi).NoPick());
-                if (id == "closet" && s.newItems.Count > 0) t.Add(U.Div("tab-dot").NoPick());
-                string k = id; t.Tap(() => Game.SetTab(k));
-                bar.Add(t);
-            }
-            return bar;
         }
 
         // ------------------------------------------------------------ the calendar
@@ -97,15 +129,12 @@ namespace CFDream.UI
         {
             var col = U.Col(); var c = s.cal;
             if (Game.Morning != null && Game.Morning.Count > 0) col.Add(Morning());
-            col.Add(Today(s));
-            if (s.ch >= 1) col.Add(Week(s));
-            if (Game.CalSel > c.d) col.Add(DayPreview(s, Game.CalSel));
             if (c.meet != null && c.meet.d == c.d) col.Add(Meetup(s));
             if (c.inv != null) col.Add(Invite(s));
 
+            col.Add(Tonight(s));
             var today = Calendar.Today(s).Where(x => x.why != "invite").ToList();
             string pick = Career.Pick(s);
-            col.Add(U.Kicker(s.ch == 0 ? "Saturday" : "Tonight").Mt(10));
             if (today.Count == 0) col.Add(U.Card().Kids(U.P("Nothing on the schedule tonight.")));
             foreach (var de in today.OrderByDescending(x => x.ev.id == pick).ThenByDescending(x => x.ev.kind == "mtt" ? x.ev.buyin : 0)) col.Add(EventCard(s, de.ev, de.why, de.ev.id == pick));
 
@@ -113,12 +142,34 @@ namespace CFDream.UI
             {
                 foreach (var L in Calendar.LiveNow()) col.Add(LiveCard(s, L));
                 col.Add(DailyCard(s));
+                col.Add(U.T("Plan ahead", "sec-h", Fonts.Disp).Mt(18).Mb(10));
+                col.Add(Week(s));
+                if (Game.CalSel > c.d) col.Add(DayPreview(s, Game.CalSel));
                 col.Add(Money(s));
                 col.Add(Job(s));
                 col.Add(Majors(s));
                 col.Add(SleepBar(s));
             }
             return col;
+        }
+
+        // "Tonight" with today's date and how many games are left
+        static VisualElement Tonight(State s)
+        {
+            var D = Calendar.Date(s.cal.d); var sl = Calendar.SlotsLeft(s);
+            var r = U.Row().Cls("sec-row");
+            var l = U.Col().Grow();
+            l.Add(U.T(s.ch == 0 ? "Saturday" : "Tonight", "sec-h", Fonts.Disp));
+            l.Add(U.Hint($"{Calendar.Str(s.cal.d, true)} · Year {D.y}"));
+            r.Add(l);
+            var right = U.Col().Cls("sec-right");
+            var pips = U.Row().Cls("pips");
+            for (int i = 0; i < sl.cap; i++) pips.Add(U.Div("pip").Cls(i < sl.used ? "used" : ""));
+            right.Add(pips);
+            string status = s.ch == 0 ? "Prologue" : s.job == "nights" ? $"{sl.left} of {sl.cap} this week" : $"{sl.left} of {sl.cap} games left";
+            right.Add(U.Hint(status));
+            r.Add(right);
+            return r;
         }
 
         static VisualElement Morning()
@@ -130,23 +181,6 @@ namespace CFDream.UI
                 var r = U.Row().Cls("news"); r.Add(U.T(icon, "news-i")); r.Add(U.P(text).Grow()); c.Add(r);
             }
             Screens.Enter(c);
-            return c;
-        }
-
-        static VisualElement Today(State s)
-        {
-            var c = U.Card("today"); var D = Calendar.Date(s.cal.d); var sl = Calendar.SlotsLeft(s);
-            var r = U.Row();
-            var dcol = U.Col().Grow();
-            dcol.Add(U.Kicker($"Year {D.y} · {Calendar.MonL[D.m - 1]}"));
-            dcol.Add(U.H2(Calendar.Str(s.cal.d, true)));
-            string status = s.ch == 0 ? "Prologue" : s.job == "nights" ? $"Day job · {sl.left} of {sl.cap} sessions left this week · payday Friday" : $"Full-time · {sl.left} of {sl.cap} games left today";
-            dcol.Add(U.Hint(status));
-            r.Add(dcol);
-            var pips = U.Row().Cls("pips");
-            for (int i = 0; i < sl.cap; i++) pips.Add(U.Div("pip").Cls(i < sl.used ? "used" : ""));
-            r.Add(pips);
-            c.Add(r);
             return c;
         }
 

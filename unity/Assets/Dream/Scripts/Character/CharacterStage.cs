@@ -78,13 +78,23 @@ namespace CFDream.Character
             var l = go.AddComponent<Light>(); l.type = t; l.color = c; l.intensity = intensity; l.cullingMask = 1 << Layer; l.shadows = LightShadows.None;
         }
 
-        // aim at the upper body of a character about `height` metres tall standing at the pivot
-        void Frame(float height)
+        // aim at a character about `height` metres tall standing at the pivot: "full" (head to toe), "bust"
+        // (chest up) or "face" (for the creator)
+        string framing = "bust";
+        void Frame(float height, string mode = null)
         {
-            float lookY = height * 0.78f, dist = height * 1.55f;
+            framing = mode ?? framing;
+            float lookY, dist;
+            switch (framing)
+            {
+                case "full": lookY = height * 0.53f; dist = height * 2.95f; break;
+                case "face": lookY = height * 0.925f; dist = height * 0.44f; break;
+                default: lookY = height * 0.78f; dist = height * 1.55f; break;
+            }
             cam.transform.localPosition = new Vector3(0, lookY, dist);
-            cam.transform.LookAt(transform.TransformPoint(new Vector3(0, lookY - 0.04f, 0)));
+            cam.transform.LookAt(transform.TransformPoint(new Vector3(0, lookY - 0.04f * (framing == "face" ? 0.3f : 1), 0)));
         }
+        public void Framing(string mode) { if (mode != framing) Frame(1.7f, mode); }
 
         // ------------------------------------------------------------ views
         public void Attach(VisualElement v) { views.Add(v); cam.enabled = HasBody; }
@@ -143,9 +153,10 @@ namespace CFDream.Character
         readonly CharacterSpec spec; readonly VisualElement fallback;
         bool down; float lastX; int pid = -1;
 
-        public CharacterView(CharacterSpec spec, VisualElement fallback2D, float width, float height)
+        readonly string framing;
+        public CharacterView(CharacterSpec spec, VisualElement fallback2D, float width, float height, string framing = "bust")
         {
-            this.spec = spec; fallback = fallback2D;
+            this.spec = spec; fallback = fallback2D; this.framing = framing;
             style.width = width; style.height = height; style.flexShrink = 0;
             AddToClassList("char-view");
             if (!Bodies.Available) { if (fallback != null) Add(fallback); return; }
@@ -159,6 +170,7 @@ namespace CFDream.Character
         void Bind()
         {
             var st = CharacterStage.Get();
+            st.Framing(framing);
             st.Attach(this);
             style.backgroundImage = new StyleBackground(Background.FromRenderTexture(st.Texture));
             style.backgroundSize = new BackgroundSize(BackgroundSizeType.Contain);

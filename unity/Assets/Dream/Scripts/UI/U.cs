@@ -228,7 +228,7 @@ namespace CFDream.UI
         }
         public static VisualElement Chip(string text, Color c, bool solid = false)
         {
-            var ch = Div("chip").Border(C.A(c, 0.55f)).Bg(solid ? c : C.A(c, 0.12f));
+            var ch = Div("chip").Bg(solid ? c : C.A(c, 0.14f));
             ch.Add(T(text, "chip-t", Fonts.Semi).Fg(solid ? C.Ink : c).NoPick());
             return ch;
         }

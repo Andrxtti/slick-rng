@@ -12,79 +12,189 @@ namespace CFDream.UI
     {
         static readonly HashSet<string> Required = new HashSet<string> { "outfit", "home", "ride" };
 
+        public static bool ShowInfo; // the details panel for what's worn in this category
+        static readonly Dictionary<string, string> CatIcon = new Dictionary<string, string>
+        {
+            { "shirts", "shirts" }, { "street", "street" }, { "jackets", "jacket" }, { "formal", "formal" }, { "head", "head" }, { "eyes", "eyes" }, { "chain", "chain" },
+            { "ear", "ear" }, { "ring", "ring" }, { "wrist", "wrist" }, { "watch", "watch" }, { "patch", "patch" }, { "sleeve", "sleeve" }, { "home", "home" }, { "ride", "ride" },
+        };
+
         public static VisualElement Build(State s)
         {
-            var col = U.Col();
-            col.Add(FitCard(s));
+            bool land = DreamApp.Landscape;
             var cats = DB.List("DR_CATS") ?? new List<object>();
-            var catRow = U.Row().Cls("wrap cats");
             string cur = Game.ClosetCat; string slot = "outfit";
-            foreach (var o in cats)
+            foreach (var o in cats) if (o is List<object> a && a.Count >= 3 && a[0] as string == cur) slot = a[2] as string;
+
+            var head = Bits.PageHead("Closet", s, Bits.FitChip(s), Bits.IconBtn("tag", () => Redeem(s), "Redeem a code"), Bits.IconBtn("bookmark", () => Fits(s), "Saved fits"));
+            var stage = Stage(s, land ? -1 : 290);
+            var rail = Rail(s, cats, cur);
+            var wearing = Wearing(s, slot, s.Eq(slot));
+            var grid = Items(s, cur, slot);
+
+            VisualElement root;
+            if (land)
             {
-                var a = o as List<object>; if (a == null || a.Count < 3) continue;
-                string key = a[0] as string, label = a[1] as string, sl = a[2] as string;
-                if (key == cur) slot = sl;
-                bool fresh = s.newItems.Any(k => k.StartsWith(sl + ":") && (sl != "outfit" || CatOf(k.Substring(7)) == key));
-                var chip = Screens.Toggle(label + (fresh ? " •" : ""), key == cur, () => { Game.ClosetCat = key; Game.Render(); });
-                catRow.Add(chip);
+                var row = U.Row().Cls("two-pane grow");
+                var left = U.Col().Cls("pane-left"); var hp = U.Div("pad-x"); hp.Add(head); left.Add(hp); left.Add(stage); row.Add(left);
+                var sv = Screens.Scroll(); var pad = U.Div("pad"); pad.Add(rail); pad.Add(wearing); pad.Add(grid); pad.Add(U.Space(24)); sv.Add(pad); row.Add(sv);
+                root = row;
             }
-            col.Add(catRow);
-            col.Add(Inspect(s, slot, s.Eq(slot)));
-            col.Add(Items(s, cur, slot));
+            else
+            {
+                var sv = Screens.Scroll(); var b = U.Div("pad-top");
+                var hp = U.Div("pad-x"); hp.Add(head); b.Add(hp); b.Add(stage);
+                var pad = U.Div("pad"); pad.Add(rail); pad.Add(wearing); pad.Add(grid); pad.Add(U.Space(24)); b.Add(pad);
+                sv.Add(b); root = sv;
+            }
+
             // seen: clear the new badges for this category
             int before = s.newItems.Count;
             s.newItems.RemoveAll(k => k.StartsWith(slot + ":") && (slot != "outfit" || CatOf(k.Substring(7)) == cur));
             if (s.newItems.Count != before) s.Save();
-            return col;
+            return root;
         }
         static string CatOf(string outfitId) => Character.Wardrobe.Category(outfitId) ?? J.S(DB.Obj("DR_OUTFIT_CAT"), outfitId, "shirts");
+        static string CatFor(string slot, string id) => slot == "outfit" ? CatOf(id) : slot;
+        static void Go(string cat) { Game.ClosetCat = cat; ShowInfo = false; Game.Render(); }
 
-        // ------------------------------------------------------------ your fit
-        static VisualElement FitCard(State s)
+        static Color? DyeOf(State s, string slot, string id) => (slot == "outfit" || slot == "head") && s.dye.TryGetValue(id, out var di) && di > 0 && di < Fashion.Dyes.Length && Fashion.Dyes[di] != null ? C.H(Fashion.Dyes[di]) : (Color?)null;
+        static Color MetalOf(State s, string slot, string id)
         {
-            var c = U.Card("fit");
-            var row = U.Row();
-            row.Add(new Portrait(Fig.Of(s), 120));
-            var r = U.Col().Grow(); r.style.marginLeft = 12;
-            var fs = Fashion.FitScore(s);
-            r.Add(U.Kicker("Fit rating"));
-            var sr = U.Row(); sr.Add(U.Num(fs.score.ToString(), "fit-score").Fg(fs.score >= 80 ? C.Gold2 : C.Cream)); var nm = U.T(fs.name, "fit-name", Fonts.Disp); nm.style.marginLeft = 8; sr.Add(nm); r.Add(sr);
-            r.Add(U.Bar(fs.score / 99.0, fs.score >= 92 ? C.Violet : fs.score >= 80 ? C.Gold : C.Green, 5).Mt(4));
-            foreach (var (mk, n) in fs.sets) r.Add(U.Hint($"{J.S(DB.Obj("DR_BRANDS"), mk, mk)} set · {n} pieces").Fg(C.Gold));
-            if (fs.sets.Count == 0) r.Add(U.Hint("Wear 3+ pieces from one maker for a set bonus.").Mt(4));
-            r.Add(U.Btn("Restyle face and hair", Game.StartRestyle, "ghost small").Mt(8));
-            row.Add(r);
-            c.Add(row);
-            var fits = U.Row().Cls("fits").Mt(12);
-            for (int i = 0; i < Fashion.FitSlots; i++)
+            if (s.fin.TryGetValue(slot + ":" + id, out var f) && f >= 0 && f < Fashion.Finishes.Length) return C.H(Fashion.Finishes[f].c);
+            return id == "silver" || id == "steel" || id == "iced" || id == "diamond" || id == "tennis" ? C.H("#dfe3ea") : C.H("#e3b94f");
+        }
+        public static ItemArt Art(State s, string slot, string id, float w, float h) => new ItemArt(slot, id, DyeOf(s, slot, id), MetalOf(s, slot, id), w, h);
+
+        // ------------------------------------------------------------ the stage: the fit on you, what's worn at a glance
+        static readonly (string slot, string icon)[] Quick = { ("outfit", "tops"), ("chain", "chain"), ("watch", "watch"), ("head", "head") };
+        static VisualElement Stage(State s, float h)
+        {
+            var st = StageView.Make(Fig.Of(s), () => Character.CharacterSpec.From(s), h, "full", out _);
+            var q = U.Col().Cls("quick");
+            foreach (var (slot, icon) in Quick)
             {
-                int k = i; bool has = i < s.fits.Count && s.fits[i] != null;
-                var f = U.Col().Cls("fitslot", has ? "has" : "");
-                f.Add(U.T($"Fit {i + 1}", "fitslot-t", Fonts.Semi));
-                if (has) f.Add(U.Btn("Wear", () => { Game.FitWear(k); DreamApp.Toast($"Wearing fit {k + 1}"); }, "small"));
-                f.Add(U.Btn(has ? "Save over" : "Save", () => { Game.FitSave(k); DreamApp.Toast($"Saved fit {k + 1}"); }, "ghost small"));
-                fits.Add(f);
+                string id = s.Eq(slot); bool has = id != "none" && !string.IsNullOrEmpty(id);
+                var b = U.Div("quick-b").Cls(has ? "has" : "");
+                if (has) b.Add(Art(s, slot, id, 30, 26)); else b.Add(new Icon("plus", 16, C.Mute));
+                string sl = slot, cid = id; b.Tap(() => Go(CatFor(sl, cid)));
+                q.Add(b);
             }
-            c.Add(fits);
+            st.Add(q);
+            st.Add(SetPanel(s));
+            return st;
+        }
+
+        // the maker you're closest to a set bonus with
+        static VisualElement SetPanel(State s)
+        {
+            var makers = new Dictionary<string, int>();
+            foreach (var (slot, id) in Fashion.Worn(s))
+            {
+                var m = Fashion.MetaOf(slot, id);
+                if (!string.IsNullOrEmpty(m.brandKey) && m.brandKey != "league") makers[m.brandKey] = (makers.TryGetValue(m.brandKey, out var c) ? c : 0) + 1;
+            }
+            var p = U.Div("stage-panel", "set-panel");
+            if (makers.Count == 0) { p.Add(U.T("Wear 3 pieces from one maker for a set bonus", "panel-r")); return p; }
+            var best = makers.OrderByDescending(kv => kv.Value).First();
+            string name = J.S(DB.Obj("DR_BRANDS"), best.Key, Character.Wardrobe.Brands.TryGetValue(best.Key, out var bi) ? bi.name : best.Key);
+            p.Add(U.T(name + " set", "panel-k", Fonts.Semi));
+            var r = U.Row().Mt(6);
+            for (int i = 0; i < 3; i++) r.Add(U.Div("set-pip").Cls(i < best.Value ? "on" : ""));
+            r.Add(U.T(best.Value >= 3 ? $"Set bonus · {best.Value} pieces" : $"{best.Value} of 3 for a bonus", "panel-r").Mt(0));
+            p.Add(r);
+            return p;
+        }
+
+        // ------------------------------------------------------------ categories: one row, swipe for more
+        static VisualElement Rail(State s, List<object> cats, string cur)
+        {
+            var sv = new ScrollView(ScrollViewMode.Horizontal); sv.AddToClassList("rail");
+            sv.horizontalScrollerVisibility = ScrollerVisibility.Hidden; sv.verticalScrollerVisibility = ScrollerVisibility.Hidden;
+            foreach (var o in cats)
+            {
+                var a = o as List<object>; if (a == null || a.Count < 3) continue;
+                string key = a[0] as string, label = a[1] as string, sl = a[2] as string;
+                bool on = key == cur, fresh = s.newItems.Any(k => k.StartsWith(sl + ":") && (sl != "outfit" || CatOf(k.Substring(7)) == key));
+                var chip = U.Row().Cls("rail-b", on ? "on" : "");
+                chip.Add(new Icon(CatIcon.TryGetValue(key, out var ic) ? ic : "tops", 17, on ? C.Ink : C.Mute));
+                chip.Add(U.T(label, "rail-t", on ? Fonts.Semi : Fonts.Medium).NoPick());
+                if (fresh) chip.Add(U.Div("rail-dot").NoPick());
+                chip.Tap(() => Go(key));
+                sv.Add(chip);
+                if (on) sv.schedule.Execute(() => sv.ScrollTo(chip)).StartingIn(30);
+            }
+            return sv;
+        }
+
+        // ------------------------------------------------------------ what's on in this category, with its details
+        static VisualElement Wearing(State s, string slot, string id)
+        {
+            var c = U.Div("wearing");
+            if (id == "none" || string.IsNullOrEmpty(id)) { c.Add(U.Hint("Nothing on. Tap a piece to wear it.")); return c; }
+            var it = DB.Item(slot, id); var m = Fashion.MetaOf(slot, id); var g = Fashion.Grade(m.grade); var gc = C.H(g.color);
+            var row = U.Row();
+            var l = U.Col().Grow();
+            l.Add(U.T("Wearing", "wearing-k", Fonts.Semi));
+            l.Add(U.T(it?.name ?? id, "wearing-n", Fonts.Semi));
+            l.Add(U.T((string.IsNullOrEmpty(m.brand) ? "" : m.brand + " · ") + g.name, "wearing-g", Fonts.Medium).Fg(gc));
+            row.Add(l);
+            var more = U.Row().Cls("more-b");
+            more.Add(U.T(ShowInfo ? "Less" : "Details", "more-t", Fonts.Semi).NoPick());
+            more.Add(new Icon(ShowInfo ? "chev-l" : "chev-r", 14, C.Gold));
+            more.Tap(() => { ShowInfo = !ShowInfo; Game.Render(); });
+            row.Add(more);
+            c.Add(row);
+            if (ShowInfo) c.Add(Inspect(s, slot, id));
             return c;
+        }
+
+        // ------------------------------------------------------------ saved fits and redeem codes (sheets)
+        static void Fits(State s)
+        {
+            DreamApp.Sheet("Saved fits", box =>
+            {
+                box.Add(U.Hint("Save what you're wearing, then switch back in one tap.").Mt(4));
+                var g = U.Col().Mt(12);
+                for (int i = 0; i < Fashion.FitSlots; i++)
+                {
+                    int k = i; bool has = i < s.fits.Count && s.fits[i] != null;
+                    var r = U.Row().Cls("fit-row");
+                    r.Add(U.T($"Fit {i + 1}", "fit-row-t", Fonts.Semi).Grow());
+                    if (has) r.Add(U.Btn("Wear", () => { DreamApp.CloseModal(); Game.FitWear(k); DreamApp.Toast($"Wearing fit {k + 1}"); }, "gold small"));
+                    r.Add(U.Btn(has ? "Save over" : "Save", () => { DreamApp.CloseModal(); Game.FitSave(k); DreamApp.Toast($"Saved fit {k + 1}"); }, "small"));
+                    g.Add(r);
+                }
+                box.Add(g);
+            });
+        }
+
+        static void Redeem(State s)
+        {
+            DreamApp.Sheet("Redeem a code", box =>
+            {
+                box.Add(U.Hint("Codes come with real Confirmed Fire merch and partner drops. Each one unlocks the piece in your closet.").Mt(4));
+                var tf = new TextField { maxLength = 32 }; tf.AddToClassList("name-field"); tf.AddToClassList("code-field"); Fonts.Use(tf, Fonts.MonoB);
+                box.Add(tf);
+                var msg = U.Hint("").Mt(6); box.Add(msg);
+                box.Add(U.Btn("Redeem", () =>
+                {
+                    var (ok, text) = Character.Wardrobe.Redeem(s, tf.value);
+                    if (ok) { DreamApp.CloseModal(); DreamApp.Toast("Unlocked: " + text); Game.Render(); }
+                    else { msg.text = text; msg.style.color = C.Red; }
+                }, "gold wide").Mt(10));
+                tf.schedule.Execute(() => tf.Focus()).StartingIn(50);
+            });
         }
 
         // ------------------------------------------------------------ what you're wearing in this slot
         static VisualElement Inspect(State s, string slot, string id)
         {
-            var c = U.Card("inspect");
-            if (id == "none") { c.Add(U.Kicker("Nothing on")); c.Add(U.Hint("Pick something below.")); return c; }
-            var it = DB.Item(slot, id); var m = Fashion.MetaOf(slot, id); var g = Fashion.Grade(m.grade); var gc = C.H(g.color);
+            var c = U.Div("inspect");
+            var it = DB.Item(slot, id); var m = Fashion.MetaOf(slot, id);
             string key = slot + ":" + id;
-            c.style.borderLeftColor = gc; c.style.borderLeftWidth = 4;
-            var hd = U.Row();
-            var l = U.Col().Grow();
-            l.Add(U.Kicker((m.brand ?? "") + (string.IsNullOrEmpty(m.brand) ? "" : " · ") + g.name).Fg(gc));
-            l.Add(U.H3(it?.name ?? id));
-            hd.Add(l);
-            if (m.fx != null) hd.Add(U.Chip("Animated", C.Violet));
-            c.Add(hd);
-            if (!string.IsNullOrEmpty(m.story)) c.Add(U.P(m.story).Cls("story-t").Mt(4));
+            if (m.fx != null) c.Add(U.Chip("Animated", C.Violet).Mt(8));
+            if (!string.IsNullOrEmpty(m.story)) c.Add(U.P(m.story).Cls("story-t").Mt(8));
             if (s.got.TryGetValue(key, out var got) && !string.IsNullOrEmpty(got.at)) c.Add(U.Hint($"Earned: {got.at} · {DateTimeOffset.FromUnixTimeMilliseconds((long)got.d).LocalDateTime:MMM d, yyyy}").Mt(6));
             else if (!string.IsNullOrEmpty(it?.req)) c.Add(U.Hint(it.req).Mt(6));
             if (slot == "home" && Calendar.HomeCost.TryGetValue(id, out var hc)) c.Add(U.Hint($"Costs {U.Money(hc)} a month").Fg(C.Gold));
@@ -136,46 +246,44 @@ namespace CFDream.UI
             return c;
         }
 
-        // ------------------------------------------------------------ everything in the category
+        // ------------------------------------------------------------ everything in the category, as pictures
         static VisualElement Items(State s, string cat, string slot)
         {
             var list = DB.Items.Where(i => i.slot == slot && (slot != "outfit" || CatOf(i.id) == cat)).ToList();
             list.AddRange(DB.LeagueItems.Where(i => i.slot == slot && s.Owns(i.slot, i.id) && (slot != "outfit" || CatOf(i.id) == cat)));
             list.AddRange(Calendar.LiveItems.Where(i => i.slot == slot && s.Owns(i.slot, i.id)));
-            var grid = U.Row().Cls("wrap items");
-            if (!Required.Contains(slot) && !list.Any(i => i.id == "none")) grid.Add(ItemCard(s, slot, new ItemDef { slot = slot, id = "none", name = "Nothing" }, true));
+            var tiles = new List<VisualElement>();
+            if (!Required.Contains(slot) && !list.Any(i => i.id == "none")) tiles.Add(ItemTile(s, slot, new ItemDef { slot = slot, id = "none", name = "Nothing" }, true));
             foreach (var it in list.OrderByDescending(i => i.id == "none" || s.Owns(i.slot, i.id)).ThenBy(i => Array.IndexOf(Fashion.GradeOrder, Fashion.MetaOf(i.slot, i.id).grade)))
-                grid.Add(ItemCard(s, slot, it, it.id == "none" || s.Owns(it.slot, it.id) || (slot == "outfit" && it.id == "office")));
-            return grid;
+                tiles.Add(ItemTile(s, slot, it, it.id == "none" || s.Owns(it.slot, it.id) || (slot == "outfit" && it.id == "office")));
+            return Bits.Tiles(tiles).Mt(12);
         }
 
-        static VisualElement ItemCard(State s, string slot, ItemDef it, bool owned)
+        static VisualElement ItemTile(State s, string slot, ItemDef it, bool owned)
         {
             var m = Fashion.MetaOf(slot, it.id); var g = Fashion.Grade(m.grade); var gc = C.H(g.color);
-            bool on = s.Eq(slot) == it.id, fresh = s.newItems.Contains(slot + ":" + it.id);
-            var c = U.Col().Cls("item", on ? "on" : "", owned ? "" : "locked");
-            var strip = U.Div("item-strip").Bg(it.id == "none" ? C.Line : gc); c.Add(strip);
-            var top = U.Row();
-            top.Add(U.T(it.id == "none" ? "" : g.name.ToUpperInvariant(), "item-grade", Fonts.Bold).Fg(gc).Grow());
-            if (fresh) top.Add(U.Chip("New", C.Gold, true));
-            else if (on) top.Add(U.Chip("On", C.Green));
-            c.Add(top);
-            c.Add(U.T(it.name, "item-n", Fonts.Semi));
-            if (!string.IsNullOrEmpty(m.brand)) c.Add(U.Hint(m.brand));
-            if (!owned) c.Add(U.Hint("🔒 " + (it.req ?? "Locked")).Cls("item-req"));
-            if (slot == "home" && Calendar.HomeCost.TryGetValue(it.id, out var hc)) c.Add(U.Hint($"{U.Money(hc)}/mo"));
-            if (slot == "ride" && Calendar.RideCost.TryGetValue(it.id, out var rc)) c.Add(U.Hint($"{U.Money(rc)}/mo"));
-            if (owned && !on)
+            bool on = s.Eq(slot) == it.id, fresh = s.newItems.Contains(slot + ":" + it.id), none = it.id == "none";
+            string sub = none ? "" : !owned ? (it.req ?? "Locked") : slot == "home" && Calendar.HomeCost.TryGetValue(it.id, out var hc) ? $"{U.Money(hc)}/mo"
+                : slot == "ride" && Calendar.RideCost.TryGetValue(it.id, out var rc) ? $"{U.Money(rc)}/mo" : g.name;
+            var art = Art(s, slot, it.id, 76, 62);
+            if (!owned) art.style.opacity = 0.25f;
+            Action tap = null;
+            if (on) tap = () => { ShowInfo = !ShowInfo; Game.Render(); };
+            else if (owned)
             {
                 if (slot == "home" || slot == "ride")
                 {
-                    double Cost(string id) { var t = slot == "home" ? Calendar.HomeCost : Calendar.RideCost; return t.TryGetValue(id ?? "", out var v) ? v : 0; }
+                    double Cost(string iid) { var tbl = slot == "home" ? Calendar.HomeCost : Calendar.RideCost; return tbl.TryGetValue(iid ?? "", out var v) ? v : 0; }
                     double after = Calendar.Bills(s) - Cost(s.Eq(slot)) + Cost(it.id);
-                    c.Tap(() => DreamApp.Confirm(slot == "home" ? "Move in?" : "Switch rides?", $"Your bills become {U.Money(after)} a month, due on the 1st.", "Do it", () => Game.Equip(slot, it.id), "Not yet"));
+                    tap = () => DreamApp.Confirm(slot == "home" ? "Move in?" : "Switch rides?", $"Your bills become {U.Money(after)} a month, due on the 1st.", "Do it", () => Game.Equip(slot, it.id), "Not yet");
                 }
-                else c.Tap(() => Game.Equip(slot, it.id));
+                else tap = () => Game.Equip(slot, it.id);
             }
-            return c;
+            var t = Bits.Tile(art, it.name, on, tap, sub, !owned ? C.Mute : none ? (Color?)null : gc, owned ? "" : "locked");
+            if (!none) { var strip = U.Div("tile-strip").Bg(gc).NoPick(); t.Add(strip); }
+            if (!owned) { var lk = U.Div("tile-lock").NoPick(); lk.Add(new Icon("lock", 20, C.Cream)); t.Add(lk); }
+            if (fresh) t.Add(U.T("NEW", "tile-new", Fonts.Bold).NoPick());
+            return t;
         }
     }
 }

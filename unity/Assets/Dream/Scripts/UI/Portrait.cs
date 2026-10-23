@@ -42,8 +42,8 @@ namespace CFDream.UI
 
     public class Portrait : VisualElement
     {
-        static readonly Dictionary<string, string> OutfitBase = new Dictionary<string, string> { { "office", "#cdd8e6" }, { "hoodie", "#5f636b" }, { "tee", "#1c1c20" }, { "varsity", "#1f3566" }, { "bomber", "#2a2d22" }, { "track", "#16161a" }, { "cardigan", "#6a2232" }, { "vest", "#c9b98a" }, { "denim", "#4a6fa0" }, { "leather", "#1a1716" }, { "fleece", "#7d8590" }, { "jersey", "#b3262c" }, { "polo", "#1f2a44" }, { "blazer", "#3b3f47" }, { "suit", "#1b2442" }, { "designer", "#4a1426" }, { "tux", "#121214" }, { "vampire", "#141216" }, { "flannel", "#a3262a" }, { "ugly", "#1d6b3a" } };
-        static readonly Dictionary<string, string> HatBase = new Dictionary<string, string> { { "cap", "#17171a" }, { "snap", "#24427e" }, { "beanie", "#b3262c" }, { "bucket", "#d8cfb4" }, { "cowboy", "#8a5a32" }, { "fedora", "#2a2522" }, { "visor", "#1e8f4a" } };
+        public static readonly Dictionary<string, string> OutfitBase = new Dictionary<string, string> { { "office", "#cdd8e6" }, { "hoodie", "#5f636b" }, { "tee", "#1c1c20" }, { "varsity", "#1f3566" }, { "bomber", "#2a2d22" }, { "track", "#16161a" }, { "cardigan", "#6a2232" }, { "vest", "#c9b98a" }, { "denim", "#4a6fa0" }, { "leather", "#1a1716" }, { "fleece", "#7d8590" }, { "jersey", "#b3262c" }, { "polo", "#1f2a44" }, { "blazer", "#3b3f47" }, { "suit", "#1b2442" }, { "designer", "#4a1426" }, { "tux", "#121214" }, { "vampire", "#141216" }, { "flannel", "#a3262a" }, { "ugly", "#1d6b3a" } };
+        public static readonly Dictionary<string, string> HatBase = new Dictionary<string, string> { { "cap", "#17171a" }, { "snap", "#24427e" }, { "beanie", "#b3262c" }, { "bucket", "#d8cfb4" }, { "cowboy", "#8a5a32" }, { "fedora", "#2a2522" }, { "visor", "#1e8f4a" } };
         static readonly HashSet<string> Tailored = new HashSet<string> { "suit", "blazer", "tux", "designer", "vampire", "vest" };
 
         readonly Fig fig; readonly bool ring;
