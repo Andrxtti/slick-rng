@@ -56,6 +56,7 @@
       matchWebGLToCanvasSize: true,
       showBanner: function (msg, type) { if (type === "error") { note.textContent = msg; note.className = "err"; load.style.display = "flex"; } else console.warn(msg); },
     };
+    if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(function () {});
     // a pinch or double-tap zoom on iPhone would fight the game's own gestures
     document.addEventListener("gesturestart", function (e) { e.preventDefault(); }, { passive: false });
     var script = document.createElement("script");
