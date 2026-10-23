@@ -3120,7 +3120,306 @@ class PreflopSolver {
   stats() { return { iters: this.iters, nodes: this.nodes.length, bytes: this.T.length * 4 }; }
 }
 
-const SlickEngine = { PLO, comboIndex, EQ169, koBonus, icmEquityGrouped, groupOthers, PreflopSolver, CLASS_NAMES, CLASS_OF, IcmModel, Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
+// ---------------------------------------------------------------- heads-up postflop: full-traversal vector CFR
+// Every iteration walks the whole game tree once per player with BOTH ranges as vectors (all combos at once)
+// and enumerates every turn and river card exactly, so there is no sampling noise. Discounted CFR (DCFR,
+// alpha 1.5 / beta 0.5 / gamma 2), alternating updates, exact card removal (per-card blocker sums at
+// showdown). Same interface as the sampled Solver: run(ms), stats(), report(path), estimateEV(); plus
+// exploitability() (exact best response), so every solve can show how close to equilibrium it is.
+class VecSolver {
+  constructor(spot, opt = {}) {
+    if (spot.stacks.length !== 2) throw new Error('VecSolver is heads-up only.');
+    this.spot = spot; this.n = 2; this.board = spot.board; this.start = spot.board.length - 3;
+    this.nodes = buildTree({ stacks: spot.stacks, pot: spot.pot, startStreet: this.start, sizes: spot.sizes, raiseCap: spot.raiseCap, allinThreshold: spot.allinThreshold, mergeThreshold: spot.mergeThreshold });
+    this.decisionPoints = this.nodes.filter((x) => x.kind === K_ACTION).length;
+    this.iters = 0; this.alpha = opt.alpha ?? 1.5; this.beta = opt.beta ?? 0.5; this.gamma = opt.gamma ?? 2;
+    const used = new Uint8Array(52); for (const c of this.board) used[c] = 1;
+    this.hands = [0, 1].map((p) => { const out = []; for (let c = 0; c < NUM_COMBOS; c++) { const w = spot.ranges[p][c]; if (w > 0 && !used[COMBO_A[c]] && !used[COMBO_B[c]]) out.push(c); } if (!out.length) throw new Error(`${spot.names[p]}'s range is empty on this board.`); return Int32Array.from(out); });
+    this.ca = this.hands.map((h) => Uint8Array.from(h, (c) => COMBO_A[c])); this.cb = this.hands.map((h) => Uint8Array.from(h, (c) => COMBO_B[c]));
+    this.init = [0, 1].map((p) => Float64Array.from(this.hands[p], (c) => spot.ranges[p][c]));
+    this.same = [0, 1].map((p) => { const idx = new Map(); this.hands[1 - p].forEach((c, i) => idx.set(c, i)); return Int32Array.from(this.hands[p], (c) => (idx.has(c) ? idx.get(c) : -1)); });
+    // hands of each player that hold each card (for chance nodes)
+    this.byCard = [0, 1].map((p) => { const L = Array.from({ length: 52 }, () => []); this.hands[p].forEach((c, i) => { L[COMBO_A[c]].push(i); L[COMBO_B[c]].push(i); }); return L.map((x) => Int32Array.from(x)); });
+    this.prepTerminals();
+    this.mem = new Map(); this.bytes = 0; this.sd = new Map(); this.memLimit = opt.memLimit || 1.2e9;
+    // per-depth scratch buffers
+    const N = Math.max(this.hands[0].length, this.hands[1].length), A = Math.max(2, ...this.nodes.map((x) => (x.kind === K_ACTION ? x.actions.length : 1)));
+    this.D = []; for (let d = 0; d < 64; d++) this.D.push({ out: new Float64Array(N), kids: new Float64Array(A * N), sig: new Float64Array(A * N), m: new Float64Array(N), o: new Float64Array(N) });
+    this.card = new Float64Array(52); this.wCard = new Float64Array(52); this.tCard = new Float64Array(52); // tCard stays zeroed between uses this.N = N; this.A = A;
+  }
+  prepTerminals() {
+    const sp = this.spot, icm = sp.payoff.type === 'icm';
+    let fake = null;
+    if (icm) { fake = Object.create(Solver.prototype); fake.spot = sp; fake.n = 2; fake.icmCache = new Map(); fake.strength = new Int32Array(2); }
+    for (const nd of this.nodes) {
+      if (nd.kind !== K_FOLD && nd.kind !== K_SHOW) continue;
+      const settle = (s0, s1) => {
+        const fin = sp.stacks.map((s, i) => s - nd.inv[i]);
+        if (nd.kind === K_FOLD) { fin[nd.winner] += nd.pot; return fin; }
+        for (const L of nd.layers) { const w = L.elig.length === 1 ? L.elig : s0 > s1 ? [0] : s1 > s0 ? [1] : [0, 1]; for (const i of w) fin[i] += L.amount / w.length; }
+        return fin;
+      };
+      const val = (s0, s1) => { const fin = settle(s0, s1); if (!icm) return [fin[0] - sp.stacks[0], fin[1] - sp.stacks[1]]; fake.strength[0] = s0; fake.strength[1] = s1; const v = fake.icmUtility(nd); return [v[0], v[1]]; };
+      if (nd.kind === K_FOLD) nd.u = val(0, 0);
+      else { const w0 = val(2, 1), w1 = val(1, 2), t = val(1, 1); nd.uW = [w0[0], w1[1]]; nd.uL = [w1[0], w0[1]]; nd.uT = t; }
+    }
+  }
+  slot(id, key, p, na) {
+    const k = id * 4096 + key; let s = this.mem.get(k);
+    if (!s) {
+      const n = this.hands[p].length * na; s = { r: new Float32Array(n), s: new Float32Array(n) };
+      this.bytes += n * 8; if (this.bytes > this.memLimit) throw new Error('Memory limit reached: use fewer bet sizes or start on a later street.');
+      this.mem.set(k, s);
+    }
+    return s;
+  }
+  showdown(b5) {
+    const key = boardKey(b5.slice(this.board.length)); let d = this.sd.get(key); if (d) return d;
+    const c7 = new Uint8Array(7); for (let i = 0; i < 5; i++) c7[i] = b5[i];
+    const onB = new Uint8Array(52); for (const c of b5) onB[c] = 1;
+    d = [0, 1].map((p) => { const h = this.hands[p], str = new Int32Array(h.length), ids = [];
+      for (let i = 0; i < h.length; i++) { const a = this.ca[p][i], b = this.cb[p][i]; if (onB[a] || onB[b]) { str[i] = -1; continue; } c7[5] = a; c7[6] = b; str[i] = evaluate(c7, 7); ids.push(i); }
+      ids.sort((x, y) => str[x] - str[y]); return { str, order: Int32Array.from(ids) }; });
+    this.sd.set(key, d); return d;
+  }
+  // counterfactual values of player p's hands at a terminal, given the opponent's reach
+  terminal(nd, p, oreach, b, out) {
+    const o = 1 - p, np = this.hands[p].length, no = this.hands[o].length, pa = this.ca[p], pb = this.cb[p], oa = this.ca[o], ob = this.cb[o], same = this.same[p];
+    const card = this.card; card.fill(0); let tot = 0;
+    for (let j = 0; j < no; j++) { const r = oreach[j]; if (r === 0) continue; tot += r; card[oa[j]] += r; card[ob[j]] += r; }
+    if (nd.kind === K_FOLD) {
+      const u = nd.u[p];
+      for (let i = 0; i < np; i++) { const s = same[i] >= 0 ? oreach[same[i]] : 0; out[i] = u * (tot - card[pa[i]] - card[pb[i]] + s); }
+      return; // hands that clash with the board get removed by the caller's reach (their value is never used)
+    }
+    if (b.length < 5) { this.runout(nd, p, oreach, b, out); return; }
+    const uW = nd.uW[p], uL = nd.uL[p], uT = nd.uT[p];
+    const sd = this.showdown(b), sp = sd[p], so = sd[o], oo = so.order, po = sp.order, ostr = so.str, pstr = sp.str;
+    const wCard = this.wCard, tCard = this.tCard; wCard.fill(0);
+    let wTot = 0, j = 0, i = 0;
+    for (let k = 0; k < np; k++) out[k] = 0;
+    while (i < po.length) {
+      const s = pstr[po[i]];
+      while (j < oo.length && ostr[oo[j]] < s) { const jj = oo[j], r = oreach[jj]; if (r !== 0) { wTot += r; wCard[oa[jj]] += r; wCard[ob[jj]] += r; } j++; }
+      let tTot = 0, j2 = j;
+      while (j2 < oo.length && ostr[oo[j2]] === s) { const jj = oo[j2], r = oreach[jj]; if (r !== 0) { tTot += r; tCard[oa[jj]] += r; tCard[ob[jj]] += r; } j2++; }
+      let i2 = i;
+      while (i2 < po.length && pstr[po[i2]] === s) {
+        const ii = po[i2], a = pa[ii], c = pb[ii], sm = same[ii] >= 0 ? oreach[same[ii]] : 0;
+        const compat = tot - card[a] - card[c] + sm, win = wTot - wCard[a] - wCard[c], tie = tTot - tCard[a] - tCard[c] + sm;
+        out[ii] = win * uW + tie * uT + (compat - win - tie) * uL; i2++;
+      }
+      // clear the tie group's blocker sums (only the cards it touched)
+      for (let jx = j; jx < j2; jx++) { const jj = oo[jx]; tCard[oa[jj]] = 0; tCard[ob[jj]] = 0; }
+      i = i2;
+    }
+  }
+  // all-in before the river: the showdown value is the average over every card still to come
+  runout(nd, p, oreach, b, out) {
+    const o = 1 - p, np = this.hands[p].length, no = this.hands[o].length, onB = new Uint8Array(52); for (const c of b) onB[c] = 1;
+    const live = 52 - b.length - 4, acc = new Float64Array(np), o2 = new Float64Array(no), tmp = new Float64Array(np);
+    for (let c = 0; c < 52; c++) {
+      if (onB[c]) continue;
+      o2.set(oreach.subarray(0, no)); for (const j of this.byCard[o][c]) o2[j] = 0;
+      b.push(c); this.terminal(nd, p, o2, b, tmp); b.pop();
+      for (let i = 0; i < np; i++) acc[i] += tmp[i];
+      for (const i of this.byCard[p][c]) acc[i] -= tmp[i];
+    }
+    for (let i = 0; i < np; i++) out[i] = acc[i] / live;
+  }
+  // current (regret matching) or average strategy of a node into sig[a*n + i]
+  strat(st, n, na, sig, avg) {
+    const X = avg ? st.s : st.r;
+    for (let i = 0; i < n; i++) {
+      let s = 0; for (let a = 0; a < na; a++) { const x = X[a * n + i]; if (x > 0) s += x; }
+      if (s > 0) for (let a = 0; a < na; a++) { const x = X[a * n + i]; sig[a * n + i] = x > 0 ? x / s : 0; }
+      else for (let a = 0; a < na; a++) sig[a * n + i] = 1 / na;
+    }
+  }
+  // value vector for player p (written to this.D[depth].out). mode: 'train' | 'avg' | 'br'
+  walk(id, p, myReach, oreach, b, key, depth, mode) {
+    const nd = this.nodes[id], D = this.D[depth], out = D.out, np = this.hands[p].length;
+    if (nd.kind === K_FOLD || nd.kind === K_SHOW) { this.terminal(nd, p, oreach, b, out); return out; }
+    if (nd.kind === K_CHANCE) {
+      const onB = new Uint8Array(52); for (const c of b) onB[c] = 1;
+      const live = 52 - b.length - 4, o = 1 - p, m2 = D.m, o2 = D.o, no = this.hands[o].length;
+      const acc = D.kids; for (let i = 0; i < np; i++) acc[i] = 0;
+      for (let c = 0; c < 52; c++) {
+        if (onB[c]) continue;
+        o2.set(oreach.subarray(0, no)); for (const j of this.byCard[o][c]) o2[j] = 0;
+        m2.set(myReach.subarray(0, np)); for (const i of this.byCard[p][c]) m2[i] = 0;
+        let any = false; for (let j = 0; j < no; j++) if (o2[j] !== 0) { any = true; break; }
+        if (!any) continue;
+        b.push(c);
+        const v = this.walk(nd.child, p, m2, o2, b, key * 53 + c + 1, depth + 1, mode);
+        b.pop();
+        for (let i = 0; i < np; i++) acc[i] += v[i];
+        for (const i of this.byCard[p][c]) acc[i] -= v[i]; // hands holding the card can't see it
+      }
+      for (let i = 0; i < np; i++) out[i] = acc[i] / live;
+      return out;
+    }
+    const q = nd.player, na = nd.actions.length;
+    if (q === p) {
+      const st = this.slot(id, key, p, na), n = np, sig = D.sig, kids = D.kids;
+      this.strat(st, n, na, sig, mode !== 'train');
+      for (let a = 0; a < na; a++) {
+        const m2 = D.m; let any = false;
+        for (let i = 0; i < n; i++) { m2[i] = myReach[i] * sig[a * n + i]; }
+        const v = this.walk(nd.children[a], p, m2, oreach, b, key, depth + 1, mode);
+        kids.set(v.subarray(0, n), a * n);
+      }
+      if (mode === 'br') { for (let i = 0; i < n; i++) { let v = -Infinity; for (let a = 0; a < na; a++) v = Math.max(v, kids[a * n + i]); out[i] = v; } return out; }
+      for (let i = 0; i < n; i++) { let v = 0; for (let a = 0; a < na; a++) v += sig[a * n + i] * kids[a * n + i]; out[i] = v; }
+      if (mode === 'train') {
+        const t = this.iters + 1, ta = Math.pow(t, this.alpha), tb = Math.pow(t, this.beta), pos = ta / (ta + 1), neg = tb / (tb + 1), wS = Math.pow(t / (t + 1), this.gamma);
+        const R = st.r, S = st.s;
+        for (let a = 0; a < na; a++) { const base = a * n; for (let i = 0; i < n; i++) {
+          const k = base + i; let r = R[k]; r = r > 0 ? r * pos : r * neg; R[k] = r + kids[k] - out[i];
+          S[k] = S[k] * wS + myReach[i] * sig[k];
+        } }
+      }
+      return out;
+    }
+    // opponent node
+    const o = q, no = this.hands[o].length, st = this.slot(id, key, o, na), sig = D.sig, o2 = D.o, acc = D.kids;
+    this.strat(st, no, na, sig, mode !== 'train');
+    for (let i = 0; i < np; i++) acc[i] = 0;
+    for (let a = 0; a < na; a++) {
+      let any = false;
+      for (let j = 0; j < no; j++) { const x = oreach[j] * sig[a * no + j]; o2[j] = x; if (x !== 0) any = true; }
+      if (!any) continue;
+      const v = this.walk(nd.children[a], p, myReach, o2, b, key, depth + 1, mode);
+      for (let i = 0; i < np; i++) acc[i] += v[i];
+    }
+    for (let i = 0; i < np; i++) out[i] = acc[i];
+    return out;
+  }
+  run(ms) {
+    const t0 = Date.now(); let k = 0;
+    do { for (const p of [0, 1]) this.walk(0, p, this.init[p], this.init[1 - p], this.board.slice(), 0, 0, 'train'); this.iters++; k++; } while (Date.now() - t0 < ms);
+    return k;
+  }
+  value(p, mode) {
+    const v = this.walk(0, p, this.init[p], this.init[1 - p], this.board.slice(), 0, 0, mode);
+    let num = 0, den = 0; const o = 1 - p, ho = this.hands[o], hp = this.hands[p], ow = this.init[o];
+    const card = new Float64Array(52); let tot = 0; for (let j = 0; j < ho.length; j++) { tot += ow[j]; card[this.ca[o][j]] += ow[j]; card[this.cb[o][j]] += ow[j]; }
+    for (let i = 0; i < hp.length; i++) { const w = this.init[p][i], s = this.same[p][i] >= 0 ? ow[this.same[p][i]] : 0; num += w * v[i]; den += w * (tot - card[this.ca[p][i]] - card[this.cb[p][i]] + s); }
+    return num / den;
+  }
+  exploitability() {
+    const v = [this.value(0, 'avg'), this.value(1, 'avg')], br = [this.value(0, 'br'), this.value(1, 'br')];
+    return { v, br, nashConv: br[0] - v[0] + br[1] - v[1], pct: (100 * (br[0] - v[0] + br[1] - v[1]) / 2) / this.spot.pot };
+  }
+  // board-instance key after a dealt card (the JS store uses key*53 + card + 1; the WASM core overrides this)
+  nextInst(inst, c) { return inst * 53 + c + 1; }
+  avgAt(id, inst) {
+    const nd = this.nodes[id], n = this.hands[nd.player].length, na = nd.actions.length, st = this.mem.get(id * 4096 + inst), out = new Float64Array(n * na);
+    if (!st) { out.fill(1 / na); return out; }
+    this.strat(st, n, na, out, true); return out;
+  }
+  // per-hand EVs of every action at a node for the player to act (against the average strategies), by walking
+  // the subtree for that player only; used by the report so the UI can show EV per hand like the sampled solver
+  // path: array of {a: actionIndex} or {card: c}; same report shape as the sampled Solver
+  report(path) {
+    let id = 0, inst = 0; const board = this.board.slice(), history = [];
+    const reach = [Float64Array.from(this.init[0]), Float64Array.from(this.init[1])];
+    for (const s of path) {
+      const nd = this.nodes[id];
+      if (nd.kind === K_ACTION) {
+        if (s.a === undefined || s.a >= nd.children.length) throw new Error('Invalid action in path.');
+        const p = nd.player, n = this.hands[p].length, sig = this.avgAt(id, inst);
+        for (let i = 0; i < n; i++) reach[p][i] *= sig[s.a * n + i];
+        history.push({ type: 'action', player: p, label: actionLabel(nd.actions[s.a]) });
+        id = nd.children[s.a];
+      } else if (nd.kind === K_CHANCE) {
+        if (s.card === undefined || board.includes(s.card)) throw new Error('Pick a card that is not on the board.');
+        for (const p of [0, 1]) for (const i of this.byCard[p][s.card]) reach[p][i] = 0;
+        board.push(s.card); history.push({ type: 'card', card: s.card });
+        inst = this.nextInst(inst, s.card); id = nd.child;
+      } else throw new Error('The hand is over at this point.');
+    }
+    const nd = this.nodes[id];
+    const base = { history, board: board.slice(), pot: nd.pot, street: nd.street, invested: Array.from(nd.inv), names: this.spot.names };
+    if (nd.kind === K_CHANCE) return { ...base, kind: 'chance', street: nd.street };
+    if (nd.kind !== K_ACTION) return { ...base, kind: 'terminal', folded: nd.folded.slice() };
+    const p = nd.player, n = this.hands[p].length, na = nd.actions.length, sig = this.avgAt(id, inst), onB = new Set(board);
+    const combos = []; let total = 0; const overall = new Array(na).fill(0), classes = {};
+    for (let i = 0; i < n; i++) {
+      const c = this.hands[p][i]; if (onB.has(COMBO_A[c]) || onB.has(COMBO_B[c])) continue;
+      const r = reach[p][i], sv = []; for (let a = 0; a < na; a++) sv.push(sig[a * n + i]);
+      total += r; for (let a = 0; a < na; a++) overall[a] += r * sv[a];
+      const k = comboClass(c), e = classes[k] || (classes[k] = { w: 0, s: new Array(na).fill(0), combos: [] });
+      e.w += r; for (let a = 0; a < na; a++) e.s[a] += r * sv[a]; e.combos.push({ name: comboStr(c), reach: r, s: sv });
+    }
+    if (total > 0) for (let a = 0; a < na; a++) overall[a] /= total;
+    for (const k in classes) { const e = classes[k]; if (e.w > 0) for (let a = 0; a < na; a++) e.s[a] /= e.w; }
+    return { ...base, kind: 'action', player: p, actions: nd.actions.map(actionLabel), actionTypes: nd.actions.map((a) => a.t), overall, classes, totalReach: total, exact: true };
+  }
+  // memory the regret tables will need (bytes), before solving: decision nodes x board instances x hands x actions
+  static estimateBytes(spot) {
+    const nodes = buildTree({ stacks: spot.stacks, pot: spot.pot, startStreet: spot.board.length - 3, sizes: spot.sizes, raiseCap: spot.raiseCap, allinThreshold: spot.allinThreshold, mergeThreshold: spot.mergeThreshold });
+    const used = new Set(spot.board), start = spot.board.length - 3, nh = [0, 1].map((p) => { let k = 0; for (let c = 0; c < NUM_COMBOS; c++) if (spot.ranges[p][c] > 0 && !used.has(COMBO_A[c]) && !used.has(COMBO_B[c])) k++; return k; });
+    const live = 52 - spot.board.length; let bytes = 0;
+    for (const nd of nodes) if (nd.kind === K_ACTION) { const k = nd.street - start, inst = k === 0 ? 1 : k === 1 ? live : live * (live - 1); bytes += inst * nh[nd.player] * nd.actions.length * 8; }
+    return bytes;
+  }
+  estimateEV() { return [0, 1].map((p) => ({ ev: this.value(p, 'avg'), se: 0 })); }
+  stats() { return { iters: this.iters, infosets: this.mem.size, bytes: this.bytes }; }
+}
+
+// VecSolver running on the WebAssembly core (same math as the JS VecSolver, several times faster).
+class VecSolverW extends VecSolver {
+  constructor(spot, wasmBytes, opt = {}) {
+    super(spot, opt);
+    const inst = new WebAssembly.Instance(new WebAssembly.Module(wasmBytes), {});
+    const X = (this.X = inst.exports), mem = X.memory, N = this.nodes.length;
+    const amax = Math.max(2, ...this.nodes.map((x) => (x.kind === K_ACTION ? x.actions.length : 1)));
+    X.setup(N, this.board.length, this.start, this.hands[0].length, this.hands[1].length, amax);
+    const kidsList = []; const coff = new Int32Array(N);
+    this.nodes.forEach((nd, i) => { coff[i] = kidsList.length; if (nd.kind === K_ACTION) kidsList.push(...nd.children); else if (nd.kind === K_CHANCE) kidsList.push(nd.child); });
+    const kp = X.set_kids(kidsList.length);
+    const I32 = (w, p, n) => new Int32Array(mem.buffer, X.ptr(w, p), n), F32 = (w, p, n) => new Float32Array(mem.buffer, X.ptr(w, p), n), U8 = (w, p, n) => new Uint8Array(mem.buffer, X.ptr(w, p), n);
+    new Int32Array(mem.buffer, kp, kidsList.length).set(kidsList);
+    I32(0, 0, N).set(this.nodes.map((x) => x.kind)); I32(1, 0, N).set(this.nodes.map((x) => (x.kind === K_ACTION ? x.player : 0)));
+    I32(2, 0, N).set(this.nodes.map((x) => (x.kind === K_ACTION ? x.actions.length : 1))); I32(3, 0, N).set(coff); I32(4, 0, N).set(this.nodes.map((x) => x.street));
+    const uF = F32(5, 0, 2 * N), uW = F32(6, 0, 2 * N), uL = F32(7, 0, 2 * N), uT = F32(8, 0, 2 * N);
+    this.nodes.forEach((nd, i) => { if (nd.kind === K_FOLD) { uF[2 * i] = nd.u[0]; uF[2 * i + 1] = nd.u[1]; } else if (nd.kind === K_SHOW) { for (const p of [0, 1]) { uW[2 * i + p] = nd.uW[p]; uL[2 * i + p] = nd.uL[p]; uT[2 * i + p] = nd.uT[p]; } } });
+    for (const p of [0, 1]) {
+      const n = this.hands[p].length; U8(9, p, n).set(this.ca[p]); U8(10, p, n).set(this.cb[p]); F32(11, p, n).set(this.init[p]); I32(12, p, n).set(this.same[p]);
+      const off = new Int32Array(53), flat = []; for (let c = 0; c < 52; c++) { off[c] = flat.length; flat.push(...this.byCard[p][c]); } off[52] = flat.length;
+      I32(13, p, 53).set(off); I32(14, p, flat.length).set(flat);
+    }
+    U8(15, 0, 5).set(this.board);
+    this.outBuf = X.alloc(4 * 64 * Math.max(this.hands[0].length, this.hands[1].length));
+  }
+  run(ms) {
+    const t0 = Date.now(); let k = 0;
+    do {
+      const t = this.iters + 1, ta = Math.pow(t, this.alpha), tb = Math.pow(t, this.beta);
+      this.iters = this.X.iterate(ta / (ta + 1), tb / (tb + 1), Math.pow(t / (t + 1), this.gamma)); k++;
+      if (this.X.heap_used() > this.memLimit) throw new Error('Memory limit reached: use fewer bet sizes or start on a later street.');
+    } while (Date.now() - t0 < ms);
+    return k;
+  }
+  value(p, mode) {
+    const ptr = this.X.value(p, mode === 'br' ? 2 : 1), v = new Float32Array(this.X.memory.buffer, ptr, this.hands[p].length);
+    let num = 0, den = 0; const o = 1 - p, ho = this.hands[o], hp = this.hands[p], ow = this.init[o];
+    const card = new Float64Array(52); let tot = 0; for (let j = 0; j < ho.length; j++) { tot += ow[j]; card[this.ca[o][j]] += ow[j]; card[this.cb[o][j]] += ow[j]; }
+    for (let i = 0; i < hp.length; i++) { const w = this.init[p][i], s = this.same[p][i] >= 0 ? ow[this.same[p][i]] : 0; num += w * v[i]; den += w * (tot - card[this.ca[p][i]] - card[this.cb[p][i]] + s); }
+    return num / den;
+  }
+  // average strategy at node id for board instance inst (WASM indexing: inst = inst*52 + card): [a*n + i]
+  avgAt(id, inst) { const nd = this.nodes[id], n = this.hands[nd.player].length, na = nd.actions.length; this.X.avg(id, inst, this.outBuf); return new Float32Array(this.X.memory.buffer, this.outBuf, n * na).slice(); }
+  nextInst(inst, c) { return inst * 52 + c; }
+  stats() { return { iters: this.iters, infosets: 0, bytes: this.X.heap_used() }; }
+}
+
+// the WebAssembly build of the vector CFR core (vcfr.c), base64
+const VCFR_WASM = (() => { try { if (typeof WebAssembly === 'undefined') return null; const b = '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';
+  const bin = typeof atob === 'function' ? atob(b) : Buffer.from(b, 'base64').toString('binary'); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; } catch (e) { return null; } })();
+
+const SlickEngine = { VecSolver, VecSolverW, VCFR_WASM, PLO, comboIndex, EQ169, koBonus, icmEquityGrouped, groupOthers, PreflopSolver, CLASS_NAMES, CLASS_OF, IcmModel, Solver, makeSpot, parseRange, parseCards, cardStr, comboClass, comboStr, evaluate, icmEquity, buildTree, NUM_COMBOS, COMBO_A, COMBO_B };
 
 // ---------------------------------------------------------------- worker protocol
 if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typeof window === 'undefined') {
@@ -3140,6 +3439,8 @@ if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typ
     try { solver.run(150); } catch (e) { running = false; self.postMessage({ type: 'error', message: e.message }); return; }
     const st = solver.stats();
     const done = Date.now() >= deadline || st.iters >= maxIters || st.bytes > 1.8e9;
+    // exact solves report how far from equilibrium they are (exploitability, % of the pot)
+    if (solver.exploitability && (done || Date.now() - (solver._lastX || 0) > 4000)) { solver._lastX = Date.now(); st.exploit = solver.exploitability().pct; }
     self.postMessage({ type: 'progress', ...st, done, memoryCapped: st.bytes > 1.8e9 });
     if (done) { running = false; return; }
     setTimeout(loop, 0);
@@ -3150,12 +3451,19 @@ if (typeof self !== 'undefined' && typeof self.postMessage === 'function' && typ
       if (m.cmd === 'build') {
         running = false;
         const t0 = Date.now();
-        solver = new Solver(makeSpot(m.spot));
-        self.postMessage({ type: 'built', nodes: solver.nodes.length, decisionPoints: solver.decisionPoints, buckets: [solver.spot.turnBuckets, solver.spot.riverBuckets], names: solver.spot.names, board: solver.board, ms: Date.now() - t0 });
+        // heads-up spots that fit in memory: exact full-traversal CFR (WebAssembly when available);
+        // multiway spots and big flop trees: the sampled engine with card abstraction
+        const sp = makeSpot(m.spot); let exact = false; solver = null;
+        if (sp.stacks.length === 2 && m.exact !== false && VecSolver.estimateBytes(sp) < (m.memLimit || 6e8)) {
+          try { solver = VCFR_WASM ? new VecSolverW(sp, VCFR_WASM, { memLimit: m.memLimit || 6e8 }) : new VecSolver(sp, { memLimit: m.memLimit || 6e8 }); exact = true; }
+          catch (e) { try { solver = new VecSolver(sp, { memLimit: m.memLimit || 6e8 }); exact = true; } catch (e2) { solver = null; } }
+        }
+        if (!solver) solver = new Solver(sp);
+        self.postMessage({ type: 'built', exact, nodes: solver.nodes.length, decisionPoints: solver.decisionPoints, buckets: exact ? [0, 0] : [solver.spot.turnBuckets, solver.spot.riverBuckets], names: solver.spot.names, board: solver.board, ms: Date.now() - t0 });
       } else if (m.cmd === 'solve') {
         if (!solver) throw new Error('Build the spot first.');
         deadline = Date.now() + m.seconds * 1000; maxIters = m.iterations || Infinity; running = true; loop();
-      } else if (m.cmd === 'stop') { running = false; self.postMessage({ type: 'progress', ...solver.stats(), done: true }); }
+      } else if (m.cmd === 'stop') { running = false; const st = solver.stats(); if (solver.exploitability) st.exploit = solver.exploitability().pct; self.postMessage({ type: 'progress', ...st, done: true }); }
       else if (m.cmd === 'report') self.postMessage({ type: 'report', reqId: m.reqId, report: solver.report(m.path) });
       else if (m.cmd === 'ev') self.postMessage({ type: 'ev', ev: solver.estimateEV(m.samples || 30000) });
       // ---- preflop solver (runs in its own worker)
@@ -4365,7 +4673,9 @@ worker.onmessage = (ev) => {
     const now = performance.now();
     if (now - lastIt.t > 900) { rate = (m.iters - lastIt.n) / ((now - lastIt.t) / 1000); lastIt = { t: now, n: m.iters }; }
     $('meter').style.width = `${Math.min(100, ((now - t0) / 1000 / secs) * 100)}%`;
-    $('status').textContent = `${m.iters.toLocaleString()} hands dealt · ${Math.round(rate).toLocaleString()}/s · ${(m.bytes / 1e6).toFixed(m.bytes < 1e7 ? 1 : 0)} MB`;
+    $('status').textContent = built && built.exact
+      ? `Exact solve · ${m.iters.toLocaleString()} iterations${m.exploit != null ? ` · ${m.exploit < 0.005 ? '<0.01' : m.exploit.toFixed(m.exploit < 1 ? 2 : 1)}% of the pot from equilibrium` : ''} · ${(m.bytes / 1e6).toFixed(m.bytes < 1e7 ? 1 : 0)} MB`
+      : `${m.iters.toLocaleString()} hands dealt · ${Math.round(rate).toLocaleString()}/s · ${(m.bytes / 1e6).toFixed(m.bytes < 1e7 ? 1 : 0)} MB`;
     if (m.memoryCapped) $('err').textContent = 'Memory limit reached. Try Simple sizes.';
     if (m.done) { endSolve(); requestReport(); worker.postMessage({ cmd: 'ev', samples: 40000 }); }
   }
