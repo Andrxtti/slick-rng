@@ -72,7 +72,7 @@ function drUnlocks(s) {
     const cur = DR_ITEMS.findIndex((x) => x.slot === it.slot && x.id === s.eq[it.slot]), mine = DR_ITEMS.indexOf(it);
     // never swap out league gear you chose to wear
     const wearingLeague = DR_LG_ITEMS.some((x) => x.slot === it.slot && x.id === s.eq[it.slot]);
-    if (it.id !== 'none' && mine > cur && it.slot !== 'head' && it.slot !== 'sleeve' && !wearingLeague) s.eq[it.slot] = it.id;
+    if (it.id !== 'none' && mine > cur && !['head', 'sleeve', 'home', 'ride'].includes(it.slot) && !wearingLeague) s.eq[it.slot] = it.id;
   }
   s.newItems = [...(s.newItems || []), ...fresh.map(drItemKey)];
   return fresh;
@@ -85,28 +85,22 @@ const drToday = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 
 const drDailyDone = (s) => !!(s.daily && s.daily[drToday()]);
 // the daily freeroll pays like a small tournament at your level, funded by the sponsor
 function drDailyEvent(s) { return { ...DR_DAILY, prizeBase: [15, 15, 60, 250, 1000, 4000, 2000, 5000][Math.min(7, s.ch)] }; }
-function drAvailable(s) {
-  if (s.ch === 0) return DR_EVENTS.filter((e) => e.id === 'local');
-  return DR_EVENTS.filter((e) => e.ch >= 1 && e.ch <= s.ch);
-}
-function drAfford(s, ev) { return ev.free || drTicket(s, ev) || s.br >= ev.buyin; }
+function drAvailable(s) { return drTodayEvents(s).map((x) => x.ev); }
+// what it costs to sit down today: the buy-in plus hotel and travel if it's away from home
+const drCostToday = (s, ev) => (ev.free || drTicket(s, ev) ? 0 : ev.buyin) + drTravelFor(s, ev);
+function drAfford(s, ev) { return s.br >= drCostToday(s, ev); }
 function drRisk(s, ev) {
   if (ev.free) return ['free', 'Free seat'];
   if (drTicket(s, ev)) return ['free', '🎟 You have a seat'];
-  if (s.br < ev.buyin) return ['no', `Need $${drMoney(ev.buyin)}`];
-  const r = ev.buyin / Math.max(1, s.br);
+  const cost = drCostToday(s, ev);
+  if (s.br < cost) return ['no', `Need $${drMoney(cost)}`];
+  const r = cost / Math.max(1, s.br);
   return r <= 0.05 ? ['safe', 'Safe for your roll'] : r <= 0.2 ? ['shot', 'Taking a shot'] : ['yolo', 'Betting the dream'];
 }
 // after anything happens: next chapter, rock bottom, first title
 function drProgress(s) {
   if (s.ch >= 1 && s.ch < 7 && DR_CHAPTERS[s.ch].test(s) && !s.story['c' + (s.ch + 1)] && !s.queue.includes('c' + (s.ch + 1))) s.queue.push('c' + (s.ch + 1));
-  if (s.ch >= 1) {
-    const live = drAvailable(s).filter((e) => !e.free), cheapest = Math.min(...live.map((e) => e.buyin));
-    if (s.br < cheapest && !s.queue.includes('broke')) {
-      const stake = Math.max(drStakeSize(s), cheapest - s.br);
-      drAdd(s, stake, "Slick's stake"); s.debt += stake; drMoment(s, '🥧', `Went broke. Slick staked you $${drMoney(stake)}`); s.flags.stakes = (s.flags.stakes || 0) + 1; s.queue.push('broke');
-    }
-  }
+  if (s.ch >= 1 && drBroke(s) && !s.story.broke && !s.queue.includes('broke')) { drMoment(s, '🥧', 'Went broke'); s.queue.push('broke'); }
 }
 
 // ---------------------------------------------------------------- an event
@@ -121,7 +115,8 @@ function drPlanFor(ev, ch) {
   if (ev.kind === 'sng') return { stages: ev.stagesFix.slice() };
   if (ev.kind === 'cash') return { stages: ['cash'] };
   if (ev.kind === 'sat') return { stages: ['early', 'satbubble'] };
-  const c = ch == null ? ((typeof DR !== 'undefined' && DR.st && DR.st.ch) || 0) : ch, big = ev.field >= 1500;
+  const c = Math.max(ch == null ? ((typeof DR !== 'undefined' && DR.st && DR.st.ch) || 0) : ch, ev.ch || 0), big = ev.field >= 1500;
+  if (ev.turbo) return { stages: ['early', 'middle', 'bubble', 'final'], perS: [1, 2, 2, 2], turbo: true };
   const plan = c <= 1 ? [['early', 4], ['middle', 2], ['bubble', 1], ['final', 1]]
     : c === 2 ? [['early', 2], ['middle', 4], ['bubble', 1], ['final', 1]]
     : c === 3 ? [['early', 1], ['middle', 3], ['bubble', 2], ['final', 2]]
@@ -155,18 +150,38 @@ function drPickBoss(s, ev, rng) {
   const fresh = ev.legends.filter((id) => !s.legends[id]), pool = fresh.length ? fresh : ev.legends;
   return pool[(rng() * pool.length) | 0];
 }
-function drStart(id) {
-  const s = DR.st, ev = id === 'daily' ? drDailyEvent(s) : drEvent(id);
-  if (DR.run || !ev || !drAfford(s, ev)) return;
+// opt.reentry: firing another bullet the same day (no new game slot, no second hotel night)
+function drStart(id, opt = {}) {
+  const s = DR.st; if (DR.run) return;
+  let ev = id === 'daily' ? drDailyEvent(s) : null, liveL = null;
+  if (!ev) {
+    liveL = DR_LIVE.find((l) => l.ev.id === id) || null;
+    const today = drOnToday(s, id);
+    ev = today ? today.ev : liveL && drLiveNow().includes(liveL) ? liveL.ev : DR.anyDay ? drEvent(id) : null;
+    if (!ev || (liveL && drLivePlayed(s, liveL.id))) return;
+  }
+  if (ev.id === 'freeroll') ev = { ...ev, prizeBase: [0, 1, 1.5, 4, 8, 16, 16, 16][Math.min(7, s.ch)] };
+  const story = !ev.daily, re = !!opt.reentry;
+  if (story && !re && !DR.anyDay && drSlots(s).left <= 0) return;
+  if (!drAfford(s, ev)) return;
   if (ev.daily && drDailyDone(s)) return;
-  if (drTicket(s, ev)) { s.tickets[ev.id]--; s.ledger.push({ d: Date.now(), amt: 0, why: `Satellite seat: ${ev.name}` }); DR.usedTicket = true; }
-  else { DR.usedTicket = false; if (!ev.free) drAdd(s, -ev.buyin, `Buy-in: ${ev.name}`); }
+  const travel = story ? drTravelFor(s, ev) : 0;
+  if (drTicket(s, ev) && !re) { s.tickets[ev.id]--; s.ledger.push({ d: Date.now(), amt: 0, why: `Satellite seat: ${ev.name}` }); DR.usedTicket = true; }
+  else { DR.usedTicket = false; if (!ev.free) drAdd(s, -ev.buyin, `${re ? 'Re-entry' : 'Buy-in'}: ${ev.name}`); }
+  if (story) {
+    const c = drCal(s);
+    if (travel) { drAdd(s, -travel, `Hotel and travel: ${(DR_PLACES[ev.venue] || {}).name || ev.venue}`); (c.trav[c.d] = c.trav[c.d] || []).push(ev.venue); }
+    if (re) { const k = `${c.d}|${ev.id}`; c.re[k] = (c.re[k] || 0) + 1; } else if (!DR.anyDay) drUseSlot(s);
+    if (ev.invite) { c.inv = null; s.flags.invites = (s.flags.invites || 0) + 1; drMoment(s, '📨', `Sat in a private game: ${ev.name}, hosted by ${ev.host}`); }
+    if (ev.id === 'local' && s.ch === 0) c.d = 5;
+    DR.morning = null;
+  }
   s.lastEvent = id; drSave();
   const seed = ev.daily ? `daily|${drToday()}` : `${id}|${Date.now()}|${Math.random()}`, rng = arRng(seed);
   DR.saved = snapSetup(); TR.random = true; window.__trRand = true;
   if (S.variant !== 'nlh') setVariant('nlh');
   const plan = drPlanFor(ev);
-  DR.run = { ev, stages: plan.stages, perS: plan.perS, si: 0, h: 0, stack: 100, results: [], total: 0, rng,
+  DR.run = { ev, stages: plan.stages, perS: plan.perS, si: 0, h: 0, stack: 100, results: [], total: 0, rng, reentry: re, travel,
     state: 'loading', spot: null, boss: drPickBoss(s, ev, rng), fails: 0, bust: false, combo: 0, t0: performance.now(), tip: 0 };
   DR.view = 'run'; drRender(); drTable();
 }
@@ -187,7 +202,7 @@ async function drTable() {
   if (pool && pool.length) {
     // a pre-solved table: no waiting, no phone CPU, answers from a long offline solve
     run.usedTables = run.usedTables || [];
-    const fit = DR_STAGE_FIT[stage], bb = drLiveEv(run.ev), anteOk = (i) => !pool[i].s.t222 || !!pool[i].s.t222.bbAnte === bb;
+    const fit = run.ev.turbo && stage === 'early' ? DR_STAGE_FIT.middle : DR_STAGE_FIT[stage], bb = drLiveEv(run.ev), anteOk = (i) => !pool[i].s.t222 || !!pool[i].s.t222.bbAnte === bb;
     const all = pool.map((_, i) => i).filter((i) => anteOk(i) && (!fit || !pool[i].s.t222 || fit(pool[i].s.t222))), any = pool.map((_, i) => i).filter(anteOk), okI = all.length ? all : any.length ? any : pool.map((_, i) => i);
     const fresh = okI.filter((i) => !run.usedTables.includes(libGid + i)), pickFrom = fresh.length ? fresh : okI;
     const ti = pickFrom[(run.rng() * pickFrom.length) | 0]; run.usedTables.push(libGid + ti);
@@ -475,14 +490,14 @@ function drFinish(quit) {
   const rec = s.events[ev.id] || (s.events[ev.id] = { played: 0, cashes: 0, wins: 0, best: null, cash: 0, net: 0 });
   rec.played++;
   const keyHands = run.results.filter((r) => r.hand).map((r) => r).sort((a, b) => a.pts - b.pts);
-  const res = { ev, n, pct, counts, all: run.results.map((x) => ({ lab: x.lab, tier: x.tier, stage: x.stage, hand: x.hand })), acc: drAccuracy(run.results), bestCombo: run.bestCombo || 0, before0: 0, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free ? 0 : ev.buyin), titles: [], beat: null, met: null, prize: 0, net: 0 };
+  const res = { ev, n, pct, counts, all: run.results.map((x) => ({ lab: x.lab, tier: x.tier, stage: x.stage, hand: x.hand })), acc: drAccuracy(run.results), bestCombo: run.bestCombo || 0, before0: 0, quit: !!quit, keys: [...keyHands.filter((r) => r.tier === 'bad').slice(0, 2), ...keyHands.filter((r) => r.tier === 'perfect' && r.hand.bestF < 80).slice(-1)].slice(0, 3), boss: run.boss, before: s.br + (ev.free || DR.usedTicket ? 0 : ev.buyin) + (run.travel || 0), titles: [], beat: null, met: null, prize: 0, net: 0, stageI: run.si, bust: !!run.bust, ticketUsed: !!DR.usedTicket, reentry: !!run.reentry, travel: run.travel || 0 };
   if (ev.kind === 'sat') {
     const place = drPlace(run, ev); res.place = place; res.paid = ev.seats;
     rec.best = rec.best ? Math.min(rec.best, place) : place;
     if (place <= ev.seats) { drMoment(s, '🎟', `Won a seat into the ${drEvent(ev.target).name}`); s.tickets = s.tickets || {}; s.tickets[ev.target] = (s.tickets[ev.target] || 0) + 1; res.ticket = ev.target; rec.wins++; s.flags.satWin = true; }
     res.net = -(DR.usedTicket ? 0 : ev.buyin);
   } else if (ev.kind === 'cash') {
-    const net = run.bust ? -ev.buyin : drCashNet(run, quit ? 0 : (run.rng() - 0.5) * 0.3);
+    const net = run.bust ? -ev.buyin : drCashNet(run, quit ? 0 : (run.rng() - 0.5) * 0.3 + (ev.soft || 0) * 0.5);
     drAdd(s, ev.buyin + net, `Cashed out: ${ev.name}`);
     res.net = net; res.prize = ev.buyin + net; rec.net += net;
     if (net > 0) { s.flags.cashWin = true; res.repaid = drRepay(s, net); }
@@ -526,6 +541,7 @@ function drFinish(quit) {
   if (s.peak >= 100000 && !s.story.derek && !s.queue.includes('derek')) s.queue.push('derek');
   res.after = s.br;
   DR.gotAt = ev.name; res.unlocked = drUnlocks(s); DR.gotAt = null;
+  if (ev.live) { const it = drLiveReward(s, ev); if (it) res.unlocked.push(it); }
   drProgress(s);
   drEventDone(res, run);
   drSave();
