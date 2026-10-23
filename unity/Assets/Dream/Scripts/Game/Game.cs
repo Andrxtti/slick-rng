@@ -1,0 +1,163 @@
+// The game's flow: which screen you're on and what happens when you tap. Screens read from here and call these.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CFDream
+{
+    public enum View { Title, Create, Hub, Scene, Run, Results, Profile }
+
+    public static class Game
+    {
+        public static State State;
+        public static View View = View.Title;
+        public static string Tab = "calendar", ClosetCat = "shirts", ProfileTab = "quests";
+        public static Run Run;
+        public static Result Last;
+        public static ScenePlay Scene;
+        public static Look Draft = new Look(); public static string DraftName = ""; public static bool Restyle;
+        public static List<(string icon, string text)> Morning;
+        public static int CalSel = -1, CalWk;
+        public static bool AnyDay; // testing: play any event regardless of the calendar
+        public static Action Render = () => { };
+
+        public static void Boot()
+        {
+            DB.Load();
+            State = State.Load();
+            Calendar.Migrate(State);
+            if (State.made) View = View.Hub;
+        }
+
+        // ------------------------------------------------------------ new career and the creator
+        public static void NewCareer() { Draft = new Look(); DraftName = ""; Restyle = false; View = View.Create; Render(); }
+        public static void Begin(string name)
+        {
+            var s = new State { made = true, name = string.IsNullOrWhiteSpace(name) ? "Rookie" : name.Trim(), look = Draft.Clone() };
+            State = s; Career.Unlocks(s); s.newItems.Clear(); s.Save();
+            PlayScene("p_office");
+        }
+        public static void StartRestyle() { Draft = State.look.Clone(); DraftName = State.name; Restyle = true; View = View.Create; Render(); }
+        public static void SaveRestyle(string name) { State.look = Draft.Clone(); if (!string.IsNullOrWhiteSpace(name)) State.name = name.Trim(); Restyle = false; State.Save(); View = View.Hub; Tab = "closet"; Render(); }
+        public static void CancelRestyle() { Restyle = false; View = View.Hub; Tab = "closet"; Render(); }
+
+        // ------------------------------------------------------------ the hub
+        public static void Hub()
+        {
+            View = View.Hub;
+            var s = State;
+            if (s.queue.Count > 0 && Run == null) { var id = s.queue[0]; s.queue.RemoveAt(0); s.Save(); PlayScene(id); return; }
+            Render();
+        }
+
+        // ------------------------------------------------------------ story scenes
+        public static void PlayScene(string id, bool replay = false)
+        {
+            id = Story.Resolve(id, State);
+            if (!DB.Scenes.ContainsKey(id)) { Hub(); return; }
+            Scene = new ScenePlay { id = id, replay = replay }; View = View.Scene; Render();
+        }
+        public static Beat CurrentBeat()
+        {
+            var sc = Scene; if (sc == null) return null;
+            if (sc.extra.Count > 0) return sc.extra[0];
+            var beats = DB.Scenes[sc.id].beats; return sc.i < beats.Count ? beats[sc.i] : null;
+        }
+        public static void Advance()
+        {
+            var sc = Scene; if (sc == null) return;
+            var b = CurrentBeat(); if (sc.extra.Count == 0 && b != null && b.choice != null) return; // pick an option first
+            if (sc.extra.Count > 0) sc.extra.RemoveAt(0); else sc.i++;
+            if (sc.extra.Count == 0 && sc.i >= DB.Scenes[sc.id].beats.Count) { SceneEnd(); return; }
+            Render();
+        }
+        public static void Choose(int k)
+        {
+            var sc = Scene; var b = CurrentBeat(); if (b == null || b.choice == null || k >= b.choice.Count) return;
+            var c = b.choice[k];
+            if (!sc.replay) Story.Act(sc.id, k, State);
+            State.Save();
+            if (c.go != null)
+            {
+                if (sc.replay) { Scene = new ScenePlay { id = c.go, replay = true }; Render(); return; }
+                State.story.Add(sc.id); State.Save(); PlayScene(c.go); return;
+            }
+            sc.i++;
+            if (c.line != null) sc.extra.Add(c.line);
+            if (sc.extra.Count == 0 && sc.i >= DB.Scenes[sc.id].beats.Count) { SceneEnd(); return; }
+            Render();
+        }
+        public static void Skip()
+        {
+            var sc = Scene; if (sc == null) return;
+            var beats = DB.Scenes[sc.id].beats; sc.extra.Clear();
+            int k = beats.FindIndex(sc.i, b => b.choice != null);
+            if (k >= 0) { sc.i = k; Render(); return; }
+            SceneEnd();
+        }
+        public static void SceneEnd()
+        {
+            var s = State; var sc = Scene; var def = DB.Scenes[sc.id];
+            if (sc.replay) { Scene = null; View = View.Hub; Tab = "story"; Render(); return; }
+            s.story.Add(sc.id); Story.OnEnd(sc.id, s);
+            Career.Unlocks(s); Career.Progress(s); s.Save();
+            Scene = null;
+            string end = def.end ?? "hub";
+            if (DB.Scenes.ContainsKey(end)) { PlayScene(end); return; }
+            if (DB.Event(end) != null) { View = View.Hub; StartEvent(end); if (Run == null) Render(); return; }
+            Hub();
+        }
+
+        // ------------------------------------------------------------ an event
+        public static void StartEvent(string id, bool reentry = false)
+        {
+            if (Run != null) return;
+            var run = Play.Start(id, reentry); if (run == null) { Render(); return; }
+            Run = run; Morning = null; View = View.Run; NextTable();
+        }
+        public static void NextTable() { var run = Run; if (run == null) return; Play.PickTable(run); run.state = "ready"; Render(); }
+        public static void Deal() { var run = Run; if (run == null) return; run.spot = Play.Deal(run); run.state = "play"; Render(); }
+        public static void Answer(int j) { var run = Run; if (run == null || run.state != "play") return; Play.Answer(run, j); Render(); }
+        public static void NextHand()
+        {
+            var run = Run; if (run == null || run.state != "answered") return;
+            var what = Play.Next(run);
+            if (what == "hand") { Deal(); return; }
+            if (what == "level") { NextTable(); return; }
+            if (what == "cooler") { Render(); return; }
+            Finish(false);
+        }
+        public static void Finish(bool quit)
+        {
+            var run = Run; if (run == null) return; Run = null;
+            Last = Play.Finish(run, quit); View = View.Results; Render();
+        }
+        public static void Reenter() { var ev = Last?.ev; if (ev == null) return; StartEvent(ev.id, true); }
+
+        // ------------------------------------------------------------ the calendar
+        public static void Sleep(int days = 1)
+        {
+            var s = State;
+            if (days <= 0) { var sl = Calendar.SlotsLeft(s); if (s.job == "nights" && sl.left == 0) days = 7 - Calendar.Date(s.cal.d).dow; else days = 1; }
+            Morning = Calendar.Sleep(s, Math.Max(1, days)); CalSel = -1; CalWk = 0; Hub();
+        }
+        public static void SleepTo(int d) { int n = d - State.cal.d; if (n > 0) Sleep(n); }
+        public static void QuitJob() { if (State.job == "nights") PlayScene("quit2"); }
+        public static void DeclineInvite() { var c = State.cal; if (c.inv == null) return; Career.Moment(State, "📭", $"Passed on the {c.inv.ev.name}"); c.inv = null; State.Save(); Render(); }
+        public static void MeetAccept() { Calendar.MeetTake(State); State.Save(); Render(); }
+        public static void MeetSkip() { State.cal.meet = null; State.Save(); Render(); }
+
+        // ------------------------------------------------------------ the closet
+        public static void Equip(string slot, string id)
+        {
+            var s = State; if (id != "none" && !s.Owns(slot, id) && !(slot == "outfit" && id == "office")) return;
+            s.eq[slot] = id; s.newItems.Remove(slot + ":" + id); s.Save(); Render();
+        }
+        public static void Dye(string id, int v) { if (v > 0) State.dye[id] = v; else State.dye.Remove(id); State.Save(); Render(); }
+        public static void SetFinish(string slot, string id, int v) { string k = slot + ":" + id; if (v >= 0) State.fin[k] = v; else State.fin.Remove(k); State.Save(); Render(); }
+        public static void FitSave(int i) { Fashion.FitSave(State, i); State.Save(); Render(); }
+        public static void FitWear(int i) { Fashion.FitWear(State, i); State.Save(); Render(); }
+        public static void SetTab(string t) { Tab = t; View = View.Hub; Render(); }
+        public static void Rehire() { if (State.job == "quit") PlayScene("rehire"); }
+    }
+}
