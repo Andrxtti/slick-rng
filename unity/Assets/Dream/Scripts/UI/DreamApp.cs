@@ -98,6 +98,7 @@ namespace CFDream.UI
             try { view = Screens.Build(); }
             catch (Exception e) { Debug.LogException(e); view = Screens.ErrorView(e); }
             column.Add(view);
+            root.style.backgroundColor = Screens.Backdrop;
             var v = Game.View;
             home.Show(v == View.Run || v == View.Results || v == View.Profile || (v == View.Create && Game.Restyle));
             if (same)

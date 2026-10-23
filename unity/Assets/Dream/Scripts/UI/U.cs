@@ -40,18 +40,27 @@ namespace CFDream.UI
         public static string Report = "";
 
         static Font L(string n) { var f = Resources.Load<Font>("Dream/Fonts/" + n); if (f == null) Report += $" missing {n};"; return f; }
+        // the optional types we look up by name, with the module that ships them
+        static readonly Dictionary<string, string[]> Homes = new Dictionary<string, string[]>
+        {
+            { "UnityEngine.TextCore.Text.FontAsset", new[] { "UnityEngine.TextCoreTextEngineModule", "UnityEngine.TextCoreModule" } },
+            { "UnityEngine.TextCore.LowLevel.GlyphRenderMode", new[] { "UnityEngine.TextCoreFontEngineModule", "UnityEngine.TextCoreModule" } },
+            { "UnityEngine.EventSystems.EventSystem", new[] { "UnityEngine.UI" } },
+            { "UnityEngine.InputSystem.UI.InputSystemUIInputModule", new[] { "Unity.InputSystem" } },
+        };
         public static Type FindType(string full)
         {
-            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                try { var t = a.GetType(full, false); if (t != null) return t; } catch { }
-            }
-            return null;
+            if (full == "UnityEngine.TextCore.Text.FontAsset") { var p = typeof(FontDefinition).GetProperty("fontAsset"); if (p != null) return p.PropertyType; }
+            if (Homes.TryGetValue(full, out var mods))
+                foreach (var m in mods) { try { var t = Type.GetType(full + ", " + m, false); if (t != null) return t; } catch { } }
+            return Type.GetType(full, false);
         }
 
+        // Runs on every Play: Unity 6 can enter Play mode without reloading scripts, and the font assets built
+        // last time were destroyed when Play stopped, so they are rebuilt here each time.
         public static void Load()
         {
-            if (Body != null) return;
+            defs.Clear(); Report = "";
             Body = L("Inter-Regular"); Medium = L("Inter-Medium"); Semi = L("Inter-SemiBold"); Bold = L("Inter-Bold");
             Disp = L("Gloock-Regular"); Mono = L("IBMPlexMono-Regular"); MonoB = L("IBMPlexMono-Bold"); Sym = L("DejaVuSans-Bold"); Emoji = L("NotoColorEmoji");
             faType = FindType("UnityEngine.TextCore.Text.FontAsset");

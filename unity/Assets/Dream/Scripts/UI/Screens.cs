@@ -9,8 +9,11 @@ namespace CFDream.UI
 {
     public static class Screens
     {
+        public static Color Backdrop = C.Ink;
+
         public static VisualElement Build()
         {
+            Backdrop = C.Ink;
             switch (Game.View)
             {
                 case View.Create: return Create();
@@ -53,9 +56,9 @@ namespace CFDream.UI
             glow.generateVisualContent += mgc =>
             {
                 var r = glow.contentRect; var p = mgc.painter2D;
-                for (int i = 0; i < 14; i++)
+                for (int i = 0; i < 36; i++)
                 {
-                    float t = i / 13f; p.fillColor = C.A(C.Mix(C.Felt, C.Gold3, 0.2f), 0.05f * (1 - t) + 0.01f);
+                    float t = i / 35f; p.fillColor = C.A(C.Mix(C.Felt, C.Gold3, 0.2f), 0.02f * (1 - t) + 0.004f);
                     p.BeginPath(); p.Arc(new Vector2(r.center.x, r.height * 0.42f), r.width * (0.2f + 0.5f * t), Angle.Degrees(0), Angle.Degrees(360)); p.Fill();
                 }
             };
@@ -226,12 +229,12 @@ namespace CFDream.UI
             var def = DB.Scenes[sc.id]; var b = Game.CurrentBeat(); var st = Game.State;
             var tint = Tint(def.place);
             var s = Page("scene");
-            s.style.backgroundColor = C.Mix(C.Ink, tint, 0.1f);
+            s.style.backgroundColor = C.Mix(C.Ink, tint, 0.1f); Backdrop = C.Mix(C.Ink, tint, 0.1f);
             var glow = new VisualElement().Cls("scene-glow").NoPick();
             glow.generateVisualContent += mgc =>
             {
                 var r = glow.contentRect; var p = mgc.painter2D;
-                for (int i = 0; i < 12; i++) { float t = i / 11f; p.fillColor = C.A(tint, 0.05f * (1 - t) + 0.008f); p.BeginPath(); p.Arc(new Vector2(r.width * 0.5f, 0), r.width * (0.25f + 0.75f * t), Angle.Degrees(0), Angle.Degrees(180)); p.Fill(); }
+                for (int i = 0; i < 32; i++) { float t = i / 31f; p.fillColor = C.A(tint, 0.02f * (1 - t) + 0.003f); p.BeginPath(); p.Arc(new Vector2(r.width * 0.5f, 0), r.width * (0.25f + 0.75f * t), Angle.Degrees(0), Angle.Degrees(180)); p.Fill(); }
             };
             s.Add(glow);
 

@@ -23,6 +23,9 @@ namespace CFDream
 
         public static void Boot()
         {
+            // Play mode can start without a script reload, so nothing from the last session may linger here
+            Run = null; Last = null; Scene = null; Morning = null; Restyle = false; Draft = new Look(); DraftName = "";
+            View = View.Title; Tab = "calendar"; ClosetCat = "shirts"; CalSel = -1; CalWk = 0;
             DB.Load();
             State = State.Load();
             Calendar.Migrate(State);

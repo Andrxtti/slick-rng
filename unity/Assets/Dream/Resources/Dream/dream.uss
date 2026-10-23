@@ -20,6 +20,8 @@ Label.h3 { font-size: 17px; margin-top: 2px; }
 Label.kicker { font-size: 10px; letter-spacing: 2px; color: #d9b36c; margin-bottom: 3px; }
 Label.p { font-size: 14px; color: #f3ecdc; }
 Label.hint { font-size: 12px; color: #a99d86; margin-top: 2px; }
+/* a little slack on the right so long lines wrap a word early instead of touching the card edge */
+Label.p, Label.hint, Label.goal-t, Label.narr-t, Label.speech-t { padding-right: 4px; }
 Label.num { font-size: 15px; color: #f3ecdc; }
 Label.story-t { color: #d8ccb4; -unity-font-style: italic; }
 
@@ -39,14 +41,16 @@ Label.btn-sub { font-size: 11px; color: #a99d86; -unity-text-align: middle-cente
 .btn.gold Label.btn-t { color: #1a1206; }
 .btn.gold Label.btn-sub { color: #4a3a1c; }
 .btn.ghost { background-color: rgba(0, 0, 0, 0); }
-.btn.small { padding: 6px 11px; border-radius: 10px; margin: 2px; }
+.btn.small { padding: 6px 11px; border-radius: 10px; margin: 2px; flex-shrink: 0; }
+.btn.small Label.btn-t { white-space: nowrap; }
 .btn.small Label.btn-t { font-size: 12px; }
 .btn.wide { align-self: stretch; margin-left: 0; margin-right: 0; }
 .btn.grow { flex-grow: 1; flex-basis: 0; }
 .btn.down { scale: 0.97 0.97; opacity: 0.85; }
 .btn.off { opacity: 0.38; }
 
-.chip { flex-direction: row; padding: 3px 8px; border-radius: 12px; border-width: 1px; margin: 0 6px 5px 0; align-self: flex-start; }
+.chip { flex-direction: row; padding: 3px 8px; border-radius: 12px; border-width: 1px; margin: 0 6px 5px 0; align-self: flex-start; flex-shrink: 0; }
+Label.chip-t { white-space: nowrap; }
 Label.chip-t { font-size: 11px; }
 .bar { background-color: #2b251c; overflow: hidden; }
 .bar-fill { height: 100%; }
@@ -73,6 +77,7 @@ Label.title-sub { color: #a99d86; margin: 8px 18px 0 18px; }
 
 /* creator */
 .create { flex-grow: 1; }
+.create-top, .footer, .scene-head, .dots { flex-shrink: 0; }
 .create-top { flex-direction: row; align-items: center; padding: 14px; background-color: #13110d; border-bottom-width: 1px; border-color: #3a3226; }
 .name-field { margin: 4px 0 0 0; }
 .name-field .unity-base-text-field__input, .name-field .unity-text-field__input { background-color: #221e17; border-color: #4d4232; border-radius: 10px; padding: 8px 10px; font-size: 18px; color: #f3ecdc; }

@@ -198,6 +198,7 @@ namespace CFDream.UI
             var ev = res.ev;
             var page = Screens.Page("results");
             var sv = Screens.Scroll(); var body = U.Div("pad");
+            body.Add(U.Space(46)); // room for the Home button
 
             var hero = U.Card("res-hero");
             hero.Add(U.Kicker(ev.name));
