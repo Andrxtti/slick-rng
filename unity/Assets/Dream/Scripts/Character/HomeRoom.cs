@@ -22,6 +22,7 @@ namespace CFDream.Character
     {
         public GameObject root; public string tier;
         public float W, D, H; public Vector3 spawn; public float spawnFace;
+        public float doorX; public Vector3 doorPos;                                    // the way out (the front wall)
         public Dictionary<string, (Vector3 pos, float yaw)> marks = new Dictionary<string, (Vector3, float)>();   // where people stand in a scene
         public (Vector3 pos, float yaw) Mark(string id, Vector3 pos, float yaw) => marks.TryGetValue(id, out var m) ? m : (pos, yaw);
         public readonly List<HomeUse> uses = new List<HomeUse>();
@@ -66,8 +67,29 @@ namespace CFDream.Character
             var bc = fl.AddComponent<BoxCollider>(); bc.center = new Vector3(0, -0.05f, 0); bc.size = new Vector3(r.W, 0.1f, r.D);
             Quad(r.root.transform, "Back wall", new Vector3(-r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, r.H, -r.D / 2), new Vector3(-r.W / 2, r.H, -r.D / 2), Mats.Get(wall, 0, 0.15f), layer, Vector2.one);
             Quad(r.root.transform, "Left wall", new Vector3(-r.W / 2, 0, r.D / 2), new Vector3(-r.W / 2, 0, -r.D / 2), new Vector3(-r.W / 2, r.H, -r.D / 2), new Vector3(-r.W / 2, r.H, r.D / 2), Mats.Get(wall2, 0, 0.15f), layer, Vector2.one);
-            // movie sets close the right side too, so close-ups never look out into the void
-            if (J.B(L, "rightWall"))
+            // rooms are closed: the right wall, a ceiling and a front wall with the door, so a camera inside never
+            // looks out into the void (a camera outside still sees in: the walls are one-sided)
+            bool closed = true;
+            if (closed)
+            {
+                r.doorX = F(L, "doorX", r.W / 2 - 1.1f);
+                float dw = 0.92f, dh = 2.08f, t = 0.06f;
+                // front wall in three pieces around the door opening, facing into the room
+                Quad(r.root.transform, "Front wall L", new Vector3(r.doorX - dw / 2, 0, r.D / 2), new Vector3(-r.W / 2, 0, r.D / 2), new Vector3(-r.W / 2, r.H, r.D / 2), new Vector3(r.doorX - dw / 2, r.H, r.D / 2), Mats.Get(wall, 0, 0.15f), layer, Vector2.one);
+                Quad(r.root.transform, "Front wall R", new Vector3(r.W / 2, 0, r.D / 2), new Vector3(r.doorX + dw / 2, 0, r.D / 2), new Vector3(r.doorX + dw / 2, r.H, r.D / 2), new Vector3(r.W / 2, r.H, r.D / 2), Mats.Get(wall, 0, 0.15f), layer, Vector2.one);
+                Quad(r.root.transform, "Front wall top", new Vector3(r.doorX + dw / 2, dh, r.D / 2), new Vector3(r.doorX - dw / 2, dh, r.D / 2), new Vector3(r.doorX - dw / 2, r.H, r.D / 2), new Vector3(r.doorX + dw / 2, r.H, r.D / 2), Mats.Get(wall, 0, 0.15f), layer, Vector2.one);
+                // the door: a dark panel set into the opening, a frame and a brass knob
+                var doorMat = Mats.Get(Color.Lerp(Hex(J.S(L, "trim", "#2a2430")), Color.black, 0.2f), 0, 0.35f);
+                Box(r.root.transform, new Vector3(r.doorX, dh / 2, r.D / 2 - 0.02f), new Vector3(dw - 0.04f, dh - 0.02f, 0.05f), doorMat, layer);
+                var fm = Mats.Get(trim, 0, 0.5f);
+                Box(r.root.transform, new Vector3(r.doorX - dw / 2, dh / 2, r.D / 2 - 0.03f), new Vector3(t, dh, 0.1f), fm, layer);
+                Box(r.root.transform, new Vector3(r.doorX + dw / 2, dh / 2, r.D / 2 - 0.03f), new Vector3(t, dh, 0.1f), fm, layer);
+                Box(r.root.transform, new Vector3(r.doorX, dh + t / 2, r.D / 2 - 0.03f), new Vector3(dw + 2 * t, t, 0.1f), fm, layer);
+                Box(r.root.transform, new Vector3(r.doorX + dw / 2 - 0.1f, 1.02f, r.D / 2 - 0.07f), new Vector3(0.05f, 0.05f, 0.06f), Mats.Get(Hex("#c9a03e"), 0.9f, 0.8f), layer);
+                Box(r.root.transform, new Vector3(0, 0.05f, r.D / 2 - 0.01f), new Vector3(r.W, 0.1f, 0.02f), Mats.Get(trim, 0, 0.4f), layer);
+                r.doorPos = new Vector3(r.doorX, 0, r.D / 2 - 0.5f);
+            }
+            if (closed || J.B(L, "rightWall"))
             {
                 Quad(r.root.transform, "Right wall", new Vector3(r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, 0, r.D / 2), new Vector3(r.W / 2, r.H, r.D / 2), new Vector3(r.W / 2, r.H, -r.D / 2), Mats.Get(wall2, 0, 0.15f), layer, Vector2.one);
                 Box(r.root.transform, new Vector3(r.W / 2 - 0.01f, 0.05f, 0), new Vector3(0.02f, 0.1f, r.D), Mats.Get(trim, 0, 0.4f), layer);
@@ -78,9 +100,12 @@ namespace CFDream.Character
             }
             Box(r.root.transform, new Vector3(0, 0.05f, -r.D / 2 + 0.01f), new Vector3(r.W, 0.1f, 0.02f), Mats.Get(trim, 0, 0.4f), layer);
             Box(r.root.transform, new Vector3(-r.W / 2 + 0.01f, 0.05f, 0), new Vector3(0.02f, 0.1f, r.D), Mats.Get(trim, 0, 0.4f), layer);
-            // a thin lip along the open edges so the cut-away reads as a diorama
-            Box(r.root.transform, new Vector3(0, -0.06f, r.D / 2 + 0.03f), new Vector3(r.W + 0.12f, 0.12f, 0.06f), Mats.Get(trim, 0, 0.4f), layer);
-            Box(r.root.transform, new Vector3(r.W / 2 + 0.03f, -0.06f, 0), new Vector3(0.06f, 0.12f, r.D + 0.12f), Mats.Get(trim, 0, 0.4f), layer);
+            if (!closed)
+            {
+                // a thin lip along the open edges so the cut-away reads as a diorama
+                Box(r.root.transform, new Vector3(0, -0.06f, r.D / 2 + 0.03f), new Vector3(r.W + 0.12f, 0.12f, 0.06f), Mats.Get(trim, 0, 0.4f), layer);
+                Box(r.root.transform, new Vector3(r.W / 2 + 0.03f, -0.06f, 0), new Vector3(0.06f, 0.12f, r.D + 0.12f), Mats.Get(trim, 0, 0.4f), layer);
+            }
 
             // windows onto the bay
             r.view = J.S(L, "view", "window_city");

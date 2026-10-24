@@ -24,6 +24,8 @@ namespace CFDream.Character
         readonly List<Vector3> fishGo = new List<Vector3>(); readonly List<Transform> flakes = new List<Transform>(); float feedT;
         public bool Busy => acting != null;
         public HomeRoom Room => room;
+        // third person: a thumb stick (x right, y forward, relative to the camera) steers you around the furniture
+        public Vector2 Stick; public Transform CamRef;
 
         static readonly string[] TvLines = {
             "\"He's got the nuts and he knows it.\"", "\"Rivered! You can't make this up.\"", "\"A bold shove from the button...\"",
@@ -73,7 +75,22 @@ namespace CFDream.Character
             if (room == null || st == null) return;
             var an = Anim();
             float dt = Time.deltaTime; bool moving = false;
-            if (path != null && pi < path.Count)
+            if (Stick.sqrMagnitude > 0.02f)
+            {
+                if (path != null || acting != null) { path = null; arrived = null; faceAt = null; if (acting != null) { StopCoroutine(acting); acting = null; Release(); } if (Pets != null) Pets.Hold(false); }
+                Vector3 f = CamRef != null ? CamRef.forward : st.transform.forward, r = CamRef != null ? CamRef.right : st.transform.right; f.y = 0; r.y = 0; f.Normalize(); r.Normalize();
+                var dir = st.transform.InverseTransformDirection(f * Stick.y + r * Stick.x); dir.y = 0;
+                float mag = Mathf.Min(1f, dir.magnitude); if (mag > 0.01f) dir /= mag;
+                var p = st.Pivot.localPosition; float step = Speed * mag * dt;
+                var want = p + dir * step;
+                if (room.Free(want)) p = want;                                                  // slide along what's in the way
+                else if (room.Free(new Vector3(want.x, p.y, p.z))) p = new Vector3(want.x, p.y, p.z);
+                else if (room.Free(new Vector3(p.x, p.y, want.z))) p = new Vector3(p.x, p.y, want.z);
+                p.x = Mathf.Clamp(p.x, -room.W / 2 + 0.3f, room.W / 2 - 0.3f); p.z = Mathf.Clamp(p.z, -room.D / 2 + 0.3f, room.D / 2 - 0.3f);
+                moving = (p - st.Pivot.localPosition).sqrMagnitude > 1e-8f; st.Pivot.localPosition = p;
+                yaw = Mathf.MoveTowardsAngle(yaw, Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg, 600 * dt);
+            }
+            else if (path != null && pi < path.Count)
             {
                 var p = st.Pivot.localPosition; var target = path[pi]; var d = target - p; d.y = 0;
                 float step = Speed * dt;

@@ -59,6 +59,8 @@ namespace CFDream.Character
         public float CutFade => cutFade;   // 1 right after a cut, fading to 0: the film view dips to black with it
         public static bool Talking;        // a line is typing itself out: the speaker's mouth moves
         public bool InRoom => framing == "room";
+        public static bool Follow = true;   // your place in third person (a camera behind you) instead of the diorama
+        Vector3 followPos; bool followInit;
         public HomeLife Life => life;
         public PetLife Pets => pets;
         public HomeRoom Room => room;
@@ -123,7 +125,7 @@ namespace CFDream.Character
         void Frame(float height, string mode = null)
         {
             framing = mode ?? framing;
-            if (framing == "room") { FrameRoom(); return; }
+            if (framing == "room") { if (Follow) FollowCam(true); else FrameRoom(); return; }
             if (inScene) { Aim(); PlaceCam(shotT); return; }   // the movie camera owns the shot
             float lookY, dist;
             switch (framing)
@@ -164,8 +166,24 @@ namespace CFDream.Character
             if (pets == null) pets = gameObject.AddComponent<PetLife>();
             pets.enabled = true; pets.Set(this, room, pet); life.Pets = pets;
             RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 0.62f));
-            framing = "room"; cam.targetTexture = roomRt; FrameRoom();
+            framing = "room"; cam.targetTexture = roomRt; life.CamRef = cam.transform;
+            if (Follow) { followInit = false; cam.farClipPlane = 60; cam.fieldOfView = 60; FollowCam(true); } else FrameRoom();
             cam.enabled = views.Count > 0 && HasBody;
+        }
+        // third person: over your shoulder, a little above, easing after you and never through a wall
+        void FollowCam(bool snap = false)
+        {
+            if (room == null) return;
+            var p = pivot.localPosition; var fwd = pivot.forward; fwd = transform.InverseTransformDirection(fwd); fwd.y = 0; if (fwd.sqrMagnitude < 1e-4f) fwd = Vector3.forward; fwd.Normalize();
+            var want = p - fwd * 2.4f + Vector3.up * 1.65f + Vector3.Cross(Vector3.up, fwd) * -0.35f;   // behind, up, a touch to your right
+            float m = 0.28f;
+            want.x = Mathf.Clamp(want.x, -room.W / 2 + m, room.W / 2 - m); want.z = Mathf.Clamp(want.z, -room.D / 2 + m, room.D / 2 - m); want.y = Mathf.Min(want.y, room.H - 0.2f);
+            // if the wall pushed the camera onto you, lift it and look down more
+            float d = Vector3.Distance(new Vector3(want.x, 0, want.z), new Vector3(p.x, 0, p.z)); if (d < 1.2f) want.y += (1.2f - d) * 0.9f;
+            if (snap || !followInit) { followPos = want; followInit = true; } else followPos = Vector3.Lerp(followPos, want, 1 - Mathf.Exp(-Time.deltaTime * 6f));
+            cam.transform.localPosition = followPos;
+            var look = p + Vector3.up * 1.25f + fwd * 0.9f;
+            cam.transform.LookAt(transform.TransformPoint(look));
         }
         void ExitRoom()
         {
@@ -406,7 +424,7 @@ namespace CFDream.Character
             if (roomRt != null) { if (cam.targetTexture == roomRt) cam.targetTexture = null; roomRt.Release(); }
             roomRt = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32) { name = "Room", antiAliasing = 1, useMipMap = false };
             roomRt.Create();
-            if (framing == "room") { cam.targetTexture = roomRt; FrameRoom(); }
+            if (framing == "room") { cam.targetTexture = roomRt; if (Follow) FollowCam(true); else FrameRoom(); }
             else if (inScene) cam.targetTexture = roomRt;
         }
         // a three-quarter view from the open front corner, as close as it can get with the whole room in shot
@@ -475,6 +493,7 @@ namespace CFDream.Character
                 foreach (var v in views) v.MarkDirtyRepaint(); return;
             }
             body?.Express("", false, Time.time);
+            if (framing == "room" && Follow) FollowCam();
             if (framing != "room")   // in your place, walking decides which way you face
             {
                 if (!dragging) { spin *= 0.92f; yaw += spin; yaw = Mathf.LerpAngle(yaw, -12 + Mathf.Sin(Time.time * 0.6f) * 4, 0.01f); }

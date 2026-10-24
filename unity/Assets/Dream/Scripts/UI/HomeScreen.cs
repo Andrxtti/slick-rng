@@ -29,6 +29,7 @@ namespace CFDream.UI
             var hud = U.Col().Cls("room-hud"); hud.Add(HubView.Header(s)); page.Add(hud);
             page.Add(Tonight(s));
             var bubble = U.Div("room-bubble").NoPick(); var bt = U.T("", "room-bubble-t", Fonts.Semi).NoPick(); bubble.Add(bt); bubble.style.display = DisplayStyle.None; page.Add(bubble);
+            page.Add(Stick());
             if (Game.Morning != null && Game.Morning.Count > 0) page.Add(Morning(s));
 
             // labels over the things you can use
@@ -127,6 +128,27 @@ namespace CFDream.UI
                 haze.style.opacity = Mathf.Clamp01((hazeUntil - now) / 2f) * 0.28f;
             }).Every(33);
             return page;
+        }
+
+        // a thumb stick: drag to walk, camera-relative; let go to stop
+        static VisualElement Stick()
+        {
+            var pad = U.Div("stick"); var knob = U.Div("stick-knob").NoPick(); pad.Add(knob);
+            int pid = -1; const float R = 44f;
+            void Set(Vector2 local)
+            {
+                var c = new Vector2(pad.resolvedStyle.width / 2, pad.resolvedStyle.height / 2); var off = local - c;
+                if (off.magnitude > R) off = off.normalized * R;
+                knob.style.translate = new Translate(off.x, off.y);
+                var life = CharacterStage.Instance?.Life; if (life != null) life.Stick = new Vector2(off.x / R, -off.y / R);
+            }
+            void End() { pid = -1; knob.style.translate = new Translate(0, 0); var life = CharacterStage.Instance?.Life; if (life != null) life.Stick = Vector2.zero; }
+            pad.RegisterCallback<PointerDownEvent>(e => { pid = e.pointerId; pad.CapturePointer(pid); Set(e.localPosition); e.StopPropagation(); });
+            pad.RegisterCallback<PointerMoveEvent>(e => { if (e.pointerId == pid) Set(e.localPosition); });
+            pad.RegisterCallback<PointerUpEvent>(e => { if (e.pointerId == pid) { pad.ReleasePointer(pid); End(); } });
+            pad.RegisterCallback<PointerCancelEvent>(e => { if (e.pointerId == pid) End(); });
+            pad.RegisterCallback<DetachFromPanelEvent>(e => End());
+            return pad;
         }
 
         // tonight at a glance, and the way into the laptop
