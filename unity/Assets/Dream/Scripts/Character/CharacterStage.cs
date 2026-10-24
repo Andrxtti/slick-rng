@@ -112,9 +112,12 @@ namespace CFDream.Character
         // ------------------------------------------------------------ your place
         void EnterRoom(string tier, float aspect, string pet)
         {
-            if (room == null || room.tier != tier)
+            bool fresh = room == null || room.tier != tier;
+            if (fresh)
             {
-                if (room != null) Destroy(room.root);
+                // out with the old place: everything called "Home ..." under the stage, not just the one we remember
+                for (int i = transform.childCount - 1; i >= 0; i--) { var ch = transform.GetChild(i); if (ch.name.StartsWith("Home ")) { ch.gameObject.SetActive(false); Destroy(ch.gameObject); } }
+                if (pets != null) pets.Clear();
                 room = HomeRoom.Build(tier, transform, Layer); hasRoomPos = false; pivot.localPosition = Vector3.zero;
                 if (room == null) return;
             }
@@ -122,7 +125,7 @@ namespace CFDream.Character
             if (hasRoomPos) { pivot.localPosition = roomPos; pivot.localRotation = Quaternion.Euler(0, roomYaw, 0); }
             if (life == null) life = gameObject.AddComponent<HomeLife>();
             life.enabled = true;
-            if (framing != "room") life.Init(this, room);
+            if (framing != "room" || fresh) life.Init(this, room);   // a new place (or coming back to this one): start from its spawn spot
             if (pets == null) pets = gameObject.AddComponent<PetLife>();
             pets.enabled = true; pets.Set(this, room, pet); life.Pets = pets;
             RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 0.62f));
@@ -259,6 +262,18 @@ namespace CFDream.Character
             StartCoroutine(Snap());
         }
         public void SnapNow() { if (gameObject.activeInHierarchy) StartCoroutine(Snap()); }
+        // a picture of the stage right now, rendered on demand (works with the editor's game view hidden): Logs/<name>.png
+        public void SnapTo(string name, string framing = null)
+        {
+            if (!string.IsNullOrEmpty(framing) && framing != this.framing) { if (framing == "room") Framing("room", room?.tier, 0.62f); else Framing(framing); }
+            var src = Texture; if (src == null) return;
+            bool was = cam.enabled; cam.enabled = true; cam.Render(); cam.enabled = was;
+            var prev = RenderTexture.active; RenderTexture.active = src;
+            var tex = new Texture2D(src.width, src.height, TextureFormat.RGBA32, false);
+            tex.ReadPixels(new Rect(0, 0, src.width, src.height), 0, 0); tex.Apply(); RenderTexture.active = prev;
+            try { System.IO.File.WriteAllBytes(System.IO.Path.Combine(Application.dataPath, "..", "Logs", name + ".png"), tex.EncodeToPNG()); } catch (Exception) { }
+            Destroy(tex);
+        }
         // save what the stage camera renders to Logs/stage.png, with a count of the pixels that aren't see-through
         System.Collections.IEnumerator Snap()
         {

@@ -14,7 +14,7 @@ namespace CFDream.Character
     {
         public float scale = 0;                 // 0: work it out from shoulder width
         public float neckUp = 0.012f, neckR = 0.062f, neckDepth = 0.058f, neckFwd = 0.008f, chainDrop = 0.075f, chestLean = 0.045f;
-        public float headUp = 0.085f, headFwd = 0.0f, headR = 0.098f;
+        public float headUp = 0.085f, headFwd = 0.0f, headR = 0.098f, crownUp = 0.112f;   // crownUp: top of the skull above the head centre
         public float eyeUp = 0.012f, eyeFwd = 0.094f, eyeGap = 0.032f, lensFwd = 0.024f; // lensFwd: eyeball centre to lens, with eye bones
         public BodyFit Copy() => (BodyFit)MemberwiseClone();
         public float earSide = 0.077f, earUp = -0.032f, earBack = 0.004f;
@@ -381,6 +381,7 @@ namespace CFDream.Character
             var C = HeadCentre(c, out var head);
             var root = Root(c, "Hat " + w.id, head);
             float R = c.M(c.f.headR + 0.006f);
+            Vector3 crown = C + c.up * c.M(c.f.crownUp);           // where the skull ends; hats sit on it, not float above it
             Quaternion Tilt(float deg) => Up(c.up, c.fwd) * Quaternion.Euler(-deg, 0, 0);
             Material Cloth(string hex) => Mats.Fabric(Dyed(w, hex));
             switch (id)
@@ -388,7 +389,7 @@ namespace CFDream.Character
                 case "cap":
                 case "snap":
                     {
-                        var rot = Tilt(12); Vector3 at = C + c.up * c.M(0.028f);
+                        var rot = Tilt(12); Vector3 at = crown - c.up * (R * (id == "snap" ? 1.0f : 0.9f) - c.M(0.012f));
                         var mat = Cloth(id == "cap" ? "#17171a" : "#24427e");
                         Part(root, MeshKit.Dome(R, id == "snap" ? 1.0f : 0.9f, -0.05f), mat, at, rot);
                         Part(root, MeshKit.Sphere(c.M(0.006f), 8), mat, at + rot * Vector3.up * R * (id == "snap" ? 1.0f : 0.9f), rot);
@@ -399,7 +400,7 @@ namespace CFDream.Character
                     }
                 case "beanie":
                     {
-                        var rot = Tilt(6); Vector3 at = C + c.up * c.M(0.012f); var mat = Cloth("#b3262c");
+                        var rot = Tilt(6); Vector3 at = crown - c.up * ((R + c.M(0.004f)) * 1.12f - c.M(0.02f)); var mat = Cloth("#b3262c");
                         Part(root, MeshKit.Dome(R + c.M(0.004f), 1.12f, -0.32f), mat, at, rot);
                         float br = R + c.M(0.004f);
                         Vector3 rim = at + rot * (Vector3.up * (Mathf.Sin(-0.3f) * br * 1.12f));
@@ -409,7 +410,7 @@ namespace CFDream.Character
                     }
                 case "bucket":
                     {
-                        var rot = Tilt(4); Vector3 at = C + c.up * c.M(0.022f); var mat = Cloth("#d8cfb4");
+                        var rot = Tilt(4); Vector3 at = crown - c.up * c.M(0.062f); var mat = Cloth("#d8cfb4");
                         Part(root, MeshKit.Lathe("bucketcrown" + R.ToString("0.0000"), new[] { new Vector2(R, 0), new Vector2(R * 0.92f, c.M(0.075f)), new Vector2(R * 0.92f, c.M(0.075f)), new Vector2(0, c.M(0.08f)) }, 32, true), mat, at, rot);
                         Part(root, MeshKit.Lathe("bucketbrim" + R.ToString("0.0000"), new[] { new Vector2(R * 0.98f, 0), new Vector2(R + c.M(0.05f), -c.M(0.032f)) }, 32, true), mat, at, rot);
                         break;
@@ -417,7 +418,7 @@ namespace CFDream.Character
                 case "cowboy":
                 case "fedora":
                     {
-                        bool cow = id == "cowboy"; var rot = Tilt(cow ? 6 : 8); Vector3 at = C + c.up * c.M(0.03f);
+                        bool cow = id == "cowboy"; var rot = Tilt(cow ? 6 : 8); Vector3 at = crown - c.up * c.M(0.055f);
                         var mat = Cloth(cow ? "#8a5a32" : "#2a2522");
                         float h = c.M(cow ? 0.11f : 0.095f);
                         Part(root, MeshKit.Lathe("crown" + id + R.ToString("0.0000"), new[] { new Vector2(R * 0.97f, 0), new Vector2(R * 0.93f, h * 0.8f), new Vector2(R * 0.6f, h), new Vector2(0, h * 0.9f) }, 32, true), mat, at, rot);
@@ -428,7 +429,7 @@ namespace CFDream.Character
                     }
                 case "visor":
                     {
-                        var rot = Tilt(8); Vector3 at = C + c.up * c.M(0.035f); var mat = Cloth("#1e8f4a");
+                        var rot = Tilt(8); Vector3 at = crown - c.up * c.M(0.075f); var mat = Cloth("#1e8f4a");
                         TubePart(root, "band", MeshKit.Ellipse(at, rot * Vector3.right, rot * Vector3.forward, R * 0.97f, R * 0.97f, 36), c.M(0.007f), mat);
                         var brimRot = rot * Quaternion.Euler(10, 0, 0);
                         Part(root, MeshKit.Disc(1, 0.05f, 28), mat, at + rot * (Vector3.forward * R) + brimRot * (Vector3.forward * c.M(0.03f)), brimRot, new Vector3(c.M(0.075f), c.M(0.004f) / 0.05f, c.M(0.055f)));

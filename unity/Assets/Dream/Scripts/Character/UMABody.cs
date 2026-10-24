@@ -36,7 +36,8 @@ namespace CFDream.Character
 
         public GameObject Root => go;
         public bool Ready => built;
-        public BodyFit Fit => null;
+        BodyFit fit;
+        public BodyFit Fit => fit;
 
         public UMABody(Transform pivot, DreamUMARefs refs)
         {
@@ -95,8 +96,92 @@ namespace CFDream.Character
             }
 #endif
             built = true;
+            try { fit = Measure(); } catch (Exception e) { Debug.LogWarning("[Dream] body measure: " + e.Message); fit = null; }
             var cb = pending; pending = null;
             try { cb?.Invoke(); } catch (Exception e) { Debug.LogException(e); }
+        }
+
+        // Size the jewellery to this body: bake the skin and measure the neck, wrists, ring finger, ears and crown
+        // around their bones, in the pivot's frame (x right, y up, z forward). Clothes are skipped by name so a
+        // hoodie collar doesn't read as a thick neck.
+        BodyFit Measure()
+        {
+            var f = new BodyFit { scale = 1 };
+            var piv = go.transform.parent != null ? go.transform.parent : go.transform;
+            var pts = new List<Vector3>(); var baked = new Mesh();
+            foreach (var smr in go.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                if (smr.sharedMesh == null) continue;
+                smr.BakeMesh(baked, true);
+                var v = baked.vertices; var l2w = smr.transform.localToWorldMatrix; var mats = smr.sharedMaterials;
+                // UMA packs everything into one renderer, one submesh per material: keep the skin's submeshes only
+                for (int sm = 0; sm < baked.subMeshCount && sm < mats.Length; sm++)
+                {
+                    string mn = mats[sm] != null ? mats[sm].name.ToLowerInvariant() : "";
+                    bool skin = mn.Contains("body") || mn.Contains("skin") || mn.Contains("head") || mn.Contains("face") || mn.Contains("hand") || mn.Contains("human");
+                    bool cloth = mn.Contains("hair") || mn.Contains("beard") || mn.Contains("brow") || mn.Contains("hoodie") || mn.Contains("shirt") || mn.Contains("jacket") || mn.Contains("pants") || mn.Contains("shoe") || mn.Contains("short") || mn.Contains("dream_") || mn.Contains("eye");
+                    if (cloth || !skin) continue;
+                    var tris = baked.GetTriangles(sm);
+                    for (int i = 0; i < tris.Length; i += 6) pts.Add(piv.InverseTransformPoint(l2w.MultiplyPoint3x4(v[tris[i]])));
+                }
+#if UNITY_EDITOR
+                Debug.Log("[Dream] body materials: " + string.Join(", ", mats.Select(m => m != null ? m.name : "null")));
+#endif
+            }
+            UnityEngine.Object.Destroy(baked);
+            if (pts.Count < 100) return null;
+            Vector3 L(HumanBodyBones b) { var t = Bone(b); return t != null ? piv.InverseTransformPoint(t.position) : Vector3.zero; }
+            // neck: a slice just above the neck bone
+            var neck = L(HumanBodyBones.Neck); var head = L(HumanBodyBones.Head);
+            float ny = Mathf.Lerp(neck.y, head.y, 0.35f);
+            float rx = 0, zf = 0, zb = 0; int cnt = 0;
+            foreach (var q in pts) if (Mathf.Abs(q.y - ny) < 0.012f && Mathf.Abs(q.x - neck.x) < 0.12f && Mathf.Abs(q.z - neck.z) < 0.12f) { rx = Mathf.Max(rx, Mathf.Abs(q.x - neck.x)); zf = Mathf.Max(zf, q.z - neck.z); zb = Mathf.Max(zb, neck.z - q.z); cnt++; }
+            if (cnt > 10) { f.neckR = rx + 0.004f; f.neckDepth = (zf + zb) / 2 + 0.004f; f.neckFwd = (zf - zb) / 2; f.neckUp = ny - neck.y; }
+            // wrists: radius around the forearm axis near the hand
+            foreach (var left in new[] { true, false })
+            {
+                var hand = L(left ? HumanBodyBones.LeftHand : HumanBodyBones.RightHand); var fore = L(left ? HumanBodyBones.LeftLowerArm : HumanBodyBones.RightLowerArm);
+                var axis = (hand - fore).normalized; var at = hand - axis * 0.035f;
+                float rFlat = 0, rSide = 0; int c2 = 0;
+                var o = Vector3.ProjectOnPlane(left ? Vector3.left : Vector3.right, axis).normalized; var side = Vector3.Cross(axis, o).normalized;
+                foreach (var q in pts)
+                {
+                    var d = q - at; float along = Vector3.Dot(d, axis); if (Mathf.Abs(along) > 0.01f) continue;
+                    var r = d - axis * along; if (r.magnitude > 0.08f) continue;
+                    rFlat = Mathf.Max(rFlat, Mathf.Abs(Vector3.Dot(r, o))); rSide = Mathf.Max(rSide, Mathf.Abs(Vector3.Dot(r, side))); c2++;
+                }
+                if (c2 > 6 && left) { f.wristFlat = rFlat; f.wristR = rSide; }
+            }
+            // ring finger: radius around the proximal phalanx
+            var fa = L(HumanBodyBones.RightRingProximal); var fb = L(HumanBodyBones.RightRingIntermediate);
+            if (fa != Vector3.zero && fb != Vector3.zero)
+            {
+                var axis = (fb - fa).normalized; var at = Vector3.Lerp(fa, fb, 0.5f); float rr = 0; int c3 = 0;
+                var rs = new List<float>();
+                foreach (var q in pts) { var d = q - at; float along = Vector3.Dot(d, axis); if (Mathf.Abs(along) > 0.005f) continue; var r = (d - axis * along).magnitude; if (r < 0.016f) rs.Add(r); }
+                rs.Sort(); if (rs.Count > 4) { rr = rs[(int)(rs.Count * 0.8f)]; f.fingerR = rr + 0.0008f; c3 = rs.Count; }
+            }
+            // ears: the skin's widest points in the band behind the eyes (the ear sits 7-12 cm behind the eye plane); the crown: the top of the skull
+            var le = L(HumanBodyBones.LeftEye); var re = L(HumanBodyBones.RightEye); var eyes = (le + re) / 2;
+            float ex = 0, ey = 0, ez = 0; int c4 = 0; float top = head.y;
+            foreach (var q in pts)
+            {
+                if (q.y > head.y - 0.02f) top = Mathf.Max(top, q.y);
+                if (q.y > eyes.y - 0.05f && q.y < eyes.y + 0.015f && q.z < eyes.z - 0.06f && q.z > eyes.z - 0.14f) ex = Mathf.Max(ex, Mathf.Abs(q.x - eyes.x));
+            }
+            foreach (var q in pts)
+                if (q.y > eyes.y - 0.05f && q.y < eyes.y + 0.015f && q.z < eyes.z - 0.06f && q.z > eyes.z - 0.14f && Mathf.Abs(q.x - eyes.x) > ex - 0.005f) { ey += q.y; ez += q.z; c4++; }
+            var centre = eyes + Vector3.forward * f.lensFwd - Vector3.up * f.eyeUp - Vector3.forward * f.eyeFwd;   // what HeadCentre computes
+            if (c4 > 2) { f.earSide = ex + 0.002f; f.earUp = (ey / c4) - 0.03f - centre.y; f.earBack = centre.z - ez / c4 + 0.02f; }   // the lobe hangs below and behind the widest point
+            f.headUp = top - head.y; f.crownUp = top - centre.y + 0.004f;
+            // the skull's width a little above the ears, for hats
+            float hw = 0;
+            foreach (var q in pts) if (q.y > eyes.y + 0.03f && q.y < eyes.y + 0.07f && q.z < eyes.z && q.z > eyes.z - 0.14f) hw = Mathf.Max(hw, Mathf.Abs(q.x - eyes.x));
+            f.headR = Mathf.Max(0.07f, hw > 0 ? hw + 0.004f : ex);
+#if UNITY_EDITOR
+            Debug.Log($"[Dream] body fit: neck r {f.neckR:0.000} d {f.neckDepth:0.000}, wrist {f.wristFlat:0.000}x{f.wristR:0.000}, finger {f.fingerR:0.0000}, ear side {f.earSide:0.000} up {f.earUp:0.000} back {f.earBack:0.000}, crown +{f.crownUp:0.000} headR {f.headR:0.000} ({pts.Count} pts)");
+#endif
+            return f;
         }
 
         // UMA's human race adds a rigidbody and capsule for games with physics; on our floorless stage it would just fall
@@ -253,7 +338,9 @@ namespace CFDream.Character
             var avail = dca.AvailableRecipes;
             bool hat = s.Get("head") is Worn hw && hw.id != "none" && hw.id != "phones";
             // a hat sits over short hair; long styles keep their length
-            string hairStyle = hat && s.hairStyle != "long" && s.hairStyle != "locs" && s.hairStyle != "ponytail" ? "buzz" : s.hairStyle;
+            // a hat covers short hair completely (UMA's card hair would poke through the crown); long styles hang out under it
+            bool longHair = s.hairStyle == "long" || s.hairStyle == "locs" || s.hairStyle == "ponytail" || s.hairStyle == "curtains";
+            string hairStyle = hat && !longHair ? "bald" : s.hairStyle;
             Put(avail, "Hair", hairStyle == "bald" ? null : Pick(avail, "Hair", HairMap.TryGetValue(hairStyle ?? "", out var hs) ? hs : null, true));
             Put(avail, "Beard", s.facial == "none" ? null : Pick(avail, "Beard", BeardMap.TryGetValue(s.facial ?? "", out var bs) ? bs : null, false));
             Put(avail, "Eyebrows", Pick(avail, "Eyebrows", BrowMap.TryGetValue(s.brows ?? "", out var br) ? br : null, true));

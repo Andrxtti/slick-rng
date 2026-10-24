@@ -36,9 +36,13 @@ namespace CFDream.EditorTools
             { "cheat-pets", () => { var s = CFDream.Game.State; if (s == null) return; foreach (var it in CFDream.DB.Items) if (it.slot == "pet") s.owned.Add(it.Key); s.Save(); CFDream.Game.Render(); } },
             { "pet-cat", () => Adopt("cat") }, { "pet-pup", () => Adopt("pup") }, { "pet-frenchie", () => Adopt("frenchie") }, { "pet-doberman", () => Adopt("doberman") }, { "pet-none", () => Adopt("none") },
             { "start", () => { var s = new CFDream.State { made = true, name = "Tester", ch = 1, job = "quit", br = 5000, peak = 5000 }; CFDream.Game.State = s; s.story.Add("p_after"); CFDream.Career.Unlocks(s); s.newItems.Clear(); s.Save(); CFDream.Game.SetTab("home"); } },
+            { "bling", () => { var s = CFDream.Game.State; if (s == null) return; foreach (var it in CFDream.DB.Items) s.owned.Add(it.Key); foreach (var kv in new Dictionary<string, string> { { "eyes", "aviator" }, { "head", "snap" }, { "ear", "diamond" }, { "chain", "cuban" }, { "ring", "gold" }, { "wrist", "gold" }, { "watch", "gold" }, { "outfit", "jersey" }, { "bottom", "joggers" }, { "shoes", "highs" } }) s.eq[kv.Key] = kv.Value; s.Save(); CFDream.Game.SetTab("closet"); } },
+            { "eq", null },   // placeholder, see Poll: "eq slot id"
+            { "restyle", () => { if (CFDream.Game.State != null) CFDream.Game.StartRestyle(); } },
             { "go-home", () => { if (CFDream.Game.State != null) CFDream.Game.SetTab("home"); } },
             { "status", () => { var s = CFDream.Game.State; var st = CFDream.Character.CharacterStage.Instance; Debug.Log($"[Dream] status: view {CFDream.Game.View} tab {CFDream.Game.Tab} made {s?.made} pet {s?.Eq("pet")} home {s?.Eq("home")} bodies {CFDream.Character.Bodies.Available} stage {(st != null)} inRoom {st?.InRoom} hasBody {st?.HasBody} petId {st?.Pets?.Id}"); } },
             { "snap", () => CFDream.Character.CharacterStage.Instance?.SnapNow() },
+            { "where", () => { var st = CFDream.Character.CharacterStage.Instance; if (st != null && st.Pivot != null) Debug.Log($"[Dream] where: ({st.Pivot.localPosition.x:0.00}, {st.Pivot.localPosition.z:0.00}) yaw {st.Pivot.localEulerAngles.y:0}"); } },
         };
 
         static DreamRemote() { EditorApplication.update += Poll; }
@@ -55,7 +59,22 @@ namespace CFDream.EditorTools
             {
                 var c = raw.Trim().ToLowerInvariant(); if (c.Length == 0) continue;
                 string result;
-                if (!Commands.TryGetValue(c, out var run)) result = "unknown command";
+                if (c.StartsWith("eq "))   // eq <slot> <id>: wear something (test only)
+                {
+                    var p = c.Split(' '); var s = CFDream.Game.State;
+                    if (p.Length == 3 && s != null) { s.owned.Add(p[1] + ":" + p[2]); s.eq[p[1]] = p[2]; s.Save(); CFDream.Game.Render(); result = "done"; } else result = "usage: eq slot id";
+                }
+                else if (c.StartsWith("use "))   // use <id>: walk to a thing in the room and use it (fire, piano, pool, tv, bed, ...)
+                {
+                    var life = CFDream.Character.CharacterStage.Instance?.Life;
+                    if (life == null) result = "no room"; else { life.Use(c.Substring(4).Trim()); result = "done"; }
+                }
+                else if (c.StartsWith("snap "))   // snap <name> [bust|face|full|room]: render the character stage to Logs/<name>.png
+                {
+                    var p = c.Split(' '); var st = CFDream.Character.CharacterStage.Instance;
+                    if (st == null) result = "no stage"; else { st.SnapTo(p[1], p.Length > 2 ? p[2] : null); result = "done"; }
+                }
+                else if (!Commands.TryGetValue(c, out var run) || run == null) result = "unknown command";
                 else
                 {
                     try { run(); result = "done"; }

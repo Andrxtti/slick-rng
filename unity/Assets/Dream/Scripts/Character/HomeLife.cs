@@ -28,6 +28,9 @@ namespace CFDream.Character
         static readonly string[] TvLines = {
             "\"He's got the nuts and he knows it.\"", "\"Rivered! You can't make this up.\"", "\"A bold shove from the button...\"",
             "\"The chip leader is applying the pressure.\"", "\"That's the hand of the night, folks.\"", "\"He tanks... and folds the winner.\"" };
+        static readonly string[] FireLines = { "Cozy.", "That's the stuff.", "Now we're living." };
+        static readonly string[] PianoLines = { "♪ Something slow and expensive ♪", "♪ The river card blues ♪", "♪ Chopsticks. Still counts. ♪", "♪ Ten thousand hours to go ♪" };
+        static readonly string[] PoolLines = { "Corner pocket.", "That one's off the rail.", "Rack 'em.", "Nobody saw that." };
         static readonly string[] BeerLines = { "Ahh. Liquid courage.", "Cold one. Earned it.", "That hit the spot.", "One more and I'm calling everything." };
 
         public void Init(CharacterStage stage, HomeRoom r)
@@ -61,7 +64,9 @@ namespace CFDream.Character
                 return;
             }
             WalkTo(u.spot, () => Act(u), u.face);
+            if (path != null) Debug.Log($"[Dream] use {id}: from {Fmt(st.Pivot.localPosition)} to {Fmt(u.spot)} face {u.face:0} via {string.Join(" > ", path.ConvertAll(Fmt))}");
         }
+        static string Fmt(Vector3 v) => $"({v.x:0.00}, {v.z:0.00})";
 
         void Update()
         {
@@ -117,6 +122,10 @@ namespace CFDream.Character
                 case "bong": acting = StartCoroutine(Bong(u)); break;
                 case "fish": acting = StartCoroutine(Feed(u)); break;
                 case "pet": acting = StartCoroutine(Pat()); break;
+                case "fire": acting = StartCoroutine(Reach(u, 0.9f, () => { room.SetFire(!room.fireOn); Said?.Invoke("me", room.fireOn ? FireLines[UnityEngine.Random.Range(0, FireLines.Length)] : "Lights out."); })); break;
+                case "piano": acting = StartCoroutine(Piano(u)); break;
+                case "pool": acting = StartCoroutine(Pool(u)); break;
+                case "trophies": case "safe": case "homegame": acting = StartCoroutine(Reach(u, 1.1f, () => Done?.Invoke(u.id))); break;
             }
         }
 
@@ -216,6 +225,45 @@ namespace CFDream.Character
             }
             g?.Clear();
             Said?.Invoke("pet", pet.Petted());
+            acting = null;
+        }
+
+        IEnumerator Piano(HomeUse u)
+        {
+            var g = Hands(); if (!room.anchors.TryGetValue("piano", out var keys)) { acting = null; yield break; }
+            var right = u.tr.forward;   // along the keyboard (the piano's keys run along its z)
+            float t = 0;
+            while (t < 3.2f)
+            {
+                t += Time.deltaTime;
+                float a = Mathf.Sin(t * 5.1f) * 0.14f, b = Mathf.Sin(t * 3.7f + 1.3f) * 0.12f;
+                g?.Both(keys - right * (0.22f + a) + Vector3.up * (0.02f + Mathf.Abs(Mathf.Sin(t * 9f)) * 0.015f), keys + right * (0.18f + b) + Vector3.up * (0.02f + Mathf.Abs(Mathf.Sin(t * 7f + 2f)) * 0.015f), 1f);
+                g?.Look(keys, 0.9f, 0.4f);
+                if (t > 0.6f && !sung) { sung = true; Said?.Invoke("piano", PianoLines[UnityEngine.Random.Range(0, PianoLines.Length)]); }
+                yield return null;
+            }
+            sung = false; g?.Clear(); acting = null;
+        }
+        bool sung;
+
+        IEnumerator Pool(HomeUse u)
+        {
+            var g = Hands(); var ball = room.cueBall;
+            Vector3 lean = u.tr.position + Vector3.up * 0.82f + (st.Pivot.position - u.tr.position).normalized * 0.45f;
+            g?.Right(lean, 0.9f); g?.Left(lean + u.tr.right * -0.3f, 0.8f); g?.Look(ball != null ? ball.position : u.tr.position, 0.9f, 0.5f);
+            yield return new WaitForSeconds(0.7f);
+            if (ball != null)
+            {
+                // the white ball rolls down the table into the rack and comes back
+                Vector3 a = room.cueHome, b = room.cueHome + new Vector3(1.0f, 0, UnityEngine.Random.Range(-0.08f, 0.08f));
+                float t = 0;
+                while (t < 1f) { t += Time.deltaTime * 1.6f; float k = 1 - (1 - t) * (1 - t); ball.localPosition = Vector3.Lerp(a, b, k); ball.Rotate(0, 0, -720 * Time.deltaTime, Space.Self); yield return null; }
+                yield return new WaitForSeconds(0.2f);
+                t = 0; while (t < 1f) { t += Time.deltaTime * 1.1f; float k = Mathf.SmoothStep(0, 1, t); ball.localPosition = Vector3.Lerp(b, a + new Vector3(0.1f, 0, 0.12f), k); ball.Rotate(0, 0, 500 * Time.deltaTime, Space.Self); yield return null; }
+                ball.localPosition = room.cueHome;
+            }
+            g?.Clear();
+            Said?.Invoke("me", PoolLines[UnityEngine.Random.Range(0, PoolLines.Length)]);
             acting = null;
         }
 

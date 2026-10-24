@@ -43,6 +43,14 @@ namespace CFDream.UI
                 {
                     case "laptop": Game.SetTab("calendar"); break;
                     case "closet": Game.SetTab("closet"); break;
+                    case "trophies":
+                        {
+                            int br = s.Title("bracelet"), rg = s.Title("ring"), me = s.Title("me"), all = s.TitleCount;
+                            Said("trophies", all == 0 ? "Empty for now. Go win something." : me > 0 ? "The big one's in there. Main Event champion." : $"{all} title{(all == 1 ? "" : "s")}: {br} bracelet{(br == 1 ? "" : "s")}, {rg} ring{(rg == 1 ? "" : "s")}.");
+                            break;
+                        }
+                    case "safe": Said("safe", $"{U.Money(s.br)} in the roll. Peak {U.Money(s.peak)}." + (s.debt > 0 ? $" Slick is owed {U.Money(s.debt)}." : "")); break;
+                    case "homegame": Said("homegame", s.cal.inv != null ? "There's an invite on the laptop. Thursday night." : "Home game's Thursday. Slick's bringing the chips."); break;
                     case "bed":
                         var sl = Calendar.SlotsLeft(s);
                         DreamApp.Confirm("Call it a night?", sl.left > 0 ? $"You've still got {sl.left} game{(sl.left == 1 ? "" : "s")} you could play tonight." : "Big day tomorrow.",

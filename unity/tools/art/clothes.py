@@ -230,9 +230,9 @@ def tops():
     def item(id_, base, color, weave, steps, **meta): I[id_] = dict(base=base, color=color, weave=weave, steps=steps, **meta)
     item("office", "tee", "#cfd7e3", "jersey", [("band", 1.44, 1.6, "#eef2f7"), ("stripe", -0.012, 0.012, "#24427e", 1.08, 1.5, "front"), ("band", 0.98, 1.03, "#b9c3d1")])
     item("tee", "tee", "#17171a", "jersey", [("band", 1.49, 1.6, "#2a2a2f")])
-    item("jersey", "tee", "#f1efe8", "jersey", [("sleeves", "#b8262c", 0.2), ("band", 1.5, 1.6, "#b8262c"), ("decal", number_decal("7", "#b8262c", "#1b1b1f"), 0, 1.3, 0.2, 0.22, "front"), ("decal", number_decal("7", "#b8262c", "#1b1b1f"), 0, 1.32, 0.24, 0.26, "back"), ("decal", text_decal("FELT KINGS", "#1b1b1f", 0.8, 2), 0, 1.47, 0.26, 0.05, "back")])
+    item("jersey", "tee", "#f1efe8", "jersey", [("sleeves", "#b8262c", 0.2), ("band", 1.5, 1.6, "#b8262c"), ("decal", number_decal("7", "#b8262c", "#1b1b1f"), 0, 1.36, 0.24, 0.26, "front"), ("decal", number_decal("7", "#b8262c", "#1b1b1f"), 0, 1.3, 0.28, 0.3, "back"), ("decal", text_decal("FELT KINGS", "#1b1b1f", 0.9, 2), 0, 1.5, 0.3, 0.055, "back"), ("decal", text_decal("CF", "#1b1b1f", 0.6, 2), 0.1, 1.5, 0.07, 0.04, "front")])
     item("polo", "hoodie", "#1f3b2e", "jersey", [("stripe", -0.006, 0.006, "#c9a03e", 1.3, 1.56, "front"), ("band", 1.52, 1.62, "#163023"), ("decal", logo_decal("spade", "#c9a03e"), -0.1, 1.42, 0.05, 0.055, "front"), ("decal", text_decal("RIVERSIDE", "#c9a03e", 0.6, 2), 0, 1.3, 0.28, 0.04, "back")])
-    item("hoodie", "hoodie", "#4a4d55", "fleece", [("band", 1.08, 1.16, "#3c3f46"), ("decal", logo_decal("drift", "#e9e7e1"), 0, 1.4, 0.16, 0.12, "front"), ("decal", text_decal("DRIFT SUPPLY", "#e9e7e1", 0.9, 2), 0, 1.27, 0.3, 0.05, "front")])
+    item("hoodie", "hoodie", "#50545e", "fleece", [("band", 1.06, 1.14, "#3c3f46"), ("decal", logo_decal("drift", "#f2efe8"), 0, 1.43, 0.22, 0.16, "front"), ("decal", text_decal("DRIFT SUPPLY", "#f2efe8", 1.1, 3), 0, 1.28, 0.34, 0.06, "front"), ("decal", text_decal("EST. RIVERSIDE", "#f2efe8", 0.6, 2), 0, 1.22, 0.3, 0.035, "front")])
     item("fleece", "hoodie", "#2f5f52", "fleece", [("stripe", -0.02, 0.02, "#1d1d22", 1.2, 1.62, "front"), ("band", 1.55, 1.64, "#1d1d22"), ("decal", logo_decal("tree", "#e9e7e1", "#8a5f3c"), -0.11, 1.42, 0.06, 0.07, "front"), ("decal", text_decal("NORTHLINE", "#e9e7e1", 0.7, 2), 0, 1.3, 0.3, 0.045, "back")])
     item("cardigan", "hoodie", "#6b4a3a", "wool", [("stripe", -0.03, 0.03, "#4c3428", 1.0, 1.62, "front"), ("band", 1.0, 1.05, "#4c3428"), ("sleeves", "#6b4a3a", 0.26)])
     item("track", "jacket", "#14213d", "nylon", [("sleeve_stripes", "#e9e7e1", "#c8323a"), ("band", 1.58, 1.68, "#e9e7e1"), ("band", 0.98, 1.04, "#e9e7e1"), ("stripe", -0.008, 0.008, "#c8c8c8", 1.0, 1.6, "front"), ("decal", text_decal("DRIFT", "#e9e7e1", 0.8, 2, italic=True), -0.1, 1.42, 0.13, 0.05, "front")])
@@ -257,8 +257,8 @@ def bottoms():
     item("sweats", "sweats", "#4a4d55", "fleece", [("band", 1.0, 1.07, "#3c3f46"), ("band", 0.1, 0.17, "#3c3f46")])
     item("joggers", "joggers", "#1b1b1f", "nylon", [("legstripe", "#e9e7e1", 0.014), ("band", 1.0, 1.06, "#e9e7e1")])
     item("trackpants", "joggers", "#14213d", "nylon", [("legstripe", "#e9e7e1", 0.02), ("legstripe", "#c8323a", 0.008), ("band", 1.0, 1.06, "#e9e7e1")])
-    item("shorts", "shorts", "#1b1b1f", "nylon", [("band", 0.97, 1.03, "#2a2a2f"), ("decal", logo_decal("drift", "#e9e7e1"), 0.1, 0.75, 0.05, 0.04, "front")])
-    item("cargo", "shorts", "#5a5f4a", "canvas", [("band", 0.97, 1.03, "#4a4f3c"), ("stripe", 0.12, 0.2, "#4a4f3c", 0.6, 0.8, "all")])
+    item("shorts", "shorts", "#1b1b1f", "nylon", [("band", 0.96, 1.03, "#e9e7e1"), ("legstripe", "#e9e7e1", 0.01), ("decal", logo_decal("drift", "#e9e7e1"), 0.1, 0.78, 0.06, 0.05, "front")])
+    item("cargo", "shorts", "#6a6f58", "canvas", [("band", 0.97, 1.03, "#4a4f3c"), ("stripe", 0.11, 0.21, "#555a46", 0.62, 0.8, "all"), ("stripe", -0.21, -0.11, "#555a46", 0.62, 0.8, "all"), ("band", 0.78, 0.8, "#4a4f3c")])
     item("slacks", "slacks", "#2b2f3a", "suit", [("band", 1.0, 1.05, "#1f222b"), ("stripe", -0.003, 0.003, "#1f222b", 0.1, 1.0, "front")])
     item("tuxpants", "slacks", "#0d0d10", "suit", [("legstripe", "#2b2b33", 0.012)])
     item("plaidpants", "slacks", "#2a3a4a", "wool", [("plaid", "#1b1b1f", "#223040", "#324860")])
@@ -278,20 +278,26 @@ def shoes():
     item("icy", "highs", "#eef6ff", "nylon", [("band", -0.01, 0.035, "#cfe0f5"), ("stripe", -0.4, 0.4, "#9fc3df", 0.05, 0.06, "all")])
     return I
 
+TOP_BASES = {"tee", "hoodie", "jacket"}
+def _z(spec, z):
+    """heights in the recipes were written for a 1.62 collar; the garments reach 1.72, so stretch anything above the hem"""
+    if spec["base"] in TOP_BASES and z is not None and z > 1.0: return 1.0 + (z - 1.0) * 1.16
+    return z
 def paint(id_, spec):
     p = Painter(spec["base"], spec["color"], spec["weave"], seed=abs(hash(id_)) % 1000)
+    Z = lambda z: _z(spec, z)
     for st in spec["steps"]:
         k = st[0]
-        if k == "band": p.band(st[1], st[2], st[3], st[4] if len(st) > 4 else "all")
-        elif k == "stripe": p.stripe_x(st[1], st[2], st[3], st[4] if len(st) > 4 else None, st[5] if len(st) > 5 else None, st[6] if len(st) > 6 else "all")
+        if k == "band": p.band(Z(st[1]), Z(st[2]), st[3], st[4] if len(st) > 4 else "all")
+        elif k == "stripe": p.stripe_x(st[1], st[2], st[3], Z(st[4]) if len(st) > 4 else None, Z(st[5]) if len(st) > 5 else None, st[6] if len(st) > 6 else "all")
         elif k == "sleeves": p.sleeves(st[1], st[2] if len(st) > 2 else 0.24)
         elif k == "legstripe": p.legs_side_stripe(st[1], st[2] if len(st) > 2 else 0.012)
         elif k == "sleeve_stripes":
             # three stripes down each arm: arms run along x past the shoulder
             for i, c in enumerate((st[1], st[2], st[1])):
-                lo = 1.52 - i * 0.03; p.where((np.abs(p.x) > 0.26) & (p.z > lo - 0.012) & (p.z < lo + 0.012) & (p.N[..., 1] < 0.2), c, 0.8)
-        elif k == "decal": p.decal(st[1], st[2], st[3], st[4], st[5], st[6] if len(st) > 6 else "front")
-        elif k == "argyle": pattern_argyle(p, st[1], st[2], st[3], st[4], st[5])
+                lo = Z(1.52) - i * 0.03; p.where((np.abs(p.x) > 0.26) & (p.z > lo - 0.012) & (p.z < lo + 0.012) & (p.N[..., 1] < 0.2), c, 0.8)
+        elif k == "decal": p.decal(st[1], st[2], Z(st[3]), st[4], st[5], st[6] if len(st) > 6 else "front")
+        elif k == "argyle": pattern_argyle(p, st[1], st[2], st[3], Z(st[4]), Z(st[5]))
         elif k == "plaid": pattern_plaid(p, st[1], st[2], st[3])
     return p.finish()
 
