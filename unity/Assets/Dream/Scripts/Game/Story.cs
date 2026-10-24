@@ -62,7 +62,19 @@ namespace CFDream
                 B("lou", "Thirty years! You hear me? Thirty years!"),
                 B("you", ""),
                 B("rosa", "His name goes on the board by the cage. Next month, it could be yours."));
-            foreach (var id in new[] { "classic_mustich", "classic_shark" }) { DB.Scenes[id].beats[0].fn = true; DB.Scenes[id].beats[4].fn = true; }
+            Put("classic_other", "cardroom", "The Biscayne Classic", "Day 2", "hub",
+                B("n", "", mood: "bust"),
+                B("n", "Final hand. All in, called, and the board runs clean."),
+                B("n", "The room comes to its feet. The Biscayne Classic has a new name on the board."),
+                B("slick", ClassicWin["slick"]),
+                B("you", ""),
+                B("rosa", "The name goes on the board by the cage. Next month, it could be yours."));
+            foreach (var id in new[] { "classic_mustich", "classic_shark", "classic_other" }) { DB.Scenes[id].beats[0].fn = true; DB.Scenes[id].beats[4].fn = true; }
+            // the final table: who's waiting for you there, then how it ends between the two of you
+            Put("ft_intro", "cardroom", "Final table", null, "run", B("n", ""), B("trent", PreLine["trent"]), B("you", "Let's play."));
+            Put("ft_won", "cardroom", "Final table", null, "hub", B("n", "", mood: "win"), B("trent", LoseLine["trent"]), B("you", "Good game."));
+            Put("ft_lost", "cardroom", "Final table", null, "hub", B("n", "", mood: "bust"), B("trent", WinLine("trent")), B("you", "Good game. I'll see you again."));
+            foreach (var id in new[] { "ft_intro", "ft_won", "ft_lost" }) DB.Scenes[id].beats[0].fn = true;
             Insert("trentbeat", 0, B("n", "Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs."));
             // Monday at the office is only Monday now; the job decision happens at home, when Slick texts
             var after = DB.Scenes["p_after"];
@@ -272,6 +284,117 @@ namespace CFDream
             int v = (int)Math.Abs(s.FlagN("events")) % pool.Length;
             b.sp = sp; b.t = pool[v]; b.fn = false; b.who = null; b.text = online; b.mood = null;
         }
+        // ------------------------------------------------------------ who wins the Classic when it isn't you
+        public static readonly Dictionary<string, string> ClassicWin = new Dictionary<string, string>
+        {
+            { "slick", "Somebody had to keep you humble, kid." },
+            { "L:hungar", "Thirty years and the comeback still works." },
+            { "L:brunswick", "Son, that's how you close a tournament." },
+            { "L:chance", "Told you I take my time. Took the whole thing." },
+            { "L:armadillo", "Now that's a story I'll be telling for years, partner." },
+            { "L:moneybaker", "Spreadsheets to trophies. Never gets old." },
+            { "L:hellbent", "Finally, a field that didn't get lucky against me." },
+            { "L:negrono", "I put them all on ace-queen. I was close enough." },
+            { "L:handsome", "Seven-four suited. Told you it was my favourite." },
+            { "L:escandalo", "And for my final trick, the trophy disappears with me." },
+            { "L:mouth", "You see that? You SEE that? Nobody was calling that!" },
+            { "L:fargo", "Is a nice trophy. Is my trophy now." },
+            { "L:sidle", "Good game." },
+            { "L:swan", "I had it the whole time. Mostly." },
+            { "L:antionius", "Your move. Next month." },
+            { "L:holdz", "I studied this exact final table this morning." },
+            { "L:bonanza", "Equilibrium says I win. So I win." },
+            { "L:kenny", "Nice trophy. I will take it." },
+            { "L:chillwick", "Good game, everyone. Genuinely." },
+            { "L:kahoon", "Discipline. Every single hand." },
+            { "L:loophole", "My frequencies were correct. As expected." },
+            { "L:hackston", "A textbook finish. I would know, I wrote the textbook." },
+            { "L:addemup", "Shipped." },
+            { "L:foxglove", "Points are points. Trophies are better." },
+            { "L:kfoxglove", "You were nervous the whole final table. I noticed." },
+            { "L:martini", "Another one for the cabinet." },
+            { "L:lonestar", "GORILLA. MODE. CHAMPION." },
+            { "L:mocha", "Cold out there. Warm in here, with this." },
+            { "L:daisies", "Went big. Went home with it." },
+            { "L:bindr", "Everyone was a nobody once. Not today." },
+            { "L:punchline", "This is my office. Thank you for visiting." },
+            { "L:glazer", "Pick a game. I'll win that one too." },
+            { "L:mizrockie", "Champ of everything. Get used to it." },
+        };
+        // ------------------------------------------------------------ the final table
+        // what they say before it starts, when you beat them, and when they beat you
+        public static readonly Dictionary<string, string> PreLine = new Dictionary<string, string>
+        {
+            { "trent", "Final table. Dad flew in for this. Don't embarrass yourself." },
+            { "lou", "Thirty years, kid, and I still get butterflies at a final table." },
+            { "slick", "Didn't think you'd make it this far. Show me what you learned." },
+            { "ghost", "Kid. Look at your cards, not at me." },
+        };
+        public static readonly Dictionary<string, string> LoseLine = new Dictionary<string, string>
+        {
+            { "trent", "Enjoy it. Variance is a loan." }, { "lou", "Ha! The kid got me. Thirty years and the kid got me." },
+            { "slick", "That's my student. Now go cash that check." }, { "ghost", "Good game, kid." },
+            { "L:hungar", "You saw the hand this time. Good." }, { "L:brunswick", "Well, I'll be. Tip of the hat, son." },
+            { "L:chance", "Took my time. You took the pot." }, { "L:armadillo", "Partner, that one's going in the stories too." },
+            { "L:moneybaker", "Good. Play your game. That's all I ever said." }, { "L:hellbent", "Unbelievable. The luckiest call I have ever seen." },
+            { "L:negrono", "I had you on ace-queen. I was not close." }, { "L:handsome", "Seven-four doesn't always win. Today it didn't." },
+            { "L:escandalo", "Hm. You saw through the trick." }, { "L:mouth", "You CALLED that? Who calls that? You called that!" },
+            { "L:fargo", "Is a nice hand. Is your hand. Congratulations." }, { "L:sidle", "Well played." },
+            { "L:swan", "I had air. You found out." }, { "L:antionius", "Your move was correct." },
+            { "L:holdz", "I did not study this spot. I will tonight." }, { "L:bonanza", "Equilibrium says fold. I didn't. My mistake." },
+            { "L:kenny", "Nice stack. Keep it." }, { "L:chillwick", "Good game. Genuinely." },
+            { "L:kahoon", "Discipline beats talent. Today you had both." }, { "L:loophole", "Your frequency was correct. Noted." },
+            { "L:hackston", "Interesting sizing. Correct, this time." }, { "L:addemup", "Nice." },
+            { "L:foxglove", "Points are points. You earned these." }, { "L:kfoxglove", "You weren't nervous at all. I was wrong." },
+            { "L:martini", "One for your cabinet, then." }, { "L:lonestar", "Gorilla mode... off." },
+            { "L:mocha", "Cold out there. Colder now." }, { "L:daisies", "Went big. Went home." },
+            { "L:bindr", "Everyone's a nobody once. You're not anymore." }, { "L:punchline", "My office. Your trophy." },
+            { "L:glazer", "Fine. Pick a different game next time." }, { "L:mizrockie", "Defending champ, defeated. Take it." },
+        };
+        public static string WinLine(string sp) => sp == "trent" ? "Write it down. Some people are born for this." : sp == "lou" ? "Not today, kid. Thirty years of practice." : sp == "ghost" ? "Busted is information. Read it." : ClassicWin.TryGetValue(sp, out var t) ? t : "Good game.";
+        public static string SpOf(string boss) => boss == null ? null : DB.Legend(boss) != null ? "L:" + boss : boss;
+        public static string NameOf(string boss)
+        {
+            if (boss == null) return "";
+            var lg = DB.Legend(boss); if (lg != null) return J.S(lg, "name", boss);
+            return J.S(DB.Person(boss), "name", boss);
+        }
+        static string Pre(string boss) { var sp = SpOf(boss); if (PreLine.TryGetValue(sp, out var t)) return t; var l = J.S(DB.Legend(boss), "line", ""); return string.IsNullOrEmpty(l) || l == "…" ? "Final table. Good luck." : l; }
+        static void Cast(string scene, string boss, string line, string venue, bool online)
+        {
+            var sc = DB.Scenes[scene]; sc.place = online || string.IsNullOrEmpty(venue) ? "home" : venue;
+            var b = sc.beats[1]; b.sp = SpOf(boss); b.t = line; b.who = null; b.fn = false; b.text = online;
+        }
+        // the final table is set: a short scene with whoever's waiting there, then back to the felt
+        public static bool FtIntro(Run run)
+        {
+            if (run?.boss == null || run.ev.kind == "cash" || run.ev.kind == "sat" || run.drill != null) return false;
+            Cast("ft_intro", run.boss, Pre(run.boss), run.ev.venue, run.ev.online); return true;
+        }
+        // after it: you beat them, or they got you (the Classic has its own scenes)
+        public static string FtEnd(Result res)
+        {
+            if (res?.met == null || res.ev.id == "classic2") return null;
+            bool won = res.place == 1;
+            Cast(won ? "ft_won" : "ft_lost", res.met, won ? (LoseLine.TryGetValue(SpOf(res.met), out var l) ? l : "Good game.") : WinLine(SpOf(res.met)), res.ev.venue, res.ev.online);
+            return won ? "ft_won" : "ft_lost";
+        }
+        // Mustich and Tommy each get their own scene; everyone else (Slick and the legends) shares one, with their line in it
+        public static string ClassicLoss(State s, string boss = null)
+        {
+            int n = (int)s.FlagN("classics"); s.SetFlag("classics", n + 1);
+            // you lost to someone at the final table: they're the one holding the trophy
+            if (boss == "trent") return "classic_mustich";
+            if (boss == "lou") return "classic_shark";
+            if (boss != null && ClassicWin.ContainsKey(SpOf(boss))) { var bb = DB.Scenes["classic_other"].beats[3]; bb.sp = SpOf(boss); bb.t = ClassicWin[SpOf(boss)]; bb.who = null; bb.fn = false; return "classic_other"; }
+            var rng = new System.Random(s.cal.seed.GetHashCode() ^ (n * 7919));
+            double r = rng.NextDouble();
+            if (r < 0.2) return "classic_mustich";
+            if (r < 0.32) return "classic_shark";
+            var pool = ClassicWin.Keys.ToList(); var who = pool[rng.Next(pool.Count)];
+            var b = DB.Scenes["classic_other"].beats[3]; b.sp = who; b.t = ClassicWin[who]; b.who = null; b.fn = false;
+            return "classic_other";
+        }
         static void Insert(string id, int i, Beat b) { if (DB.Scenes.TryGetValue(id, out var sc)) sc.beats.Insert(Math.Min(i, sc.beats.Count), b); }
         static void Replace(string id, int i, string sp, string t) { if (DB.Scenes.TryGetValue(id, out var sc) && i < sc.beats.Count) { sc.beats[i].sp = sp; sc.beats[i].t = t; sc.beats[i].fn = false; } }
 
@@ -294,7 +417,18 @@ namespace CFDream
                     case "after_cooler:1": return new[] { "...Brutal.", "Right play. Wrong deck.", "Don't tilt. Don't tilt. Don't tilt." }[v];
                 }
             }
-            if (sceneId == "classic_mustich" || sceneId == "classic_shark")
+            if (sceneId == "ft_intro")
+            {
+                var run = Game.Run; string nm = NameOf(run?.boss);
+                return run == null ? "Final table." : $"Final table. {run.ev.name}.\nNine players left, and one of them is {nm}.";
+            }
+            if (sceneId == "ft_won" || sceneId == "ft_lost")
+            {
+                var r = Game.Last; string nm = NameOf(r?.met);
+                return sceneId == "ft_won" ? $"Final hand. You and {nm}, everything in the middle.\nYour cards hold. {r?.ev?.name} is yours."
+                    : $"Final hand. You and {nm}, everything in the middle.\nTheir cards hold. You're out in {Fmt.Ord(r?.place ?? 0)}" + ((r?.prize ?? 0) > 0 ? $", with ${Fmt.Money(r.prize)}." : ".");
+            }
+            if (sceneId == "classic_mustich" || sceneId == "classic_shark" || sceneId == "classic_other")
             {
                 var r = Game.Last; int place = r?.place ?? 0; double prize = r?.prize ?? 0;
                 if (index == 0) return place > 0 ? $"Sunday night. Day 2 of the Biscayne Classic.\nYou went out in {Fmt.Ord(place)}" + (prize > 0 ? $" for ${Fmt.Money(prize)}." : ", short of the money.") : "Sunday night. Day 2 of the Biscayne Classic.";

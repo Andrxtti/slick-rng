@@ -40,6 +40,7 @@ namespace CFDream
         public Prog prog;
         public List<MisSpot> drill;   // a study session: the spots you misplayed, dealt again in order
         public string Stage => stages[Math.Min(si, stages.Count - 1)];
+        public bool ftIntro;   // the final-table scene has played
     }
 
     public class Result
@@ -145,8 +146,17 @@ namespace CFDream
         static string PickBoss(State s, EventDef ev, Rng rng)
         {
             if (!string.IsNullOrEmpty(ev.boss)) return ev.boss;
-            if (ev.legends == null || ev.legends.Count == 0) return null;
-            var fresh = ev.legends.Where(id => !s.legends.Contains(id)).ToList(); var pool = fresh.Count > 0 ? fresh : ev.legends;
+            if (ev.legends != null && ev.legends.Count > 0)
+            {
+                var fresh = ev.legends.Where(id => !s.legends.Contains(id)).ToList(); var lp = fresh.Count > 0 ? fresh : ev.legends;
+                return lp[rng.Int(lp.Count)];
+            }
+            // anywhere else, more often than not a familiar face makes the final table: the card room regulars, Slick, a legend
+            if (ev.kind != "mtt" || ev.daily || ev.id == "local" || rng.Next() > 0.6) return null;
+            var pool = new List<string> { "slick" };
+            if (!ev.online && ev.venue == "cardroom") { pool.Add("trent"); pool.Add("trent"); pool.Add("lou"); pool.Add("lou"); }
+            if (!ev.online && ev.venue == "casino") pool.Add("trent");
+            foreach (var o in DB.List("DR_LEGENDS") ?? new List<object>()) { string id = J.S(o, "id"); if (!string.IsNullOrEmpty(id) && J.I(o, "ch") <= Math.Max(1, s.ch) + 1) pool.Add(id); }
             return pool[rng.Int(pool.Count)];
         }
 
@@ -435,8 +445,9 @@ namespace CFDream
             // the aftermath, as a scene in the venue (the first tournament too: it's where the story turns)
             // the Classic films its own: bagging chips after Day 1, and the winner's moment after Day 2
             if (ev.id == "classic" && res.ticket != null) s.queue.Add("classic_day1");
-            else if (ev.id == "classic2" && res.place != 1) { s.queue.Add(s.FlagN("classics") % 2 == 0 ? "classic_mustich" : "classic_shark"); s.SetFlag("classics", s.FlagN("classics") + 1); }
+            else if (ev.id == "classic2" && res.place != 1) s.queue.Add(Story.ClassicLoss(s, res.met));
             else if (ev.id == "classic2") { }
+            else if (Story.FtEnd(res) is string ft) s.queue.Insert(0, ft);   // the final hand against whoever was waiting at the final table
             else if (!ev.daily && (s.ch >= 1 || ev.id == "local"))
             {
                 string after = run.cooler != null ? "after_cooler" : res.place == 1 && ev.kind != "cash" ? "after_win" : res.prize > 0 || (ev.kind == "cash" && res.net > 0) ? "after_cash" : "after_bust";

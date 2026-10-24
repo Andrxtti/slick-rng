@@ -155,9 +155,11 @@ namespace CFDream
             var s = State; var sc = Scene; var def = DB.Scenes[sc.id];
             if (sc.replay) { Scene = null; View = View.Hub; Tab = "story"; Render(); return; }
             s.sceneId = null; s.sceneI = 0;
-            s.story.Add(sc.id); Story.OnEnd(sc.id, s);
+            if (!s.story.Contains(sc.id)) s.story.Add(sc.id);
+            Story.OnEnd(sc.id, s);
             Career.Unlocks(s); Career.Progress(s); s.Save();
             Scene = null;
+            if (def.end == "run") { if (Run != null) { View = View.Run; Render(); } else Hub(); return; }   // back to the felt
             // the prologue's road: office, a ride across town, the diner, Saturday at the card room, Monday, home
             if (sc.id == "p_office") { Go(new Trip { kind = "drive", ride = s.Eq("ride"), kicker = "2:13 AM", place = "Calle Ocho", sub = "Lucky Seven Diner", then = () => PlayScene("p_diner") }); return; }
             if (sc.id == "p_diner") { Go(new Trip { kind = "drive", ride = s.Eq("ride"), kicker = "Saturday · 11:40 AM", place = "Biscayne Card Room", sub = "The Biscayne Championship · your free seat", then = () => PlayScene("p_seat") }); return; }
@@ -201,7 +203,13 @@ namespace CFDream
         }
         public static bool NoTrip;   // the story already drove you there
         static void Go(Trip t) { Trip = t; View = View.Transit; Render(); }
-        public static void NextTable() { var run = Run; if (run == null) return; Play.PickTable(run); run.state = "ready"; Render(); }
+        public static void NextTable()
+        {
+            var run = Run; if (run == null) return; Play.PickTable(run); run.state = "ready";
+            // the final table: first a scene with whoever's waiting there
+            if (run.Stage == "final" && !run.ftIntro && Story.FtIntro(run)) { run.ftIntro = true; PlayScene("ft_intro"); return; }
+            Render();
+        }
         // a study session on the Spacepad: your misplayed spots, again
         public static void StartDrill()
         {

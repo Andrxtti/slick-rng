@@ -109,7 +109,7 @@ namespace CFDream.UI
             var page = Screens.Page("run two-pane");
             var left = U.Col().Cls("pane-left table-pane");
             left.Add(Header(run));
-            var table = new TableView(run.spot); table.AddToClassList("table-wide"); left.Add(table);
+            var table = new TableView(run.spot, vs: run.Stage == "final" && run.ev.kind != "cash" && run.drill == null ? run.boss : null); table.AddToClassList("table-wide"); left.Add(table);
             page.Add(left);
             var sv = Screens.Scroll(); sv.AddToClassList("pane-right");
             var body = U.Div("pad"); body.Add(Hand(run, false)); body.Add(U.Space(24));
@@ -121,7 +121,17 @@ namespace CFDream.UI
         {
             var sp = run.spot; var col = U.Col(); if (sp == null) return col;
             bool answered = run.state == "answered"; var last = answered ? run.results.LastOrDefault() : null;
-            if (withTable) col.Add(new TableView(sp));
+            // at the final table, whoever from the story is there is the one you're playing against
+            string vs = run.Stage == "final" && run.ev.kind != "cash" && run.drill == null ? run.boss : null;
+            if (vs != null)
+            {
+                bool lastHand = run.si >= run.stages.Count - 1 && run.h >= Play.Per(run) - 1;
+                var bar = U.Row().Cls("rival-bar"); var fig = Fig.For(vs); if (fig != null) bar.Add(new Portrait(fig, 40, false));
+                var bl = U.Col().Grow(); bl.style.marginLeft = 10;
+                bl.Add(U.Kicker(lastHand ? "Final hand" : "Final table")); bl.Add(U.H3("vs " + Story.NameOf(vs)));
+                bar.Add(bl); col.Add(bar);
+            }
+            if (withTable) col.Add(new TableView(sp, vs: vs));
 
             var hero = sp.seats[sp.hero];
             var hr = U.Row().Cls("hero-row");

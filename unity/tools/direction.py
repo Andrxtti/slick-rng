@@ -250,6 +250,26 @@ scene("classic_shark",
     ("lou",   "cu:Cheering>Clapping"),
     ("you",   "cu:Clapping"),
     ("rosa",  "two:Clapping@swell~night"))
+scene("classic_other",
+    ("n",     "high^:Sad Idle~tension"),
+    ("n",     "wide:Fist Pump@hush"),
+    ("n",     "low:Victory@crowd~triumph"),
+    ("",      "cu:Victory>Clapping"),                         # the winner: whoever it was this month
+    ("you",   "cu:Clapping"),
+    ("rosa",  "two:Clapping@swell~night"))
+# the final table: the speaker in the middle is whoever's there, so it matches any speaker
+scene("ft_intro",
+    ("n",     "wide^:Looking Around@hush~tension"),
+    ("",      "cu:Pointing"),
+    ("you",   "push:Head Nod Yes@sting"))
+scene("ft_won",
+    ("n",     "low^:Victory@crowd~triumph"),
+    ("",      "two:Shaking Hands 2>Shaking Hands 2"),
+    ("you",   "cu:Head Nod Yes@swell"))
+scene("ft_lost",
+    ("n",     "high^:Defeated@hush~tension"),
+    ("",      "cu:Fist Pump"),
+    ("you",   "cu:Shaking Head No~night"))
 scene("rehire",
     ("derek", "ots:Pointing@sting~tension"),
     ("n",     "high^:Sad Idle"))

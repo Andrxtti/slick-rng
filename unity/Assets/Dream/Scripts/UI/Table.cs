@@ -49,8 +49,10 @@ namespace CFDream.UI
     public class TableView : VisualElement
     {
         readonly Spot sp; readonly Color felt, rim;
-        public TableView(Spot spot, bool showHeroCards = true, int answered = -1)
+        readonly string vs;   // someone from the story at this table: their seat is marked
+        public TableView(Spot spot, bool showHeroCards = true, int answered = -1, string vs = null)
         {
+            this.vs = vs;
             sp = spot;
             var fcfg = J.O(DB.Obj("DR_FELTS"), Game.State?.pg?.eq?.GetValueOr("felt", "green") ?? "green");
             felt = C.H(J.S(fcfg, "c", "#0e4d39"), C.Felt);
@@ -92,6 +94,10 @@ namespace CFDream.UI
             var pot = U.Col().Cls("pot");
             pot.Add(U.T("POT", "pot-k", Fonts.Bold)); pot.Add(U.Num(Fmt.Bb(sp.pot) + " bb", "pot-v"));
             Add(pot);
+            // the rival sits in the seat you're up against: the biggest bet still in the hand
+            int rival = -1;
+            if (vs != null)
+                for (int i = 0; i < n; i++) { var x = sp.seats[i]; if (i == sp.hero || x.folded) continue; if (rival < 0 || x.put > sp.seats[rival].put) rival = i; }
             for (int i = 0; i < n; i++)
             {
                 var s = sp.seats[i]; int k = (i - sp.hero + n) % n;
@@ -104,6 +110,12 @@ namespace CFDream.UI
                 var top = U.Row(); top.style.justifyContent = Justify.Center;
                 top.Add(U.T(s.pos, "seat-pos", Fonts.Bold));
                 if (s.pos == "BTN") top.Add(U.T("D", "dealer", Fonts.Bold));
+                if (i == rival)
+                {
+                    seat.AddToClassList("rival");
+                    var fig = Fig.For(vs); if (fig != null) { var pt = new Portrait(fig, 30, false); pt.AddToClassList("seat-face"); seat.Add(pt); }
+                    seat.Add(U.T(Story.NameOf(vs).Split(' ')[0], "seat-rival", Fonts.Semi));
+                }
                 seat.Add(top);
                 seat.Add(U.Num(Fmt.Bb(Math.Max(0, s.stack - s.put)), "seat-stack"));
                 if (!string.IsNullOrEmpty(s.act) && !hero) seat.Add(U.T(s.act, "seat-act " + ActCls(s.act), Fonts.Semi));
