@@ -63,10 +63,27 @@ namespace CFDream.UI
 
         // One scale for both orientations: a phone is 430 units on its short side and 932 on its long side, whichever way
         // it's held, so text and buttons stay the same size when you rotate. Desktops and tablets get the smaller fit.
+        // On big screens (a laptop browser, a tablet) the phone layout isn't blown up to fill the window: at most 1.25
+        // of the screen's points per UI unit, so it reads like a normal website and the extra room goes to the layout.
         static float UiScale()
         {
             float w = Mathf.Max(1, Screen.width), h = Mathf.Max(1, Screen.height);
-            return Mathf.Max(0.5f, Mathf.Min(Mathf.Min(w, h) / 430f, Mathf.Max(w, h) / 932f));
+            float fit = Mathf.Min(Mathf.Min(w, h) / 430f, Mathf.Max(w, h) / 932f);
+            return Mathf.Max(0.5f, Mathf.Min(fit, Mathf.Max(1f, ScreenPixelsPerPoint()) * 1.25f));
+        }
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("__Internal")] static extern int DreamCssWidth();
+#endif
+        // screen pixels per point: per CSS pixel on the web, per 96-dpi pixel on desktops, per 160-dpi point on phones
+        static float ScreenPixelsPerPoint()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            int css = 0; try { css = DreamCssWidth(); } catch { }
+            return css > 10 ? Screen.width / (float)css : 1f;
+#else
+            bool desk = Application.isEditor || SystemInfo.deviceType == DeviceType.Desktop;
+            return Screen.dpi > 0 ? Screen.dpi / (desk ? 96f : 160f) : 1f;
+#endif
         }
 
         void ApplyScreen(bool force)
