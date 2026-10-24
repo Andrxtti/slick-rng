@@ -63,7 +63,7 @@ namespace CFDream.Character
 
             // floor (it also catches taps), walls and skirting
             var fl = Quad(r.root.transform, "Floor", new Vector3(-r.W / 2, 0, r.D / 2), new Vector3(r.W / 2, 0, r.D / 2), new Vector3(r.W / 2, 0, -r.D / 2), new Vector3(-r.W / 2, 0, -r.D / 2),
-                Mats.Textured(Tex("floor_wood"), floor, 0.35f, new Vector2(r.W / 1.8f, r.D / 1.8f)), layer, new Vector2(1, 1));
+                Mats.Textured(Tex(J.S(L, "floorTex", "floor_wood")), floor, 0.35f, new Vector2(r.W / (L.ContainsKey("floorTex") ? 1.4f : 1.8f), r.D / (L.ContainsKey("floorTex") ? 1.4f : 1.8f))), layer, new Vector2(1, 1));
             var bc = fl.AddComponent<BoxCollider>(); bc.center = new Vector3(0, -0.05f, 0); bc.size = new Vector3(r.W, 0.1f, r.D);
             Quad(r.root.transform, "Back wall", new Vector3(-r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, r.H, -r.D / 2), new Vector3(-r.W / 2, r.H, -r.D / 2), Mats.Get(wall, 0, 0.15f), layer, Vector2.one);
             Quad(r.root.transform, "Left wall", new Vector3(-r.W / 2, 0, r.D / 2), new Vector3(-r.W / 2, 0, -r.D / 2), new Vector3(-r.W / 2, r.H, -r.D / 2), new Vector3(-r.W / 2, r.H, r.D / 2), Mats.Get(wall2, 0, 0.15f), layer, Vector2.one);
@@ -443,7 +443,7 @@ namespace CFDream.Character
         static Texture2D Tex(string n)
         {
             if (tex.TryGetValue(n, out var t) && t != null) return t;
-            t = Resources.Load<Texture2D>("Dream/Homes/" + n); if (t != null) t.wrapMode = n == "floor_wood" || n == "pool_water" ? TextureWrapMode.Repeat : TextureWrapMode.Clamp;
+            t = Resources.Load<Texture2D>("Dream/Homes/" + n); if (t != null) t.wrapMode = n == "floor_wood" || n == "floor_checker" || n == "pool_water" ? TextureWrapMode.Repeat : TextureWrapMode.Clamp;
             tex[n] = t; return t;
         }
         static List<object> List(object o, string k) => J.L(o, k) ?? new List<object>();

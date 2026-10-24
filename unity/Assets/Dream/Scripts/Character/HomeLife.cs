@@ -18,7 +18,7 @@ namespace CFDream.Character
 
         CharacterStage st; HomeRoom room;
         List<Vector3> path; int pi; float? faceAt; Action arrived; Coroutine acting;
-        const float Speed = 1.25f;
+        const float Speed = 1.25f, StickSpeed = 0.9f;
         float yaw;
         bool tvOn; float tvT, sayT; int tvF, tvLine;
         readonly List<Vector3> fishGo = new List<Vector3>(); readonly List<Transform> flakes = new List<Transform>(); float feedT;
@@ -81,14 +81,16 @@ namespace CFDream.Character
                 Vector3 f = CamRef != null ? CamRef.forward : st.transform.forward, r = CamRef != null ? CamRef.right : st.transform.right; f.y = 0; r.y = 0; f.Normalize(); r.Normalize();
                 var dir = st.transform.InverseTransformDirection(f * Stick.y + r * Stick.x); dir.y = 0;
                 float mag = Mathf.Min(1f, dir.magnitude); if (mag > 0.01f) dir /= mag;
-                var p = st.Pivot.localPosition; float step = Speed * mag * dt;
+                // the rooms are small: a dead zone, a gentle curve (a light push creeps, a full push walks) and a lower top speed
+                float sm = Mathf.Clamp01((Stick.magnitude - 0.12f) / 0.88f); sm *= sm;
+                var p = st.Pivot.localPosition; float step = StickSpeed * sm * dt;
                 var want = p + dir * step;
                 if (room.Free(want)) p = want;                                                  // slide along what's in the way
                 else if (room.Free(new Vector3(want.x, p.y, p.z))) p = new Vector3(want.x, p.y, p.z);
                 else if (room.Free(new Vector3(p.x, p.y, want.z))) p = new Vector3(p.x, p.y, want.z);
                 p.x = Mathf.Clamp(p.x, -room.W / 2 + 0.3f, room.W / 2 - 0.3f); p.z = Mathf.Clamp(p.z, -room.D / 2 + 0.3f, room.D / 2 - 0.3f);
-                moving = (p - st.Pivot.localPosition).sqrMagnitude > 1e-8f; st.Pivot.localPosition = p;
-                yaw = Mathf.MoveTowardsAngle(yaw, Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg, 600 * dt);
+                moving = sm > 0.01f && (p - st.Pivot.localPosition).sqrMagnitude > 1e-8f; st.Pivot.localPosition = p;
+                yaw = Mathf.MoveTowardsAngle(yaw, Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg, 300 * dt);
             }
             else if (path != null && pi < path.Count)
             {

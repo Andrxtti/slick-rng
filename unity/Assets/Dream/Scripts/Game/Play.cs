@@ -84,12 +84,13 @@ namespace CFDream
             {
                 live = Calendar.Live.FirstOrDefault(l => l.ev.id == id);
                 var today = Calendar.OnToday(s, id);
-                ev = today != null ? today.ev : live != null && Calendar.LiveNow().Contains(live) ? live.ev : Game.AnyDay ? DB.Event(id) : null;
+                bool prologue = id == "local" && s.ch == 0 && !s.story.Contains("p_after");   // the first tournament always opens: it is the story, not the calendar
+                ev = today != null ? today.ev : live != null && Calendar.LiveNow().Contains(live) ? live.ev : Game.AnyDay || prologue ? DB.Event(id) : null;
                 if (ev == null || (live != null && Calendar.LivePlayed(s, live.id))) return null;
             }
             if (ev.id == "freeroll") { ev = ev.Copy(); ev.prizeBase = new[] { 0, 1, 1.5, 4, 8, 16, 16, 16 }[Math.Min(7, s.ch)]; }
             bool story = !ev.daily;
-            if (story && !reentry && !Game.AnyDay && Calendar.SlotsLeft(s).left <= 0) return null;
+            if (story && !reentry && !Game.AnyDay && ev.id != "local" && Calendar.SlotsLeft(s).left <= 0) return null;
             if (!Career.Afford(s, ev)) return null;
             if (ev.daily && Career.DailyDone(s)) return null;
             double travel = story ? Calendar.TravelFor(s, ev) : 0;

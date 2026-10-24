@@ -417,7 +417,7 @@ namespace CFDream.UI
         }
 
         // Sunday on the Spacepad: pick the nights you'll play this week (3 online, 1 live on the weekend)
-        public static void Planner(State s)
+        public static void Planner(State s, bool first = false)
         {
             DreamApp.Sheet("Plan the week", box =>
             {
@@ -443,7 +443,7 @@ namespace CFDream.UI
                     }
                 }
                 rows = U.Col().Mt(10); box.Add(rows); Draw();
-                box.Add(U.Btn("Done", () => { Calendar.PlanDone(s); DreamApp.CloseModal(); Game.Hub(); }, "gold wide").Mt(12));
+                box.Add(U.Btn("Done", () => { Calendar.PlanDone(s); DreamApp.CloseModal(); if (first) Game.FirstPlanDone(); else Game.Hub(); }, "gold wide").Mt(12));
             });
         }
 

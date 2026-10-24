@@ -250,7 +250,7 @@ SETS = {
     #             w    d    h    wall       left       floor      trim       view            accent
     # Miami: a glass office over the bay, a pastel deco diner on the Drive, a card room off the causeway
     "office":    (6.0, 4.6, 2.8, "#e6e2da", "#d9d5cd", "#9a9ea2", "#2a2f36", "window_miami", "#ffb36b"),
-    "diner":     (6.0, 4.6, 2.7, "#1f6e78", "#1b626b", "#d8d2c4", "#f48fb1", "window_deco",  "#ff6aa8"),
+    "diner":     (6.0, 4.6, 2.7, "#1f6e78", "#1b626b", "#ffffff", "#f48fb1", "window_deco",  "#ff6aa8"),
     "cardroom":  (7.0, 5.2, 2.8, "#2d4a3c", "#28422f", "#5a4636", "#c9a03e", "window_palms", "#c9a03e"),
     "casino":    (7.0, 5.2, 3.0, "#3a2342", "#33203b", "#4b2f3f", "#c9a03e", "window_city",  "#d9b36c"),
     "vegas":     (7.0, 5.2, 3.0, "#2a1a3a", "#241633", "#3b2a4a", "#ff6aa8", "window_city",  "#ff6aa8"),
@@ -272,11 +272,14 @@ def build_set(place):
         P_["window"](1.2, 3.4, h * 0.62); P_["art"]("art_1", "left", 1.2, 1.7)
         P_["light"](1.2, 1.9, -d / 2 + 0.7, "#ffb36b", 1.5, 6); P_["light"](-2, 1.6, 1.2, "#cfe0ff", 0.7, 4)
     elif place == "diner":
-        add("dining_table", 0, -1.0, ry=0); add("dining_chair", -0.5, -1.75, ry=0); add("dining_chair", 0.5, -1.75, ry=0)
+        # a counter with red stools, a red vinyl booth along the right wall, black-and-white tile and a neon sign
+        red = {"fabric": "#b01e2a", "pillow2": "#8c1620"}
         add("kitchen_island", left("kitchen_island") + 0.3, -0.2, ry=90, c={"cabinet": "#b8322d", "marble": "#f1e8dc"})
-        for k in range(3): add("bar_stool", -w / 2 + 1.25, -1.2 + k * 0.7)
-        add("art", 1.8, -d / 2 + 0.03, 0, y=1.8, tex="art_5"); P_["window"](-0.6, 3.0, h * 0.46)
-        P_["light"](0, 2.1, -0.4, "#ffd8a8", 1.4, 6); P_["light"](2.2, 1.5, 1.0, "#ff5f8f", 0.9, 4); P_["light"](-2.4, 1.6, 0.8, "#4fd7e8", 0.6, 4)
+        for k in range(3): add("bar_stool", -w / 2 + 1.25, -1.2 + k * 0.7, c={"seat": "#b01e2a"})
+        add("dining_table", 1.35, -1.25, ry=90)
+        add("couch", 0.55, -1.25, ry=90, c=red, s=0.8); add("couch", 2.15, -1.25, ry=-90, c=red, s=0.8)
+        P_["art"]("art_diner", "back", 1.9, 2.05, wide=True); P_["window"](-0.6, 3.0, h * 0.46)
+        P_["light"](0, 2.1, -0.4, "#ffd8a8", 1.4, 6); P_["light"](2.2, 1.5, 1.0, "#ff5f8f", 1.2, 4); P_["light"](-2.4, 1.6, 0.8, "#4fd7e8", 0.9, 4)
     elif place in ("cardroom", "casino", "vegas", "tv", "titan", "main"):
         add("poker_table", 0, -1.2, ry=0)
         for k, (x, z, ry) in enumerate(((-1.2, -2.0, 0), (0, -2.1, 0), (1.2, -2.0, 0), (-2.0, -1.2, 90), (2.0, -1.2, -90))): add("chair", x, z, ry=ry)
@@ -292,6 +295,7 @@ def build_set(place):
         add("chandelier", 0, -0.5, y=2.6); P_["art"]("art_3", "left", 0.4, 1.9)
         P_["light"](0, 2.4, -0.5, "#e8d8ff", 1.5, 7)
     L = P_["done"]((-0.8, 1.0, 124)); L["marks"] = marks; L["id"] = "set_" + place; L["rightWall"] = True
+    if place == "diner": L["floorTex"] = "floor_checker"; L["floor"] = "#ffffff"
     return L
 
 if __name__ == "__main__":

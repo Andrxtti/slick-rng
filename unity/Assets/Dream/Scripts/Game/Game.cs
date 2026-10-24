@@ -60,6 +60,18 @@ namespace CFDream
             var s = State;
             if (s.queue.Count > 0 && Run == null) { var id = s.queue[0]; s.queue.RemoveAt(0); s.Save(); PlayScene(id); return; }
             Render();
+            if (s.FlagN("needplan") > 0 && Run == null) CFDream.UI.HubView.Planner(s, true);
+        }
+        // the first week is planned: quit and you start now, keep the job and the story picks up on the first night you chose
+        public static void FirstPlanDone()
+        {
+            var s = State; s.SetFlag("needplan", 0); s.Save();
+            if (s.job == "nights")
+            {
+                int first = -1; foreach (var k in s.cal.plan.Keys) if (k >= s.cal.d && (first < 0 || k < first)) first = k;
+                if (first > s.cal.d) { Morning = Calendar.Sleep(s, first - s.cal.d); CalSel = -1; CalWk = 0; }
+            }
+            PlayScene("c1");
         }
 
         // ------------------------------------------------------------ story scenes
@@ -119,6 +131,8 @@ namespace CFDream
             s.story.Add(sc.id); Story.OnEnd(sc.id, s);
             Career.Unlocks(s); Career.Progress(s); s.Save();
             Scene = null;
+            if ((sc.id == "p_quit" || sc.id == "p_keep") && !s.story.Contains("c1"))   // home to the apartment: the Spacepad opens and the first week gets planned
+            { s.SetFlag("needplan"); s.Save(); Tab = "calendar"; Hub(); return; }
             string end = def.end ?? "hub";
             if (DB.Scenes.ContainsKey(end)) { PlayScene(end); return; }
             if (DB.Event(end) != null) { View = View.Hub; StartEvent(end); if (Run == null) Render(); return; }
