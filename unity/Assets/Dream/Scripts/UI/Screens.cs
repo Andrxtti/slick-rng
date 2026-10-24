@@ -314,13 +314,15 @@ namespace CFDream.UI
                 if (Bodies.Available)
                 {
                     string other = b.sp != "you" && b.sp != "n" && !b.text && fig != null ? b.sp : sc.lastOther;
+                    // nobody yet (the opening narration): whoever speaks first in this scene is already in the room
+                    if (other == null) for (int k = sc.i; k < def.beats.Count; k++) { var nb = def.beats[k]; if (nb.sp != "you" && nb.sp != "n" && !nb.text && Speaker(nb.sp, null).fig != null) { other = nb.sp; break; } }
                     if (other != null) sc.lastOther = other;
                     var ofig = other != null ? (other == b.sp ? fig : Speaker(other, null).fig) : null;
                     bool speakerYou = b.sp == "you", speech = !b.text && b.sp != "n" && fig != null;
                     string shot = sc.i == 0 || b.sp == "n" ? "wide" : !speech ? "wide" : other == null ? "cu" : sc.i % 3 == 2 ? "ots" : "cu";
                     if (b.mood == "win" || b.mood == "bust" || b.mood == "cooler") shot = sc.i == 0 ? "wide" : "cu";
                     string setTier = def.place == "home" ? st.Eq("home") : "set_" + (def.place ?? "cardroom");
-                    var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = speakerYou || other == null, Mood = b.mood };
+                    var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = speakerYou || other == null, Narration = b.sp == "n" || b.text, Mood = b.mood };
                     film.AddToClassList("film");
                     Film(film, def, sc, tint);
                     stage.Add(film); stage.AddToClassList("movie");

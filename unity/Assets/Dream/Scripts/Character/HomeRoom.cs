@@ -69,6 +69,10 @@ namespace CFDream.Character
             {
                 Quad(r.root.transform, "Right wall", new Vector3(r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, 0, r.D / 2), new Vector3(r.W / 2, r.H, r.D / 2), new Vector3(r.W / 2, r.H, -r.D / 2), Mats.Get(wall2, 0, 0.15f), layer, Vector2.one);
                 Box(r.root.transform, new Vector3(r.W / 2 - 0.01f, 0.05f, 0), new Vector3(0.02f, 0.1f, r.D), Mats.Get(trim, 0, 0.4f), layer);
+                // and a ceiling, so a wide shot that tilts up finds plaster instead of black sky
+                var ceil = Color.Lerp(wall, Color.black, 0.35f);
+                Quad(r.root.transform, "Ceiling", new Vector3(-r.W / 2, r.H, -r.D / 2), new Vector3(r.W / 2, r.H, -r.D / 2), new Vector3(r.W / 2, r.H, r.D / 2), new Vector3(-r.W / 2, r.H, r.D / 2), Mats.Get(ceil, 0, 0.05f), layer, Vector2.one);
+                Box(r.root.transform, new Vector3(0, r.H - 0.04f, -r.D / 2 + 0.03f), new Vector3(r.W, 0.08f, 0.06f), Mats.Get(trim, 0, 0.3f), layer);   // cornice
             }
             Box(r.root.transform, new Vector3(0, 0.05f, -r.D / 2 + 0.01f), new Vector3(r.W, 0.1f, 0.02f), Mats.Get(trim, 0, 0.4f), layer);
             Box(r.root.transform, new Vector3(-r.W / 2 + 0.01f, 0.05f, 0), new Vector3(0.02f, 0.1f, r.D), Mats.Get(trim, 0, 0.4f), layer);
