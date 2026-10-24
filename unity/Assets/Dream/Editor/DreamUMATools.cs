@@ -120,10 +120,17 @@ namespace CFDream.EditorTools
         // normal, gloss, AO and detail maps carry less you can see: they go smaller
         static readonly string[] Detail = { "_NM", "_SG", "Normal", "Gloss", "Detail", "_AO", ".AO", "_N_", "Mask" };
 
+        // every asset UMA's library will put in a build
+        public static string[] LibraryPaths()
+        {
+            var idx = UMAAssetIndexer.Instance; if (idx == null) return new string[0];
+            return idx.SerializedItems.Where(ai => ai != null && !string.IsNullOrEmpty(ai._Path)).Select(ai => ai._Path).Distinct().ToArray();
+        }
+
         static void Shrink(string platform, int size, string[] only)
         {
             var idx = UMAAssetIndexer.Instance; if (idx == null) return;
-            var paths = idx.SerializedItems.Where(ai => ai != null && !string.IsNullOrEmpty(ai._Path)).Select(ai => ai._Path).Distinct().ToArray();
+            var paths = LibraryPaths();
             var deps = AssetDatabase.GetDependencies(paths, true).Where(p => p.StartsWith("Assets/UMA")).ToList();
             int changed = 0, seen = 0; long before = 0;
             AssetDatabase.StartAssetEditing();

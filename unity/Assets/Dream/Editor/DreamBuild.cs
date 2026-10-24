@@ -6,8 +6,11 @@
 //   Dream > Build Web (iPhone Safari)     a web version to play on any phone; Add to Home Screen
 // Also works from the command line: Unity.exe -batchmode -quit -projectPath "<project>" -executeMethod CFDream.EditorTools.DreamBuild.BuildAndroid
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -19,6 +22,7 @@ namespace CFDream.EditorTools
     {
         public const string AppId = "com.confirmedfire.dream", Company = "Confirmed Fire", Product = "The Dream", Version = "0.1.0";
         const string IconDir = "Assets/Dream/Art/Icon/";
+        public static bool Quiet;   // set by DreamRemote: no Explorer window popping up after a build
         static string OutDir => Path.GetFullPath(Path.Combine(Application.dataPath, "..", "..", "Builds"));
 
         [MenuItem("Dream/Apply mobile settings", priority = 1)]
@@ -133,11 +137,116 @@ namespace CFDream.EditorTools
         static void WebSettings()
         {
             PlayerSettings.SplashScreen.show = false;   // the game has its own title screen; saves a few MB on the web
+            PlayerSettings.SplashScreen.showUnityLogo = false;   // otherwise the 2.7 MB logo texture still ships
             PlayerSettings.WebGL.template = "PROJECT:Dream";
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
             PlayerSettings.WebGL.decompressionFallback = true;
             PlayerSettings.WebGL.dataCaching = true;
             PlayerSettings.WebGL.nameFilesAsHashes = false;
+            WebTextures();
+        }
+
+        // iPhones read ASTC textures straight from the GPU; DXT (Unity's web default) has to be unpacked to full-size
+        // RGBA on an iPhone, several times the memory. ASTC is also smaller to download. Only the textures that go into
+        // the build are switched (everything under a Resources folder, the scenes, the UMA library), so the hundreds
+        // of unused UMA textures aren't re-encoded.
+        static readonly string[] Detail = { "_NM", "_SG", "Normal", "Gloss", "Detail", "_AO", ".AO", "_N_", "Mask" };
+        [MenuItem("Dream/Web textures to ASTC (iPhone)", priority = 30)]
+        public static void WebTextures()
+        {
+            var roots = new List<string>();
+            roots.AddRange(EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path));
+            roots.AddRange(AssetDatabase.GetAllAssetPaths().Where(p => p.StartsWith("Assets/") && p.Contains("/Resources/") && !p.Contains("/Editor/") && !AssetDatabase.IsValidFolder(p)));
+#if DREAM_UMA
+            roots.AddRange(DreamUMATools.LibraryPaths());
+#endif
+            var deps = AssetDatabase.GetDependencies(roots.ToArray(), true).Distinct().ToList();
+            int seen = 0, changed = 0;
+            AssetDatabase.StartAssetEditing();
+            try
+            {
+                foreach (var p in deps)
+                {
+                    if (!(AssetImporter.GetAtPath(p) is TextureImporter ti)) continue;
+                    if (ti.textureCompression == TextureImporterCompression.Uncompressed || ti.textureType == TextureImporterType.SingleChannel) continue;
+                    seen++;
+                    var ps = ti.GetPlatformTextureSettings("WebGL");
+                    bool detail = ti.textureType == TextureImporterType.NormalMap || Detail.Any(k => Path.GetFileName(p).IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+                    var want = detail ? TextureImporterFormat.ASTC_8x8 : TextureImporterFormat.ASTC_6x6;
+                    if (ps.overridden && ps.format == want) continue;
+                    if (ps.overridden && ps.format != TextureImporterFormat.Automatic && !ps.format.ToString().StartsWith("DXT") && !ps.format.ToString().StartsWith("BC")) continue;   // a deliberate format: keep it
+                    if (!ps.overridden) ps.maxTextureSize = ti.maxTextureSize;
+                    ps.overridden = true; ps.format = want; ps.compressionQuality = 50;
+                    ti.SetPlatformTextureSettings(ps); EditorUtility.SetDirty(ti); ti.SaveAndReimport(); changed++;
+                }
+            }
+            finally { AssetDatabase.StopAssetEditing(); }
+            Debug.Log($"[Dream] Web textures: {seen} in the build, {changed} switched to ASTC");
+        }
+
+        // Colour emoji can't be drawn in the web build (the text drops them), so the 10 MB emoji font stays home.
+        // It's moved out of Resources for the build and put straight back afterwards.
+        static readonly string[] WebSkip = { "Assets/Dream/Resources/Dream/Fonts/NotoColorEmoji.ttf" };
+        const string Parked = "Assets/Dream/Parked";
+        static List<(string src, string dst)> Park()
+        {
+            var moved = new List<(string, string)>();
+            if (!AssetDatabase.IsValidFolder(Parked)) AssetDatabase.CreateFolder("Assets/Dream", "Parked");
+            foreach (var p in WebSkip)
+            {
+                if (AssetDatabase.LoadMainAssetAtPath(p) == null) continue;
+                string to = Parked + "/" + Path.GetFileName(p);
+                string err = AssetDatabase.MoveAsset(p, to);
+                if (string.IsNullOrEmpty(err)) moved.Add((p, to)); else Debug.LogWarning($"[Dream] Couldn't leave {p} out of the web build: {err}");
+            }
+            return moved;
+        }
+        static void Unpark(List<(string src, string dst)> moved)
+        {
+            foreach (var (src, dst) in moved)
+            {
+                string err = AssetDatabase.MoveAsset(dst, src);
+                if (!string.IsNullOrEmpty(err)) Debug.LogError($"[Dream] Put {dst} back at {src} by hand: {err}");
+            }
+            AssetDatabase.Refresh();
+        }
+        // after a build that ran from the menu or a parked file was left behind by a crash: put it back
+        [InitializeOnLoadMethod]
+        static void UnparkLeftovers()
+        {
+            EditorApplication.delayCall += () =>
+            {
+                if (BuildPipeline.isBuildingPlayer || !AssetDatabase.IsValidFolder(Parked)) return;
+                var back = new List<(string, string)>();
+                foreach (var p in WebSkip) { string to = Parked + "/" + Path.GetFileName(p); if (AssetDatabase.LoadMainAssetAtPath(to) != null && AssetDatabase.LoadMainAssetAtPath(p) == null) back.Add((p, to)); }
+                if (back.Count > 0) { Debug.Log("[Dream] Putting back files parked for a web build"); Unpark(back); }
+            };
+        }
+
+        // what took the space: Logs/build_sizes.txt, biggest assets and folders first
+        static void SizeReport(BuildReport report, string name)
+        {
+            try
+            {
+                var items = new List<(string path, string type, ulong size)>();
+                foreach (var pa in report.packedAssets ?? new PackedAssets[0])
+                    foreach (var c in pa.contents) items.Add((string.IsNullOrEmpty(c.sourceAssetPath) ? "(built-in) " + pa.shortPath : c.sourceAssetPath, c.type != null ? c.type.Name : "?", c.packedSize));
+                var sb = new StringBuilder();
+                sb.AppendLine($"{name} build {DateTime.Now:yyyy-MM-dd HH:mm}  total {report.summary.totalSize / 1048576.0:0.0} MB (uncompressed data: {items.Sum(i => (double)i.size) / 1048576.0:0.0} MB)");
+                if (items.Count == 0) sb.AppendLine("No asset sizes: player data wasn't rebuilt this time.");
+                sb.AppendLine("\nBy type:");
+                foreach (var g in items.GroupBy(i => i.type).OrderByDescending(g => g.Sum(i => (double)i.size)).Take(15))
+                    sb.AppendLine($"{g.Sum(i => (double)i.size) / 1048576.0,8:0.00} MB  {g.Key} ({g.Count()})");
+                sb.AppendLine("\nBy folder:");
+                foreach (var g in items.GroupBy(i => Path.GetDirectoryName(i.path)?.Replace('\\', '/') ?? "").OrderByDescending(g => g.Sum(i => (double)i.size)).Take(40))
+                    sb.AppendLine($"{g.Sum(i => (double)i.size) / 1048576.0,8:0.00} MB  {g.Key} ({g.Count()})");
+                sb.AppendLine("\nBiggest assets:");
+                foreach (var g in items.GroupBy(i => i.path).OrderByDescending(g => g.Sum(i => (double)i.size)).Take(80))
+                    sb.AppendLine($"{g.Sum(i => (double)i.size) / 1048576.0,8:0.00} MB  {g.Key}  [{string.Join(",", g.Select(i => i.type).Distinct())}]");
+                Directory.CreateDirectory(Path.Combine(Application.dataPath, "..", "Logs"));
+                File.WriteAllText(Path.Combine(Application.dataPath, "..", "Logs", "build_sizes.txt"), sb.ToString());
+            }
+            catch (Exception e) { Debug.LogWarning("[Dream] Size report skipped: " + e.Message); }
         }
 
         [MenuItem("Dream/Open builds folder", priority = 40)]
@@ -172,12 +281,16 @@ namespace CFDream.EditorTools
                 scenes = scenes, locationPathName = path, target = target, targetGroup = group,
                 options = dev ? BuildOptions.Development | BuildOptions.AllowDebugging : BuildOptions.None,
             };
-            var report = BuildPipeline.BuildPlayer(opts);
+            var parked = target == BuildTarget.WebGL ? Park() : new List<(string, string)>();
+            BuildReport report;
+            try { report = BuildPipeline.BuildPlayer(opts); }
+            finally { Unpark(parked); }
+            SizeReport(report, name);
             var sum = report.summary;
             if (sum.result == BuildResult.Succeeded)
             {
                 Debug.Log($"[Dream] Build succeeded: {path} ({sum.totalSize / 1048576.0:0.0} MB in {sum.totalTime.TotalMinutes:0.0} min)");
-                if (!Application.isBatchMode) EditorUtility.RevealInFinder(path);
+                if (!Application.isBatchMode && !Quiet) EditorUtility.RevealInFinder(path);
             }
             else Debug.LogError($"[Dream] {name} build {sum.result} with {sum.totalErrors} error(s). The details are in the Console above this line.");
         }
