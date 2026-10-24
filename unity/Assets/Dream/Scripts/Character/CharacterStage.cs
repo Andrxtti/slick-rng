@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UIElements;
 
 namespace CFDream.Character
@@ -50,6 +52,8 @@ namespace CFDream.Character
         Vector3 camA, camB, lookA, lookB; float shotT = 1, shotDur = 6; string shotKey;
         float cutFade; bool actYou = true; float actT;
         string shotKind = "wide", baseKind = "wide"; bool shotYou = true, subjYou = true, narr, reacted; float sinceShot;
+        // the movie's post-processing (Resources/Dream/Cinema, made by Dream > Create cinema profile): on in scenes only
+        Volume cinema; DepthOfField dof; UniversalAdditionalCameraData camData;
         public float CutFade => cutFade;   // 1 right after a cut, fading to 0: the film view dips to black with it
         public bool InRoom => framing == "room";
         public HomeLife Life => life;
@@ -84,6 +88,25 @@ namespace CFDream.Character
             AddLight("Key", LightType.Directional, new Color(1f, 0.95f, 0.88f), 1.15f, new Vector3(28, 149, 0));
             AddLight("Fill", LightType.Directional, new Color(0.72f, 0.8f, 1f), 0.45f, new Vector3(10, 211, 0));
             AddLight("Rim", LightType.Directional, new Color(0.95f, 0.8f, 0.5f), 0.9f, new Vector3(18, -18, 0));
+            try
+            {
+                camData = cam.GetUniversalAdditionalCameraData();
+                if (camData != null) { camData.renderPostProcessing = false; camData.volumeLayerMask = 1 << Layer; camData.renderShadows = false; }
+                var prof = Resources.Load<VolumeProfile>("Dream/Cinema");
+                if (prof != null)
+                {
+                    var vg = new GameObject("Cinema"); vg.layer = Layer; vg.transform.SetParent(transform, false);
+                    cinema = vg.AddComponent<Volume>(); cinema.isGlobal = true; cinema.priority = 100; cinema.sharedProfile = prof; cinema.weight = 0;
+                    cinema.profile.TryGet(out dof);   // .profile is this stage's own copy, so the focus can move per shot
+                }
+            }
+            catch (Exception e) { Debug.LogWarning("[Dream] cinema post-processing unavailable: " + e.Message); cinema = null; dof = null; }
+        }
+        void Cinema(bool on)
+        {
+            if (camData != null) { camData.renderPostProcessing = on && cinema != null; camData.antialiasing = on ? AntialiasingMode.FastApproximateAntialiasing : AntialiasingMode.None; }
+            if (cinema != null) cinema.weight = on ? 1 : 0;
+            cam.allowHDR = on && cinema != null;
         }
         void AddLight(string n, LightType t, Color c, float intensity, Vector3 euler)
         {
@@ -171,13 +194,13 @@ namespace CFDream.Character
             npcPivot.localPosition = them.pos; npcPivot.localRotation = Quaternion.Euler(0, them.yaw, 0);
             if (room.shadow != null) room.shadow.localPosition = new Vector3(you.pos.x, 0, you.pos.z);
             RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 0.85f));
-            framing = "scene"; inScene = true; cam.targetTexture = roomRt; cam.farClipPlane = 60;
+            framing = "scene"; inScene = true; cam.targetTexture = roomRt; cam.farClipPlane = 60; Cinema(true);
             if (shotKey == null) Shot("wide", true, 7f);
             cam.enabled = views.Count > 0;   // the set shows even while the people are still being built
         }
         void ExitScene()
         {
-            inScene = false; shotKey = null;
+            inScene = false; shotKey = null; Cinema(false);
             if (room != null && room.tier.StartsWith("set_")) { room.root.SetActive(false); Destroy(room.root); room = null; }
             else if (room != null) room.root.SetActive(false);
             if (npc != null) npc.Root.SetActive(false);
@@ -252,6 +275,13 @@ namespace CFDream.Character
                         // eye height, looking a touch down at chest height, so the frame holds the room and not the void above the walls
                         camA = M + front * 3.9f + Vector3.up * 1.55f; camB = M + front * 3.3f + Vector3.up * 1.45f; lookA = lookB = M + Vector3.up * 1.05f; cam.fieldOfView = 40; break;
                     }
+            }
+            // focus: sharp on the subject, the set going soft behind them; the wide keeps the room readable
+            if (dof != null)
+            {
+                float dist = (lookA - (camA + camB) / 2).magnitude;
+                bool close = shotKind == "cu" || shotKind == "ots";
+                dof.gaussianStart.value = close ? dist + 0.45f : 7f; dof.gaussianEnd.value = close ? dist + 2.6f : 16f; dof.gaussianMaxRadius.value = close ? 1.1f : 0.6f;
             }
         }
         // how you carry yourself in a shot: arms up for a win, head down after a bust or a cooler

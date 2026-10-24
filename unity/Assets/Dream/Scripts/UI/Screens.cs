@@ -331,7 +331,7 @@ namespace CFDream.UI
                 {
                     beat = U.Div("narration").Cls(b.goal ? "goal" : "", b.big ? "big" : "");
                     if (b.goal) beat.Add(U.Kicker("Your goal").Fg(C.Gold));
-                    beat.Add(U.T(U.Esc(text), "narr-t", b.goal ? Fonts.Semi : Fonts.Body));
+                    var nl = U.T(U.Esc(text), "narr-t", b.goal ? Fonts.Semi : Fonts.Body); beat.Add(nl); if (Bodies.Available) Type(nl, U.Esc(text));
                 }
                 else if (b.text)
                 {
@@ -359,7 +359,7 @@ namespace CFDream.UI
                     nm.Add(U.T(name, "speech-name", Fonts.Semi).Fg(col));
                     if (!string.IsNullOrEmpty(role)) nm.Add(U.T(role, "speech-role"));
                     beat.Add(nm);
-                    beat.Add(U.T(U.Esc(text), "speech-t" + (b.big ? " big" : "") + (b.mood == "think" ? " think" : "")));
+                    var sl = U.T(U.Esc(text), "speech-t" + (b.big ? " big" : "") + (b.mood == "think" ? " think" : "")); beat.Add(sl); if (Bodies.Available) Type(sl, U.Esc(text));
                 }
                 beat.AddToClassList("beat");
                 Enter(beat);
@@ -376,11 +376,24 @@ namespace CFDream.UI
                 else bottom.Add(U.Hint("Tap to continue").Cls("center tap-hint"));
             }
             s.Add(stage); s.Add(bottom);
-            if (b == null || b.choice == null || sc.extra.Count > 0) s.Tap(Game.Advance);
+            if (b == null || b.choice == null || sc.extra.Count > 0) s.Tap(() => { if (typing != null) typing(); else Game.Advance(); });   // a tap mid-line finishes the line first
             var dots = U.Row().Cls("dots");
             int total = def.beats.Count; for (int i = 0; i < total; i++) dots.Add(U.Div("dot").Cls(i < sc.i ? "done" : i == sc.i ? "on" : ""));
             s.Add(dots);
             return s;
+        }
+
+        // lines type themselves out like subtitles landing; a tap while typing shows the whole line
+        static Action typing;
+        static void Type(Label l, string full, int perTick = 2)
+        {
+            if (l == null || full.Length < 10) return;
+            // the rest of the line is there but transparent, so the box is its final size from the first frame
+            int n = 0; l.enableRichText = true; l.text = "<alpha=#00>" + full; IVisualElementScheduledItem it = null; Action done = null;
+            done = () => { l.text = full; if (typing == done) typing = null; it?.Pause(); };
+            it = l.schedule.Execute(() => { n = Math.Min(full.Length, n + perTick); l.text = full.Substring(0, n) + "<alpha=#00>" + full.Substring(n); if (n >= full.Length) done(); }).Every(40);
+            typing = done;
+            l.RegisterCallback<DetachFromPanelEvent>(e => { if (typing == done) typing = null; it?.Pause(); });
         }
 
         public static VisualElement SoundToggle()
