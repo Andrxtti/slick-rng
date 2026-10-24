@@ -91,7 +91,43 @@ namespace CFDream
                 ClassCombos.Add(combos);
             }
             Story.ApplyOverrides();
+            ApplyScriptEdits();
             Character.Wardrobe.Load(); // built-in 3D pieces and brand packs (Resources/Brands/*/brand.json)
+        }
+
+        // the edited script (Resources/Dream/script_edits.json from unity/tools/script_import.py): words, display
+        // names and choice labels laid over the scenes by scene id and line order
+        static void ApplyScriptEdits()
+        {
+            var ta = Resources.Load<TextAsset>("Dream/script_edits"); if (ta == null) return;
+            var ed = Json.Parse(ta.text) as Dictionary<string, object>; if (ed == null) return;
+            int changed = 0;
+            foreach (var kv in ed)
+            {
+                if (!Scenes.TryGetValue(kv.Key, out var sc)) continue;
+                var lines = kv.Value as List<object>; if (lines == null) continue;
+                for (int i = 0; i < lines.Count && i < sc.beats.Count; i++)
+                {
+                    var L = lines[i] as Dictionary<string, object>; var b = sc.beats[i]; if (L == null || b.fn) continue;
+                    if (J.S(L, "sp") != b.sp) continue;   // the order drifted (a line was added or removed): leave the rest alone
+                    string t = J.S(L, "t"); if (!string.IsNullOrEmpty(t) && t != b.t) { b.t = t; changed++; }
+                    string who = J.S(L, "who"); if (!string.IsNullOrEmpty(who) && !string.Equals(who, DefaultName(b.sp), System.StringComparison.OrdinalIgnoreCase) && who != b.who) b.who = who;
+                    var ch = J.L(L, "choice");
+                    if (ch != null && b.choice != null)
+                        for (int c = 0; c < ch.Count && c < b.choice.Count; c++)
+                        {
+                            var C = ch[c] as Dictionary<string, object>; if (C == null) continue;
+                            string ct = J.S(C, "t"); if (!string.IsNullOrEmpty(ct)) b.choice[c].t = ct;
+                            string cl = J.S(C, "line"); if (!string.IsNullOrEmpty(cl) && b.choice[c].line != null) b.choice[c].line.t = cl;
+                        }
+                }
+            }
+            if (changed > 0) UnityEngine.Debug.Log($"[Dream] script edits: {changed} lines changed");
+        }
+        static string DefaultName(string sp)
+        {
+            if (sp != null && sp.StartsWith("L:")) { var lg = Legend(sp.Substring(2)); return lg != null ? J.S(lg, "name", sp) : sp; }
+            var p = Person(sp); return p != null ? J.S(p, "name", sp) : sp;
         }
 
         static Scene ParseScene(string id, Dictionary<string, object> d)

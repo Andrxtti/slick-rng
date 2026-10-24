@@ -29,6 +29,7 @@ namespace CFDream.EditorTools
             { "cinema-profile", DreamCinema.Create },
             { "uma-setup", DreamUMASetup.Setup },
             { "voice-list", DreamVoice.Export },
+            { "script-export", DreamScript.Export },
 #if DREAM_UMA
             { "export-uvs", DreamUMATools.ExportUVs }, { "build-clothes", DreamClothes.Build },
             { "uma-rebuild", DreamUMATools.Rebuild }, { "uma-trim", DreamUMATools.TrimApply }, { "uma-shrink", DreamUMATools.ShrinkForWeb },
