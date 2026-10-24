@@ -124,9 +124,37 @@ namespace CFDream.UI
                 pad.Add(bar);
             }
             pad.Add(Header(s));
-            var rest = U.Div("pad"); rest.Add(Chapter(s)); rest.Add(CalendarTab(s)); rest.Add(U.Space(24));
+            var rest = U.Div("pad"); rest.Add(Chapter(s)); rest.Add(Study(s)); rest.Add(CalendarTab(s)); rest.Add(U.Space(24));
             pad.Add(rest); main.Add(pad);
             return main;
+        }
+
+        // the study tool: where your game leaks, and the spots you misplayed dealt again until you get them right
+        static VisualElement Study(State s)
+        {
+            var c = U.Card("study"); var misses = Play.Misses(s);
+            var top = U.Row(); top.Add(U.Kicker("Study").Grow()); if (s.FlagN("fixed") > 0) top.Add(U.Hint($"{(int)s.FlagN("fixed")} fixed").Fg(C.Green)); c.Add(top);
+            var ranked = Progression.Skills.Where(k => k != "short").Select(k => (k, acc: Progression.SkillAcc(s.pg, k))).Where(x => x.acc.HasValue).OrderBy(x => x.acc.Value).Take(3).ToList();
+            if (ranked.Count == 0) c.Add(U.Hint("Play a few hands and your leaks show up here, graded by the solver."));
+            else
+            {
+                c.Add(U.T("Where it leaks", "kh-t", Fonts.Semi).Mt(2));
+                foreach (var (k, acc) in ranked)
+                {
+                    var (n, d) = Progression.SkillNames[k]; int stars = Progression.SkillStars(s.pg, k);
+                    var r = U.Row().Cls("skill").Mt(4);
+                    var l = U.Col().Grow(); l.Add(U.T(n, "skill-n", Fonts.Semi)); l.Add(U.Hint(d)); r.Add(l);
+                    var rr = U.Col().Cls("skill-r"); rr.Add(U.Sym(new string('★', stars) + new string('☆', 3 - stars), "stars").Fg(stars > 0 ? C.Gold : C.Faint)); rr.Add(U.Hint(acc + "%").Fg(acc < 62 ? C.Red : acc < 78 ? C.Gold : C.Green));
+                    r.Add(rr); c.Add(r);
+                }
+            }
+            if (misses.Count > 0)
+            {
+                c.Add(U.Btn($"Drill your misses · {misses.Count}", Game.StartDrill, "gold wide").Mt(10));
+                c.Add(U.Hint("Same seat, same stacks, same action. A spot leaves the list when you get it right.").Mt(4));
+            }
+            else if (s.dec > 0) c.Add(U.Hint("No misplayed spots waiting. Every mistake you make at the tables lands here to be drilled.").Mt(6));
+            return c;
         }
 
         public static VisualElement Header(State s)

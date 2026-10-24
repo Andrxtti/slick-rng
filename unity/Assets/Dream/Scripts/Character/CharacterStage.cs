@@ -90,13 +90,17 @@ namespace CFDream.Character
             Frame(1.7f);
             // a soft studio: warm key, cool fill, gold rim from behind
             // the character faces +Z (towards the camera); light directions are where the light travels
-            AddLight("Key", LightType.Directional, new Color(1f, 0.95f, 0.88f), 1.15f, new Vector3(28, 149, 0));
+            var key = AddLight("Key", LightType.Directional, new Color(1f, 0.95f, 0.88f), 1.15f, new Vector3(28, 149, 0));
             AddLight("Fill", LightType.Directional, new Color(0.72f, 0.8f, 1f), 0.45f, new Vector3(10, 211, 0));
             AddLight("Rim", LightType.Directional, new Color(0.95f, 0.8f, 0.5f), 0.9f, new Vector3(18, -18, 0));
+            // the key casts a shadow (one hard map is all the phone pipeline gives; kept short so it stays crisp)
+            key.shadows = LightShadows.Soft; key.shadowStrength = 0.55f; key.shadowBias = 0.02f; key.shadowNormalBias = 0.6f; RenderSettings.sun = key;
+            try { if (UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset urp) urp.shadowDistance = 14f; } catch { }
+            Environment();
             try
             {
                 camData = cam.GetUniversalAdditionalCameraData();
-                if (camData != null) { camData.renderPostProcessing = false; camData.volumeLayerMask = 1 << Layer; camData.renderShadows = false; }
+                if (camData != null) { camData.renderPostProcessing = false; camData.volumeLayerMask = 1 << Layer; camData.renderShadows = true; }
                 var prof = Resources.Load<VolumeProfile>("Dream/Cinema");
                 if (prof != null)
                 {
@@ -113,10 +117,38 @@ namespace CFDream.Character
             if (cinema != null) cinema.weight = on ? 1 : 0;
             cam.allowHDR = on && cinema != null;
         }
-        void AddLight(string n, LightType t, Color c, float intensity, Vector3 euler)
+        Light AddLight(string n, LightType t, Color c, float intensity, Vector3 euler)
         {
             var go = new GameObject(n); go.transform.SetParent(transform, false); go.transform.localEulerAngles = euler;
             var l = go.AddComponent<Light>(); l.type = t; l.color = c; l.intensity = intensity; l.cullingMask = 1 << Layer; l.shadows = LightShadows.None;
+            return l;
+        }
+        // a soft world around the stage so skin, eyes, lacquer and chrome have something to reflect: a small painted
+        // sky cubemap (warm window one side, cool fill the other) and a three-tone ambient
+        static void Environment()
+        {
+            const int S = 32; var cube = new Cubemap(S, TextureFormat.RGBA32, false) { name = "Stage sky" };
+            Color sky = new Color(0.46f, 0.52f, 0.66f), horizon = new Color(0.62f, 0.56f, 0.56f), ground = new Color(0.16f, 0.13f, 0.12f);
+            Vector3 warm = new Vector3(0.45f, 0.35f, -0.82f).normalized, cool = new Vector3(-0.85f, 0.3f, 0.42f).normalized;
+            var px = new Color[S * S];
+            for (int f = 0; f < 6; f++)
+            {
+                for (int y = 0; y < S; y++)
+                    for (int x = 0; x < S; x++)
+                    {
+                        float u = (x + 0.5f) / S * 2 - 1, v = (y + 0.5f) / S * 2 - 1; Vector3 d;
+                        switch (f) { case 0: d = new Vector3(1, -v, -u); break; case 1: d = new Vector3(-1, -v, u); break; case 2: d = new Vector3(u, 1, v); break; case 3: d = new Vector3(u, -1, -v); break; case 4: d = new Vector3(u, -v, 1); break; default: d = new Vector3(-u, -v, -1); break; }
+                        d.Normalize();
+                        var c = d.y >= 0 ? Color.Lerp(horizon, sky, Mathf.Pow(d.y, 0.6f)) : Color.Lerp(horizon, ground, Mathf.Pow(-d.y, 0.5f));
+                        float kw = Mathf.Pow(Mathf.Max(0, Vector3.Dot(d, warm)), 12f), kc = Mathf.Pow(Mathf.Max(0, Vector3.Dot(d, cool)), 10f);
+                        c += new Color(1f, 0.85f, 0.6f) * kw * 1.6f + new Color(0.6f, 0.75f, 1f) * kc * 0.8f;
+                        px[y * S + x] = c;
+                    }
+                cube.SetPixels(px, (CubemapFace)f);
+            }
+            cube.Apply();
+            RenderSettings.defaultReflectionMode = UnityEngine.Rendering.DefaultReflectionMode.Custom; RenderSettings.customReflectionTexture = cube; RenderSettings.reflectionIntensity = 0.85f;
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight; RenderSettings.ambientSkyColor = sky * 0.9f; RenderSettings.ambientEquatorColor = horizon * 0.65f; RenderSettings.ambientGroundColor = ground;
         }
 
         // aim at a character about `height` metres tall standing at the pivot: "full" (head to toe), "bust"
@@ -167,7 +199,7 @@ namespace CFDream.Character
             pets.enabled = true; pets.Set(this, room, pet); life.Pets = pets;
             RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 0.62f));
             framing = "room"; cam.targetTexture = roomRt; life.CamRef = cam.transform;
-            if (Follow) { followInit = false; cam.farClipPlane = 60; cam.fieldOfView = 60; FollowCam(true); } else FrameRoom();
+            if (Follow) { followInit = false; cam.farClipPlane = 60; cam.fieldOfView = 64; FollowCam(true); } else FrameRoom();
             cam.enabled = views.Count > 0 && HasBody;
         }
         // third person: over your shoulder, a little above, easing after you and never through a wall
@@ -175,14 +207,14 @@ namespace CFDream.Character
         {
             if (room == null) return;
             var p = pivot.localPosition; var fwd = pivot.forward; fwd = transform.InverseTransformDirection(fwd); fwd.y = 0; if (fwd.sqrMagnitude < 1e-4f) fwd = Vector3.forward; fwd.Normalize();
-            var want = p - fwd * 2.4f + Vector3.up * 1.65f + Vector3.Cross(Vector3.up, fwd) * -0.35f;   // behind, up, a touch to your right
+            var want = p - fwd * 2.9f + Vector3.up * 1.95f + Vector3.Cross(Vector3.up, fwd) * -0.45f;   // behind, up, a touch to your right
             float m = 0.28f;
             want.x = Mathf.Clamp(want.x, -room.W / 2 + m, room.W / 2 - m); want.z = Mathf.Clamp(want.z, -room.D / 2 + m, room.D / 2 - m); want.y = Mathf.Min(want.y, room.H - 0.2f);
             // if the wall pushed the camera onto you, lift it and look down more
             float d = Vector3.Distance(new Vector3(want.x, 0, want.z), new Vector3(p.x, 0, p.z)); if (d < 1.2f) want.y += (1.2f - d) * 0.9f;
             if (snap || !followInit) { followPos = want; followInit = true; } else followPos = Vector3.Lerp(followPos, want, 1 - Mathf.Exp(-Time.deltaTime * 6f));
             cam.transform.localPosition = followPos;
-            var look = p + Vector3.up * 1.25f + fwd * 0.9f;
+            var look = p + Vector3.up * 1.05f + fwd * 1.7f;   // you sit low in the frame; the room ahead is the picture
             cam.transform.LookAt(transform.TransformPoint(look));
         }
         void ExitRoom()

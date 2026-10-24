@@ -34,10 +34,18 @@ namespace CFDream.UI
             var h = U.Div("run-head");
             var r = U.Row();
             var l = U.Col().Grow(); l.style.marginRight = 52;
-            l.Add(U.Kicker(run.ev.name)); l.Add(U.H3(DB.StageLong(run.Stage) + (run.turbo ? " · Turbo" : "")));
+            bool drill = run.drill != null;
+            l.Add(U.Kicker(run.ev.name)); l.Add(U.H3(drill ? "Spots you misplayed" : DB.StageLong(run.Stage) + (run.turbo ? " · Turbo" : "")));
             r.Add(l);
             h.Add(r);
             int per = Play.Per(run);
+            if (drill)
+            {
+                var dm = U.Row().Mt(8); var di = U.Col().Cls("run-info"); di.Add(U.Num($"{Math.Min(run.h + 1, per)}/{per}", "")); di.Add(U.T("SPOT", "stat-l", Fonts.Bold)); dm.Add(di);
+                int okN = run.results.Count(x => x.tier == "perfect" || x.tier == "good"); var dj = U.Col().Cls("run-info"); dj.Add(U.Num(okN.ToString(), "").Fg(C.Green)); dj.Add(U.T("FIXED", "stat-l", Fonts.Bold)); dm.Add(dj);
+                h.Add(dm); if (run.combo >= 3) h.Add(U.Chip($"🔥 {run.combo} in a row", C.H("#ff8a3c")).Mt(6));
+                return h;
+            }
             var m = U.Row().Mt(8);
             var stack = U.Col().Grow();
             var sl = U.Row(); sl.Add(U.T("STACK", "stat-l", Fonts.Bold).Grow()); sl.Add(U.Num(run.stack.ToString(), "stack-n").Fg(StackCol(run.stack))); stack.Add(sl);
@@ -58,6 +66,16 @@ namespace CFDream.UI
         static VisualElement Intro(Run run)
         {
             var c = U.Card("intro");
+            if (run.drill != null)
+            {
+                c.Add(U.Kicker("Study session")); c.Add(U.H2("The spots you misplayed"));
+                c.Add(U.Hint($"{run.drill.Count} hand{(run.drill.Count == 1 ? "" : "s")}. Same seat, same stacks, same action in front of you. Get one right and it leaves the list."));
+                var t0 = U.Row().Cls("tip").Mt(12); t0.Add(new Portrait(Fig.Slick(), 40, false));
+                var tl0 = U.Col().Grow(); tl0.style.marginLeft = 8; tl0.Add(U.T("Slick", "tip-who", Fonts.Semi).Fg(C.Blue)); tl0.Add(U.P("Nobody remembers the hands they won. Fix the ones you didn't."));
+                t0.Add(tl0); c.Add(t0);
+                c.Add(U.Btn("Deal", Game.Deal, "gold wide").Mt(14));
+                Screens.Enter(c); return c;
+            }
             string stage = run.Stage; var tips = DB.Tips(stage);
             c.Add(U.Kicker(run.si == 0 ? DB.Place(run.ev.venue) : "Next level"));
             c.Add(U.H2(DB.StageLong(stage)));
@@ -227,6 +245,20 @@ namespace CFDream.UI
             var hero = U.Card("res-hero");
             hero.Add(U.Kicker(ev.name));
             bool won = res.place == 1 && ev.kind != "cash";
+            if (ev.kind == "drill")
+            {
+                hero.Add(U.T($"{res.fixedN}/{res.drillN}", "res-big", Fonts.Disp).Fg(res.fixedN == res.drillN ? C.Gold2 : res.fixedN > 0 ? C.Green : C.Cream));
+                hero.Add(U.P(res.fixedN == res.drillN ? "Every spot put right. They're off the list." : res.fixedN > 0 ? "spots put right and off the list. The rest come back next session." : "None put right yet. They'll be back; read the solver's reasons below."));
+                var dm = U.Row().Cls("stats").Mt(10); dm.Add(U.Stat(res.acc + "%", "Accuracy")); dm.Add(U.Stat(res.bestCombo.ToString(), "Best run")); dm.Add(U.Stat(Play.Misses(s).Count.ToString(), "Still waiting")); hero.Add(dm);
+                Screens.Enter(hero); body.Add(hero);
+                if (res.prog != null && res.prog.xp > 0) { var cx = U.Card(); var xr = U.Row(); xr.Add(U.Kicker("Career").Grow()); xr.Add(U.Num($"+{Math.Round(res.prog.xp)} XP", "").Fg(C.Gold)); cx.Add(xr); body.Add(cx); }
+                body.Add(Decisions(res));
+                var da = U.Col().Mt(6);
+                if (Play.Misses(s).Count > 0) da.Add(U.Btn("Drill the rest", Game.StartDrill, "gold wide"));
+                da.Add(U.Btn("Back to the Spacepad", () => Game.SetTab("calendar"), (Play.Misses(s).Count > 0 ? "ghost" : "gold") + " wide").Mt(8));
+                body.Add(da); body.Add(U.Space(30)); sv.Add(body); page.Add(sv);
+                return page;
+            }
             if (ev.kind == "cash")
             {
                 hero.Add(U.T(U.Signed(res.net), "res-big", Fonts.Disp).Fg(res.net >= 0 ? C.Green : C.Red));
@@ -280,7 +312,20 @@ namespace CFDream.UI
             }
 
             // how you played
-            if (res.all.Count > 0)
+            if (res.all.Count > 0) body.Add(Decisions(res));
+
+            var acts = U.Col().Mt(6);
+            if (Calendar.CanReenter(s, res)) acts.Add(U.Btn($"Re-enter · {U.Money(ev.buyin)}", () => DreamApp.Confirm("Fire another bullet?", $"{U.Money(ev.buyin)} from a {U.Money(s.br)} roll. Late registration is still open.", "Re-enter", Game.Reenter, "Not this time"), "ghost wide"));
+            var sl = Calendar.SlotsLeft(s);
+            acts.Add(U.Btn("Continue", () => Game.Hub(), "gold wide", true, s.ch == 0 ? null : sl.left > 0 ? $"{sl.left} game{(sl.left == 1 ? "" : "s")} left {(sl.week ? "this week" : "today")}" : sl.week ? "No games left this week" : "No games left today").Mt(8));
+            body.Add(acts);
+            body.Add(U.Space(30));
+            sv.Add(body); page.Add(sv);
+            return page;
+        }
+
+        static VisualElement Decisions(Result res)
+        {
             {
                 var c = U.Card(); c.Add(U.Kicker($"Your decisions · {res.n}"));
                 var counts = U.Row().Cls("wrap").Mt(4);
@@ -297,17 +342,8 @@ namespace CFDream.UI
                     r.Add(l); r.Add(U.Chip(L.n, C.H(L.c)));
                     c.Add(r);
                 }
-                body.Add(c);
+                return c;
             }
-
-            var acts = U.Col().Mt(6);
-            if (Calendar.CanReenter(s, res)) acts.Add(U.Btn($"Re-enter · {U.Money(ev.buyin)}", () => DreamApp.Confirm("Fire another bullet?", $"{U.Money(ev.buyin)} from a {U.Money(s.br)} roll. Late registration is still open.", "Re-enter", Game.Reenter, "No"), "wide", true, "Same event, fresh stack"));
-            var sl = Calendar.SlotsLeft(s);
-            acts.Add(U.Btn("Continue", () => Game.Hub(), "gold wide", true, s.ch == 0 ? null : sl.left > 0 ? $"{sl.left} game{(sl.left == 1 ? "" : "s")} left {(sl.week ? "this week" : "today")}" : sl.week ? "No sessions left this week" : "No games left today"));
-            body.Add(acts);
-            body.Add(U.Space(30));
-            sv.Add(body); page.Add(sv);
-            return page;
         }
 
         static VisualElement Banner(string icon, string title, string sub, Color c, VisualElement art = null)

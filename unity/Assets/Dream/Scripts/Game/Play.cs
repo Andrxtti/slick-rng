@@ -38,6 +38,7 @@ namespace CFDream
         public string libGid; public int libIndex = -1; public HashSet<int> seen = new HashSet<int>(); public List<string> usedTables = new List<string>();
         public List<(string slot, string id)> worn;
         public Prog prog;
+        public List<MisSpot> drill;   // a study session: the spots you misplayed, dealt again in order
         public string Stage => stages[Math.Min(si, stages.Count - 1)];
     }
 
@@ -47,6 +48,7 @@ namespace CFDream
         public bool bust, quit, ticketUsed, reentry; public string boss, beat, met, ticket, cooler, stage;
         public List<string> titles = new List<string>(); public List<ItemDef> unlocked = new List<ItemDef>();
         public List<Decision> all = new List<Decision>(), keys = new List<Decision>(); public Prog prog;
+        public int fixedN, drillN;   // a study session: spots put right, spots dealt
     }
 
     public static class Play
@@ -110,6 +112,35 @@ namespace CFDream
             run.boss = PickBoss(s, ev, run.rng);
             return run;
         }
+        // ------------------------------------------------------------ study: your misplayed spots, again
+        // the same seat, the same stacks, the same action in front of you; a spot leaves the list once you get it right
+        public static List<MisSpot> Misses(State s)
+        {
+            var seen = new HashSet<string>(); var outp = new List<MisSpot>();
+            for (int i = s.pg.mis.Count - 1; i >= 0; i--) { var m = s.pg.mis[i]; if (Valid(m) && seen.Add(m.g + "|" + m.t + "|" + m.n + "|" + m.c)) outp.Add(m); }
+            return outp;
+        }
+        static bool Valid(MisSpot m)
+        {
+            var pool = DB.Tables(m.g); if (pool == null || m.t < 0 || m.t >= pool.Count) return false;
+            var nodes = J.L((Dictionary<string, object>)pool[m.t], "n"); if (nodes == null || m.n < 0 || m.n >= nodes.Count) return false;
+            return string.Join(",", J.Strs(J.L(nodes[m.n], "p"))) == (m.p ?? "");   // the library was re-solved since: the spot moved
+        }
+        public static Run StartDrill(State s, int max = 8)
+        {
+            var mis = Misses(s).Take(max).ToList(); if (mis.Count == 0) return null;
+            var ev = new EventDef { id = "drill", kind = "drill", name = "Study session", venue = "home", online = true, free = true, buyin = 0, blurb = "The spots you misplayed, dealt again." };
+            var run = new Run { ev = ev, stages = new List<string> { "drill" }, perS = new List<int> { mis.Count }, rng = new Rng($"drill|{DateTime.UtcNow.Ticks}"), drill = mis };
+            run.libGid = mis[0].g; run.libIndex = mis[0].t;
+            return run;
+        }
+        static Spot DealMiss(Run run, MisSpot m)
+        {
+            var pool = DB.Tables(m.g); var table = (Dictionary<string, object>)pool[m.t]; var nodes = J.L(table, "n"); var node = (Dictionary<string, object>)nodes[m.n];
+            var rows = J.L(node, "r"); var row = rows.FirstOrDefault(r => (int)J.Num(((List<object>)r)[0]) == m.c) ?? rows[0];
+            run.libGid = m.g; run.libIndex = m.t; run.seen.Add(m.n);
+            return BuildSpot(run, table, node, m.n, (List<object>)row, Difficulty(run));
+        }
         static string PickBoss(State s, EventDef ev, Rng rng)
         {
             if (!string.IsNullOrEmpty(ev.boss)) return ev.boss;
@@ -134,6 +165,7 @@ namespace CFDream
         }
         public static void PickTable(Run run)
         {
+            if (run.drill != null) return;   // a study session deals its own spots
             string stage = run.Stage, gid = DB.StageGid(stage); var pool = DB.Tables(gid);
             bool bb = LiveEv(run.ev);
             var idx = Enumerable.Range(0, pool.Count).ToList();
@@ -148,7 +180,7 @@ namespace CFDream
         public static double Difficulty(Run run)
         {
             var ev = run.ev; string stage = run.Stage; double d;
-            if (ev.daily) d = 0.15 + 0.11 * Math.Min(7, S.ch);
+            if (ev.daily || ev.kind == "drill") d = 0.15 + 0.11 * Math.Min(7, S.ch);
             else d = new[] { 0.12, 0.22, 0.36, 0.5, 0.64, 0.78, 0.9, 1 }[Math.Min(7, ev.id == "main" ? 6 : ev.ch)];
             if (stage == "final" || stage == "deep") d += 0.08;
             if (run.boss != null) d += 0.05;
@@ -159,6 +191,7 @@ namespace CFDream
         // makes it a decision. Each situation's hands are stored hardest-first; difficulty picks the window.
         public static Spot Deal(Run run)
         {
+            if (run.drill != null) return DealMiss(run, run.drill[Math.Min(run.h, run.drill.Count - 1)]);
             var pool = DB.Tables(run.libGid); var table = (Dictionary<string, object>)pool[run.libIndex];
             var nodes = J.L(table, "n"); var rng = run.rng; double d = Difficulty(run);
             var cand = Enumerable.Range(0, nodes.Count).Where(i => !run.seen.Contains(i)).ToList();
@@ -232,7 +265,7 @@ namespace CFDream
             if (limpSpot && (g.lab == "mistake" || g.lab == "blunder")) g.lab = "inaccuracy";
             var L = DB.Labels[g.lab];
             string tier = L.tier; bool ok = tier != "bad"; int pts = L.score - (tier == "bad" ? 60 : 0);
-            int before = run.stack; run.stack = Math.Max(0, Math.Min(200, run.stack + L.life));
+            int before = run.stack; if (run.drill == null) run.stack = Math.Max(0, Math.Min(200, run.stack + L.life));
             run.combo = ok && tier != "close" ? run.combo + 1 : 0; run.bestCombo = Math.Max(run.bestCombo, run.combo);
             var hero = sp.seats[sp.hero]; int best = g.bestIdx;
             Odds odds = null; int ci = sp.acts.IndexOf("call");
@@ -277,7 +310,7 @@ namespace CFDream
             run.h = 0;
             if (run.si + 1 < run.stages.Count)
             {
-                if (run.ev.kind != "cash" && CoolerRoll(run)) { run.bust = true; run.cooler = CoolerLine(run); run.state = "cooler"; return "cooler"; }
+                if (run.ev.kind != "cash" && run.drill == null && CoolerRoll(run)) { run.bust = true; run.cooler = CoolerLine(run); run.state = "cooler"; return "cooler"; }
                 run.si++; run.tip++; return "level";
             }
             run.si++; return "finish";
@@ -328,7 +361,9 @@ namespace CFDream
         // ------------------------------------------------------------ the results
         public static Result Finish(Run run, bool quit)
         {
-            var s = S; var ev = run.ev; if (quit && ev.kind != "cash") run.bust = true;
+            var s = S; var ev = run.ev;
+            if (run.drill != null) return FinishDrill(run, s);
+            if (quit && ev.kind != "cash") run.bust = true;
             int n = run.results.Count; double pct = n > 0 ? run.total / (100.0 * n) : 0;
             int perfect = run.results.Count(r => r.tier == "perfect"), good = run.results.Count(r => r.tier == "good"), close = run.results.Count(r => r.tier == "close"), bad = run.results.Count(r => r.tier == "bad");
             s.dec += n; s.perfect += perfect; s.good += good; s.close += close; s.mistakes += bad; s.played++;
@@ -411,6 +446,23 @@ namespace CFDream
             if (!string.IsNullOrEmpty(ev.live)) { var it = Calendar.LiveReward(s, ev); if (it != null) res.unlocked.Add(it); }
             Career.Progress(s);
             Progression.EventDone(res, run);
+            s.Save();
+            return res;
+        }
+
+        // a study session ends: the spots you got right leave the list; no money moves, the calendar doesn't care
+        static Result FinishDrill(Run run, State s)
+        {
+            int n = run.results.Count; var res = new Result { ev = run.ev, n = n, all = run.results.ToList(), acc = Accuracy(run.results), bestCombo = run.bestCombo, before = s.br, after = s.br, stage = "drill", drillN = run.drill.Count };
+            for (int i = 0; i < run.results.Count && i < run.drill.Count; i++)
+            {
+                var r = run.results[i]; var m = run.drill[i];
+                if (r.tier == "perfect" || r.tier == "good") { res.fixedN++; s.pg.mis.RemoveAll(x => x.g == m.g && x.t == m.t && x.n == m.n && x.c == m.c); }
+            }
+            res.keys = run.results.Where(r => r.tier == "bad").Take(3).ToList();
+            s.dec += n; s.perfect += run.results.Count(r => r.tier == "perfect"); s.good += run.results.Count(r => r.tier == "good"); s.close += run.results.Count(r => r.tier == "close"); s.mistakes += run.results.Count(r => r.tier == "bad");
+            if (run.prog != null) { Progression.GainXp(s, 10 * res.fixedN, run.prog); res.prog = run.prog; }
+            s.SetFlag("drills", s.FlagN("drills") + 1); s.SetFlag("fixed", s.FlagN("fixed") + res.fixedN);
             s.Save();
             return res;
         }

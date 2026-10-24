@@ -149,6 +149,13 @@ namespace CFDream
             View = View.Run; NextTable();
         }
         public static void NextTable() { var run = Run; if (run == null) return; Play.PickTable(run); run.state = "ready"; Render(); }
+        // a study session on the Spacepad: your misplayed spots, again
+        public static void StartDrill()
+        {
+            if (Run != null) return;
+            var run = Play.StartDrill(State); if (run == null) { Render(); return; }
+            Run = run; Morning = null; run.state = "ready"; View = View.Run; Render();
+        }
         public static void Deal() { var run = Run; if (run == null) return; run.spot = Play.Deal(run); run.state = "play"; Render(); }
         public static void Answer(int j) { var run = Run; if (run == null || run.state != "play") return; Play.Answer(run, j); Render(); }
         public static void NextHand()

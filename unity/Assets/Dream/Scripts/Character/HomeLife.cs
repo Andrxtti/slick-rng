@@ -38,7 +38,7 @@ namespace CFDream.Character
         public void Init(CharacterStage stage, HomeRoom r)
         {
             st = stage; room = r;
-            if (st.Pivot.localPosition == Vector3.zero || !room.Free(st.Pivot.localPosition)) { st.Pivot.localPosition = room.spawn; yaw = room.spawnFace; }
+            if (st.Pivot.localPosition == Vector3.zero || !room.Free(st.Pivot.localPosition)) { st.Pivot.localPosition = room.spawn; yaw = CharacterStage.Follow ? 180f : room.spawnFace; }   // in third person you walk in from the door, facing the room
             else yaw = st.Pivot.localEulerAngles.y;
             st.Pivot.localRotation = Quaternion.Euler(0, yaw, 0);
             path = null; arrived = null; faceAt = null;
