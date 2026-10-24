@@ -22,6 +22,7 @@ namespace CFDream.Character
         Transform Bone(HumanBodyBones b);
         BodyFit Fit { get; }             // where jewellery and hats sit on this body; null for the defaults
         void Express(string mood, bool talking, float t);   // the face: a mood, and the mouth while a line plays
+        bool Act(string clip);   // play a body clip by name (null = back to the usual animation); false when there are no clips
         void Dispose();
     }
 
@@ -266,7 +267,7 @@ namespace CFDream.Character
         }
         void ExitScene()
         {
-            inScene = false; shotKey = null; Cinema(false);
+            inScene = false; shotKey = null; Cinema(false); body?.Act(null); npc?.Act(null);
             if (ext != null) ext.gameObject.SetActive(false);
             confetti = null;   // it lives in the set
             if (room != null && room.tier.StartsWith("set_")) { room.root.SetActive(false); Destroy(room.root); room = null; }
@@ -401,6 +402,7 @@ namespace CFDream.Character
             var an = body?.Root != null ? body.Root.GetComponentInChildren<Animator>() : null; if (an == null) return;
             var g = an.GetComponent<Gestures>(); if (g == null) g = an.gameObject.AddComponent<Gestures>();
             var head = Bone(HumanBodyBones.Head); if (head == null) { g.Clear(); return; }
+            if (inScene && body.Act(mood == "win" ? "Victory" : mood == "bust" || mood == "cooler" ? "Defeated" : mood == "cash" ? "Fist Pump" : "Breathing Idle")) { g.Look(head.position + pivot.forward * 1.5f, 0.5f, 0.1f); return; }
             Vector3 fwd = pivot.forward, right = pivot.right, up = Vector3.up, H = head.position;
             switch (mood)
             {
@@ -432,10 +434,15 @@ namespace CFDream.Character
             // faces: the speaker talks while the line types; moods colour your face, the other person reacts a little
             bool talk = Talking || Sound.Speaking;
             body?.Express(mood ?? "", talk && actYou && !narr, actT);
+            if (string.IsNullOrEmpty(mood))
+            {
+                clips = body != null && body.Act(talk && actYou && !narr ? "Talking" : "Breathing Idle");
+                bool npcClips = npc != null && npc.Act(talk && !actYou && !narr ? "Talking" : "Breathing Idle"); clips |= npcClips;
+            }
             npc?.Express(mood == "win" ? "cash" : mood == "bust" || mood == "cooler" ? "think" : "", talk && !actYou && !narr, actT);
             // the speaker's right hand lifts and turns while the line plays, then settles
             var g = actYou ? gy : gn; var piv = actYou ? pivot : npcPivot; var head = actYou ? hy : hn;
-            if (g != null && head != null && string.IsNullOrEmpty(mood) && !narr)
+            if (!clips && g != null && head != null && string.IsNullOrEmpty(mood) && !narr)
             {
                 float w = Mathf.Clamp01(1.2f - actT * 0.18f) * (0.45f + 0.25f * Mathf.Sin(actT * 1.7f));
                 var chest = head.position - Vector3.up * 0.42f;
@@ -443,7 +450,7 @@ namespace CFDream.Character
                 g.Right(target, w);
             }
         }
-        string mood;
+        string mood; bool clips;
         Gestures GesturesOf(ICharacterBody b)
         {
             var an = b?.Root != null ? b.Root.GetComponentInChildren<Animator>() : null; if (an == null) return null;

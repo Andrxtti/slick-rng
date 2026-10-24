@@ -266,6 +266,25 @@ namespace CFDream.Character
             lastMood = mood;
         }
 
+        // body acting: the scene clips live on their own controller, swapped in while a scene plays and out afterwards
+        RuntimeAnimatorController acting, normal; string actingNow; static bool actingLooked;
+        public bool Act(string clip)
+        {
+            var an = go != null ? go.GetComponentInChildren<Animator>() : null; if (an == null) return false;
+            if (acting == null && !actingLooked) { acting = Resources.Load<RuntimeAnimatorController>("Dream/Acting"); actingLooked = acting == null; }
+            if (acting == null) return false;
+            if (string.IsNullOrEmpty(clip))
+            {
+                if (normal != null && an.runtimeAnimatorController == acting) an.runtimeAnimatorController = normal;
+                actingNow = null; return true;
+            }
+            if (an.runtimeAnimatorController != acting) { normal = an.runtimeAnimatorController; an.runtimeAnimatorController = acting; actingNow = null; }
+            if (actingNow == clip) return true;
+            actingNow = clip;
+            if (an.HasState(0, Animator.StringToHash(clip))) an.CrossFadeInFixedTime(clip, 0.3f);
+            return true;
+        }
+
         public Transform Bone(HumanBodyBones b)
         {
             var anim = go != null ? go.GetComponentInChildren<Animator>() : null;
