@@ -77,6 +77,12 @@ namespace CFDream.EditorTools
             var move = EnsureMove();
             if (move != null && refs.idle != move) { refs.idle = move; changed = true; }
             if (refs.idle == null) { refs.idle = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(Idle); changed |= refs.idle != null; }
+            if (refs.expressionSet == null)
+            {
+                string pick = null;
+                foreach (var g in AssetDatabase.FindAssets("t:UMAExpressionSet")) { var p = AssetDatabase.GUIDToAssetPath(g); if (pick == null || p.Contains("UMA 30") || p.Contains("UMA3")) pick = p; }
+                if (pick != null) { refs.expressionSet = AssetDatabase.LoadAssetAtPath<ScriptableObject>(pick); changed = true; Debug.Log("[Dream] expression set: " + pick); }
+            }
             if (fresh) AssetDatabase.CreateAsset(refs, RefsPath);
             if (changed) { EditorUtility.SetDirty(refs); AssetDatabase.SaveAssets(); }
             if (log || fresh) Debug.Log($"[Dream] 3D characters set up: UMA avatar {(refs.avatar != null ? "found" : "MISSING")}, idle {(refs.idle != null ? "found" : "MISSING")}");

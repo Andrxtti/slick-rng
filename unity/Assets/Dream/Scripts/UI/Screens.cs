@@ -390,10 +390,10 @@ namespace CFDream.UI
             if (l == null || full.Length < 10) return;
             // the rest of the line is there but transparent, so the box is its final size from the first frame
             int n = 0; l.enableRichText = true; l.text = "<alpha=#00>" + full; IVisualElementScheduledItem it = null; Action done = null;
-            done = () => { l.text = full; if (typing == done) typing = null; it?.Pause(); };
+            done = () => { l.text = full; if (typing == done) { typing = null; CharacterStage.Talking = false; } it?.Pause(); };
             it = l.schedule.Execute(() => { n = Math.Min(full.Length, n + perTick); l.text = full.Substring(0, n) + "<alpha=#00>" + full.Substring(n); if (n >= full.Length) done(); }).Every(40);
-            typing = done;
-            l.RegisterCallback<DetachFromPanelEvent>(e => { if (typing == done) typing = null; it?.Pause(); });
+            typing = done; CharacterStage.Talking = true;
+            l.RegisterCallback<DetachFromPanelEvent>(e => { if (typing == done) { typing = null; CharacterStage.Talking = false; } it?.Pause(); });
         }
 
         public static VisualElement SoundToggle()

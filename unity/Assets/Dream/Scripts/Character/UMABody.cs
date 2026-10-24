@@ -14,6 +14,7 @@ using UnityEngine;
 using System.Linq;
 using UMA;
 using UMA.CharacterSystem;
+using UMA.PoseTools;
 #endif
 
 namespace CFDream.Character
@@ -97,6 +98,7 @@ namespace CFDream.Character
 #endif
             built = true;
             try { fit = Measure(); } catch (Exception e) { Debug.LogWarning("[Dream] body measure: " + e.Message); fit = null; }
+            try { Face(); } catch (Exception e) { Debug.LogWarning("[Dream] face: " + e.Message); }
             var cb = pending; pending = null;
             try { cb?.Invoke(); } catch (Exception e) { Debug.LogException(e); }
         }
@@ -223,6 +225,45 @@ namespace CFDream.Character
                 else dca.ForceUpdate(true, true, false);
             }
             catch (Exception e) { Debug.LogException(e); var cb = pending; pending = null; cb?.Invoke(); }
+        }
+
+        // ------------------------------------------------------------ the face
+        // UMA's expression player moves brows, mouth, jaw and eyes by bone poses; it blinks and glances on its own.
+        UMAExpressionPlayer face; float talkT; string lastMood;
+        void Face()
+        {
+            var set = (refs.expressionSet as UMAExpressionSet) ?? dca.activeRace?.racedata?.expressionSet;
+            if (set == null) return;
+            if (face == null) { face = go.GetComponent<UMAExpressionPlayer>(); if (face == null) face = go.AddComponent<UMAExpressionPlayer>(); }
+            face.expressionSet = set; face.overrideMecanimJaw = true; face.overrideMecanimEyes = true; face.overrideMecanimHead = false; face.overrideMecanimNeck = false; face.overrideMecanimHands = false;
+            face.enableBlinking = true; face.enableSaccades = true; face.minBlinkDelay = 2.5f; face.maxBlinkDelay = 7f;
+            face.Initialize();
+        }
+        public void Express(string mood, bool talking, float t)
+        {
+            if (face == null) return;
+            float k = 1 - Mathf.Exp(-Time.deltaTime * 6f);
+            float smile = 0.08f, happy = 0, sad = 0, despair = 0, sour = 0, brows = 0, browsIn = 0, midBrow = 0;
+            switch (mood)
+            {
+                case "win": happy = 0.75f; smile = 0.5f; brows = 0.35f; break;
+                case "cash": smile = 0.4f; brows = 0.15f; break;
+                case "bust": sad = 0.55f; smile = -0.25f; midBrow = -0.3f; break;
+                case "cooler": despair = 0.45f; sour = 0.25f; browsIn = 0.4f; break;
+                case "think": browsIn = 0.35f; brows = -0.15f; smile = 0; break;
+                case "tense": browsIn = 0.5f; midBrow = -0.2f; smile = -0.1f; break;
+                default: brows = 0.06f * Mathf.Sin(t * 0.7f); break;
+            }
+            // talking: the jaw works, the brows lift on the stresses
+            float jaw = 0;
+            if (talking) { talkT += Time.deltaTime; float s1 = Mathf.Sin(talkT * 11f), s2 = Mathf.Sin(talkT * 17.3f + 1f); jaw = Mathf.Clamp01(0.12f + 0.38f * Mathf.Abs(s1) * (0.6f + 0.4f * s2 * s2)); brows += 0.08f * Mathf.Max(0, Mathf.Sin(talkT * 2.3f)); }
+            else talkT = 0;
+            face.jawOpen_Close = Mathf.Lerp(face.jawOpen_Close, jaw, talking ? 0.6f : k);
+            face.leftMouthSmile_Frown = Mathf.Lerp(face.leftMouthSmile_Frown, smile, k); face.rightMouthSmile_Frown = Mathf.Lerp(face.rightMouthSmile_Frown, smile * 0.9f, k);
+            face.leftBrowUp_Down = Mathf.Lerp(face.leftBrowUp_Down, brows, k); face.rightBrowUp_Down = Mathf.Lerp(face.rightBrowUp_Down, brows * 0.85f, k);
+            face.midBrowUp_Down = Mathf.Lerp(face.midBrowUp_Down, midBrow, k); face.browsIn = Mathf.Lerp(face.browsIn, browsIn, k);
+            face.HappyFace = Mathf.Lerp(face.HappyFace, happy, k); face.SadFace = Mathf.Lerp(face.SadFace, sad, k); face.DespairFace = Mathf.Lerp(face.DespairFace, despair, k); face.SourFace = Mathf.Lerp(face.SourFace, sour, k);
+            lastMood = mood;
         }
 
         public Transform Bone(HumanBodyBones b)

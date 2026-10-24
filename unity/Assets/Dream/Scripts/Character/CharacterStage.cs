@@ -21,6 +21,7 @@ namespace CFDream.Character
         void Apply(CharacterSpec spec, Action onReady);
         Transform Bone(HumanBodyBones b);
         BodyFit Fit { get; }             // where jewellery and hats sit on this body; null for the defaults
+        void Express(string mood, bool talking, float t);   // the face: a mood, and the mouth while a line plays
         void Dispose();
     }
 
@@ -55,6 +56,7 @@ namespace CFDream.Character
         // the movie's post-processing (Resources/Dream/Cinema, made by Dream > Create cinema profile): on in scenes only
         Volume cinema; DepthOfField dof; UniversalAdditionalCameraData camData;
         public float CutFade => cutFade;   // 1 right after a cut, fading to 0: the film view dips to black with it
+        public static bool Talking;        // a line is typing itself out: the speaker's mouth moves
         public bool InRoom => framing == "room";
         public HomeLife Life => life;
         public PetLife Pets => pets;
@@ -355,6 +357,9 @@ namespace CFDream.Character
             Vector3 P = hy != null ? hy.position : transform.TransformPoint(HeadOf(true)), Q = hn != null ? hn.position : transform.TransformPoint(HeadOf(false));
             if (gy != null && string.IsNullOrEmpty(mood)) gy.Look(Q - Vector3.up * 0.02f, 0.75f, 0.15f);
             if (gn != null) gn.Look(P - Vector3.up * 0.02f, 0.75f, 0.15f);
+            // faces: the speaker talks while the line types; moods colour your face, the other person reacts a little
+            body?.Express(mood ?? "", Talking && actYou && !narr, actT);
+            npc?.Express(mood == "win" ? "cash" : mood == "bust" || mood == "cooler" ? "think" : "", Talking && !actYou && !narr, actT);
             // the speaker's right hand lifts and turns while the line plays, then settles
             var g = actYou ? gy : gn; var piv = actYou ? pivot : npcPivot; var head = actYou ? hy : hn;
             if (g != null && head != null && string.IsNullOrEmpty(mood) && !narr)
@@ -445,6 +450,7 @@ namespace CFDream.Character
                 if (cutFade > 0) cutFade = Mathf.Max(0, cutFade - Time.deltaTime / 0.35f);
                 foreach (var v in views) v.MarkDirtyRepaint(); return;
             }
+            body?.Express("", false, Time.time);
             if (framing != "room")   // in your place, walking decides which way you face
             {
                 if (!dragging) { spin *= 0.92f; yaw += spin; yaw = Mathf.LerpAngle(yaw, -12 + Mathf.Sin(Time.time * 0.6f) * 4, 0.01f); }

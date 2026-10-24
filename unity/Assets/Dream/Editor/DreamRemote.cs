@@ -27,6 +27,7 @@ namespace CFDream.EditorTools
             { "build-web", () => { DreamBuild.Quiet = true; try { DreamBuild.BuildWeb(); } finally { DreamBuild.Quiet = false; } } },
             { "web-textures", DreamBuild.WebTextures },
             { "cinema-profile", DreamCinema.Create },
+            { "uma-setup", DreamUMASetup.Setup },
 #if DREAM_UMA
             { "export-uvs", DreamUMATools.ExportUVs }, { "build-clothes", DreamClothes.Build },
             { "uma-rebuild", DreamUMATools.Rebuild }, { "uma-trim", DreamUMATools.TrimApply }, { "uma-shrink", DreamUMATools.ShrinkForWeb },

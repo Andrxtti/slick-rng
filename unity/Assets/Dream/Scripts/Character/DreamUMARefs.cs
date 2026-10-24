@@ -9,5 +9,6 @@ namespace CFDream.Character
         public GameObject avatar;                 // UMA's DynamicCharacterAvatar prefab
         public RuntimeAnimatorController idle;    // a standing idle, so the character never stands in a T-pose
         public string maleRace = "Human Male 3.0", femaleRace = "Human Female 3.0";
+        public ScriptableObject expressionSet;    // UMA's expression set (bone poses for brows, mouth, jaw, eyes), for faces that act
     }
 }
