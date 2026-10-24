@@ -167,7 +167,7 @@ namespace CFDream.Character
             pivot.localPosition = you.pos; pivot.localRotation = Quaternion.Euler(0, you.yaw, 0);
             npcPivot.localPosition = them.pos; npcPivot.localRotation = Quaternion.Euler(0, them.yaw, 0);
             if (room.shadow != null) room.shadow.localPosition = new Vector3(you.pos.x, 0, you.pos.z);
-            RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 1.6f));
+            RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 0.85f));
             framing = "scene"; inScene = true; cam.targetTexture = roomRt; cam.farClipPlane = 60;
             if (shotKey == null) Shot("wide", true, 7f);
             cam.enabled = views.Count > 0;   // the set shows even while the people are still being built
