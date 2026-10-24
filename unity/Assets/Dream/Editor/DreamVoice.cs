@@ -32,6 +32,7 @@ namespace CFDream.EditorTools
                     Line(kv.Key, b);
                     if (b.choice != null) foreach (var c in b.choice) Line(kv.Key, c.line);
                 }
+            foreach (var (sp, t) in Story.WitnessLines()) Line("after", new Beat { sp = sp, t = t });   // the aftermath witnesses (David's and Slick's are texts, left out by Line)
             sb.Append("\n]\n");
             var dir = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Logs")); Directory.CreateDirectory(dir);
             File.WriteAllText(Path.Combine(dir, "voice_lines.json"), sb.ToString(), new UTF8Encoding(false));

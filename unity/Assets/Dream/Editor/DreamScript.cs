@@ -19,7 +19,8 @@ namespace CFDream.EditorTools
             var sb = new StringBuilder();
             sb.Append("# The Dream — script\n\n");
             sb.Append("Edit the words after the colon. Keep the numbers and the speaker ids in brackets as they are; a line that starts with `Choice:` is a button the player taps (the arrow says where it leads; after `|` is the reply it gets).\n");
-            sb.Append("`[n]` is the narrator, `[you]` is the player. `/` in a line is a line break on screen. Texts on the phone are marked (text).\n\n");
+            sb.Append("`[n]` is the narrator, `[you]` is the player. `/` in a line is a line break on screen. Texts on the phone are marked (text).\n");
+            sb.Append("The braces after a line are the shot list (unity/tools/direction.py: shot, who moves how, the sting, the score); leave them or delete them, the words are what matter.\n\n");
             foreach (var kv in DB.Scenes.OrderBy(k => Order(k.Key)))
             {
                 var sc = kv.Value;
@@ -27,7 +28,7 @@ namespace CFDream.EditorTools
                 for (int i = 0; i < sc.beats.Count; i++)
                 {
                     var b = sc.beats[i];
-                    sb.Append($"{i + 1}. {Who(b)}{(b.text ? " (text)" : "")}{(b.mood != null ? " (" + b.mood + ")" : "")}: {(b.fn ? "(built at runtime)" : One(b.t))}\n");
+                    sb.Append($"{i + 1}. {Who(b)}{(b.text ? " (text)" : "")}{(b.mood != null ? " (" + b.mood + ")" : "")}: {(b.fn ? "(built at runtime)" : One(b.t))}{Dir(b)}\n");
                     if (b.choice != null) foreach (var c in b.choice) sb.Append($"    - Choice: {One(c.t)}{(c.go != null ? " → " + c.go : "")}{(c.line != null ? " | " + Who(c.line) + ": " + One(c.line.t) : "")}\n");
                 }
                 sb.Append("\n");
@@ -48,9 +49,17 @@ namespace CFDream.EditorTools
             }
             return $"{name} [{b.sp}]";
         }
+        static string Dir(Beat b)
+        {
+            var d = new System.Text.StringBuilder();
+            if (b.shot != null) d.Append(b.shot); if (b.on == "you") d.Append("^");
+            if (b.act != null) d.Append(":" + b.act); if (b.react != null) d.Append(">" + b.react);
+            if (b.cue != null) d.Append("@" + b.cue); if (b.music != null) d.Append("~" + b.music);
+            return d.Length > 0 ? "  {" + d + "}" : "";
+        }
         static string One(string t) => (t ?? "").Replace("\r", "").Replace("\n", " / ");
         // the story order first, then the rest alphabetically
-        static readonly string[] First = { "p_office", "p_diner", "p_after", "p_quit", "p_keep", "c1", "trentbeat", "c2", "c3", "c4", "c5", "c6", "c7" };
+        static readonly string[] First = { "p_office", "p_diner", "p_after", "p_quit", "p_keep", "c1", "lesson1", "trentbeat", "firstwin", "c2", "lesson2", "ring1", "c3", "lesson3", "bracelet1", "c4", "lesson4", "tour1", "c5", "lesson5", "titan1", "c6", "champ", "c7", "badbeat", "broke" };
         static string Order(string id) { int i = System.Array.IndexOf(First, id); return (i >= 0 ? i.ToString("00") : "99") + id; }
     }
 }

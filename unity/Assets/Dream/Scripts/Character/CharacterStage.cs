@@ -302,8 +302,9 @@ namespace CFDream.Character
         }
         // shots: "wide" (both of you, a slow push in), "cu" (close on the speaker, off the axis), "ots" (over the
         // listener's shoulder at the speaker). speakerIsYou says who is talking; narration means nobody gestures.
-        public void Shot(string kind, bool speakerIsYou, float dur = 6f, bool narration = false)
+        public void Shot(string kind, bool speakerIsYou, float dur = 6f, bool narration = false, string act = null, string react = null)
         {
+            actClip = act; reactClip = react;
             string key = kind + (speakerIsYou ? "|you" : "|them");
             if (key == shotKey && shotT < 1) return;
             if (shotKey != null && key != shotKey) { Sound.Play("cut", 0.5f); cutFade = 1f; }   // a cut: a soft whoosh and a dip to black
@@ -339,6 +340,40 @@ namespace CFDream.Character
                         var off = (toL * 1.0f + side * 0.75f).normalized;   // about forty degrees off the eye-line, the set behind them
                         camA = S + off * 1.35f + Vector3.up * 0.04f; camB = S + off * 1.08f + Vector3.up * 0.02f; lookA = lookB = S - Vector3.up * 0.08f; cam.fieldOfView = 30; break;   // eyes on the upper third
                     }
+                case "two":
+                    {
+                        // a medium two-shot from the side, both faces in profile, closer than the wide
+                        camA = M + side * 2.5f + Vector3.up * 1.5f; camB = M + side * 2.25f + Vector3.up * 1.48f; lookA = lookB = M + Vector3.up * 1.3f; cam.fieldOfView = 34; break;
+                    }
+                case "push":
+                    {
+                        // a long slow push into the subject's face, for the line that changes things
+                        var off = (toL * 0.8f + side * 0.9f).normalized;
+                        camA = S + off * 2.1f + Vector3.up * 0.06f; camB = S + off * 1.0f; lookA = lookB = S - Vector3.up * 0.06f; cam.fieldOfView = 30; break;
+                    }
+                case "ecu":
+                    {
+                        // the eyes, nothing else
+                        var off = (toL * 1.0f + side * 0.6f).normalized;
+                        camA = S + off * 0.78f + Vector3.up * 0.03f; camB = S + off * 0.7f + Vector3.up * 0.03f; lookA = lookB = S + Vector3.up * 0.0f; cam.fieldOfView = 24; break;
+                    }
+                case "low":
+                    {
+                        // from the floor, looking up: the hero shot, the trophy shot
+                        var off = (toL * 0.9f + side * 0.8f).normalized;
+                        camA = S + off * 1.7f - Vector3.up * 0.9f; camB = S + off * 1.5f - Vector3.up * 0.8f; lookA = lookB = S - Vector3.up * 0.1f; cam.fieldOfView = 36; break;
+                    }
+                case "high":
+                    {
+                        // from above, looking down on someone small in a big room: the bust, the empty wallet
+                        var front = (side * 0.6f + Vector3.forward * 0.8f).normalized;
+                        camA = S + front * 2.6f + Vector3.up * 1.9f; camB = S + front * 2.3f + Vector3.up * 1.7f; lookA = lookB = S - Vector3.up * 0.3f; cam.fieldOfView = 34; break;
+                    }
+                case "hands":
+                    {
+                        // an insert: the hands and whatever is in them, from across the table
+                        camA = S + toL * 1.1f + side * 0.3f - Vector3.up * 0.55f; camB = S + toL * 1.0f + side * 0.25f - Vector3.up * 0.55f; lookA = lookB = S - Vector3.up * 0.62f + toL * 0.15f; cam.fieldOfView = 30; break;
+                    }
                 case "ots":
                     {
                         // behind the listener's shoulder (toL points from the speaker past the listener), looking back at the speaker
@@ -356,7 +391,7 @@ namespace CFDream.Character
             if (dof != null)
             {
                 float dist = (lookA - (camA + camB) / 2).magnitude;
-                bool close = shotKind == "cu" || shotKind == "ots";
+                bool close = shotKind == "cu" || shotKind == "ots" || shotKind == "push" || shotKind == "ecu" || shotKind == "low" || shotKind == "hands";
                 dof.gaussianStart.value = close ? dist + 0.45f : shotKind == "ext" ? 200f : 7f; dof.gaussianEnd.value = close ? dist + 2.6f : shotKind == "ext" ? 400f : 16f; dof.gaussianMaxRadius.value = close ? 1.1f : 0.6f;
             }
         }
@@ -402,7 +437,7 @@ namespace CFDream.Character
             var an = body?.Root != null ? body.Root.GetComponentInChildren<Animator>() : null; if (an == null) return;
             var g = an.GetComponent<Gestures>(); if (g == null) g = an.gameObject.AddComponent<Gestures>();
             var head = Bone(HumanBodyBones.Head); if (head == null) { g.Clear(); return; }
-            if (inScene && body.Act(mood == "win" ? "Victory" : mood == "bust" || mood == "cooler" ? "Defeated" : mood == "cash" ? "Fist Pump" : "Breathing Idle")) { g.Look(head.position + pivot.forward * 1.5f, 0.5f, 0.1f); return; }
+            if (inScene && body.Act(actClip ?? (mood == "win" ? "Victory" : mood == "bust" || mood == "cooler" ? "Defeated" : mood == "cash" ? "Fist Pump" : "Breathing Idle"))) { g.Look(head.position + pivot.forward * 1.5f, 0.5f, 0.1f); return; }
             Vector3 fwd = pivot.forward, right = pivot.right, up = Vector3.up, H = head.position;
             switch (mood)
             {
@@ -434,12 +469,18 @@ namespace CFDream.Character
             // faces: the speaker talks while the line types; moods colour your face, the other person reacts a little
             bool talk = Talking || Sound.Speaking;
             body?.Express(mood ?? "", talk && actYou && !narr, actT);
-            if (string.IsNullOrEmpty(mood))
+            // bodies: the speaker's gesture changes from line to line and the listener nods along now and then;
+            // an authored clip (act for the speaker, react for the listener; in narration act is you, react is them)
+            // plays whether or not the line is still being said
             {
-                // the speaker's gesture changes from line to line; the listener nods along now and then
                 string say = TalkClips[shotN % TalkClips.Length], hear = shotN % 3 == 0 ? "Head Nod Yes" : shotN % 5 == 0 ? "Thinking" : "Breathing Idle";
-                clips = body != null && body.Act(talk && actYou && !narr ? say : talk && !actYou && !narr ? hear : "Breathing Idle");
-                bool npcClips = npc != null && npc.Act(talk && !actYou && !narr ? say : talk && actYou && !narr ? hear : "Breathing Idle"); clips |= npcClips;
+                string yours, theirs;
+                if (narr) { yours = actClip ?? "Breathing Idle"; theirs = reactClip ?? "Breathing Idle"; }
+                else if (actYou) { yours = actClip ?? (talk ? say : "Breathing Idle"); theirs = reactClip ?? (talk ? hear : "Breathing Idle"); }
+                else { theirs = actClip ?? (talk ? say : "Breathing Idle"); yours = reactClip ?? (talk ? hear : "Breathing Idle"); }
+                if (!string.IsNullOrEmpty(mood)) { yours = null; if (reactClip == null) theirs = mood == "win" || mood == "cash" ? "Clapping" : "Breathing Idle"; }   // Pose() has your body in a mood
+                clips = yours != null && body != null && body.Act(yours);
+                bool npcClips = npc != null && npc.Act(theirs); clips |= npcClips;
             }
             npc?.Express(mood == "win" ? "cash" : mood == "bust" || mood == "cooler" ? "think" : "", talk && !actYou && !narr, actT);
             // the speaker's right hand lifts and turns while the line plays, then settles
@@ -452,7 +493,7 @@ namespace CFDream.Character
                 g.Right(target, w);
             }
         }
-        string mood; bool clips; int shotN;
+        string mood, actClip, reactClip; bool clips; int shotN;
         static readonly string[] TalkClips = { "Talking", "Talking", "Agreeing", "Talking", "Pointing", "Shrugging", "Talking", "Standing Arguing" };
         Gestures GesturesOf(ICharacterBody b)
         {
@@ -528,7 +569,7 @@ namespace CFDream.Character
                 // coverage on a long line: after a few seconds on the speaker, a beat on the listener, then back
                 bool both = HasBody && npc != null && npc.Ready && npc.Root.activeSelf;
                 if (baseKind == "ext" && sinceShot > 3.6f) { baseKind = shotKind = "wide"; shotT = 0; shotDur = 7f; sinceShot = 0; Sound.Play("cut", 0.5f); cutFade = 1f; Aim(); PlaceCam(0); }
-                if (!reacted && !Reacting && !narr && string.IsNullOrEmpty(mood) && both && baseKind != "wide" && baseKind != "ext" && sinceShot > 4.5f) Reaction(false);
+                if (!reacted && !Reacting && !narr && string.IsNullOrEmpty(mood) && both && baseKind != "wide" && baseKind != "ext" && baseKind != "two" && baseKind != "push" && baseKind != "ecu" && baseKind != "hands" && sinceShot > 4.5f) Reaction(false);
                 else if (Reacting && sinceShot > 3.2f) Reaction(true);
                 PlaceCam(shotT); Acting();
                 if (cutFade > 0) cutFade = Mathf.Max(0, cutFade - Time.deltaTime / 0.35f);
@@ -655,7 +696,7 @@ namespace CFDream.Character
         bool down; float lastX; Vector2 downAt; int pid = -1;
         readonly string framing;
         public string Tier, Pet;            // "room" views: which home, and who lives there with you
-        public CharacterSpec NpcSpec; public string ShotKind = "wide", Mood; public bool SpeakerIsYou = true, Narration;   // "scene" views
+        public CharacterSpec NpcSpec; public string ShotKind = "wide", Mood, Act, React; public bool SpeakerIsYou = true, Narration;   // "scene" views
         bool Room => framing == "room";
         bool SceneMode => framing == "scene";
 
@@ -687,7 +728,7 @@ namespace CFDream.Character
             st.Attach(this);
             SetTexture(st);
             st.Show(spec);
-            if (SceneMode) { st.ShowNpc(NpcSpec); st.Shot(ShotKind, SpeakerIsYou, 6f, Narration); st.Pose(Mood); }
+            if (SceneMode) { st.ShowNpc(NpcSpec); st.Shot(ShotKind, SpeakerIsYou, 6f, Narration, Act, React); st.Pose(Mood); }
             Label hint = null;
             if (!st.HasBody && fallback != null && fallback.parent == null)
             {
@@ -701,7 +742,7 @@ namespace CFDream.Character
             RegisterCallback<DetachFromPanelEvent>(e => st.Changed -= onChanged);
             if (st.HasBody && fallback != null && fallback.parent == this) { Remove(fallback); if (hint != null && hint.parent == this) Remove(hint); }
             // a room view's texture follows the view's shape
-            if (Room || SceneMode) RegisterCallback<GeometryChangedEvent>(e => { if (Aspect() > 0 && (st.InRoom || SceneMode)) { st.RoomTexture(Aspect()); SetTexture(st); if (SceneMode) st.Shot(ShotKind, SpeakerIsYou, 6f, Narration); } });
+            if (Room || SceneMode) RegisterCallback<GeometryChangedEvent>(e => { if (Aspect() > 0 && (st.InRoom || SceneMode)) { st.RoomTexture(Aspect()); SetTexture(st); if (SceneMode) st.Shot(ShotKind, SpeakerIsYou, 6f, Narration, Act, React); } });
         }
         void SetTexture(CharacterStage st)
         {

@@ -8,7 +8,9 @@ edits, scene, beats = {}, None, None
 head = re.compile(r"^#{1,3}\s*([A-Za-z0-9_]+)\s*(?:—|-|–)")          # ## p_office — Prologue ...
 line = re.compile(r"^\s*(?:\d+[.)]|[-*•])?\s*(.+?)\s*\[([A-Za-z:_0-9]+)\]\s*((?:\([a-z]+\)\s*)*):\s*(.*)$")   # NAME [sp] (text) (mood): words
 choice = re.compile(r"^\s*(?:[-*•]|\d+[.)])?\s*(?:>\s*)?Choice:\s*(.*?)(?:\s*(?:→|->)\s*([A-Za-z0-9_]+))?(?:\s*\|\s*(.+?)\s*\[([A-Za-z:_0-9]+)\]\s*:\s*(.*))?\s*$")
-def words(t): return t.strip().replace(" / ", "\n").replace("/ ", "\n").strip()
+def words(t):
+    t = re.sub(r"\s*\{[^{}]*\}\s*$", "", t)   # the shot list in braces after a line is not part of the line
+    return t.strip().replace(" / ", "\n").replace("/ ", "\n").strip()
 def unescape(t):   # a doc export escapes markdown punctuation: p\_office, \[slick\]
     for a, b in (("\\_", "_"), ("\\[", "["), ("\\]", "]"), ("\\*", "*"), ("\\#", "#"), ("\\>", ">")): t = t.replace(a, b)
     return t

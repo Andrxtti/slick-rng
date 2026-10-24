@@ -47,6 +47,9 @@ namespace CFDream
         public string sp, t, who, mood;
         public bool big, text, goal, fn;
         public List<Choice> choice;
+        // direction (Resources/Dream/direction.json, see unity/tools/direction.py): the shot, what the speaker and the
+        // listener do with their bodies, a sting when the line lands, and the score under it
+        public string shot, act, react, cue, music, on;
     }
     public class Choice { public string t, go; public Beat line; }
     public class Scene { public string id, place, title, sub, end; public List<Beat> beats = new List<Beat>(); }
@@ -92,7 +95,33 @@ namespace CFDream
             }
             Story.ApplyOverrides();
             ApplyScriptEdits();
+            ApplyDirection();
             Character.Wardrobe.Load(); // built-in 3D pieces and brand packs (Resources/Brands/*/brand.json)
+        }
+
+        // the shot list (Resources/Dream/direction.json): per scene, one entry per line in order, matched by speaker
+        // so a drifted line order leaves the rest alone, like the script edits
+        static void ApplyDirection()
+        {
+            var ta = Resources.Load<TextAsset>("Dream/direction"); if (ta == null) return;
+            var dir = Json.Parse(ta.text) as Dictionary<string, object>; if (dir == null) return;
+            int n = 0, skipped = 0;
+            foreach (var kv in dir)
+            {
+                if (!Scenes.TryGetValue(kv.Key, out var sc)) { skipped++; continue; }
+                var lines = kv.Value as List<object>; if (lines == null) continue;
+                if (lines.Count != sc.beats.Count) UnityEngine.Debug.LogWarning($"[Dream] direction for {kv.Key} has {lines.Count} lines, the scene has {sc.beats.Count}");
+                for (int i = 0; i < lines.Count && i < sc.beats.Count; i++)
+                {
+                    var L = lines[i] as Dictionary<string, object>; var b = sc.beats[i]; if (L == null) continue;
+                    string sp = J.S(L, "sp"); if (!string.IsNullOrEmpty(sp) && sp != b.sp) { skipped++; continue; }
+                    b.shot = J.S(L, "shot") ?? b.shot; b.act = J.S(L, "act") ?? b.act; b.react = J.S(L, "react") ?? b.react;
+                    b.cue = J.S(L, "cue") ?? b.cue; b.music = J.S(L, "music") ?? b.music; b.on = J.S(L, "on") ?? b.on;
+                    string mood = J.S(L, "mood"); if (!string.IsNullOrEmpty(mood)) b.mood = mood;
+                    n++;
+                }
+            }
+            if (skipped > 0) UnityEngine.Debug.LogWarning($"[Dream] direction: {skipped} lines did not match the script and were skipped");
         }
 
         // the edited script (Resources/Dream/script_edits.json from unity/tools/script_import.py): words, display

@@ -437,10 +437,11 @@ namespace CFDream
             if (!ev.daily && s.ch >= 1)
             {
                 string after = run.cooler != null ? "after_cooler" : res.place == 1 && ev.kind != "cash" ? "after_win" : res.prize > 0 || (ev.kind == "cash" && res.net > 0) ? "after_cash" : "after_bust";
-                if (DB.Scenes.TryGetValue(after, out var sc)) { sc.place = string.IsNullOrEmpty(ev.venue) || ev.online ? "home" : ev.venue; s.queue.Add(after); }
+                if (DB.Scenes.TryGetValue(after, out var sc)) { sc.place = string.IsNullOrEmpty(ev.venue) || ev.online ? "home" : ev.venue; Story.Aftermath(s, res, run, sc, after); s.queue.Add(after); }
                 s.SetFlag("events", s.FlagN("events") + 1);
             }
             if (run.cooler != null && s.ch >= 1 && !s.story.Contains("badbeat") && !s.queue.Contains("badbeat")) s.queue.Add("badbeat");
+            if (run.cooler == null && !ev.daily && res.prize <= 0 && s.ch >= 1 && s.ch <= 5) { string les = "lesson" + s.ch; if (DB.Scenes.ContainsKey(les) && !s.story.Contains(les) && !s.queue.Contains(les)) s.queue.Add(les); }
             if (s.peak >= 100000 && !s.story.Contains("derek") && !s.queue.Contains("derek")) s.queue.Add("derek");
             res.after = s.br;
             res.unlocked = Career.Unlocks(s, ev.name);

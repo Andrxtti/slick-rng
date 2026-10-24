@@ -77,7 +77,9 @@ namespace CFDream.UI
                             var sc = Game.Scene; var def = sc != null && DB.Scenes.ContainsKey(sc.id) ? DB.Scenes[sc.id] : null; var b = Game.CurrentBeat();
                             string place = def?.place == "home" ? (s?.Eq("home") ?? "home") : def?.place;
                             Sound.Place(def?.place == "home" ? "home" : place);
-                            Sound.Music(CueFor(sc?.id, def?.place, b?.mood, s));
+                            string cue = CueFor(sc?.id, def?.place, b?.mood, s);
+                            if (!string.IsNullOrEmpty(b?.music)) cue = b.music == "none" ? null : b.music;   // the shot list can drop the score out, or change it
+                            Sound.Music(cue);
                             break;
                         }
                     case View.Transit: Sound.Place(Game.Trip != null && Game.Trip.kind == "online" ? "home" : "vegas"); Sound.Music("grind"); break;

@@ -311,7 +311,11 @@ namespace CFDream.UI
                 var (name, role, col, fig) = Speaker(b.sp, b.who);
                 // the line is spoken once, when the beat first shows; runtime-built lines have no clip
                 string said = sc.id + ":" + sc.i + ":" + sc.extra.Count; float voiced = 0f;
-                if (said != lastSaid) { lastSaid = said; voiced = !b.text && !b.fn && Sound.Say(Voice.Key(b.sp, b.t)) ? Sound.SpeakingFor : 0f; }
+                if (said != lastSaid)
+                {
+                    lastSaid = said; voiced = !b.text && !b.fn && Sound.Say(Voice.Key(b.sp, b.t)) ? Sound.SpeakingFor : 0f;
+                    if (!string.IsNullOrEmpty(b.cue) && sc.extra.Count == 0) Sound.Play(b.cue, 0.8f);   // the sting lands with the line
+                }
                 else if (Sound.Speaking) voiced = Sound.SpeakingFor;
                 VisualElement beat;
                 // the movie: the set for this place, you and whoever you're talking to in 3D, a camera that moves
@@ -326,8 +330,9 @@ namespace CFDream.UI
                     // the opening beat starts on the city outside, then cuts into the room
                     string shot = sc.i == 0 && sc.extra.Count == 0 ? "ext" : b.sp == "n" ? "wide" : !speech ? "wide" : other == null ? "cu" : sc.i % 3 == 2 ? "ots" : "cu";
                     if (b.mood == "win" || b.mood == "bust" || b.mood == "cooler") shot = sc.i == 0 ? "wide" : "cu";
+                    if (!string.IsNullOrEmpty(b.shot) && sc.extra.Count == 0) shot = b.shot;   // the shot list wins over the formula
                     string setTier = def.place == "home" ? st.Eq("home") : "set_" + (def.place ?? "cardroom");
-                    var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = speakerYou || other == null, Narration = b.sp == "n" || b.text, Mood = b.mood };
+                    var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = (b.on == "you" && sc.extra.Count == 0) || speakerYou || other == null, Narration = b.sp == "n" || b.text, Mood = b.mood, Act = sc.extra.Count == 0 ? b.act : null, React = sc.extra.Count == 0 ? b.react : null };
                     film.AddToClassList("film");
                     Film(film, def, sc, tint);
                     stage.Add(film); stage.AddToClassList("movie");
