@@ -216,16 +216,32 @@ namespace CFDream.Character
         // materials ourselves so hair and beards take the player's colour on every pipeline
         void Tint()
         {
-            var s = queued; if (s == null) return;
+            var s = queued;
             foreach (var r in go.GetComponentsInChildren<Renderer>(true))
                 foreach (var m in r.sharedMaterials)
                 {
-                    if (m == null || m.shader == null || m.shader.name.IndexOf("Hair", StringComparison.OrdinalIgnoreCase) < 0) continue;
+                    if (m == null || m.shader == null) continue;
+                    if (m.shader.name.IndexOf("SkinShader", StringComparison.OrdinalIgnoreCase) >= 0) { Skin(m); continue; }
+                    if (s == null || m.shader.name.IndexOf("Hair", StringComparison.OrdinalIgnoreCase) < 0) continue;
+                    // hair: a little more sheen, so it reads as strands catching the key light instead of a dark cap
+                    if (m.HasProperty("_Smoothness")) m.SetFloat("_Smoothness", m.renderQueue >= 3000 ? 0.34f : 0.38f);
                     // card hair blends root to tip; a lighter tip reads as real hair catching the light
                     if (m.HasProperty("_RootColor")) { m.SetColor("_RootColor", Color.Lerp(s.hair, Color.black, 0.12f)); m.SetColor("_Tip_Color", Color.Lerp(s.hair, Color.white, 0.14f)); }
                     if (m.HasProperty("_BaseColor")) { var c = s.hair; c.a = m.GetColor("_BaseColor").a; m.SetColor("_BaseColor", c); }
                     if (m.HasProperty("_Color")) { var c = s.hair; c.a = m.GetColor("_Color").a; m.SetColor("_Color", c); }
                 }
+        }
+
+        // skin (UMA3_SkinShader_URP): UMA's defaults are tuned for a neutral studio light. Under our warm, saturated sets
+        // the subsurface tint (0.6 of a red-orange) turns faces orange and the 0.8 smoothness ceiling reads as plastic.
+        // Less of both, a more neutral scatter colour and the pore normals at full strength: matte, warm, real skin.
+        static void Skin(Material m)
+        {
+            if (m.HasProperty("_SSSBlend")) m.SetFloat("_SSSBlend", 0.32f);
+            if (m.HasProperty("_SubsurfaceColor")) m.SetColor("_SubsurfaceColor", new Color(0.86f, 0.46f, 0.40f, 0f));
+            if (m.HasProperty("_Smoothness_Remap")) m.SetVector("_Smoothness_Remap", new Vector4(0.04f, 0.46f, 0, 0));
+            if (m.HasProperty("_BumpScale")) m.SetFloat("_BumpScale", 0.95f);
+            if (m.HasProperty("_Ambient_Occlusion_Remap")) m.SetVector("_Ambient_Occlusion_Remap", new Vector4(0.12f, 1f, 0, 0));
         }
 
         System.Collections.IEnumerator PushNextFrame() { yield return null; scheduled = false; Push(); }
