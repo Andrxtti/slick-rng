@@ -44,9 +44,10 @@ namespace CFDream.Character
         public bool HasBody => body != null && body.Ready;
         public RenderTexture Texture => framing == "room" && roomRt != null ? roomRt : rt;
         // your place: the room, life in it (walking, using things) and its own render texture shaped like the view
-        HomeRoom room; HomeLife life; RenderTexture roomRt; Vector3 roomPos; float roomYaw; bool hasRoomPos;
+        HomeRoom room; HomeLife life; PetLife pets; RenderTexture roomRt; Vector3 roomPos; float roomYaw; bool hasRoomPos;
         public bool InRoom => framing == "room";
         public HomeLife Life => life;
+        public PetLife Pets => pets;
         public HomeRoom Room => room;
         public Camera Cam => cam;
         public Transform Pivot => pivot;
@@ -101,15 +102,15 @@ namespace CFDream.Character
             cam.transform.localPosition = new Vector3(0, lookY, dist);
             cam.transform.LookAt(transform.TransformPoint(new Vector3(0, lookY - 0.04f * (framing == "face" ? 0.3f : 1), 0)));
         }
-        public void Framing(string mode, string tier = null, float aspect = 0)
+        public void Framing(string mode, string tier = null, float aspect = 0, string pet = null)
         {
-            if (mode == "room") { EnterRoom(tier ?? room?.tier ?? "studio", aspect); return; }
+            if (mode == "room") { EnterRoom(tier ?? room?.tier ?? "studio", aspect, pet); return; }
             if (framing == "room") ExitRoom();
             if (mode != framing) Frame(bodyH, mode);
         }
 
         // ------------------------------------------------------------ your place
-        void EnterRoom(string tier, float aspect)
+        void EnterRoom(string tier, float aspect, string pet)
         {
             if (room == null || room.tier != tier)
             {
@@ -122,6 +123,8 @@ namespace CFDream.Character
             if (life == null) life = gameObject.AddComponent<HomeLife>();
             life.enabled = true;
             if (framing != "room") life.Init(this, room);
+            if (pets == null) pets = gameObject.AddComponent<PetLife>();
+            pets.enabled = true; pets.Set(this, room, pet); life.Pets = pets;
             RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 0.62f));
             framing = "room"; cam.targetTexture = roomRt; FrameRoom();
             cam.enabled = views.Count > 0 && HasBody;
@@ -130,6 +133,7 @@ namespace CFDream.Character
         {
             if (room != null) { roomPos = pivot.localPosition; roomYaw = pivot.localEulerAngles.y; hasRoomPos = true; room.root.SetActive(false); }
             if (life != null) life.enabled = false;
+            if (pets != null) pets.enabled = false;
             pivot.localPosition = Vector3.zero; cam.targetTexture = rt; cam.fieldOfView = 22; framing = "bust";
         }
         public void RoomTexture(float aspect)
@@ -254,13 +258,14 @@ namespace CFDream.Character
             Debug.Log(sb.ToString());
             StartCoroutine(Snap());
         }
+        public void SnapNow() { if (gameObject.activeInHierarchy) StartCoroutine(Snap()); }
         // save what the stage camera renders to Logs/stage.png, with a count of the pixels that aren't see-through
         System.Collections.IEnumerator Snap()
         {
             for (int i = 0; i < 3; i++) yield return new WaitForEndOfFrame();
-            var prev = RenderTexture.active; RenderTexture.active = rt;
-            var tex = new Texture2D(rt.width, rt.height, TextureFormat.RGBA32, false);
-            tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0); tex.Apply();
+            var src = Texture; var prev = RenderTexture.active; RenderTexture.active = src;
+            var tex = new Texture2D(src.width, src.height, TextureFormat.RGBA32, false);
+            tex.ReadPixels(new Rect(0, 0, src.width, src.height), 0, 0); tex.Apply();
             RenderTexture.active = prev;
             var px = tex.GetPixels32(); int solid = 0, coloured = 0;
             foreach (var p in px) { if (p.a > 25) solid++; if (p.r + p.g + p.b > 30) coloured++; }
@@ -297,7 +302,7 @@ namespace CFDream.Character
         readonly CharacterSpec spec; readonly VisualElement fallback;
         bool down; float lastX; Vector2 downAt; int pid = -1;
         readonly string framing;
-        public string Tier;                 // "room" views: which home
+        public string Tier, Pet;            // "room" views: which home, and who lives there with you
         bool Room => framing == "room";
 
         public CharacterView(CharacterSpec spec, VisualElement fallback2D, float width, float height, string framing = "bust")
@@ -324,7 +329,7 @@ namespace CFDream.Character
         void Bind()
         {
             var st = CharacterStage.Get();
-            st.Framing(framing, Tier, Aspect());
+            st.Framing(framing, Tier, Aspect(), Pet);
             st.Attach(this);
             SetTexture(st);
             st.Show(spec);

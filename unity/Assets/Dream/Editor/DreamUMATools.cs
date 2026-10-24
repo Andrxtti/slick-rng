@@ -155,6 +155,31 @@ namespace CFDream.EditorTools
             Debug.Log("[Dream] " + msg);
         }
 
+        // UV layout and body position of every vertex of the clothes we paint, for unity/tools/art/clothes.py:
+        // Logs/uv/<slot>.json = {"uv":[[u,v]...],"pos":[[x,y,z]...],"tris":[...]}
+        [MenuItem("Dream/3D characters/Export clothing UVs", priority = 9)]
+        public static void ExportUVs()
+        {
+            var idx = UMAAssetIndexer.Instance; if (idx == null) return;
+            Directory.CreateDirectory("Logs/uv"); int n = 0;
+            foreach (var sda in idx.GetAllAssets<SlotDataAsset>())
+            {
+                if (sda == null || sda.meshData == null || sda.meshData.vertices == null) continue;
+                string nm = sda.slotName ?? sda.name;
+                if (!(nm.Contains("hoodie") || nm.Contains("tshirt") || nm.Contains("tanktop") || nm.Contains("jacket") || nm.Contains("sweater") || nm.Contains("pants") || nm.Contains("shorts") || nm.Contains("shoe") || nm.Contains("tights") || nm.Contains("sportswear"))) continue;
+                var md = sda.meshData; var sb = new StringBuilder("{\"uv\":[");
+                for (int i = 0; i < md.uv.Length; i++) sb.Append(i > 0 ? "," : "").Append('[').Append(md.uv[i].x.ToString("0.0000")).Append(',').Append(md.uv[i].y.ToString("0.0000")).Append(']');
+                sb.Append("],\"pos\":[");
+                for (int i = 0; i < md.vertices.Length; i++) sb.Append(i > 0 ? "," : "").Append('[').Append(md.vertices[i].x.ToString("0.0000")).Append(',').Append(md.vertices[i].y.ToString("0.0000")).Append(',').Append(md.vertices[i].z.ToString("0.0000")).Append(']');
+                sb.Append("],\"tris\":[");
+                bool first = true;
+                foreach (var sm in md.submeshes) foreach (var t in sm.GetBaseTriangles()) { sb.Append(first ? "" : ",").Append(t); first = false; }
+                sb.Append("]}");
+                File.WriteAllText("Logs/uv/" + nm + ".json", sb.ToString()); n++;
+            }
+            Debug.Log($"[Dream] wrote UVs for {n} clothing slots to Logs/uv");
+        }
+
         [MenuItem("Dream/3D characters/Rebuild UMA library", priority = 5)]
         public static void Rebuild()
         {

@@ -80,7 +80,7 @@ namespace CFDream.Character
             foreach (var o in J.L(d, "items") ?? new List<object>())
             {
                 string slot = J.S(o, "slot"), id = J.S(o, "id");
-                if (string.IsNullOrEmpty(slot) || string.IsNullOrEmpty(id) || Array.IndexOf(Fashion.Wearable, slot) < 0 && slot != "home" && slot != "ride")
+                if (string.IsNullOrEmpty(slot) || string.IsNullOrEmpty(id) || Array.IndexOf(Fashion.Wearable, slot) < 0 && slot != "home" && slot != "ride" && slot != "pet")
                 { Problems.Add($"{key}: an item needs a known \"slot\" and an \"id\""); continue; }
                 if (DB.Item(slot, id) != null) { Problems.Add($"{key}: {slot}:{id} already exists, pick another id"); continue; }
                 var it = new ItemDef { slot = slot, id = id, name = J.S(o, "name", id), req = J.S(o, "req", "") };

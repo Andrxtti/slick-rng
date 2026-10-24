@@ -45,6 +45,7 @@ namespace CFDream
             { "chain:none", "" }, { "chain:silver", "peak:10000" }, { "chain:cuban", "peak:100000" }, { "chain:rope", "peak:250000" }, { "chain:layered", "title:bracelet" }, { "chain:iced", "peak:1000000" },
             { "home:studio", "" }, { "home:apt", "peak:25000" }, { "home:condo", "peak:150000" }, { "home:penthouse", "peak:1000000" }, { "home:mansion", "peak:5000000" }, { "home:island", "title:me" },
             { "ride:bus", "" }, { "ride:hatch", "peak:5000" }, { "ride:coupe", "peak:50000" }, { "ride:sedan", "peak:250000" }, { "ride:super", "peak:2000000" }, { "ride:jet", "title:titan" },
+            { "pet:cat", "played:5" }, { "pet:pup", "titles:1" }, { "pet:frenchie", "title:ring" }, { "pet:doberman", "peak:1000000" },
             { "patch:none", "" }, { "patch:grind", "streak:3" }, { "patch:tavern", "flag:cashWin" }, { "patch:site", "title:ring" }, { "patch:energy", "title:bracelet" }, { "patch:global", "title:me" },
         };
         // brand packs add their own items with the same rule codes (plus "redeem": only a code unlocks it)

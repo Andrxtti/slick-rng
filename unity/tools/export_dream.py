@@ -60,6 +60,7 @@ async def main():
     for e in d['DR_EVENTS']:
         e.update(FLAGS.get(e['id'], {}))
     d['DR_EVENTS'].append(FREEROLL)
+    sys.path.insert(0, __import__('os').path.dirname(__file__)); import dream_extras; dream_extras.apply(d)   # pets and other Unity-only data
     data = {'data': d, 'classes': r['classes'], 'payouts': r['payouts']}
     json.dump(data, open(OUT + '/dream_data.json', 'w'), separators=(',', ':'))
     json.dump(r['spots'], open(OUT + '/spots.json', 'w'), separators=(',', ':'))

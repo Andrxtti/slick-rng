@@ -77,6 +77,7 @@ namespace CFDream.UI
                 case "sleeve": F(p, "M40 6L62 14V32C62 48 52 60 40 66C28 60 18 48 18 32V14Z", C.H(J.S(patch, "c", "#d9b36c"))); break;
                 case "home": Home(p); break;
                 case "ride": Ride(p); break;
+                case "pet": Pet(p); break;
             }
         }
 
@@ -306,6 +307,62 @@ namespace CFDream.UI
                     F(p, "M0 58Q20 52 40 56Q60 60 80 54V70H0Z", C.H("#2f8fbf")); F(p, "M18 58Q40 44 64 58Z", C.H("#e7d3a1"));
                     S(p, "M42 52Q44 32 40 22", C.H("#7a5a32"), 3); F(p, "M40 22Q28 18 22 26Q32 22 40 24Q46 14 58 16Q48 18 42 24Q52 26 56 34Q46 28 40 24Z", C.H("#3c8a3a")); break;
                 default: Box(p, 22, 28, 36, 36, 2, wall); break;
+            }
+        }
+
+        // pets sitting for their portrait, in their own colours (Resources/Dream/Pets/pets.json)
+        void Pet(Painter2D p)
+        {
+            var info = Character.PetInfo.Get(id);
+            Color Col(string n, string def) => info != null && info.colors.TryGetValue(n, out var c) ? c : C.H(def);
+            Color fur = Col("fur", "#b8834f"), fur2 = Col("fur2", "#f2ebe0"), fur3 = Col("fur3", "#6b4426"), nose = Col("nose", "#151315"), inner = Col("inner", "#e8a0a8"),
+                eye = Col("eye", "#0c0b0c"), collar = Col("collar", "#c8323a"), tag = Col("tag", "#e3b94f"), tongue = Col("tongue", "#e0707e"), white = Color.white;
+            switch (id)
+            {
+                case "cat":
+                    S(p, "M52 62Q70 60 66 44Q63 36 58 40", fur, 5); S(p, "M64 52L68 50M65 45L69 46", fur3, 1.4f);
+                    F(p, "M28 64Q24 46 32 34Q40 28 48 34Q56 46 52 64Z", fur); F(p, "M34 64Q33 48 40 42Q47 48 46 64Z", fur2);
+                    S(p, "M30 46L35 47M29 53L34 54M50 46L45 47M51 53L46 54", fur3, 1.5f);
+                    F(p, "M28 20L30 5L39 14Z", fur); F(p, "M52 20L50 5L41 14Z", fur); F(p, "M30.5 15L31.5 9L35.5 13Z", inner); F(p, "M49.5 15L48.5 9L44.5 13Z", inner);
+                    Oval(p, 40, 23, 13, 11, fur); S(p, "M35 13.5L36 17M40 12.5V16.5M45 13.5L44 17", fur3, 1.5f);
+                    Oval(p, 40, 28.5f, 5.5f, 3.8f, fur2); F(p, "M38.4 26.6H41.6L40 28.4Z", Col("nose", "#e8879a"));
+                    Oval(p, 35, 21.5f, 2.4f, 2.7f, Col("iris", "#c6d64a")); Oval(p, 45, 21.5f, 2.4f, 2.7f, Col("iris", "#c6d64a"));
+                    Oval(p, 35, 21.5f, 0.7f, 2.3f, eye); Oval(p, 45, 21.5f, 0.7f, 2.3f, eye);
+                    S(p, "M33 29L25 28M33 30.5L25 31.5M47 29L55 28M47 30.5L55 31.5", C.A(white, 0.7f), 0.6f);
+                    Oval(p, 35, 64, 4.2f, 2.3f, fur2); Oval(p, 45, 64, 4.2f, 2.3f, fur2);
+                    break;
+                case "frenchie":
+                    F(p, "M22 64Q20 46 30 36H50Q60 46 58 64Z", fur); F(p, "M34 64Q33 48 40 42Q47 48 46 64Z", fur2);
+                    S(p, "M29 37Q40 43 51 37", collar, 3); Dot(p, 40, 41.5f, 2.2f, tag);
+                    F(p, "M27 19Q19 2 30 5Q35 9 35 15Z", fur); F(p, "M53 19Q61 2 50 5Q45 9 45 15Z", fur);
+                    F(p, "M28.5 15Q24 6 30 7.5Q33 10 33 14Z", inner); F(p, "M51.5 15Q56 6 50 7.5Q47 10 47 14Z", inner);
+                    Oval(p, 40, 25, 15, 12, fur); Oval(p, 40, 30.5f, 8.5f, 5.5f, fur3); Oval(p, 40, 28, 3.4f, 2.2f, nose);
+                    S(p, "M36 33Q40 35 44 33", nose, 1.2f); Oval(p, 40, 35, 2, 2.4f, tongue);
+                    Dot(p, 33, 22.5f, 2.6f, eye); Dot(p, 47, 22.5f, 2.6f, eye); Dot(p, 33.8f, 21.6f, 0.8f, white); Dot(p, 47.8f, 21.6f, 0.8f, white);
+                    Oval(p, 32, 64, 5, 2.4f, fur2); Oval(p, 48, 64, 5, 2.4f, fur2);
+                    break;
+                case "doberman":
+                    S(p, "M48 62Q60 58 62 48", fur, 3);
+                    F(p, "M30 66Q27 46 34 30H46Q53 46 50 66Z", fur);
+                    Box(p, 32.5f, 44, 5, 22, 2, fur); Box(p, 42.5f, 44, 5, 22, 2, fur); Box(p, 32.5f, 58, 5, 8, 2, fur2); Box(p, 42.5f, 58, 5, 8, 2, fur2);
+                    Oval(p, 36, 35, 2.4f, 2, fur2); Oval(p, 44, 35, 2.4f, 2, fur2);
+                    S(p, "M34 31Q40 35 46 31", collar, 2.4f);
+                    F(p, "M33 14L30 0L38 10Z", fur); F(p, "M47 14L50 0L42 10Z", fur); F(p, "M33 11L31.5 4L36 9.5Z", inner); F(p, "M47 11L48.5 4L44 9.5Z", inner);
+                    Oval(p, 40, 17, 9, 9, fur); Oval(p, 40, 25, 5, 7, fur); Oval(p, 40, 28, 4.2f, 3.6f, fur2); Oval(p, 40, 30.5f, 2.4f, 1.8f, nose);
+                    Dot(p, 36, 16.5f, 1.6f, eye); Dot(p, 44, 16.5f, 1.6f, eye); Dot(p, 36.5f, 16, 0.5f, white); Dot(p, 44.5f, 16, 0.5f, white);
+                    Dot(p, 35.5f, 13.4f, 1.1f, fur2); Dot(p, 44.5f, 13.4f, 1.1f, fur2);
+                    break;
+                default:   // the pup
+                    S(p, "M54 60Q67 56 64 43", fur, 4.5f); Dot(p, 64, 43, 2.4f, fur2);
+                    F(p, "M26 64Q22 44 32 32H48Q58 44 54 64Z", fur); F(p, "M33 64Q32 46 40 38Q48 46 47 64Z", fur2);
+                    F(p, "M27 40Q30 34 36 33L33 46Z", fur3);
+                    S(p, "M31 33Q40 38 49 33", collar, 3); Dot(p, 40, 37.5f, 2.1f, tag);
+                    Oval(p, 40, 21, 12, 11, fur); F(p, "M38 10H42L43 22H37Z", fur2); Oval(p, 40, 27, 7.5f, 5.5f, fur2); Oval(p, 40, 25, 2.8f, 2.1f, nose);
+                    Oval(p, 40, 31.5f, 2.1f, 2.8f, tongue);
+                    F(p, "M29 13Q21 15 23 31Q28 31 31 22Z", fur3); F(p, "M51 13Q59 15 57 31Q52 31 49 22Z", fur3);
+                    Dot(p, 35.5f, 19, 1.9f, eye); Dot(p, 44.5f, 19, 1.9f, eye); Dot(p, 36.1f, 18.4f, 0.6f, white); Dot(p, 45.1f, 18.4f, 0.6f, white);
+                    Oval(p, 34, 64, 4.6f, 2.4f, fur2); Oval(p, 46, 64, 4.6f, 2.4f, fur2);
+                    break;
             }
         }
 

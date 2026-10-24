@@ -19,7 +19,7 @@ namespace CFDream.UI
             var page = U.Div("home-room");
             if (!Bodies.Available) { page.Add(HubView.Laptop(s, false)); return page; }   // no 3D body: the hub as before
 
-            var view = new CharacterView(CharacterSpec.From(s), null, 0, 0, "room") { Tier = s.Eq("home") };
+            var view = new CharacterView(CharacterSpec.From(s), null, 0, 0, "room") { Tier = s.Eq("home"), Pet = s.Eq("pet") };
             view.AddToClassList("room-view");
             page.Add(view);
 

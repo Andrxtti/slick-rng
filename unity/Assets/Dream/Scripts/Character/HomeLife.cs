@@ -13,6 +13,8 @@ namespace CFDream.Character
         public static event Action<string, string> Said;   // who (a use id, or "me") and the line
         public static event Action<string> Done;           // laptop, bed, closet: the UI takes it from here
         public static event Action Puff;
+        public static void Say(string who, string line) => Said?.Invoke(who, line);
+        public PetLife Pets;                               // your pet, when you have one
 
         CharacterStage st; HomeRoom room;
         List<Vector3> path; int pi; float? faceAt; Action arrived; Coroutine acting;
@@ -44,12 +46,20 @@ namespace CFDream.Character
         {
             if (room == null) return;
             if (acting != null) { StopCoroutine(acting); acting = null; Release(); }
+            if (Pets != null) Pets.Hold(false);
             path = room.Path(st.Pivot.localPosition, to); pi = 0; arrived = onArrive; faceAt = face;
         }
 
         public void Use(string id)
         {
             var u = room?.Use(id); if (u == null) return;
+            if (id == "pet")
+            {
+                if (Pets == null || Pets.Info == null) return;
+                var spot = Pets.PetSpot(st.Pivot.localPosition, out var face);
+                WalkTo(spot, () => Act(u), face); Pets.Hold(true);
+                return;
+            }
             WalkTo(u.spot, () => Act(u), u.face);
         }
 
@@ -106,6 +116,7 @@ namespace CFDream.Character
                 case "beer": acting = StartCoroutine(Beer(u)); break;
                 case "bong": acting = StartCoroutine(Bong(u)); break;
                 case "fish": acting = StartCoroutine(Feed(u)); break;
+                case "pet": acting = StartCoroutine(Pat()); break;
             }
         }
 
@@ -184,6 +195,27 @@ namespace CFDream.Character
             g?.Clear();
             yield return new WaitForSeconds(0.6f);
             Said?.Invoke("fish", room.fish.Count > 3 ? "Feeding frenzy." : "Bubbles approves.");
+            acting = null;
+        }
+
+        // a scratch behind the ears (or a reach down, for the little ones)
+        IEnumerator Pat()
+        {
+            var g = Hands(); var pet = Pets; if (pet == null || pet.Info == null) { acting = null; yield break; }
+            Said?.Invoke("me", pet.Greeting());
+            pet.Hold(true);
+            float t = 0; bool low = pet.Low;
+            while (t < 1.9f)
+            {
+                t += Time.deltaTime;
+                var back = pet.Back;
+                if (low) back.y = Mathf.Max(back.y, st.Pivot.position.y + 0.8f);   // as far down as you can reach standing
+                var stroke = back + (pet.HeadPos - pet.Back).normalized * (Mathf.Sin(t * 6.5f) * 0.07f);
+                g?.Right(stroke, 0.95f); g?.Look(pet.HeadPos, 0.9f, low ? 0.55f : 0.3f);
+                yield return null;
+            }
+            g?.Clear();
+            Said?.Invoke("pet", pet.Petted());
             acting = null;
         }
 

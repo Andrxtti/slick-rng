@@ -16,7 +16,7 @@ namespace CFDream.UI
         static readonly Dictionary<string, string> CatIcon = new Dictionary<string, string>
         {
             { "shirts", "shirts" }, { "street", "street" }, { "jackets", "jacket" }, { "formal", "formal" }, { "head", "head" }, { "eyes", "eyes" }, { "chain", "chain" },
-            { "ear", "ear" }, { "ring", "ring" }, { "wrist", "wrist" }, { "watch", "watch" }, { "patch", "patch" }, { "sleeve", "sleeve" }, { "home", "home" }, { "ride", "ride" },
+            { "ear", "ear" }, { "ring", "ring" }, { "wrist", "wrist" }, { "watch", "watch" }, { "patch", "patch" }, { "sleeve", "sleeve" }, { "home", "home" }, { "ride", "ride" }, { "pet", "pet" },
         };
 
         public static VisualElement Build(State s)
