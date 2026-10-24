@@ -8,7 +8,7 @@ namespace CFDream
     public enum View { Title, Create, Hub, Scene, Run, Results, Profile, Transit }
 
     // getting to the game: "drive" (your ride), "fly" (out of town or your jet) or "online" (the CF Poker client)
-    public class Trip { public string kind, ride; public EventDef ev; }
+    public class Trip { public string kind, ride; public EventDef ev; public string kicker, place, sub; public Action then; }   // story trips carry their own caption and what comes after
 
     public static class Game
     {
@@ -59,19 +59,46 @@ namespace CFDream
             View = View.Hub;
             var s = State;
             if (s.queue.Count > 0 && Run == null) { var id = s.queue[0]; s.queue.RemoveAt(0); s.Save(); PlayScene(id); return; }
+            if (Run == null && s.FlagN("needjob") > 0) Tab = "home";
             Render();
-            if (s.FlagN("needplan") > 0 && Run == null) CFDream.UI.HubView.Planner(s, true);
+            if (Run != null) return;
+            // home after the office: look around, then Slick's offer lands on your phone
+            if (s.FlagN("needjob") > 0) { if (CFDream.UI.Tips.Seen(s, "t10") || CFDream.UI.Tips.Off(s)) OfferSoon(4000); return; }
+            // the first week: the Spacepad opens on its own, then the planner
+            if (s.FlagN("needplan") > 0)
+                CFDream.UI.Tips.Show("t12", "Your Spacepad", "This is your *Spacepad*, your laptop for everything poker: tonight's games, the calendar, your money and your job. The tabs at the bottom take you *Home*, to the *Closet*, *Online*, your *Career* and the *Story*.",
+                    CFDream.UI.Tips.OnScreen(".navbar"), () => CFDream.UI.HubView.Planner(State, true));
+        }
+        // the walking tip is done: give them a moment in the apartment before the phone buzzes
+        public static void HomeTipDone() { if (State != null && State.FlagN("needjob") > 0) OfferSoon(2500); }
+        static bool offerSet;
+        static void OfferSoon(int ms)
+        {
+            if (offerSet) return; offerSet = true;
+            CFDream.UI.Tips.Later(ms, () =>
+            {
+                offerSet = false;
+                if (State == null || State.FlagN("needjob") <= 0 || Run != null || View == View.Scene || View == View.Transit) return;
+                CFDream.UI.DreamApp.CloseModal(); Sound.Play("text", 0.8f); PlayScene("p_offer");
+            });
         }
         // the first week is planned: quit and you start now, keep the job and the story picks up on the first night you chose
         public static void FirstPlanDone()
         {
             var s = State; s.SetFlag("needplan", 0); s.Save();
-            if (s.job == "nights")
+            bool keep = s.job == "nights";
+            string next = keep
+                ? "Since you kept the job, the days go by at work. When you *go to sleep* you wake up on the *first night you picked*. Lou pays you every *Friday*. Every *Sunday* you plan the next week."
+                : "Since you quit, your week *starts now*. Play tonight, then *go to sleep* to move to the next night you picked. Every *Sunday* you plan the next week.";
+            CFDream.UI.Tips.Show("t14", "What happens next", next, null, () =>
             {
-                int first = -1; foreach (var k in s.cal.plan.Keys) if (k >= s.cal.d && (first < 0 || k < first)) first = k;
-                if (first > s.cal.d) { Morning = Calendar.Sleep(s, first - s.cal.d); CalSel = -1; CalWk = 0; }
-            }
-            PlayScene("c1");
+                if (keep)
+                {
+                    int first = -1; foreach (var k in s.cal.plan.Keys) if (k >= s.cal.d && (first < 0 || k < first)) first = k;
+                    if (first > s.cal.d) { Morning = Calendar.Sleep(s, first - s.cal.d); CalSel = -1; CalWk = 0; }
+                }
+                PlayScene("c1");
+            });
         }
 
         // ------------------------------------------------------------ story scenes
@@ -131,6 +158,15 @@ namespace CFDream
             s.story.Add(sc.id); Story.OnEnd(sc.id, s);
             Career.Unlocks(s); Career.Progress(s); s.Save();
             Scene = null;
+            // the prologue's road: office, a ride across town, the diner, Saturday at the card room, Monday, home
+            if (sc.id == "p_office") { Go(new Trip { kind = "drive", ride = s.Eq("ride"), kicker = "2:13 AM", place = "Calle Ocho", sub = "Lucky Seven Diner", then = () => PlayScene("p_diner") }); return; }
+            if (sc.id == "p_diner") { Go(new Trip { kind = "drive", ride = s.Eq("ride"), kicker = "Saturday · 11:40 AM", place = "Biscayne Card Room", sub = "The Biscayne Championship · your free seat", then = () => PlayScene("p_seat") }); return; }
+            if (sc.id == "p_seat") { NoTrip = true; View = View.Hub; StartEvent("local"); NoTrip = false; if (Run == null) Render(); return; }
+            if (sc.id == "p_after" && !s.story.Contains("p_offer"))
+            {
+                s.cal.d = Math.Max(s.cal.d, 7); s.SetFlag("needjob"); s.Save(); Tab = "home";
+                Go(new Trip { kind = "drive", ride = s.Eq("ride"), kicker = "Monday · 7:10 PM", place = "Home", sub = "The long way back from Floor 34", then = Hub }); return;
+            }
             if ((sc.id == "p_quit" || sc.id == "p_keep") && !s.story.Contains("c1"))   // home to the apartment: the Spacepad opens and the first week gets planned
             { s.SetFlag("needplan"); s.Save(); Tab = "calendar"; Hub(); return; }
             string end = def.end ?? "hub";
@@ -146,7 +182,7 @@ namespace CFDream
             var run = Play.Start(id, reentry); if (run == null) { Render(); return; }
             Run = run; Morning = null;
             // a short cutscene on the way, except for another bullet in an event you're already at
-            if (!reentry) { Trip = new Trip { kind = TripKind(run.ev), ride = State.Eq("ride"), ev = run.ev }; View = View.Transit; Render(); return; }
+            if (!reentry && !NoTrip) { Trip = new Trip { kind = TripKind(run.ev), ride = State.Eq("ride"), ev = run.ev }; View = View.Transit; Render(); return; }
             View = View.Run; NextTable();
         }
         static string TripKind(EventDef ev)
@@ -158,10 +194,13 @@ namespace CFDream
         public static void Arrive()
         {
             if (View != View.Transit) return;
-            Trip = null;
+            var then = Trip?.then; Trip = null;
+            if (then != null) { then(); return; }
             if (Run == null) { Hub(); return; }
             View = View.Run; NextTable();
         }
+        public static bool NoTrip;   // the story already drove you there
+        static void Go(Trip t) { Trip = t; View = View.Transit; Render(); }
         public static void NextTable() { var run = Run; if (run == null) return; Play.PickTable(run); run.state = "ready"; Render(); }
         // a study session on the Spacepad: your misplayed spots, again
         public static void StartDrill()

@@ -432,14 +432,14 @@ namespace CFDream
                 s.daily[today] = new List<double> { res.place, res.prize }; res.streak = s.streak;
                 foreach (var k in s.daily.Keys.OrderBy(k => k).Take(Math.Max(0, s.daily.Count - 120)).ToList()) s.daily.Remove(k);
             }
-            if (ev.id == "local" && !s.story.Contains("p_after")) s.queue.Add("p_after");
-            // the aftermath, as a scene in the venue
-            if (!ev.daily && s.ch >= 1)
+            // the aftermath, as a scene in the venue (the first tournament too: it's where the story turns)
+            if (!ev.daily && (s.ch >= 1 || ev.id == "local"))
             {
                 string after = run.cooler != null ? "after_cooler" : res.place == 1 && ev.kind != "cash" ? "after_win" : res.prize > 0 || (ev.kind == "cash" && res.net > 0) ? "after_cash" : "after_bust";
                 if (DB.Scenes.TryGetValue(after, out var sc)) { sc.place = string.IsNullOrEmpty(ev.venue) || ev.online ? "home" : ev.venue; Story.Aftermath(s, res, run, sc, after); s.queue.Add(after); }
                 s.SetFlag("events", s.FlagN("events") + 1);
             }
+            if (ev.id == "local" && !s.story.Contains("p_after") && !s.queue.Contains("p_after")) s.queue.Add("p_after");
             if (run.cooler != null && s.ch >= 1 && !s.story.Contains("badbeat") && !s.queue.Contains("badbeat")) s.queue.Add("badbeat");
             if (run.cooler == null && !ev.daily && res.prize <= 0 && s.ch >= 1 && s.ch <= 5) { string les = "lesson" + s.ch; if (DB.Scenes.ContainsKey(les) && !s.story.Contains(les) && !s.queue.Contains(les)) s.queue.Add(les); }
             if (s.peak >= 100000 && !s.story.Contains("derek") && !s.queue.Contains("derek")) s.queue.Add("derek");

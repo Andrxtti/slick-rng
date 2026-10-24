@@ -130,7 +130,7 @@ namespace CFDream.UI
             var hi = U.Col().Grow(); hi.style.marginLeft = 12;
             hi.Add(U.Kicker(sp.cat));
             hi.Add(U.T($"{hero.pos} · {Fmt.Bb(hero.stack - hero.put)} bb", "hero-pos", Fonts.Semi));
-            var odds = Odds(sp); if (odds != null) hi.Add(U.Hint(odds));
+            var odds = Odds(sp); if (odds != null) { var oh = U.Hint(odds); oh.name = "odds"; hi.Add(oh); }
             hr.Add(hi);
             col.Add(hr);
 
@@ -315,7 +315,7 @@ namespace CFDream.UI
             if (res.all.Count > 0) body.Add(Decisions(res));
 
             var acts = U.Col().Mt(6);
-            if (Calendar.CanReenter(s, res)) acts.Add(U.Btn($"Re-enter · {U.Money(ev.buyin)}", () => DreamApp.Confirm("Fire another bullet?", $"{U.Money(ev.buyin)} from a {U.Money(s.br)} roll. Late registration is still open.", "Re-enter", Game.Reenter, "Not this time"), "ghost wide"));
+            if (Calendar.CanReenter(s, res)) acts.Add(U.Btn($"Re-enter · {U.Money(ev.buyin)}", () => DreamApp.Confirm("Fire another bullet?", $"{U.Money(ev.buyin)} from a {U.Money(s.br)} roll. Late registration is still open.", "Re-enter", Game.Reenter, "Not this time"), "ghost wide").Named("reenter"));
             var sl = Calendar.SlotsLeft(s);
             acts.Add(U.Btn("Continue", () => Game.Hub(), "gold wide", true, s.ch == 0 ? null : sl.left > 0 ? $"{sl.left} game{(sl.left == 1 ? "" : "s")} left {(sl.week ? "this week" : "today")}" : sl.week ? "No games left this week" : "No games left today").Mt(8));
             body.Add(acts);

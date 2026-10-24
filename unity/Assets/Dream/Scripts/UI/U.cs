@@ -194,6 +194,8 @@ namespace CFDream.UI
 
         public static VisualElement Card(params string[] cls) => Div("card").Cls(cls);
 
+        public static T Named<T>(this T e, string n) where T : VisualElement { e.name = n; return e; }
+
         // A tap that survives scroll views: it fires only if the pointer barely moved between down and up.
         public static T Tap<T>(this T e, Action a) where T : VisualElement
         {

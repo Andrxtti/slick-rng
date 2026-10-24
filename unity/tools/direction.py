@@ -47,15 +47,24 @@ scene("p_diner",
     ("slick", "ecu:Talking@sting"),                           # People call me Slick
     ("n",     "wide^:Looking Around@bell"),                   # gone before the bell stops
     ("n",     "ecu^:Thinking@swell~night"))                   # the line in pen
+scene("p_seat",
+    ("n",     "ext~grind"),                                   # the card room, Saturday late morning
+    ("rosa",  "two:Talking"),
+    ("you",   "cu:Talking"),                                  # somebody bought me a seat
+    ("rosa",  "ots:Pointing>Head Nod Yes"),                   # table nine, seat four
+    ("n",     "push^:Looking Around@hush~tension"))           # hands shaking anyway
 scene("p_after",
     ("derek", "ots:Pointing"),
     ("n",     "cu^:Thinking"),
     ("derek", "cu:Angry Gesture@tick"),
-    ("n",     "two"),
+    ("n",     "push^:Thinking~night"))                        # your mind never leaves table nine
+scene("p_offer",
+    ("n",     "wide^:Texting While Standing@text~night"),     # the phone buzzes at home
+    ("slick", ""), ("slick", ""), ("slick", ""),
     ("n",     "push^:Thinking@sting~none"))                   # decision time, in silence
 scene("p_quit",
-    ("you",   "low:Pointing@sting~grind"),                    # Redo it yourself
-    ("n",     "ext@swell~grind"),                             # thirty-four floors
+    ("you",   ""),                                            # the text to Lou
+    ("n",     "low^:Fist Pump@swell~grind"),                  # never felt lighter
     ("slick", ""), ("slick", ""), ("mom", ""))
 scene("p_keep",
     ("n",     "high^:Thinking~night"),

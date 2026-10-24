@@ -82,7 +82,7 @@ namespace CFDream.UI
                 root.Add(beam);
             }
             Letterbox(root, ch);
-            Title(root, "Heading to", DB.Place(trip.ev.venue), Sub(trip), RideName(trip.ride), cw, ch);
+            Title(root, trip.kicker ?? "Heading to", trip.place ?? DB.Place(trip.ev?.venue), trip.sub ?? Sub(trip), RideName(trip.ride), cw, ch);
 
             float dur = trip.ride == "bus" ? 4.6f : 3.9f;
             float roadPx = 1500 * s;                               // the road's speed on screen, px/s
@@ -129,7 +129,7 @@ namespace CFDream.UI
             root.Add(plane);
             Letterbox(root, ch);
             bool own = trip.ride == "jet";
-            Title(root, own ? "Wheels up" : "Flying to", DB.Place(trip.ev.venue), Sub(trip), own ? "Your private jet" : "Coach, window seat", cw, ch);
+            Title(root, trip.kicker ?? (own ? "Wheels up" : "Flying to"), trip.place ?? DB.Place(trip.ev?.venue), trip.sub ?? Sub(trip), own ? "Your private jet" : "Coach, window seat", cw, ch);
             float dur = 4.2f, t0 = Time.realtimeSinceStartup;
             root.schedule.Execute(() =>
             {

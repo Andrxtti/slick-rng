@@ -421,7 +421,9 @@ namespace CFDream.UI
         {
             DreamApp.Sheet("Plan the week", box =>
             {
-                box.Add(U.Hint($"Pick your nights. {Calendar.GamesCap} online games and one live game (Saturday or Sunday). Sleeping skips straight to the next night you picked.").Mt(4));
+                bool keep = s.job == "nights";
+                box.Add(U.Hint(keep ? $"Pick your nights. {Calendar.GamesCap} online games and one live game (Saturday or Sunday). Sleeping skips straight to the next night you picked."
+                                    : $"Pick the nights you'll play. Full-time, any night works: {Calendar.GamesCap} online games and a live one each day. Sleeping skips straight to the next night you picked.").Mt(4));
                 int start = Calendar.WeekStart(s.cal.d);
                 VisualElement rows = null;
                 void Draw()
@@ -435,14 +437,17 @@ namespace CFDream.UI
                         r.Add(U.T(Calendar.DowL[D.dow] + (d == s.cal.d ? " · today" : ""), "plan-day").Grow());
                         if (!past)
                         {
-                            r.Add(U.Btn("Online", () => { Calendar.SetPlan(s, d, w == "online" ? null : "online"); Draw(); }, w == "online" ? "gold sm" : "ghost sm", w == "online" || on < Calendar.GamesCap));
-                            if (wkend) r.Add(U.Btn("Live", () => { Calendar.SetPlan(s, d, w == "live" ? null : "live"); Draw(); }, w == "live" ? "gold sm" : "ghost sm", w == "live" || lv < Calendar.LiveCap).Ml(6));
+                            r.Add(U.Btn("Online", () => { Calendar.SetPlan(s, d, w == "online" ? null : "online"); Draw(); }, w == "online" ? "gold sm" : "ghost sm", w == "online" || !keep || on < Calendar.GamesCap));
+                            if (wkend || !keep) r.Add(U.Btn("Live", () => { Calendar.SetPlan(s, d, w == "live" ? null : "live"); Draw(); }, w == "live" ? "gold sm" : "ghost sm", w == "live" || !keep || lv < Calendar.LiveCap).Ml(6));
                         }
                         else r.Add(U.Hint(w == null ? "—" : w == "live" ? "live" : "online"));
                         rows.Add(r);
                     }
                 }
-                rows = U.Col().Mt(10); box.Add(rows); Draw();
+                rows = U.Col().Cls("plan-rows").Mt(10); box.Add(rows); Draw();
+                if (first) Tips.Later(300, () => Tips.Show("t13", "Plan your week", keep
+                    ? "Pick your *3 online nights* and *1 weekend live night*. Those are the only nights you can play while you work for Lou. Tap *Done* when you're set."
+                    : "Pick the nights you'll play. Full-time, *any night* works: 3 online games and a live one each day. Planning tells the game *which nights to take you to*. Tap *Done* when you're set.", rows));
                 box.Add(U.Btn("Done", () => { Calendar.PlanDone(s); DreamApp.CloseModal(); if (first) Game.FirstPlanDone(); else Game.Hub(); }, "gold wide").Mt(12));
             });
         }
@@ -524,6 +529,10 @@ namespace CFDream.UI
                 c.Add(r);
             }
             col.Add(c);
+            var tc = U.Card(); tc.Add(U.Kicker("Tutorial"));
+            tc.Add(U.Hint("The tips that explain each part of the game show once. Bring them all back to see them again."));
+            tc.Add(U.Btn("Show the tips again", () => { Tips.Reset(s); DreamApp.Toast("Tips are back on"); }, "ghost wide").Mt(8));
+            col.Add(tc);
             var t = U.Card(); t.Add(U.Kicker("Your story so far"));
             if (s.timeline.Count == 0) t.Add(U.Hint("The big moments of your career land here."));
             foreach (var m in s.timeline.Take(40))

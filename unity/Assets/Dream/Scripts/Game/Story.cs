@@ -17,24 +17,35 @@ namespace CFDream
 
         public static void ApplyOverrides()
         {
-            // the job choice: quit (Slick backs you, 3 games a day) or keep it (a paycheck every Friday, 3 games a week)
+            // the prologue: the diner sends you to the card room, where Miles takes your envelope at the cage
+            DB.Scenes["p_diner"].end = "p_seat";
+            Put("p_seat", "cardroom", "Prologue", "Biscayne Card Room", "local",
+                B("n", "Saturday. 11:40 AM. Biscayne Card Room, off the causeway.\nCarpet from 1994. Coffee from this morning, maybe."),
+                B("rosa", "Help you?"),
+                B("you", "Somebody bought me a seat. The Biscayne Championship."),
+                B("rosa", "Free seat? Lucky you. Table nine, seat four. Cards in the air at noon."),
+                B("n", "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway."));
+            // Monday at the office is only Monday now; the job decision happens at home, when Slick texts
             var after = DB.Scenes["p_after"];
-            var decide = after.beats.FirstOrDefault(b => b.choice != null);
-            if (decide != null)
-            {
-                decide.choice = new List<Choice> { C("Quit. Today.", "p_quit"), C("Keep the job. Grind nights and weekends.", "p_keep") };
-                after.beats.Insert(after.beats.IndexOf(decide), B("n", "Nobody says you have to decide forever. Keep the paycheck and play around it, or walk now and bet on yourself. You can always quit later."));
-            }
-            Put("p_quit", "office", null, null, "c1",
-                B("you", "Lou? Redo it yourself."),
-                B("n", "The elevator ride down is the best thirty-four floors of your life.\nNo paycheck. No plan B."),
-                B("slick", $"Heard you walked out. I put ${Fmt.Money(Calendar.GiftQuit)} in your account. Not a loan. Don't make me regret it.", text: true),
-                B("slick", "Rent is due on the first. Play three games a day, max. Never play above your roll.", text: true),
+            after.beats.RemoveAll(b => b.choice != null);
+            after.beats.Add(B("n", "Seven more hours of spreadsheets. Your mind never leaves table nine."));
+            Put("p_offer", "home", "Prologue", "Monday night", "hub",
+                B("n", "Monday night. Your phone buzzes on the counter."),
+                B("slick", "Saw your results from Saturday. Here's my offer.", text: true),
+                B("slick", $"Quit Lou. I'll put ${Fmt.Money(Calendar.GiftQuit)} in your account tomorrow. Not a loan. Don't make me regret it.", text: true),
+                B("slick", "Or keep the job and play on the side. Your call, kid. It's the biggest one you'll make.", text: true),
+                new Beat { sp = "n", t = "Decision time.", choice = new List<Choice> { C("Quit. Text Lou tonight.", "p_quit"), C("Keep the job. Grind nights and weekends.", "p_keep") } });
+            // the job choice: quit (Slick backs you, 3 games a day) or keep it (a paycheck every Friday, 3 games a week)
+            Put("p_quit", "home", "Prologue", "Full-time", "c1",
+                B("you", "Lou. Redo it yourself.", text: true),
+                B("n", "Sent. No paycheck. No plan B.\nYou have never felt lighter."),
+                B("slick", $"Done. ${Fmt.Money(Calendar.GiftQuit)} is in your account. Not a loan. Don't make me regret it.", text: true),
+                B("slick", "Rent is due on the first. Never play above your roll.", text: true),
                 B("mom", "BRO. YOU QUIT YOUR JOB?? CALL ME", text: true));
-            Put("p_keep", "office", null, null, "c1",
+            Put("p_keep", "home", "Prologue", "Nights and weekends", "c1",
                 B("n", "You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL."),
                 B("n", $"${Fmt.Money(Calendar.Salary)} lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream."),
-                B("slick", "Heard about Saturday. Smart. A paycheck buys you time to learn. Never play above your roll. Text me when you win something.", text: true));
+                B("slick", "Smart. A paycheck buys you time to learn. Never play above your roll. Text me when you win something.", text: true));
             // going broke: no automatic bailout. Slick lays out the options.
             Put("broke", "diner", "Rock bottom", null, "hub",
                 B("n", "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."),
@@ -82,6 +93,7 @@ namespace CFDream
             Put("after_cooler", "cardroom", "After", null, "hub", B("n", "", mood: "cooler"), B("you", "", mood: "cooler"));
             foreach (var id in new[] { "after_win", "after_cash", "after_bust", "after_cooler" }) { foreach (var b in DB.Scenes[id].beats) b.fn = true; DB.Scenes[id].beats.Add(B("lou", id == "after_win" ? "Kid. Don't let it go to your head. Let it go to your bankroll." : id == "after_cash" ? "A cash is a cash. The trophy's next." : id == "after_bust" ? "Happens to everybody. Back tomorrow." : "Brutal. Thirty years and that one still stings.")); }   // the third voice: a witness, chosen when it plays
             // the calendar decides when things happen, so chapter openers stop promising a month
+            Replace("c1", 1, "rosa", "Back again? Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven.");
             Replace("c2", 0, "slick", "You've outgrown Biscayne. The Circuit stops at Silver Strike every couple of months. Every event gives a ring. Check the calendar.");
             Replace("c3", 0, "n", "Every June, Las Vegas hosts the WCS Summer Series. 112 degrees outside, 68 inside, ten thousand people chasing the same gold. It's on your calendar now.");
             Replace("c6", 0, "n", "Every July: eight thousand players, ten thousand dollars each.\nOne of them ends up on the cover of every poker magazine in the world.");
@@ -228,8 +240,9 @@ namespace CFDream
             switch (sceneId)
             {
                 case "p_diner": s.SetFlag("honest", k == 0 ? 1 : 0); break;
+                case "p_offer":
                 case "p_after":
-                    s.cal.d = 7; // Monday morning
+                    s.cal.d = Math.Max(s.cal.d, 7); s.SetFlag("needjob", 0); // Monday
                     if (k == 0) { s.job = "quit"; Career.Add(s, Calendar.GiftQuit, "Slick's backing"); }
                     else { s.job = "nights"; Career.Add(s, 2000, "Savings, keeping the day job"); }
                     break;

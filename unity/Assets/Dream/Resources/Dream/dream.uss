@@ -557,3 +557,18 @@ Label.film-title-t { font-size: 22px; color: #f3ecdc; margin-top: 2px; text-shad
 /* third person in your place: the thumb stick */
 .stick { position: absolute; left: 16px; bottom: 118px; width: 128px; height: 128px; border-radius: 64px; background-color: rgba(255, 255, 255, 0.07); border-width: 1px; border-color: rgba(255, 255, 255, 0.16); }
 .stick-knob { position: absolute; left: 40px; top: 40px; width: 48px; height: 48px; border-radius: 24px; background-color: rgba(255, 255, 255, 0.32); border-width: 1px; border-color: rgba(255, 255, 255, 0.4); }
+
+/* tutorial tips: the dimmed screen, a lime ring around what's being explained, and the bubble */
+.tip-ring { border-width: 2px; border-color: #b8ff2e; border-radius: 14px; transition-property: border-color, scale; transition-duration: 0.6s, 0.6s; }
+.tip-ring.pulse { border-color: rgba(184, 255, 46, 0.45); scale: 1.02 1.02; }
+.tip-bubble { background-color: #10161c; border-width: 1px; border-color: #4b9cd3; border-left-width: 4px; border-left-color: #b8ff2e; border-radius: 16px; padding: 14px 16px 12px 16px; opacity: 0; translate: 0 8px; transition-property: opacity, translate; transition-duration: 0.25s, 0.25s; }
+.tip-bubble.in { opacity: 1; translate: 0 0; }
+Label.tip-k { font-size: 10px; letter-spacing: 3px; color: #b8ff2e; }
+Label.tip-title { font-size: 17px; color: #7fbde6; margin-top: 2px; }
+Label.tip-text { font-size: 15px; color: #f3ecdc; margin-top: 6px; white-space: normal; }
+.tip-row { align-items: center; margin-top: 12px; }
+Label.tip-skip { font-size: 12px; color: rgba(243, 236, 220, 0.55); padding: 6px 4px; }
+.tip-compare { margin-top: 10px; }
+.tip-side { flex-grow: 1; flex-basis: 0; border-top-width: 3px; background-color: rgba(255, 255, 255, 0.04); border-radius: 10px; padding: 8px 10px; margin: 0 3px; }
+Label.tip-side-h { font-size: 14px; margin-bottom: 4px; }
+Label.tip-side-t { font-size: 12.5px; color: #f3ecdc; margin-top: 3px; white-space: normal; }

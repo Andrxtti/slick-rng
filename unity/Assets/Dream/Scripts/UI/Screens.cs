@@ -382,6 +382,8 @@ namespace CFDream.UI
                     // story choices are neutral: no right or wrong colour, just one blue and one green (then they alternate)
                     for (int i = 0; i < b.choice.Count; i++) { int k = i; ch.Add(U.Btn(b.choice[i].t, () => Game.Choose(k), (i % 2 == 0 ? "pick-blue" : "pick-green") + " wide")); }
                     bottom.Add(ch);
+                    if (sc.id == "p_offer" && !sc.replay)
+                        Tips.Later(220, () => Tips.Show("t11", "Quit or keep the job?", "This is the *biggest decision* in the game. Here's what each choice means:", null, null, false, Tips.JobCard));
                 }
                 else bottom.Add(U.Hint("Tap to continue").Cls("center tap-hint"));
             }

@@ -53,6 +53,7 @@ namespace CFDream.UI
             home = HomeButton(); root.Add(home);
             modal = U.Div("modal").Show(false); modal.style.backgroundColor = new Color(0, 0, 0, 0.66f); root.Add(modal);
             toast = U.Div("toast").Show(false); root.Add(toast);
+            Tips.Attach(root);
             ApplyScreen(true);
             Game.Render = RenderNow;
             try { Game.Boot(); }
@@ -187,7 +188,7 @@ namespace CFDream.UI
             if (column == null) return;
             var sv = column.Q<ScrollView>("main"); if (sv != null) lastScroll = sv.scrollOffset;
             string key = Key(); bool same = key == lastKey; lastKey = key;
-            column.Clear();
+            column.Clear(); Tips.Clear();
             VisualElement view;
             try { view = Screens.Build(); }
             catch (Exception e) { Debug.LogException(e); view = Screens.ErrorView(e); }
@@ -195,6 +196,7 @@ namespace CFDream.UI
             root.style.backgroundColor = Screens.Backdrop;
             var v = Game.View;
             SoundFor(v);
+            Tips.AfterRender(column);
             bool showHome = v == View.Run || v == View.Results || v == View.Profile || (v == View.Create && Game.Restyle);
             home.Show(showHome); root.EnableInClassList("has-home", showHome);
             if (same)
