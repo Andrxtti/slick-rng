@@ -9,13 +9,23 @@ third-person home, Study drill, Mixamo acting in scenes, re-voiced cast.
 - New voice colour: narrator, Slick, Tommy "The Shark", Bio "The Ghost".
 - Load time (data file now 70 MB).
 
-## Next, by model
-- Sonnet: phone prop for text beats (check first that the 3D scene shows during text beats); ch3-7 set dressing;
-  hook up Sit To Stand / Stand To Sit / Walking / Sitting clips to the home (sit at the card table, walk to the door);
-  pick extra clips per mood (Shrugging, Pointing, Angry Gesture, Agreeing...) into Acting().
-- Fable extra: look pass 2 (skin/hair shading); win/bust cutscene direction; finish the storyline (chapters 1-7 beats, shot lists).
-- No walkable city. Travel is always a cutscene. Online play (multiplayer) is its own phase, started after the storyline is complete.
-- Haiku/script: builds, publishing, script edits, re-voicing.
+## To-do list (model · effort)
+Sonnet · medium (do next, small, safe)
+1. Phone prop in text beats. First check whether the 3D scene shows during text beats; skip if not.
+2. Set dressing for chapters 3-7 (props and lights per set, like the diner pass). Needs screenshots to judge.
+3. Sit/stand/walk clips at home, once there is sit furniture (couch, card table) with a use point.
+4. Fix list from Steven's Beta 1.70 testing (opening order, diner, joystick feel).
+Fable · extra (one sitting each)
+5. Storyline: chapters 1-7 beats and shot lists, in the order testers reach them (1-3 first).
+6. Win and bust cutscene direction (camera, clips, music stings).
+7. Character look pass 2 (skin and hair shading).
+Fable · low
+8. Review of any Sonnet change that touches the opening flow or saves (Calendar, Play.Start, SceneEnd).
+Haiku / script
+9. Builds and publishing (a code-change build takes ~19 min on this PC when it is busy), script-edit pulls, re-voicing after script edits.
+Later (after the storyline is complete)
+10. Online play phase (multiplayer). No walkable city: travel stays cutscenes.
+Steven's side: test Beta 1.70; edit the script doc; music tracks; Apple developer account later.
 
 ## Notes
 - Mixamo clips live in Assets/Dream/Anim/Mixamo (27 files, FBX for Unity, no skin, 30 fps). "Dream > Build acting set"

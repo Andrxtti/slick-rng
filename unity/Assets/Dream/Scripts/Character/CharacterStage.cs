@@ -307,7 +307,7 @@ namespace CFDream.Character
             string key = kind + (speakerIsYou ? "|you" : "|them");
             if (key == shotKey && shotT < 1) return;
             if (shotKey != null && key != shotKey) { Sound.Play("cut", 0.5f); cutFade = 1f; }   // a cut: a soft whoosh and a dip to black
-            shotKey = key; baseKind = shotKind = kind; shotYou = subjYou = speakerIsYou; narr = narration; shotDur = dur; shotT = 0; actYou = speakerIsYou; actT = 0; sinceShot = 0; reacted = false;
+            shotKey = key; shotN++; baseKind = shotKind = kind; shotYou = subjYou = speakerIsYou; narr = narration; shotDur = dur; shotT = 0; actYou = speakerIsYou; actT = 0; sinceShot = 0; reacted = false;
             Aim(); PlaceCam(0);
         }
         // coverage: a long line cuts to the listener for a moment (a reaction), then back to the speaker
@@ -436,8 +436,10 @@ namespace CFDream.Character
             body?.Express(mood ?? "", talk && actYou && !narr, actT);
             if (string.IsNullOrEmpty(mood))
             {
-                clips = body != null && body.Act(talk && actYou && !narr ? "Talking" : "Breathing Idle");
-                bool npcClips = npc != null && npc.Act(talk && !actYou && !narr ? "Talking" : "Breathing Idle"); clips |= npcClips;
+                // the speaker's gesture changes from line to line; the listener nods along now and then
+                string say = TalkClips[shotN % TalkClips.Length], hear = shotN % 3 == 0 ? "Head Nod Yes" : shotN % 5 == 0 ? "Thinking" : "Breathing Idle";
+                clips = body != null && body.Act(talk && actYou && !narr ? say : talk && !actYou && !narr ? hear : "Breathing Idle");
+                bool npcClips = npc != null && npc.Act(talk && !actYou && !narr ? say : talk && actYou && !narr ? hear : "Breathing Idle"); clips |= npcClips;
             }
             npc?.Express(mood == "win" ? "cash" : mood == "bust" || mood == "cooler" ? "think" : "", talk && !actYou && !narr, actT);
             // the speaker's right hand lifts and turns while the line plays, then settles
@@ -450,7 +452,8 @@ namespace CFDream.Character
                 g.Right(target, w);
             }
         }
-        string mood; bool clips;
+        string mood; bool clips; int shotN;
+        static readonly string[] TalkClips = { "Talking", "Talking", "Agreeing", "Talking", "Pointing", "Shrugging", "Talking", "Standing Arguing" };
         Gestures GesturesOf(ICharacterBody b)
         {
             var an = b?.Root != null ? b.Root.GetComponentInChildren<Animator>() : null; if (an == null) return null;
