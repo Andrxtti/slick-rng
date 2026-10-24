@@ -1,0 +1,224 @@
+{
+ "top:office": {
+  "slot": "male_tshirt_white",
+  "recipe": "male_tshirt_white_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "tshirt_white"
+ },
+ "top:tee": {
+  "slot": "male_tshirt_white",
+  "recipe": "male_tshirt_white_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "tshirt_white"
+ },
+ "top:jersey": {
+  "slot": "male_tshirt_white",
+  "recipe": "male_tshirt_white_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "tshirt_white"
+ },
+ "top:polo": {
+  "slot": "male_hoodie_grey",
+  "recipe": "male_hoodie_grey_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "hoodie_grey"
+ },
+ "top:hoodie": {
+  "slot": "male_hoodie_grey",
+  "recipe": "male_hoodie_grey_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "hoodie_grey"
+ },
+ "top:fleece": {
+  "slot": "male_hoodie_grey",
+  "recipe": "male_hoodie_grey_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "hoodie_grey"
+ },
+ "top:cardigan": {
+  "slot": "male_hoodie_grey",
+  "recipe": "male_hoodie_grey_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "hoodie_grey"
+ },
+ "top:track": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:denim": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:varsity": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:leather": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:bomber": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:vest": {
+  "slot": "male_tshirt_white",
+  "recipe": "male_tshirt_white_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "tshirt_white"
+ },
+ "top:blazer": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:suit": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:designer": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:tux": {
+  "slot": "male_jacket_hive",
+  "recipe": "male_jacket_hive_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "jacket_hive"
+ },
+ "top:flannel": {
+  "slot": "male_hoodie_grey",
+  "recipe": "male_hoodie_grey_Recipe",
+  "wardrobeSlot": "Chest",
+  "textures": "hoodie_grey"
+ },
+ "bottom:khakis": {
+  "slot": "male_sportpants_alt_black",
+  "recipe": "male_sportpants_alt_black_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sportpants_alt_black"
+ },
+ "bottom:jeans": {
+  "slot": "male_sportpants_alt_black",
+  "recipe": "male_sportpants_alt_black_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sportpants_alt_black"
+ },
+ "bottom:blackjeans": {
+  "slot": "male_sportpants_alt_black",
+  "recipe": "male_sportpants_alt_black_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sportpants_alt_black"
+ },
+ "bottom:sweats": {
+  "slot": "male_sweatpants_black",
+  "recipe": "male_sweatpants_black_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sweatpants_black"
+ },
+ "bottom:joggers": {
+  "slot": "male_sportpants_grey",
+  "recipe": "male_sportpants_grey_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sportpants_grey"
+ },
+ "bottom:trackpants": {
+  "slot": "male_sportpants_grey",
+  "recipe": "male_sportpants_grey_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sportpants_grey"
+ },
+ "bottom:shorts": {
+  "slot": "male_shorts_black_cotton",
+  "recipe": "male_shorts_black_cotton_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "shorts_black_cotton"
+ },
+ "bottom:cargo": {
+  "slot": "male_shorts_black_cotton",
+  "recipe": "male_shorts_black_cotton_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "shorts_black_cotton"
+ },
+ "bottom:slacks": {
+  "slot": "male_sportpants_alt_black",
+  "recipe": "male_sportpants_alt_black_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sportpants_alt_black"
+ },
+ "bottom:tuxpants": {
+  "slot": "male_sportpants_alt_black",
+  "recipe": "male_sportpants_alt_black_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sportpants_alt_black"
+ },
+ "bottom:plaidpants": {
+  "slot": "male_sportpants_alt_black",
+  "recipe": "male_sportpants_alt_black_Recipe",
+  "wardrobeSlot": "Legs",
+  "textures": "sportpants_alt_black"
+ },
+ "shoes:sneakers": {
+  "slot": "male_shoe_low_white.001",
+  "recipe": "male_shoe_low_white.001_Recipe",
+  "wardrobeSlot": "Feet",
+  "textures": "shoe_low_white"
+ },
+ "shoes:runners": {
+  "slot": "male_shoe_low_white.001",
+  "recipe": "male_shoe_low_white.001_Recipe",
+  "wardrobeSlot": "Feet",
+  "textures": "shoe_low_white"
+ },
+ "shoes:dress": {
+  "slot": "male_shoe_low_white.001",
+  "recipe": "male_shoe_low_white.001_Recipe",
+  "wardrobeSlot": "Feet",
+  "textures": "shoe_low_white"
+ },
+ "shoes:loafers": {
+  "slot": "male_shoe_low_white.001",
+  "recipe": "male_shoe_low_white.001_Recipe",
+  "wardrobeSlot": "Feet",
+  "textures": "shoe_low_white"
+ },
+ "shoes:highs": {
+  "slot": "male_shoes_tall",
+  "recipe": "male_shoes_tall_Recipe",
+  "wardrobeSlot": "Feet",
+  "textures": "shoes_tall_white"
+ },
+ "shoes:boots": {
+  "slot": "male_shoes_tall",
+  "recipe": "male_shoes_tall_Recipe",
+  "wardrobeSlot": "Feet",
+  "textures": "shoes_tall_white"
+ },
+ "shoes:slides": {
+  "slot": "male_shoe_low_white.001",
+  "recipe": "male_shoe_low_white.001_Recipe",
+  "wardrobeSlot": "Feet",
+  "textures": "shoe_low_white"
+ },
+ "shoes:icy": {
+  "slot": "male_shoes_tall",
+  "recipe": "male_shoes_tall_Recipe",
+  "wardrobeSlot": "Feet",
+  "textures": "shoes_tall_white"
+ }
+}

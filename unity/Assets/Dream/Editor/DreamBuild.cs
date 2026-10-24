@@ -173,9 +173,10 @@ namespace CFDream.EditorTools
                     var ps = ti.GetPlatformTextureSettings("WebGL");
                     bool detail = ti.textureType == TextureImporterType.NormalMap || Detail.Any(k => Path.GetFileName(p).IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
                     var want = detail ? TextureImporterFormat.ASTC_8x8 : TextureImporterFormat.ASTC_6x6;
-                    if (ps.overridden && ps.format == want) continue;
+                    if (ps.overridden && ps.format == want && !(p.StartsWith("Assets/Dream/Clothes/") && ps.maxTextureSize > 512)) continue;
                     if (ps.overridden && ps.format != TextureImporterFormat.Automatic && !ps.format.ToString().StartsWith("DXT") && !ps.format.ToString().StartsWith("BC")) continue;   // a deliberate format: keep it
                     if (!ps.overridden) ps.maxTextureSize = ti.maxTextureSize;
+                    if (p.StartsWith("Assets/Dream/Clothes/")) ps.maxTextureSize = Mathf.Min(ps.maxTextureSize, 512);   // painted clothes: plenty on a phone
                     ps.overridden = true; ps.format = want; ps.compressionQuality = 50;
                     ti.SetPlatformTextureSettings(ps); EditorUtility.SetDirty(ti); ti.SaveAndReimport(); changed++;
                 }

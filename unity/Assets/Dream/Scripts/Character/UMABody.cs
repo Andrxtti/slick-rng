@@ -204,7 +204,11 @@ namespace CFDream.Character
         {
             foreach (var m in new[] { HairMap, BeardMap, BrowMap, TopMap }) foreach (var a in m.Values) foreach (var n in a) yield return n;
             foreach (var n in new[] { "Senior_U_Wardrobe", "Adult_M_Wardrobe", "Freckled_Light_U_Wardrobe", "male_sweatpants_black_Recipe", "male_sportpants_alt_black_Recipe",
-                                      "male_shoes_tall_Recipe", "male_shoe_low_white.001_Recipe", "shoe_low_white_Recipe", "male_jacket_hive_Recipe", "male_hoodie_grey_Recipe" }) yield return n;
+                                      "male_shoes_tall_Recipe", "male_shoe_low_white.001_Recipe", "shoe_low_white_Recipe", "male_jacket_hive_Recipe", "male_hoodie_grey_Recipe",
+                                      // base garments the closet paints its own looks onto (Dream > 3D characters > Build closet clothes)
+                                      "male_tshirt_white_Recipe", "male_tanktop_yellow_Recipe", "male_shorts_black_cotton_Recipe", "male_shorts_white_Recipe", "male_shorts_hive_Recipe",
+                                      "male_sportpants_grey_Recipe", "male_sportpants_blueWhite_Recipe", "male_tights_black_Recipe", "sportswear_sweater_granit_Recipe", "sportwear_pants_granit_Recipe",
+                                      "shoes_tall_white_Recipe", "male_shoes_tall_turquoise_Recipe", "male_hoodie_blue_Recipe", "male_hoodie_blueWhite_Recipe" }) yield return n;
         }
 
         static readonly Dictionary<string, string[]> HairMap = new Dictionary<string, string[]>
@@ -241,7 +245,7 @@ namespace CFDream.Character
         static string DressKey(CharacterSpec s)
         {
             var o = s.Get("outfit"); var h = s.Get("head");
-            return $"{s.hairStyle}|{s.facial}|{s.brows}|{s.age}|{s.freckles}|{o?.id}|{(h != null && h.id != "phones" ? "hat" : "")}";
+            return $"{s.hairStyle}|{s.facial}|{s.brows}|{s.age}|{s.freckles}|{o?.id}|{s.Get("bottom")?.id}|{s.Get("shoes")?.id}|{(h != null && h.id != "phones" ? "hat" : "")}";
         }
 
         void Dress(CharacterSpec s)
@@ -257,18 +261,26 @@ namespace CFDream.Character
             foreach (var slot in new[] { "Complexion", "Face" })
                 if (skinLook != null && Has(avail, slot, skinLook)) { Put(avail, slot, skinLook); skinLook = null; }
 
-            // clothes: what the closet item says to wear, else our pick from UMA's built-in wardrobe
+            // clothes: the painted closet piece when it's built (dream_<slot>_<id>), else the item's own asset, else a stand-in
             var o = s.Get("outfit"); string id = o?.id ?? "office";
             var def = Wardrobe.For("outfit", id);
             bool formal = Tailored.Contains(id);
-            string top = def != null && !string.IsNullOrEmpty(def.asset) ? def.asset
-                : Pick(avail, def != null && !string.IsNullOrEmpty(def.umaSlot) ? def.umaSlot : "Chest", TopMap.TryGetValue(id, out var tm) ? tm : new[] { formal ? "male_jacket_hive_Recipe" : "male_hoodie_grey_Recipe" }, true);
-            Put(avail, def != null && !string.IsNullOrEmpty(def.umaSlot) ? def.umaSlot : "Chest", top);
-            Put(avail, "Legs", Pick(avail, "Legs", formal ? new[] { "male_sweatpants_black_Recipe", "male_sportpants_alt_black_Recipe" } : new[] { "male_sportpants_alt_black_Recipe", "male_sweatpants_black_Recipe" }, true));
-            Put(avail, "Feet", Pick(avail, "Feet", formal ? new[] { "male_shoes_tall_Recipe", "male_shoe_low_white.001_Recipe" } : new[] { "male_shoe_low_white.001_Recipe", "shoe_low_white_Recipe" }, true));
+            string chest = def != null && !string.IsNullOrEmpty(def.umaSlot) ? def.umaSlot : "Chest";
+            string top = Has(avail, chest, "dream_top_" + id) ? "dream_top_" + id
+                : def != null && !string.IsNullOrEmpty(def.asset) ? def.asset
+                : Pick(avail, chest, TopMap.TryGetValue(id, out var tm) ? tm : new[] { formal ? "male_jacket_hive_Recipe" : "male_hoodie_grey_Recipe" }, true);
+            Put(avail, chest, top);
+            var b = s.Get("bottom"); string bid = b?.id;
+            string legs = bid != null && Has(avail, "Legs", "dream_bottom_" + bid) ? "dream_bottom_" + bid
+                : Pick(avail, "Legs", formal ? new[] { "dream_bottom_slacks", "male_sportpants_alt_black_Recipe", "male_sweatpants_black_Recipe" } : new[] { "dream_bottom_jeans", "male_sportpants_alt_black_Recipe", "male_sweatpants_black_Recipe" }, true);
+            Put(avail, "Legs", legs);
+            var sh = s.Get("shoes"); string sid = sh?.id;
+            string feet = sid != null && Has(avail, "Feet", "dream_shoes_" + sid) ? "dream_shoes_" + sid
+                : Pick(avail, "Feet", formal ? new[] { "dream_shoes_dress", "male_shoes_tall_Recipe", "male_shoe_low_white.001_Recipe" } : new[] { "dream_shoes_sneakers", "male_shoe_low_white.001_Recipe", "shoe_low_white_Recipe" }, true);
+            Put(avail, "Feet", feet);
             if (def != null) foreach (var extra in def.with)
                 {
-                    var p = extra.Split(':'); if (p.Length != 2) continue;
+                    var p = extra.Split(':'); if (p.Length != 2 || p[0] == "Legs" || p[0] == "Feet") continue;
                     if (Has(avail, p[0], p[1])) Put(avail, p[0], p[1]);
                 }
         }

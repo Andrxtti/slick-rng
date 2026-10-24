@@ -11,7 +11,7 @@ namespace CFDream
 
     public static class Fashion
     {
-        public static readonly string[] Wearable = { "outfit", "eyes", "head", "ear", "chain", "ring", "wrist", "watch", "patch", "sleeve" };
+        public static readonly string[] Wearable = { "outfit", "bottom", "shoes", "eyes", "head", "ear", "chain", "ring", "wrist", "watch", "patch", "sleeve" };
         public static readonly int[] WearAt = { 0, 25, 100, 300 }; // good decisions made while wearing it
         public static readonly string[] WearN = { "New", "Broken in", "Signature", "Mastered" };
         public static readonly string[] WearGives = { "", "New colourways and metal finishes", "Your monogram, stitched or engraved", "A finish that catches the light" };
@@ -102,7 +102,16 @@ namespace CFDream
         }
 
         // ------------------------------------------------------------ saved fits
-        public const int FitSlots = 4;
+        public const int FitSlots = 4, Looks = 2;
+        public static int Look(State s) => Math.Max(0, Math.Min(Looks - 1, s.pg.St("look")));
+        public static void LookSync(State s) => FitSave(s, Look(s));                       // the look that's on follows what you wear
+        public static void LookSwitch(State s, int k)
+        {
+            k = Math.Max(0, Math.Min(Looks - 1, k)); if (k == Look(s)) return;
+            LookSync(s);
+            if (k < s.fits.Count && s.fits[k] != null) FitWear(s, k); else FitSave(s, k);   // a new look starts as a copy of this one
+            s.pg.st["look"] = k;
+        }
         public static void FitSave(State s, int i)
         {
             while (s.fits.Count <= i) s.fits.Add(null);

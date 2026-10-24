@@ -397,7 +397,7 @@ Label.fit-row-t { font-size: 15px; }
 .tile.ghost-tile { background-color: rgba(0, 0, 0, 0); }
 .tile.down { scale: 0.96 0.96; }
 .tile-pic { min-height: 64px; align-items: center; justify-content: center; }
-Label.tile-t { font-size: 12px; -unity-text-align: middle-center; margin-top: 4px; }
+Label.tile-t { font-size: 12px; -unity-text-align: middle-center; margin-top: 4px; white-space: normal; max-height: 32px; overflow: hidden; }
 Label.tile-sub { font-size: 10px; color: #a99d86; -unity-text-align: middle-center; margin-top: 2px; }
 .tile.locked Label.tile-t { color: #a99d86; }
 .tile-check { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 9px; background-color: #d9b36c; align-items: center; justify-content: center; }
@@ -497,3 +497,21 @@ Label.morning-i { font-size: 14px; margin-right: 8px; }
 Label.laptop-back-t { font-size: 13px; color: #d9b36c; margin-left: 2px; }
 .laptop-url { justify-content: center; }
 Label.laptop-url-t { font-size: 12px; color: #8a7f6c; }
+
+/* ---- closet: looks, slot grid, slot page */
+.looks { align-items: center; margin-top: 6px; }
+.look-tab { height: 34px; padding: 0 16px; border-radius: 17px; margin-right: 8px; align-items: center; justify-content: center; background-color: #1a1712; border-width: 1.5px; border-color: rgba(0, 0, 0, 0); flex-direction: row; }
+.look-tab.on { background-color: #f3eadb; }
+.look-tab.ghost { background-color: rgba(0, 0, 0, 0); border-color: #4d4232; margin-right: 0; }
+.look-tab.down { scale: 0.95 0.95; }
+Label.look-t { font-size: 13px; color: #d6ccb8; margin-left: 4px; }
+.look-tab.on Label.look-t { color: #1a1408; }
+.thumb { flex-shrink: 0; }
+.tile.slot-tile { background-color: #1c1813; padding-top: 12px; }
+.tile.slot-tile Label.tile-t { font-size: 11px; letter-spacing: 1px; -unity-font-style: bold; color: #a99d86; }
+.tile.slot-tile Label.tile-sub { font-size: 11px; color: #f3eadb; margin-top: 3px; }
+.slot-head { align-items: center; margin-top: 6px; margin-bottom: 4px; }
+.back-b { height: 34px; padding: 0 12px 0 6px; border-radius: 17px; align-items: center; background-color: #1a1712; }
+.back-b.down { scale: 0.95 0.95; }
+Label.back-t { font-size: 13px; color: #d9b36c; margin-left: 2px; }
+Label.slot-title { font-size: 15px; color: #f3eadb; }

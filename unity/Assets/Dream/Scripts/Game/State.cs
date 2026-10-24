@@ -63,7 +63,7 @@ namespace CFDream
         public Dictionary<string, int> titles = new Dictionary<string, int> { { "local", 0 }, { "room", 0 }, { "ring", 0 }, { "bracelet", 0 }, { "tour", 0 }, { "glo", 0 }, { "titan", 0 }, { "me", 0 } };
         public Dictionary<string, EventRec> events = new Dictionary<string, EventRec>();
         public Dictionary<string, double> flags = new Dictionary<string, double>();
-        public Dictionary<string, string> eq = new Dictionary<string, string> { { "outfit", "office" }, { "eyes", "readers" }, { "head", "none" }, { "ear", "none" }, { "ring", "none" }, { "wrist", "none" }, { "watch", "digital" }, { "chain", "none" }, { "home", "studio" }, { "ride", "bus" }, { "pet", "none" }, { "patch", "none" }, { "sleeve", "none" } };
+        public Dictionary<string, string> eq = new Dictionary<string, string> { { "outfit", "office" }, { "bottom", "khakis" }, { "shoes", "sneakers" }, { "eyes", "readers" }, { "head", "none" }, { "ear", "none" }, { "ring", "none" }, { "wrist", "none" }, { "watch", "digital" }, { "chain", "none" }, { "home", "studio" }, { "ride", "bus" }, { "pet", "none" }, { "patch", "none" }, { "sleeve", "none" } };
         public Dictionary<string, int> dye = new Dictionary<string, int>(), fin = new Dictionary<string, int>(), tickets = new Dictionary<string, int>();
         public Dictionary<string, WearRec> wear = new Dictionary<string, WearRec>();
         public Dictionary<string, Got> got = new Dictionary<string, Got>();

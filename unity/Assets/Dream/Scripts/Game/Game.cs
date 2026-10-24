@@ -14,7 +14,7 @@ namespace CFDream
     {
         public static State State;
         public static View View = View.Title;
-        public static string Tab = "home", ClosetCat = "shirts", ProfileTab = "quests";
+        public static string Tab = "home", ClosetCat = "", ProfileTab = "quests";
         public static Run Run;
         public static Trip Trip;
         public static Result Last;
@@ -29,7 +29,7 @@ namespace CFDream
         {
             // Play mode can start without a script reload, so nothing from the last session may linger here
             Run = null; Last = null; Scene = null; Morning = null; Trip = null; Restyle = false; Draft = new Look(); DraftName = "";
-            View = View.Title; Tab = "home"; ClosetCat = "shirts"; CalSel = -1; CalWk = 0;
+            View = View.Title; Tab = "home"; ClosetCat = ""; CalSel = -1; CalWk = 0;
             DB.Load();
             State = State.Load();
             Calendar.Migrate(State);
@@ -174,10 +174,24 @@ namespace CFDream
         public static void Equip(string slot, string id)
         {
             var s = State; if (id != "none" && !s.Owns(slot, id) && !(slot == "outfit" && id == "office")) return;
-            s.eq[slot] = id; s.newItems.Remove(slot + ":" + id); s.Save(); Render();
+            s.eq[slot] = id; s.newItems.Remove(slot + ":" + id); Fashion.LookSync(s); s.Save(); Render();
         }
-        public static void Dye(string id, int v) { if (v > 0) State.dye[id] = v; else State.dye.Remove(id); State.Save(); Render(); }
-        public static void SetFinish(string slot, string id, int v) { string k = slot + ":" + id; if (v >= 0) State.fin[k] = v; else State.fin.Remove(k); State.Save(); Render(); }
+        public static void Dye(string id, int v) { if (v > 0) State.dye[id] = v; else State.dye.Remove(id); Fashion.LookSync(State); State.Save(); Render(); }
+        public static void SetFinish(string slot, string id, int v) { string k = slot + ":" + id; if (v >= 0) State.fin[k] = v; else State.fin.Remove(k); Fashion.LookSync(State); State.Save(); Render(); }
+        // Look 1 / Look 2: two outfits you flip between; whatever you change goes into the one that's on
+        public static void LookSwitch(int k) { Fashion.LookSwitch(State, k); State.Save(); Render(); }
+        public static void Randomize()
+        {
+            var s = State; var rnd = new Random();
+            foreach (var slot in Fashion.Wearable)
+            {
+                var pool = DB.Items.Where(i => i.slot == slot && (s.Owns(slot, i.id) || (slot == "outfit" && i.id == "office"))).Select(i => i.id).ToList();
+                bool required = slot == "outfit" || slot == "bottom" || slot == "shoes";
+                if (!required) { pool.Add("none"); if (rnd.NextDouble() < 0.35) { s.eq[slot] = "none"; continue; } }
+                if (pool.Count > 0) s.eq[slot] = pool[rnd.Next(pool.Count)];
+            }
+            Fashion.LookSync(s); s.Save(); Render();
+        }
         public static void FitSave(int i) { Fashion.FitSave(State, i); State.Save(); Render(); }
         public static void FitWear(int i) { Fashion.FitWear(State, i); State.Save(); Render(); }
         public static void SetTab(string t) { Tab = t; View = View.Hub; Render(); }
