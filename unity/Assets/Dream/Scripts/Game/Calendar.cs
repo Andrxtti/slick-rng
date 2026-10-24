@@ -185,7 +185,7 @@ namespace CFDream
         // ------------------------------------------------------------ the week on the Spacepad (day job)
         public static int WeekStart(int d) => d - Date(d).dow;   // the Sunday
         public static string PlanFor(State s, int d) => s.cal.plan.TryGetValue(d, out var v) ? v : null;
-        public static bool PlanDue(State s) => s.job == "nights" && s.ch >= 1 && s.cal.planned < WeekOf(s.cal.d) && Date(s.cal.d).dow == 0;
+        public static bool PlanDue(State s) => s.ch >= 1 && s.cal.planned < WeekOf(s.cal.d) && Date(s.cal.d).dow == 0;   // every Sunday, job or not
         public static void SetPlan(State s, int d, string what)
         {
             if (string.IsNullOrEmpty(what)) s.cal.plan.Remove(d); else s.cal.plan[d] = what;
@@ -197,13 +197,18 @@ namespace CFDream
         // with the day job: how many nights to skip to the next night you can play (0 = tonight)
         public static int SkipTo(State s)
         {
-            if (s.job != "nights") return 0;
             int dow = Date(s.cal.d).dow;
+            // a planned week (job or not): sleeping goes straight to the next night you picked; nights you didn't pick
+            // are never lived through one at a time
+            var week = s.cal.plan.Keys.Where(k => k >= WeekStart(s.cal.d) && k <= WeekStart(s.cal.d) + 6).OrderBy(k => k).ToList();
+            if (week.Count > 0)
+            {
+                var ahead = week.Where(k => k > s.cal.d).ToList();
+                foreach (var k in ahead) { var w = s.cal.plan[k]; if (s.job != "nights" || (w == "live" ? LiveLeft(s) > 0 : SlotsLeft(s).left > 0)) return k - s.cal.d; }
+                return 7 - dow;   // planned nights all behind you: next Sunday, a new plan
+            }
+            if (s.job != "nights") return 0;
             if (AllPlayed(s)) return 7 - dow;                                  // next Sunday: a new week
-            // a planned week: the next planned day with something left to play
-            var ahead = s.cal.plan.Keys.Where(k => k > s.cal.d && k <= WeekStart(s.cal.d) + 6).OrderBy(k => k).ToList();
-            foreach (var k in ahead) { var w = s.cal.plan[k]; if (w == "live" ? LiveLeft(s) > 0 : SlotsLeft(s).left > 0) return k - s.cal.d; }
-            if (ahead.Count == 0 && s.cal.plan.Keys.Any(k => k >= WeekStart(s.cal.d) && k <= WeekStart(s.cal.d) + 6)) return 7 - dow;   // planned days all behind you
             if (SlotsLeft(s).left == 0 && LiveLeft(s) > 0 && dow >= 1 && dow <= 5) return 6 - dow;   // Saturday's live game
             return 0;
         }

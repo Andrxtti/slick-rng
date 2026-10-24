@@ -543,3 +543,13 @@ Label.plan-day { font-size: 14px; color: #f3ecdc; }
 
 /* online lobby: games still to come */
 .event.soon { opacity: 0.6; }
+
+/* the film look */
+.film-grade, .film-vignette, .film-grain, .film-fade, .film-title { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+.film-grain { opacity: 0.12; -unity-background-scale-mode: scale-and-crop; background-size: 192px 192px; background-repeat: repeat; }
+.film-fade { background-color: #000; opacity: 0; }
+.film-title { top: auto; bottom: 26px; left: 18px; right: auto; opacity: 0; translate: -14px 0; transition-property: opacity, translate; transition-duration: 0.9s, 0.9s; transition-timing-function: ease-out, ease-out; }
+.film-title.in { opacity: 1; translate: 0 0; }
+Label.film-title-k { font-size: 10px; letter-spacing: 3px; color: #d9b36c; }
+Label.film-title-t { font-size: 22px; color: #f3ecdc; margin-top: 2px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); }
+.icon-btn.snd { margin-right: 6px; }

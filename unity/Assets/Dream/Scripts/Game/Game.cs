@@ -162,7 +162,9 @@ namespace CFDream
         public static void Finish(bool quit)
         {
             var run = Run; if (run == null) return; Run = null;
-            Last = Play.Finish(run, quit); View = View.Results; Render();
+            Last = Play.Finish(run, quit); View = View.Results;
+            var L = Last; if (L != null) Sound.Play(L.bust ? "bust" : L.place == 1 && L.ev.kind != "cash" ? "win" : L.prize > 0 || L.net > 0 ? "chips" : "bust", L.bust ? 0.9f : 1f);
+            Render();
         }
         public static void Reenter() { var ev = Last?.ev; if (ev == null) return; StartEvent(ev.id, true); }
 

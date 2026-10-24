@@ -301,7 +301,7 @@ namespace CFDream.UI
             if (!string.IsNullOrEmpty(def.sub) && def.title != null) head.Add(U.Hint(def.sub));
             var skip = U.Btn(sc.replay ? "Close" : "Skip", () => { if (sc.replay) { Game.Scene = null; Game.View = View.Hub; Game.Tab = "story"; Game.Render(); } else Game.Skip(); }, "ghost small");
             skip.AddToClassList("scene-skip");
-            head.Add(skip);
+            head.Add(SoundToggle()); head.Add(skip);
             s.Add(head);
 
             var stage = U.Div("scene-stage"); var bottom = U.Div("scene-bottom");
@@ -322,7 +322,7 @@ namespace CFDream.UI
                     string setTier = def.place == "home" ? st.Eq("home") : "set_" + (def.place ?? "cardroom");
                     var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = speakerYou || other == null, Mood = b.mood };
                     film.AddToClassList("film");
-                    var bars = U.Div("film-bars").NoPick(); film.Add(bars);
+                    Film(film, def, sc, tint);
                     stage.Add(film); stage.AddToClassList("movie");
                 }
                 if (b.sp == "n")
@@ -333,6 +333,7 @@ namespace CFDream.UI
                 }
                 else if (b.text)
                 {
+                    if (!sc.replay || true) Sound.Play("text", 0.7f);
                     beat = U.Div("phone");
                     var ph = U.Row().Cls("phone-head");
                     if (fig != null) ph.Add(new Portrait(fig, 34, false));
@@ -378,6 +379,60 @@ namespace CFDream.UI
             int total = def.beats.Count; for (int i = 0; i < total; i++) dots.Add(U.Div("dot").Cls(i < sc.i ? "done" : i == sc.i ? "on" : ""));
             s.Add(dots);
             return s;
+        }
+
+        public static VisualElement SoundToggle()
+        {
+            var b = U.Div("icon-btn snd"); b.Add(new Icon(Sound.On ? "sound" : "mute", 18, C.Mute));
+            b.Tap(() => { Sound.On = !Sound.On; Game.Render(); });
+            return b;
+        }
+        // the film look over a scene shot: colour grade, vignette, grain, letterbox, a dip to black on every cut,
+        // a fade in from black with a title card when the scene opens
+        static Texture2D grainTex;
+        static void Film(VisualElement film, Scene def, ScenePlay sc, Color tint)
+        {
+            var grade = U.Div("film-grade").NoPick(); grade.style.backgroundColor = C.A(tint, 0.10f); film.Add(grade);
+            var vig = U.Div("film-vignette").NoPick();
+            vig.generateVisualContent += mgc =>
+            {
+                var r = vig.contentRect; var p = mgc.painter2D; float R = Mathf.Max(r.width, r.height) * 0.78f; var cen = new Vector2(r.width / 2, r.height / 2);
+                for (int i = 0; i < 14; i++)
+                {
+                    float t = i / 13f; p.fillColor = new Color(0, 0, 0, 0.035f + 0.02f * t); p.strokeColor = Color.clear;
+                    p.BeginPath(); p.Arc(cen, R * (1.25f - 0.55f * t), Angle.Degrees(0), Angle.Degrees(360)); p.Arc(cen, R * 2.5f, Angle.Degrees(360), Angle.Degrees(0), ArcDirection.CounterClockwise); p.ClosePath(); p.Fill(FillRule.OddEven);
+                }
+            };
+            film.Add(vig);
+            if (grainTex == null)
+            {
+                grainTex = new Texture2D(96, 96, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Repeat };
+                var px = new Color32[96 * 96]; var rng = new System.Random(7);
+                for (int i = 0; i < px.Length; i++) { byte v = (byte)rng.Next(0, 256); px[i] = new Color32(v, v, v, (byte)rng.Next(14, 40)); }
+                grainTex.SetPixels32(px); grainTex.Apply();
+            }
+            var grain = U.Div("film-grain").NoPick(); grain.style.backgroundImage = new StyleBackground(grainTex); film.Add(grain);
+            var bars = U.Div("film-bars").NoPick(); film.Add(bars);
+            var fade = U.Div("film-fade").NoPick(); film.Add(fade);
+            bool opening = sc.i == 0 && sc.extra.Count == 0;
+            float t0 = Time.realtimeSinceStartup;
+            if (opening)
+            {
+                var title = U.Div("film-title").NoPick();
+                title.Add(U.T(DB.Place(def.place, "sub").ToUpperInvariant(), "film-title-k", Fonts.Semi));
+                title.Add(U.T(def.title != null && def.sub != null ? def.sub : (def.title ?? ""), "film-title-t", Fonts.Disp));
+                film.Add(title);
+                title.schedule.Execute(() => title.AddToClassList("in")).StartingIn(900);
+                title.schedule.Execute(() => title.RemoveFromClassList("in")).StartingIn(4200);
+            }
+            // every frame: the grain crawls, the fade follows the cuts (and the opening fade-in)
+            film.schedule.Execute(() =>
+            {
+                var st = CharacterStage.Instance; float el = Time.realtimeSinceStartup - t0;
+                float f = st != null ? st.CutFade : 0; if (opening) f = Mathf.Max(f, 1f - el / 1.1f);
+                fade.style.opacity = Mathf.Clamp01(f);
+                grain.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Left, UnityEngine.Random.Range(0, 96)); grain.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Top, UnityEngine.Random.Range(0, 96));
+            }).Every(50);
         }
 
         // fade-and-rise on the next frame

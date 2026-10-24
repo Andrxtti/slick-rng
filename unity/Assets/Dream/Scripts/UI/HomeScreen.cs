@@ -54,7 +54,7 @@ namespace CFDream.UI
                     case "bed":
                         var sl = Calendar.SlotsLeft(s);
                         DreamApp.Confirm("Call it a night?", !Calendar.AllPlayed(s) ? "You could still play tonight." : "Big day tomorrow.",
-                            "Sleep", () => Game.Sleep(s.job == "nights" && Calendar.AllPlayed(s) ? 0 : 1), "Not yet");
+                            "Sleep", () => Game.Sleep(0), "Not yet");
                         break;
                 }
             }

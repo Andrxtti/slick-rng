@@ -48,6 +48,8 @@ namespace CFDream.Character
         // the movie: a set, the other character, and a camera that moves
         ICharacterBody npc; Transform npcPivot; string npcKey, npcPending; bool inScene;
         Vector3 camA, camB, lookA, lookB; float shotT = 1, shotDur = 6; string shotKey;
+        float cutFade; bool actYou = true; float actT;
+        public float CutFade => cutFade;   // 1 right after a cut, fading to 0: the film view dips to black with it
         public bool InRoom => framing == "room";
         public HomeLife Life => life;
         public PetLife Pets => pets;
@@ -210,7 +212,8 @@ namespace CFDream.Character
         {
             string key = kind + (speakerIsYou ? "|you" : "|them");
             if (key == shotKey && shotT < 1) return;
-            shotKey = key; shotDur = dur; shotT = 0;
+            if (shotKey != null && key != shotKey) { Sound.Play("cut", 0.5f); cutFade = 1f; }   // a cut: a soft whoosh and a dip to black
+            shotKey = key; shotDur = dur; shotT = 0; actYou = speakerIsYou; actT = 0;
             Vector3 P = HeadOf(true), Q = HeadOf(false), M = (P + Q) / 2; M.y = Mathf.Min(P.y, Q.y) - 0.35f;
             Vector3 d = Q - P; d.y = 0; if (d.sqrMagnitude < 1e-4f) d = Vector3.right; d.Normalize();
             Vector3 side = new Vector3(d.z, 0, -d.x); if (side.z < 0) side = -side;   // the camera lives on the open side of the set
@@ -238,6 +241,7 @@ namespace CFDream.Character
         // how you carry yourself in a shot: arms up for a win, head down after a bust or a cooler
         public void Pose(string mood)
         {
+            this.mood = mood;
             var an = body?.Root != null ? body.Root.GetComponentInChildren<Animator>() : null; if (an == null) return;
             var g = an.GetComponent<Gestures>(); if (g == null) g = an.gameObject.AddComponent<Gestures>();
             var head = Bone(HumanBodyBones.Head); if (head == null) { g.Clear(); return; }
@@ -252,9 +256,38 @@ namespace CFDream.Character
         }
         void PlaceCam(float t)
         {
-            float k = t * t * (3 - 2 * t);
-            cam.transform.localPosition = Vector3.Lerp(camA, camB, k);
-            cam.transform.LookAt(transform.TransformPoint(Vector3.Lerp(lookA, lookB, k)));
+            float k = t * t * (3 - 2 * t), tm = Time.time;
+            // a hand-held breath on the camera: tiny, slow, never still
+            var sway = new Vector3(Mathf.PerlinNoise(tm * 0.35f, 0.3f) - 0.5f, Mathf.PerlinNoise(0.7f, tm * 0.28f) - 0.5f, 0) * 0.016f;
+            var look = Vector3.Lerp(lookA, lookB, k) + new Vector3(Mathf.PerlinNoise(tm * 0.22f, 2.1f) - 0.5f, Mathf.PerlinNoise(4.2f, tm * 0.19f) - 0.5f, 0) * 0.02f;
+            cam.transform.localPosition = Vector3.Lerp(camA, camB, k) + sway;
+            cam.transform.LookAt(transform.TransformPoint(look));
+        }
+        // who looks at whom, and the speaker's hands: the listener watches the speaker, the speaker talks with a hand
+        void Acting()
+        {
+            actT += Time.deltaTime;
+            var gy = GesturesOf(body); var gn = GesturesOf(npc);
+            var hy = Bone(HumanBodyBones.Head); var hn = npc?.Bone(HumanBodyBones.Head);
+            if (hy == null && hn == null) return;
+            Vector3 P = hy != null ? hy.position : transform.TransformPoint(HeadOf(true)), Q = hn != null ? hn.position : transform.TransformPoint(HeadOf(false));
+            if (gy != null && string.IsNullOrEmpty(mood)) gy.Look(Q - Vector3.up * 0.02f, 0.75f, 0.15f);
+            if (gn != null) gn.Look(P - Vector3.up * 0.02f, 0.75f, 0.15f);
+            // the speaker's right hand lifts and turns while the line plays, then settles
+            var g = actYou ? gy : gn; var piv = actYou ? pivot : npcPivot; var head = actYou ? hy : hn;
+            if (g != null && head != null && string.IsNullOrEmpty(mood))
+            {
+                float w = Mathf.Clamp01(1.2f - actT * 0.18f) * (0.45f + 0.25f * Mathf.Sin(actT * 1.7f));
+                var chest = head.position - Vector3.up * 0.42f;
+                var target = chest + piv.forward * (0.28f + 0.06f * Mathf.Sin(actT * 2.3f)) + piv.right * (0.18f + 0.05f * Mathf.Sin(actT * 1.1f + 1f)) + Vector3.up * (0.05f * Mathf.Sin(actT * 2.9f));
+                g.Right(target, w);
+            }
+        }
+        string mood;
+        Gestures GesturesOf(ICharacterBody b)
+        {
+            var an = b?.Root != null ? b.Root.GetComponentInChildren<Animator>() : null; if (an == null) return null;
+            var g = an.GetComponent<Gestures>(); if (g == null) g = an.gameObject.AddComponent<Gestures>(); return g;
         }
         public void RoomTexture(float aspect)
         {
@@ -318,7 +351,13 @@ namespace CFDream.Character
         void LateUpdate()
         {
             if (views.Count == 0 || pivot == null) return;
-            if (inScene) { if (shotT < 1) { shotT = Mathf.Min(1, shotT + Time.deltaTime / shotDur); PlaceCam(shotT); } foreach (var v in views) v.MarkDirtyRepaint(); return; }
+            if (inScene)
+            {
+                if (shotT < 1) shotT = Mathf.Min(1, shotT + Time.deltaTime / shotDur);
+                PlaceCam(shotT); Acting();
+                if (cutFade > 0) cutFade = Mathf.Max(0, cutFade - Time.deltaTime / 0.35f);
+                foreach (var v in views) v.MarkDirtyRepaint(); return;
+            }
             if (framing != "room")   // in your place, walking decides which way you face
             {
                 if (!dragging) { spin *= 0.92f; yaw += spin; yaw = Mathf.LerpAngle(yaw, -12 + Mathf.Sin(Time.time * 0.6f) * 4, 0.01f); }

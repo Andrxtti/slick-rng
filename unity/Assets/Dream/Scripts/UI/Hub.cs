@@ -434,7 +434,10 @@ namespace CFDream.UI
             else
             {
                 c.Add(U.Kicker("Full-time"));
-                c.Add(U.P($"No paycheck. {Calendar.GamesCap} games a day."));
+                c.Add(U.P($"No paycheck. {Calendar.GamesCap} online games a day, plus a live one."));
+                var wk2 = Enumerable.Range(0, 7).Select(i => Calendar.WeekStart(s.cal.d) + i).Where(d => Calendar.PlanFor(s, d) != null).Select(d => Calendar.Dow[Calendar.Date(d).dow] + (Calendar.PlanFor(s, d) == "live" ? " live" : "")).ToList();
+                c.Add(U.Hint(wk2.Count > 0 ? "This week on the Spacepad: " + string.Join(" · ", wk2) : "No plan this week: every night is yours.").Mt(4));
+                c.Add(U.Btn("Plan the week on the Spacepad", () => Planner(s), "wide").Mt(8));
                 if (Calendar.Low(s)) c.Add(U.Btn("Ask Lou for the job back", () => DreamApp.Confirm("Back to Floor 34?", $"{U.Money(Calendar.Salary)} every Friday, but only {Calendar.GamesCap} sessions a week.", "Ask him", Game.Rehire, "Not yet"), "ghost wide").Mt(8));
             }
             return c;
@@ -465,11 +468,12 @@ namespace CFDream.UI
             var sl = Calendar.SlotsLeft(s); var c = U.Col().Cls("sleep").Mt(6);
             string next = Calendar.Str(s.cal.d + 1, true);
             int skip = Calendar.SkipTo(s);
-            if (skip > 0)
+            if (skip > 1)
             {
+                // the plan decides the nights: one sleep goes straight to the next one
                 bool week = Calendar.AllPlayed(s) || Calendar.Date(s.cal.d + skip).dow == 0; string day = Calendar.DowL[Calendar.Date(s.cal.d + skip).dow];
-                c.Add(U.Btn("Sleep until " + day, () => Game.Sleep(0), "gold wide", true, (week ? $"New week: {Calendar.GamesCap} online games and a live one" : "Your next night on the Spacepad") + $" · skips {skip} day{(skip == 1 ? "" : "s")}"));
-                c.Add(U.Btn("Sleep one night", () => Game.Sleep(1), "ghost wide", true, next));
+                c.Add(U.Btn("Go to sleep · wake up " + day, () => Game.Sleep(0), "gold wide", true, (week ? $"New week: {Calendar.GamesCap} online games and a live one" : "Your next night on the Spacepad") + $" · {skip} nights"));
+                return c;
             }
             else c.Add(U.Btn("Go to sleep", () => Game.Sleep(1), sl.left == 0 ? "gold wide" : "wide", true, sl.left > 0 ? $"{sl.left} game{(sl.left == 1 ? "" : "s")} left unplayed · wake up {next}" : $"Wake up {next}"));
             return c;
@@ -500,6 +504,7 @@ namespace CFDream.UI
             }
             col.Add(t);
             var dev = U.Row().Mt(10);
+            dev.Add(U.Btn(Sound.On ? "Sound: on" : "Sound: off", () => { Sound.On = !Sound.On; Game.Render(); }, "ghost grow"));
             dev.Add(U.Btn("Restyle your look", Game.StartRestyle, "ghost grow"));
             dev.Add(U.Btn("Title screen", () => { Game.View = View.Title; Game.Render(); }, "ghost grow"));
             col.Add(dev);

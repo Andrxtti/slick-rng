@@ -61,6 +61,53 @@ namespace CFDream.UI
         }
 
         void Update() => ApplyScreen(false);
+
+        // the sound follows the screen: where you are sets the ambience, what is happening sets the cue
+        static void SoundFor(View v)
+        {
+            try
+            {
+                var s = Game.State;
+                switch (v)
+                {
+                    case View.Title: Sound.Place("home"); Sound.Music("night"); break;
+                    case View.Create: Sound.Place("home"); Sound.Music("night"); break;
+                    case View.Scene:
+                        {
+                            var sc = Game.Scene; var def = sc != null && DB.Scenes.ContainsKey(sc.id) ? DB.Scenes[sc.id] : null; var b = Game.CurrentBeat();
+                            string place = def?.place == "home" ? (s?.Eq("home") ?? "home") : def?.place;
+                            Sound.Place(def?.place == "home" ? "home" : place);
+                            Sound.Music(CueFor(sc?.id, def?.place, b?.mood, s));
+                            break;
+                        }
+                    case View.Transit: Sound.Place(Game.Trip != null && Game.Trip.kind == "online" ? "home" : "vegas"); Sound.Music("grind"); break;
+                    case View.Run:
+                        {
+                            var run = Game.Run; var ev = run?.ev; string stage = run?.Stage ?? "early";
+                            Sound.Place(ev == null || ev.online || ev.daily || ev.kind == "sng" ? "home" : ev.venue);
+                            Sound.Music(stage == "bubble" || stage == "satbubble" || stage == "final" || stage == "deep" ? "tension" : "grind");
+                            break;
+                        }
+                    case View.Results:
+                        {
+                            var r = Game.Last; Sound.Place(r?.ev == null || r.ev.online || r.ev.daily ? "home" : r.ev.venue);
+                            Sound.Music(r != null && !r.bust && r.place == 1 ? "triumph" : r != null && r.bust ? "night" : "grind");
+                            break;
+                        }
+                    default: Sound.Place("home"); Sound.Music(Game.Tab == "online" ? "grind" : "night"); break;
+                }
+            }
+            catch (Exception e) { Debug.LogWarning("[Dream] sound: " + e.Message); }
+        }
+        static string CueFor(string sceneId, string place, string mood, State s)
+        {
+            if (mood == "win" || sceneId == "firstwin" || sceneId == "champ" || sceneId == "bracelet1" || sceneId == "ring1" || sceneId == "titan1" || sceneId == "trentbeat") return "triumph";
+            if (mood == "bust" || mood == "cooler" || sceneId == "badbeat" || sceneId == "broke" || sceneId == "quit250") return "tension";
+            if (sceneId != null && sceneId.StartsWith("p_")) return "night";
+            if (sceneId != null && sceneId.Length == 2 && sceneId[0] == 'c') return "grind";
+            if (place == "diner" || place == "home" || place == "office") return "night";
+            return "grind";
+        }
         // leaving the app (switching tabs, locking the phone) always writes the career down first
         void OnApplicationPause(bool paused) { if (paused) Game.State?.Save(); }
         void OnApplicationFocus(bool focus) { if (!focus) Game.State?.Save(); }
@@ -145,6 +192,7 @@ namespace CFDream.UI
             column.Add(view);
             root.style.backgroundColor = Screens.Backdrop;
             var v = Game.View;
+            SoundFor(v);
             bool showHome = v == View.Run || v == View.Results || v == View.Profile || (v == View.Create && Game.Restyle);
             home.Show(showHome); root.EnableInClassList("has-home", showHome);
             if (same)
