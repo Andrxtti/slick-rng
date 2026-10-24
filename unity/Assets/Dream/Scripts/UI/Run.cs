@@ -141,7 +141,7 @@ namespace CFDream.UI
                 for (int i = 0; i < sp.acts.Count; i++)
                 {
                     int k = i; string lab = sp.Label(i);
-                    var btn = U.Btn(lab, () => Game.Answer(k), "opt-btn " + ActCls(sp.acts[i], lab));
+                    var btn = U.Btn(lab, () => Game.Answer(k), "opt-btn " + (i % 2 == 0 ? "pick-blue" : "pick-green"));   // decision tabs alternate Carolina blue / neon lime
                     opts.Add(btn);
                 }
                 col.Add(opts);
