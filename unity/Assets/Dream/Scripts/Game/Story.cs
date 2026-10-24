@@ -80,7 +80,7 @@ namespace CFDream
             Put("after_cash", "cardroom", "After", null, "hub", B("n", "", mood: "cash"), B("you", "", mood: "cash"));
             Put("after_bust", "cardroom", "After", null, "hub", B("n", "", mood: "bust"), B("you", "", mood: "bust"));
             Put("after_cooler", "cardroom", "After", null, "hub", B("n", "", mood: "cooler"), B("you", "", mood: "cooler"));
-            foreach (var id in new[] { "after_win", "after_cash", "after_bust", "after_cooler" }) { foreach (var b in DB.Scenes[id].beats) b.fn = true; DB.Scenes[id].beats.Add(B("lou", "")); }   // the third voice: a witness, chosen when it plays
+            foreach (var id in new[] { "after_win", "after_cash", "after_bust", "after_cooler" }) { foreach (var b in DB.Scenes[id].beats) b.fn = true; DB.Scenes[id].beats.Add(B("lou", id == "after_win" ? "Kid. Don't let it go to your head. Let it go to your bankroll." : id == "after_cash" ? "A cash is a cash. The trophy's next." : id == "after_bust" ? "Happens to everybody. Back tomorrow." : "Brutal. Thirty years and that one still stings.")); }   // the third voice: a witness, chosen when it plays
             // the calendar decides when things happen, so chapter openers stop promising a month
             Replace("c2", 0, "slick", "You've outgrown Biscayne. The Circuit stops at Silver Strike every couple of months. Every event gives a ring. Check the calendar.");
             Replace("c3", 0, "n", "Every June, Las Vegas hosts the WCS Summer Series. 112 degrees outside, 68 inside, ten thousand people chasing the same gold. It's on your calendar now.");
