@@ -13,7 +13,8 @@ third-person home, Study drill, Mixamo acting in scenes, re-voiced cast.
 - Sonnet: phone prop for text beats (check first that the 3D scene shows during text beats); ch3-7 set dressing;
   hook up Sit To Stand / Stand To Sit / Walking / Sitting clips to the home (sit at the card table, walk to the door);
   pick extra clips per mood (Shrugging, Pointing, Angry Gesture, Agreeing...) into Acting().
-- Fable extra: online city design doc; look pass 2 (skin/hair shading); win/bust cutscene direction.
+- Fable extra: look pass 2 (skin/hair shading); win/bust cutscene direction; finish the storyline (chapters 1-7 beats, shot lists).
+- No walkable city. Travel is always a cutscene. Online play (multiplayer) is its own phase, started after the storyline is complete.
 - Haiku/script: builds, publishing, script edits, re-voicing.
 
 ## Notes
