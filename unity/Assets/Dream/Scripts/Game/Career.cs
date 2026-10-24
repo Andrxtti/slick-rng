@@ -171,7 +171,7 @@ namespace CFDream
             if (s.Title("bracelet") > 0) return "Bracelet Winner";
             if (s.Title("ring") > 0) return "Circuit Ring Winner";
             if (s.ch >= 2) return "Circuit Grinder";
-            if (s.Title("room") > 0) return "Riverside Champion";
+            if (s.Title("room") > 0) return "Biscayne Champion";
             if (s.ch >= 1) return s.job == "quit" ? "Full-time Dreamer" : "Moonlighter";
             return "Cubicle Dreamer";
         }

@@ -9,11 +9,11 @@ def depth(p, ry=0):  # a prop's back faces the wall it stands against, so its de
 
 TIERS = {
     #            w    d    h    wall       left wall  floor      trim       view            accent     fabric     blanket
-    "studio":   (5.6, 4.8, 2.6, "#5a5262", "#4f4858", "#c9b8a2", "#2a2430", "window_city",  "#e8c46a", "#5b4a6a", "#34507a"),
-    "apt":      (6.0, 5.0, 2.7, "#3e4a5c", "#36414f", "#b89a78", "#1f2530", "window_city",  "#e8c46a", "#7a3b5a", "#7a2f3a"),
-    "condo":    (7.0, 5.6, 2.8, "#d6d0c6", "#cbc4b8", "#7a5c44", "#3a332c", "window_city",  "#c9a03e", "#2f4f5f", "#e9e3d6"),
-    "penthouse":(8.0, 6.2, 3.0, "#1d1c24", "#24222c", "#5a4636", "#0e0d12", "window_city",  "#d9b36c", "#2b2622", "#151318"),
-    "mansion":  (9.0, 7.0, 3.3, "#efe7d8", "#e6dcc9", "#a07850", "#6b5236", "window_city",  "#c9a03e", "#6a1f2b", "#efe7d8"),
+    "studio":   (5.6, 4.8, 2.6, "#5a5262", "#4f4858", "#c9b8a2", "#2a2430", "window_miami",  "#e8c46a", "#5b4a6a", "#34507a"),
+    "apt":      (6.0, 5.0, 2.7, "#3e4a5c", "#36414f", "#b89a78", "#1f2530", "window_miami",  "#e8c46a", "#7a3b5a", "#7a2f3a"),
+    "condo":    (7.0, 5.6, 2.8, "#d6d0c6", "#cbc4b8", "#7a5c44", "#3a332c", "window_miami",  "#c9a03e", "#2f4f5f", "#e9e3d6"),
+    "penthouse":(8.0, 6.2, 3.0, "#1d1c24", "#24222c", "#5a4636", "#0e0d12", "window_miami",  "#d9b36c", "#2b2622", "#151318"),
+    "mansion":  (9.0, 7.0, 3.3, "#efe7d8", "#e6dcc9", "#a07850", "#6b5236", "window_miami",  "#c9a03e", "#6a1f2b", "#efe7d8"),
     "island":   (9.0, 7.0, 3.1, "#f3ead9", "#eadfca", "#c79a6a", "#7a5a3a", "window_ocean", "#3fb6c9", "#f2efe8", "#3fb6c9"),
 }
 
@@ -248,9 +248,10 @@ BUILDERS = {"condo": build_condo, "penthouse": build_penthouse, "mansion": build
 # small rooms built with the same props; "marks" say where you and the person you're talking to stand
 SETS = {
     #             w    d    h    wall       left       floor      trim       view            accent
-    "office":    (6.0, 4.6, 2.8, "#5d6b7c", "#54606f", "#8a8f94", "#2a2f36", "window_city",  "#9aa6b2"),
-    "diner":     (6.0, 4.6, 2.7, "#7a2f2a", "#6c2a26", "#3a3a3a", "#c9a03e", "window_city",  "#e8c46a"),
-    "cardroom":  (7.0, 5.2, 2.8, "#2d4a3c", "#28422f", "#5a4636", "#1b1e1a", "window_city",  "#c9a03e"),
+    # Miami: a glass office over the bay, a pastel deco diner on the Drive, a card room off the causeway
+    "office":    (6.0, 4.6, 2.8, "#e6e2da", "#d9d5cd", "#9a9ea2", "#2a2f36", "window_miami", "#ffb36b"),
+    "diner":     (6.0, 4.6, 2.7, "#1f6e78", "#1b626b", "#d8d2c4", "#f48fb1", "window_deco",  "#ff6aa8"),
+    "cardroom":  (7.0, 5.2, 2.8, "#2d4a3c", "#28422f", "#5a4636", "#c9a03e", "window_palms", "#c9a03e"),
     "casino":    (7.0, 5.2, 3.0, "#3a2342", "#33203b", "#4b2f3f", "#c9a03e", "window_city",  "#d9b36c"),
     "vegas":     (7.0, 5.2, 3.0, "#2a1a3a", "#241633", "#3b2a4a", "#ff6aa8", "window_city",  "#ff6aa8"),
     "tv":        (7.0, 5.2, 3.0, "#15223a", "#122036", "#2b2f3a", "#3d7fd1", "window_city",  "#3d7fd1"),
@@ -268,14 +269,14 @@ def build_set(place):
     if place == "office":
         add("desk", 0, back("desk"), ry=0); add("laptop", -0.1, back("desk") - 0.1, y=0.75, ry=0); add("chair", 0.9, back("desk") + 0.9, ry=180)
         add("bookshelf", left("bookshelf"), -0.6, ry=90); add("plant", w / 2 - 0.4, -d / 2 + 0.5); add("floor_lamp", w / 2 - 0.7, -d / 2 + 1.6)
-        P_["window"](1.4, 2.2, h * 0.45); P_["art"]("art_1", "left", 1.2, 1.7)
-        P_["light"](0, 2.2, -0.5, "#dfe8ff", 1.3, 6); P_["light"](-2, 1.6, 1.2, "#ffd9a0", 0.8, 4)
+        P_["window"](1.2, 3.4, h * 0.62); P_["art"]("art_1", "left", 1.2, 1.7)
+        P_["light"](1.2, 1.9, -d / 2 + 0.7, "#ffb36b", 1.5, 6); P_["light"](-2, 1.6, 1.2, "#cfe0ff", 0.7, 4)
     elif place == "diner":
         add("dining_table", 0, -1.0, ry=0); add("dining_chair", -0.5, -1.75, ry=0); add("dining_chair", 0.5, -1.75, ry=0)
         add("kitchen_island", left("kitchen_island") + 0.3, -0.2, ry=90, c={"cabinet": "#b8322d", "marble": "#f1e8dc"})
         for k in range(3): add("bar_stool", -w / 2 + 1.25, -1.2 + k * 0.7)
-        add("art", 1.8, -d / 2 + 0.03, 0, y=1.8, tex="art_5"); P_["window"](-0.6, 2.6, h * 0.42)
-        P_["light"](0, 2.1, -0.4, "#ffb36b", 1.5, 6); P_["light"](2.2, 1.5, 1.0, "#ff5f8f", 0.7, 4)
+        add("art", 1.8, -d / 2 + 0.03, 0, y=1.8, tex="art_5"); P_["window"](-0.6, 3.0, h * 0.46)
+        P_["light"](0, 2.1, -0.4, "#ffd8a8", 1.4, 6); P_["light"](2.2, 1.5, 1.0, "#ff5f8f", 0.9, 4); P_["light"](-2.4, 1.6, 0.8, "#4fd7e8", 0.6, 4)
     elif place in ("cardroom", "casino", "vegas", "tv", "titan", "main"):
         add("poker_table", 0, -1.2, ry=0)
         for k, (x, z, ry) in enumerate(((-1.2, -2.0, 0), (0, -2.1, 0), (1.2, -2.0, 0), (-2.0, -1.2, 90), (2.0, -1.2, -90))): add("chair", x, z, ry=ry)

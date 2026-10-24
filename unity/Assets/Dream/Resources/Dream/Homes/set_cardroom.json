@@ -6,8 +6,8 @@
  "wall": "#2d4a3c",
  "wall2": "#28422f",
  "floor": "#5a4636",
- "trim": "#1b1e1a",
- "view": "window_city",
+ "trim": "#c9a03e",
+ "view": "window_palms",
  "accent": "#c9a03e",
  "windows": [
   {

@@ -182,7 +182,7 @@ namespace CFDream.Character
             {
                 for (int i = transform.childCount - 1; i >= 0; i--) { var ch = transform.GetChild(i); if (ch.name.StartsWith("Home ")) { ch.gameObject.SetActive(false); Destroy(ch.gameObject); } }
                 if (pets != null) pets.Clear();
-                room = HomeRoom.Build(tier, transform, Layer); hasRoomPos = false;
+                room = HomeRoom.Build(tier, transform, Layer); hasRoomPos = false; confetti = null;
                 if (room == null) return;
             }
             room.root.SetActive(true);
@@ -201,6 +201,7 @@ namespace CFDream.Character
         void ExitScene()
         {
             inScene = false; shotKey = null; Cinema(false);
+            confetti = null;   // it lives in the set
             if (room != null && room.tier.StartsWith("set_")) { room.root.SetActive(false); Destroy(room.root); room = null; }
             else if (room != null) room.root.SetActive(false);
             if (npc != null) npc.Root.SetActive(false);
@@ -261,13 +262,13 @@ namespace CFDream.Character
                 case "cu":
                     {
                         var off = (toL * 1.0f + side * 0.75f).normalized;   // about forty degrees off the eye-line, the set behind them
-                        camA = S + off * 1.35f + Vector3.up * 0.04f; camB = S + off * 1.08f + Vector3.up * 0.02f; lookA = lookB = S - Vector3.up * 0.04f; cam.fieldOfView = 30; break;
+                        camA = S + off * 1.35f + Vector3.up * 0.04f; camB = S + off * 1.08f + Vector3.up * 0.02f; lookA = lookB = S - Vector3.up * 0.10f; cam.fieldOfView = 30; break;   // eyes on the upper third
                     }
                 case "ots":
                     {
                         // behind the listener's shoulder (toL points from the speaker past the listener), looking back at the speaker
                         var sideL = Vector3.Cross(Vector3.up, toL).normalized; if (Vector3.Dot(sideL, side) < 0) sideL = -sideL;
-                        camA = L + toL * 0.55f + sideL * 0.40f + Vector3.up * 0.12f; camB = L + toL * 0.45f + sideL * 0.34f + Vector3.up * 0.10f; lookA = lookB = S - Vector3.up * 0.04f; cam.fieldOfView = 34; break;
+                        camA = L + toL * 0.55f + sideL * 0.40f + Vector3.up * 0.12f; camB = L + toL * 0.45f + sideL * 0.34f + Vector3.up * 0.10f; lookA = lookB = S - Vector3.up * 0.16f; cam.fieldOfView = 34; break;
                     }
                 default:
                     {
@@ -284,10 +285,45 @@ namespace CFDream.Character
                 dof.gaussianStart.value = close ? dist + 0.45f : 7f; dof.gaussianEnd.value = close ? dist + 2.6f : 16f; dof.gaussianMaxRadius.value = close ? 1.1f : 0.6f;
             }
         }
+        // a win: paper falling from the ceiling of the set, gold, cream and blue, tumbling
+        ParticleSystem[] confetti; static Mesh paper;
+        void Confetti(bool on)
+        {
+            if (on && confetti == null && room != null && inScene)
+            {
+                if (paper == null)
+                {
+                    paper = new Mesh { name = "Paper" };
+                    paper.vertices = new[] { new Vector3(-0.5f, -0.3f, 0), new Vector3(0.5f, -0.3f, 0), new Vector3(0.5f, 0.3f, 0), new Vector3(-0.5f, 0.3f, 0) };
+                    paper.triangles = new[] { 0, 2, 1, 0, 3, 2 }; paper.normals = new[] { Vector3.back, Vector3.back, Vector3.back, Vector3.back }; paper.RecalculateBounds();
+                }
+                var cols = new[] { new Color(1f, 0.78f, 0.25f), new Color(0.95f, 0.93f, 0.85f), new Color(0.35f, 0.6f, 1f) };
+                confetti = new ParticleSystem[cols.Length];
+                for (int i = 0; i < cols.Length; i++)
+                {
+                    var go = new GameObject("Confetti " + i); go.layer = Layer; go.transform.SetParent(room.root.transform, false); go.transform.localPosition = new Vector3(0, room.H - 0.08f, 0.1f);
+                    var ps = go.AddComponent<ParticleSystem>(); ps.Stop();
+                    var m = ps.main; m.loop = true; m.duration = 5; m.startLifetime = new ParticleSystem.MinMaxCurve(3.5f, 6.5f); m.startSpeed = new ParticleSystem.MinMaxCurve(0.1f, 0.6f);
+                    m.startSize = new ParticleSystem.MinMaxCurve(0.03f, 0.055f); m.gravityModifier = 0.1f; m.maxParticles = 220; m.simulationSpace = ParticleSystemSimulationSpace.Local;
+                    m.startRotation3D = true; m.startRotationX = new ParticleSystem.MinMaxCurve(0, 6.28f); m.startRotationY = new ParticleSystem.MinMaxCurve(0, 6.28f); m.startRotationZ = new ParticleSystem.MinMaxCurve(0, 6.28f);
+                    var em = ps.emission; em.rateOverTime = 22;
+                    var sh = ps.shape; sh.shapeType = ParticleSystemShapeType.Box; sh.scale = new Vector3(room.W * 0.8f, 0.05f, room.D * 0.6f);
+                    var rot = ps.rotationOverLifetime; rot.enabled = true; rot.separateAxes = true;
+                    rot.x = new ParticleSystem.MinMaxCurve(-5f, 5f); rot.y = new ParticleSystem.MinMaxCurve(-5f, 5f); rot.z = new ParticleSystem.MinMaxCurve(-3f, 3f);
+                    var nz = ps.noise; nz.enabled = true; nz.strength = 0.3f; nz.frequency = 0.5f; nz.scrollSpeed = 0.25f;
+                    var r = go.GetComponent<ParticleSystemRenderer>(); r.renderMode = ParticleSystemRenderMode.Mesh; r.mesh = paper; r.alignment = ParticleSystemRenderSpace.World;
+                    r.sharedMaterial = Mats.Get(cols[i], 0.1f, 0.55f); r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    confetti[i] = ps;
+                }
+            }
+            if (confetti == null) return;
+            foreach (var ps in confetti) { if (ps == null) continue; if (on && !ps.isPlaying) ps.Play(); else if (!on && ps.isPlaying) ps.Stop(); }
+        }
         // how you carry yourself in a shot: arms up for a win, head down after a bust or a cooler
         public void Pose(string mood)
         {
             this.mood = mood;
+            Confetti(mood == "win");
             var an = body?.Root != null ? body.Root.GetComponentInChildren<Animator>() : null; if (an == null) return;
             var g = an.GetComponent<Gestures>(); if (g == null) g = an.gameObject.AddComponent<Gestures>();
             var head = Bone(HumanBodyBones.Head); if (head == null) { g.Clear(); return; }

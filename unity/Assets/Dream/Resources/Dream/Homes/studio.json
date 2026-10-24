@@ -7,7 +7,7 @@
  "wall2": "#4f4858",
  "floor": "#c9b8a2",
  "trim": "#2a2430",
- "view": "window_city",
+ "view": "window_miami",
  "accent": "#e8c46a",
  "windows": [
   {
@@ -39,7 +39,7 @@
    "x": 0.168,
    "y": 1.456,
    "z": -1.7999999999999998,
-   "c": "#ff6aa8",
+   "c": "#ffb36b",
    "i": 1.0,
    "r": 4.0
   }

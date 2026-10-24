@@ -101,10 +101,10 @@ namespace CFDream
         // ------------------------------------------------------------ live events: the real-world calendar
         public static readonly List<LiveDef> Live = new List<LiveDef>
         {
-            new LiveDef { id = "haunt", from = "10-20", to = "11-02", icon = "🎃", n = "Haunted Riverside",
-                item = new ItemDef { slot = "patch", id = "haunt", name = "“Haunted Riverside” patch", live = "haunt", req = "Haunted Riverside live event (10/20 to 11/02)" },
-                ev = new EventDef { id = "live_haunt", ch = 1, kind = "mtt", name = "Haunted Riverside Costume Freeroll", venue = "cardroom", buyin = 0, free = true, field = 160, prizeBase = 40, live = "haunt",
-                    blurb = "Costumes required, buy-in waived. Play it once and the Haunted Riverside patch is yours. Real-world event: October 20 to November 2." } },
+            new LiveDef { id = "haunt", from = "10-20", to = "11-02", icon = "🎃", n = "Haunted Biscayne",
+                item = new ItemDef { slot = "patch", id = "haunt", name = "“Haunted Biscayne” patch", live = "haunt", req = "Haunted Biscayne live event (10/20 to 11/02)" },
+                ev = new EventDef { id = "live_haunt", ch = 1, kind = "mtt", name = "Haunted Biscayne Costume Freeroll", venue = "cardroom", buyin = 0, free = true, field = 160, prizeBase = 40, live = "haunt",
+                    blurb = "Costumes required, buy-in waived. Play it once and the Haunted Biscayne patch is yours. Real-world event: October 20 to November 2." } },
         };
         public static IEnumerable<ItemDef> LiveItems => Live.Select(x => x.item);
         public static string RealToday() { var n = DateTime.Now; return $"{n.Year}-{n.Month:00}-{n.Day:00}"; }
@@ -277,7 +277,7 @@ namespace CFDream
         class Host { public string n, at, line; public double soft; public int lo, hi; }
         static readonly Host[] Hosts =
         {
-            new Host { n = "Tommy \"The Shark\" Maio", at = "the back room at Riverside", line = "Friends only, cash only, no questions. Half the table has been drinking since noon.", soft = 0.18, lo = 0, hi = 2 },
+            new Host { n = "Tommy \"The Shark\" Maio", at = "the back room at Biscayne", line = "Friends only, cash only, no questions. Half the table has been drinking since noon.", soft = 0.18, lo = 0, hi = 2 },
             new Host { n = "a retired NBA star", at = "his place in the hills", line = "He plays poker the way he drove the lane: straight at you, every time.", soft = 0.3, lo = 1, hi = 4 },
             new Host { n = "a tech founder", at = "his rooftop", line = "Just sold his company. Plays every hand and calls it \"learning\".", soft = 0.35, lo = 1, hi = 5 },
             new Host { n = "a movie producer", at = "a celebrity home game", line = "Two actors, one rapper, one pro. Guess which seat is yours.", soft = 0.28, lo = 2, hi = 6 },

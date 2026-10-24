@@ -9,9 +9,9 @@ const DR_CASH_HANDS = 5;      // decisions per cash session
 
 // ---------------------------------------------------------------- places (scene backdrops)
 const DR_PLACES = {
-  office:   { name: 'Floor 34', sub: 'Halvorsen & Pike Consulting' },
-  diner:    { name: 'Lucky Seven Diner', sub: '2:13 AM' },
-  cardroom: { name: 'Riverside Card Room', sub: 'Open 24 hours' },
+  office:   { name: 'Floor 34', sub: 'Halvorsen & Pike · Brickell, Miami' },
+  diner:    { name: 'Lucky Seven Diner', sub: 'Calle Ocho · 2:13 AM' },
+  cardroom: { name: 'Biscayne Card Room', sub: 'Off the causeway · open 24 hours' },
   casino:   { name: 'Silver Strike Casino', sub: 'Circuit stop' },
   vegas:    { name: 'Las Vegas', sub: 'The Summer Series' },
   tv:       { name: 'Feature Table', sub: 'Royal Poker Tour · live on stream' },
@@ -30,9 +30,9 @@ const DR_PLACES = {
 const DR_PEOPLE = {
   slick:  { name: 'Slick', role: 'The stranger from the diner', c: '#5aa9de', img: 'slick' },
   derek:  { name: 'Natso SweetLou', role: 'Your manager', c: '#9aa6b2', look: { skin: 1, hair: 'slick', hairC: 2, facial: 'none' }, eq: { outfit: 'suit', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smug' },
-  rosa:   { name: 'Miles "The Snowplow" Gnomey', role: 'Floor manager, Riverside', c: '#e8704f', look: { skin: 2, hair: 'buzz', hairC: 1, facial: 'goatee' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'silver', patch: 'none' } },
+  rosa:   { name: 'Miles "The Snowplow" Gnomey', role: 'Floor manager, Biscayne', c: '#e8704f', look: { skin: 2, hair: 'buzz', hairC: 1, facial: 'goatee' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'silver', patch: 'none' } },
   trent:  { name: 'Mustich', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'short', hairC: 6, facial: 'none', eyeC: 3 }, eq: { outfit: 'blazer', eyes: 'thick', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
-  lou:    { name: 'Tommy "The Shark" Maio', role: 'Riverside regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'slick', hairC: 0, facial: 'stubble' }, eq: { outfit: 'suit', eyes: 'tinted', head: 'none', chain: 'cuban', patch: 'none' } },
+  lou:    { name: 'Tommy "The Shark" Maio', role: 'Biscayne regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'slick', hairC: 0, facial: 'stubble' }, eq: { outfit: 'suit', eyes: 'tinted', head: 'none', chain: 'cuban', patch: 'none' } },
   host:   { name: 'Dex Marlow', role: 'Stream host', c: '#f878b8', look: { skin: 3, hair: 'quiff', hairC: 1, facial: 'stubble' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
   ghost:  { name: 'Bio The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
   mom:    { name: 'David Pec', role: 'Your best friend. Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'fade', hairC: 1, facial: 'stubble' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
@@ -87,8 +87,8 @@ function drLegendLook(L) {
 
 // ---------------------------------------------------------------- chapters
 const DR_CHAPTERS = [
-  { n: 'Prologue', t: 'The 9-to-5', place: 'office', goal: 'Play the Riverside Local Championship', test: (s) => !!s.story.p_after },
-  { n: 'Chapter 1', t: 'The Grind', place: 'cardroom', goal: 'Win the Riverside Classic or build a $10,000 bankroll', test: (s) => s.titles.room > 0 || s.br >= 10000,
+  { n: 'Prologue', t: 'The 9-to-5', place: 'office', goal: 'Play the Biscayne Local Championship', test: (s) => !!s.story.p_after },
+  { n: 'Chapter 1', t: 'The Grind', place: 'cardroom', goal: 'Win the Biscayne Classic or build a $10,000 bankroll', test: (s) => s.titles.room > 0 || s.br >= 10000,
     prog: (s) => [Math.min(1, s.br / 10000), `$${drMoney(s.br)} of $10,000`] },
   { n: 'Chapter 2', t: 'The Circuit', place: 'casino', goal: 'Win 2 Circuit rings and build a $40,000 bankroll', test: (s) => s.titles.ring >= 2 && s.br >= 40000,
     prog: (s) => [(Math.min(2, s.titles.ring) / 2 + Math.min(1, s.br / 40000)) / 2, `💍 ${Math.min(2, s.titles.ring)}/2 rings · $${drMoney(s.br)} of $40,000`] },
@@ -105,7 +105,7 @@ const DR_CHAPTERS = [
 // ---------------------------------------------------------------- titles
 const DR_TITLES = {
   local: { n: 'Local Champion', icon: '🏅', plural: 'Local titles' },
-  room: { n: 'Riverside Classic', icon: '🏆', plural: 'Card-room trophies' },
+  room: { n: 'Biscayne Classic', icon: '🏆', plural: 'Card-room trophies' },
   ring: { n: 'Circuit ring', icon: '💍', plural: 'Circuit rings' },
   bracelet: { n: 'Gold bracelet', icon: '📿', plural: 'Bracelets' },
   tour: { n: 'Royal Tour title', icon: '👑', plural: 'Tour titles' },
@@ -118,12 +118,12 @@ const DR_TITLES = {
 // kind: mtt (3 stages: early, bubble, final table) or cash (one session).
 // legends: who can be waiting at your final table.
 const DR_EVENTS = [
-  { id: 'local', ch: 0, kind: 'mtt', name: 'Riverside Local Championship', venue: 'cardroom', buyin: 250, field: 118, free: true, title: 'local', boss: 'lou', blurb: 'Your free seat. Your first real tournament.' },
+  { id: 'local', ch: 0, kind: 'mtt', name: 'Biscayne Local Championship', venue: 'cardroom', buyin: 250, field: 118, free: true, title: 'local', boss: 'lou', blurb: 'Your free seat. Your first real tournament.' },
   { id: 'c12', ch: 1, kind: 'cash', name: '$1/$2 No-Limit', venue: 'cardroom', buyin: 200, blurb: 'The bread and butter. 100 big blinds.' },
   { id: 'nightly', ch: 1, kind: 'mtt', name: 'The $60 Midnight Rush', venue: 'cardroom', buyin: 60, field: 42, blurb: 'Fast blinds. Shove-or-fold by midnight.' },
   { id: 'deep', ch: 1, kind: 'mtt', name: 'Sunday Grind $150 Deepstack', venue: 'cardroom', buyin: 150, field: 126, legends: ['armadillo'], blurb: 'The best structure in town.' },
   { id: 'tilt11', ch: 1, kind: 'mtt', online: true, name: 'CF Tilt $11 Night Owl Turbo', venue: 'cftilt', buyin: 11, field: 980, blurb: 'Online side event. Everyone antes, nobody waits for the dealer.' },
-  { id: 'classic', ch: 1, kind: 'mtt', name: 'Riverside Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Riverside. Mustich wants it too.' },
+  { id: 'classic', ch: 1, kind: 'mtt', name: 'Biscayne Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Biscayne. Mustich wants it too.' },
   { id: 'sat1700', ch: 2, kind: 'sat', name: 'Circuit Main Mega Satellite', venue: 'casino', buyin: 180, field: 164, seats: 16, target: 'ring1700', blurb: 'Win a seat into the $1,700 Circuit Main. The bubble is brutal: everyone left gets the same prize.' },
   { id: 'c25', ch: 2, kind: 'cash', name: '$2/$5 No-Limit', venue: 'casino', buyin: 500, blurb: 'Deeper stacks, bigger egos.' },
   { id: 'ring400', ch: 2, kind: 'mtt', name: 'Circuit $400 Silver Strike Opener', venue: 'casino', buyin: 400, field: 384, title: 'ring', legends: ['fargo', 'mouth'], blurb: 'Every Circuit event awards a ring.' },
@@ -232,11 +232,11 @@ const DR_ITEMS = [
   { slot: 'chain', id: 'iced', name: 'Iced Cuban link', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
   // homes
   { slot: 'home', id: 'studio', name: 'Studio over the laundromat', req: 'Where it all started', test: () => true },
-  { slot: 'home', id: 'apt', name: 'Downtown one-bedroom', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
-  { slot: 'home', id: 'condo', name: 'High-rise condo', req: 'Peak bankroll of $150,000', test: (s) => s.peak >= 150000 },
-  { slot: 'home', id: 'penthouse', name: 'Strip penthouse', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
-  { slot: 'home', id: 'mansion', name: 'Hills mansion', req: 'Peak bankroll of $5,000,000', test: (s) => s.peak >= 5e6 },
-  { slot: 'home', id: 'island', name: 'Private island villa', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
+  { slot: 'home', id: 'apt', name: 'Brickell one-bedroom', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
+  { slot: 'home', id: 'condo', name: 'Bayfront high-rise condo', req: 'Peak bankroll of $150,000', test: (s) => s.peak >= 150000 },
+  { slot: 'home', id: 'penthouse', name: 'South Beach penthouse', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
+  { slot: 'home', id: 'mansion', name: 'Coral Gables mansion', req: 'Peak bankroll of $5,000,000', test: (s) => s.peak >= 5e6 },
+  { slot: 'home', id: 'island', name: 'Star Island villa', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
   // rides
   { slot: 'ride', id: 'bus', name: 'Monthly bus pass', req: 'Where it all started', test: () => true },
   { slot: 'ride', id: 'hatch', name: "'09 hatchback", req: 'Peak bankroll of $5,000', test: (s) => s.peak >= 5000 },
@@ -266,7 +266,7 @@ const DR_REPUTATION = [
   [(s) => s.titles.me > 0 && s.titles.bracelet >= 15, 'The New GOAT'], [(s) => s.titles.me > 0, 'World Champion'],
   [(s) => s.titles.titan > 0, 'Titan'], [(s) => s.titles.tour + s.titles.glo > 0, 'Tour Champion'],
   [(s) => s.titles.bracelet > 0, 'Bracelet Winner'], [(s) => s.titles.ring > 0, 'Circuit Ring Winner'],
-  [(s) => s.ch >= 2, 'Circuit Grinder'], [(s) => s.titles.room > 0, 'Riverside Champion'],
+  [(s) => s.ch >= 2, 'Circuit Grinder'], [(s) => s.titles.room > 0, 'Biscayne Champion'],
   [(s) => s.ch >= 1, (s) => (s.job === 'quit' ? 'Full-time Dreamer' : 'Moonlighter')], [() => true, 'Cubicle Dreamer'],
 ];
 

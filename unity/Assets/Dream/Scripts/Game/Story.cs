@@ -37,7 +37,7 @@ namespace CFDream
                 B("slick", "Heard about Saturday. Smart. A paycheck buys you time to learn. Never play above your roll. Text me when you win something.", text: true));
             // going broke: no automatic bailout. Slick lays out the options.
             Put("broke", "diner", "Rock bottom", null, "hub",
-                B("n", "Lucky Seven Diner. 2:13 AM. Same stool. Same pie. Empty wallet."),
+                B("n", "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."),
                 B("slick", "Busted?"),
                 B("you", "Every last dollar."),
                 B("slick", "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why."),
@@ -82,7 +82,7 @@ namespace CFDream
             Put("after_cooler", "cardroom", "After", null, "hub", B("n", "", mood: "cooler"), B("you", "", mood: "cooler"));
             foreach (var id in new[] { "after_win", "after_cash", "after_bust", "after_cooler" }) foreach (var b in DB.Scenes[id].beats) b.fn = true;
             // the calendar decides when things happen, so chapter openers stop promising a month
-            Replace("c2", 0, "slick", "You've outgrown Riverside. The Circuit stops at Silver Strike every couple of months. Every event gives a ring. Check the calendar.");
+            Replace("c2", 0, "slick", "You've outgrown Biscayne. The Circuit stops at Silver Strike every couple of months. Every event gives a ring. Check the calendar.");
             Replace("c3", 0, "n", "Every June, Las Vegas hosts the WCS Summer Series. 112 degrees outside, 68 inside, ten thousand people chasing the same gold. It's on your calendar now.");
             Replace("c6", 0, "n", "Every July: eight thousand players, ten thousand dollars each.\nOne of them ends up on the cover of every poker magazine in the world.");
             // the boss texts you while you still work for him

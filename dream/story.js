@@ -6,7 +6,7 @@
 const DR_SCENES = {
   // ------------------------------------------------------------ prologue
   p_office: { place: 'office', title: 'Prologue', sub: 'The 9-to-5', beats: [
-    { sp: 'n', t: 'Monday. 6:47 PM. Floor 34.\nEveryone else went home an hour ago.' },
+    { sp: 'n', t: 'Monday. 6:47 PM. Floor 34, Brickell.\nEveryone else went home an hour ago. Out the glass, the bay is going pink.' },
     { sp: 'derek', t: 'The Henderson deck. Redo it. All of it. On my desk by eight.' },
     { sp: 'you', t: 'I sent it Friday. You signed off on it.' },
     { sp: 'derek', t: "And now I'm un-signing off on it. Problem?" },
@@ -28,7 +28,7 @@ const DR_SCENES = {
       { t: "Doesn't matter now.", act: (s) => { s.flags.honest = false; }, line: { sp: 'slick', who: 'Stranger', t: "It always matters. You just stopped saying it out loud." } },
     ] },
     { sp: 'n', t: 'He slides a red envelope across the counter.' },
-    { sp: 'slick', t: "Riverside Local Championship. Saturday, noon. Two-fifty seat. It's paid.", who: 'Stranger' },
+    { sp: 'slick', t: "Biscayne Local Championship. Saturday, noon. Two-fifty seat. It's paid.", who: 'Stranger' },
     { sp: 'you', t: "Why would you give that to a stranger?" },
     { sp: 'slick', t: 'Because I sat on that stool once. Somebody bought my pie too.', who: 'Stranger' },
     { sp: 'slick', t: "Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips.", who: 'Stranger' },
@@ -52,26 +52,26 @@ const DR_SCENES = {
   p_quit: { place: 'office', beats: [
     { sp: 'you', t: 'Lou? Redo it yourself.' },
     { sp: 'n', t: 'The elevator ride down is the best thirty-four floors of your life.\nYou have $1,200 in savings and absolutely no plan B.' },
-    { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
+    { sp: 'slick', t: 'Heard about Saturday. Biscayne runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
     { sp: 'mom', t: 'BRO. YOU QUIT YOUR JOB?? CALL ME', text: true },
   ], end: 'c1' },
   p_keep: { place: 'office', beats: [
     { sp: 'n', t: 'You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL.' },
     { sp: 'n', t: '$2,000 in savings. Days for Natso SweetLou. Nights for the dream.' },
-    { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
+    { sp: 'slick', t: 'Heard about Saturday. Biscayne runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
   ], end: 'c1' },
 
   // ------------------------------------------------------------ chapter openers
   c1: { place: 'cardroom', title: 'Chapter 1', sub: 'The Grind', beats: [
-    { sp: 'n', t: 'Riverside Card Room. Carpet from 1994. Coffee from this morning, maybe.\nTwenty tables, every one of them a classroom.' },
+    { sp: 'n', t: 'Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe.\nTwenty tables, every one of them a classroom.' },
     { sp: 'rosa', t: "New face. Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven." },
     { sp: 'lou', t: "Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast." },
     { sp: 'trent', t: "Cute hoodie. Did it come with the free seat?" },
-    { sp: 'n', t: "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Riverside Classic all year." },
-    { sp: 'n', t: 'Goal: win the Riverside Classic, or build your bankroll to $10,000.', goal: true },
+    { sp: 'n', t: "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Biscayne Classic all year." },
+    { sp: 'n', t: 'Goal: win the Biscayne Classic, or build your bankroll to $10,000.', goal: true },
   ], end: 'hub' },
   c2: { place: 'casino', title: 'Chapter 2', sub: 'The Circuit', beats: [
-    { sp: 'slick', t: "You've outgrown Riverside. The Circuit stops at Silver Strike this month. Every event gives a ring. Go get one." },
+    { sp: 'slick', t: "You've outgrown Biscayne. The Circuit stops at Silver Strike this month. Every event gives a ring. Go get one." },
     { sp: 'n', t: 'Bigger rooms. Better players. A guy at the rail is wearing four rings on one hand.' },
     { sp: 'L:moneybaker', t: "You're the kid who quit the cubicle? I was an accountant. Spreadsheets and everything. Play your game and let them find out." },
     { sp: 'trent', t: "Look who followed me to the Circuit. Try not to bust on the bubble this time." },
@@ -114,7 +114,7 @@ const DR_SCENES = {
 
   // ------------------------------------------------------------ beats along the way
   broke: { place: 'diner', title: 'Rock bottom', beats: [
-    { sp: 'n', t: 'Lucky Seven Diner. 2:13 AM. Same stool. Same pie. Empty wallet.' },
+    { sp: 'n', t: 'Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet.' },
     { sp: 'slick', t: 'Busted?' },
     { sp: 'you', t: "Every last dollar." },
     { sp: 'slick', t: "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why." },
@@ -148,8 +148,8 @@ Object.assign(DR_SCENES, {
     { sp: 'you', t: "He's right about one thing. It isn't for everyone." },
     { sp: 'slick', t: 'Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list.', goal: true },
   ], end: 'hub' },
-  trentbeat: { place: 'cardroom', title: 'Chapter 1', sub: 'The Riverside Classic', beats: [
-    { sp: 'n', t: 'The last card hits the felt. The Riverside Classic is yours.' },
+  trentbeat: { place: 'cardroom', title: 'Chapter 1', sub: 'The Biscayne Classic', beats: [
+    { sp: 'n', t: 'The last card hits the felt. The Biscayne Classic is yours.' },
     { sp: 'trent', t: "Enjoy it. Dad says the Classic is a rounding error." },
     { sp: 'lou', t: "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it." },
     { sp: 'rosa', t: "Your name goes on the board by the cage. Permanent marker. Congratulations." },
@@ -189,7 +189,7 @@ Object.assign(DR_SCENES, {
 // the first time a legend sits at your final table they say their line; who you meet is remembered
 function drMeetLine(id) {
   if (id === 'ghost') return { sp: 'ghost', t: "Heads-up for the world title. I've waited a long time for someone worth this." };
-  if (id === 'trent') return { sp: 'trent', t: DR.run && DR.run.ev.id === 'classic' ? "Final table of the Classic. Just you, me and Dad's money. Let's go." : DR.run && DR.run.ev.ch >= 5 ? "Titan final table. Look at us. Two nobodies from Riverside." : "You again. Fine. This ring is mine." };
+  if (id === 'trent') return { sp: 'trent', t: DR.run && DR.run.ev.id === 'classic' ? "Final table of the Classic. Just you, me and Dad's money. Let's go." : DR.run && DR.run.ev.ch >= 5 ? "Titan final table. Look at us. Two nobodies from Biscayne." : "You again. Fine. This ring is mine." };
   if (id === 'lou') return { sp: 'lou', t: "Final table, kid. Thirty years I've been trying to win this thing. Don't you dare." };
   const L = drLegend(id); return L ? { sp: 'L:' + id, t: L.line } : null;
 }

@@ -6525,9 +6525,9 @@ const DR_CASH_HANDS = 5;      // decisions per cash session
 
 // ---------------------------------------------------------------- places (scene backdrops)
 const DR_PLACES = {
-  office:   { name: 'Floor 34', sub: 'Halvorsen & Pike Consulting' },
-  diner:    { name: 'Lucky Seven Diner', sub: '2:13 AM' },
-  cardroom: { name: 'Riverside Card Room', sub: 'Open 24 hours' },
+  office:   { name: 'Floor 34', sub: 'Halvorsen & Pike · Brickell, Miami' },
+  diner:    { name: 'Lucky Seven Diner', sub: 'Calle Ocho · 2:13 AM' },
+  cardroom: { name: 'Biscayne Card Room', sub: 'Off the causeway · open 24 hours' },
   casino:   { name: 'Silver Strike Casino', sub: 'Circuit stop' },
   vegas:    { name: 'Las Vegas', sub: 'The Summer Series' },
   tv:       { name: 'Feature Table', sub: 'Royal Poker Tour · live on stream' },
@@ -6546,9 +6546,9 @@ const DR_PLACES = {
 const DR_PEOPLE = {
   slick:  { name: 'Slick', role: 'The stranger from the diner', c: '#5aa9de', img: 'slick' },
   derek:  { name: 'Natso SweetLou', role: 'Your manager', c: '#9aa6b2', look: { skin: 1, hair: 'slick', hairC: 2, facial: 'none' }, eq: { outfit: 'suit', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smug' },
-  rosa:   { name: 'Miles "The Snowplow" Gnomey', role: 'Floor manager, Riverside', c: '#e8704f', look: { skin: 2, hair: 'buzz', hairC: 1, facial: 'goatee' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'silver', patch: 'none' } },
+  rosa:   { name: 'Miles "The Snowplow" Gnomey', role: 'Floor manager, Biscayne', c: '#e8704f', look: { skin: 2, hair: 'buzz', hairC: 1, facial: 'goatee' }, eq: { outfit: 'polo', eyes: 'readers', head: 'none', chain: 'silver', patch: 'none' } },
   trent:  { name: 'Mustich', role: 'Trust-fund pro. Your rival.', c: '#c084fc', look: { skin: 0, hair: 'short', hairC: 6, facial: 'none', eyeC: 3 }, eq: { outfit: 'blazer', eyes: 'thick', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smug' },
-  lou:    { name: 'Tommy "The Shark" Maio', role: 'Riverside regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'slick', hairC: 0, facial: 'stubble' }, eq: { outfit: 'suit', eyes: 'tinted', head: 'none', chain: 'cuban', patch: 'none' } },
+  lou:    { name: 'Tommy "The Shark" Maio', role: 'Biscayne regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'slick', hairC: 0, facial: 'stubble' }, eq: { outfit: 'suit', eyes: 'tinted', head: 'none', chain: 'cuban', patch: 'none' } },
   host:   { name: 'Dex Marlow', role: 'Stream host', c: '#f878b8', look: { skin: 3, hair: 'quiff', hairC: 1, facial: 'stubble' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
   ghost:  { name: 'Bio The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
   mom:    { name: 'David Pec', role: 'Your best friend. Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'fade', hairC: 1, facial: 'stubble' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
@@ -6603,8 +6603,8 @@ function drLegendLook(L) {
 
 // ---------------------------------------------------------------- chapters
 const DR_CHAPTERS = [
-  { n: 'Prologue', t: 'The 9-to-5', place: 'office', goal: 'Play the Riverside Local Championship', test: (s) => !!s.story.p_after },
-  { n: 'Chapter 1', t: 'The Grind', place: 'cardroom', goal: 'Win the Riverside Classic or build a $10,000 bankroll', test: (s) => s.titles.room > 0 || s.br >= 10000,
+  { n: 'Prologue', t: 'The 9-to-5', place: 'office', goal: 'Play the Biscayne Local Championship', test: (s) => !!s.story.p_after },
+  { n: 'Chapter 1', t: 'The Grind', place: 'cardroom', goal: 'Win the Biscayne Classic or build a $10,000 bankroll', test: (s) => s.titles.room > 0 || s.br >= 10000,
     prog: (s) => [Math.min(1, s.br / 10000), `$${drMoney(s.br)} of $10,000`] },
   { n: 'Chapter 2', t: 'The Circuit', place: 'casino', goal: 'Win 2 Circuit rings and build a $40,000 bankroll', test: (s) => s.titles.ring >= 2 && s.br >= 40000,
     prog: (s) => [(Math.min(2, s.titles.ring) / 2 + Math.min(1, s.br / 40000)) / 2, `💍 ${Math.min(2, s.titles.ring)}/2 rings · $${drMoney(s.br)} of $40,000`] },
@@ -6621,7 +6621,7 @@ const DR_CHAPTERS = [
 // ---------------------------------------------------------------- titles
 const DR_TITLES = {
   local: { n: 'Local Champion', icon: '🏅', plural: 'Local titles' },
-  room: { n: 'Riverside Classic', icon: '🏆', plural: 'Card-room trophies' },
+  room: { n: 'Biscayne Classic', icon: '🏆', plural: 'Card-room trophies' },
   ring: { n: 'Circuit ring', icon: '💍', plural: 'Circuit rings' },
   bracelet: { n: 'Gold bracelet', icon: '📿', plural: 'Bracelets' },
   tour: { n: 'Royal Tour title', icon: '👑', plural: 'Tour titles' },
@@ -6634,12 +6634,12 @@ const DR_TITLES = {
 // kind: mtt (3 stages: early, bubble, final table) or cash (one session).
 // legends: who can be waiting at your final table.
 const DR_EVENTS = [
-  { id: 'local', ch: 0, kind: 'mtt', name: 'Riverside Local Championship', venue: 'cardroom', buyin: 250, field: 118, free: true, title: 'local', boss: 'lou', blurb: 'Your free seat. Your first real tournament.' },
+  { id: 'local', ch: 0, kind: 'mtt', name: 'Biscayne Local Championship', venue: 'cardroom', buyin: 250, field: 118, free: true, title: 'local', boss: 'lou', blurb: 'Your free seat. Your first real tournament.' },
   { id: 'c12', ch: 1, kind: 'cash', name: '$1/$2 No-Limit', venue: 'cardroom', buyin: 200, blurb: 'The bread and butter. 100 big blinds.' },
   { id: 'nightly', ch: 1, kind: 'mtt', name: 'The $60 Midnight Rush', venue: 'cardroom', buyin: 60, field: 42, blurb: 'Fast blinds. Shove-or-fold by midnight.' },
   { id: 'deep', ch: 1, kind: 'mtt', name: 'Sunday Grind $150 Deepstack', venue: 'cardroom', buyin: 150, field: 126, legends: ['armadillo'], blurb: 'The best structure in town.' },
   { id: 'tilt11', ch: 1, kind: 'mtt', online: true, name: 'CF Tilt $11 Night Owl Turbo', venue: 'cftilt', buyin: 11, field: 980, blurb: 'Online side event. Everyone antes, nobody waits for the dealer.' },
-  { id: 'classic', ch: 1, kind: 'mtt', name: 'Riverside Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Riverside. Mustich wants it too.' },
+  { id: 'classic', ch: 1, kind: 'mtt', name: 'Biscayne Classic', venue: 'cardroom', buyin: 340, field: 212, title: 'room', boss: 'trent', blurb: 'The big one at Biscayne. Mustich wants it too.' },
   { id: 'sat1700', ch: 2, kind: 'sat', name: 'Circuit Main Mega Satellite', venue: 'casino', buyin: 180, field: 164, seats: 16, target: 'ring1700', blurb: 'Win a seat into the $1,700 Circuit Main. The bubble is brutal: everyone left gets the same prize.' },
   { id: 'c25', ch: 2, kind: 'cash', name: '$2/$5 No-Limit', venue: 'casino', buyin: 500, blurb: 'Deeper stacks, bigger egos.' },
   { id: 'ring400', ch: 2, kind: 'mtt', name: 'Circuit $400 Silver Strike Opener', venue: 'casino', buyin: 400, field: 384, title: 'ring', legends: ['fargo', 'mouth'], blurb: 'Every Circuit event awards a ring.' },
@@ -6748,11 +6748,11 @@ const DR_ITEMS = [
   { slot: 'chain', id: 'iced', name: 'Iced Cuban link', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
   // homes
   { slot: 'home', id: 'studio', name: 'Studio over the laundromat', req: 'Where it all started', test: () => true },
-  { slot: 'home', id: 'apt', name: 'Downtown one-bedroom', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
-  { slot: 'home', id: 'condo', name: 'High-rise condo', req: 'Peak bankroll of $150,000', test: (s) => s.peak >= 150000 },
-  { slot: 'home', id: 'penthouse', name: 'Strip penthouse', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
-  { slot: 'home', id: 'mansion', name: 'Hills mansion', req: 'Peak bankroll of $5,000,000', test: (s) => s.peak >= 5e6 },
-  { slot: 'home', id: 'island', name: 'Private island villa', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
+  { slot: 'home', id: 'apt', name: 'Brickell one-bedroom', req: 'Peak bankroll of $25,000', test: (s) => s.peak >= 25000 },
+  { slot: 'home', id: 'condo', name: 'Bayfront high-rise condo', req: 'Peak bankroll of $150,000', test: (s) => s.peak >= 150000 },
+  { slot: 'home', id: 'penthouse', name: 'South Beach penthouse', req: 'Peak bankroll of $1,000,000', test: (s) => s.peak >= 1e6 },
+  { slot: 'home', id: 'mansion', name: 'Coral Gables mansion', req: 'Peak bankroll of $5,000,000', test: (s) => s.peak >= 5e6 },
+  { slot: 'home', id: 'island', name: 'Star Island villa', req: 'Win the Main Event', test: (s) => s.titles.me >= 1 },
   // rides
   { slot: 'ride', id: 'bus', name: 'Monthly bus pass', req: 'Where it all started', test: () => true },
   { slot: 'ride', id: 'hatch', name: "'09 hatchback", req: 'Peak bankroll of $5,000', test: (s) => s.peak >= 5000 },
@@ -6782,7 +6782,7 @@ const DR_REPUTATION = [
   [(s) => s.titles.me > 0 && s.titles.bracelet >= 15, 'The New GOAT'], [(s) => s.titles.me > 0, 'World Champion'],
   [(s) => s.titles.titan > 0, 'Titan'], [(s) => s.titles.tour + s.titles.glo > 0, 'Tour Champion'],
   [(s) => s.titles.bracelet > 0, 'Bracelet Winner'], [(s) => s.titles.ring > 0, 'Circuit Ring Winner'],
-  [(s) => s.ch >= 2, 'Circuit Grinder'], [(s) => s.titles.room > 0, 'Riverside Champion'],
+  [(s) => s.ch >= 2, 'Circuit Grinder'], [(s) => s.titles.room > 0, 'Biscayne Champion'],
   [(s) => s.ch >= 1, (s) => (s.job === 'quit' ? 'Full-time Dreamer' : 'Moonlighter')], [() => true, 'Cubicle Dreamer'],
 ];
 
@@ -6855,7 +6855,7 @@ const drLib = () => DR_LIB_C || (DR_LIB_C = drLibPrune(JSON.parse(DR_LIB_RAW)));
 const DR_SCENES = {
   // ------------------------------------------------------------ prologue
   p_office: { place: 'office', title: 'Prologue', sub: 'The 9-to-5', beats: [
-    { sp: 'n', t: 'Monday. 6:47 PM. Floor 34.\nEveryone else went home an hour ago.' },
+    { sp: 'n', t: 'Monday. 6:47 PM. Floor 34, Brickell.\nEveryone else went home an hour ago. Out the glass, the bay is going pink.' },
     { sp: 'derek', t: 'The Henderson deck. Redo it. All of it. On my desk by eight.' },
     { sp: 'you', t: 'I sent it Friday. You signed off on it.' },
     { sp: 'derek', t: "And now I'm un-signing off on it. Problem?" },
@@ -6877,7 +6877,7 @@ const DR_SCENES = {
       { t: "Doesn't matter now.", act: (s) => { s.flags.honest = false; }, line: { sp: 'slick', who: 'Stranger', t: "It always matters. You just stopped saying it out loud." } },
     ] },
     { sp: 'n', t: 'He slides a red envelope across the counter.' },
-    { sp: 'slick', t: "Riverside Local Championship. Saturday, noon. Two-fifty seat. It's paid.", who: 'Stranger' },
+    { sp: 'slick', t: "Biscayne Local Championship. Saturday, noon. Two-fifty seat. It's paid.", who: 'Stranger' },
     { sp: 'you', t: "Why would you give that to a stranger?" },
     { sp: 'slick', t: 'Because I sat on that stool once. Somebody bought my pie too.', who: 'Stranger' },
     { sp: 'slick', t: "Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips.", who: 'Stranger' },
@@ -6901,26 +6901,26 @@ const DR_SCENES = {
   p_quit: { place: 'office', beats: [
     { sp: 'you', t: 'Lou? Redo it yourself.' },
     { sp: 'n', t: 'The elevator ride down is the best thirty-four floors of your life.\nYou have $1,200 in savings and absolutely no plan B.' },
-    { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
+    { sp: 'slick', t: 'Heard about Saturday. Biscayne runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
     { sp: 'mom', t: 'BRO. YOU QUIT YOUR JOB?? CALL ME', text: true },
   ], end: 'c1' },
   p_keep: { place: 'office', beats: [
     { sp: 'n', t: 'You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL.' },
     { sp: 'n', t: '$2,000 in savings. Days for Natso SweetLou. Nights for the dream.' },
-    { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
+    { sp: 'slick', t: 'Heard about Saturday. Biscayne runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
   ], end: 'c1' },
 
   // ------------------------------------------------------------ chapter openers
   c1: { place: 'cardroom', title: 'Chapter 1', sub: 'The Grind', beats: [
-    { sp: 'n', t: 'Riverside Card Room. Carpet from 1994. Coffee from this morning, maybe.\nTwenty tables, every one of them a classroom.' },
+    { sp: 'n', t: 'Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe.\nTwenty tables, every one of them a classroom.' },
     { sp: 'rosa', t: "New face. Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven." },
     { sp: 'lou', t: "Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast." },
     { sp: 'trent', t: "Cute hoodie. Did it come with the free seat?" },
-    { sp: 'n', t: "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Riverside Classic all year." },
-    { sp: 'n', t: 'Goal: win the Riverside Classic, or build your bankroll to $10,000.', goal: true },
+    { sp: 'n', t: "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Biscayne Classic all year." },
+    { sp: 'n', t: 'Goal: win the Biscayne Classic, or build your bankroll to $10,000.', goal: true },
   ], end: 'hub' },
   c2: { place: 'casino', title: 'Chapter 2', sub: 'The Circuit', beats: [
-    { sp: 'slick', t: "You've outgrown Riverside. The Circuit stops at Silver Strike this month. Every event gives a ring. Go get one." },
+    { sp: 'slick', t: "You've outgrown Biscayne. The Circuit stops at Silver Strike this month. Every event gives a ring. Go get one." },
     { sp: 'n', t: 'Bigger rooms. Better players. A guy at the rail is wearing four rings on one hand.' },
     { sp: 'L:moneybaker', t: "You're the kid who quit the cubicle? I was an accountant. Spreadsheets and everything. Play your game and let them find out." },
     { sp: 'trent', t: "Look who followed me to the Circuit. Try not to bust on the bubble this time." },
@@ -6963,7 +6963,7 @@ const DR_SCENES = {
 
   // ------------------------------------------------------------ beats along the way
   broke: { place: 'diner', title: 'Rock bottom', beats: [
-    { sp: 'n', t: 'Lucky Seven Diner. 2:13 AM. Same stool. Same pie. Empty wallet.' },
+    { sp: 'n', t: 'Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet.' },
     { sp: 'slick', t: 'Busted?' },
     { sp: 'you', t: "Every last dollar." },
     { sp: 'slick', t: "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why." },
@@ -6997,8 +6997,8 @@ Object.assign(DR_SCENES, {
     { sp: 'you', t: "He's right about one thing. It isn't for everyone." },
     { sp: 'slick', t: 'Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list.', goal: true },
   ], end: 'hub' },
-  trentbeat: { place: 'cardroom', title: 'Chapter 1', sub: 'The Riverside Classic', beats: [
-    { sp: 'n', t: 'The last card hits the felt. The Riverside Classic is yours.' },
+  trentbeat: { place: 'cardroom', title: 'Chapter 1', sub: 'The Biscayne Classic', beats: [
+    { sp: 'n', t: 'The last card hits the felt. The Biscayne Classic is yours.' },
     { sp: 'trent', t: "Enjoy it. Dad says the Classic is a rounding error." },
     { sp: 'lou', t: "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it." },
     { sp: 'rosa', t: "Your name goes on the board by the cage. Permanent marker. Congratulations." },
@@ -7038,7 +7038,7 @@ Object.assign(DR_SCENES, {
 // the first time a legend sits at your final table they say their line; who you meet is remembered
 function drMeetLine(id) {
   if (id === 'ghost') return { sp: 'ghost', t: "Heads-up for the world title. I've waited a long time for someone worth this." };
-  if (id === 'trent') return { sp: 'trent', t: DR.run && DR.run.ev.id === 'classic' ? "Final table of the Classic. Just you, me and Dad's money. Let's go." : DR.run && DR.run.ev.ch >= 5 ? "Titan final table. Look at us. Two nobodies from Riverside." : "You again. Fine. This ring is mine." };
+  if (id === 'trent') return { sp: 'trent', t: DR.run && DR.run.ev.id === 'classic' ? "Final table of the Classic. Just you, me and Dad's money. Let's go." : DR.run && DR.run.ev.ch >= 5 ? "Titan final table. Look at us. Two nobodies from Biscayne." : "You again. Fine. This ring is mine." };
   if (id === 'lou') return { sp: 'lou', t: "Final table, kid. Thirty years I've been trying to win this thing. Don't you dare." };
   const L = drLegend(id); return L ? { sp: 'L:' + id, t: L.line } : null;
 }

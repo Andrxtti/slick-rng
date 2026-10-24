@@ -75,7 +75,7 @@ namespace CFDream.UI
             s.Add(fan);
             s.Add(U.Kicker("Confirmed Fire").Cls("center").Mt(26));
             s.Add(U.T("The Dream", "title-h", Fonts.Disp));
-            s.Add(U.P("From a cubicle on Floor 34 to the final table of the Main Event. Every decision graded by a solver.").Cls("center title-sub"));
+            s.Add(U.P("From a cubicle in Brickell to the final table of the Main Event. Every decision graded by a solver.").Cls("center title-sub"));
             s.Add(U.Spring());
             var st = Game.State;
             if (st != null && st.made)
