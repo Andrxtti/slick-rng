@@ -323,7 +323,8 @@ namespace CFDream.UI
                     if (other != null) sc.lastOther = other;
                     var ofig = other != null ? (other == b.sp ? fig : Speaker(other, null).fig) : null;
                     bool speakerYou = b.sp == "you", speech = !b.text && b.sp != "n" && fig != null;
-                    string shot = sc.i == 0 || b.sp == "n" ? "wide" : !speech ? "wide" : other == null ? "cu" : sc.i % 3 == 2 ? "ots" : "cu";
+                    // the opening beat starts on the city outside, then cuts into the room
+                    string shot = sc.i == 0 && sc.extra.Count == 0 ? "ext" : b.sp == "n" ? "wide" : !speech ? "wide" : other == null ? "cu" : sc.i % 3 == 2 ? "ots" : "cu";
                     if (b.mood == "win" || b.mood == "bust" || b.mood == "cooler") shot = sc.i == 0 ? "wide" : "cu";
                     string setTier = def.place == "home" ? st.Eq("home") : "set_" + (def.place ?? "cardroom");
                     var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = speakerYou || other == null, Narration = b.sp == "n" || b.text, Mood = b.mood };

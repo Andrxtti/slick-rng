@@ -30,6 +30,8 @@ namespace CFDream.Character
         public readonly List<Transform> fish = new List<Transform>();
         public readonly List<(Vector3 c, float w, float d)> pools = new List<(Vector3, float, float)>();
         public Transform can; public Vector3 canHome; public Transform bong; public Transform shadow;
+        public string view;                                                           // what's out of the window (a texture name)
+        public static Texture2D ViewTex(string n) => Tex(n);
         public Transform flame; public Light fireLight; public bool fireOn;          // the hearth
         public Transform cueBall; public Vector3 cueHome;                             // the pool table's white ball
         public readonly Dictionary<string, Vector3> anchors = new Dictionary<string, Vector3>();   // piano keys and the like (world)
@@ -81,7 +83,8 @@ namespace CFDream.Character
             Box(r.root.transform, new Vector3(r.W / 2 + 0.03f, -0.06f, 0), new Vector3(0.06f, 0.12f, r.D + 0.12f), Mats.Get(trim, 0, 0.4f), layer);
 
             // windows onto the bay
-            var viewMat = Mats.Textured(Tex(J.S(L, "view", "window_city")), Color.white, 0.6f, null, 1.1f);
+            r.view = J.S(L, "view", "window_city");
+            var viewMat = Mats.Textured(Tex(r.view), Color.white, 0.6f, null, 1.1f);
             foreach (var w in List(L, "windows"))
             {
                 float x = F(w, "x"), y = F(w, "y", 1.5f), ww = F(w, "w", 1.6f), hh = F(w, "h", 1.1f);

@@ -55,6 +55,7 @@ namespace CFDream.Character
         string shotKind = "wide", baseKind = "wide"; bool shotYou = true, subjYou = true, narr, reacted; float sinceShot;
         // the movie's post-processing (Resources/Dream/Cinema, made by Dream > Create cinema profile): on in scenes only
         Volume cinema; DepthOfField dof; UniversalAdditionalCameraData camData;
+        Transform ext; string extView;   // the establishing shot: the view out of the window, painted big, far above the set
         public float CutFade => cutFade;   // 1 right after a cut, fading to 0: the film view dips to black with it
         public static bool Talking;        // a line is typing itself out: the speaker's mouth moves
         public bool InRoom => framing == "room";
@@ -190,6 +191,7 @@ namespace CFDream.Character
             room.root.SetActive(true);
             if (life != null) life.enabled = false;
             if (pets != null) pets.enabled = false;
+            Backdrop(room.view);
             if (npcPivot == null) { npcPivot = new GameObject("Them").transform; npcPivot.SetParent(transform, false); }
             var you = room.Mark("you", new Vector3(-0.7f, 0, 1.0f), 90f); var them = room.Mark("them", new Vector3(0.7f, 0, 1.0f), -90f);
             pivot.localPosition = you.pos; pivot.localRotation = Quaternion.Euler(0, you.yaw, 0);
@@ -200,9 +202,22 @@ namespace CFDream.Character
             if (shotKey == null) Shot("wide", true, 7f);
             cam.enabled = views.Count > 0;   // the set shows even while the people are still being built
         }
+        // a 16:9 painting of the city, 32 m wide, hung far above the set for the opening shot
+        void Backdrop(string view)
+        {
+            view = view ?? "window_city";
+            if (ext != null && extView == view) { ext.gameObject.SetActive(true); return; }
+            if (ext != null) Destroy(ext.gameObject);
+            var go = GameObject.CreatePrimitive(PrimitiveType.Quad); go.name = "Backdrop"; go.layer = Layer; Destroy(go.GetComponent<Collider>());
+            go.transform.SetParent(transform, false); go.transform.localPosition = new Vector3(0, 40f, 0); go.transform.localRotation = Quaternion.Euler(0, 180f, 0);   // faces +z
+            go.transform.localScale = new Vector3(32f, 18f, 1f);
+            var mr = go.GetComponent<MeshRenderer>(); mr.sharedMaterial = Mats.Textured(HomeRoom.ViewTex(view), Color.white, 0.6f, null, 1.1f); mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            ext = go.transform; extView = view;
+        }
         void ExitScene()
         {
             inScene = false; shotKey = null; Cinema(false);
+            if (ext != null) ext.gameObject.SetActive(false);
             confetti = null;   // it lives in the set
             if (room != null && room.tier.StartsWith("set_")) { room.root.SetActive(false); Destroy(room.root); room = null; }
             else if (room != null) room.root.SetActive(false);
@@ -261,6 +276,13 @@ namespace CFDream.Character
             Vector3 S = subjYou ? P : Q, L = subjYou ? Q : P, toL = L - S; toL.y = 0; toL.Normalize();
             switch (shotKind)
             {
+                case "ext":
+                    {
+                        // the city, slowly pushing in and tilting down, cropped tight enough that the painting's edges never show
+                        Vector3 c = ext != null ? ext.localPosition : new Vector3(0, 40f, 0); float dist = 9f / Mathf.Tan(15f * Mathf.Deg2Rad) * 0.74f;
+                        camA = c + Vector3.forward * dist * 1.05f + Vector3.right * 0.8f + Vector3.up * 0.9f; camB = c + Vector3.forward * dist * 0.93f - Vector3.right * 0.6f + Vector3.up * 0.2f;
+                        lookA = c + Vector3.up * 1.2f; lookB = c - Vector3.up * 0.2f; cam.fieldOfView = 30; break;
+                    }
                 case "cu":
                     {
                         var off = (toL * 1.0f + side * 0.75f).normalized;   // about forty degrees off the eye-line, the set behind them
@@ -284,7 +306,7 @@ namespace CFDream.Character
             {
                 float dist = (lookA - (camA + camB) / 2).magnitude;
                 bool close = shotKind == "cu" || shotKind == "ots";
-                dof.gaussianStart.value = close ? dist + 0.45f : 7f; dof.gaussianEnd.value = close ? dist + 2.6f : 16f; dof.gaussianMaxRadius.value = close ? 1.1f : 0.6f;
+                dof.gaussianStart.value = close ? dist + 0.45f : shotKind == "ext" ? 200f : 7f; dof.gaussianEnd.value = close ? dist + 2.6f : shotKind == "ext" ? 400f : 16f; dof.gaussianMaxRadius.value = close ? 1.1f : 0.6f;
             }
         }
         // a win: paper falling from the ceiling of the set, gold, cream and blue, tumbling
@@ -445,7 +467,8 @@ namespace CFDream.Character
                 sinceShot += Time.deltaTime;
                 // coverage on a long line: after a few seconds on the speaker, a beat on the listener, then back
                 bool both = HasBody && npc != null && npc.Ready && npc.Root.activeSelf;
-                if (!reacted && !Reacting && !narr && string.IsNullOrEmpty(mood) && both && baseKind != "wide" && sinceShot > 4.5f) Reaction(false);
+                if (baseKind == "ext" && sinceShot > 3.6f) { baseKind = shotKind = "wide"; shotT = 0; shotDur = 7f; sinceShot = 0; Sound.Play("cut", 0.5f); cutFade = 1f; Aim(); PlaceCam(0); }
+                if (!reacted && !Reacting && !narr && string.IsNullOrEmpty(mood) && both && baseKind != "wide" && baseKind != "ext" && sinceShot > 4.5f) Reaction(false);
                 else if (Reacting && sinceShot > 3.2f) Reaction(true);
                 PlaceCam(shotT); Acting();
                 if (cutFade > 0) cutFade = Mathf.Max(0, cutFade - Time.deltaTime / 0.35f);
