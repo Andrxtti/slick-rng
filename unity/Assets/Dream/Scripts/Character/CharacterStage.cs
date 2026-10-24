@@ -231,8 +231,8 @@ namespace CFDream.Character
         Vector3 HeadOf(bool you)
         {
             var piv = you ? pivot : npcPivot; var b = you ? (HasBody ? Bone(HumanBodyBones.Head) : null) : (npc != null && npc.Ready ? npc.Bone(HumanBodyBones.Head) : null);
-            if (b != null) return transform.InverseTransformPoint(b.position) + Vector3.up * 0.06f;
-            return piv.localPosition + Vector3.up * 1.62f;
+            if (b != null) return transform.InverseTransformPoint(b.position) + Vector3.up * 0.12f;   // the head bone sits at the skull base; the eyes are a hand above
+            return piv.localPosition + Vector3.up * 1.66f;
         }
         // shots: "wide" (both of you, a slow push in), "cu" (close on the speaker, off the axis), "ots" (over the
         // listener's shoulder at the speaker). speakerIsYou says who is talking; narration means nobody gestures.
@@ -264,13 +264,13 @@ namespace CFDream.Character
                 case "cu":
                     {
                         var off = (toL * 1.0f + side * 0.75f).normalized;   // about forty degrees off the eye-line, the set behind them
-                        camA = S + off * 1.35f + Vector3.up * 0.04f; camB = S + off * 1.08f + Vector3.up * 0.02f; lookA = lookB = S - Vector3.up * 0.10f; cam.fieldOfView = 30; break;   // eyes on the upper third
+                        camA = S + off * 1.35f + Vector3.up * 0.04f; camB = S + off * 1.08f + Vector3.up * 0.02f; lookA = lookB = S - Vector3.up * 0.08f; cam.fieldOfView = 30; break;   // eyes on the upper third
                     }
                 case "ots":
                     {
                         // behind the listener's shoulder (toL points from the speaker past the listener), looking back at the speaker
                         var sideL = Vector3.Cross(Vector3.up, toL).normalized; if (Vector3.Dot(sideL, side) < 0) sideL = -sideL;
-                        camA = L + toL * 0.55f + sideL * 0.40f + Vector3.up * 0.12f; camB = L + toL * 0.45f + sideL * 0.34f + Vector3.up * 0.10f; lookA = lookB = S - Vector3.up * 0.16f; cam.fieldOfView = 34; break;
+                        camA = L + toL * 0.55f + sideL * 0.40f + Vector3.up * 0.12f; camB = L + toL * 0.45f + sideL * 0.34f + Vector3.up * 0.10f; lookA = lookB = S - Vector3.up * 0.11f; cam.fieldOfView = 34; break;
                     }
                 default:
                     {
@@ -358,8 +358,9 @@ namespace CFDream.Character
             if (gy != null && string.IsNullOrEmpty(mood)) gy.Look(Q - Vector3.up * 0.02f, 0.75f, 0.15f);
             if (gn != null) gn.Look(P - Vector3.up * 0.02f, 0.75f, 0.15f);
             // faces: the speaker talks while the line types; moods colour your face, the other person reacts a little
-            body?.Express(mood ?? "", Talking && actYou && !narr, actT);
-            npc?.Express(mood == "win" ? "cash" : mood == "bust" || mood == "cooler" ? "think" : "", Talking && !actYou && !narr, actT);
+            bool talk = Talking || Sound.Speaking;
+            body?.Express(mood ?? "", talk && actYou && !narr, actT);
+            npc?.Express(mood == "win" ? "cash" : mood == "bust" || mood == "cooler" ? "think" : "", talk && !actYou && !narr, actT);
             // the speaker's right hand lifts and turns while the line plays, then settles
             var g = actYou ? gy : gn; var piv = actYou ? pivot : npcPivot; var head = actYou ? hy : hn;
             if (g != null && head != null && string.IsNullOrEmpty(mood) && !narr)

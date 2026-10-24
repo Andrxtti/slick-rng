@@ -299,7 +299,7 @@ namespace CFDream.UI
             head.Add(U.Kicker(DB.Place(def.place, "sub")).Fg(C.Mix(tint, C.Cream, 0.4f)));
             head.Add(U.H2(def.title ?? DB.Place(def.place)));
             if (!string.IsNullOrEmpty(def.sub) && def.title != null) head.Add(U.Hint(def.sub));
-            var skip = U.Btn(sc.replay ? "Close" : "Skip", () => { if (sc.replay) { Game.Scene = null; Game.View = View.Hub; Game.Tab = "story"; Game.Render(); } else Game.Skip(); }, "ghost small");
+            var skip = U.Btn(sc.replay ? "Close" : "Skip", () => { Sound.Hush(); if (sc.replay) { Game.Scene = null; Game.View = View.Hub; Game.Tab = "story"; Game.Render(); } else Game.Skip(); }, "ghost small");
             skip.AddToClassList("scene-skip");
             head.Add(SoundToggle()); head.Add(skip);
             s.Add(head);
@@ -309,6 +309,10 @@ namespace CFDream.UI
             {
                 string text = Story.Text(sc.id, b, sc.i, st);
                 var (name, role, col, fig) = Speaker(b.sp, b.who);
+                // the line is spoken once, when the beat first shows; runtime-built lines have no clip
+                string said = sc.id + ":" + sc.i + ":" + sc.extra.Count; float voiced = 0f;
+                if (said != lastSaid) { lastSaid = said; voiced = !b.text && !b.fn && Sound.Say(Voice.Key(b.sp, b.t)) ? Sound.SpeakingFor : 0f; }
+                else if (Sound.Speaking) voiced = Sound.SpeakingFor;
                 VisualElement beat;
                 // the movie: the set for this place, you and whoever you're talking to in 3D, a camera that moves
                 if (Bodies.Available)
@@ -331,7 +335,7 @@ namespace CFDream.UI
                 {
                     beat = U.Div("narration").Cls(b.goal ? "goal" : "", b.big ? "big" : "");
                     if (b.goal) beat.Add(U.Kicker("Your goal").Fg(C.Gold));
-                    var nl = U.T(U.Esc(text), "narr-t", b.goal ? Fonts.Semi : Fonts.Body); beat.Add(nl); if (Bodies.Available) Type(nl, U.Esc(text));
+                    var nl = U.T(U.Esc(text), "narr-t", b.goal ? Fonts.Semi : Fonts.Body); beat.Add(nl); if (Bodies.Available) Type(nl, U.Esc(text), voiced);
                 }
                 else if (b.text)
                 {
@@ -359,7 +363,7 @@ namespace CFDream.UI
                     nm.Add(U.T(name, "speech-name", Fonts.Semi).Fg(col));
                     if (!string.IsNullOrEmpty(role)) nm.Add(U.T(role, "speech-role"));
                     beat.Add(nm);
-                    var sl = U.T(U.Esc(text), "speech-t" + (b.big ? " big" : "") + (b.mood == "think" ? " think" : "")); beat.Add(sl); if (Bodies.Available) Type(sl, U.Esc(text));
+                    var sl = U.T(U.Esc(text), "speech-t" + (b.big ? " big" : "") + (b.mood == "think" ? " think" : "")); beat.Add(sl); if (Bodies.Available) Type(sl, U.Esc(text), voiced);
                 }
                 beat.AddToClassList("beat");
                 Enter(beat);
@@ -383,11 +387,14 @@ namespace CFDream.UI
             return s;
         }
 
-        // lines type themselves out like subtitles landing; a tap while typing shows the whole line
-        static Action typing;
-        static void Type(Label l, string full, int perTick = 2)
+        // lines type themselves out like subtitles landing, paced to the voice when there is one; a tap while
+        // typing shows the whole line
+        static Action typing; static string lastSaid;
+        static void Type(Label l, string full, float voiced = 0f)
         {
             if (l == null || full.Length < 10) return;
+            // 2 characters a tick (50 a second), or whatever lands the last word just before the voice does
+            int perTick = voiced > 0.3f ? Mathf.Max(1, Mathf.CeilToInt(full.Length / (voiced * 0.92f / 0.04f))) : 2;
             // the rest of the line is there but transparent, so the box is its final size from the first frame
             int n = 0; l.enableRichText = true; l.text = "<alpha=#00>" + full; IVisualElementScheduledItem it = null; Action done = null;
             done = () => { l.text = full; if (typing == done) { typing = null; CharacterStage.Talking = false; } it?.Pause(); };

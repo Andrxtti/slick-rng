@@ -112,6 +112,7 @@ namespace CFDream
         }
         public static void SceneEnd()
         {
+            Sound.Hush();
             var s = State; var sc = Scene; var def = DB.Scenes[sc.id];
             if (sc.replay) { Scene = null; View = View.Hub; Tab = "story"; Render(); return; }
             s.sceneId = null; s.sceneI = 0;

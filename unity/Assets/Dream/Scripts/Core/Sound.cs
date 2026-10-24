@@ -12,15 +12,28 @@ namespace CFDream
         public static Sound I { get { if (inst == null) { var go = new GameObject("Sound"); DontDestroyOnLoad(go); inst = go.AddComponent<Sound>(); inst.Setup(); } return inst; } }
         public static bool On { get => PlayerPrefs.GetInt("cfdream.sound", 1) == 1; set { PlayerPrefs.SetInt("cfdream.sound", value ? 1 : 0); PlayerPrefs.Save(); if (inst != null) inst.Apply(); } }
 
-        AudioSource[] amb = new AudioSource[2], mus = new AudioSource[2]; AudioSource fx; int ambOn, musOn;
+        AudioSource[] amb = new AudioSource[2], mus = new AudioSource[2]; AudioSource fx, voice; int ambOn, musOn;
         string ambName, musName; float ambVol = 0.55f, musVol = 0.38f;
         readonly Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
+        // the voice: one line at a time; the score and the room duck under it
+        public static bool Speaking => inst != null && inst.voice != null && inst.voice.isPlaying;
+        public static float SpeakingFor => Speaking ? inst.voice.clip.length : 0f;
+        float duck = 1f;
 
         void Setup()
         {
             for (int i = 0; i < 2; i++) { amb[i] = Src(true); mus[i] = Src(true); }
-            fx = Src(false);
+            fx = Src(false); voice = Src(false); voice.volume = 1f;
         }
+        // say a line (Resources/Dream/Voice/v_<key>, made by unity/tools/voice.py). True when there is a clip for it.
+        public static bool Say(string key)
+        {
+            var I_ = I; I_.voice.Stop();
+            if (string.IsNullOrEmpty(key) || !On) return false;
+            var c = Resources.Load<AudioClip>("Dream/Voice/v_" + key); if (c == null) return false;
+            I_.voice.clip = c; I_.voice.Play(); return true;
+        }
+        public static void Hush() { if (inst != null && inst.voice != null) inst.voice.Stop(); }
         AudioSource Src(bool loop) { var a = gameObject.AddComponent<AudioSource>(); a.loop = loop; a.playOnAwake = false; a.volume = 0; a.spatialBlend = 0; return a; }
         AudioClip Clip(string name)
         {
@@ -63,18 +76,26 @@ namespace CFDream
         readonly Dictionary<AudioSource, float> fades = new Dictionary<AudioSource, float>();
         void Update()
         {
-            if (fades.Count == 0) return;
-            float k = Time.unscaledDeltaTime / 1.6f; var done = new List<AudioSource>();
-            foreach (var kv in fades)
+            // the bed ducks while someone speaks, quickly down and gently back
+            float want = voice != null && voice.isPlaying ? 0.45f : 1f;
+            duck = Mathf.MoveTowards(duck, want, Time.unscaledDeltaTime / (want < duck ? 0.25f : 0.9f));
+            if (fades.Count > 0)
             {
-                var a = kv.Key; a.volume = Mathf.MoveTowards(a.volume, kv.Value, k);
-                if (Mathf.Approximately(a.volume, kv.Value)) { if (kv.Value <= 0f) a.Stop(); done.Add(a); }
+                float k = Time.unscaledDeltaTime / 1.6f; var done = new List<AudioSource>();
+                foreach (var kv in fades)
+                {
+                    var a = kv.Key; a.volume = Mathf.MoveTowards(a.volume, kv.Value, k);
+                    if (Mathf.Approximately(a.volume, kv.Value)) { if (kv.Value <= 0f) a.Stop(); done.Add(a); }
+                }
+                foreach (var a in done) fades.Remove(a);
             }
-            foreach (var a in done) fades.Remove(a);
+            // settled sources follow the duck
+            if (On && musName != null && !fades.ContainsKey(mus[musOn])) mus[musOn].volume = musVol * duck;
+            if (On && ambName != null && !fades.ContainsKey(amb[ambOn])) amb[ambOn].volume = ambVol * Mathf.Lerp(0.7f, 1f, (duck - 0.45f) / 0.55f);
         }
         void Apply()
         {
-            bool on = On;
+            bool on = On; if (!on && voice != null) voice.Stop();
             fades[amb[ambOn]] = on && ambName != null ? ambVol : 0f; fades[mus[musOn]] = on && musName != null ? musVol : 0f;
             if (on) { if (ambName != null && !amb[ambOn].isPlaying) amb[ambOn].Play(); if (musName != null && !mus[musOn].isPlaying) mus[musOn].Play(); }
         }
