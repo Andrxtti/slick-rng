@@ -79,7 +79,9 @@ namespace CFDream.UI
                     s => "A *cash game* isn't a tournament. The chips are real money, and you can *leave whenever you like* with what's in front of you."),
                 R("t25", "Series and rings", ".intro", s => In(View.Run) && Has(r => r.state == "ready" && r.ev.title == "ring"),
                     s => "A *series* is a poker festival: a run of events over several days. Every Circuit event gives its winner a *ring*."),
-                R("t26", "Satellites", ".intro", s => In(View.Run) && Has(r => r.state == "ready" && r.ev.kind == "sat"),
+                R("t34", "Two days", ".intro", s => In(View.Run) && Has(r => r.state == "ready" && r.ev.id == "classic"),
+                    s => "The Biscayne Classic runs *two days*. Survive Saturday and you *bag your chips* for Sunday's *Day 2*, where the money and the trophy are."),
+                R("t26", "Satellites", ".intro", s => In(View.Run) && Has(r => r.state == "ready" && r.ev.kind == "sat" && r.ev.id != "classic"),
                     s => "A *satellite* is a cheaper tournament where the prize is a *seat* in a bigger one."),
                 R("t28", "Travel", ".intro", s => In(View.Run) && Has(r => r.state == "ready" && r.travel > 0),
                     s => "Away events cost *hotel and travel* on top of the buy-in. You pay it once per trip day."),
@@ -133,7 +135,8 @@ namespace CFDream.UI
             var sl = Calendar.SlotsLeft(s); int lv = Calendar.LiveLeft(s);
             string games = s.job == "nights"
                 ? $"You have *{sl.left} online game{(sl.left == 1 ? "" : "s")}* left this week" + (lv > 0 ? " and *1 live game* this weekend." : ".")
-                : $"You can play *{sl.left} online game{(sl.left == 1 ? "" : "s")}* today" + (lv > 0 ? " and *1 live game*." : ".");
+                : lv > 0 && sl.used == 0 ? "You can play *3 online games* today, or *1 live game plus 1 online*: the Spacepad comes with you to the card room."
+                : $"You can play *{sl.left} more online game{(sl.left == 1 ? "" : "s")}* today" + (lv > 0 ? " and *1 live game*." : ".");
             return "Below is *tonight's schedule*. " + games + " The *Daily Freeroll* is free and doesn't count, so play it every day. Scroll down for the full *poker calendar*. When you're done, *go to bed* to move to your next night.";
         }
 
@@ -263,7 +266,7 @@ namespace CFDream.UI
         public static void JobCard(VisualElement bub)
         {
             var row = U.Row().Cls("tip-compare");
-            row.Add(Side("Quit", "#4b9cd3", new[] { "Slick gives you *$5,000* once", "No paycheck", "*3 online games a day*", "*1 live game a day*", "Faster, riskier" }));
+            row.Add(Side("Quit", "#4b9cd3", new[] { "Slick gives you *$5,000* once", "No paycheck", "*3 online games a day*", "Or *1 live + 1 online* on a live day", "Faster, riskier" }));
             row.Add(Side("Keep the job", "#b8ff2e", new[] { "*$2,000* from Lou every Friday", "Days at the office", "*3 online games a week*", "*1 live game* on the weekend", "Slower, safer" }));
             bub.Add(row);
             bub.Add(U.T(Rich("Rent is due on the 1st either way. You can change your mind later: keep the job now and *quit any time* from the Spacepad."), "tip-text").NoPick());

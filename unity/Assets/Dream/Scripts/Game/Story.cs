@@ -25,6 +25,45 @@ namespace CFDream
                 B("you", "Somebody bought me a seat. The Biscayne Championship."),
                 B("rosa", "Free seat? Lucky you. Table nine, seat four. Cards in the air at noon."),
                 B("n", "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway."));
+            // the nightly schedule: The Winn Nightly at the card room, two CF Tilt events online
+            var nt = DB.Event("nightly");
+            if (nt != null) { nt.name = "The Winn Nightly $110"; nt.buyin = 110; nt.field = 60; nt.turbo = false; nt.blurb = "Biscayne's nightly. Sixty players, deep enough to actually play."; }
+            if (DB.Event("glob55") == null && DB.Event("tilt11") != null)
+            {
+                var g = DB.Event("tilt11").Copy("CF $55 Global Rush"); g.id = "glob55"; g.buyin = 55; g.field = 1104; g.turbo = false;
+                g.blurb = "CF Tilt's nightly flagship. Players from everywhere, a real prize pool."; DB.Events.Add(g);
+            }
+            var c1d = DB.Event("classic");
+            if (c1d != null && DB.Event("classic2") == null)
+            {
+                var d2 = c1d.Copy("Biscayne Classic · Day 2"); d2.id = "classic2"; d2.field = 40; d2.reentry = false; d2.blurb = "Forty players come back Sunday. Thirty-two get paid. One gets the trophy.";
+                d2.stages = new List<string> { "bubble", "deep", "final" }; d2.perS = new List<int> { 2, 2, 3 };
+                DB.Events.Add(d2);
+                c1d.name = "Biscayne Classic · Day 1"; c1d.kind = "sat"; c1d.seats = 40; c1d.target = "classic2"; c1d.title = null; c1d.boss = null;
+                c1d.stages = new List<string> { "early", "middle" }; c1d.perS = new List<int> { 4, 3 };
+                c1d.blurb = "The big one at Biscayne, over two days. Survive Saturday and bag your chips for Sunday. Mustich wants it too.";
+            }
+            Put("classic_day1", "cardroom", "The Biscayne Classic", "Day 1", "hub",
+                B("n", "Bags and tags. Two hundred and twelve started this morning. Forty come back tomorrow, and you're one of them."),
+                B("rosa", "Bag your chips, write your name on it. Day 2 is noon tomorrow. Don't be late."),
+                B("trent", "Look who survived. Don't get used to it."),
+                B("slick", "Day 2. Go to sleep. Don't celebrate yet.", text: true));
+            Put("classic_mustich", "cardroom", "The Biscayne Classic", "Day 2", "hub",
+                B("n", "", mood: "bust"),
+                B("n", "Final hand. Mustich shoves with his dad watching from the rail. Called. An ace on the river."),
+                B("n", "The room explodes. Mustich holds the trophy over his head like he bought it."),
+                B("trent", "Write it down, Florida. Some people are born for this."),
+                B("you", ""),
+                B("lou", "Next month, kid. That trophy isn't going anywhere."));
+            Put("classic_shark", "cardroom", "The Biscayne Classic", "Day 2", "hub",
+                B("n", "", mood: "bust"),
+                B("n", "Final hand. Tommy \"The Shark\" Maio turns over two kings and the whole rail stops breathing."),
+                B("n", "The river bricks. Thirty years at this card room, and the old man finally has his trophy."),
+                B("lou", "Thirty years! You hear me? Thirty years!"),
+                B("you", ""),
+                B("rosa", "His name goes on the board by the cage. Next month, it could be yours."));
+            foreach (var id in new[] { "classic_mustich", "classic_shark" }) { DB.Scenes[id].beats[0].fn = true; DB.Scenes[id].beats[4].fn = true; }
+            Insert("trentbeat", 0, B("n", "Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs."));
             // Monday at the office is only Monday now; the job decision happens at home, when Slick texts
             var after = DB.Scenes["p_after"];
             after.beats.RemoveAll(b => b.choice != null);
@@ -57,8 +96,39 @@ namespace CFDream
                     {
                         C("Take Slick's stake", null, B("slick", "Half your profits come back to me until it's paid. Respect the roll this time.")),
                         C("Grind the freerolls", null, B("slick", "Free money is the best money. Show me you can build it back from zero.")),
-                        C("Ask Lou for the job back", null, B("n", "Natso SweetLou smirks for a full ten seconds. Then he slides a badge across the desk.")),
+                        C("Ask Lou for the job back", null, B("n", "Lou laughs for a full ten seconds. \"Your job? We gave it to the intern.\"\nThat night Slick sends $500: \"Make it last.\"")),
                     } });
+            Put("broke_n", "diner", "Rock bottom", null, "hub",
+                B("n", "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."),
+                B("slick", "Busted?"),
+                B("you", "Every last dollar."),
+                B("slick", "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why."),
+                new Beat { sp = "slick", t = "You've still got Lou's paycheck. Freerolls on CF Tilt while it builds back. Or my money, and half your profits until it's back.",
+                    choice = new List<Choice>
+                    {
+                        C("Take Slick's stake", null, B("slick", "Half your profits come back to me until it's paid. Respect the roll this time.")),
+                        C("Grind the freerolls", null, B("slick", "Free money is the best money. Show me you can build it back from zero.")),
+                    } });
+            // three shots above your roll and broke anyway: Slick walks until you've built it back and said sorry
+            Put("broke_told", "diner", "Rock bottom", "I told you so", "hub",
+                B("n", "Lucky Seven Diner. 2:13 AM. Same stool. Same pie. Empty wallet. Again."),
+                B("slick", "I told you. Three times I told you."),
+                B("you", "I know."),
+                B("slick", "You want to play above your roll, you do it without me. No stake. No seats. Nothing."),
+                B("slick", "Freerolls on CF Tilt. Grind it back to ten grand. Then come find me."));
+            Put("slick_back", "home", "Square", null, "hub",
+                B("n", "Ten thousand dollars. Built back from the freerolls, one min-cash at a time."),
+                B("you", "You were right. I didn't listen. I'm sorry.", text: true),
+                B("slick", "Took you long enough. Welcome back, kid.", text: true),
+                B("slick", "Now respect the roll.", text: true));
+            // full-time and asking for the old desk back: Lou says no (and Slick, once a month, sends a little something)
+            Put("lou_no", "office", "Floor 34", "Asking for the job back", "hub",
+                B("derek", "Your job? We gave it to the intern. He's better at spreadsheets than you ever were."),
+                B("n", "Thirty-four floors down. The elevator has never felt slower."),
+                B("slick", "Heard Lou laughed you out. Here's $500. Make it last.", text: true));
+            Put("lou_no2", "office", "Floor 34", "Asking for the job back", "hub",
+                B("derek", "Your job? We gave it to the intern. He's better at spreadsheets than you ever were."),
+                B("n", "Thirty-four floors down. The elevator has never felt slower."));
             Put("rehire", "office", "Back on Floor 34", null, "hub",
                 B("derek", "Look who came crawling back. Same desk. Same Henderson deck. Smaller title."),
                 B("n", $"${Fmt.Money(Calendar.Salary)} every Friday again. Three sessions a week for the dream."));
@@ -80,11 +150,11 @@ namespace CFDream
                 B("mom", "100K and youre still doing the henderson deck???? I cant", text: true),
                 B("mom", "quit. move. go full time. ill drive you to the cardroom myself", text: true));
             // a quarter of a million: the badge comes off, whether you were ready or not
-            Put("quit250", "office", "Decision made", "Floor 34", "hub",
+            Put("quit250", "home", "Decision made", "David was right", "hub",
                 B("mom", "250K. a QUARTER MILLION. if you walk into that office tomorrow I will personally come get you", text: true),
-                B("derek", "The partners saw the poker site. A quarter million, they said. So which is it: the deck, or the cards?"),
-                B("you", "The cards, Lou. It was always the cards."),
-                B("n", "You leave the badge on the desk. No paycheck. Every day is yours now: three games, or a live one and the rest online."),
+                B("mom", "im not joking. this is the sign. quit.", text: true),
+                B("you", "Yeah. You're right. I'm done."),
+                B("n", "Monday morning you leave the badge on Lou's desk with a sticky note: Redo it yourself.\nNo paycheck. Every day is yours now."),
                 B("slick", "About time. Rent is still due on the first. Never play above your roll.", text: true));
             // after every event: the walk away from the table, from a cooler's silence to a title's roar (text picks a variant)
             Put("after_win", "cardroom", "After", null, "hub", B("n", "", mood: "win"), B("you", "", mood: "win"));
@@ -224,6 +294,12 @@ namespace CFDream
                     case "after_cooler:1": return new[] { "...Brutal.", "Right play. Wrong deck.", "Don't tilt. Don't tilt. Don't tilt." }[v];
                 }
             }
+            if (sceneId == "classic_mustich" || sceneId == "classic_shark")
+            {
+                var r = Game.Last; int place = r?.place ?? 0; double prize = r?.prize ?? 0;
+                if (index == 0) return place > 0 ? $"Sunday night. Day 2 of the Biscayne Classic.\nYou went out in {Fmt.Ord(place)}" + (prize > 0 ? $" for ${Fmt.Money(prize)}." : ", short of the money.") : "Sunday night. Day 2 of the Biscayne Classic.";
+                return place > 0 && place <= 9 ? $"Final table. {Fmt.Ord(place)}. Close enough to touch it." : prize > 0 ? $"{Fmt.Ord(place)}. On the board, not the trophy. Next month." : "Made Day 2 and still went home with nothing. Next month.";
+            }
             if (sceneId == "p_after")
             {
                 var local = DB.Event("local");
@@ -249,7 +325,10 @@ namespace CFDream
                 case "tour1": s.SetFlag(k == 0 ? "quote" : "humble"); break;
                 case "broke":
                     if (k == 0) { double amt = Career.StakeSize(s); Career.Add(s, amt, "Slick's stake"); s.debt += amt; s.SetFlag("stakes", s.FlagN("stakes") + 1); Career.Moment(s, "🥧", $"Slick staked you ${Fmt.Money(amt)}"); }
-                    if (k == 2 && s.job == "quit") { s.job = "nights"; Career.Moment(s, "🪪", "Went back to the day job"); }
+                    if (k == 2) { Career.Add(s, 500, "From Slick, after Lou said no"); Career.Moment(s, "🚫", "Lou said no. Slick sent $500."); }
+                    break;
+                case "broke_n":
+                    if (k == 0) { double amt = Career.StakeSize(s); Career.Add(s, amt, "Slick's stake"); s.debt += amt; s.SetFlag("stakes", s.FlagN("stakes") + 1); Career.Moment(s, "🥧", $"Slick staked you ${Fmt.Money(amt)}"); }
                     break;
                 case "derek_job": break;
             }
@@ -266,9 +345,12 @@ namespace CFDream
             if (id == "p_keep") Career.Moment(s, "🌙", "Kept the day job. Nights are for the dream.");
             if (id == "rehire") { s.job = "nights"; Career.Moment(s, "🪪", "Went back to the day job"); }
             if (id == "quit2") { s.job = "quit"; Career.Moment(s, "🚪", "Quit the day job to play full-time"); }
+            if (id == "broke_told") { s.SetFlag("slick_off"); Career.Moment(s, "🕶️", "Slick walked away. Build it back to $10,000."); }
+            if (id == "slick_back") { s.SetFlag("slick_off", 0); s.SetFlag("shots", 0); Career.Moment(s, "🤝", "Said sorry. Slick is back in your corner."); }
+            if (id == "lou_no") { Career.Add(s, 500, "From Slick, after Lou said no"); s.SetFlag("lou500", s.cal.d + 1); }
             if (id == "quit250") { s.job = "quit"; Career.Moment(s, "🚪", "A quarter million. Quit the day job for good."); }
         }
         // the boss scene depends on whether you still work for him
-        public static string Resolve(string id, State s) => id == "derek" && s.job == "nights" ? "derek_job" : id;
+        public static string Resolve(string id, State s) => id == "derek" && s.job == "nights" ? "derek_job" : id == "broke" && s.job == "nights" ? "broke_n" : id;
     }
 }

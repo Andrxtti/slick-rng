@@ -52,7 +52,7 @@ namespace CFDream
         public static bool Broke(State s) => s.br < 60;
 
         // ------------------------------------------------------------ the schedule
-        static readonly string[] EveryDay = { "c12", "nightly", "tilt11", "c25" };
+        static readonly string[] EveryDay = { "nightly", "glob55", "tilt11", "c25" };
         static readonly Dictionary<int, string[]> Weekday = new Dictionary<int, string[]> { { 0, new[] { "deep", "tilt55", "tilt215", "tilt2100" } }, { 2, new[] { "tilt530" } } };
         static SeriesDef S(string id, string n, string venue, string icon, int m, int from, int days, params (string, string)[] ev) => new SeriesDef { id = id, n = n, venue = venue, icon = icon, m = m, from = from, days = days, ev = ev };
         static readonly (string, string)[] CircuitEv = { ("0-6", "sat1700"), ("1", "ring400"), ("3", "ring600"), ("5", "ring400"), ("7", "ring1700") };
@@ -138,7 +138,8 @@ namespace CFDream
             if (s.ch == 0) { if (d == 5 || d == s.cal.d) Push("local", null, "Your free seat"); return list; } // the prologue jumps to Saturday when you sit down
             var c = s.cal; var D = Date(d);
             if (c.inv != null && c.inv.d == d) list.Add(new DayEvent { ev = c.inv.ev, why = "invite" });
-            if (d == c.d && Low(s)) Push("freeroll", null, "freeroll");
+            if (d == c.d && s.br < 400) Push("freeroll", null, "freeroll");   // the comeback freeroll: only when the roll is under $400
+            if (s.Ticket("classic2") > 0 && D.dow == 0) Push("classic2", null, "Day 2 · your chips are bagged");
             foreach (var x in SeriesOnDay(d))
             {
                 if (x.sr.wcs) { foreach (var (id, name) in WcsDay(d, x.o, x.s0)) Push(id, name, x.sr.n); continue; }
@@ -166,7 +167,9 @@ namespace CFDream
             var c = s.cal;
             if (s.ch == 0) return new Slots { left = 1, cap = 1 };
             if (s.job == "nights") { c.wk.TryGetValue(WeekOf(c.d), out int u); return new Slots { left = Math.Max(0, GamesCap - u), cap = GamesCap, used = u, week = true }; }
-            c.used.TryGetValue(c.d, out int ud); return new Slots { left = Math.Max(0, GamesCap - ud), cap = GamesCap, used = ud };
+            // full-time: 3 online a day, but a day with a live game is 1 live + 1 online (the Spacepad comes with you)
+            c.used.TryGetValue(c.d, out int ud); c.liveD.TryGetValue(c.d, out int lt); int cap = lt > 0 ? 1 : GamesCap;
+            return new Slots { left = Math.Max(0, cap - ud), cap = cap, used = Math.Min(ud, cap) };
         }
         public static void UseSlot(State s, bool live = false)
         {
@@ -180,7 +183,8 @@ namespace CFDream
         {
             var c = s.cal; if (s.ch == 0) return 1;
             if (s.job == "nights") { c.liveW.TryGetValue(WeekOf(c.d), out int u); return Math.Max(0, LiveCap - u); }
-            c.liveD.TryGetValue(c.d, out int ud); return Math.Max(0, LiveCap - ud);
+            c.liveD.TryGetValue(c.d, out int ld); c.used.TryGetValue(c.d, out int od);
+            return od >= 2 ? 0 : Math.Max(0, LiveCap - ld);   // two online games already today: no room for a live one
         }
         // ------------------------------------------------------------ the week on the Spacepad (day job)
         public static int WeekStart(int d) => d - Date(d).dow;   // the Sunday
@@ -198,6 +202,7 @@ namespace CFDream
         public static int SkipTo(State s)
         {
             int dow = Date(s.cal.d).dow;
+            if (s.Ticket("classic2") > 0 && dow == 6) return 1;   // Day 2 of the Classic is tomorrow
             // a planned week (job or not): sleeping goes straight to the next night you picked; nights you didn't pick
             // are never lived through one at a time
             var week = s.cal.plan.Keys.Where(k => k >= WeekStart(s.cal.d) && k <= WeekStart(s.cal.d) + 6).OrderBy(k => k).ToList();
@@ -216,10 +221,12 @@ namespace CFDream
         // why you can't play this one today (null when you can)
         public static string CantPlay(State s, EventDef ev)
         {
-            if (ev.daily || s.ch == 0) return null;
+            if (ev.daily || s.ch == 0 || ev.id == "classic2") return null;
             if (ev.online) { var sl = SlotsLeft(s); return sl.left > 0 ? null : s.job == "nights" ? "No online games left this week" : "No online games left today"; }
             if (s.job == "nights" && !Weekend(s)) return "Live games are weekends only while you have the day job";
-            return LiveLeft(s) > 0 ? null : s.job == "nights" ? "Your live game this weekend is played" : "One live game a day";
+            if (LiveLeft(s) > 0) return null;
+            if (s.job == "nights") return "Your live game this weekend is played";
+            s.cal.liveD.TryGetValue(s.cal.d, out int lp); return lp > 0 ? "One live game a day" : "Two online games played: a live day is 1 live + 1 online";
         }
         // nothing left to do today (or this week, with the job): sleep is the only move
         public static bool AllPlayed(State s)
@@ -256,6 +263,8 @@ namespace CFDream
             var c = s.cal; var D = Date(c.d);
             if (c.inv != null && c.inv.d < c.d) { if (wake || c.inv.seen) news.Add(("📭", $"The {c.inv.ev.name} invite expired.")); c.inv = null; }
             if (c.meet != null && c.meet.d < c.d) c.meet = null;
+            if (s.Ticket("classic2") > 0 && D.dow == 1) { s.tickets["classic2"] = 0; news.Add(("🎟", "You missed Day 2 of the Biscayne Classic. Your chips were blinded out.")); }
+            if (s.Ticket("classic2") > 0 && D.dow == 0) news.Add(("🏆", "Day 2 of the Biscayne Classic. Noon. Your chips are bagged."));
             if (s.job == "nights" && D.dow == 5) { Career.Add(s, Salary, "Paycheck"); news.Add(("💵", $"Payday. +${Fmt.Money(Salary)} from the day job.")); }
             string mk = $"{D.Y}-{D.m}";
             if (D.dd == 1 && c.paid != mk) { c.paid = mk; PayBills(s, news); }
@@ -304,7 +313,7 @@ namespace CFDream
         // ------------------------------------------------------------ Slick shows up when you're in trouble
         static void MaybeMeet(State s, List<(string, string)> news)
         {
-            var c = s.cal; if (c.meet != null || !Low(s)) return;
+            var c = s.cal; if (c.meet != null || !Low(s) || s.FlagN("slick_off") > 0) return;   // Slick walked away: no diner meetups
             var r = RngFor(s, c.d, "meet"); if (r.Next() > (Broke(s) ? 0.35 : 0.12)) return;
             double k = r.Next(); string seat = s.ch >= 3 ? "tilt215" : "deep";
             c.meet = k < 0.45 ? new Meetup { kind = "stake", amt = Career.StakeSize(s), d = c.d } : k < 0.8 ? new Meetup { kind = "seat", id = seat, d = c.d } : new Meetup { kind = "cash", amt = Math.Round(Career.StakeSize(s) / 50) * 10, d = c.d };

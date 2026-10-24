@@ -90,7 +90,7 @@ namespace CFDream
             }
             if (ev.id == "freeroll") { ev = ev.Copy(); ev.prizeBase = new[] { 0, 1, 1.5, 4, 8, 16, 16, 16 }[Math.Min(7, s.ch)]; }
             bool story = !ev.daily;
-            if (story && !reentry && !Game.AnyDay && ev.id != "local" && Calendar.SlotsLeft(s).left <= 0) return null;
+            if (story && !reentry && !Game.AnyDay && ev.id != "local" && ev.id != "classic2" && (ev.online ? Calendar.SlotsLeft(s).left <= 0 : Calendar.LiveLeft(s) <= 0)) return null;
             if (!Career.Afford(s, ev)) return null;
             if (ev.daily && Career.DailyDone(s)) return null;
             double travel = story ? Calendar.TravelFor(s, ev) : 0;
@@ -102,7 +102,7 @@ namespace CFDream
                 var c = s.cal;
                 if (travel > 0) { Career.Add(s, -travel, "Hotel and travel"); if (!c.trav.ContainsKey(c.d)) c.trav[c.d] = new List<string>(); c.trav[c.d].Add(ev.venue); }
                 if (reentry) { var k = $"{c.d}|{ev.id}"; c.re[k] = (c.re.TryGetValue(k, out var n) ? n : 0) + 1; }
-                else if (!Game.AnyDay) Calendar.UseSlot(s, !ev.online);
+                else if (!Game.AnyDay && ev.id != "classic2") Calendar.UseSlot(s, !ev.online);
                 if (ev.invite) { c.inv = null; s.SetFlag("invites", s.FlagN("invites") + 1); Career.Moment(s, "📨", $"Sat in a private game: {ev.name}, hosted by {ev.host}"); }
                 if (ev.id == "local" && s.ch == 0) c.d = 5;
             }
@@ -322,11 +322,11 @@ namespace CFDream
         public static int Paid(EventDef ev)
         {
             if (ev.kind == "sat") return ev.seats;
-            var p = DB.Payouts(ev.field); return p != null ? J.I(p, "paid") : Math.Max(1, ev.field / 7);
+            var p = DB.Payouts(ev.id == "classic2" ? 212 : ev.field); return p != null ? J.I(p, "paid") : Math.Max(1, ev.field / 7);   // Day 2 pays the whole Classic's prize pool
         }
         public static double PrizeFor(EventDef ev, int place)
         {
-            var p = DB.Payouts(ev.field); if (p == null) return 0;
+            var p = DB.Payouts(ev.id == "classic2" ? 212 : ev.field); if (p == null) return 0;
             var am = J.Nums(J.L(p, "amounts")); if (place < 1 || place > am.Count) return 0;
             return Math.Round(am[place - 1] * (ev.prizeBase > 0 ? ev.prizeBase : ev.buyin));
         }
@@ -416,8 +416,8 @@ namespace CFDream
                     if (run.boss == "ghost") Career.Moment(s, "🕶️", "Beat Bio The Ghost for the world title");
                     if (run.boss == "trent") { s.SetFlag("trentW", s.FlagN("trentW") + 1); Career.Moment(s, "😏", $"Beat Mustich heads-up ({s.FlagN("trentW")} and counting)"); }
                     void Once(string id) { if (!s.story.Contains(id) && !s.queue.Contains(id)) s.queue.Add(id); }
+                    if (ev.title == "room") Once("trentbeat");
                     if (s.TitleCount == 1) Once("firstwin");
-                    if (ev.title == "room" && run.boss == "trent") Once("trentbeat");
                     if (ev.title == "ring" && s.Title("ring") == 1) Once("ring1");
                     if (ev.title == "bracelet" && s.Title("bracelet") == 1) Once("bracelet1");
                     if ((ev.title == "tour" || ev.title == "glo") && s.Title("tour") + s.Title("glo") == 1) Once("tour1");
@@ -433,7 +433,11 @@ namespace CFDream
                 foreach (var k in s.daily.Keys.OrderBy(k => k).Take(Math.Max(0, s.daily.Count - 120)).ToList()) s.daily.Remove(k);
             }
             // the aftermath, as a scene in the venue (the first tournament too: it's where the story turns)
-            if (!ev.daily && (s.ch >= 1 || ev.id == "local"))
+            // the Classic films its own: bagging chips after Day 1, and the winner's moment after Day 2
+            if (ev.id == "classic" && res.ticket != null) s.queue.Add("classic_day1");
+            else if (ev.id == "classic2" && res.place != 1) { s.queue.Add(s.FlagN("classics") % 2 == 0 ? "classic_mustich" : "classic_shark"); s.SetFlag("classics", s.FlagN("classics") + 1); }
+            else if (ev.id == "classic2") { }
+            else if (!ev.daily && (s.ch >= 1 || ev.id == "local"))
             {
                 string after = run.cooler != null ? "after_cooler" : res.place == 1 && ev.kind != "cash" ? "after_win" : res.prize > 0 || (ev.kind == "cash" && res.net > 0) ? "after_cash" : "after_bust";
                 if (DB.Scenes.TryGetValue(after, out var sc)) { sc.place = string.IsNullOrEmpty(ev.venue) || ev.online ? "home" : ev.venue; Story.Aftermath(s, res, run, sc, after); s.queue.Add(after); }

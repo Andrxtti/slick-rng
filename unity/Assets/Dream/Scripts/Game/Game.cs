@@ -268,6 +268,25 @@ namespace CFDream
         public static void FitSave(int i) { Fashion.FitSave(State, i); State.Save(); Render(); }
         public static void FitWear(int i) { Fashion.FitWear(State, i); State.Save(); Render(); }
         public static void SetTab(string t) { Tab = t; View = View.Hub; Render(); }
-        public static void Rehire() { if (State.job == "quit") PlayScene("rehire"); }
+        // full-time and asking for the old desk: Lou says no; Slick covers you once a month (not while he's walked away)
+        public static void Rehire()
+        {
+            var s = State; if (s.job != "quit") return;
+            int last = (int)s.FlagN("lou500") - 1; bool gift = s.FlagN("slick_off") <= 0 && (last < 0 || s.cal.d - last >= 30);
+            PlayScene(gift ? "lou_no" : "lou_no2");
+        }
+        // registering: a buy-in that's a shot for your roll gets a text from Slick first (three shots and a bust, and he walks)
+        public static void Register(string id)
+        {
+            var s = State; var ev = Calendar.OnToday(s, id)?.ev ?? DB.Event(id);
+            if (ev == null || s.ch < 1 || s.FlagN("slick_off") > 0) { StartEvent(id); return; }
+            var risk = Career.Risk(s, ev);
+            if (risk.k != "shot" && risk.k != "yolo") { StartEvent(id); return; }
+            int n = (int)s.FlagN("shots"); double pct = Math.Round(Career.CostToday(s, ev) / Math.Max(1, s.br) * 100);
+            string warn = n == 0 ? "Take three shots above your roll and go broke, and I stop bailing you out." : n == 1 ? "That'd be your second shot. Remember what I said." : "That's three. Go broke after this and you're on your own.";
+            Sound.Play("text", 0.8f);
+            CFDream.UI.DreamApp.Confirm("Slick", $"\"{ev.name} is {pct}% of your roll. That's a shot, kid. You sure?\"\n\n{warn}", "Take the shot",
+                () => { s.SetFlag("shots", n + 1); Career.Moment(s, "🎯", $"Took a shot: {ev.name} ({pct}% of the roll)"); s.Save(); StartEvent(id); }, "Play smaller");
+        }
     }
 }

@@ -151,7 +151,11 @@ namespace CFDream
         public static void Progress(State s)
         {
             if (s.ch >= 1 && s.ch < 7 && ChapterDone(s, s.ch) && !s.story.Contains("c" + (s.ch + 1)) && !s.queue.Contains("c" + (s.ch + 1))) s.queue.Add("c" + (s.ch + 1));
-            if (s.ch >= 1 && Calendar.Broke(s) && !s.story.Contains("broke") && !s.queue.Contains("broke")) { Moment(s, "🥧", "Went broke"); s.queue.Add("broke"); }
+            // going broke: Slick lays out the options, unless you took three shots above your roll first
+            if (s.ch >= 1 && Calendar.Broke(s) && s.FlagN("brokeNow") <= 0 && !s.queue.Contains("broke") && !s.queue.Contains("broke_told"))
+            { Moment(s, "🥧", "Went broke"); s.SetFlag("brokeNow"); s.queue.Add(s.FlagN("shots") >= 3 || s.FlagN("slick_off") > 0 ? "broke_told" : "broke"); }
+            if (s.FlagN("brokeNow") > 0 && s.br >= 400) s.SetFlag("brokeNow", 0);
+            if (s.FlagN("slick_off") > 0 && s.br >= 10000 && !s.queue.Contains("slick_back")) s.queue.Add("slick_back");
             // keeping the day job: David leans on you at every milestone, and a quarter million settles it
             if (s.ch >= 1 && s.job == "nights")
             {

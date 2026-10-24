@@ -350,7 +350,7 @@ namespace CFDream.UI
             var l = U.Col().Grow();
             l.Add(U.Kicker(pick ? "★ Slick's pick" : why ?? "").Fg(pick ? C.Gold2 : C.Gold));
             l.Add(U.H3(ev.name));
-            string kind = ev.kind == "cash" ? "Cash game" : ev.kind == "sat" ? $"Satellite · {ev.seats} seats" : ev.field > 0 ? $"{ev.field:#,0} players" : "Tournament";
+            string kind = ev.id == "classic" ? $"Day 1 of 2 · {ev.field:#,0} players · top {ev.seats} return Sunday" : ev.id == "classic2" ? $"Day 2 · {ev.field} players · 32 paid" : ev.kind == "cash" ? "Cash game" : ev.kind == "sat" ? $"Satellite · {ev.seats} seats" : ev.field > 0 ? $"{ev.field:#,0} players" : "Tournament";
             l.Add(U.Hint($"{DB.Place(ev.venue)} · {kind}"));
             top.Add(l);
             var r = U.Col().Cls("event-price");
@@ -363,7 +363,8 @@ namespace CFDream.UI
             chips.Add(U.Chip(risk.label, RiskCol.TryGetValue(risk.k, out var rc) ? rc : C.Mute, risk.k == "no"));
             if (ev.turbo) chips.Add(U.Chip("Turbo", C.Red));
             if (ev.reentry) chips.Add(U.Chip("Re-entry", C.Mute));
-            if (ev.kind == "sat" && !string.IsNullOrEmpty(ev.target)) chips.Add(U.Chip("Wins a seat: " + (DB.Event(ev.target)?.name ?? ev.target), C.Blue));
+            if (ev.id == "classic") chips.Add(U.Chip("🏆 Biscayne Classic", C.Gold));
+            else if (ev.kind == "sat" && !string.IsNullOrEmpty(ev.target)) chips.Add(U.Chip("Wins a seat: " + (DB.Event(ev.target)?.name ?? ev.target), C.Blue));
             var tr = Calendar.TravelFor(s, ev); if (tr > 0) chips.Add(U.Chip($"Hotel {U.Money(tr)}", C.Mute));
             if (!string.IsNullOrEmpty(ev.title)) chips.Add(U.Chip(DB.TitleIcon(ev.title) + " " + DB.TitleName(ev.title), C.Gold));
             if (ev.legends != null && ev.legends.Count > 0) chips.Add(U.Chip("A legend is in the field", C.Violet));
@@ -371,7 +372,7 @@ namespace CFDream.UI
             c.Add(chips);
             if (!string.IsNullOrEmpty(ev.blurb)) c.Add(U.Hint(ev.blurb).Mt(6));
             string why2 = risk.k == "no" ? risk.label : Calendar.CantPlay(s, ev);
-            c.Add(U.Btn(ev.kind == "cash" ? "Sit down" : "Register", () => Game.StartEvent(ev.id), pick ? "gold wide" : "wide", why2 == null, why2).Mt(10));
+            c.Add(U.Btn(ev.kind == "cash" ? "Sit down" : "Register", () => Game.Register(ev.id), pick ? "gold wide" : "wide", why2 == null, why2).Mt(10));
             return c;
         }
 
@@ -423,7 +424,7 @@ namespace CFDream.UI
             {
                 bool keep = s.job == "nights";
                 box.Add(U.Hint(keep ? $"Pick your nights. {Calendar.GamesCap} online games and one live game (Saturday or Sunday). Sleeping skips straight to the next night you picked."
-                                    : $"Pick the nights you'll play. Full-time, any night works: {Calendar.GamesCap} online games and a live one each day. Sleeping skips straight to the next night you picked.").Mt(4));
+                                    : $"Pick the nights you'll play. Full-time, any night works: {Calendar.GamesCap} online games, or a live game plus 1 online. Sleeping skips straight to the next night you picked.").Mt(4));
                 int start = Calendar.WeekStart(s.cal.d);
                 VisualElement rows = null;
                 void Draw()
@@ -447,7 +448,7 @@ namespace CFDream.UI
                 rows = U.Col().Cls("plan-rows").Mt(10); box.Add(rows); Draw();
                 if (first) Tips.Later(300, () => Tips.Show("t13", "Plan your week", keep
                     ? "Pick your *3 online nights* and *1 weekend live night*. Those are the only nights you can play while you work for Lou. Tap *Done* when you're set."
-                    : "Pick the nights you'll play. Full-time, *any night* works: 3 online games and a live one each day. Planning tells the game *which nights to take you to*. Tap *Done* when you're set.", rows));
+                    : "Pick the nights you'll play. Full-time, *any night* works: *3 online games*, or a *live game plus 1 online*. Planning tells the game *which nights to take you to*. Tap *Done* when you're set.", rows));
                 box.Add(U.Btn("Done", () => { Calendar.PlanDone(s); DreamApp.CloseModal(); if (first) Game.FirstPlanDone(); else Game.Hub(); }, "gold wide").Mt(12));
             });
         }
@@ -467,11 +468,12 @@ namespace CFDream.UI
             else
             {
                 c.Add(U.Kicker("Full-time"));
-                c.Add(U.P($"No paycheck. {Calendar.GamesCap} online games a day, plus a live one."));
+                c.Add(U.P($"No paycheck. {Calendar.GamesCap} online games a day, or a live game plus 1 online."));
+                if (s.FlagN("slick_off") > 0) c.Add(U.Hint("Slick isn't backing you right now. Get the roll back to $10,000.").Fg(C.Red).Mt(4));
                 var wk2 = Enumerable.Range(0, 7).Select(i => Calendar.WeekStart(s.cal.d) + i).Where(d => Calendar.PlanFor(s, d) != null).Select(d => Calendar.Dow[Calendar.Date(d).dow] + (Calendar.PlanFor(s, d) == "live" ? " live" : "")).ToList();
                 c.Add(U.Hint(wk2.Count > 0 ? "This week on the Spacepad: " + string.Join(" · ", wk2) : "No plan this week: every night is yours.").Mt(4));
                 c.Add(U.Btn("Plan the week on the Spacepad", () => Planner(s), "wide").Mt(8));
-                if (Calendar.Low(s)) c.Add(U.Btn("Ask Lou for the job back", () => DreamApp.Confirm("Back to Floor 34?", $"{U.Money(Calendar.Salary)} every Friday, but only {Calendar.GamesCap} sessions a week.", "Ask him", Game.Rehire, "Not yet"), "ghost wide").Mt(8));
+                if (Calendar.Low(s)) c.Add(U.Btn("Ask Lou for the job back", () => DreamApp.Confirm("Back to Floor 34?", "Swallow your pride and ask Lou for your old desk?", "Ask him", Game.Rehire, "Not yet"), "ghost wide").Mt(8));
             }
             return c;
         }

@@ -80,6 +80,7 @@ scene("c1",
     ("n",     "push:Looking Around"),                         # Mustich, sized up
     ("n",     "wide^@swell"))
 scene("trentbeat",
+    ("n",     "wide^:Looking Around@hush~tension"),           # heads-up, the room on its chairs
     ("n",     "wide^:Victory@crowd~triumph!win"),
     ("trent", "cu:Shrugging>Fist Pump"),
     ("lou",   "ots:Head Nod Yes@swell"),
@@ -208,6 +209,47 @@ scene("broke",
     ("you",   "cu:Shaking Head No"),
     ("slick", "push:Talking@swell~night"),
     ("slick", "two:Pointing~none"))
+scene("broke_n",
+    ("n",     "high^:Sad Idle@hush~tension"),
+    ("slick", "ots:Talking"),
+    ("you",   "cu:Shaking Head No"),
+    ("slick", "push:Talking@swell~night"),
+    ("slick", "two:Pointing~none"))
+scene("broke_told",
+    ("n",     "high^:Sad Idle@hush~tension"),
+    ("slick", "cu:Shaking Head No@sting"),                    # I told you
+    ("you",   "ecu:Defeated"),
+    ("slick", "ots:Pointing"),
+    ("slick", "push:Talking~night"))
+scene("slick_back",
+    ("n",     "cu^:Texting While Standing~night"),
+    ("you", ""), ("slick", ""), ("slick", ""))
+scene("lou_no",
+    ("derek", "ots:Shaking Head No@sting~tension"),
+    ("n",     "high^:Sad Idle"),
+    ("slick", ""))
+scene("lou_no2",
+    ("derek", "ots:Shaking Head No@sting~tension"),
+    ("n",     "high^:Sad Idle"))
+scene("classic_day1",
+    ("n",     "wide^:Fist Pump@chips~grind"),                 # bags and tags
+    ("rosa",  "two:Pointing"),
+    ("trent", "cu:Shrugging@tick"),
+    ("slick", ""))
+scene("classic_mustich",
+    ("n",     "high^:Sad Idle~tension"),                      # your finish
+    ("n",     "wide:Fist Pump@hush"),                         # the final hand, from the rail
+    ("n",     "low:Victory@crowd~triumph"),                   # the trophy over his head
+    ("trent", "cu:Pointing>Clapping"),
+    ("you",   "cu:Shaking Head No"),
+    ("lou",   "ots:Talking>Head Nod Yes@swell~night"))
+scene("classic_shark",
+    ("n",     "high^:Sad Idle~tension"),
+    ("n",     "wide:Thinking@hush"),
+    ("n",     "low:Victory@crowd~triumph"),                   # thirty years
+    ("lou",   "cu:Cheering>Clapping"),
+    ("you",   "cu:Clapping"),
+    ("rosa",  "two:Clapping@swell~night"))
 scene("rehire",
     ("derek", "ots:Pointing@sting~tension"),
     ("n",     "high^:Sad Idle"))
@@ -216,9 +258,8 @@ scene("quit2",
     ("derek", "cu:Shrugging"),
     ("n",     "wide^@swell"))
 scene("quit250",
-    ("mom",   ""),
-    ("derek", "ots:Angry Gesture~tension"),
-    ("you",   "push:Talking@sting"),
+    ("mom",   ""), ("mom", ""),
+    ("you",   "push^:Head Nod Yes@sting"),
     ("n",     "wide^:Looking Around@swell~triumph"),
     ("slick", ""))
 scene("derek", ("derek", ""))
