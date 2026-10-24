@@ -12,6 +12,7 @@ namespace CFDream
         public double buyin, prizeBase, soft;
         public bool free, online, daily, turbo, reentry, invite;
         public List<string> legends = new List<string>();
+        public List<string> stages; public List<int> perS;   // quick online games carry their own plan
         public EventDef Copy(string newName = null)
         {
             var e = (EventDef)MemberwiseClone();

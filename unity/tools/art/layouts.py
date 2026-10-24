@@ -267,7 +267,7 @@ def build_set(place):
     marks = {"you": [-0.8, 1.0, 124], "them": [0.45, 0.15, -56]}
     if place == "office":
         add("desk", 0, back("desk"), ry=0); add("laptop", -0.1, back("desk") - 0.1, y=0.75, ry=0); add("chair", 0.9, back("desk") + 0.9, ry=180)
-        add("bookshelf", left("bookshelf"), -0.6, ry=90); add("plant", w / 2 - 0.4, -d / 2 + 0.5); add("floor_lamp", -w / 2 + 0.6, 1.4)
+        add("bookshelf", left("bookshelf"), -0.6, ry=90); add("plant", w / 2 - 0.4, -d / 2 + 0.5); add("floor_lamp", w / 2 - 0.7, -d / 2 + 1.6)
         P_["window"](1.4, 2.2, h * 0.45); P_["art"]("art_1", "left", 1.2, 1.7)
         P_["light"](0, 2.2, -0.5, "#dfe8ff", 1.3, 6); P_["light"](-2, 1.6, 1.2, "#ffd9a0", 0.8, 4)
     elif place == "diner":
@@ -281,7 +281,7 @@ def build_set(place):
         for k, (x, z, ry) in enumerate(((-1.2, -2.0, 0), (0, -2.1, 0), (1.2, -2.0, 0), (-2.0, -1.2, 90), (2.0, -1.2, -90))): add("chair", x, z, ry=ry)
         if place in ("casino", "titan", "main", "tv"): add("chandelier", 0, -1.2, y=2.5)
         if place in ("titan", "main"): add("trophy_case", right("trophy_case"), -0.4, ry=-90)
-        if place == "cardroom": add("floor_lamp", w / 2 - 0.6, 0.6); add("plant", -w / 2 + 0.4, -d / 2 + 0.5)
+        if place == "cardroom": add("floor_lamp", w / 2 - 0.6, -d / 2 + 1.2); add("plant", -w / 2 + 0.4, -d / 2 + 0.5)
         if place == "vegas": P_["art"]("art_4", "back", 2.2, 2.0, wide=True)
         if place == "tv": add("flat_tv_big", -w / 2 + 0.24, 0.3, ry=90, y=1.2)
         P_["window"](0 if place != "vegas" else -1.6, 2.4, h * 0.42)

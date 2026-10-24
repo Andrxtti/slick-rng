@@ -540,3 +540,6 @@ Label.plan-day { font-size: 14px; color: #f3ecdc; }
 .film { width: 100%; height: 56%; min-height: 300px; border-radius: 16px; background-color: #06060a; overflow: hidden; -unity-background-scale-mode: scale-and-crop; }
 .film-bars { position: absolute; left: 0; right: 0; top: 0; bottom: 0; border-top-width: 14px; border-bottom-width: 14px; border-color: #06060a; }
 .scene-bottom .speech { margin-top: 10px; }
+
+/* online lobby: games still to come */
+.event.soon { opacity: 0.6; }

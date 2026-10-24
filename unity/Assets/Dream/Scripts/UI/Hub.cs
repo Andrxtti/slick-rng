@@ -12,7 +12,7 @@ namespace CFDream.UI
     public static class HubView
     {
         // Home is your place; its laptop ("calendar") is the hub: tonight's games, the calendar, money
-        static readonly (string id, string n, string icon)[] Tabs = { ("home", "Home", "home"), ("closet", "Closet", "closet"), ("career", "Career", "career"), ("story", "Story", "story") };
+        static readonly (string id, string n, string icon)[] Tabs = { ("home", "Home", "home"), ("closet", "Closet", "closet"), ("online", "Online", "online"), ("career", "Career", "career"), ("story", "Story", "story") };
 
         public static VisualElement Build()
         {
@@ -24,12 +24,41 @@ namespace CFDream.UI
                 case "closet": body.Add(ClosetView.Build(s)); break;
                 case "career": body.Add(Simple("Career", s, CareerView.Build(s))); break;
                 case "story": body.Add(Simple("Story", s, StoryTab(s))); break;
+                case "online": body.Add(Simple("Online", s, OnlineTab(s))); break;
                 case "calendar": body.Add(Laptop(s, true)); break;
                 default: body.Add(HomeScreen.Build(s)); break;
             }
             page.Add(body);
             page.Add(NavBar(s));
             return page;
+        }
+
+        // CF Tilt online: quick games on the same engine as the story, by tier; the rest is marked as coming
+        static VisualElement OnlineTab(State s)
+        {
+            var col = U.Col();
+            var sl = Calendar.SlotsLeft(s);
+            col.Add(U.Hint(s.ch == 0 ? "Finish the prologue first." : s.job == "nights" ? $"Online games count against your week: {sl.left} of {sl.cap} left." : $"Online games count against today: {sl.left} of {sl.cap} left.").Mt(2));
+            foreach (var tier in new[] { "Casual", "Ranked", "League" })
+            {
+                col.Add(U.Kicker(tier).Mt(16));
+                foreach (var g in Career.Online(s).Where(x => x.tier == tier))
+                {
+                    var c = U.Card("event" + (g.soon ? " soon" : ""));
+                    var hd = U.Row(); hd.Add(U.H3(g.name).Grow()); if (g.soon) hd.Add(U.Chip(g.note, C.Mute)); else hd.Add(U.Chip(g.ev.turbo ? "Turbo" : "Online", C.Blue));
+                    c.Add(hd); c.Add(U.P(g.blurb).Mt(4));
+                    if (!g.soon)
+                    {
+                        var ev = g.ev; var risk = Career.Risk(s, ev);
+                        c.Add(U.Hint($"Buy-in {U.Money(ev.buyin)} · {ev.field} players · {ev.seats} paid · {string.Join(" / ", ev.perS)} hands").Mt(4));
+                        string why = s.ch == 0 ? "After the prologue" : risk.k == "no" ? risk.label : Calendar.CantPlay(s, ev);
+                        c.Add(U.Btn("Play", () => Game.StartEvent(ev.id), why == null ? "gold wide" : "wide", why == null, why).Mt(8));
+                    }
+                    col.Add(c);
+                }
+            }
+            col.Add(U.Hint("Every online game opens with a player intro: your look, your gear, your titles. Ranked ratings and the League season land with the online update.").Mt(16));
+            return col;
         }
 
         // a plain scrolling page with a title (career, story)

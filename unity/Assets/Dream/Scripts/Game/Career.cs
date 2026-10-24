@@ -126,6 +126,27 @@ namespace CFDream
                 default: return (((double)legends / total + Math.Min(1, s.Title("bracelet") / 15.0)) / 2, $"{legends}/{total} legends · {s.Title("bracelet")}/15 bracelets");
             }
         }
+        // ------------------------------------------------------------ online: the lobby (Casual, Ranked, League)
+        public class OnlineGame { public string id, name, blurb, tier, note; public bool soon; public EventDef ev; }
+        static double OnlineBuyin(State s, double baseBuyin) => Math.Round(baseBuyin * new[] { 1, 1, 3, 10, 25, 50, 100, 200 }[Math.Min(7, Math.Max(0, s.ch))]);
+        static EventDef Quick(State s, string id, string name, string blurb, int field, int paid, List<string> stages, List<int> perS, double buyin, bool turbo = false)
+            => new EventDef { id = "ol_" + id, kind = "sng", name = name, blurb = blurb, venue = "cftilt", online = true, field = field, seats = paid, buyin = OnlineBuyin(s, buyin), ch = Math.Max(1, s.ch), turbo = turbo, stages = stages, perS = perS };
+        public static List<OnlineGame> Online(State s)
+        {
+            var L = new List<OnlineGame>();
+            L.Add(new OnlineGame { id = "sng", tier = "Casual", name = "Quick SnG", blurb = "A nine-handed single table in ten hands: early, bubble, final.", ev = Quick(s, "sng", "Quick SnG", "Nine players, three paid. Ten hands.", 9, 3, new List<string> { "early", "bubble", "final" }, new List<int> { 3, 3, 4 }, 11) });
+            L.Add(new OnlineGame { id = "hyper6", tier = "Casual", name = "6-Max Hyper", blurb = "Six players, two paid. Blinds fly.", ev = Quick(s, "hyper6", "6-Max Hyper", "Six players, two paid. About three minutes.", 6, 2, new List<string> { "early", "final" }, new List<int> { 3, 4 }, 7, true) });
+            L.Add(new OnlineGame { id = "trivia", tier = "Casual", name = "Poker Trivia", blurb = "Family-feud style. Three rounds: 5, 5 and the big one.", soon = true, note = "Coming" });
+            L.Add(new OnlineGame { id = "icm", tier = "Casual", name = "ICMirighhht?", blurb = "Spot the ICM blunder before the clock does.", soon = true, note = "Coming" });
+            L.Add(new OnlineGame { id = "mosh", tier = "Ranked", name = "Mosh Pit", blurb = "An 18-player double table that is all bubble and final table. Shove-fest.", ev = Quick(s, "mosh", "Mosh Pit", "Eighteen runners, four paid, and it starts on the bubble.", 18, 4, new List<string> { "bubble", "final" }, new List<int> { 6, 6 }, 33, true) });
+            L.Add(new OnlineGame { id = "dbl18", tier = "Ranked", name = "Double Table", blurb = "Two tables down to one. The long one.", ev = Quick(s, "dbl18", "Double Table", "Eighteen players, four paid. Two tables down to one.", 18, 4, new List<string> { "early", "middle", "bubble", "final" }, new List<int> { 3, 3, 3, 3 }, 22) });
+            L.Add(new OnlineGame { id = "hu", tier = "Ranked", name = "Heads-Up Turbo", blurb = "One opponent, turbo blinds, first to the felt.", soon = true, note = "Coming" });
+            L.Add(new OnlineGame { id = "3max", tier = "Ranked", name = "Heads-Up 3-Max", blurb = "Three players, winner takes it.", soon = true, note = "Coming" });
+            L.Add(new OnlineGame { id = "league", tier = "League", name = "Season League", blurb = "Live-service calendar, divisions, promotion and relegation, full-league SnGs that launch when 90% ready up.", soon = true, note = "Coming" });
+            return L;
+        }
+        public static EventDef OnlineEvent(State s, string id) => Online(s).FirstOrDefault(g => g.ev != null && g.ev.id == id)?.ev;
+
         // after anything happens: next chapter, rock bottom
         public static void Progress(State s)
         {

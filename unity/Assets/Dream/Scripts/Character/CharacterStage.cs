@@ -228,7 +228,10 @@ namespace CFDream.Character
                         camA = L + back * 0.75f + sideL * 0.42f + Vector3.up * 0.14f; camB = L + back * 0.62f + sideL * 0.36f + Vector3.up * 0.11f; lookA = lookB = S - Vector3.up * 0.02f; cam.fieldOfView = 34; break;
                     }
                 default:
-                    camA = M + side * 3.6f + Vector3.up * 1.5f; camB = M + side * 3.0f + Vector3.up * 1.35f; lookA = lookB = M + Vector3.up * 0.9f; cam.fieldOfView = 36; break;
+                    {
+                        var front = (side * 0.5f + Vector3.forward * 0.85f).normalized;   // from out front, both of you in the frame
+                        camA = M + front * 3.9f + Vector3.up * 1.45f; camB = M + front * 3.3f + Vector3.up * 1.3f; lookA = lookB = M + Vector3.up * 0.95f; cam.fieldOfView = 42; break;
+                    }
             }
             PlaceCam(0);
         }

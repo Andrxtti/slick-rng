@@ -57,6 +57,7 @@ namespace CFDream
         public static bool LiveEv(EventDef ev) => !(ev.online || ev.daily || ev.kind == "sng");
         public static (List<string> stages, List<int> perS) PlanFor(EventDef ev, int ch)
         {
+            if (ev.stages != null && ev.stages.Count > 0) return (ev.stages, ev.perS);
             if (ev.kind == "cash") return (new List<string> { "cash" }, null);
             if (ev.kind == "sat") return (new List<string> { "early", "satbubble" }, null);
             if (ev.turbo) return (new List<string> { "early", "middle", "bubble", "final" }, new List<int> { 1, 2, 2, 2 });
@@ -76,6 +77,7 @@ namespace CFDream
         {
             var s = S; EventDef ev; LiveDef live = null;
             if (id == "daily") ev = Career.DailyEvent(s);
+            else if (id.StartsWith("ol_")) { ev = Career.OnlineEvent(s, id); if (ev == null) return null; }
             else
             {
                 live = Calendar.Live.FirstOrDefault(l => l.ev.id == id);

@@ -389,13 +389,18 @@ namespace CFDream.Character
                 case "cap":
                 case "snap":
                     {
-                        var rot = Tilt(12); Vector3 at = crown - c.up * (R * (id == "snap" ? 1.0f : 0.9f) - c.M(0.012f));
+                        // a snapback is a structured cap: a slightly wider, flatter crown that sits low on the head, a
+                        // thick flat brim; a dad cap is a soft dome with a curved brim
+                        bool snap = id == "snap";
+                        var rot = Tilt(snap ? 6 : 12); float Rc = snap ? R + c.M(0.006f) : R, hgt = snap ? 0.82f : 0.9f;
+                        Vector3 at = crown - c.up * (Rc * hgt - c.M(snap ? 0.006f : 0.012f));
                         var mat = Cloth(id == "cap" ? "#17171a" : "#24427e");
-                        Part(root, MeshKit.Dome(R, id == "snap" ? 1.0f : 0.9f, -0.05f), mat, at, rot);
-                        Part(root, MeshKit.Sphere(c.M(0.006f), 8), mat, at + rot * Vector3.up * R * (id == "snap" ? 1.0f : 0.9f), rot);
-                        Vector3 front = at + rot * (Vector3.forward * R * 0.97f);
-                        var brimRot = rot * Quaternion.Euler(id == "snap" ? 2 : 10, 0, 0);
-                        Part(root, MeshKit.Disc(1, 0.05f, 28), mat, front + brimRot * (Vector3.forward * c.M(0.035f)), brimRot, new Vector3(c.M(0.078f), c.M(0.004f) / 0.05f, c.M(0.06f)));
+                        Part(root, MeshKit.Dome(Rc, hgt, snap ? -0.12f : -0.05f), mat, at, rot);
+                        Part(root, MeshKit.Sphere(c.M(0.006f), 8), mat, at + rot * Vector3.up * Rc * hgt, rot);
+                        Vector3 front = at + rot * (Vector3.forward * Rc * 0.96f - Vector3.up * c.M(snap ? 0.012f : 0.0f));
+                        var brimRot = rot * Quaternion.Euler(snap ? 0 : 10, 0, 0);
+                        Part(root, MeshKit.Disc(1, 0.05f, 28), mat, front + brimRot * (Vector3.forward * c.M(snap ? 0.04f : 0.035f)), brimRot,
+                            new Vector3(c.M(snap ? 0.088f : 0.078f), c.M(snap ? 0.007f : 0.004f) / 0.05f, c.M(snap ? 0.07f : 0.06f)));
                         break;
                     }
                 case "beanie":
