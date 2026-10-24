@@ -12,6 +12,7 @@ namespace CFDream.EditorTools
 {
     public class DreamAnim : AssetPostprocessor
     {
+        public override uint GetVersion() => 2;   // bump to reimport the clips when the settings change
         public const string Folder = "Assets/Dream/Anim/Mixamo";
         const string ControllerPath = "Assets/Dream/Resources/Dream/Acting.controller";
         // everything else plays once and holds
@@ -39,7 +40,11 @@ namespace CFDream.EditorTools
             {
                 c.name = name; c.loopTime = loop; c.loopPose = loop;
                 c.lockRootRotation = true; c.lockRootHeightY = true; c.lockRootPositionXZ = true;
-                c.keepOriginalOrientation = true; c.keepOriginalPositionY = true; c.keepOriginalPositionXZ = true;
+                // standing clips stand on their feet (Mixamo's hip height is the download character's, so "original" sinks
+                // a different body into the floor); sitting clips keep their own height so they don't float off the chair
+                bool seated = name.StartsWith("Sitting") || name == "Sit To Stand" || name == "Stand To Sit";
+                c.keepOriginalOrientation = true; c.keepOriginalPositionXZ = true;
+                c.keepOriginalPositionY = seated; c.heightFromFeet = !seated; c.heightOffset = 0;
             }
             mi.clipAnimations = clips;
         }

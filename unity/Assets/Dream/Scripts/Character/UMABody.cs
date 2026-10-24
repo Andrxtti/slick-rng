@@ -77,6 +77,23 @@ namespace CFDream.Character
             if (!first) Push();
         }
 
+        static bool loggedMats;
+        void LogMaterials()
+        {
+            if (loggedMats) return; loggedMats = true;
+            var sb = new System.Text.StringBuilder("[Dream] UMA materials:");
+            string[] props = { "_Smoothness", "_Glossiness", "_GlossMapScale", "_Metallic", "_BumpScale", "_OcclusionStrength", "_Cutoff", "_SpecularHighlights", "_EnvironmentReflections", "_RimPower", "_Translucency" };
+            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+                foreach (var m in r.sharedMaterials)
+                {
+                    if (m == null) continue;
+                    sb.Append($" | {r.name}/{m.name} [{(m.shader != null ? m.shader.name : "?")}] rq{m.renderQueue}");
+                    foreach (var p in props) if (m.HasProperty(p)) sb.Append($" {p.TrimStart('_')}={m.GetFloat(p):0.##}");
+                    foreach (var k in m.shaderKeywords) sb.Append(" +" + k);
+                }
+            Debug.Log(sb.ToString());
+        }
+
         void OnBuilt(UMAData d)
         {
             Pin(); Tint();
@@ -96,7 +113,7 @@ namespace CFDream.Character
                 Debug.Log("[Dream] UMA shared colours: " + (sc == null ? "none" : string.Join(", ", sc.Where(c => c != null).Select(c => $"{c.name}={(c.channelMask.Length > 0 ? ColorUtility.ToHtmlStringRGB(c.channelMask[0]) : "-")}"))));
             }
 #endif
-            built = true;
+            built = true; LogMaterials();
             try { fit = Measure(); } catch (Exception e) { Debug.LogWarning("[Dream] body measure: " + e.Message); fit = null; }
             try { Face(); } catch (Exception e) { Debug.LogWarning("[Dream] face: " + e.Message); }
             var cb = pending; pending = null;

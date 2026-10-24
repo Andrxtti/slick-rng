@@ -308,7 +308,7 @@ namespace CFDream.Character
             string key = kind + (speakerIsYou ? "|you" : "|them");
             if (key == shotKey && shotT < 1) return;
             if (shotKey != null && key != shotKey) { Sound.Play("cut", 0.5f); cutFade = 1f; }   // a cut: a soft whoosh and a dip to black
-            shotKey = key; shotN++; baseKind = shotKind = kind; shotYou = subjYou = speakerIsYou; narr = narration; shotDur = dur; shotT = 0; actYou = speakerIsYou; actT = 0; sinceShot = 0; reacted = false;
+            shotKey = key; shotN++; reaimed = false; baseKind = shotKind = kind; shotYou = subjYou = speakerIsYou; narr = narration; shotDur = dur; shotT = 0; actYou = speakerIsYou; actT = 0; sinceShot = 0; reacted = false;
             Aim(); PlaceCam(0);
         }
         // coverage: a long line cuts to the listener for a moment (a reaction), then back to the speaker
@@ -493,7 +493,7 @@ namespace CFDream.Character
                 g.Right(target, w);
             }
         }
-        string mood, actClip, reactClip; bool clips; int shotN;
+        string mood, actClip, reactClip; bool clips, reaimed; int shotN;
         static readonly string[] TalkClips = { "Talking", "Talking", "Agreeing", "Talking", "Pointing", "Shrugging", "Talking", "Standing Arguing" };
         Gestures GesturesOf(ICharacterBody b)
         {
@@ -565,7 +565,7 @@ namespace CFDream.Character
             if (inScene)
             {
                 if (shotT < 1) shotT = Mathf.Min(1, shotT + Time.deltaTime / shotDur);
-                sinceShot += Time.deltaTime;
+                sinceShot += Time.deltaTime; if (!reaimed && sinceShot > 0.5f) { reaimed = true; Aim(); }   // the clip has settled: frame the head where it is now
                 // coverage on a long line: after a few seconds on the speaker, a beat on the listener, then back
                 bool both = HasBody && npc != null && npc.Ready && npc.Root.activeSelf;
                 if (baseKind == "ext" && sinceShot > 3.6f) { baseKind = shotKind = "wide"; shotT = 0; shotDur = 7f; sinceShot = 0; Sound.Play("cut", 0.5f); cutFade = 1f; Aim(); PlaceCam(0); }
