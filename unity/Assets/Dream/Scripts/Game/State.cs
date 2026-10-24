@@ -19,7 +19,7 @@ namespace CFDream
     public class Got { public double d; public string at; }
     public class Moment { public double d; public string icon, text; }
     public class Trophy { public string t, ev; public double prize, d; }
-    public class Invite { public EventDef ev; public int d; }
+    public class Invite { public EventDef ev; public int d; public bool seen; }
     public class Meetup { public string kind, id; public double amt; public int d; }
     public class Fit { public Dictionary<string, string> eq = new Dictionary<string, string>(); public Dictionary<string, int> dye = new Dictionary<string, int>(), fin = new Dictionary<string, int>(); }
     public class Quest { public string id; public int v; public bool done; }
@@ -45,6 +45,9 @@ namespace CFDream
     {
         public int d;
         public Dictionary<int, int> used = new Dictionary<int, int>(), wk = new Dictionary<int, int>();
+        public Dictionary<int, int> liveD = new Dictionary<int, int>(), liveW = new Dictionary<int, int>();   // live (in-person) games played, by day and by week
+        public Dictionary<int, string> plan = new Dictionary<int, string>();   // the week on the Spacepad: day -> "online" / "live"
+        public int planned = -1;                                               // the last week you planned
         public Dictionary<int, List<string>> trav = new Dictionary<int, List<string>>();
         public Dictionary<string, int> re = new Dictionary<string, int>();
         public Invite inv; public Meetup meet;
@@ -58,6 +61,7 @@ namespace CFDream
         public Look look = new Look();
         public double br, peak, debt;
         public int ch, dec, perfect, good, close, mistakes, played, cashes, ft, streak, bestStreak;
+        public string sceneId; public int sceneI;   // a scene in progress, so a refresh picks it back up
         public HashSet<string> story = new HashSet<string>(), legends = new HashSet<string>(), met = new HashSet<string>(), owned = new HashSet<string>();
         public List<string> queue = new List<string>(), newItems = new List<string>();
         public Dictionary<string, int> titles = new Dictionary<string, int> { { "local", 0 }, { "room", 0 }, { "ring", 0 }, { "bracelet", 0 }, { "tour", 0 }, { "glo", 0 }, { "titan", 0 }, { "me", 0 } };
@@ -86,18 +90,47 @@ namespace CFDream
 
         // ------------------------------------------------------------ save and load
         const string Key = "cfdream.save.v1";
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("__Internal")] static extern int DreamStoreSet(string key, string val);
+        [System.Runtime.InteropServices.DllImport("__Internal")] static extern string DreamStoreGet(string key);
+        [System.Runtime.InteropServices.DllImport("__Internal")] static extern void DreamStoreDel(string key);
+#endif
+        // on the web the save is kept in the browser's localStorage (per site, synchronous) as well as PlayerPrefs:
+        // Unity's own store is per URL and its IndexedDB sync is flaky on iPhone Safari, which lost careers on refresh
+        static string Read()
+        {
+            string txt = null;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            try { txt = DreamStoreGet(Key); } catch (Exception e) { Debug.LogWarning("Dream save (web store): " + e.Message); }
+#endif
+            if (string.IsNullOrEmpty(txt)) txt = PlayerPrefs.GetString(Key, "");
+            return txt;
+        }
+        static void Write(string txt)
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            try { DreamStoreSet(Key, txt); } catch (Exception e) { Debug.LogWarning("Dream save (web store): " + e.Message); }
+#endif
+            PlayerPrefs.SetString(Key, txt); PlayerPrefs.Save();
+        }
         public static State Load()
         {
             try
             {
-                var txt = PlayerPrefs.GetString(Key, "");
+                var txt = Read();
                 if (string.IsNullOrEmpty(txt)) return new State();
                 return FromDict(Json.Parse(txt) as Dictionary<string, object>) ?? new State();
             }
             catch (Exception e) { Debug.LogWarning("Dream save could not be read: " + e.Message); return new State(); }
         }
-        public void Save() { PlayerPrefs.SetString(Key, Json.Write(ToDict())); PlayerPrefs.Save(); }
-        public static void Erase() { PlayerPrefs.DeleteKey(Key); PlayerPrefs.Save(); }
+        public void Save() { Write(Json.Write(ToDict())); }
+        public static void Erase()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            try { DreamStoreDel(Key); } catch { }
+#endif
+            PlayerPrefs.DeleteKey(Key); PlayerPrefs.Save();
+        }
 
         static Dictionary<string, object> D() => new Dictionary<string, object>();
         static List<object> Ls<T>(IEnumerable<T> xs) => xs.Select(x => (object)x).ToList();
@@ -112,6 +145,7 @@ namespace CFDream
             d["br"] = br; d["peak"] = peak; d["debt"] = debt; d["ch"] = ch;
             foreach (var (k, v) in new[] { ("dec", dec), ("perfect", perfect), ("good", good), ("close", close), ("mistakes", mistakes), ("played", played), ("cashes", cashes), ("ft", ft), ("streak", streak), ("bestStreak", bestStreak) }) d[k] = v;
             d["story"] = Ls(story); d["legends"] = Ls(legends); d["met"] = Ls(met); d["owned"] = Ls(owned); d["queue"] = Ls(queue); d["newItems"] = Ls(newItems);
+            d["sceneId"] = sceneId; d["sceneI"] = sceneI;
             d["titles"] = Map(titles); d["flags"] = Map(flags); d["eq"] = Map(eq); d["dye"] = Map(dye); d["fin"] = Map(fin); d["tickets"] = Map(tickets);
             var ev = D(); foreach (var kv in events) ev[kv.Key] = new Dictionary<string, object> { { "played", kv.Value.played }, { "cashes", kv.Value.cashes }, { "wins", kv.Value.wins }, { "best", kv.Value.best }, { "cash", kv.Value.cash }, { "net", kv.Value.net } }; d["events"] = ev;
             var w = D(); foreach (var kv in wear) w[kv.Key] = new Dictionary<string, object> { { "g", kv.Value.g }, { "e", kv.Value.e }, { "c", kv.Value.c }, { "f", kv.Value.f }, { "w", kv.Value.w }, { "t", Ls(kv.Value.t) } }; d["wear"] = w;
@@ -128,7 +162,7 @@ namespace CFDream
             p["mis"] = pg.mis.Select(m => (object)new Dictionary<string, object> { { "g", m.g }, { "t", m.t }, { "n", m.n }, { "c", m.c }, { "p", m.p }, { "lab", m.lab }, { "d", m.d } }).ToList();
             d["pg"] = p;
             // calendar
-            var c = D(); c["d"] = cal.d; c["used"] = MapI(cal.used); c["wk"] = MapI(cal.wk); c["re"] = Map(cal.re); c["seed"] = cal.seed; c["paid"] = cal.paid;
+            var c = D(); c["d"] = cal.d; c["used"] = MapI(cal.used); c["wk"] = MapI(cal.wk); c["liveD"] = MapI(cal.liveD); c["liveW"] = MapI(cal.liveW); c["plan"] = cal.plan.ToDictionary(kv => kv.Key.ToString(), kv => (object)kv.Value); c["planned"] = cal.planned; c["re"] = Map(cal.re); c["seed"] = cal.seed; c["paid"] = cal.paid;
             var tr = D(); foreach (var kv in cal.trav) tr[kv.Key.ToString()] = Ls(kv.Value); c["trav"] = tr;
             if (cal.inv != null) c["inv"] = new Dictionary<string, object> { { "d", cal.inv.d }, { "id", cal.inv.ev.id }, { "name", cal.inv.ev.name }, { "venue", cal.inv.ev.venue }, { "buyin", cal.inv.ev.buyin }, { "ch", cal.inv.ev.ch }, { "soft", cal.inv.ev.soft }, { "host", cal.inv.ev.host }, { "blurb", cal.inv.ev.blurb } };
             if (cal.meet != null) c["meet"] = new Dictionary<string, object> { { "kind", cal.meet.kind }, { "id", cal.meet.id }, { "amt", cal.meet.amt }, { "d", cal.meet.d } };
@@ -175,6 +209,7 @@ namespace CFDream
             s.played = J.I(d, "played"); s.cashes = J.I(d, "cashes"); s.ft = J.I(d, "ft"); s.streak = J.I(d, "streak"); s.bestStreak = J.I(d, "bestStreak");
             s.story = Set(d.Val("story")); s.legends = Set(d.Val("legends")); s.met = Set(d.Val("met")); s.owned = Set(d.Val("owned"));
             s.queue = J.Strs(d.Val("queue")); s.newItems = J.Strs(d.Val("newItems"));
+            s.sceneId = J.S(d, "sceneId"); s.sceneI = J.I(d, "sceneI");
             s.titles = IntMap(d.Val("titles"), s.titles); s.eq = StrMap(d.Val("eq"), s.eq);
             s.dye = IntMap(d.Val("dye")); s.fin = IntMap(d.Val("fin")); s.tickets = IntMap(d.Val("tickets"));
             if (d.Val("flags") is Dictionary<string, object> fl) foreach (var kv in fl) s.flags[kv.Key] = kv.Value is bool b ? (b ? 1 : 0) : J.Num(kv.Value);
@@ -200,6 +235,10 @@ namespace CFDream
                 var cal = s.cal; cal.d = J.I(c, "d"); cal.seed = J.S(c, "seed", cal.seed); cal.paid = J.S(c, "paid", "");
                 if (c.Val("used") is Dictionary<string, object> u) foreach (var kv in u) cal.used[int.Parse(kv.Key)] = (int)J.Num(kv.Value);
                 if (c.Val("wk") is Dictionary<string, object> wk) foreach (var kv in wk) cal.wk[int.Parse(kv.Key)] = (int)J.Num(kv.Value);
+                if (c.Val("liveD") is Dictionary<string, object> ld) foreach (var kv in ld) cal.liveD[int.Parse(kv.Key)] = (int)J.Num(kv.Value);
+                if (c.Val("liveW") is Dictionary<string, object> lw) foreach (var kv in lw) cal.liveW[int.Parse(kv.Key)] = (int)J.Num(kv.Value);
+                if (c.Val("plan") is Dictionary<string, object> pl) foreach (var kv in pl) cal.plan[int.Parse(kv.Key)] = kv.Value as string;
+                cal.planned = c.ContainsKey("planned") ? J.I(c, "planned") : -1;
                 if (c.Val("trav") is Dictionary<string, object> tr) foreach (var kv in tr) cal.trav[int.Parse(kv.Key)] = J.Strs(kv.Value);
                 cal.re = IntMap(c.Val("re"));
                 if (c.Val("inv") is Dictionary<string, object> iv)

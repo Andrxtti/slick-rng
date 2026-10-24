@@ -57,7 +57,7 @@ const DR_SCENES = {
   ], end: 'c1' },
   p_keep: { place: 'office', beats: [
     { sp: 'n', t: 'You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL.' },
-    { sp: 'n', t: '$2,000 in savings. Days for Corporate Lou. Nights for the dream.' },
+    { sp: 'n', t: '$2,000 in savings. Days for Natso SweetLou. Nights for the dream.' },
     { sp: 'slick', t: 'Heard about Saturday. Riverside runs games every night. Start small. Never play above your roll. Text me when you win something.', text: true },
   ], end: 'c1' },
 

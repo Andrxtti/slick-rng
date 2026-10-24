@@ -37,7 +37,13 @@ SHOES = [
     ("icy", "Icy-blue high-tops", "Peak bankroll of $1,000,000", "legendary", "sole", "Frosted. Limited. The felt gets cold when you walk up."),
 ]
 
+# hair: only cuts the 3D body actually has, named after what they look like (UMA 3's card hair set)
+HAIR = [("short", "Textured crop"), ("sidepart", "Side part"), ("buzz", "Crew cut"), ("quiff", "Pompadour"), ("spiky", "Spiked"),
+        ("fauxhawk", "Faux hawk"), ("slick", "Slicked back"), ("bun", "Man bun"), ("ponytail", "Ponytail"), ("long", "Long"),
+        ("longswept", "Long, swept"), ("bald", "Bald")]
+
 def apply(d):
+    d["DR_HAIR"] = [list(h) for h in HAIR]
     items = d["DR_ITEMS"]; have = {(i.get("slot"), i.get("id")) for i in items}
     for (pid, name, req, grade, brand, story) in PETS:
         if ("pet", pid) not in have: items.append({"slot": "pet", "id": pid, "name": name, "req": req, "test": "__fn"})
@@ -47,7 +53,7 @@ def apply(d):
             if (slot, iid) not in have: items.append({"slot": slot, "id": iid, "name": name, "req": req, "test": "__fn"})
             d["DR_META"][slot + ":" + iid] = [grade, brand, story]
     # slots and closet categories in closet order: top, bottom, shoes, then the rest
-    for sl, label in (("outfit", "Top"), ("bottom", "Bottom"), ("shoes", "Shoes"), ("pet", "Pet")):
+    for sl, label in (("outfit", "Outfit"), ("bottom", "Bottom"), ("shoes", "Shoes"), ("pet", "Pet")):
         found = [x for x in d["DR_SLOTS"] if x[0] == sl]
         if found: found[0][1] = label
         else: d["DR_SLOTS"].append([sl, label])

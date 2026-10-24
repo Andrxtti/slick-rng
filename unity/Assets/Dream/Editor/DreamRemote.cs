@@ -42,6 +42,8 @@ namespace CFDream.EditorTools
             { "go-home", () => { if (CFDream.Game.State != null) CFDream.Game.SetTab("home"); } },
             { "status", () => { var s = CFDream.Game.State; var st = CFDream.Character.CharacterStage.Instance; Debug.Log($"[Dream] status: view {CFDream.Game.View} tab {CFDream.Game.Tab} made {s?.made} pet {s?.Eq("pet")} home {s?.Eq("home")} bodies {CFDream.Character.Bodies.Available} stage {(st != null)} inRoom {st?.InRoom} hasBody {st?.HasBody} petId {st?.Pets?.Id}"); } },
             { "snap", () => CFDream.Character.CharacterStage.Instance?.SnapNow() },
+            { "next", () => CFDream.Game.Advance() },
+            { "fit", () => { if (CFDream.Game.State != null) CFDream.UI.ClosetView.Fitting(CFDream.Game.State); } },
             { "where", () => { var st = CFDream.Character.CharacterStage.Instance; if (st != null && st.Pivot != null) Debug.Log($"[Dream] where: ({st.Pivot.localPosition.x:0.00}, {st.Pivot.localPosition.z:0.00}) yaw {st.Pivot.localEulerAngles.y:0}"); } },
         };
 
@@ -63,6 +65,21 @@ namespace CFDream.EditorTools
                 {
                     var p = c.Split(' '); var s = CFDream.Game.State;
                     if (p.Length == 3 && s != null) { s.owned.Add(p[1] + ":" + p[2]); s.eq[p[1]] = p[2]; s.Save(); CFDream.Game.Render(); result = "done"; } else result = "usage: eq slot id";
+                }
+                else if (raw.Trim().StartsWith("hair "))   // hair <RecipeName>|none: force a UMA hair recipe (case kept)
+                {
+                    var nm = raw.Trim().Substring(5).Trim();
+#if DREAM_UMA
+                    CFDream.Character.UMABody.HairOverride = nm == "none" ? null : nm;
+                    CFDream.Character.CharacterStage.Instance?.Invalidate();
+                    if (CFDream.Game.State != null) CFDream.Game.Render(); result = "done";
+#else
+                    result = "no UMA";
+#endif
+                }
+                else if (c.StartsWith("scene "))   // scene <id>: play a story scene (replay)
+                {
+                    if (CFDream.Game.State != null) { CFDream.Game.PlayScene(c.Substring(6).Trim(), true); result = "done"; } else result = "no state";
                 }
                 else if (c.StartsWith("use "))   // use <id>: walk to a thing in the room and use it (fire, piano, pool, tv, bed, ...)
                 {

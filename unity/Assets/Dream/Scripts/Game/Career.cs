@@ -131,6 +131,13 @@ namespace CFDream
         {
             if (s.ch >= 1 && s.ch < 7 && ChapterDone(s, s.ch) && !s.story.Contains("c" + (s.ch + 1)) && !s.queue.Contains("c" + (s.ch + 1))) s.queue.Add("c" + (s.ch + 1));
             if (s.ch >= 1 && Calendar.Broke(s) && !s.story.Contains("broke") && !s.queue.Contains("broke")) { Moment(s, "🥧", "Went broke"); s.queue.Add("broke"); }
+            // keeping the day job: David leans on you at every milestone, and a quarter million settles it
+            if (s.ch >= 1 && s.job == "nights")
+            {
+                void Once(string id, bool when) { if (when && !s.story.Contains(id) && !s.queue.Contains(id)) s.queue.Add(id); }
+                Once("david1", s.peak >= 10000); Once("david2", s.peak >= 25000); Once("david3", s.peak >= 50000); Once("david4", s.peak >= 100000);
+                Once("quit250", s.peak >= 250000);
+            }
         }
 
         // the line under your name, earned as you climb

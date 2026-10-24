@@ -118,7 +118,7 @@ namespace CFDream.UI
                 p.strokeColor = C.A(C.Gold, 0.35f); p.lineWidth = 1.2f * k; p.BeginPath(); Ell(p, 50, 55, 48.5f, 51.5f); p.Stroke();
             }
             // long hair falls behind the shoulders
-            if (hair == "long" || hair == "locs" || hair == "twists" || hair == "mullet")
+            if (hair == "long" || hair == "longswept" || hair == "locs" || hair == "twists" || hair == "mullet")
             {
                 float dn = hair == "mullet" ? 74 : 88;
                 Poly(p, Color.Lerp(hairC, Color.black, 0.15f), cx - fw - 3, 40, cx + fw + 3, 40, cx + fw + 5, dn, cx - fw - 5, dn);
@@ -194,7 +194,9 @@ namespace CFDream.UI
                     case "buzz": HairCap(p, C.A(hc, 0.55f), cx, cy, fw, fh, 2, false); break;
                     case "mohawk": Poly(p, hc, cx - 3.5f, cy - fh - 7, cx + 3.5f, cy - fh - 7, cx + 3, cy - 6, cx - 3, cy - 6); HairCap(p, C.A(hc, 0.3f), cx, cy, fw, fh, 1, false); break;
                     case "cornrows": HairCap(p, hc, cx, cy, fw, fh, 2.5f, false); for (int i = -2; i <= 2; i++) Line(p, C.A(skin, 0.5f), 0.6f, cx + i * 4.5f, cy - fh, cx + i * 5.5f, cy - 6); break;
-                    case "fade": case "waves": HairCap(p, hc, cx, cy, fw, fh, 3.5f, false); break;
+                    case "fade": case "waves": case "sidepart": HairCap(p, hc, cx, cy, fw, fh, 3.5f, false); break;
+                    case "spiky": HairCap(p, hc, cx, cy, fw, fh, 4, true); for (int i = -2; i <= 2; i++) Poly(p, hc, cx + i * 5 - 2, cy - fh + 1, cx + i * 5 + 2, cy - fh + 1, cx + i * 5 + 1, cy - fh - 5); break;
+                    case "fauxhawk": HairCap(p, hc, cx, cy, fw, fh, 2.5f, false); Poly(p, hc, cx - 5, cy - fh + 1, cx + 5, cy - fh + 1, cx + 2, cy - fh - 6, cx - 2, cy - fh - 6); break;
                     case "quiff": HairCap(p, hc, cx, cy, fw, fh, 4, true); FillEll(p, hc, cx - 3, cy - fh - 2, 9, 5); break;
                     case "curtains": HairCap(p, hc, cx, cy, fw, fh, 5, true); Poly(p, hc, cx - 1, cy - fh + 2, cx - 12, cy - 6, cx - 15, cy - 10); Poly(p, hc, cx + 1, cy - fh + 2, cx + 12, cy - 6, cx + 15, cy - 10); break;
                     case "slick": HairCap(p, hc, cx, cy, fw, fh, 4.5f, false); for (int i = -1; i <= 1; i++) Line(p, C.A(Color.white, 0.12f), 0.6f, cx + i * 6, cy - fh + 1, cx + i * 7, cy - 10); break;

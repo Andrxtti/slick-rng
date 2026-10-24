@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
+using CFDream.Character;
 
 namespace CFDream.UI
 {
@@ -24,7 +25,7 @@ namespace CFDream.UI
         // Game.ClosetCat: "" = the slot grid, else a category key from DR_CATS.
         static readonly string[] SlotOrder = { "outfit", "bottom", "shoes", "head", "eyes", "chain", "watch", "ring", "wrist", "ear", "patch", "sleeve", "pet", "home", "ride" };
         static readonly Dictionary<string, string> SlotLabel = new Dictionary<string, string>
-        { { "outfit", "Top" }, { "bottom", "Bottom" }, { "shoes", "Shoes" }, { "head", "Head" }, { "eyes", "Face" }, { "chain", "Chain" }, { "watch", "Watch" }, { "ring", "Ring" }, { "wrist", "Bracelet" }, { "ear", "Earrings" }, { "patch", "Chest patch" }, { "sleeve", "Sleeve patch" }, { "pet", "Pet" }, { "home", "Home" }, { "ride", "Ride" } };
+        { { "outfit", "Outfit" }, { "bottom", "Bottom" }, { "shoes", "Shoes" }, { "head", "Head" }, { "eyes", "Face" }, { "chain", "Chain" }, { "watch", "Watch" }, { "ring", "Ring" }, { "wrist", "Bracelet" }, { "ear", "Earrings" }, { "patch", "Chest patch" }, { "sleeve", "Sleeve patch" }, { "pet", "Pet" }, { "home", "Home" }, { "ride", "Ride" } };
         static readonly string[] TopCats = { "all", "shirts", "street", "jackets", "formal" };
         static readonly Dictionary<string, string> TopCatLabel = new Dictionary<string, string> { { "all", "All" }, { "shirts", "Tops" }, { "street", "Streetwear" }, { "jackets", "Jackets" }, { "formal", "Formal" } };
         public static string Sub = "all";   // the sub-tab inside Top
@@ -70,6 +71,17 @@ namespace CFDream.UI
             if (string.IsNullOrEmpty(cat)) return null;
             foreach (var o in DB.List("DR_CATS") ?? new List<object>()) if (o is List<object> a && a.Count >= 3 && a[0] as string == cat) return a[2] as string;
             return cat;
+        }
+        // the fitting-room look: you, full length, over the closet; drag to turn, tap anywhere outside to go back
+        public static void Fitting(State s)
+        {
+            var m = DreamApp.I.Modal; m.Clear(); m.Show(true); m.AddToClassList("fitting");
+            float h = m.resolvedStyle.height; if (float.IsNaN(h) || h < 100) h = 680f; h *= 0.82f;
+            var view = new CharacterView(CharacterSpec.From(s), null, h * 0.62f, h, "full");
+            view.AddToClassList("fitting-view");
+            m.Add(view);
+            var hint = U.T("Drag to turn \u2022 tap outside to close", "fitting-hint"); hint.pickingMode = PickingMode.Ignore; m.Add(hint);
+            m.RegisterCallback<PointerDownEvent>(e => { if (e.target == m) { m.RemoveFromClassList("fitting"); DreamApp.CloseModal(); } });
         }
         static void Open(string slot) { Game.ClosetCat = slot == "outfit" ? "shirts" : slot; if (slot == "outfit") Sub = "all"; ShowInfo = false; Game.Render(); }
         static void Back() { Game.ClosetCat = ""; ShowInfo = false; Game.Render(); }
@@ -282,7 +294,7 @@ namespace CFDream.UI
                 var dyes = Fashion.DyeOpts(s, slot, id);
                 if (dyes != null)
                 {
-                    c.Add(U.Kicker("Colourway" + (lv < 1 && dyes.Any(x => !x.ok) ? " · more unlock when it's Broken in" : "")).Mt(10));
+                    c.Add(U.Kicker("Colorway" + (lv < 1 && dyes.Any(x => !x.ok) ? " · more unlock when it's Broken in" : "")).Mt(10));
                     var sw = U.Row().Cls("wrap swatches");
                     int curDye = s.dye.TryGetValue(id, out var cd) ? cd : 0;
                     foreach (var x in dyes)
@@ -346,7 +358,8 @@ namespace CFDream.UI
                     double after = Calendar.Bills(s) - Cost(s.Eq(slot)) + Cost(it.id);
                     tap = () => DreamApp.Confirm(slot == "home" ? "Move in?" : "Switch rides?", $"Your bills become {U.Money(after)} a month, due on the 1st.", "Do it", () => Game.Equip(slot, it.id), "Not yet");
                 }
-                else tap = () => Game.Equip(slot, it.id);
+                else if (slot == "pet") tap = () => Game.Equip(slot, it.id);
+                else tap = () => { Game.Equip(slot, it.id); Fitting(s); };   // wear it, then see it full-length and spin it round
             }
             var t = Bits.Tile(art, it.name, on, tap, sub, !owned ? C.Mute : none ? (Color?)null : gc, owned ? "" : "locked");
             if (!none) { var strip = U.Div("tile-strip").Bg(gc).NoPick(); t.Add(strip); }

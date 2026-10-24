@@ -40,7 +40,8 @@ namespace CFDream
         // ------------------------------------------------------------ money: paychecks, rent, travel
         public const double Salary = 2000;     // every Friday while you keep the day job
         public const double GiftQuit = 5000;   // Slick backs you when you quit
-        public const int GamesCap = 3;         // per day full-time, per week with the day job
+        public const int GamesCap = 3;         // online games: per day full-time, per week with the day job
+        public const int LiveCap = 1;          // live games: one a day full-time, one a week (weekend only) with the day job
         public static readonly Dictionary<string, double> HomeCost = new Dictionary<string, double> { { "studio", 650 }, { "apt", 1600 }, { "condo", 4200 }, { "penthouse", 15000 }, { "mansion", 42000 }, { "island", 120000 } };
         public static readonly Dictionary<string, double> RideCost = new Dictionary<string, double> { { "bus", 90 }, { "hatch", 320 }, { "coupe", 750 }, { "sedan", 1600 }, { "super", 6500 }, { "jet", 45000 } };
         public const double Living = 700;
@@ -167,15 +168,65 @@ namespace CFDream
             if (s.job == "nights") { c.wk.TryGetValue(WeekOf(c.d), out int u); return new Slots { left = Math.Max(0, GamesCap - u), cap = GamesCap, used = u, week = true }; }
             c.used.TryGetValue(c.d, out int ud); return new Slots { left = Math.Max(0, GamesCap - ud), cap = GamesCap, used = ud };
         }
-        public static void UseSlot(State s)
+        public static void UseSlot(State s, bool live = false)
         {
-            var c = s.cal; c.used[c.d] = (c.used.TryGetValue(c.d, out var u) ? u : 0) + 1;
-            int w = WeekOf(c.d); c.wk[w] = (c.wk.TryGetValue(w, out var x) ? x : 0) + 1; Prune(c);
+            var c = s.cal; int w = WeekOf(c.d);
+            if (live) { c.liveD[c.d] = (c.liveD.TryGetValue(c.d, out var l) ? l : 0) + 1; c.liveW[w] = (c.liveW.TryGetValue(w, out var y) ? y : 0) + 1; }
+            else { c.used[c.d] = (c.used.TryGetValue(c.d, out var u) ? u : 0) + 1; c.wk[w] = (c.wk.TryGetValue(w, out var x) ? x : 0) + 1; }
+            Prune(c);
+        }
+        // live games: with the day job, one on the weekend; full-time, one a day (on top of the online games)
+        public static int LiveLeft(State s)
+        {
+            var c = s.cal; if (s.ch == 0) return 1;
+            if (s.job == "nights") { c.liveW.TryGetValue(WeekOf(c.d), out int u); return Math.Max(0, LiveCap - u); }
+            c.liveD.TryGetValue(c.d, out int ud); return Math.Max(0, LiveCap - ud);
+        }
+        // ------------------------------------------------------------ the week on the Spacepad (day job)
+        public static int WeekStart(int d) => d - Date(d).dow;   // the Sunday
+        public static string PlanFor(State s, int d) => s.cal.plan.TryGetValue(d, out var v) ? v : null;
+        public static bool PlanDue(State s) => s.job == "nights" && s.ch >= 1 && s.cal.planned < WeekOf(s.cal.d) && Date(s.cal.d).dow == 0;
+        public static void SetPlan(State s, int d, string what)
+        {
+            if (string.IsNullOrEmpty(what)) s.cal.plan.Remove(d); else s.cal.plan[d] = what;
+            foreach (var k in s.cal.plan.Keys.Where(k => k < WeekStart(s.cal.d) - 7).ToList()) s.cal.plan.Remove(k);
+        }
+        public static void PlanDone(State s) { s.cal.planned = WeekOf(s.cal.d); s.Save(); }
+        // today is a day you planned to play (or you have no plan at all)
+        public static bool Today(State s, out string what) { what = PlanFor(s, s.cal.d); return what != null; }
+        // with the day job: how many nights to skip to the next night you can play (0 = tonight)
+        public static int SkipTo(State s)
+        {
+            if (s.job != "nights") return 0;
+            int dow = Date(s.cal.d).dow;
+            if (AllPlayed(s)) return 7 - dow;                                  // next Sunday: a new week
+            // a planned week: the next planned day with something left to play
+            var ahead = s.cal.plan.Keys.Where(k => k > s.cal.d && k <= WeekStart(s.cal.d) + 6).OrderBy(k => k).ToList();
+            foreach (var k in ahead) { var w = s.cal.plan[k]; if (w == "live" ? LiveLeft(s) > 0 : SlotsLeft(s).left > 0) return k - s.cal.d; }
+            if (ahead.Count == 0 && s.cal.plan.Keys.Any(k => k >= WeekStart(s.cal.d) && k <= WeekStart(s.cal.d) + 6)) return 7 - dow;   // planned days all behind you
+            if (SlotsLeft(s).left == 0 && LiveLeft(s) > 0 && dow >= 1 && dow <= 5) return 6 - dow;   // Saturday's live game
+            return 0;
+        }
+        public static bool Weekend(State s) { int dow = Date(s.cal.d).dow; return dow == 0 || dow == 6; }
+        // why you can't play this one today (null when you can)
+        public static string CantPlay(State s, EventDef ev)
+        {
+            if (ev.daily || s.ch == 0) return null;
+            if (ev.online) { var sl = SlotsLeft(s); return sl.left > 0 ? null : s.job == "nights" ? "No online games left this week" : "No online games left today"; }
+            if (s.job == "nights" && !Weekend(s)) return "Live games are weekends only while you have the day job";
+            return LiveLeft(s) > 0 ? null : s.job == "nights" ? "Your live game this weekend is played" : "One live game a day";
+        }
+        // nothing left to do today (or this week, with the job): sleep is the only move
+        public static bool AllPlayed(State s)
+        {
+            return SlotsLeft(s).left == 0 && LiveLeft(s) == 0;
         }
         static void Prune(CalState c)
         {
             foreach (var k in c.used.Keys.Where(k => k < c.d - 14).ToList()) c.used.Remove(k);
             foreach (var k in c.wk.Keys.Where(k => k < WeekOf(c.d) - 2).ToList()) c.wk.Remove(k);
+            foreach (var k in c.liveD.Keys.Where(k => k < c.d - 14).ToList()) c.liveD.Remove(k);
+            foreach (var k in c.liveW.Keys.Where(k => k < WeekOf(c.d) - 2).ToList()) c.liveW.Remove(k);
             foreach (var k in c.trav.Keys.Where(k => k < c.d - 3).ToList()) c.trav.Remove(k);
             foreach (var k in c.re.Keys.Where(k => int.Parse(k.Split('|')[0]) < c.d - 3).ToList()) c.re.Remove(k);
         }
@@ -190,21 +241,21 @@ namespace CFDream
         public static List<(string icon, string text)> Sleep(State s, int days = 1)
         {
             var news = new List<(string, string)>();
-            for (int i = 0; i < days; i++) { s.cal.d++; NewDay(s, news); }
+            for (int i = 0; i < days; i++) { s.cal.d++; NewDay(s, news, i == days - 1); }
             if (news.Count == 0) news.Add(("☀️", "A quiet night. Nothing new this morning."));
             Prune(s.cal); Career.Progress(s); s.Save();
             return news;
         }
-        static void NewDay(State s, List<(string, string)> news)
+        static void NewDay(State s, List<(string, string)> news, bool wake = true)
         {
             var c = s.cal; var D = Date(c.d);
-            if (c.inv != null && c.inv.d < c.d) { news.Add(("📭", $"The {c.inv.ev.name} invite expired.")); c.inv = null; }
+            if (c.inv != null && c.inv.d < c.d) { if (wake || c.inv.seen) news.Add(("📭", $"The {c.inv.ev.name} invite expired.")); c.inv = null; }
             if (c.meet != null && c.meet.d < c.d) c.meet = null;
             if (s.job == "nights" && D.dow == 5) { Career.Add(s, Salary, "Paycheck"); news.Add(("💵", $"Payday. +${Fmt.Money(Salary)} from the day job.")); }
             string mk = $"{D.Y}-{D.m}";
             if (D.dd == 1 && c.paid != mk) { c.paid = mk; PayBills(s, news); }
             var start = SeriesOnDay(c.d).FirstOrDefault(x => x.o == 0); if (start != null) news.Add((start.sr.icon, $"{start.sr.n} starts today."));
-            if (s.ch >= 1) { MaybeInvite(s, news); MaybeMeet(s, news); }
+            if (s.ch >= 1 && wake) { MaybeInvite(s, news); MaybeMeet(s, news); }
         }
         static void PayBills(State s, List<(string, string)> news)
         {
@@ -221,7 +272,7 @@ namespace CFDream
         class Host { public string n, at, line; public double soft; public int lo, hi; }
         static readonly Host[] Hosts =
         {
-            new Host { n = "Tommy \"The Nose\" Maio", at = "the back room at Riverside", line = "Friends only, cash only, no questions. Half the table has been drinking since noon.", soft = 0.18, lo = 0, hi = 2 },
+            new Host { n = "Tommy \"The Shark\" Maio", at = "the back room at Riverside", line = "Friends only, cash only, no questions. Half the table has been drinking since noon.", soft = 0.18, lo = 0, hi = 2 },
             new Host { n = "a retired NBA star", at = "his place in the hills", line = "He plays poker the way he drove the lane: straight at you, every time.", soft = 0.3, lo = 1, hi = 4 },
             new Host { n = "a tech founder", at = "his rooftop", line = "Just sold his company. Plays every hand and calls it \"learning\".", soft = 0.35, lo = 1, hi = 5 },
             new Host { n = "a movie producer", at = "a celebrity home game", line = "Two actors, one rapper, one pro. Guess which seat is yours.", soft = 0.28, lo = 2, hi = 6 },
@@ -238,11 +289,11 @@ namespace CFDream
             double roll = Math.Max(500, s.br), u = r.Next(), ratio = u < 0.45 ? 0.05 + r.Next() * 0.15 : u < 0.8 ? 0.2 + r.Next() * 0.4 : 0.6 + r.Next() * 0.9;
             int k = 0; for (int i = 0; i < Stakes.Length; i++) if (Stakes[i][1] * 100 <= roll * ratio) k = i;
             var st = Stakes[k]; var pool = Hosts.Where(h => k >= h.lo && k <= h.hi).ToList(); var host = pool.Count > 0 ? pool[r.Int(pool.Count)] : Hosts[0];
-            int when = r.Next() < 0.55 ? c.d : c.d + 1; string name = $"${Fmt.Money(st[0])}/${Fmt.Money(st[1])} Private Game";
+            int when = c.d + (r.Next() < 0.55 ? 1 : 2); string name = $"${Fmt.Money(st[0])}/${Fmt.Money(st[1])} Private Game";   // never the same night it lands
             var ev = new EventDef { id = "inv", ch = Math.Min(7, Math.Max(1, k)), kind = "cash", name = name, venue = k >= 4 ? "titan" : "cardroom", buyin = st[1] * 100, invite = true, soft = host.soft, host = host.n,
                 blurb = $"Hosted by {host.n} at {host.at}. {host.line}" };
-            c.inv = new Invite { ev = ev, d = when };
-            news.Add(("📨", $"A private game invite: {name}, {(when == c.d ? "tonight" : "tomorrow night")}."));
+            c.inv = new Invite { ev = ev, d = when, seen = true };
+            news.Add(("📨", $"A private game invite: {name}, {(when == c.d + 1 ? "tomorrow night" : DowL[Date(when).dow] + " night")}."));
         }
 
         // ------------------------------------------------------------ Slick shows up when you're in trouble

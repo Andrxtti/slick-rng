@@ -43,7 +43,7 @@ def build(tier):
     # work corner, back right: desk, laptop, chair, lamp
     dx = w / 2 - 0.25 - 0.65; dz = back("desk")
     add("desk", dx, dz)
-    add("laptop", dx - 0.1, dz - 0.02, y=0.75, use="laptop", label="Laptop", spot=[dx - 0.1, dz + 0.95, 180])
+    add("laptop", dx - 0.1, dz - 0.02, y=0.75, use="laptop", label="Spacepad", spot=[dx - 0.1, dz + 0.95, 180])
     add("chair", dx - 0.1, dz + 0.62, ry=180)
     add("lamp", w / 2 - 0.25, -d / 2 + 0.3)
     # TV wall on the left with something to sit on
@@ -141,7 +141,7 @@ def build_condo():
     # lounge on the left, desk and closet on the right
     tv_wall(P_, "flat_tv_big", 0.7, -w / 2 + 3.1)
     dz = -0.3; add("desk", right("desk"), dz, ry=-90)
-    add("laptop", right("desk") - 0.02, dz - 0.1, y=0.75, ry=-90, use="laptop", label="Laptop", spot=[right("desk") - 0.95, dz - 0.1, 90])
+    add("laptop", right("desk") - 0.02, dz - 0.1, y=0.75, ry=-90, use="laptop", label="Spacepad", spot=[right("desk") - 0.95, dz - 0.1, 90])
     add("chair", right("desk") - 0.62, dz - 0.1, ry=-90)
     add("wardrobe", right("wardrobe"), 1.1, ry=-90, use="closet", label="Closet", spot=[right("wardrobe") - 0.95, 1.1, 90])
     add("fish_tank", right("fish_tank"), 2.1, ry=-90, use="fish", label="Fish", spot=[right("fish_tank") - 0.85, 2.1, 90])
@@ -169,7 +169,7 @@ def build_penthouse():
     add("chandelier", 0.1, -0.2, y=2.25)
     tv_wall(P_, "flat_tv_big", 1.6, -w / 2 + 3.2, fabric="#2b2622")
     dz = 0.6; add("desk", right("desk"), dz, ry=-90, c={"wood": "#1c1a22"})
-    add("laptop", right("desk") - 0.02, dz - 0.1, y=0.75, ry=-90, use="laptop", label="Laptop", spot=[right("desk") - 0.95, dz - 0.1, 90])
+    add("laptop", right("desk") - 0.02, dz - 0.1, y=0.75, ry=-90, use="laptop", label="Spacepad", spot=[right("desk") - 0.95, dz - 0.1, 90])
     add("chair", right("desk") - 0.62, dz - 0.1, ry=-90)
     add("wardrobe", right("wardrobe"), 1.9, ry=-90, use="closet", label="Closet", spot=[right("wardrobe") - 0.95, 1.9, 90], c={"wood": "#1c1a22"})
     add("fish_tank_big", right("fish_tank_big"), d / 2 - 0.95, ry=-90, use="fish", label="Fish", spot=[right("fish_tank_big") - 0.85, d / 2 - 0.95, 90])
@@ -208,11 +208,11 @@ def build_mansion():
     add("trophy_case", left("trophy_case"), 2.1, ry=90, use="trophies", label="Trophies", spot=[left("trophy_case") + 0.9, 2.1, -90])
     add("wardrobe", right("wardrobe"), -0.6, ry=-90, use="closet", label="Closet", spot=[right("wardrobe") - 0.95, -0.6, 90])
     dz = 2.6; add("desk", right("desk"), dz, ry=-90)
-    add("laptop", right("desk") - 0.02, dz - 0.1, y=0.75, ry=-90, use="laptop", label="Laptop", spot=[right("desk") - 0.95, dz - 0.1, 90])
+    add("laptop", right("desk") - 0.02, dz - 0.1, y=0.75, ry=-90, use="laptop", label="Spacepad", spot=[right("desk") - 0.95, dz - 0.1, 90])
     add("chair", right("desk") - 0.62, dz - 0.1, ry=-90)
     add("fish_tank_big", right("fish_tank_big"), 1.1, ry=-90, use="fish", label="Fish", spot=[right("fish_tank_big") - 0.85, 1.1, 90])
     add("floor_lamp", -2.6, 1.6); add("plant", -w / 2 + 0.4, d / 2 - 0.5); add("plant", w / 2 - 0.4, -d / 2 + 0.5)
-    P_["art"]("art_3", "back", 0, 2.45); P_["art"]("art_5", "right", 1.1, 1.9)
+    P_["art"]("art_3", "back", 0, 2.45); P_["art"]("art_5", "left", -1.7, 1.9)   # the right wall isn't drawn, so nothing hangs on it
     P_["window"](-2.6, 1.8, P_["h"] * 0.5); P_["window"](2.9, 1.8, P_["h"] * 0.5)
     P_["light"](tx, 2.2, tz, "#ffe2b0", 1.5, 5.5); P_["light"](0, 0.6, -d / 2 + 0.7, "#ff8a3a", 1.4, 4); P_["light"](-2.6, 1.7, 1.6, "#ffe2b0", 0.9, 3.5); P_["light"](w / 2 - 0.4, 1.6, -d / 2 + 0.5)
     return P_["done"]((0.4, 1.9, 20))
@@ -233,7 +233,7 @@ def build_island():
     add("poker_table", gx, gz, use="homegame", label="Home game", spot=[gx, gz - 1.25, 0])
     P_["pool"](3.0, 2.0, 2.8, 2.4)
     dz = -1.1; add("desk", right("desk"), dz, ry=-90, c={"wood": "#b98a5a"})
-    add("laptop", right("desk") - 0.02, dz - 0.1, y=0.75, ry=-90, use="laptop", label="Laptop", spot=[right("desk") - 0.95, dz - 0.1, 90])
+    add("laptop", right("desk") - 0.02, dz - 0.1, y=0.75, ry=-90, use="laptop", label="Spacepad", spot=[right("desk") - 0.95, dz - 0.1, 90])
     add("chair", right("desk") - 0.62, dz - 0.1, ry=-90)
     add("wardrobe", left("wardrobe"), d / 2 - 0.8, ry=90, use="closet", label="Closet", spot=[left("wardrobe") + 0.95, d / 2 - 0.8, -90], c={"wood": "#b98a5a"})
     add("trophy_case", right("trophy_case"), -2.6, ry=-90, use="trophies", label="Trophies", spot=[right("trophy_case") - 0.9, -2.6, 90], c={"wood_dark": "#7a5a3a"})
@@ -244,10 +244,62 @@ def build_island():
 
 BUILDERS = {"condo": build_condo, "penthouse": build_penthouse, "mansion": build_mansion, "island": build_island}
 
+# ------------------------------------------------------------ the movie sets (one per place in the story)
+# small rooms built with the same props; "marks" say where you and the person you're talking to stand
+SETS = {
+    #             w    d    h    wall       left       floor      trim       view            accent
+    "office":    (6.0, 4.6, 2.8, "#5d6b7c", "#54606f", "#8a8f94", "#2a2f36", "window_city",  "#9aa6b2"),
+    "diner":     (6.0, 4.6, 2.7, "#7a2f2a", "#6c2a26", "#3a3a3a", "#c9a03e", "window_city",  "#e8c46a"),
+    "cardroom":  (7.0, 5.2, 2.8, "#2d4a3c", "#28422f", "#5a4636", "#1b1e1a", "window_city",  "#c9a03e"),
+    "casino":    (7.0, 5.2, 3.0, "#3a2342", "#33203b", "#4b2f3f", "#c9a03e", "window_city",  "#d9b36c"),
+    "vegas":     (7.0, 5.2, 3.0, "#2a1a3a", "#241633", "#3b2a4a", "#ff6aa8", "window_city",  "#ff6aa8"),
+    "tv":        (7.0, 5.2, 3.0, "#15223a", "#122036", "#2b2f3a", "#3d7fd1", "window_city",  "#3d7fd1"),
+    "titan":     (7.0, 5.2, 3.2, "#1d1c24", "#24222c", "#5a4636", "#8c7a4a", "window_city",  "#d9b36c"),
+    "main":      (8.0, 5.6, 3.4, "#1b1b1f", "#222227", "#3c2f2a", "#d9b36c", "window_city",  "#d9b36c"),
+    "hall":      (7.0, 5.2, 3.4, "#2b2340", "#251e38", "#4a3f5a", "#7a5ac8", "window_city",  "#7a5ac8"),
+}
+def build_set(place):
+    w, d, h, wall, wall2, floor, trim, view, accent = SETS[place]
+    TIERS["set_" + place] = (w, d, h, wall, wall2, floor, trim, view, accent, "#3a3a44", "#3a3a44")
+    P_ = plan("set_" + place); add, back, left, right = P_["add"], P_["back"], P_["left"], P_["right"]
+    # everyone talks near the front of the set; the furniture sits behind and beside them
+    # the two of you stand on a diagonal near the front, so every angle has a wall behind it
+    marks = {"you": [-0.8, 1.0, 124], "them": [0.45, 0.15, -56]}
+    if place == "office":
+        add("desk", 0, back("desk"), ry=0); add("laptop", -0.1, back("desk") - 0.1, y=0.75, ry=0); add("chair", 0.9, back("desk") + 0.9, ry=180)
+        add("bookshelf", left("bookshelf"), -0.6, ry=90); add("plant", w / 2 - 0.4, -d / 2 + 0.5); add("floor_lamp", -w / 2 + 0.6, 1.4)
+        P_["window"](1.4, 2.2, h * 0.45); P_["art"]("art_1", "left", 1.2, 1.7)
+        P_["light"](0, 2.2, -0.5, "#dfe8ff", 1.3, 6); P_["light"](-2, 1.6, 1.2, "#ffd9a0", 0.8, 4)
+    elif place == "diner":
+        add("dining_table", 0, -1.0, ry=0); add("dining_chair", -0.5, -1.75, ry=0); add("dining_chair", 0.5, -1.75, ry=0)
+        add("kitchen_island", left("kitchen_island") + 0.3, -0.2, ry=90, c={"cabinet": "#b8322d", "marble": "#f1e8dc"})
+        for k in range(3): add("bar_stool", -w / 2 + 1.25, -1.2 + k * 0.7)
+        add("art", 1.8, -d / 2 + 0.03, 0, y=1.8, tex="art_5"); P_["window"](-0.6, 2.6, h * 0.42)
+        P_["light"](0, 2.1, -0.4, "#ffb36b", 1.5, 6); P_["light"](2.2, 1.5, 1.0, "#ff5f8f", 0.7, 4)
+    elif place in ("cardroom", "casino", "vegas", "tv", "titan", "main"):
+        add("poker_table", 0, -1.2, ry=0)
+        for k, (x, z, ry) in enumerate(((-1.2, -2.0, 0), (0, -2.1, 0), (1.2, -2.0, 0), (-2.0, -1.2, 90), (2.0, -1.2, -90))): add("chair", x, z, ry=ry)
+        if place in ("casino", "titan", "main", "tv"): add("chandelier", 0, -1.2, y=2.5)
+        if place in ("titan", "main"): add("trophy_case", right("trophy_case"), -0.4, ry=-90)
+        if place == "cardroom": add("floor_lamp", w / 2 - 0.6, 0.6); add("plant", -w / 2 + 0.4, -d / 2 + 0.5)
+        if place == "vegas": P_["art"]("art_4", "back", 2.2, 2.0, wide=True)
+        if place == "tv": add("flat_tv_big", -w / 2 + 0.24, 0.3, ry=90, y=1.2)
+        P_["window"](0 if place != "vegas" else -1.6, 2.4, h * 0.42)
+        P_["light"](0, 2.4, -1.0, "#ffe2b0", 1.6, 7); P_["light"](2.4, 1.4, 1.2, accent, 0.9, 4)
+    elif place == "hall":
+        add("trophy_case", -1.6, back("trophy_case"), ry=0); add("trophy_case", 1.6, back("trophy_case"), ry=0)
+        add("chandelier", 0, -0.5, y=2.6); P_["art"]("art_3", "left", 0.4, 1.9)
+        P_["light"](0, 2.4, -0.5, "#e8d8ff", 1.5, 7)
+    L = P_["done"]((-0.8, 1.0, 124)); L["marks"] = marks; L["id"] = "set_" + place; L["rightWall"] = True
+    return L
+
 if __name__ == "__main__":
     out = os.environ.get("HOMES_OUT", "out/Homes"); os.makedirs(out, exist_ok=True)
-    for t in TIERS:
+    counts = {}
+    for t in list(TIERS):
         L = BUILDERS[t]() if t in BUILDERS else build(t)
         L["props"] = [p for p in L["props"] if p is not None]
-        json.dump(L, open(f"{out}/{t}.json", "w"), indent=1)
-    print("ok", {t: len((BUILDERS[t]() if t in BUILDERS else build(t))["props"]) for t in TIERS})
+        json.dump(L, open(f"{out}/{t}.json", "w"), indent=1); counts[t] = len(L["props"])
+    for place in SETS:
+        L = build_set(place); json.dump(L, open(f"{out}/set_{place}.json", "w"), indent=1); counts["set_" + place] = len(L["props"])
+    print("ok", counts)

@@ -34,6 +34,11 @@ namespace CFDream
             State = State.Load();
             Calendar.Migrate(State);
             if (State.made) View = View.Hub;
+            // a story scene was in progress: pick it up where it was
+            if (State.made && !string.IsNullOrEmpty(State.sceneId) && DB.Scenes.ContainsKey(State.sceneId))
+            {
+                Scene = new ScenePlay { id = State.sceneId, i = Math.Max(0, Math.Min(State.sceneI, DB.Scenes[State.sceneId].beats.Count - 1)) }; View = View.Scene;
+            }
         }
 
         // ------------------------------------------------------------ new career and the creator
@@ -62,8 +67,11 @@ namespace CFDream
         {
             id = Story.Resolve(id, State);
             if (!DB.Scenes.ContainsKey(id)) { Hub(); return; }
-            Scene = new ScenePlay { id = id, replay = replay }; View = View.Scene; Render();
+            Scene = new ScenePlay { id = id, replay = replay }; View = View.Scene;
+            if (!replay) { State.sceneId = id; State.sceneI = 0; State.Save(); }
+            Render();
         }
+        static void Bookmark() { var sc = Scene; if (sc != null && !sc.replay && State != null) { State.sceneId = sc.id; State.sceneI = sc.i; State.Save(); } }
         public static Beat CurrentBeat()
         {
             var sc = Scene; if (sc == null) return null;
@@ -76,7 +84,7 @@ namespace CFDream
             var b = CurrentBeat(); if (sc.extra.Count == 0 && b != null && b.choice != null) return; // pick an option first
             if (sc.extra.Count > 0) sc.extra.RemoveAt(0); else sc.i++;
             if (sc.extra.Count == 0 && sc.i >= DB.Scenes[sc.id].beats.Count) { SceneEnd(); return; }
-            Render();
+            Bookmark(); Render();
         }
         public static void Choose(int k)
         {
@@ -92,20 +100,21 @@ namespace CFDream
             sc.i++;
             if (c.line != null) sc.extra.Add(c.line);
             if (sc.extra.Count == 0 && sc.i >= DB.Scenes[sc.id].beats.Count) { SceneEnd(); return; }
-            Render();
+            Bookmark(); Render();
         }
         public static void Skip()
         {
             var sc = Scene; if (sc == null) return;
             var beats = DB.Scenes[sc.id].beats; sc.extra.Clear();
             int k = beats.FindIndex(sc.i, b => b.choice != null);
-            if (k >= 0) { sc.i = k; Render(); return; }
+            if (k >= 0) { sc.i = k; Bookmark(); Render(); return; }
             SceneEnd();
         }
         public static void SceneEnd()
         {
             var s = State; var sc = Scene; var def = DB.Scenes[sc.id];
             if (sc.replay) { Scene = null; View = View.Hub; Tab = "story"; Render(); return; }
+            s.sceneId = null; s.sceneI = 0;
             s.story.Add(sc.id); Story.OnEnd(sc.id, s);
             Career.Unlocks(s); Career.Progress(s); s.Save();
             Scene = null;
@@ -161,8 +170,9 @@ namespace CFDream
         public static void Sleep(int days = 1)
         {
             var s = State;
-            if (days <= 0) { var sl = Calendar.SlotsLeft(s); if (s.job == "nights" && sl.left == 0) days = 7 - Calendar.Date(s.cal.d).dow; else days = 1; }
+            if (days <= 0) { days = Math.Max(1, Calendar.SkipTo(s)); }
             Morning = Calendar.Sleep(s, Math.Max(1, days)); CalSel = -1; CalWk = 0; Hub();
+            if (Calendar.PlanDue(s)) CFDream.UI.HubView.Planner(s);   // Sunday with the day job: the week gets planned on the Spacepad first
         }
         public static void SleepTo(int d) { int n = d - State.cal.d; if (n > 0) Sleep(n); }
         public static void QuitJob() { if (State.job == "nights") PlayScene("quit2"); }

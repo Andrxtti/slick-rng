@@ -42,9 +42,12 @@ namespace CFDream.Character
         readonly HashSet<VisualElement> views = new HashSet<VisualElement>();
         float yaw = -12, spin; bool dragging;
         public bool HasBody => body != null && body.Ready;
-        public RenderTexture Texture => framing == "room" && roomRt != null ? roomRt : rt;
+        public RenderTexture Texture => (framing == "room" || inScene) && roomRt != null ? roomRt : rt;
         // your place: the room, life in it (walking, using things) and its own render texture shaped like the view
         HomeRoom room; HomeLife life; PetLife pets; RenderTexture roomRt; Vector3 roomPos; float roomYaw; bool hasRoomPos;
+        // the movie: a set, the other character, and a camera that moves
+        ICharacterBody npc; Transform npcPivot; string npcKey, npcPending; bool inScene;
+        Vector3 camA, camB, lookA, lookB; float shotT = 1, shotDur = 6; string shotKey;
         public bool InRoom => framing == "room";
         public HomeLife Life => life;
         public PetLife Pets => pets;
@@ -92,6 +95,7 @@ namespace CFDream.Character
         {
             framing = mode ?? framing;
             if (framing == "room") { FrameRoom(); return; }
+            if (inScene) { if (shotKey != null) { var k = shotKey.Split('|'); float t = shotT; shotKey = null; Shot(k[0], k[1] == "you", shotDur); shotT = t; PlaceCam(shotT); } return; }   // the movie camera owns the shot
             float lookY, dist;
             switch (framing)
             {
@@ -104,6 +108,8 @@ namespace CFDream.Character
         }
         public void Framing(string mode, string tier = null, float aspect = 0, string pet = null)
         {
+            if (mode == "scene") { EnterScene(tier ?? "set_cardroom", aspect); return; }
+            if (inScene) ExitScene();
             if (mode == "room") { EnterRoom(tier ?? room?.tier ?? "studio", aspect, pet); return; }
             if (framing == "room") ExitRoom();
             if (mode != framing) Frame(bodyH, mode);
@@ -139,6 +145,114 @@ namespace CFDream.Character
             if (pets != null) pets.enabled = false;
             pivot.localPosition = Vector3.zero; cam.targetTexture = rt; cam.fieldOfView = 22; framing = "bust";
         }
+        // ------------------------------------------------------------ the movie
+        // a scene is a set (built like a home from Homes/set_<place>.json, or your own place for "home") with you on
+        // the "you" mark and whoever you're talking to on the "them" mark; the camera plays shots between them
+        void EnterScene(string tier, float aspect)
+        {
+            if (framing == "room") ExitRoom();
+            bool fresh = room == null || room.tier != tier;
+            if (fresh)
+            {
+                for (int i = transform.childCount - 1; i >= 0; i--) { var ch = transform.GetChild(i); if (ch.name.StartsWith("Home ")) { ch.gameObject.SetActive(false); Destroy(ch.gameObject); } }
+                if (pets != null) pets.Clear();
+                room = HomeRoom.Build(tier, transform, Layer); hasRoomPos = false;
+                if (room == null) return;
+            }
+            room.root.SetActive(true);
+            if (life != null) life.enabled = false;
+            if (pets != null) pets.enabled = false;
+            if (npcPivot == null) { npcPivot = new GameObject("Them").transform; npcPivot.SetParent(transform, false); }
+            var you = room.Mark("you", new Vector3(-0.7f, 0, 1.0f), 90f); var them = room.Mark("them", new Vector3(0.7f, 0, 1.0f), -90f);
+            pivot.localPosition = you.pos; pivot.localRotation = Quaternion.Euler(0, you.yaw, 0);
+            npcPivot.localPosition = them.pos; npcPivot.localRotation = Quaternion.Euler(0, them.yaw, 0);
+            if (room.shadow != null) room.shadow.localPosition = new Vector3(you.pos.x, 0, you.pos.z);
+            RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 1.6f));
+            framing = "scene"; inScene = true; cam.targetTexture = roomRt; cam.farClipPlane = 60;
+            if (shotKey == null) Shot("wide", true, 7f);
+            cam.enabled = views.Count > 0;   // the set shows even while the people are still being built
+        }
+        void ExitScene()
+        {
+            inScene = false; shotKey = null;
+            if (room != null && room.tier.StartsWith("set_")) { room.root.SetActive(false); Destroy(room.root); room = null; }
+            else if (room != null) room.root.SetActive(false);
+            if (npc != null) npc.Root.SetActive(false);
+            pivot.localPosition = Vector3.zero; cam.targetTexture = rt; cam.fieldOfView = 22; framing = "bust";
+        }
+        // the other character: built once per look, kept between beats
+        public void ShowNpc(CharacterSpec spec)
+        {
+            if (!Bodies.Available || npcPivot == null) return;
+            if (spec == null) { if (npc != null) npc.Root.SetActive(false); return; }
+            string key = spec.Fingerprint() + "|" + string.Join(",", spec.worn.ConvertAll(w => w.slot + ":" + w.id));
+            if (npc != null) npc.Root.SetActive(true);
+            if (key == npcKey || key == npcPending) return;
+            npcPending = key;
+            if (npc == null) { try { npc = Bodies.Create(npcPivot); } catch (Exception e) { Debug.LogException(e); npc = null; return; } }
+            npc.Apply(spec, () =>
+            {
+                npcKey = key; if (npcPending == key) npcPending = null;
+                SetLayer(npc.Root, Layer);
+                npc.Root.transform.localRotation = Quaternion.identity;
+            });
+        }
+        // where the heads are, for the camera (a mark plus 1.6 m until a body is built)
+        Vector3 HeadOf(bool you)
+        {
+            var piv = you ? pivot : npcPivot; var b = you ? Bone(HumanBodyBones.Head) : npc?.Bone(HumanBodyBones.Head);
+            if (b != null) return transform.InverseTransformPoint(b.position) + Vector3.up * 0.06f;
+            return piv.localPosition + Vector3.up * 1.62f;
+        }
+        // shots: "wide" (both of you, a slow push in), "cu" (close on the speaker, off the axis), "ots" (over the
+        // listener's shoulder at the speaker). speakerIsYou says who is talking.
+        public void Shot(string kind, bool speakerIsYou, float dur = 6f)
+        {
+            string key = kind + (speakerIsYou ? "|you" : "|them");
+            if (key == shotKey && shotT < 1) return;
+            shotKey = key; shotDur = dur; shotT = 0;
+            Vector3 P = HeadOf(true), Q = HeadOf(false), M = (P + Q) / 2; M.y = Mathf.Min(P.y, Q.y) - 0.35f;
+            Vector3 d = Q - P; d.y = 0; if (d.sqrMagnitude < 1e-4f) d = Vector3.right; d.Normalize();
+            Vector3 side = new Vector3(d.z, 0, -d.x); if (side.z < 0) side = -side;   // the camera lives on the open side of the set
+            Vector3 S = speakerIsYou ? P : Q, L = speakerIsYou ? Q : P, toL = L - S; toL.y = 0; toL.Normalize();
+            switch (kind)
+            {
+                case "cu":
+                    {
+                        var off = (toL * 0.6f + side * 1.0f).normalized;   // three-quarter face, the set behind them
+                        camA = S + off * 1.4f + Vector3.up * 0.05f; camB = S + off * 1.1f + Vector3.up * 0.03f; lookA = lookB = S - Vector3.up * 0.03f; cam.fieldOfView = 30; break;
+                    }
+                case "ots":
+                    {
+                        var back = -toL; var sideL = Vector3.Cross(Vector3.up, toL).normalized; if (Vector3.Dot(sideL, side) < 0) sideL = -sideL;
+                        camA = L + back * 0.75f + sideL * 0.42f + Vector3.up * 0.14f; camB = L + back * 0.62f + sideL * 0.36f + Vector3.up * 0.11f; lookA = lookB = S - Vector3.up * 0.02f; cam.fieldOfView = 34; break;
+                    }
+                default:
+                    camA = M + side * 3.6f + Vector3.up * 1.5f; camB = M + side * 3.0f + Vector3.up * 1.35f; lookA = lookB = M + Vector3.up * 0.9f; cam.fieldOfView = 36; break;
+            }
+            PlaceCam(0);
+        }
+        // how you carry yourself in a shot: arms up for a win, head down after a bust or a cooler
+        public void Pose(string mood)
+        {
+            var an = body?.Root != null ? body.Root.GetComponentInChildren<Animator>() : null; if (an == null) return;
+            var g = an.GetComponent<Gestures>(); if (g == null) g = an.gameObject.AddComponent<Gestures>();
+            var head = Bone(HumanBodyBones.Head); if (head == null) { g.Clear(); return; }
+            Vector3 fwd = pivot.forward, right = pivot.right, up = Vector3.up, H = head.position;
+            switch (mood)
+            {
+                case "win": g.Both(H + up * 0.42f - right * 0.32f + fwd * 0.12f, H + up * 0.45f + right * 0.3f + fwd * 0.1f, 1f); g.Look(H + fwd * 1.5f + up * 0.6f, 0.8f, 0.2f); break;
+                case "bust": case "cooler": g.Clear(); g.Look(H + fwd * 0.8f - up * 0.9f, 0.95f, 0.35f); break;
+                case "cash": g.Clear(); g.Look(H + fwd * 1.5f - up * 0.1f, 0.6f, 0.1f); break;
+                default: g.Clear(); break;
+            }
+        }
+        void PlaceCam(float t)
+        {
+            float k = t * t * (3 - 2 * t);
+            cam.transform.localPosition = Vector3.Lerp(camA, camB, k);
+            cam.transform.LookAt(transform.TransformPoint(Vector3.Lerp(lookA, lookB, k)));
+        }
         public void RoomTexture(float aspect)
         {
             int h = 1280, w = Mathf.Clamp(Mathf.RoundToInt(h * aspect), 400, 2560);
@@ -147,6 +261,7 @@ namespace CFDream.Character
             roomRt = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32) { name = "Room", antiAliasing = 1, useMipMap = false };
             roomRt.Create();
             if (framing == "room") { cam.targetTexture = roomRt; FrameRoom(); }
+            else if (inScene) cam.targetTexture = roomRt;
         }
         // a three-quarter view from the open front corner, as close as it can get with the whole room in shot
         void FrameRoom()
@@ -192,7 +307,7 @@ namespace CFDream.Character
         }
 
         // ------------------------------------------------------------ views
-        public void Attach(VisualElement v) { views.Add(v); cam.enabled = HasBody; }
+        public void Attach(VisualElement v) { views.Add(v); cam.enabled = HasBody || inScene; }
         public void Detach(VisualElement v) { views.Remove(v); if (views.Count == 0) cam.enabled = false; }
         public void Drag(float dx) { yaw -= dx * 0.45f; spin = -dx * 0.45f; dragging = true; }
         public void Release() { dragging = false; }
@@ -200,6 +315,7 @@ namespace CFDream.Character
         void LateUpdate()
         {
             if (views.Count == 0 || pivot == null) return;
+            if (inScene) { if (shotT < 1) { shotT = Mathf.Min(1, shotT + Time.deltaTime / shotDur); PlaceCam(shotT); } foreach (var v in views) v.MarkDirtyRepaint(); return; }
             if (framing != "room")   // in your place, walking decides which way you face
             {
                 if (!dragging) { spin *= 0.92f; yaw += spin; yaw = Mathf.LerpAngle(yaw, -12 + Mathf.Sin(Time.time * 0.6f) * 4, 0.01f); }
@@ -209,6 +325,7 @@ namespace CFDream.Character
         }
 
         // ------------------------------------------------------------ the body
+        public void Invalidate() { builtKey = null; }   // editor tests: force the next Show to rebuild
         public void Show(CharacterSpec spec)
         {
             if (!Bodies.Available || spec == null) return;
@@ -318,7 +435,9 @@ namespace CFDream.Character
         bool down; float lastX; Vector2 downAt; int pid = -1;
         readonly string framing;
         public string Tier, Pet;            // "room" views: which home, and who lives there with you
+        public CharacterSpec NpcSpec; public string ShotKind = "wide", Mood; public bool SpeakerIsYou = true;   // "scene" views
         bool Room => framing == "room";
+        bool SceneMode => framing == "scene";
 
         public CharacterView(CharacterSpec spec, VisualElement fallback2D, float width, float height, string framing = "bust")
         {
@@ -331,7 +450,7 @@ namespace CFDream.Character
             RegisterCallback<PointerDownEvent>(e => { down = true; pid = e.pointerId; lastX = e.position.x; downAt = e.position; this.CapturePointer(pid); });
             RegisterCallback<PointerMoveEvent>(e =>
             {
-                if (!down || e.pointerId != pid || Room) return;
+                if (!down || e.pointerId != pid || Room || SceneMode) return;
                 CharacterStage.Instance?.Drag(e.position.x - lastX); lastX = e.position.x;
             });
             RegisterCallback<PointerUpEvent>(e =>
@@ -348,14 +467,21 @@ namespace CFDream.Character
             st.Attach(this);
             SetTexture(st);
             st.Show(spec);
-            if (!st.HasBody && fallback != null && fallback.parent == null) Add(fallback);
+            if (SceneMode) { st.ShowNpc(NpcSpec); st.Shot(ShotKind, SpeakerIsYou); st.Pose(Mood); }
+            Label hint = null;
+            if (!st.HasBody && fallback != null && fallback.parent == null)
+            {
+                Add(fallback);
+                // the flat stand-in is only there while the 3D player builds (slow the first time on a phone): say so
+                hint = new Label("Building your player…"); hint.AddToClassList("build-hint"); hint.pickingMode = PickingMode.Ignore; Add(hint);
+            }
             Action onChanged = null;
-            onChanged = () => { if (fallback != null && fallback.parent == this) Remove(fallback); };
+            onChanged = () => { if (fallback != null && fallback.parent == this) Remove(fallback); if (hint != null && hint.parent == this) Remove(hint); if (SceneMode) st.Pose(Mood); };
             st.Changed += onChanged;
             RegisterCallback<DetachFromPanelEvent>(e => st.Changed -= onChanged);
-            if (st.HasBody && fallback != null && fallback.parent == this) Remove(fallback);
+            if (st.HasBody && fallback != null && fallback.parent == this) { Remove(fallback); if (hint != null && hint.parent == this) Remove(hint); }
             // a room view's texture follows the view's shape
-            if (Room) RegisterCallback<GeometryChangedEvent>(e => { if (Aspect() > 0 && st.InRoom) { st.RoomTexture(Aspect()); SetTexture(st); } });
+            if (Room || SceneMode) RegisterCallback<GeometryChangedEvent>(e => { if (Aspect() > 0 && (st.InRoom || SceneMode)) { st.RoomTexture(Aspect()); SetTexture(st); if (SceneMode) st.Shot(ShotKind, SpeakerIsYou); } });
         }
         void SetTexture(CharacterStage st)
         {

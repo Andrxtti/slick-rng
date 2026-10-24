@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
+using CFDream.Character;
 
 namespace CFDream.UI
 {
@@ -162,7 +163,7 @@ namespace CFDream.UI
                         break;
                     }
                 default:
-                    body.Add(Bits.Segmented(new[] { ("style", "Style"), ("colour", "Colour") }, HairMode, v => { HairMode = v; Changed(); }));
+                    body.Add(Bits.Segmented(new[] { ("style", "Style"), ("colour", "Color") }, HairMode, v => { HairMode = v; Changed(); }));
                     if (HairMode == "colour") body.Add(Swatches(Opt("DR_HAIRC"), d.hairC, i => { d.hairC = i; Changed(); }).Mt(14));
                     else body.Add(LookTiles(d, eq, "DR_HAIR", d.hair, (l, v) => l.hair = v, v => { d.hair = v; Changed(); }).Mt(14));
                     break;
@@ -261,7 +262,7 @@ namespace CFDream.UI
         static readonly Dictionary<string, string> PlaceTint = new Dictionary<string, string>
         {
             { "office", "#5d7896" }, { "diner", "#c2413a" }, { "cardroom", "#2f8a5e" }, { "casino", "#c79a3c" }, { "vegas", "#c2479a" },
-            { "tv", "#3d7fd1" }, { "titan", "#8c7a4a" }, { "main", "#d9b36c" }, { "hall", "#7a5ac8" },
+            { "tv", "#3d7fd1" }, { "titan", "#8c7a4a" }, { "main", "#d9b36c" }, { "hall", "#7a5ac8" }, { "home", "#6b4f8a" },
         };
         public static Color Tint(string place) => C.H(PlaceTint.TryGetValue(place ?? "", out var h) ? h : "#d9b36c");
 
@@ -309,6 +310,21 @@ namespace CFDream.UI
                 string text = Story.Text(sc.id, b, sc.i, st);
                 var (name, role, col, fig) = Speaker(b.sp, b.who);
                 VisualElement beat;
+                // the movie: the set for this place, you and whoever you're talking to in 3D, a camera that moves
+                if (Bodies.Available)
+                {
+                    string other = b.sp != "you" && b.sp != "n" && !b.text && fig != null ? b.sp : sc.lastOther;
+                    if (other != null) sc.lastOther = other;
+                    var ofig = other != null ? (other == b.sp ? fig : Speaker(other, null).fig) : null;
+                    bool speakerYou = b.sp == "you", speech = !b.text && b.sp != "n" && fig != null;
+                    string shot = sc.i == 0 || b.sp == "n" ? "wide" : !speech ? "wide" : other == null ? "cu" : sc.i % 3 == 2 ? "ots" : "cu";
+                    if (b.mood == "win" || b.mood == "bust" || b.mood == "cooler") shot = sc.i == 0 ? "wide" : "cu";
+                    string setTier = def.place == "home" ? st.Eq("home") : "set_" + (def.place ?? "cardroom");
+                    var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = speakerYou || other == null, Mood = b.mood };
+                    film.AddToClassList("film");
+                    var bars = U.Div("film-bars").NoPick(); film.Add(bars);
+                    stage.Add(film); stage.AddToClassList("movie");
+                }
                 if (b.sp == "n")
                 {
                     beat = U.Div("narration").Cls(b.goal ? "goal" : "", b.big ? "big" : "");
@@ -327,8 +343,8 @@ namespace CFDream.UI
                 }
                 else
                 {
-                    // the speaker stands on the stage; what they say sits at the bottom
-                    if (fig != null)
+                    // the speaker stands on the stage; what they say sits at the bottom (the drawn figure only without 3D)
+                    if (fig != null && !Bodies.Available)
                     {
                         stage.AddToClassList("speaking");
                         var spot = U.Div("scene-spot").NoPick();
@@ -344,13 +360,14 @@ namespace CFDream.UI
                 }
                 beat.AddToClassList("beat");
                 Enter(beat);
-                if (b.sp == "n" || b.text) stage.Add(beat); else bottom.Add(beat);
+                if ((b.sp == "n" || b.text) && !Bodies.Available) stage.Add(beat); else bottom.Add(beat);
                 sc.lastSp = b.sp;
 
                 if (sc.extra.Count == 0 && b.choice != null)
                 {
                     var ch = U.Col().Cls("choices");
-                    for (int i = 0; i < b.choice.Count; i++) { int k = i; ch.Add(U.Btn(b.choice[i].t, () => Game.Choose(k), i == 0 ? "gold wide" : "wide")); }
+                    // story choices are neutral: no right or wrong colour, just one blue and one green (then they alternate)
+                    for (int i = 0; i < b.choice.Count; i++) { int k = i; ch.Add(U.Btn(b.choice[i].t, () => Game.Choose(k), (i % 2 == 0 ? "pick-blue" : "pick-green") + " wide")); }
                     bottom.Add(ch);
                 }
                 else bottom.Add(U.Hint("Tap to continue").Cls("center tap-hint"));

@@ -296,17 +296,20 @@ namespace CFDream.Character
                                       "shoes_tall_white_Recipe", "male_shoes_tall_turquoise_Recipe", "male_hoodie_blue_Recipe", "male_hoodie_blueWhite_Recipe" }) yield return n;
         }
 
+        public static string HairOverride;   // editor tests: force a hair recipe by name
         static readonly Dictionary<string, string[]> HairMap = new Dictionary<string, string[]>
         {
-            // UMA 3's own card hair first: it takes the hair colour. The older bb_ cuts stay as a fallback for the short styles.
-            { "short", new[] { "Hair_MessyRightPart_Recipe", "Hair_LeftPart_Recipe" } }, { "fade", new[] { "Hair_PulledBack_Recipe", "bb_Male_Military_Hair_Recipe" } },
-            { "waves", new[] { "Hair_PulledBack_Recipe" } }, { "buzz", new[] { "Hair_PulledBack_Recipe", "bb_Male_Military_Hair_Recipe" } },
-            { "quiff", new[] { "Hair_MessyPomp_Recipe" } }, { "slick", new[] { "Hair_StraigntPulledBack_Recipe", "Hair_PulledBack_Recipe" } },
-            { "curly", new[] { "Hair_Poofy" } }, { "afro", new[] { "Hair_Poofy" } }, { "twists", new[] { "HairMessyUp_Recipe", "Hair_Pointy_Recipe" } },
-            { "cornrows", new[] { "Hair_StraigntPulledBack_Recipe" } }, { "locs", new[] { "Hair_LongSwept_Recipe" } }, { "mohawk", new[] { "Hair_Pointy_Recipe" } },
-            { "wavy", new[] { "Hair_LeftPart_Recipe", "HairMessyUp_Recipe" } }, { "curtains", new[] { "Hair_Straight_Recipe", "Hair_CurveUnder_Recipe" } },
-            { "mullet", new[] { "HairMessyUp_Recipe" } }, { "long", new[] { "Hair_LongSwept_Recipe", "Hair_Straight_Recipe" } },
-            { "ponytail", new[] { "HairPonytail_Recipe" } }, { "bun", new[] { "Hair_Bun_Recipe", "Hair_UpwardBun_Recipe" } },
+            // one UMA 3 card-hair recipe per style, chosen by looking at each one on the body (Oct 2026)
+            { "short", new[] { "Hair_MessyRightPart_Recipe" } }, { "sidepart", new[] { "Hair_LeftPart_Recipe" } },
+            { "buzz", new[] { "bb_Male_Military_Hair_Recipe" } }, { "quiff", new[] { "Hair_MessyPomp_Recipe" } },
+            { "spiky", new[] { "HairMessyUp_Recipe" } }, { "fauxhawk", new[] { "Hair_Pointy_Recipe" } },
+            { "slick", new[] { "Hair_UpwardBun_Recipe" } }, { "bun", new[] { "Hair_Bun_Recipe" } }, { "ponytail", new[] { "HairPonytail_Recipe" } },
+            { "long", new[] { "Hair_StraigntPulledBack_Recipe" } }, { "longswept", new[] { "Hair_LongSwept_Recipe" } },
+            // styles from older saves (no longer offered) land on the nearest cut
+            { "fade", new[] { "Hair_LeftPart_Recipe" } }, { "waves", new[] { "bb_Male_Military_Hair_Recipe" } }, { "curly", new[] { "Hair_MessyRightPart_Recipe" } },
+            { "afro", new[] { "Hair_MessyRightPart_Recipe" } }, { "twists", new[] { "HairMessyUp_Recipe" } }, { "cornrows", new[] { "Hair_UpwardBun_Recipe" } },
+            { "locs", new[] { "Hair_LongSwept_Recipe" } }, { "mohawk", new[] { "Hair_Pointy_Recipe" } }, { "wavy", new[] { "HairMessyUp_Recipe" } },
+            { "curtains", new[] { "Hair_StraigntPulledBack_Recipe" } }, { "mullet", new[] { "HairMessyUp_Recipe" } },
         };
         static readonly Dictionary<string, string[]> BeardMap = new Dictionary<string, string[]>
         {
@@ -330,7 +333,7 @@ namespace CFDream.Character
         static string DressKey(CharacterSpec s)
         {
             var o = s.Get("outfit"); var h = s.Get("head");
-            return $"{s.hairStyle}|{s.facial}|{s.brows}|{s.age}|{s.freckles}|{o?.id}|{s.Get("bottom")?.id}|{s.Get("shoes")?.id}|{(h != null && h.id != "phones" ? "hat" : "")}";
+            return $"{HairOverride}|{s.hairStyle}|{s.facial}|{s.brows}|{s.age}|{s.freckles}|{o?.id}|{s.Get("bottom")?.id}|{s.Get("shoes")?.id}|{(h != null && h.id != "phones" ? "hat" : "")}";
         }
 
         void Dress(CharacterSpec s)
@@ -339,9 +342,9 @@ namespace CFDream.Character
             bool hat = s.Get("head") is Worn hw && hw.id != "none" && hw.id != "phones";
             // a hat sits over short hair; long styles keep their length
             // a hat covers short hair completely (UMA's card hair would poke through the crown); long styles hang out under it
-            bool longHair = s.hairStyle == "long" || s.hairStyle == "locs" || s.hairStyle == "ponytail" || s.hairStyle == "curtains";
+            bool longHair = s.hairStyle == "long" || s.hairStyle == "longswept" || s.hairStyle == "locs" || s.hairStyle == "ponytail" || s.hairStyle == "curtains";
             string hairStyle = hat && !longHair ? "bald" : s.hairStyle;
-            Put(avail, "Hair", hairStyle == "bald" ? null : Pick(avail, "Hair", HairMap.TryGetValue(hairStyle ?? "", out var hs) ? hs : null, true));
+            Put(avail, "Hair", hairStyle == "bald" ? null : Pick(avail, "Hair", !string.IsNullOrEmpty(HairOverride) ? new[] { HairOverride } : HairMap.TryGetValue(hairStyle ?? "", out var hs) ? hs : null, true));
             Put(avail, "Beard", s.facial == "none" ? null : Pick(avail, "Beard", BeardMap.TryGetValue(s.facial ?? "", out var bs) ? bs : null, false));
             Put(avail, "Eyebrows", Pick(avail, "Eyebrows", BrowMap.TryGetValue(s.brows ?? "", out var br) ? br : null, true));
             string skinLook = s.age == "old" ? "Senior_U_Wardrobe" : s.age == "adult" ? "Adult_M_Wardrobe" : s.freckles ? "Freckled_Light_U_Wardrobe" : null;

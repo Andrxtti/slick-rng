@@ -91,7 +91,7 @@ namespace CFDream.UI
                 var bar = U.Row().Cls("laptop-bar");
                 var back = U.Row().Cls("laptop-back"); back.Add(new Icon("chev-l", 16, C.Gold)); back.Add(U.T("Home", "laptop-back-t", Fonts.Semi).NoPick());
                 back.Tap(() => Game.SetTab("home")); bar.Add(back);
-                var url = U.Row().Cls("laptop-url").Grow(); url.Add(U.T("cfdream.app", "laptop-url-t", Fonts.Medium).NoPick()); bar.Add(url);
+                var url = U.Row().Cls("laptop-url").Grow(); url.Add(U.T("Spacepad \u00b7 cfdream.app", "laptop-url-t", Fonts.Medium).NoPick()); bar.Add(url);
                 pad.Add(bar);
             }
             pad.Add(Header(s));
@@ -187,7 +187,8 @@ namespace CFDream.UI
             var pips = U.Row().Cls("pips");
             for (int i = 0; i < sl.cap; i++) pips.Add(U.Div("pip").Cls(i < sl.used ? "used" : ""));
             right.Add(pips);
-            string status = s.ch == 0 ? "Prologue" : s.job == "nights" ? $"{sl.left} of {sl.cap} this week" : $"{sl.left} of {sl.cap} games left";
+            int lv = Calendar.LiveLeft(s);
+            string status = s.ch == 0 ? "Prologue" : s.job == "nights" ? $"{sl.left} of {sl.cap} online this week · live {(lv > 0 ? (Calendar.Weekend(s) ? "tonight" : "this weekend") : "played")}" : $"{sl.left} of {sl.cap} online today · {(lv > 0 ? "1 live game" : "live game played")}";
             right.Add(U.Hint(status));
             r.Add(right);
             return r;
@@ -312,7 +313,7 @@ namespace CFDream.UI
             if (ev.online) chips.Add(U.Chip("Online", C.Blue));
             c.Add(chips);
             if (!string.IsNullOrEmpty(ev.blurb)) c.Add(U.Hint(ev.blurb).Mt(6));
-            string why2 = risk.k == "no" ? risk.label : sl.left <= 0 && !ev.daily ? (s.job == "nights" ? "No sessions left this week" : "No games left today") : null;
+            string why2 = risk.k == "no" ? risk.label : Calendar.CantPlay(s, ev);
             c.Add(U.Btn(ev.kind == "cash" ? "Sit down" : "Register", () => Game.StartEvent(ev.id), pick ? "gold wide" : "wide", why2 == null, why2).Mt(10));
             return c;
         }
@@ -358,14 +359,48 @@ namespace CFDream.UI
             return c;
         }
 
+        // Sunday on the Spacepad: pick the nights you'll play this week (3 online, 1 live on the weekend)
+        public static void Planner(State s)
+        {
+            DreamApp.Sheet("Plan the week", box =>
+            {
+                box.Add(U.Hint($"Pick your nights. {Calendar.GamesCap} online games and one live game (Saturday or Sunday). Sleeping skips straight to the next night you picked.").Mt(4));
+                int start = Calendar.WeekStart(s.cal.d);
+                VisualElement rows = null;
+                void Draw()
+                {
+                    rows.Clear();
+                    int on = 0, lv = 0; for (int i = 0; i < 7; i++) { var w = Calendar.PlanFor(s, start + i); if (w == "online") on++; else if (w == "live") lv++; }
+                    for (int i = 0; i < 7; i++)
+                    {
+                        int d = start + i; var D = Calendar.Date(d); bool past = d < s.cal.d, wkend = D.dow == 0 || D.dow == 6; string w = Calendar.PlanFor(s, d);
+                        var r = U.Row().Cls("plan-row"); if (past) r.AddToClassList("past");
+                        r.Add(U.T(Calendar.DowL[D.dow] + (d == s.cal.d ? " · today" : ""), "plan-day").Grow());
+                        if (!past)
+                        {
+                            r.Add(U.Btn("Online", () => { Calendar.SetPlan(s, d, w == "online" ? null : "online"); Draw(); }, w == "online" ? "gold sm" : "ghost sm", w == "online" || on < Calendar.GamesCap));
+                            if (wkend) r.Add(U.Btn("Live", () => { Calendar.SetPlan(s, d, w == "live" ? null : "live"); Draw(); }, w == "live" ? "gold sm" : "ghost sm", w == "live" || lv < Calendar.LiveCap).Ml(6));
+                        }
+                        else r.Add(U.Hint(w == null ? "—" : w == "live" ? "live" : "online"));
+                        rows.Add(r);
+                    }
+                }
+                rows = U.Col().Mt(10); box.Add(rows); Draw();
+                box.Add(U.Btn("Done", () => { Calendar.PlanDone(s); DreamApp.CloseModal(); Game.Hub(); }, "gold wide").Mt(12));
+            });
+        }
+
         static VisualElement Job(State s)
         {
             var c = U.Card("job");
             if (s.job == "nights")
             {
                 c.Add(U.Kicker("Day job · Floor 34"));
-                c.Add(U.P($"{U.Money(Calendar.Salary)} every Friday. {Calendar.GamesCap} poker sessions a week."));
-                c.Add(U.Btn("Quit the day job", () => DreamApp.Confirm("Go full-time?", $"No more paycheck. You'll get {Calendar.GamesCap} games a day, and rent still comes due on the 1st.", "Quit", Game.QuitJob, "Not yet"), "ghost wide").Mt(8));
+                c.Add(U.P($"{U.Money(Calendar.Salary)} every Friday. {Calendar.GamesCap} online games a week, plus one live game on the weekend."));
+                var wk = Enumerable.Range(0, 7).Select(i => Calendar.WeekStart(s.cal.d) + i).Where(d => Calendar.PlanFor(s, d) != null).Select(d => Calendar.Dow[Calendar.Date(d).dow] + (Calendar.PlanFor(s, d) == "live" ? " live" : "")).ToList();
+                c.Add(U.Hint(wk.Count > 0 ? "This week on the Spacepad: " + string.Join(" · ", wk) : "No plan this week: play whenever you have games left.").Mt(4));
+                c.Add(U.Btn("Plan the week on the Spacepad", () => Planner(s), "wide").Mt(8));
+                c.Add(U.Btn("Quit the day job", () => DreamApp.Confirm("Go full-time?", $"No more paycheck. Every day is yours: {Calendar.GamesCap} online games, or a live one plus online. Rent still comes due on the 1st.", "Quit", Game.QuitJob, "Not yet"), "ghost wide").Mt(8));
             }
             else
             {
@@ -400,10 +435,11 @@ namespace CFDream.UI
         {
             var sl = Calendar.SlotsLeft(s); var c = U.Col().Cls("sleep").Mt(6);
             string next = Calendar.Str(s.cal.d + 1, true);
-            if (s.job == "nights" && sl.left == 0)
+            int skip = Calendar.SkipTo(s);
+            if (skip > 0)
             {
-                int toSun = 7 - Calendar.Date(s.cal.d).dow;
-                c.Add(U.Btn("Sleep until Sunday", () => Game.Sleep(0), "gold wide", true, $"New week, {Calendar.GamesCap} new sessions · skips {toSun} day{(toSun == 1 ? "" : "s")}"));
+                bool week = Calendar.AllPlayed(s) || Calendar.Date(s.cal.d + skip).dow == 0; string day = Calendar.DowL[Calendar.Date(s.cal.d + skip).dow];
+                c.Add(U.Btn("Sleep until " + day, () => Game.Sleep(0), "gold wide", true, (week ? $"New week: {Calendar.GamesCap} online games and a live one" : "Your next night on the Spacepad") + $" · skips {skip} day{(skip == 1 ? "" : "s")}"));
                 c.Add(U.Btn("Sleep one night", () => Game.Sleep(1), "ghost wide", true, next));
             }
             else c.Add(U.Btn("Go to sleep", () => Game.Sleep(1), sl.left == 0 ? "gold wide" : "wide", true, sl.left > 0 ? $"{sl.left} game{(sl.left == 1 ? "" : "s")} left unplayed · wake up {next}" : $"Wake up {next}"));

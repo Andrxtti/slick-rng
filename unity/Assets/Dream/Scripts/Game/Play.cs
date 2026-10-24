@@ -23,7 +23,7 @@ namespace CFDream
     public class Odds { public double call, pot; public int need; }
     public class HandInfo
     {
-        public int[] cards; public string pos, cat, mine, best, mineK, bestK, lab, unit; public double bb; public double? loss;
+        public int[] cards; public string pos, cat, mine, best, mineK, bestK, lab, unit; public double bb; public double? loss; public bool limp;
         public int bestF, myF, heroCls, facing; public Odds odds; public List<string> labels; public List<double> strat;
     }
     public class Decision { public int j, pts; public bool ok; public string tier, lab, stage; public int before, after; public HandInfo hand; }
@@ -97,7 +97,7 @@ namespace CFDream
                 var c = s.cal;
                 if (travel > 0) { Career.Add(s, -travel, "Hotel and travel"); if (!c.trav.ContainsKey(c.d)) c.trav[c.d] = new List<string>(); c.trav[c.d].Add(ev.venue); }
                 if (reentry) { var k = $"{c.d}|{ev.id}"; c.re[k] = (c.re.TryGetValue(k, out var n) ? n : 0) + 1; }
-                else if (!Game.AnyDay) Calendar.UseSlot(s);
+                else if (!Game.AnyDay) Calendar.UseSlot(s, !ev.online);
                 if (ev.invite) { c.inv = null; s.SetFlag("invites", s.FlagN("invites") + 1); Career.Moment(s, "📨", $"Sat in a private game: {ev.name}, hosted by {ev.host}"); }
                 if (ev.id == "local" && s.ch == 0) c.d = 5;
             }
@@ -198,6 +198,7 @@ namespace CFDream
 
         // ------------------------------------------------------------ grading, Chess.com style
         static readonly Dictionary<string, double[]> LossSteps = new Dictionary<string, double[]> { { "bb", new[] { 0.05, 0.2, 0.6, 1.5 } }, { "icm", new[] { 0.015, 0.06, 0.18, 0.5 } } };
+        static string hero0(Spot sp) => sp.seats != null && sp.hero >= 0 && sp.hero < sp.seats.Count ? sp.seats[sp.hero].pos : "";
         public static (string lab, double? loss, int bestIdx) LabelFor(List<double> strat, List<double> ev, int j, string unit, double hard, string kind)
         {
             double fmax = strat.Max(); int sb = strat.IndexOf(fmax); double mine = strat[j];
@@ -222,7 +223,12 @@ namespace CFDream
         {
             var sp = run.spot; var strat = sp.strat;
             var ev = sp.ev != null && sp.evScale != 1 ? sp.ev.Select(x => x * sp.evScale).ToList() : sp.ev;
-            var g = LabelFor(strat, ev, j, sp.unit == "bbicm" ? "bb" : sp.unit, sp.hard, sp.acts[j]); var L = DB.Labels[g.lab];
+            var g = LabelFor(strat, ev, j, sp.unit == "bbicm" ? "bb" : sp.unit, sp.hard, sp.acts[j]);
+            // the limp angle: the solver completes from the small blind and you raised — the conventional play, not a
+            // leak: partial credit (never worse than an inaccuracy) and the limp gets explained
+            bool limpSpot = sp.acts[g.bestIdx] == "call" && sp.path.Count(k => k != "fold") == 0 && (sp.acts[j] == "raise" || sp.acts[j] == "raiseB") && hero0(sp) == "SB";
+            if (limpSpot && (g.lab == "mistake" || g.lab == "blunder")) g.lab = "inaccuracy";
+            var L = DB.Labels[g.lab];
             string tier = L.tier; bool ok = tier != "bad"; int pts = L.score - (tier == "bad" ? 60 : 0);
             int before = run.stack; run.stack = Math.Max(0, Math.Min(200, run.stack + L.life));
             run.combo = ok && tier != "close" ? run.combo + 1 : 0; run.bestCombo = Math.Max(run.bestCombo, run.combo);
@@ -239,7 +245,7 @@ namespace CFDream
             }
             var hand = new HandInfo
             {
-                cards = sp.hand, pos = hero.pos, bb = Math.Round((hero.stack - hero.put) * 10) / 10, cat = sp.cat, mine = sp.Label(j), best = sp.Label(best), mineK = sp.acts[j], bestK = sp.acts[best],
+                cards = sp.hand, pos = hero.pos, bb = Math.Round((hero.stack - hero.put) * 10) / 10, cat = sp.cat, mine = sp.Label(j), best = sp.Label(best), mineK = sp.acts[j], bestK = sp.acts[best], limp = limpSpot,
                 bestF = (int)Math.Round(strat[best] * 100), myF = (int)Math.Round(strat[j] * 100), odds = odds, labels = Enumerable.Range(0, sp.acts.Count).Select(sp.Label).ToList(),
                 heroCls = sp.cls, lab = g.lab, loss = g.loss, unit = sp.unit, strat = strat.ToList(), facing = sp.path.Count(k => k != "fold"),
             };
@@ -389,6 +395,13 @@ namespace CFDream
                 foreach (var k in s.daily.Keys.OrderBy(k => k).Take(Math.Max(0, s.daily.Count - 120)).ToList()) s.daily.Remove(k);
             }
             if (ev.id == "local" && !s.story.Contains("p_after")) s.queue.Add("p_after");
+            // the aftermath, as a scene in the venue
+            if (!ev.daily && s.ch >= 1)
+            {
+                string after = run.cooler != null ? "after_cooler" : res.place == 1 && ev.kind != "cash" ? "after_win" : res.prize > 0 || (ev.kind == "cash" && res.net > 0) ? "after_cash" : "after_bust";
+                if (DB.Scenes.TryGetValue(after, out var sc)) { sc.place = string.IsNullOrEmpty(ev.venue) || ev.online ? "home" : ev.venue; s.queue.Add(after); }
+                s.SetFlag("events", s.FlagN("events") + 1);
+            }
             if (run.cooler != null && s.ch >= 1 && !s.story.Contains("badbeat") && !s.queue.Contains("badbeat")) s.queue.Add("badbeat");
             if (s.peak >= 100000 && !s.story.Contains("derek") && !s.queue.Contains("derek")) s.queue.Add("derek");
             res.after = s.br;
@@ -406,6 +419,7 @@ namespace CFDream
             var h = r.hand; if (h == null || r.tier == "perfect" || r.tier == "good") return "";
             bool icm = r.stage == "bubble" || r.stage == "satbubble" || r.stage == "deep" || r.stage == "final";
             bool loose = h.mineK != "fold" && h.bestK == "fold", tight = h.mineK == "fold" && h.bestK != "fold"; string c = h.cat;
+            if (h.limp) return $"Raising is fine here. The solver completes from the small blind with this hand instead: at {h.bb} bb the limp keeps the pot small, lets you see a flop with your whole range and leaves a raise behind for when the big blind attacks. Limping is a small-blind-only play; from any other seat, open-raise.";
             if (!loose && !tight) return $"Right idea, wrong size. The solver prefers {h.best} here.";
             if (c == "Facing a jam") return loose ? "Calling a jam takes a much stronger hand than shoving one." + (icm ? " Near the money, stronger still: busting costs more than chips." : "") : "This hand is ahead of their shoving range often enough. Folding gives up too much." + (icm ? " Even with ICM, this one is a call." : "");
             if (c == "First in / vs limps") return loose ? $"Too loose from {h.pos}. With players still to act behind you, open fewer hands." : $"This is a profitable open from {h.pos}. Folding lets the blinds walk.";

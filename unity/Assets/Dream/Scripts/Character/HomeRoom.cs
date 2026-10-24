@@ -22,6 +22,8 @@ namespace CFDream.Character
     {
         public GameObject root; public string tier;
         public float W, D, H; public Vector3 spawn; public float spawnFace;
+        public Dictionary<string, (Vector3 pos, float yaw)> marks = new Dictionary<string, (Vector3, float)>();   // where people stand in a scene
+        public (Vector3 pos, float yaw) Mark(string id, Vector3 pos, float yaw) => marks.TryGetValue(id, out var m) ? m : (pos, yaw);
         public readonly List<HomeUse> uses = new List<HomeUse>();
         public Renderer tvScreen; public Material tvOff; public Material[] tvOn;
         public Transform tank; public Vector3 tankMin, tankMax;  // water volume in room space
@@ -62,6 +64,12 @@ namespace CFDream.Character
             var bc = fl.AddComponent<BoxCollider>(); bc.center = new Vector3(0, -0.05f, 0); bc.size = new Vector3(r.W, 0.1f, r.D);
             Quad(r.root.transform, "Back wall", new Vector3(-r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, r.H, -r.D / 2), new Vector3(-r.W / 2, r.H, -r.D / 2), Mats.Get(wall, 0, 0.15f), layer, Vector2.one);
             Quad(r.root.transform, "Left wall", new Vector3(-r.W / 2, 0, r.D / 2), new Vector3(-r.W / 2, 0, -r.D / 2), new Vector3(-r.W / 2, r.H, -r.D / 2), new Vector3(-r.W / 2, r.H, r.D / 2), Mats.Get(wall2, 0, 0.15f), layer, Vector2.one);
+            // movie sets close the right side too, so close-ups never look out into the void
+            if (J.B(L, "rightWall"))
+            {
+                Quad(r.root.transform, "Right wall", new Vector3(r.W / 2, 0, -r.D / 2), new Vector3(r.W / 2, 0, r.D / 2), new Vector3(r.W / 2, r.H, r.D / 2), new Vector3(r.W / 2, r.H, -r.D / 2), Mats.Get(wall2, 0, 0.15f), layer, Vector2.one);
+                Box(r.root.transform, new Vector3(r.W / 2 - 0.01f, 0.05f, 0), new Vector3(0.02f, 0.1f, r.D), Mats.Get(trim, 0, 0.4f), layer);
+            }
             Box(r.root.transform, new Vector3(0, 0.05f, -r.D / 2 + 0.01f), new Vector3(r.W, 0.1f, 0.02f), Mats.Get(trim, 0, 0.4f), layer);
             Box(r.root.transform, new Vector3(-r.W / 2 + 0.01f, 0.05f, 0), new Vector3(0.02f, 0.1f, r.D), Mats.Get(trim, 0, 0.4f), layer);
             // a thin lip along the open edges so the cut-away reads as a diorama
@@ -191,6 +199,7 @@ namespace CFDream.Character
             foreach (var (pc, pw, pd) in r.pools) { var pg = new GameObject("pool block"); pg.transform.SetParent(r.root.transform, false); pg.transform.localPosition = pc; r.Block(pg.transform, new Vector3(-pw / 2, 0, -pd / 2), new Vector3(pw / 2, 0, pd / 2)); UnityEngine.Object.Destroy(pg); }
             r.BlockEdges();
             foreach (var u in r.uses) { var (ui, uk) = r.CellOf(u.spot); r.blocked[ui, uk] = false; }   // where you stand to use a thing is always somewhere you can stand
+            if (J.O(L, "marks") is Dictionary<string, object> mk) foreach (var kv in mk) if (kv.Value is List<object> ml && ml.Count >= 3) r.marks[kv.Key] = (new Vector3(N(ml[0]), 0, N(ml[1])), N(ml[2]));
             var spn = J.L(L, "spawn");
             if (spn != null && spn.Count >= 3) { r.spawn = new Vector3(N(spn[0]), 0, N(spn[1])); r.spawnFace = N(spn[2]); }
 

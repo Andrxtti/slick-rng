@@ -13,6 +13,7 @@ namespace CFDream.UI
         PanelSettings ps;
         UIDocument doc;
         VisualElement root, column, home, modal, toast;
+        public VisualElement Modal => modal;
         Rect lastSafe; int lastW, lastH;
         string lastKey; Vector2 lastScroll;
 
@@ -60,6 +61,10 @@ namespace CFDream.UI
         }
 
         void Update() => ApplyScreen(false);
+        // leaving the app (switching tabs, locking the phone) always writes the career down first
+        void OnApplicationPause(bool paused) { if (paused) Game.State?.Save(); }
+        void OnApplicationFocus(bool focus) { if (!focus) Game.State?.Save(); }
+        void OnApplicationQuit() { Game.State?.Save(); }
 
         // One scale for both orientations: a phone is 430 units on its short side and 932 on its long side, whichever way
         // it's held, so text and buttons stay the same size when you rotate. Desktops and tablets get the smaller fit.

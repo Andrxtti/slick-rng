@@ -373,7 +373,12 @@ function drAnswer(k) {
   const strat = sp.res.strat[sp.cls], fmax = Math.max(...strat), rel = fmax > 0 ? strat[j] / fmax : 0;
   const unit = sp.unit || (pfConfig().payoff.type === 'icm' ? 'icm' : 'bb'), ev = sp.res.ev && sp.res.ev[sp.cls];
   const evS = ev && sp.evScale && sp.evScale !== 1 ? ev.map((x) => x * sp.evScale) : ev;
-  const g = drLabelFor(strat, evS, j, unit === 'bbicm' ? 'bb' : unit, sp.hard == null ? 0.4 : sp.hard, k), L = DR_LABELS[g.lab];
+  const g = drLabelFor(strat, evS, j, unit === 'bbicm' ? 'bb' : unit, sp.hard == null ? 0.4 : sp.hard, k);
+  // the limp angle: when the solver's answer is to complete from the small blind and you raised, that is the
+  // conventional play, not a leak. It gets partial credit (never worse than an inaccuracy) and the limp is explained.
+  const bestK = sp.res.actions[g.bestIdx] && sp.res.actions[g.bestIdx].k, limpSpot = bestK === 'call' && sp.path.filter((e) => e.k !== 'fold').length === 0 && (k === 'raise' || k === 'raiseB');
+  if (limpSpot && (g.lab === 'mistake' || g.lab === 'blunder')) { g.lab = 'inaccuracy'; g.limp = true; }
+  const L = DR_LABELS[g.lab];
   const tier = L.tier, ok = tier !== 'bad', pts = L.score - (tier === 'bad' ? 60 : 0);
   const before = run.stack; run.stack = Math.max(0, Math.min(200, run.stack + L.life));
   run.combo = ok && tier !== 'close' ? run.combo + 1 : 0; run.bestCombo = Math.max(run.bestCombo || 0, run.combo);
@@ -384,7 +389,7 @@ function drAnswer(k) {
   const hand = { cards: sp.hands[sp.hero].slice(), pos: hero.pos, bb: Math.round((hero.stack - hero.put) * 10) / 10, cat: trCategory(v), mine: lab(j), best: lab(best), mineK: sp.res.actions[j].k, bestK: sp.res.actions[best].k, bestF: Math.round(strat[best] * 100), myF: Math.round(strat[j] * 100),
     odds: (() => { const o = v.opts.find((x) => x.k === 'call'), m = o && /([\d.]+)/.exec(o.t), amt = m ? +m[1] - (hero.put || 0) : 0; return amt > 0 && v.pot > 0 ? { call: Math.round(amt * 10) / 10, pot: Math.round(v.pot * 10) / 10, need: Math.round((amt / (v.pot + amt)) * 100) } : null; })(),
     grid: sp.grid || null, acts: sp.res.actions.map((x) => x.k), labels: sp.res.actions.map((x, i) => lab(i)), heroCls: sp.cls,
-    lab: g.lab, loss: g.loss, unit, mix: sp.res.actions.map((a, i) => [lab(i), Math.round(strat[i] * 100)]), facing: sp.path.filter((e) => e.k !== 'fold').length };
+    lab: g.lab, loss: g.loss, limp: !!g.limp, unit, mix: sp.res.actions.map((a, i) => [lab(i), Math.round(strat[i] * 100)]), facing: sp.path.filter((e) => e.k !== 'fold').length };
   if (window.__drLog) window.__drLog.push({ ...hand, tier, stage: run.stages[run.si], d: sp.diff, acts: sp.res.actions.map((x) => x.k).join('/'), facing: sp.path.filter((e) => e.k !== 'fold').map((e) => e.k).join('-') || 'first in' });
   const r = { j, pts, rel, ok, tier, lab: g.lab, strat: strat.slice(), stage: run.stages[run.si], before, after: run.stack, hand };
   run.total += pts; run.results.push(r);
@@ -417,6 +422,7 @@ function drTip(r) {
   const icm = ['bubble', 'satbubble', 'deep', 'final'].includes(r.stage);
   const loose = h.mineK !== 'fold' && h.bestK === 'fold', tight = h.mineK === 'fold' && h.bestK !== 'fold';
   const c = h.cat;
+  if (h.limp) return `Raising is fine here. The solver completes from the small blind with this hand instead: at ${h.bb} bb the limp keeps the pot small, lets you see a flop with your whole range and leaves a raise behind for when the big blind attacks. Limping is a small-blind-only play; from any other seat, open-raise.`;
   if (!loose && !tight) return `Right idea, wrong size. The solver prefers ${h.best} here.`;
   if (c === 'Facing a jam') return loose ? `Calling a jam takes a much stronger hand than shoving one.${icm ? ' Near the money, stronger still: busting costs more than chips.' : ''}` : `This hand is ahead of their shoving range often enough. Folding gives up too much.${icm ? ' Even with ICM, this one is a call.' : ''}`;
   if (c === 'First in / vs limps') return loose ? `Too loose from ${h.pos}. With players still to act behind you, open fewer hands.` : `This is a profitable open from ${h.pos}. Folding lets the blinds walk.`;

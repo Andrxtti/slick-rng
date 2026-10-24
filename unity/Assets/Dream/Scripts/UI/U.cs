@@ -164,6 +164,7 @@ namespace CFDream.UI
         }
         public static T Mb<T>(this T e, float v) where T : VisualElement { e.style.marginBottom = v; return e; }
         public static T Mt<T>(this T e, float v) where T : VisualElement { e.style.marginTop = v; return e; }
+        public static T Ml<T>(this T e, float v) where T : VisualElement { e.style.marginLeft = v; return e; }
         public static T Size<T>(this T e, float w, float h) where T : VisualElement { if (w >= 0) e.style.width = w; if (h >= 0) e.style.height = h; return e; }
         public static T Font<T>(this T e, Font f) where T : VisualElement { Fonts.Use(e, f); return e; }
         public static T Fs<T>(this T e, float px) where T : VisualElement { e.style.fontSize = px; return e; }

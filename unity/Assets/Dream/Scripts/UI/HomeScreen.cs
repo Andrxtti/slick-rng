@@ -50,11 +50,11 @@ namespace CFDream.UI
                             break;
                         }
                     case "safe": Said("safe", $"{U.Money(s.br)} in the roll. Peak {U.Money(s.peak)}." + (s.debt > 0 ? $" Slick is owed {U.Money(s.debt)}." : "")); break;
-                    case "homegame": Said("homegame", s.cal.inv != null ? "There's an invite on the laptop. Thursday night." : "Home game's Thursday. Slick's bringing the chips."); break;
+                    case "homegame": Said("homegame", s.cal.inv != null ? "There's an invite on the Spacepad. Thursday night." : "Home game's Thursday. Slick's bringing the chips."); break;
                     case "bed":
                         var sl = Calendar.SlotsLeft(s);
-                        DreamApp.Confirm("Call it a night?", sl.left > 0 ? $"You've still got {sl.left} game{(sl.left == 1 ? "" : "s")} you could play tonight." : "Big day tomorrow.",
-                            "Sleep", () => Game.Sleep(s.job == "nights" && sl.left == 0 ? 0 : 1), "Not yet");
+                        DreamApp.Confirm("Call it a night?", !Calendar.AllPlayed(s) ? "You could still play tonight." : "Big day tomorrow.",
+                            "Sleep", () => Game.Sleep(s.job == "nights" && Calendar.AllPlayed(s) ? 0 : 1), "Not yet");
                         break;
                 }
             }
@@ -67,6 +67,7 @@ namespace CFDream.UI
             {
                 var st = CharacterStage.Instance; var room = st?.Room; if (st == null || room == null || !st.InRoom) return;
                 float now = Time.realtimeSinceStartup;
+                var placed = new List<(Vector2 p, float w, float h)>();   // chips already put down this frame, so the next ones can step off them
                 foreach (var u in room.uses)
                 {
                     if (!chips.TryGetValue(u.id, out var chip))
@@ -79,7 +80,18 @@ namespace CFDream.UI
                     var vp = st.Viewport(u.Anchor);
                     if (vp.z <= 0) { chip.style.display = DisplayStyle.None; continue; }
                     chip.style.display = DisplayStyle.Flex;
-                    var p = view.FromViewport(vp); chip.style.left = p.x; chip.style.top = p.y;
+                    var p = view.FromViewport(vp);
+                    float cw = chip.resolvedStyle.width, ch = chip.resolvedStyle.height;
+                    if (float.IsNaN(cw) || cw <= 0) cw = 84; if (float.IsNaN(ch) || ch <= 0) ch = 30;
+                    for (int guard = 0; guard < 6; guard++)   // in a big room several things sit at the same depth: stack their labels instead of piling them up
+                    {
+                        bool hit = false;
+                        foreach (var q in placed)
+                            if (Mathf.Abs(p.x - q.p.x) < (cw + q.w) / 2 + 6 && Mathf.Abs(p.y - q.p.y) < (ch + q.h) / 2 + 4) { p.y = q.p.y + (p.y >= q.p.y ? 1 : -1) * ((ch + q.h) / 2 + 6); hit = true; }
+                        if (!hit) break;
+                    }
+                    placed.Add((p, cw, ch));
+                    chip.style.left = p.x; chip.style.top = p.y;
                 }
                 // the speech bubble follows whoever's talking
                 if (sayWho != null)
@@ -124,10 +136,10 @@ namespace CFDream.UI
             var l = U.Col().Grow();
             var sl = Calendar.SlotsLeft(s);
             l.Add(U.T(Calendar.Str(s.cal.d, true), "room-day", Fonts.Semi).NoPick());
-            string news = s.cal.inv != null ? "You've got an invite" : s.cal.meet != null ? "Slick wants to meet" : sl.left > 0 ? $"{sl.left} game{(sl.left == 1 ? "" : "s")} left tonight" : "No games left tonight";
+            string news = s.cal.inv != null ? "You've got an invite" : s.cal.meet != null ? "Slick wants to meet" : !Calendar.AllPlayed(s) ? (sl.left > 0 ? $"{sl.left} online game{(sl.left == 1 ? "" : "s")} left" + (Calendar.LiveLeft(s) > 0 && (s.job != "nights" || Calendar.Weekend(s)) ? " + a live one" : "") : "A live game left") : "Nothing left to play tonight";
             l.Add(U.T(news, "room-news", Fonts.Medium).NoPick().Fg(s.cal.inv != null || s.cal.meet != null ? C.Gold2 : C.Mute));
             bar.Add(l);
-            bar.Add(U.Btn("Open laptop", () =>
+            bar.Add(U.Btn("Open the Spacepad", () =>
             {
                 var life = CharacterStage.Instance != null ? CharacterStage.Instance.Life : null;
                 if (life != null && life.isActiveAndEnabled && life.Room != null) life.Use("laptop"); else Game.SetTab("calendar");
