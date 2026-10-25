@@ -46,8 +46,8 @@ namespace CFDream
             { "home:studio", "" }, { "home:apt", "peak:25000" }, { "home:condo", "peak:150000" }, { "home:penthouse", "peak:1000000" }, { "home:mansion", "peak:5000000" }, { "home:island", "title:me" },
             { "ride:bus", "" }, { "ride:hatch", "peak:5000" }, { "ride:coupe", "peak:50000" }, { "ride:sedan", "peak:250000" }, { "ride:super", "peak:2000000" }, { "ride:jet", "title:titan" },
             { "bottom:khakis", "" }, { "bottom:jeans", "" }, { "bottom:blackjeans", "played:3" }, { "bottom:sweats", "played:1" }, { "bottom:joggers", "streak:3" }, { "bottom:trackpants", "peak:10000" },
-            { "bottom:shorts", "flag:cashWin" }, { "bottom:cargo", "played:5" }, { "bottom:slacks", "ch:2" }, { "bottom:plaidpants", "title:ring" }, { "bottom:tuxpants", "flag:meft" },
-            { "shoes:sneakers", "" }, { "shoes:runners", "played:3" }, { "shoes:highs", "streak:3" }, { "shoes:slides", "flag:cashWin" }, { "shoes:loafers", "ch:2" }, { "shoes:dress", "peak:50000" }, { "shoes:boots", "title:ring" }, { "shoes:icy", "peak:1000000" },
+            { "bottom:shorts", "flag:cashOnline" }, { "bottom:cargo", "played:5" }, { "bottom:slacks", "ch:2" }, { "bottom:plaidpants", "title:ring" }, { "bottom:tuxpants", "flag:meft" },
+            { "shoes:sneakers", "" }, { "shoes:runners", "played:3" }, { "shoes:highs", "streak:3" }, { "shoes:slides", "flag:cashOnline" }, { "shoes:loafers", "ch:2" }, { "shoes:dress", "peak:50000" }, { "shoes:boots", "title:ring" }, { "shoes:icy", "peak:1000000" },
             { "pet:cat", "played:5" }, { "pet:pup", "titles:1" }, { "pet:frenchie", "title:ring" }, { "pet:doberman", "peak:1000000" },
             { "patch:none", "" }, { "patch:grind", "streak:3" }, { "patch:tavern", "flag:cashWin" }, { "patch:site", "title:ring" }, { "patch:energy", "title:bracelet" }, { "patch:global", "title:me" },
         };

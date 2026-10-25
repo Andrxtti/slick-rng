@@ -53,7 +53,7 @@ namespace CFDream
 
         // ------------------------------------------------------------ the schedule
         static readonly string[] EveryDay = { "nightly", "glob55", "tilt11" };
-        static readonly Dictionary<int, string[]> Weekday = new Dictionary<int, string[]> { { 0, new[] { "deep", "tilt55", "tilt215", "tilt2100" } }, { 2, new[] { "tilt530" } } };
+        static readonly Dictionary<int, string[]> Weekday = new Dictionary<int, string[]> { { 0, new[] { "deep", "tilt55", "tilt215" } }, { 2, new[] { "tilt530" } }, { 4, new[] { "tilt2100" } } };
         static SeriesDef S(string id, string n, string venue, string icon, int m, int from, int days, params (string, string)[] ev) => new SeriesDef { id = id, n = n, venue = venue, icon = icon, m = m, from = from, days = days, ev = ev };
         static readonly (string, string)[] CircuitEv = { ("0-6", "sat1700"), ("1", "ring400"), ("3", "ring600"), ("5", "ring400"), ("7", "ring1700") };
         public static readonly List<SeriesDef> Series = new List<SeriesDef>

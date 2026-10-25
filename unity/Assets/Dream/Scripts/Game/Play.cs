@@ -407,7 +407,7 @@ namespace CFDream
                 res.place = place; res.paid = P; res.prize = prize; res.net = prize - (ev.free ? 0 : ev.buyin);
                 rec.best = rec.best > 0 ? Math.Min(rec.best, place) : place;
                 if (prize > 0 && s.cashes == 0) Career.Moment(s, "💵", $"First cash: {Fmt.Ord(place)} in the {ev.name}");
-                if (prize > 0) { Career.Add(s, prize, $"{Fmt.Ord(place)} in {ev.name}"); s.cashes++; rec.cashes++; rec.cash = Math.Max(rec.cash, prize); if (ev.ch == 2) s.SetFlag("circuitCash"); res.repaid = Career.Repay(s, res.net); }
+                if (prize > 0) { Career.Add(s, prize, $"{Fmt.Ord(place)} in {ev.name}"); s.cashes++; rec.cashes++; rec.cash = Math.Max(rec.cash, prize); if (ev.ch == 2) s.SetFlag("circuitCash"); if (ev.venue == "cardroom") s.SetFlag("cashWin"); if (ev.online || ev.venue == "cftilt") s.SetFlag("cashOnline"); res.repaid = Career.Repay(s, res.net); }
                 rec.net += res.net;
                 bool reachedFinal = !run.bust || run.Stage == "final";
                 res.cooler = run.cooler; res.stage = run.Stage;

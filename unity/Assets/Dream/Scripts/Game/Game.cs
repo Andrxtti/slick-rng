@@ -190,7 +190,7 @@ namespace CFDream
             var run = Play.Start(id, reentry); if (run == null) { Render(); return; }
             Run = run; Morning = null;
             // a short cutscene on the way, except for another bullet in an event you're already at
-            if (!reentry && !NoTrip) { Trip = new Trip { kind = TripKind(run.ev), ride = State.Eq("ride"), ev = run.ev, arrive = run.ev.online ? null : CFDream.UI.ArrivalView.Claim(State, run.ev.venue) }; View = View.Transit; Render(); return; }
+            if (!reentry && !NoTrip) { Trip = new Trip { kind = TripKind(run.ev), ride = State.Eq("ride"), ev = run.ev, arrive = run.ev.online || run.ev.invite ? null : CFDream.UI.ArrivalView.Claim(State, run.ev.venue) }; View = View.Transit; Render(); return; }
             View = View.Run; NextTable();
         }
         static string TripKind(EventDef ev)

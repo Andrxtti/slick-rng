@@ -115,7 +115,7 @@ namespace CFDream.UI
                 R("t35", "The Circuit calendar", null, s => Hub("calendar") && s.ch >= 2,
                     s => "The *Circuit* stops at Silver Strike four times a year: *February, April, August and November*, ten days each. Stops show on the *Poker Calendar* with a ring. Plan your weeks around them."),
                 R("t36", "Your seat", null, s => Hub("calendar") && s.tickets.Any(k => k.Value > 0 && k.Key != "classic2"),
-                    s => "You won a *seat*. It's a ticket into the bigger event on its day: *no buy-in*, but it still uses that day's *live game*. Miss it and it carries nowhere, so plan around it."),
+                    s => "You won a *seat*. It's a ticket into the bigger event on its day: *no buy-in*, but it still uses that day's *live game*. If you can't use it that day, the seat stays on your Spacepad for the next one."),
                 R("t32", "An invite", ".invite", s => Hub("calendar") && s.cal.inv != null,
                     s => "About once a month someone invites you to a *private tournament*: eighteen players, three paid, a *high buy-in*. It fits your roll, but sometimes it's too big. *Saying no is allowed.*"),
                 // the closet
