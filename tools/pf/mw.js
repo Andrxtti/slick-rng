@@ -41,7 +41,10 @@ for (let done = 0; done < SECS; done += step) {
 s.evalPass(+(process.env.EVSECS || 90) * 1000);
 const out = { stack: S, tag: TAG, iters: s.iters, model: require('./solver2.js').MODEL, mw: require('./solver2.js').MW, spots: SPOTS.map(([t, p], k) => {
   const id = ids[k], nd = s.nodes[id];
-  return { title: t, path: p, hero: nm[nd.player], acts: nd.actions.map((a) => a.k), labels: nd.actions.map((a) => label(nd, a, cfg)),
+  // the ranges that got here: for every voluntary action on the path, that seat's frequency of taking it by hand class
+  const pre = []; let x = 0;
+  for (const k of p) { const n0 = s.nodes[x], ai = n0.actions.findIndex((a) => a.k === k); if (k !== 'fold') pre.push({ seat: nm[n0.player], act: k, w: Array.from({ length: 169 }, (_, c) => +s.avg(x, c)[ai].toFixed(4)) }); x = n0.children[ai]; }
+  return { title: t, path: p, hero: nm[nd.player], acts: nd.actions.map((a) => a.k), labels: nd.actions.map((a) => label(nd, a, cfg)), pre,
     st: Array.from({ length: 169 }, (_, c) => s.avg(id, c).map((x) => +x.toFixed(4))), ev: Array.from({ length: 169 }, (_, c) => (s.evOf2(id, c) || []).map((x) => +x.toFixed(3))) };
 }) };
 fs.writeFileSync(`${__dirname}/out/mw${S}_${TAG}.json`, JSON.stringify(out));
