@@ -3,6 +3,8 @@ import json, glob, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../unity/Assets/Dream/Resources/Dream/spots.json')
 lib = {}; stats = {}; dropped = {'spots': 0}
+NAMES = json.loads(os.popen("node -e \"process.stdout.write(JSON.stringify(require('" + HERE + "/../../app/engine.js').CLASS_NAMES))\"").read())
+VALUE = {NAMES.index(h) for h in ('AA', 'KK', 'QQ', 'JJ', 'TT', 'AKs', 'AKo', 'AQs', 'AQo')}
 def kind(lbl):
     l = lbl.lower()
     return 'fold' if l == 'fold' else 'check' if l == 'check' else 'call' if (l.startswith('call') or l == 'complete') else 'allin' if l.startswith('jam') else 'raise'
@@ -32,6 +34,13 @@ for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
             if hero[0] == 'SB' and eff <= 30 + 1e-9: drop('call', 'SB flat')
             # blind re-jams above 25bb when a small 3-bet is on the menu: our model leans to the jam there
             if hero[0] in ('SB', 'BB') and eff > 25 and 'raise' in n['a']: drop('allin', 'blind jam over 25bb')
+        if n['v']['cat'] in ('Facing a raise', 'Facing a 3-bet or more') and 'raise' in n['a'] and eff <= 35 + 1e-9:
+            # big pairs and big aces with a small re-raise on the menu at 35bb or less: the small raise (inducing, getting
+            # stacks in later) is a real option that our flop model undervalues, so "jam" is never taught for them
+            ai = n['a'].index('allin') if 'allin' in n['a'] else -1
+            if ai >= 0:
+                keep = [r for r in n['r'] if not (r[0] in VALUE and r[2].index(max(r[2])) == ai)]
+                dropped['value jam vs small raise'] = dropped.get('value jam vs small raise', 0) + len(n['r']) - len(keep); n['r'] = keep
         if n['v']['cat'] == 'Facing a 3-bet or more' and eff <= 25 + 1e-9:
             # flatting a 3-bet with 25bb or less (low stack-to-pot ratio): the course plays these jam-or-fold
             drop('call', 'short 3-bet flat')
