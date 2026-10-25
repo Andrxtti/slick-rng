@@ -52,27 +52,40 @@ namespace CFDream
         public static bool Broke(State s) => s.br < 60;
 
         // ------------------------------------------------------------ the schedule
-        static readonly string[] EveryDay = { "nightly", "glob55", "tilt11", "c25" };
+        static readonly string[] EveryDay = { "nightly", "glob55", "tilt11" };
         static readonly Dictionary<int, string[]> Weekday = new Dictionary<int, string[]> { { 0, new[] { "deep", "tilt55", "tilt215", "tilt2100" } }, { 2, new[] { "tilt530" } } };
         static SeriesDef S(string id, string n, string venue, string icon, int m, int from, int days, params (string, string)[] ev) => new SeriesDef { id = id, n = n, venue = venue, icon = icon, m = m, from = from, days = days, ev = ev };
         static readonly (string, string)[] CircuitEv = { ("0-6", "sat1700"), ("1", "ring400"), ("3", "ring600"), ("5", "ring400"), ("7", "ring1700") };
         public static readonly List<SeriesDef> Series = new List<SeriesDef>
         {
-            S("rtpi", "Royal Tour Paradise Islands", "tv", "👑", 1, 10, 7, ("1", "rpt3500"), ("all", "c1025")),
+            S("rtpi", "Royal Tour Paradise Islands", "tv", "👑", 1, 10, 7, ("1", "rpt3500")),
             S("glow", "GLO Cup Winter", "tv", "🥇", 1, 21, 6, ("1", "glo10k"), ("4", "glo10k")),
             S("cfeb", "Circuit: Silver Strike", "casino", "💍", 2, 10, 10, CircuitEv),
-            S("rtla", "Royal Tour LA Classic", "tv", "👑", 3, 14, 7, ("2", "rpt3500"), ("all", "c1025")),
+            S("rtla", "Royal Tour LA Classic", "tv", "👑", 3, 14, 7, ("2", "rpt3500")),
             S("capr", "Circuit: Silver Strike", "casino", "💍", 4, 2, 10, CircuitEv),
             S("tspr", "Titan Series Spring", "titan", "🔱", 4, 18, 10, ("0-4", "sat25k"), ("2", "t25k"), ("5", "t25k"), ("7", "t100k"), ("all", "private")),
             new SeriesDef { id = "wcs", n = "WCS Summer Series", venue = "vegas", icon = "📿", m = 5, from = 30, days = 48, wcs = true },
             S("caug", "Circuit: Silver Strike", "casino", "💍", 8, 4, 10, CircuitEv),
-            S("rtfl", "Royal Tour Florida", "tv", "👑", 8, 22, 7, ("2", "rpt3500"), ("all", "c1025")),
+            S("rtfl", "Royal Tour Florida", "tv", "👑", 8, 22, 7, ("2", "rpt3500")),
             S("tfal", "Titan Series Fall", "titan", "🔱", 9, 12, 10, ("0-4", "sat25k"), ("2", "t25k"), ("5", "t25k"), ("7", "t100k"), ("8", "t250k"), ("all", "private")),
             S("glof", "GLO Cup Fall", "tv", "🥇", 10, 20, 6, ("1", "glo10k"), ("4", "glo10k")),
             S("cnov", "Circuit: Silver Strike", "casino", "💍", 11, 3, 10, CircuitEv),
-            S("rt5d", "Royal Tour Five Diamond", "tv", "👑", 12, 5, 7, ("1", "rpt3500"), ("4", "rpt10k"), ("all", "c1025")),
+            S("rt5d", "Royal Tour Five Diamond", "tv", "👑", 12, 5, 7, ("1", "rpt3500"), ("4", "rpt10k")),
             S("hall", "Hall of Legends Invitational", "hall", "🏛️", 12, 18, 1, ("0", "legends")),
         };
+        // the next Circuit stop from today: "February 10", or "today" when one is running
+        public static string NextCircuit(State s)
+        {
+            int best = int.MaxValue; string nm = null;
+            foreach (var sr in Series)
+                foreach (var Y in new[] { Date(s.cal.d).Y, Date(s.cal.d).Y + 1 })
+                {
+                    if (sr.wcs || sr.venue != "casino") continue;
+                    int s0 = DayOf(Y, sr.m, sr.from), end = s0 + sr.days - 1; if (end < s.cal.d) continue;
+                    int at = Math.Max(s0, s.cal.d); if (at < best) { best = at; nm = s0 <= s.cal.d ? "now" : MonL[sr.m - 1] + " " + sr.from; }
+                }
+            return nm ?? "soon";
+        }
         public static List<SeriesOn> SeriesOnDay(int d)
         {
             var D = Date(d); var out_ = new List<SeriesOn>();
@@ -87,7 +100,7 @@ namespace CFDream
         // the WCS Summer Series: bracelets twice a week each, the $10K Championship, the Main in July
         static List<(string id, string name)> WcsDay(int d, int o, int s0)
         {
-            var D = Date(d); var l = new List<(string, string)> { ("c510", null) };
+            var D = Date(d); var l = new List<(string, string)> { };
             if (o >= 2 && o <= 19) l.Add(("sat10k", null));
             int n = 0; for (int k = 0; k <= o; k++) { int w = Date(s0 + k).dow; if (w == 1 || w == 4 || w == 3 || w == 6) n++; }
             if (D.dow == 1 || D.dow == 4) l.Add(("b1500", $"WCS Event #{n}: $1,500 No-Limit"));
@@ -133,6 +146,8 @@ namespace CFDream
             {
                 var t = DB.Event(id); if (t == null || list.Any(x => x.ev.id == id)) return;
                 if (t.req > 0 && s.ch < t.req) return;
+                if (t.ch > Math.Max(1, s.ch)) return;   // events unlock by chapter
+                if (t.kind == "cash") return;   // no cash games in the story: tournaments only
                 list.Add(new DayEvent { ev = name != null ? t.Copy(name) : t, why = why });
             }
             if (s.ch == 0) { if (d == 5 || d == s.cal.d) Push("local", null, "Your free seat"); return list; } // the prologue jumps to Saturday when you sit down
@@ -303,9 +318,9 @@ namespace CFDream
             double roll = Math.Max(500, s.br), u = r.Next(), ratio = u < 0.45 ? 0.05 + r.Next() * 0.15 : u < 0.8 ? 0.2 + r.Next() * 0.4 : 0.6 + r.Next() * 0.9;
             int k = 0; for (int i = 0; i < Stakes.Length; i++) if (Stakes[i][1] * 100 <= roll * ratio) k = i;
             var st = Stakes[k]; var pool = Hosts.Where(h => k >= h.lo && k <= h.hi).ToList(); var host = pool.Count > 0 ? pool[r.Int(pool.Count)] : Hosts[0];
-            int when = c.d + (r.Next() < 0.55 ? 1 : 2); string name = $"${Fmt.Money(st[0])}/${Fmt.Money(st[1])} Private Game";   // never the same night it lands
-            var ev = new EventDef { id = "inv", ch = Math.Min(7, Math.Max(1, k)), kind = "cash", name = name, venue = k >= 4 ? "titan" : "cardroom", buyin = st[1] * 100, invite = true, soft = host.soft, host = host.n,
-                blurb = $"Hosted by {host.n} at {host.at}. {host.line}" };
+            int when = c.d + (r.Next() < 0.55 ? 1 : 2); string name = $"${Fmt.Money(st[1] * 100)} Private Game";   // never the same night it lands
+            var ev = new EventDef { id = "inv", ch = Math.Min(7, Math.Max(1, k)), kind = "mtt", field = 18, name = name, venue = k >= 4 ? "titan" : "cardroom", buyin = st[1] * 100, invite = true, soft = host.soft, host = host.n,
+                blurb = $"Hosted by {host.n} at {host.at}. Eighteen players, three paid, one night. {host.line}" };
             c.inv = new Invite { ev = ev, d = when, seen = true };
             news.Add(("📨", $"A private game invite: {name}, {(when == c.d + 1 ? "tomorrow night" : DowL[Date(when).dow] + " night")}."));
         }
@@ -316,7 +331,7 @@ namespace CFDream
             var c = s.cal; if (c.meet != null || !Low(s) || s.FlagN("slick_off") > 0) return;   // Slick walked away: no diner meetups
             var r = RngFor(s, c.d, "meet"); if (r.Next() > (Broke(s) ? 0.35 : 0.12)) return;
             double k = r.Next(); string seat = s.ch >= 3 ? "tilt215" : "deep";
-            c.meet = k < 0.45 ? new Meetup { kind = "stake", amt = Career.StakeSize(s), d = c.d } : k < 0.8 ? new Meetup { kind = "seat", id = seat, d = c.d } : new Meetup { kind = "cash", amt = Math.Round(Career.StakeSize(s) / 50) * 10, d = c.d };
+            c.meet = k < 0.5 ? new Meetup { kind = "stake", amt = Career.StakeSize(s), d = c.d } : new Meetup { kind = "seat", id = seat, d = c.d };
             news.Add(("🕶️", "Slick texted: \"Diner. 2 AM. Bring an appetite.\""));
         }
         public static void MeetTake(State s)

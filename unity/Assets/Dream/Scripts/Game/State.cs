@@ -242,7 +242,7 @@ namespace CFDream
                 if (c.Val("trav") is Dictionary<string, object> tr) foreach (var kv in tr) cal.trav[int.Parse(kv.Key)] = J.Strs(kv.Value);
                 cal.re = IntMap(c.Val("re"));
                 if (c.Val("inv") is Dictionary<string, object> iv)
-                    cal.inv = new Invite { d = J.I(iv, "d"), ev = new EventDef { id = "inv", kind = "cash", invite = true, name = J.S(iv, "name", ""), venue = J.S(iv, "venue", "cardroom"), buyin = J.N(iv, "buyin"), ch = J.I(iv, "ch", 1), soft = J.N(iv, "soft"), host = J.S(iv, "host", ""), blurb = J.S(iv, "blurb", "") } };
+                    cal.inv = new Invite { d = J.I(iv, "d"), ev = new EventDef { id = "inv", kind = "mtt", field = 18, invite = true, name = J.S(iv, "name", ""), venue = J.S(iv, "venue", "cardroom"), buyin = J.N(iv, "buyin"), ch = J.I(iv, "ch", 1), soft = J.N(iv, "soft"), host = J.S(iv, "host", ""), blurb = J.S(iv, "blurb", "") } };
                 if (c.Val("meet") is Dictionary<string, object> mt) cal.meet = new Meetup { kind = J.S(mt, "kind"), id = J.S(mt, "id"), amt = J.N(mt, "amt"), d = J.I(mt, "d") };
             }
             return s;

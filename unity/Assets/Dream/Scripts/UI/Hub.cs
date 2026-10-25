@@ -320,21 +320,21 @@ namespace CFDream.UI
         {
             var inv = s.cal.inv; var ev = inv.ev; bool tonight = inv.d == s.cal.d;
             var c = U.Card("invite");
-            c.Add(U.Kicker(tonight ? "Private game · tonight" : "Private game · tomorrow night").Fg(C.Violet));
+            c.Add(U.Kicker(tonight ? "Private tournament · tonight" : "Private tournament · tomorrow night").Fg(C.Violet));
             c.Add(U.H2(ev.name));
             c.Add(U.P(ev.blurb).Mt(4));
             double pct = ev.buyin / Math.Max(1, s.br) * 100;
             var risk = Career.Risk(s, ev);
             var chips = U.Row().Cls("wrap").Mt(8);
-            chips.Add(U.Chip($"Bring {U.Money(ev.buyin)}", C.Cream));
+            chips.Add(U.Chip($"Buy-in {U.Money(ev.buyin)}", C.Cream));
             chips.Add(U.Chip(s.br > 0 ? $"{Math.Round(pct)}% of your roll" : "You're broke", pct <= 5 ? C.Green : pct <= 20 ? C.Gold : C.Red));
             if (Calendar.TravelFor(s, ev) > 0) chips.Add(U.Chip($"Travel {U.Money(Calendar.TravelFor(s, ev))}", C.Mute));
             c.Add(chips);
-            c.Add(U.Hint(pct > 20 ? "A real shot. Lose it and you're rebuilding for weeks." : pct > 5 ? "Bigger than you usually play. The table is soft." : "Comfortable. Soft table, good money.").Mt(6));
+            c.Add(U.Hint(pct > 20 ? "A real shot. Bust and you're rebuilding for weeks." : pct > 5 ? "Bigger than you usually play. The field is soft." : "Comfortable. Soft field, good money.").Mt(6));
             var b = U.Row().Mt(10);
             b.Add(U.Btn("Pass", () => DreamApp.Confirm("Pass on the game?", "Invites like this don't come around often.", "Pass", Game.DeclineInvite, "Keep it"), "ghost grow"));
             var sl = Calendar.SlotsLeft(s);
-            if (tonight) b.Add(U.Btn("Sit down", () => Game.StartEvent("inv"), "gold grow", risk.k != "no" && sl.left > 0, risk.k == "no" ? risk.label : sl.left <= 0 ? "No games left" : null));
+            if (tonight) b.Add(U.Btn("Register", () => Game.StartEvent("inv"), "gold grow", risk.k != "no" && sl.left > 0, risk.k == "no" ? risk.label : sl.left <= 0 ? "No games left" : null));
             else b.Add(U.Btn("See you tomorrow", null, "grow", false));
             c.Add(b);
             return c;

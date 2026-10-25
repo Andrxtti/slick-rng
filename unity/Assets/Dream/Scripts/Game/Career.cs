@@ -155,11 +155,16 @@ namespace CFDream
             if (s.ch >= 1 && Calendar.Broke(s) && s.FlagN("brokeNow") <= 0 && !s.queue.Contains("broke") && !s.queue.Contains("broke_told"))
             { Moment(s, "🥧", "Went broke"); s.SetFlag("brokeNow"); s.queue.Add(s.FlagN("shots") >= 3 || s.FlagN("slick_off") > 0 ? "broke_told" : "broke"); }
             if (s.FlagN("brokeNow") > 0 && s.br >= 400) s.SetFlag("brokeNow", 0);
+            if (s.ch == 2)
+            {
+                if (s.Title("ring") >= 2 && s.br < 40000 && !s.story.Contains("c2_roll") && !s.queue.Contains("c2_roll")) s.queue.Add("c2_roll");
+                if (s.br >= 40000 && s.Title("ring") < 2 && !s.story.Contains("c2_rings") && !s.queue.Contains("c2_rings")) s.queue.Add("c2_rings");
+            }
             if (s.FlagN("slick_off") > 0 && s.br >= 10000 && !s.queue.Contains("slick_back")) s.queue.Add("slick_back");
             // keeping the day job: David leans on you at every milestone, and a quarter million settles it
             if (s.ch >= 1 && s.job == "nights")
             {
-                void Once(string id, bool when) { if (when && !s.story.Contains(id) && !s.queue.Contains(id)) s.queue.Add(id); }
+                void Once(string id, bool when) { if (when && !s.story.Contains(id) && !s.queue.Contains(id)) s.queue.Insert(0, id); }   // David first: his text comes before the next chapter opens
                 Once("david1", s.peak >= 10000); Once("david2", s.peak >= 25000); Once("david3", s.peak >= 50000); Once("david4", s.peak >= 100000);
                 Once("quit250", s.peak >= 250000);
             }

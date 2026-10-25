@@ -25,6 +25,8 @@ namespace CFDream
                 B("you", "Somebody bought me a seat. The Biscayne Championship."),
                 B("rosa", "Free seat? Lucky you. Table nine, seat four. Cards in the air at noon."),
                 B("n", "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway."));
+            // Chapter 2 opens on the real calendar and on whichever job you chose
+            if (DB.Scenes.TryGetValue("c2", out var c2s) && c2s.beats.Count > 2) { c2s.beats[0].fn = true; c2s.beats[2].fn = true; }
             // the nightly schedule: The Winn Nightly at the card room, two CF Tilt events online
             var nt = DB.Event("nightly");
             if (nt != null) { nt.name = "The Winn Nightly $110"; nt.buyin = 110; nt.field = 60; nt.turbo = false; nt.blurb = "Biscayne's nightly. Sixty players, deep enough to actually play."; }
@@ -97,6 +99,8 @@ namespace CFDream
                 B("n", "You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL."),
                 B("n", $"${Fmt.Money(Calendar.Salary)} lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream."),
                 B("slick", "Smart. A paycheck buys you time to learn. Never play above your roll. Text me when you win something.", text: true));
+            Put("c2_roll", "casino", "Chapter 2", "The roll", "hub", B("slick", "Two rings. Now the roll. Forty thousand, and not one dollar of it borrowed from tomorrow.", text: true));
+            Put("c2_rings", "casino", "Chapter 2", "The hardware", "hub", B("slick", "Money's there. Now the hardware. Bankrolls don't get introduced at the rail. Rings do.", text: true));
             // going broke: no automatic bailout. Slick lays out the options.
             Put("broke", "diner", "Rock bottom", null, "hub",
                 B("n", "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."),
@@ -417,6 +421,8 @@ namespace CFDream
                     case "after_cooler:1": return new[] { "...Brutal.", "Right play. Wrong deck.", "Don't tilt. Don't tilt. Don't tilt." }[v];
                 }
             }
+            if (sceneId == "c2" && index == 0) { string nx = Calendar.NextCircuit(s); return "You've outgrown Biscayne. " + (nx == "now" ? "The Circuit is at Silver Strike right now." : $"The next Circuit stop at Silver Strike starts {nx}.") + " Every event gives a ring. Go get one."; }
+            if (sceneId == "c2" && index == 2) return s.job == "nights" ? "You're the kid with the day job? I had one too. Spreadsheets and everything. Play your game and let them find out." : "You're the kid who quit the cubicle? I was an accountant. Spreadsheets and everything. Play your game and let them find out.";
             if (sceneId == "ft_intro")
             {
                 var run = Game.Run; string nm = NameOf(run?.boss);
