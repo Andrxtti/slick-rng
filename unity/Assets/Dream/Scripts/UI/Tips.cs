@@ -194,7 +194,10 @@ namespace CFDream.UI
             {
                 if (closed) return; closed = true;
                 if (skipAll && Game.State != null) { Game.State.SetFlag("tips_off"); Game.State.Save(); }
-                Mark(id); layer.Clear(); showing = null; then?.Invoke();
+                Mark(id); showing = null;
+                // the shade lingers a moment so the same tap can't fall through to the screen underneath
+                foreach (var ch in layer.Children().ToList()) if (ch.ClassListContains("tip-bubble") || ch.ClassListContains("tip-ring")) ch.RemoveFromHierarchy();
+                layer.schedule.Execute(() => { if (showing == null && !pending) layer.Clear(); then?.Invoke(); }).StartingIn(150);
             }
 
             Rect hole = Rect.zero;

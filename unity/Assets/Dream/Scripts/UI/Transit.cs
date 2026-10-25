@@ -23,7 +23,8 @@ namespace CFDream.UI
             Screens.Backdrop = Color.black;
             bool done = false;
             void Finish() { if (done) return; done = true; RideStage.Get().End(); Game.Arrive(); }
-            root.RegisterCallback<PointerUpEvent>(e => Finish());
+            float born = Time.realtimeSinceStartup;   // the tap that started the trip must not also skip it
+            root.RegisterCallback<PointerUpEvent>(e => { if (Time.realtimeSinceStartup - born > 0.6f) Finish(); });
             root.RegisterCallback<DetachFromPanelEvent>(e => { if (!done) RideStage.Get().End(); });
             bool built = false;
             root.RegisterCallback<GeometryChangedEvent>(e =>
