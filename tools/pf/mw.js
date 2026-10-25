@@ -34,6 +34,7 @@ const SPOTS = [
   ['BB vs UTG open', ['raise', ...F(6)]],
   ['BB vs BTN open', [...F(5), 'raise', 'fold']],
   ['UTG1 vs UTG open', ['raise']],
+  ['CO vs UTG open', ['raise', 'fold', 'fold', 'fold']],
 ];
 const s = new PF2(cfg);
 const f = (keys) => { let id = 0; for (const k of keys) { const nd = s.nodes[id]; if (!nd || nd.kind !== 'act') return -1; const a = nd.actions.findIndex((x) => x.k === k); if (a < 0) return -1; id = nd.children[a]; } return id; };

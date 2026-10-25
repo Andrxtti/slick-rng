@@ -15,7 +15,7 @@ const MAP = {
   'R2.1-F-C-F-F-F-F|7': 'BB vs EP open + EP/MP flat', 'F-F-R2.1-F-F-C-F|7': 'BB vs MP open + LP flat', 'F-F-R2.1-F-F-F-C|7': 'BB vs MP open + SB flat',
   'F-F-F-F-R2.2-C-F|7': 'BB vs CO open + BTN flat', 'F-F-F-F-F-R2.5-C|7': 'BB vs BTN open + SB flat',
   'F-F-F-F-R2.2|5': 'BTN vs CO open', 'F-F-F-F-F-R2.5|6': 'SB vs BTN open', 'R2.1-F-F-F-F|5': 'BTN vs UTG open', 'R2.1-F-F-F-F-F-F|7': 'BB vs UTG open',
-  'F-F-F-F-F-R2.5-F|7': 'BB vs BTN open', 'R2.1|1': 'UTG1 vs UTG open',
+  'F-F-F-F-F-R2.5-F|7': 'BB vs BTN open', 'R2.1|1': 'UTG1 vs UTG open', 'R2.1-F-F-F|4': 'CO vs UTG open',
 };
 // keys are normalized to a stack and a path with raise sizes stripped ("25|R-F-F-F-F-F-C|7"), so one map serves all depths
 const norm = (k) => k.replace(/R[\d.]+/g, 'R');
