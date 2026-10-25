@@ -97,6 +97,18 @@ Known heads-up issue found on the way (not multiway): at 100bb our SB and BTN fl
 offsuit kings against late opens. Those are 3-bet-or-fold hands. It is the heads-up realization model (offsuit aces are
 under-penalized), it feeds the BB's multiway defense, and it belongs to the heads-up calibration item.
 
+## Library re-solve under the new model (Oct 25, all 50 tables, full gate)
+
+- sanity.js: 0 problems on 23,903 dealt hands. Shipped library untouched (out_mw/ is local, ignored).
+- Reproducibility (libdiff.py, spots matched by seat + path, hands by class): the same table solved twice with the same
+  settings reproduces 100% of the dealt answers they share (0 of 200 at 240 s, 0 of 216 at 480 s). 480 s vs 240 s differs
+  on 2 of 206, both near-ties facing a jam (A7s, ATo; EV margins under 0.1). A first comparison that matched by list
+  position reported 43% "flips"; that was the comparison's bug, not the solver's.
+- New model vs the shipped library: 60 of 10,627 dealt hands shared by both change their best action (0.6%), all with a
+  gate-size margin; mostly fold -> call in the BB and the blinds vs a raise. 2 of the 60 are in held-back multiway spots.
+- Next gate step (credibility): ship only hands where two independent solves agree on the best action. That removes the
+  near-tie flips above at the cost of a second 3-hour run per library build.
+
 ## Still open
 
 - The shipped library is untouched. Turning the model on means re-solving all 56 tables through the gate (about 3 hours
