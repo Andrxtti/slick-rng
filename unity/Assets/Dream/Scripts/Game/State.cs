@@ -242,7 +242,12 @@ namespace CFDream
                 if (c.Val("trav") is Dictionary<string, object> tr) foreach (var kv in tr) cal.trav[int.Parse(kv.Key)] = J.Strs(kv.Value);
                 cal.re = IntMap(c.Val("re"));
                 if (c.Val("inv") is Dictionary<string, object> iv)
-                    cal.inv = new Invite { d = J.I(iv, "d"), ev = new EventDef { id = "inv", kind = "mtt", field = 18, invite = true, name = J.S(iv, "name", ""), venue = J.S(iv, "venue", "cardroom"), buyin = J.N(iv, "buyin"), ch = J.I(iv, "ch", 1), soft = J.N(iv, "soft"), host = J.S(iv, "host", ""), blurb = J.S(iv, "blurb", "") } };
+                {
+                    // saves from before the cash games went away: same invite, now a private tournament
+                    string nm = J.S(iv, "name", "").Replace("Cash Game", "Private Game").Replace("cash game", "private game"), bl = J.S(iv, "blurb", "");
+                    if (bl.IndexOf("cash", StringComparison.OrdinalIgnoreCase) >= 0 || bl.IndexOf("sit ", StringComparison.OrdinalIgnoreCase) >= 0 || bl.IndexOf("table", StringComparison.OrdinalIgnoreCase) >= 0) bl = "Eighteen players, three paid, one night.";
+                    cal.inv = new Invite { d = J.I(iv, "d"), seen = false, ev = new EventDef { id = "inv", kind = "mtt", field = 18, invite = true, name = nm, venue = J.S(iv, "venue", "cardroom"), buyin = J.N(iv, "buyin"), ch = J.I(iv, "ch", 1), soft = J.N(iv, "soft"), host = J.S(iv, "host", ""), blurb = bl } };
+                }
                 if (c.Val("meet") is Dictionary<string, object> mt) cal.meet = new Meetup { kind = J.S(mt, "kind"), id = J.S(mt, "id"), amt = J.N(mt, "amt"), d = J.I(mt, "d") };
             }
             return s;

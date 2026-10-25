@@ -32,7 +32,7 @@ namespace CFDream
     {
         public EventDef ev; public List<string> stages; public List<int> perS;
         public int si, h, stack = 100, total, combo, bestCombo, tip, travel;
-        public bool bust, reentry, usedTicket, fumes, turbo; public string state = "ready", boss, cooler; public Showdown show;
+        public bool bust, reentry, usedTicket, fumes, turbo; public string state = "ready", boss, cooler; public Showdown show; public int showH = -99, showSi = -1;
         public List<Decision> results = new List<Decision>();
         public Rng rng; public Spot spot;
         public string libGid; public int libIndex = -1; public HashSet<int> seen = new HashSet<int>(); public List<string> usedTables = new List<string>();

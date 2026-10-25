@@ -21,6 +21,18 @@ namespace CFDream
             return a == "call" && (sp.path.Contains("allin") || (sp.cat ?? "").IndexOf("jam", StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
+        // does this all-in play out on screen? Always at the bubble and the final table; otherwise about half the time,
+        // never two hands running, and never if the player turned the animations off in Settings.
+        public static bool Plays(Run run, Decision d)
+        {
+            var s = Game.State; if (s != null && s.FlagN("sd_skip") > 0) return false;
+            string st = run.Stage;
+            if (st == "final" || st == "bubble" || st == "satbubble") return true;
+            if (run.showH == run.h - 1 && run.si == run.showSi) return false;
+            var rng = new System.Random((int)(Rng.Hash($"sdp|{run.ev.id}|{run.si}|{run.h}|{d.j}") & 0x7fffffff));
+            return rng.NextDouble() < 0.55;
+        }
+
         public static Showdown Make(Run run, Decision d)
         {
             var sp = run.spot; var heroSeat = sp.seats[sp.hero];

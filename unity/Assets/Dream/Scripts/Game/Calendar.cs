@@ -338,7 +338,7 @@ namespace CFDream
         {
             var m = s.cal.meet; if (m == null) return;
             if (m.kind == "stake") { Career.Add(s, m.amt, "Slick's stake"); s.debt += m.amt; s.SetFlag("stakes", s.FlagN("stakes") + 1); Career.Moment(s, "🥧", $"Slick staked you ${Fmt.Money(m.amt)}"); }
-            else if (m.kind == "seat") { s.tickets[m.id] = s.Ticket(m.id) + 1; Career.Moment(s, "🎟", $"Slick paid your seat into the {DB.Event(m.id).name}"); }
+            else if (m.kind == "seat") { s.tickets[m.id] = s.Ticket(m.id) + 1; Career.Moment(s, "🎟", $"Slick paid your seat into the {DB.Event(m.id)?.name}"); }
             else Career.Add(s, m.amt, "From Slick, for groceries");
             s.cal.meet = null;
         }

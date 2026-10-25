@@ -229,7 +229,7 @@ namespace CFDream
             var run = Run; if (run == null || run.state != "play") return;
             var sp = run.spot; var d = Play.Answer(run, j);
             // all in: the hand plays out before the verdict
-            if (run.drill == null && Showdown.AllIn(sp, j)) { run.show = Showdown.Make(run, d); run.state = "showdown"; }
+            if (run.drill == null && Showdown.AllIn(sp, j) && Showdown.Plays(run, d)) { run.show = Showdown.Make(run, d); run.showH = run.h; run.showSi = run.si; run.state = "showdown"; }
             Render();
         }
         public static void ShowdownDone() { var run = Run; if (run == null || run.state != "showdown") return; run.state = "answered"; Render(); }

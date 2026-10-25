@@ -546,6 +546,8 @@ namespace CFDream.UI
             col.Add(t);
             var dev = U.Row().Mt(10);
             dev.Add(U.Btn(Sound.On ? "Sound: on" : "Sound: off", () => { Sound.On = !Sound.On; Game.Render(); }, "ghost grow"));
+            bool sdOff = s.FlagN("sd_skip") > 0;
+            dev.Add(U.Btn(sdOff ? "All-in scenes: off" : "All-in scenes: on", () => { if (sdOff) s.flags.Remove("sd_skip"); else s.SetFlag("sd_skip"); s.Save(); Game.Render(); }, "ghost grow"));
             dev.Add(U.Btn("Restyle your look", Game.StartRestyle, "ghost grow"));
             dev.Add(U.Btn("Title screen", () => { Game.View = View.Title; Game.Render(); }, "ghost grow"));
             col.Add(dev);
