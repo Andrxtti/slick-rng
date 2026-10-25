@@ -27,6 +27,13 @@ const SPOTS = [
   ['BB vs MP open + SB flat', [...F(2), 'raise', ...F(3), 'call']],
   ['BB vs CO open + BTN flat', [...F(4), 'raise', 'call', 'fold']],
   ['BB vs BTN open + SB flat', [...F(5), 'raise', 'call']],
+  // heads-up nodes (one opener), for the same fit: where the offsuit-ace flats and the suited calls show up
+  ['BTN vs CO open', [...F(4), 'raise']],
+  ['SB vs BTN open', [...F(5), 'raise']],
+  ['BTN vs UTG open', ['raise', ...F(4)]],
+  ['BB vs UTG open', ['raise', ...F(6)]],
+  ['BB vs BTN open', [...F(5), 'raise', 'fold']],
+  ['UTG1 vs UTG open', ['raise']],
 ];
 const s = new PF2(cfg);
 const f = (keys) => { let id = 0; for (const k of keys) { const nd = s.nodes[id]; if (!nd || nd.kind !== 'act') return -1; const a = nd.actions.findIndex((x) => x.k === k); if (a < 0) return -1; id = nd.children[a]; } return id; };

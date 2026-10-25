@@ -1228,6 +1228,7 @@ class PreflopSolver {
       this.str[p] = 0; this.str[o] = 1; loseU = this.utility(nd)[p];
       this.str[p] = sp; this.str[o] = so; this._noR = false;
     }
+    const pPos = this.cfg.playPos ?? 1, pNeg = this.cfg.playNeg ?? 1;
     let both = 0, onlyP = 0;
     if (!icm && nd.kind === 'show') for (const L of nd.layers) { if (L.elig.length === 2) both += L.amount; else if (L.elig[0] === p) onlyP += L.amount; }
     for (let c = 0; c < this.NC; c++) {
@@ -1239,7 +1240,8 @@ class PreflopSolver {
         // the effect grows with the stack-to-pot ratio (gamma), on top of position (R)
         // playability: with chips behind, pairs, suited connectors and suited aces make more of their equity
         // (sets, flushes, straights, the nut draws) and offsuit junk makes less; grows with the stack-to-pot ratio
-        const pl = 1 + PLAY169[c] * nd.playK, plo = 1 + PLAY169[oc] * nd.playK;
+        // cfg.playPos / cfg.playNeg scale the bonuses and the penalties of the table (calibration hooks; default 1)
+        const pl = 1 + PLAY169[c] * (PLAY169[c] > 0 ? pPos : pNeg) * nd.playK, plo = 1 + PLAY169[oc] * (PLAY169[oc] > 0 ? pPos : pNeg) * nd.playK;
         const a = nd.R[p] * pl * Math.pow(eq, nd.gamma), b = nd.R[o] * plo * Math.pow(1 - eq, nd.gamma);
         share = a + b > 0 ? a / (a + b) : 0.5;
       }

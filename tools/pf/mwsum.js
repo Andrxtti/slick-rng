@@ -13,7 +13,7 @@ const ours = (sp, c) => { const st = sp.st[c], o = { fold: 0, call: 0, raise: 0 
 const rows = [];
 for (const f of process.argv.slice(2)) {
   let d; try { d = require(path.resolve(f)); } catch (e) { continue; }
-  const m = d.mw || {}, tag = d.tag, set = m.on ? `play ${m.play} gam ${m.gam} r ${m.r} pen ${m.pen ?? 1} leak ${m.leak ?? 0} pos ${m.pos ?? 1}` : 'engine default (MW off)';
+  const m = d.mw || {}, tag = d.tag, set = m.on ? `play ${m.play} gam ${m.gam} r ${m.r} pen ${m.pen ?? 1} leak ${m.leak ?? 0} pos ${m.pos ?? 1} playk ${m.playk ?? 0} init ${m.init ?? 1}` : 'engine default (MW off)';
   const G = { BTN: [], LP: [], SB: [], BB: [] }; let ag = 0, ov = 0, n = 0;
   for (const sp of d.spots) {
     const ch = X[sp.title]; if (!ch) continue;

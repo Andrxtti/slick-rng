@@ -20,7 +20,7 @@ const JAM_CAP_NONBLIND3 = +(process.env.JAMCAP3 || 25);   // non-blind 3-bettors
 // defends ~67%). See tools/pf/out/ref30_F.txt, ref40_F.txt.
 const env = (k, d) => (process.env[k] !== undefined ? +process.env[k] : d);
 // kInit: an out-of-position preflop aggressor (a blind 3-bettor, a squeezer) gets back this share of the positional penalty
-const MODEL = { rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
+const MODEL = { pPos: env('PPOS', 1), pNeg: env('PNEG', 1), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
 // Multiway flops (three or more players see the flop). The engine settles these with a random-board showdown and
 // splits the realization leak evenly between everyone, so a hand with no equity still collects a share of the pot and
 // suitedness/position-by-hand play no part. MW=1 uses the heads-up model generalized instead: each player's multiway
@@ -35,7 +35,11 @@ const MODEL = { rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S
 // Defaults are the refit of Oct 25 against the course's 18 multiway charts (see MULTIWAY_NOTES.md): 87% hand agreement vs
 // 71% for the engine's own settlement, every group within a few points and never looser than the charts. MW=0 restores
 // the engine settlement.
-const MW = { on: env('MW', 1), play: env('MWPLAY', 1.5), gam: env('MWGAM', 0.3), r: env('MWR', 1), pen: env('MWPEN', 2), leak: env('MWLEAK', 0), pos: env('MWPOS', 2) };
+// playk: extra playability weight per player beyond three (nut potential and implied odds matter more the more players
+// see the flop; offsuit broadways suffer more too).
+// init: how much of the preflop aggressor's initiative bonus (MODEL.kInit) survives with three or more in. A c-bet into two
+// or more players gets through far less often, so 1 keeps the heads-up bonus and 0 removes it multiway.
+const MW = { on: env('MW', 1), play: env('MWPLAY', 1.5), gam: env('MWGAM', 0.3), r: env('MWR', 1), pen: env('MWPEN', 2), leak: env('MWLEAK', 0), pos: env('MWPOS', 2), playk: env('MWPLAYK', 0), init: env('MWINIT', 1) };
 const PLAY = (() => {
   const RK = '23456789TJQKA', t = new Float64Array(169);
   E.CLASS_NAMES.forEach((nm, i) => {
@@ -56,7 +60,7 @@ const PLAY = (() => {
   return t;
 })();
 class PF2 extends E.PreflopSolver {
-  constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, ...cfg }; super(cfg); }
+  constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, playPos: MODEL.pPos, playNeg: MODEL.pNeg, ...cfg }; super(cfg); }
   prepTerminal(nd) {
     super.prepTerminal(nd);
     if (nd.kind !== 'flop') return;
@@ -66,7 +70,7 @@ class PF2 extends E.PreflopSolver {
     const ramp = Math.min(1, Math.max(0, (spr - MODEL.s0) / MODEL.s1)), rLow = this.cfg.rLow;
     order.forEach((i, r) => {
       let r0 = k === 1 ? 1 : rLow + (1 - rLow) * Math.pow(r / (k - 1), k >= 3 && MW.on ? MW.pos : 1);
-      if (i === nd.aggr && r < k - 1) r0 += (1 - r0) * MODEL.kInit;
+      if (i === nd.aggr && r < k - 1) r0 += (1 - r0) * MODEL.kInit * (k >= 3 && MW.on ? MW.init : 1);
       if (nd.aggr < 0 && r < k - 1) r0 += (1 - r0) * MODEL.kLimp;                   // limped pot: nobody has the initiative
       nd.R[i] = 1 - (1 - r0) * ramp;
     });
@@ -101,9 +105,9 @@ class PF2 extends E.PreflopSolver {
       if (k === 1) { fin[el[0]] += L.amount; continue; }
       let ss = 0;
       for (const i of el) { let lg = 0; for (const j of el) if (j !== i) lg += LO[cls[i] * NC + cls[j]]; s[i] = Math.exp(lg / (2 * (k - 1))); ss += s[i]; }
-      const g = nd.gamma + MW.gam * (k - 2), mr = k >= 3 ? MW.r : 1, mp = k >= 3 ? MW.play : 1, pen = k >= 3 ? MW.pen : 1; let xs = 0, bs = 0;
+      const g = nd.gamma + MW.gam * (k - 2), mr = k >= 3 ? MW.r : 1, mp = k >= 3 ? MW.play + MW.playk * (k - 3) : 1, pen = k >= 3 ? MW.pen : 1; let xs = 0, bs = 0;
       const b = this._mwB || (this._mwB = new Float64Array(this.n));
-      for (const i of el) { const pl = PLAY[cls[i]]; b[i] = (1 + (pl < 0 ? pl * pen : pl) * nd.playK * mp) * Math.pow(s[i] / ss, g); bs += b[i]; x[i] = (1 - (1 - nd.R[i]) * mr) * b[i]; xs += x[i]; }
+      for (const i of el) { const pl0 = PLAY[cls[i]], pl = pl0 * (pl0 > 0 ? MODEL.pPos : MODEL.pNeg); b[i] = (1 + (pl < 0 ? pl * pen : pl) * nd.playK * mp) * Math.pow(s[i] / ss, g); bs += b[i]; x[i] = (1 - (1 - nd.R[i]) * mr) * b[i]; xs += x[i]; }
       if (k >= 3 && MW.leak > 0) {
         // leak to position: each player keeps R of his base share, the rest goes to the players acting after him
         const rank = this._mwRank || (this._mwRank = (() => { const o = this.cfg.postOrder || [...Array(this.n).keys()], r = new Int32Array(this.n); o.forEach((p, q) => (r[p] = q)); return r; })());
