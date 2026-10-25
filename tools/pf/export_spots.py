@@ -4,6 +4,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../unity/Assets/Dream/Resources/Dream/spots.json')
 lib = {}; stats = {}; dropped = {'spots': 0}
 NAMES = json.loads(os.popen("node -e \"process.stdout.write(JSON.stringify(require('" + HERE + "/../../app/engine.js').CLASS_NAMES))\"").read())
+MWFLOP = json.loads(os.popen('node ' + HERE + '/mwflop.js').read())
 VALUE = {NAMES.index(h) for h in ('AA', 'KK', 'QQ', 'JJ', 'TT', 'AKs', 'AKo', 'AQs', 'AQo')}
 def kind(lbl):
     l = lbl.lower()
@@ -22,10 +23,10 @@ for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
         # short-stack flats from a seat that doesn't close the action: the course teaches shove-or-fold at 12bb and
         # under, and that is where our flop model is weakest, so those hands are never quizzed
         hero = n['v']['seats'][n['h']]
-        # multiway (two or more opponents still in with a voluntary action): the postflop model has no real multiway
-        # term yet, so these spots are held back until they are verified against the course's multiway material
-        VOL = ('Raise', 'Call', 'Jam', 'Complete', 'Limp')
-        if sum(1 for i, x in enumerate(n['v']['seats']) if i != n['h'] and not x[3] and x[4].startswith(VOL)) >= 2:
+        # multiway spots that reach a flop (two or more opponents in, and some line below the hero's decision sees a
+        # flop) depend on the multiway postflop model, which is held back until it is verified against the course's
+        # multiway charts. Multiway spots that only end in folds or all-in showdowns are exact all-in math and stay in.
+        if os.path.basename(f) + '|' + ','.join(n['p']) in MWFLOP:
             dropped['multiway held back'] = dropped.get('multiway held back', 0) + 1; continue
         eff = min(hero[1], max([x[1] for i, x in enumerate(n['v']['seats']) if i != n['h'] and not x[3]] or [hero[1]]))
         def drop(kind, why):

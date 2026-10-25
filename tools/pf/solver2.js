@@ -21,6 +21,32 @@ const JAM_CAP_NONBLIND3 = +(process.env.JAMCAP3 || 25);   // non-blind 3-bettors
 const env = (k, d) => (process.env[k] !== undefined ? +process.env[k] : d);
 // kInit: an out-of-position preflop aggressor (a blind 3-bettor, a squeezer) gets back this share of the positional penalty
 const MODEL = { rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
+// Multiway flops (three or more players see the flop). The engine settles these with a random-board showdown and
+// splits the realization leak evenly between everyone, so a hand with no equity still collects a share of the pot and
+// suitedness/position-by-hand play no part. MW=1 uses the heads-up model generalized instead: each player's multiway
+// equity is estimated from the exact heads-up class equities against the actual opponents (Bradley-Terry: exact when
+// two players), then share = R * playability * equity^gamma, normalized. Playability and the strength curve can be
+// made stronger multiway (MWPLAY, MWGAM) and the out-of-position leak larger (MWR), as the course teaches.
+const MW = { on: env('MW', 0), play: env('MWPLAY', 1), gam: env('MWGAM', 0), r: env('MWR', 1) };
+const PLAY = (() => {
+  const RK = '23456789TJQKA', t = new Float64Array(169);
+  E.CLASS_NAMES.forEach((nm, i) => {
+    const hi = RK.indexOf(nm[0]), lo = RK.indexOf(nm[1]), gap = hi - lo, suited = nm[2] === 's', pair = nm.length === 2;
+    let k = 0;
+    if (pair) k = hi <= RK.indexOf('9') ? 0.12 : hi <= RK.indexOf('J') ? 0.05 : 0;
+    else if (suited) {
+      if (hi === 12) k = lo <= RK.indexOf('5') ? 0.10 : 0.05;
+      else if (gap === 1) k = 0.12; else if (gap === 2) k = 0.09; else if (gap === 3) k = 0.05; else k = 0.02;
+      if (hi >= RK.indexOf('T') && lo >= RK.indexOf('T')) k = Math.max(k, 0.06);
+    } else {
+      if (hi >= RK.indexOf('T') && lo >= RK.indexOf('T')) k = 0;
+      else if (hi === 12) k = lo >= RK.indexOf('T') ? 0 : -0.05;
+      else if (gap === 1) k = -0.01; else if (gap === 2) k = -0.04; else k = -0.08;
+    }
+    t[i] = k;
+  });
+  return t;
+})();
 class PF2 extends E.PreflopSolver {
   constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, ...cfg }; super(cfg); }
   prepTerminal(nd) {
@@ -57,8 +83,40 @@ class PF2 extends E.PreflopSolver {
     for (let c = 0; c < NC; c++) { const eq = this.EQ[c * NC + oc], q = nd.pAll * Math.min(1, 2 * Math.min(eq, 1 - eq) * MODEL.pM); out[c] = (1 - q) * out[c] + q * tmp[c]; }
   }
   // multiway pots, and players who already folded (their ICM equity still moves with the others' stacks)
+  // add each pot layer to fin by model shares among the players eligible for it (see MW above)
+  mwShares(nd, cls, fin) {
+    const NC = this.NC;
+    if (!this._LO) { this._LO = new Float64Array(NC * NC); for (let i = 0; i < NC * NC; i++) { const a = Math.min(0.995, Math.max(0.005, this.EQ[i])); this._LO[i] = Math.log(a / (1 - a)); } }
+    const LO = this._LO, s = this._mwS || (this._mwS = new Float64Array(this.n)), x = this._mwX || (this._mwX = new Float64Array(this.n));
+    for (const L of nd.layers) {
+      const el = L.elig, k = el.length;
+      if (k === 1) { fin[el[0]] += L.amount; continue; }
+      let ss = 0;
+      for (const i of el) { let lg = 0; for (const j of el) if (j !== i) lg += LO[cls[i] * NC + cls[j]]; s[i] = Math.exp(lg / (2 * (k - 1))); ss += s[i]; }
+      const g = nd.gamma + MW.gam * (k - 2), mr = k >= 3 ? MW.r : 1, mp = k >= 3 ? MW.play : 1; let xs = 0;
+      for (const i of el) { x[i] = (1 - (1 - nd.R[i]) * mr) * (1 + PLAY[cls[i]] * nd.playK * mp) * Math.pow(s[i] / ss, g); xs += x[i]; }
+      for (const i of el) fin[i] += (L.amount * x[i]) / xs;
+    }
+  }
+  mwTermVec(nd, p, out) {
+    const n = this.n, st = this.cfg.stacks, cls = this.cls, save = cls[p], alive = !nd.folded[p];
+    const icm = this.cfg.payoff && this.cfg.payoff.type === 'icm';
+    const fin = this._mwFin || (this._mwFin = new Float64Array(n));
+    const one = (c) => {
+      cls[p] = c;
+      for (let i = 0; i < n; i++) fin[i] = st[i] - nd.put[i];
+      this.mwShares(nd, cls, fin);
+      if (!icm) return fin[p] - st[p];
+      for (let i = 0; i < n; i++) fin[i] = Math.round(fin[i] * 32) / 32;            // coarse enough for the ICM cache
+      this._mwUse = true; const u = this.utility(nd)[p]; this._mwUse = false; return u;
+    };
+    if (!alive) { const u = one(save); for (let c = 0; c < this.NC; c++) out[c] = u * this.cw[c]; }
+    else for (let c = 0; c < this.NC; c++) out[c] = this.cw[c] > 0 ? one(c) * this.cw[c] : 0;
+    cls[p] = save;
+  }
+  finalStacks(nd) { if (this._mwUse) { this._lw = null; return Float64Array.from(this._mwFin); } return super.finalStacks(nd); }
   termVec(nd, p, out) {
-    super.termVec(nd, p, out);
+    if (MW.on && nd.kind === 'flop' && nd.alive.length >= 3) this.mwTermVec(nd, p, out); else super.termVec(nd, p, out);
     if (nd.kind !== 'flop' || !nd.twin || !(nd.pAll > 0)) return;
     if (nd.alive.length === 2 && nd.alive.includes(p)) return;                     // handled per matchup in termVec2
     const tmp = this._twv || (this._twv = new Float64Array(this.NC)); super.termVec(nd.twin, p, tmp);
@@ -169,4 +227,4 @@ function label(nd, a, cfg) {
   return a.k;
 }
 
-module.exports = { MODEL, PF2, label, E, OPEN, SB_OPEN, ISO, JAM_CAP };
+module.exports = { MODEL, MW, PF2, label, E, OPEN, SB_OPEN, ISO, JAM_CAP };
