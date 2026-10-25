@@ -31,11 +31,14 @@ namespace CFDream.UI
             {
                 if (built || root.layout.width < 10) return; built = true;
                 float cw = root.layout.width, ch = root.layout.height;
+                // the first time somewhere new, the trip ends on the arrival shot
+                bool arrived = false;
+                Action next = trip.arrive == null ? (Action)Finish : () => { if (done || arrived) return; arrived = true; RideStage.Get().End(); ArrivalView.Play(root, trip.arrive, cw, ch, Finish); Hint(root); };
                 switch (trip.kind)
                 {
-                    case "online": Online(root, trip, cw, ch, Finish); break;
-                    case "fly": Fly(root, trip, cw, ch, Finish); break;
-                    default: Drive(root, trip, cw, ch, Finish); break;
+                    case "online": Online(root, trip, cw, ch, next); break;
+                    case "fly": Fly(root, trip, cw, ch, next); break;
+                    default: Drive(root, trip, cw, ch, next); break;
                 }
                 Hint(root);
             });

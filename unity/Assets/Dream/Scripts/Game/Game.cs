@@ -8,7 +8,7 @@ namespace CFDream
     public enum View { Title, Create, Hub, Scene, Run, Results, Profile, Transit }
 
     // getting to the game: "drive" (your ride), "fly" (out of town or your jet) or "online" (the CF Poker client)
-    public class Trip { public string kind, ride; public EventDef ev; public string kicker, place, sub; public Action then; }   // story trips carry their own caption and what comes after
+    public class Trip { public string kind, ride; public EventDef ev; public string kicker, place, sub, arrive; public Action then; }   // arrive: a venue whose arrival shot ends the trip   // story trips carry their own caption and what comes after
 
     public static class Game
     {
@@ -106,6 +106,12 @@ namespace CFDream
         {
             id = Story.Resolve(id, State);
             if (!DB.Scenes.ContainsKey(id)) { Hub(); return; }
+            if (!replay && id.Length == 2 && id[0] == 'c' && id[1] >= '2' && CFDream.UI.ArrivalView.Claim(State, DB.Scenes[id].place) is string arr)
+            {
+                bool fly = CFDream.UI.ArrivalView.Venues[arr] == "fly";
+                Go(new Trip { kind = fly ? "fly" : "drive", ride = State.Eq("ride"), arrive = arr, kicker = fly ? "Flying to" : "Heading to", place = DB.Place(arr), sub = DB.Scenes[id].title + " · " + DB.Scenes[id].sub, then = () => PlayScene(id) });
+                return;
+            }
             Scene = new ScenePlay { id = id, replay = replay }; View = View.Scene;
             if (!replay) { State.sceneId = id; State.sceneI = 0; State.Save(); }
             Render();
@@ -184,7 +190,7 @@ namespace CFDream
             var run = Play.Start(id, reentry); if (run == null) { Render(); return; }
             Run = run; Morning = null;
             // a short cutscene on the way, except for another bullet in an event you're already at
-            if (!reentry && !NoTrip) { Trip = new Trip { kind = TripKind(run.ev), ride = State.Eq("ride"), ev = run.ev }; View = View.Transit; Render(); return; }
+            if (!reentry && !NoTrip) { Trip = new Trip { kind = TripKind(run.ev), ride = State.Eq("ride"), ev = run.ev, arrive = run.ev.online ? null : CFDream.UI.ArrivalView.Claim(State, run.ev.venue) }; View = View.Transit; Render(); return; }
             View = View.Run; NextTable();
         }
         static string TripKind(EventDef ev)
@@ -218,7 +224,15 @@ namespace CFDream
             Run = run; Morning = null; run.state = "ready"; View = View.Run; Render();
         }
         public static void Deal() { var run = Run; if (run == null) return; run.spot = Play.Deal(run); run.state = "play"; Render(); }
-        public static void Answer(int j) { var run = Run; if (run == null || run.state != "play") return; Play.Answer(run, j); Render(); }
+        public static void Answer(int j)
+        {
+            var run = Run; if (run == null || run.state != "play") return;
+            var sp = run.spot; var d = Play.Answer(run, j);
+            // all in: the hand plays out before the verdict
+            if (run.drill == null && Showdown.AllIn(sp, j)) { run.show = Showdown.Make(run, d); run.state = "showdown"; }
+            Render();
+        }
+        public static void ShowdownDone() { var run = Run; if (run == null || run.state != "showdown") return; run.state = "answered"; Render(); }
         public static void NextHand()
         {
             var run = Run; if (run == null || run.state != "answered") return;

@@ -22,6 +22,7 @@ namespace CFDream.UI
             {
                 case "ready": body.Add(Intro(run)); break;
                 case "cooler": body.Add(Cooler(run)); break;
+                case "showdown": body.Add(ShowdownView(run)); break;
                 default: body.Add(Hand(run)); break;
             }
             body.Add(U.Space(30));
@@ -221,6 +222,92 @@ namespace CFDream.UI
             Screens.Enter(c);
             return c;
         }
+
+        // all in: both hands face up, the board one street at a time, then who holds
+        static VisualElement ShowdownView(Run run)
+        {
+            var sd = run.show; var c = U.Card("showdown");
+            if (sd == null) { c.schedule.Execute(Game.ShowdownDone).StartingIn(10); return c; }
+            c.Add(U.Kicker(sd.oppName != sd.oppSeat ? "Final table · all in vs " + sd.oppName : "All in"));
+            var head = U.T("ALL IN", "sd-allin", Fonts.Disp); head.style.fontSize = 44; head.style.color = C.H("#b8ff2e");
+            head.style.textShadow = new TextShadow { offset = Vector2.zero, blurRadius = 18, color = new Color(0.72f, 1f, 0.18f, 0.8f) };
+            head.style.unityTextAlign = TextAnchor.MiddleCenter; c.Add(head);
+            if (sd.folded)
+            {
+                c.Add(U.P($"{sd.oppSeat} thinks it over. Then the cards go in the muck.").Mt(8));
+                c.Add(U.T("They fold. The pot is yours.", "sd-result", Fonts.Semi).Fg(C.Green).Mt(8));
+                Sound.Play("chips", 0.9f);
+                c.Add(U.Btn("See the verdict", Game.ShowdownDone, "gold wide").Mt(14));
+                Screens.Enter(c); return c;
+            }
+            float w = 46;
+            VisualElement SdHand(string who, int[] cards, bool faceUp, out VisualElement backs, out VisualElement faces, Color col)
+            {
+                var col1 = U.Col().Cls("sd-hand"); col1.style.alignItems = Align.Center; col1.style.flexGrow = 1;
+                col1.Add(U.T(who, "sd-who", Fonts.Semi).Fg(col));
+                var stack = new VisualElement(); stack.style.width = w * 2 + 6; stack.style.height = w * 1.4f;
+                faces = U.Row(); faces.style.position = Position.Absolute; faces.Add(CardView.Face(cards[0], w)); var f2 = CardView.Face(cards[1], w); f2.style.marginLeft = 6; faces.Add(f2);
+                backs = U.Row(); backs.style.position = Position.Absolute; backs.Add(CardView.Back(w)); var b2 = CardView.Back(w); b2.style.marginLeft = 6; backs.Add(b2);
+                stack.Add(faces); stack.Add(backs); faces.style.opacity = faceUp ? 1 : 0; backs.style.opacity = faceUp ? 0 : 1;
+                col1.Add(stack); return col1;
+            }
+            var row = U.Row().Mt(10);
+            row.Add(SdHand("You", sd.hero, true, out _, out _, C.Blue));
+            var vsl = U.T("vs", "sd-vs", Fonts.Semi).Fg(C.Mute); vsl.style.alignSelf = Align.Center; row.Add(vsl);
+            row.Add(SdHand(sd.oppName, sd.opp, false, out var oppBack, out var oppFace, C.Gold));
+            c.Add(row);
+            // the equity bar, shown when their cards turn over
+            var eq = U.Col().Mt(10); eq.style.opacity = 0;
+            var bar = U.Row(); bar.style.height = 8; bar.style.borderTopLeftRadius = bar.style.borderBottomLeftRadius = bar.style.borderTopRightRadius = bar.style.borderBottomRightRadius = 4; bar.style.overflow = Overflow.Hidden;
+            var mine = new VisualElement(); mine.style.width = Length.Percent((float)(sd.eq * 100)); mine.style.backgroundColor = C.Blue; bar.Add(mine);
+            var theirs = new VisualElement(); theirs.style.flexGrow = 1; theirs.style.backgroundColor = C.Gold; bar.Add(theirs);
+            eq.Add(bar);
+            var eql = U.Row().Mt(4); eql.Add(U.T($"{Math.Round(sd.eq * 100)}% to win", "sd-eq", Fonts.Semi).Fg(C.Blue).Grow()); eql.Add(U.T($"{Math.Round((1 - sd.eq) * 100)}%", "sd-eq", Fonts.Semi).Fg(C.Gold)); eq.Add(eql);
+            c.Add(eq);
+            // the board
+            var board = U.Row().Mt(14); board.style.justifyContent = Justify.Center; board.style.minHeight = w * 1.4f;
+            var bc = new List<VisualElement>();
+            for (int i = 0; i < 5; i++) { var f = CardView.Face(sd.board[i], w); if (i > 0) f.style.marginLeft = i == 3 || i == 4 ? 12 : 6; f.style.opacity = 0; f.style.translate = new Translate(0, -14); board.Add(f); bc.Add(f); }
+            c.Add(board);
+            var street = U.T("", "sd-street", Fonts.Semi).Fg(C.Mute); street.style.unityTextAlign = TextAnchor.MiddleCenter; street.style.marginTop = 6; c.Add(street);
+            var result = U.Col().Mt(10); result.style.opacity = 0; result.style.alignItems = Align.Center;
+            string big = sd.chop ? "Chopped. Split pot." : sd.win ? "You hold!" : sd.oppName != sd.oppSeat ? $"{sd.oppName} holds." : "They hold.";
+            var rl = U.T(big, "sd-result", Fonts.Disp).Fg(sd.chop ? C.Cream : sd.win ? C.Green : C.Red); rl.style.fontSize = 30; result.Add(rl);
+            result.Add(U.Hint(sd.win || sd.chop ? $"{sd.heroHand} beats {Lower(sd.oppHand)}." : $"{sd.oppHand} beats {Lower(sd.heroHand)}.").Mt(2));
+            if (sd.after != sd.before) result.Add(U.Hint($"Stack {sd.before} → {sd.after} bb").Fg(sd.after > sd.before ? C.Green : C.Red));
+            var go = U.Btn("See the verdict", Game.ShowdownDone, "gold wide").Mt(12);
+            result.Add(go);
+            c.Add(result);
+            var hint = U.Hint("Tap to skip").Mt(6); hint.style.unityTextAlign = TextAnchor.MiddleCenter; c.Add(hint);
+
+            // the timeline: flip, flop, turn, a long breath, the river
+            float t0 = Time.realtimeSinceStartup, skip = -1; int shown = 0; bool flipped = false, ended = false;
+            float[] at = { 1.6f, 1.75f, 1.9f, 3.0f, 4.6f };
+            c.RegisterCallback<PointerUpEvent>(e => { if (!ended && Time.realtimeSinceStartup - t0 > 0.4f) skip = 99; });
+            Sound.Play("swell", 0.8f);
+            c.schedule.Execute(() =>
+            {
+                if (ended) return;
+                float t = Math.Max(Time.realtimeSinceStartup - t0, skip);
+                if (!flipped && t >= 0.8f) { flipped = true; oppBack.style.opacity = 0; oppFace.style.opacity = 1; eq.style.opacity = 1; Sound.Play("sting", 0.7f); }
+                while (shown < 5 && t >= at[shown])
+                {
+                    var f = bc[shown]; f.style.opacity = 1; f.style.translate = new Translate(0, 0); shown++;
+                    if (skip < 0) Sound.Play(shown == 5 ? "hush" : "tick", 0.8f);
+                    street.text = shown == 3 ? "The flop" : shown == 4 ? "The turn" : shown == 5 ? "The river" : "";
+                }
+                if (shown == 3 && t < at[3]) street.text = "The flop";
+                if (shown == 4 && t > 3.6f && t < at[4]) street.text = "The river...";
+                if (t >= 5.3f || skip > 0 && shown == 5)
+                {
+                    ended = true; result.style.opacity = 1; street.text = ""; hint.style.display = DisplayStyle.None;
+                    Sound.Play(sd.win ? "win" : sd.chop ? "chips" : "bust", 0.9f);
+                }
+            }).Every(16);
+            Screens.Enter(c);
+            return c;
+        }
+        static string Lower(string s) => string.IsNullOrEmpty(s) ? s : char.ToLowerInvariant(s[0]) + s.Substring(1);
 
         static VisualElement Cooler(Run run)
         {
