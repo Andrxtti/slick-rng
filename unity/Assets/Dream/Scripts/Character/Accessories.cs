@@ -28,24 +28,31 @@ namespace CFDream.Character
 
         class Ctx
         {
-            public CharacterStage st; public BodyFit f; public float s; public Vector3 up, fwd, right; public CharacterSpec spec;
-            public Transform B(HumanBodyBones b) => st.Bone(b);
+            public Transform pivot; public Func<HumanBodyBones, Transform> bone; public Func<GameObject> body;   // whose body: you, or whoever you're talking to
+            public BodyFit f; public float s; public Vector3 up, fwd, right; public CharacterSpec spec;
+            public Transform B(HumanBodyBones b) => bone(b);
             public float M(float metres) => metres * s;
         }
 
         public static void Dress(CharacterStage st, CharacterSpec spec, List<GameObject> list)
         {
+            if (st == null) { foreach (var g in list) if (g != null) UnityEngine.Object.Destroy(g); list.Clear(); return; }
+            DressOn(st.Pivot, st.Bone, () => st.BodyRoot, st.Fit, spec, list);
+        }
+        // the same pieces on any body: the scene partner wears their glasses and chains too
+        public static void DressOn(Transform pivot, Func<HumanBodyBones, Transform> bone, Func<GameObject> body, BodyFit fit, CharacterSpec spec, List<GameObject> list)
+        {
             foreach (var g in list) if (g != null) UnityEngine.Object.Destroy(g);
             list.Clear();
-            if (st == null || spec == null || st.Bone(HumanBodyBones.Head) == null) return;
-            var c = new Ctx { st = st, spec = spec, f = st.Fit ?? new BodyFit() };
+            if (pivot == null || bone == null || spec == null || bone(HumanBodyBones.Head) == null) return;
+            var c = new Ctx { pivot = pivot, bone = bone, body = body, spec = spec, f = fit ?? new BodyFit() };
             c.s = c.f.scale;
             if (c.s <= 0)
             {
                 Transform l = c.B(HumanBodyBones.LeftUpperArm), r = c.B(HumanBodyBones.RightUpperArm);
                 c.s = l != null && r != null ? Mathf.Clamp(Vector3.Distance(l.position, r.position) / 0.33f, 0.6f, 1.6f) : 1;
             }
-            c.fwd = st.Pivot.forward; c.up = st.Pivot.up; c.right = Vector3.Cross(c.up, c.fwd);
+            c.fwd = pivot.forward; c.up = pivot.up; c.right = Vector3.Cross(c.up, c.fwd);
             Transform le = c.B(HumanBodyBones.LeftEye), re = c.B(HumanBodyBones.RightEye);
             if (le != null && re != null) { c.f = c.f.Copy(); c.f.eyeGap = Vector3.Distance(le.position, re.position) / 2 / c.s; } // lenses over the real eyes
 
@@ -91,9 +98,9 @@ namespace CFDream.Character
         {
             // beside the body, not inside its skeleton: UMA rebuilds its bones and wants their names unique
             var go = new GameObject(name);
-            go.transform.SetParent(c.st.Pivot, false);
+            go.transform.SetParent(c.pivot, false);
             go.transform.position = bone.position; go.transform.rotation = Quaternion.identity;
-            go.AddComponent<BoneFollow>().Init(c.st, bone);
+            go.AddComponent<BoneFollow>().Init(c.body, bone);
             return go;
         }
         static GameObject Part(GameObject root, Mesh mesh, Material mat, Vector3 pos, Quaternion rot, Vector3? scale = null)
@@ -516,11 +523,11 @@ namespace CFDream.Character
             HumanBodyBones hb = HumanBodyBones.Head;
             if (!string.IsNullOrEmpty(def.bone) && !Enum.TryParse(def.bone, true, out hb)) hb = HumanBodyBones.Head;
             var bone = c.B(hb) ?? c.B(HumanBodyBones.Head);
-            var go = UnityEngine.Object.Instantiate(src, c.st.Pivot, false);
+            var go = UnityEngine.Object.Instantiate(src, c.pivot, false);
             go.name = "Brand " + w.Key;
             go.transform.position = bone.TransformPoint(def.offset * c.s); go.transform.rotation = bone.rotation * Quaternion.Euler(def.euler);
             go.transform.localScale = Vector3.one * def.scale * c.s;
-            go.AddComponent<BoneFollow>().Init(c.st, bone);
+            go.AddComponent<BoneFollow>().Init(c.body, bone);
             if (def.dyeable && w.dye.HasValue)
                 foreach (var r in go.GetComponentsInChildren<Renderer>())
                 {

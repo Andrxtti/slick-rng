@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace CFDream.Character
@@ -7,9 +8,9 @@ namespace CFDream.Character
     [DefaultExecutionOrder(1000)]
     public class BoneFollow : MonoBehaviour
     {
-        CharacterStage st; Transform bone; string boneName; Vector3 pos; Quaternion rot = Quaternion.identity; bool pinned;
+        Func<GameObject> bodyOf; Transform bone; string boneName; Vector3 pos; Quaternion rot = Quaternion.identity; bool pinned;
 
-        public void Init(CharacterStage stage, Transform b) { st = stage; bone = b; boneName = b != null ? b.name : null; }
+        public void Init(Func<GameObject> body, Transform b) { bodyOf = body; bone = b; boneName = b != null ? b.name : null; }
 
         // remember where the piece sits relative to the bone right now
         public void Pin()
@@ -30,7 +31,7 @@ namespace CFDream.Character
 
         Transform Find()
         {
-            var root = st != null && st.BodyRoot != null ? st.BodyRoot.transform : null;
+            var go = bodyOf?.Invoke(); var root = go != null ? go.transform : null;
             if (root == null || string.IsNullOrEmpty(boneName)) return null;
             foreach (var t in root.GetComponentsInChildren<Transform>(true)) if (t.name == boneName) return t;
             return null;

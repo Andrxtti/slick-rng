@@ -51,6 +51,7 @@ namespace CFDream.Character
         HomeRoom room; HomeLife life; PetLife pets; RenderTexture roomRt; Vector3 roomPos; float roomYaw; bool hasRoomPos;
         // the movie: a set, the other character, and a camera that moves
         ICharacterBody npc; Transform npcPivot; string npcKey, npcPending; bool inScene;
+        readonly List<GameObject> npcAcc = new List<GameObject>();   // the scene partner's glasses, chains, hats
         Vector3 camA, camB, lookA, lookB; float shotT = 1, shotDur = 6; string shotKey;
         float cutFade; bool actYou = true; float actT;
         string shotKind = "wide", baseKind = "wide"; bool shotYou = true, subjYou = true, narr, reacted; float sinceShot;
@@ -273,13 +274,15 @@ namespace CFDream.Character
             if (room != null && room.tier.StartsWith("set_")) { room.root.SetActive(false); Destroy(room.root); room = null; }
             else if (room != null) room.root.SetActive(false);
             if (npc != null) npc.Root.SetActive(false);
+            foreach (var a in npcAcc) if (a != null) a.SetActive(false);
             pivot.localPosition = Vector3.zero; cam.targetTexture = rt; cam.fieldOfView = 22; framing = "bust";
         }
         // the other character: built once per look, kept between beats
         public void ShowNpc(CharacterSpec spec)
         {
             if (!Bodies.Available || npcPivot == null) return;
-            if (spec == null) { if (npc != null) npc.Root.SetActive(false); return; }
+            if (spec == null) { if (npc != null) npc.Root.SetActive(false); foreach (var a in npcAcc) if (a != null) a.SetActive(false); return; }
+            foreach (var a in npcAcc) if (a != null) a.SetActive(true);
             string key = spec.Fingerprint() + "|" + string.Join(",", spec.worn.ConvertAll(w => w.slot + ":" + w.id));
             if (npc != null) npc.Root.SetActive(true);
             if (key == npcKey || key == npcPending) return;
@@ -290,6 +293,10 @@ namespace CFDream.Character
                 npcKey = key; if (npcPending == key) npcPending = null;
                 SetLayer(npc.Root, Layer);
                 npc.Root.transform.localRotation = Quaternion.identity;
+                var keepN = npcPivot.localRotation; npcPivot.localRotation = Quaternion.identity;   // build pieces facing +Z, like yours
+                try { Accessories.DressOn(npcPivot, npc.Bone, () => npc?.Root, npc.Fit, spec, npcAcc); } catch (Exception e) { Debug.LogWarning("[Dream] partner accessories: " + e.Message); }
+                npcPivot.localRotation = keepN;
+                foreach (var a in npcAcc) SetLayer(a, Layer);
                 if (inScene) { Aim(); PlaceCam(shotT); }
             });
         }
