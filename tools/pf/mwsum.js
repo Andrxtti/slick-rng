@@ -13,7 +13,7 @@ const ours = (sp, c) => { const st = sp.st[c], o = { fold: 0, call: 0, raise: 0 
 const rows = [];
 for (const f of process.argv.slice(2)) {
   let d; try { d = require(path.resolve(f)); } catch (e) { continue; }
-  const m = d.mw || {}, tag = d.tag, set = m.on ? `play ${m.play} gam ${m.gam} r ${m.r} pen ${m.pen ?? 1} leak ${m.leak ?? 0}` : 'engine default (MW off)';
+  const m = d.mw || {}, tag = d.tag, set = m.on ? `play ${m.play} gam ${m.gam} r ${m.r} pen ${m.pen ?? 1} leak ${m.leak ?? 0} pos ${m.pos ?? 1}` : 'engine default (MW off)';
   const G = { BTN: [], LP: [], SB: [], BB: [] }; let ag = 0, ov = 0, n = 0;
   for (const sp of d.spots) {
     const ch = X[sp.title]; if (!ch) continue;
@@ -34,5 +34,5 @@ for (const f of process.argv.slice(2)) {
     g: Object.fromEntries(Object.entries(G).map(([k, a]) => [k, `${mean(a, 'w').toFixed(1)}/${mean(a, 'wc').toFixed(1)}`])) , gerr: Object.fromEntries(Object.entries(G).map(([k, a]) => [k, err(a)])) });
 }
 rows.sort((a, b) => b.ag - a.ag);
-console.log('run'.padEnd(22), 'setting'.padEnd(36), 'agree  overlap  width err   squeeze ours/chart   mean width ours/chart by group (BTN | LP | SB | BB)   group width err');
-for (const r of rows) console.log(r.tag.padEnd(22), r.set.padEnd(36), `${r.ag.toFixed(1).padStart(5)}% ${r.ov.toFixed(0).padStart(5)}%   ${r.err.toFixed(1).padStart(5)}      ${r.sq.toFixed(1)} / ${r.sqc.toFixed(1)}          ${r.g.BTN} | ${r.g.LP} | ${r.g.SB} | ${r.g.BB}      ${['BTN', 'LP', 'SB', 'BB'].map((k) => k + ' ' + r.gerr[k].toFixed(1)).join('  ')}`);
+console.log('run'.padEnd(22), 'setting'.padEnd(42), 'agree  overlap  width err   squeeze ours/chart   mean width ours/chart by group (BTN | LP | SB | BB)   group width err');
+for (const r of rows) console.log(r.tag.padEnd(22), r.set.padEnd(42), `${r.ag.toFixed(1).padStart(5)}% ${r.ov.toFixed(0).padStart(5)}%   ${r.err.toFixed(1).padStart(5)}      ${r.sq.toFixed(1)} / ${r.sqc.toFixed(1)}          ${r.g.BTN} | ${r.g.LP} | ${r.g.SB} | ${r.g.BB}      ${['BTN', 'LP', 'SB', 'BB'].map((k) => k + ' ' + r.gerr[k].toFixed(1)).join('  ')}`);

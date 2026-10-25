@@ -30,7 +30,9 @@ const MODEL = { rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S
 // pen: extra weight on the playability PENALTIES (offsuit aces, offsuit junk) with three or more in; leak: 0 shares each
 // player's positional leak among everyone (plain normalization), 1 gives it to the players who act after him, in
 // proportion to their strength (position means the players behind you get to exploit your checks).
-const MW = { on: env('MW', 0), play: env('MWPLAY', 1), gam: env('MWGAM', 0), r: env('MWR', 1), pen: env('MWPEN', 1), leak: env('MWLEAK', 0) };
+// pos: shape of the position ladder with three or more in. 1 = evenly spaced (the heads-up rule extended); higher
+// values pull the middle seats toward the first to act, since only the last to act really has position in a multiway pot.
+const MW = { on: env('MW', 0), play: env('MWPLAY', 1), gam: env('MWGAM', 0), r: env('MWR', 1), pen: env('MWPEN', 1), leak: env('MWLEAK', 0), pos: env('MWPOS', 1) };
 const PLAY = (() => {
   const RK = '23456789TJQKA', t = new Float64Array(169);
   E.CLASS_NAMES.forEach((nm, i) => {
@@ -60,7 +62,7 @@ class PF2 extends E.PreflopSolver {
     const behind = alive.map((i) => this.cfg.stacks[i] - nd.put[i]).sort((a, b) => b - a)[1], spr = behind / Math.max(pot, 1e-9);
     const ramp = Math.min(1, Math.max(0, (spr - MODEL.s0) / MODEL.s1)), rLow = this.cfg.rLow;
     order.forEach((i, r) => {
-      let r0 = k === 1 ? 1 : rLow + (1 - rLow) * (r / (k - 1));
+      let r0 = k === 1 ? 1 : rLow + (1 - rLow) * Math.pow(r / (k - 1), k >= 3 && MW.on ? MW.pos : 1);
       if (i === nd.aggr && r < k - 1) r0 += (1 - r0) * MODEL.kInit;
       if (nd.aggr < 0 && r < k - 1) r0 += (1 - r0) * MODEL.kLimp;                   // limped pot: nobody has the initiative
       nd.R[i] = 1 - (1 - r0) * ramp;
