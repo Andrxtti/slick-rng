@@ -2,14 +2,14 @@
 import json, glob, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../unity/Assets/Dream/Resources/Dream/spots.json')
-lib = {}; stats = {}; dropped = {'short flat': 0, 'spots': 0}
+lib = {}; stats = {}; dropped = {'spots': 0}
 def kind(lbl):
     l = lbl.lower()
     return 'fold' if l == 'fold' else 'check' if l == 'check' else 'call' if (l.startswith('call') or l == 'complete') else 'allin' if l.startswith('jam') else 'raise'
 for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
     if f.endswith('probe.json') or os.path.basename(f).startswith('ref'): continue
     d = json.load(open(f)); spots = d.get('spots') or []
-    if len(spots) < 4: continue
+    if len(spots) < (2 if d['gid'] == 'sat' else 4): continue
     t = d['snap'].get('t222') or {}
     T = {'u': d['unit'], 'k': 1, 'left': t.get('left'), 'paid': t.get('paid'), 'avg': t.get('avg'), 'icm': d['unit'] == 'icm', 'bbAnte': bool(t.get('bbAnte')), 'n': []}
     if d['unit'] == 'icm':
@@ -20,10 +20,21 @@ for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
         # short-stack flats from a seat that doesn't close the action: the course teaches shove-or-fold at 12bb and
         # under, and that is where our flop model is weakest, so those hands are never quizzed
         hero = n['v']['seats'][n['h']]
-        if hero[0] != 'BB' and n['v']['cat'] == 'Facing a raise' and hero[1] <= 12 + 1e-9 and 'call' in n['a']:
-            ci = n['a'].index('call')
-            keep = [r for r in n['r'] if r[2].index(max(r[2])) != ci]
-            dropped['short flat'] += len(n['r']) - len(keep); n['r'] = keep
+        eff = min(hero[1], max([x[1] for i, x in enumerate(n['v']['seats']) if i != n['h'] and not x[3]] or [hero[1]]))
+        def drop(kind, why):
+            if kind not in n['a']: return
+            ki = n['a'].index(kind); keep = [r for r in n['r'] if r[2].index(max(r[2])) != ki]
+            dropped[why] = dropped.get(why, 0) + len(n['r']) - len(keep); n['r'] = keep
+        if n['v']['cat'] == 'Facing a raise':
+            # short flats from a seat that doesn't close the action (the course: shove-or-fold, don't flat pairs with
+            # the blinds behind), and SB flats up to 30bb: disputed lines where our flop model is weakest
+            if hero[0] != 'BB' and eff <= 16 + 1e-9: drop('call', 'short flat')
+            if hero[0] == 'SB' and eff <= 30 + 1e-9: drop('call', 'SB flat')
+            # blind re-jams above 25bb when a small 3-bet is on the menu: our model leans to the jam there
+            if hero[0] in ('SB', 'BB') and eff > 25 and 'raise' in n['a']: drop('allin', 'blind jam over 25bb')
+        if n['v']['cat'] == 'Facing a 3-bet or more' and eff <= 25 + 1e-9:
+            # flatting a 3-bet with 25bb or less (low stack-to-pot ratio): the course plays these jam-or-fold
+            drop('call', 'short 3-bet flat')
         if len(n['r']) < (8 if not n['p'] or all(k == 'fold' for k in n['p']) else 5): dropped['spots'] += 1; continue
         assert len(n['a']) == len(n['v']['opts']) and all(kind(o) == k for o, k in zip(n['v']['opts'], n['a'])), (f, n['a'], n['v']['opts'])
         for r in n['r']: assert len(r[1]) == len(n['a']) and len(r[2]) == len(n['a'])

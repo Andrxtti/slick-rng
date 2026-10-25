@@ -17,7 +17,7 @@ for (const f of files) {
       if (!sat && nm === 'AA' && k === 'fold') say(f, n, c, 'AA folds');
       if (!sat && nm === 'KK' && k === 'fold' && (chips || (jams === 0 && raises <= 1))) say(f, n, c, 'KK folds');
       if (chips && ['QQ', 'AKs'].includes(nm) && k === 'fold' && jams + raises <= 1) say(f, n, c, nm + ' folds to one bet in chip EV');
-      if (n.v.cat === 'First in' && ['AA', 'KK', 'QQ', 'JJ', 'AKs', 'AKo', 'AQs'].includes(nm) && k === 'fold') say(f, n, c, 'premium folds first in');
+      if (!sat && n.v.cat === 'First in' && ['AA', 'KK', 'QQ', 'JJ', 'AKs', 'AKo', 'AQs'].includes(nm) && k === 'fold') say(f, n, c, 'premium folds first in');
       if (n.v.cat === 'First in' && k === 'fold' && n.a.includes('check')) say(f, n, c, 'folds when it can check');
       if (st.some((x) => !(x >= 0 && x <= 1))) say(f, n, c, 'strategy out of range');
       if (Math.abs(st.reduce((a, b) => a + b, 0) - 1) > 0.03) say(f, n, c, 'strategy does not sum to 1');

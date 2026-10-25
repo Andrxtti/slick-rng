@@ -104,7 +104,8 @@ for (const f of cands) {
   rows.sort((a, b) => a[1] - b[1]);
   let keep = rows.slice(0, Math.max(6, Math.floor(rows.length * 0.85)));
   const tops = keep.map((r) => r[2].indexOf(Math.max(...r[2]))).filter((_, i) => Math.max(...keep[i][2]) >= 0.95);
-  if (tops.length && Math.max(...[...new Set(tops)].map((x) => tops.filter((y) => y === x).length)) > 0.85 * keep.length) continue;
+  // one-answer spots are skipped (nothing to learn), except on a satellite bubble where "fold nearly everything" is the lesson
+  if (D.gid !== 'sat' && tops.length && Math.max(...[...new Set(tops)].map((x) => tops.filter((y) => y === x).length)) > 0.85 * keep.length) continue;
   if (keep.length > 30) keep = [...Array(30)].map((_, i) => keep[Math.round((i * (keep.length - 1)) / 29)]);
   // the table as the player sees it, built from the same tree that was solved
   const put = cfg.posts.slice(), folded = new Array(nP).fill(false), acts = Array.from({ length: nP }, () => []);
