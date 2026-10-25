@@ -4,7 +4,7 @@
 # mkdir, so a restart after a stop just picks up the tables not yet finished (a table with a finished json is skipped).
 #   bash run_mw.sh [secs-per-table-overrides via SHOVE_SECS / BUBBLE_SECS / SAT_SECS / RING_SECS]
 cd "$(dirname "$0")"
-OUTD=out_mw; mkdir -p "$OUTD" "$OUTD/.claim"
+OUTD=${OUTD:-out_mw}; mkdir -p "$OUTD" "$OUTD/.claim"
 EVS=${EVS:-60}
 worker() {
   for f in $(ls cfgs/shove-*.json; ls cfgs/bubble-*.json; ls cfgs/sat-*.json; ls cfgs/ring-*.json); do

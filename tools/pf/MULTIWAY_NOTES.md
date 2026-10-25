@@ -6,8 +6,11 @@ paid course and is never committed or shipped.
 
 ## Standing decisions (Steven, Oct 2026)
 
-- Multiway spots follow the RYE Masterclass guidance, especially from the blinds. Where our solver and the coach
-  disagree, agreement with the coach wins. GTO Wizard is the other yardstick.
+- Chip EV must be GTO: the realization model is fitted to GTO Wizard's chip-EV solutions (read from Steven's own account,
+  gw/, local only). ICM and multiway are where the product should be stronger, cheaper, sharper and more informative than
+  GTO Wizard; the course's ICM-tightened guidance is the yardstick for our ICM-table output, not for chip-EV solves.
+- Multiway spots follow the RYE Masterclass guidance, especially from the blinds, where it does not contradict chip-EV
+  GTO: his charts are ICM-tightened (he says so), so a chip-EV BB defends wider than his chart by design.
 - Offsuit junk calls in the BB in a multiway pot (53o, 64o, Q5o, J7o and the like) are folds in MTTs. No model
   setting that keeps them as calls ships.
 - Where the solver and the coach don't completely agree on a hand, the game shows the other action as a possible
@@ -67,6 +70,19 @@ paid course and is never committed or shipped.
   BB spots but under-defends the other BB spots; a bigger out-of-position leak makes everything worse because the leak
   flows to whoever is in position. The refit therefore targets the SB's own flat range and the BB's offsuit junk
   directly rather than one global knob.
+
+## GTO Wizard check (Oct 25, MTT chip EV 8-max, exact percentages, 18 nodes at 100bb + 16 at 25bb)
+
+- BTN overcalls, SB and HJ/MP: GTO Wizard and the course agree at 92-94% hand agreement; both are wider than every version
+  of our model (our BTN/SB cold-calls are 4-8 points narrow: 22-44 and 54s-T9s fold).
+- BB multiway: GTO Wizard chip EV is 15-30 points wider than the course charts (67 vs 44 vs UTG open + SB call, 65 vs 36 vs
+  MP open + BTN call, 76 vs 66 vs BTN open + SB call). That gap is the ICM/"vs good regs" tightening his charts carry.
+- Our first-cut multiway model (play 1, gam 0, pen 1, pos 1) agrees with GTO Wizard at 85.5% (the course charts: 86.3%);
+  the afternoon refit toward his BB widths scores 81.8% and is withdrawn as the default. Engine default: 77.8%.
+- At 25bb chip EV the BB defends 77-98% of hands against an open and a call (jams included); BTN overcalls 13-15%
+  (half of it jams); SB 18-21%.
+- Heads-up 100bb: GTO Wizard flats A8o/A9o from the SB vs a BTN open but folds A2o-A7o (A5o 3-bets or folds); BTN vs CO
+  flats A9o+ only. Our old SB/BTN flats of A2o-A7o were wrong (heads-up model issue).
 
 ## Refit result (Oct 25, 100bb 8-max chip EV, 18 charts with his on-camera corrections applied)
 
