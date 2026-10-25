@@ -2,12 +2,12 @@
 import json, glob, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../unity/Assets/Dream/Resources/Dream/spots.json')
-lib = {}; stats = {}
+lib = {}; stats = {}; dropped = {'short flat': 0, 'spots': 0}
 def kind(lbl):
     l = lbl.lower()
     return 'fold' if l == 'fold' else 'check' if l == 'check' else 'call' if (l.startswith('call') or l == 'complete') else 'allin' if l.startswith('jam') else 'raise'
 for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
-    if f.endswith('probe.json'): continue
+    if f.endswith('probe.json') or os.path.basename(f).startswith('ref'): continue
     d = json.load(open(f)); spots = d.get('spots') or []
     if len(spots) < 4: continue
     t = d['snap'].get('t222') or {}
@@ -17,10 +17,21 @@ for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
         avg = float(t.get('avg') or (sum(st) / len(st))); left = float(t.get('left') or len(st))
         T['k'] = round(left * avg / 100, 3)
     for n in spots:
+        # short-stack flats from a seat that doesn't close the action: the course teaches shove-or-fold at 12bb and
+        # under, and that is where our flop model is weakest, so those hands are never quizzed
+        hero = n['v']['seats'][n['h']]
+        if hero[0] != 'BB' and n['v']['cat'] == 'Facing a raise' and hero[1] <= 12 + 1e-9 and 'call' in n['a']:
+            ci = n['a'].index('call')
+            keep = [r for r in n['r'] if r[2].index(max(r[2])) != ci]
+            dropped['short flat'] += len(n['r']) - len(keep); n['r'] = keep
+        if len(n['r']) < (8 if not n['p'] or all(k == 'fold' for k in n['p']) else 5): dropped['spots'] += 1; continue
         assert len(n['a']) == len(n['v']['opts']) and all(kind(o) == k for o, k in zip(n['v']['opts'], n['a'])), (f, n['a'], n['v']['opts'])
         for r in n['r']: assert len(r[1]) == len(n['a']) and len(r[2]) == len(n['a'])
         T['n'].append({k: n[k] for k in ('h', 'p', 'a', 'w', 'r', 'g', 'v')})
     lib.setdefault(d['gid'], []).append(T)
-    stats[d['gid']] = stats.get(d['gid'], 0) + len(spots)
+    stats[d['gid']] = stats.get(d['gid'], 0) + len(T['n'])
+# cash games are not in the story; if anything ever deals one, it plays the chip-EV ring tables
+if 'cash' not in lib and 'ring' in lib: lib['cash'] = lib['ring']
+for g in ('ring', 'bubble', 'shove', 'sat'): assert lib.get(g), 'no tables for ' + g
 json.dump(lib, open(OUT, 'w'), separators=(',', ':'))
-print('tables', {g: len(v) for g, v in lib.items()}, 'spots', stats, 'size', os.path.getsize(OUT) // 1024, 'KB ->', OUT)
+print('dropped', dropped, 'tables', {g: len(v) for g, v in lib.items()}, 'spots', stats, 'size', os.path.getsize(OUT) // 1024, 'KB ->', OUT)

@@ -20,7 +20,7 @@ const PERT = [], base = { rLow: s.cfg.rLow, gammaK: s.cfg.gammaK };
 const reprep = () => { for (const nd of s.nodes) if (nd.kind === 'flop') s.prepTerminal(nd); };
 const kInit0 = MODEL.kInit, pA0 = MODEL.pA;
 // harsher, kinder, and "the rest of the stacks get in on low-SPR flops" (all-in twin on)
-for (const d of [{ rLow: -0.06, gammaK: +0.2, kInit: 0, pA: pA0 }, { rLow: +0.06, gammaK: -0.2, kInit: 1, pA: pA0 }, { rLow: 0, gammaK: 0, kInit: kInit0, pA: pA0 > 0 ? 0 : 2.5 }]) {
+for (const d of [{ rLow: -0.06, gammaK: +0.2, kInit: 0, pA: pA0 }, { rLow: +0.06, gammaK: -0.2, kInit: 1, pA: pA0 }, { rLow: 0, gammaK: 0, kInit: kInit0, pA: pA0 > 0 ? 0 : 1.5 }, { rLow: 0, gammaK: 0, kInit: kInit0, pA: Math.max(2.5, pA0 + 1.5) }]) {
   s.cfg.rLow = Math.min(1, base.rLow + d.rLow); s.cfg.gammaK = Math.max(0, base.gammaK + d.gammaK); MODEL.kInit = d.kInit; MODEL.pA = d.pA; reprep();
   s.EV2.fill(0); s.EW2.fill(0); s.evalPass(EVS * 500);
   PERT.push({ EV: Float64Array.from(s.EV2), EW: Float64Array.from(s.EW2) });
@@ -57,7 +57,7 @@ const PREMIUM = new Set(['AA', 'KK', 'QQ', 'JJ', 'AKs', 'AKo']), NAMES = E.CLASS
 const EQR = (() => { const v = []; for (let c = 0; c < NC; c++) { let s2 = 0, w = 0; for (let o = 0; o < NC; o++) { s2 += E.EQ169[c * NC + o] * SIZE[o]; w += SIZE[o]; } v.push(s2 / w); } return v; })();
 const RANK = (() => { const idx = [...Array(NC).keys()].sort((a, b) => EQR[b] - EQR[a]); const r = new Array(NC); idx.forEach((c, i) => (r[c] = i)); return r; })();
 const out = [];
-let firsts = 0, seconds = 0, fragile = 0, bvbSkip = 0;
+let firsts = 0, seconds = 0, fragile = 0, bvbSkip = 0, flatSkip = 0;
 const cands = found.filter((f) => f.clean && s.nodes[f.id].actions.some((a) => a.k === 'fold'));
 cands.sort((x, y) => y.prob - x.prob);
 for (const f of cands) {
@@ -88,6 +88,13 @@ for (const f of cands) {
     { let robust = true; for (const P of PERT) { const ep = evPass(P.EV, P.EW, f.id, c); if (!ep) { robust = false; break; } const bp = ep.indexOf(Math.max(...ep)); const gp = ep[fav] - Math.max(...ep.filter((_, i) => i !== fav)); if (bp !== fav || gp < GAP * 0.3) { robust = false; break; } }
       if (!robust) { fragile++; continue; } }
     const name = NAMES[c];
+    // a flat that leaves less than the pot behind, from a seat that does not close the action, when a jam is on the
+    // menu: GTO play there is almost always jam-or-fold, and our flop model is at its weakest. Never quizzed.
+    if (keys[fav] === 'call' && cfg.names[f.h] !== 'BB' && keys.includes('allin')) {
+      const toCall = Math.min(nd.bet, cfg.stacks[f.h]) - nd.put[f.h], behind = cfg.stacks[f.h] - Math.min(nd.bet, cfg.stacks[f.h]);
+      const potAfter = nd.put.reduce((x, y) => x + y, 0) + (cfg.ante || 0) + toCall;
+      if (behind < potAfter) { flatSkip++; continue; }
+    }
     if (PREMIUM.has(name) && (!aggro || ((name === 'AA' || name === 'KK') && top >= 0.97))) continue;
     if (keys[fav] === 'fold' && RANK[c] >= 62 && st[fav] >= 0.9) continue;   // trash nobody is tempted to play
     rows.push([c, +(es[0] - es[1]).toPrecision(3), st.map((x) => Math.round(x * 100) / 100), ev.map((x) => +x.toPrecision(4))]);
@@ -112,6 +119,6 @@ for (const f of cands) {
 }
 // self-check: every label must describe its own action
 for (const n of out) n.a.forEach((k, i) => { const l = n.v.opts[i].toLowerCase(); const ok = k === 'fold' ? l === 'fold' : k === 'check' ? l === 'check' : k === 'call' ? (l.startsWith('call') || l === 'complete') : k === 'allin' ? l.startsWith('jam') : /^(raise|3-bet|4-bet)/.test(l); if (!ok) throw new Error('label mismatch ' + k + ' / ' + l); });
-const res = { gid: D.gid, unit, snap: D.snap, file: file.split('/').pop(), model: { rLow: base.rLow, gammaK: base.gammaK, s0: MODEL.s0, s1: MODEL.s1, kInit: MODEL.kInit, pA: MODEL.pA, jamCap3: +(process.env.JAMCAP3 || 25) }, fragile, bvbSkip, iters: s.iters, nodes: s.nodes.length, secs: Math.round((Date.now() - t0) / 1000), spots: out };
+const res = { gid: D.gid, unit, snap: D.snap, file: file.split('/').pop(), model: { rLow: base.rLow, gammaK: base.gammaK, s0: MODEL.s0, s1: MODEL.s1, kInit: MODEL.kInit, pA: MODEL.pA, jamCap3: +(process.env.JAMCAP3 || 25) }, fragile, bvbSkip, flatSkip, iters: s.iters, nodes: s.nodes.length, secs: Math.round((Date.now() - t0) / 1000), spots: out };
 fs.writeFileSync(OUT, JSON.stringify(res));
-process.stderr.write(`done ${res.file}: ${out.length} spots (${firsts} first, ${seconds} second), ${fragile} model-sensitive hands held back, ${bvbSkip} short BvB spots skipped, in ${res.secs}s\n`);
+process.stderr.write(`done ${res.file}: ${out.length} spots (${firsts} first, ${seconds} second), ${fragile} model-sensitive hands held back, ${bvbSkip} short BvB spots skipped, ${flatSkip} short flats held back, in ${res.secs}s\n`);
