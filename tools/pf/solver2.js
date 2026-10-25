@@ -32,7 +32,10 @@ const MODEL = { rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S
 // proportion to their strength (position means the players behind you get to exploit your checks).
 // pos: shape of the position ladder with three or more in. 1 = evenly spaced (the heads-up rule extended); higher
 // values pull the middle seats toward the first to act, since only the last to act really has position in a multiway pot.
-const MW = { on: env('MW', 0), play: env('MWPLAY', 1), gam: env('MWGAM', 0), r: env('MWR', 1), pen: env('MWPEN', 1), leak: env('MWLEAK', 0), pos: env('MWPOS', 1) };
+// Defaults are the refit of Oct 25 against the course's 18 multiway charts (see MULTIWAY_NOTES.md): 87% hand agreement vs
+// 71% for the engine's own settlement, every group within a few points and never looser than the charts. MW=0 restores
+// the engine settlement.
+const MW = { on: env('MW', 1), play: env('MWPLAY', 1.5), gam: env('MWGAM', 0.3), r: env('MWR', 1), pen: env('MWPEN', 2), leak: env('MWLEAK', 0), pos: env('MWPOS', 2) };
 const PLAY = (() => {
   const RK = '23456789TJQKA', t = new Float64Array(169);
   E.CLASS_NAMES.forEach((nm, i) => {

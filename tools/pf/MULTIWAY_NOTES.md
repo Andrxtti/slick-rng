@@ -68,7 +68,37 @@ paid course and is never committed or shipped.
   flows to whoever is in position. The refit therefore targets the SB's own flat range and the BB's offsuit junk
   directly rather than one global knob.
 
+## Refit result (Oct 25, 100bb 8-max chip EV, 18 charts with his on-camera corrections applied)
+
+Settings scanned by full re-solves (450 s each, two per round), scored by hand-weighted agreement with the charts:
+
+| model | agree | mean width error | BTN | LP | SB | BB |
+|---|---|---|---|---|---|---|
+| engine default (random-board showdown) | 71% | 21 pts | 16/17 | 7/8 | 19/15 | 99/47 |
+| generalized flop model, first cut | 84% | 8 pts | 14/17 | 7/8 | 13/15 | 62/47 |
+| **chosen: play 1.5, gamma +0.3 per extra player, offsuit penalty x2, position ladder 2** | **87%** | **4.6 pts** | 12/17 | 8/8 | 13/15 | 41/47 |
+
+(width = % of hands continuing, ours/chart, mean per group.) Squeeze shares match the charts within a point under every
+model. What the chosen model gets right: every BB spot within 10 points of the chart and the "SB flatted" spots within 5;
+HJ/MP/EP+2 within 2; SB cold-calls within 4. What it still misses, all on the conservative side (we fold where he calls):
+BTN overcalls run 4-7 points narrow (22-44 and 54s-T9s fold), BB vs EP open + EP/MP flat is 20 vs 34, BB vs CO open +
+BTN flat 45 vs 55. Nothing is looser than his chart except the BB vs BTN open + SB flat squeeze share (15 vs 12).
+
+Knobs tried and rejected: a bigger out-of-position leak (MWR 1.3) makes everything worse; routing the leak to the players
+acting after you (MWLEAK) is the more principled rule but scored slightly lower, so it stays off; playability x2 across the
+board blows up early-position overcalls.
+
+Checks: heads-up benches at 20 and 30bb with the model off vs on differ only on near-ties and low-sample nodes (within the
+run-to-run noise of the bench itself); the model only touches flops with three or more players in. The library gate
+(solve_lib.js) now adds two multiway-robustness passes (harsher and kinder multiway model) so a multiway hand is dealt
+only when its answer survives both.
+
+Known heads-up issue found on the way (not multiway): at 100bb our SB and BTN flat weak offsuit aces (A2o-A7o) and weak
+offsuit kings against late opens. Those are 3-bet-or-fold hands. It is the heads-up realization model (offsuit aces are
+under-penalized), it feeds the BB's multiway defense, and it belongs to the heads-up calibration item.
+
 ## Still open
 
-- Whether multiway spots return to the library at all depends on the refit landing within the charts' widths on every
-  group, then passing the HU benches and sanity checks unchanged.
+- The shipped library is untouched. Turning the model on means re-solving all 56 tables through the gate (about 3 hours
+  on this machine), then reviewing the 22 held-back multiway spots one by one (mwreview.js) against his 20-40bb
+  guidance before any of them is dealt again.

@@ -1,7 +1,7 @@
 // Solve one library table with the clean tree and harvest its training spots (labels straight from the tree).
 //   node solve_lib.js <cfg.json> <solveSecs> <evalSecs> <out.json>
 const fs = require('fs');
-const { PF2, label, E, MODEL } = require('./solver2.js');
+const { PF2, label, E, MODEL, MW } = require('./solver2.js');
 const [file, SECS = 240, EVS = 60, OUT] = process.argv.slice(2);
 const D = JSON.parse(fs.readFileSync(file, 'utf8'));
 const cfg = { ...D.cfg }; delete cfg.allowLimps; delete cfg.leave1; delete cfg.lite; cfg.maxNodes = 900000;
@@ -26,6 +26,17 @@ for (const d of [{ rLow: -0.06, gammaK: +0.2, kInit: 0, pA: pA0 }, { rLow: +0.06
   PERT.push({ EV: Float64Array.from(s.EV2), EW: Float64Array.from(s.EW2) });
 }
 s.cfg.rLow = base.rLow; s.cfg.gammaK = base.gammaK; MODEL.kInit = kInit0; MODEL.pA = pA0; reprep();
+// with the multiway flop model on, two more passes: a harsher multiway model (weak hands realize even less, only the
+// last to act has position) and a kinder one (the heads-up rules extended). A multiway hand is dealt only if its answer
+// survives both.
+if (MW.on) {
+  const mw0 = { ...MW };
+  for (const d of [{ play: 1, gam: mw0.gam + 0.15, pen: mw0.pen + 1, pos: 3 }, { play: mw0.play + 0.5, gam: Math.max(0, mw0.gam - 0.15), pen: 1, pos: 1 }]) {
+    Object.assign(MW, d); reprep(); s.EV2.fill(0); s.EW2.fill(0); s.evalPass(EVS * 500);
+    PERT.push({ EV: Float64Array.from(s.EV2), EW: Float64Array.from(s.EW2) });
+  }
+  Object.assign(MW, mw0); reprep();
+}
 for (let i = 0; i < s.EV2.length; i++) s.EV2[i] = EVA[i] + EVB[i]; for (let i = 0; i < s.EW2.length; i++) s.EW2[i] = EWA[i] + EWB[i];
 const evPass = (EVx, EWx, id, c) => { const nd = s.nodes[id], na = nd.actions.length, w = EWx[nd.ewOff + c]; if (!(w > 0)) return null; const o = []; for (let a = 0; a < na; a++) o.push(EVx[nd.evOff + c * na + a] / w); return o; };
 // ---- walk the tree with everyone's average strategy: how often each line happens, and who still holds what
