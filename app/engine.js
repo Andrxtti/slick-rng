@@ -1228,7 +1228,7 @@ class PreflopSolver {
       this.str[p] = 0; this.str[o] = 1; loseU = this.utility(nd)[p];
       this.str[p] = sp; this.str[o] = so; this._noR = false;
     }
-    const pPos = this.cfg.playPos ?? 1, pNeg = this.cfg.playNeg ?? 1;
+    const pPos = this.cfg.playPos ?? 1, pNeg = this.cfg.playNeg ?? 1, io = this.cfg.implied ?? 0;
     let both = 0, onlyP = 0;
     if (!icm && nd.kind === 'show') for (const L of nd.layers) { if (L.elig.length === 2) both += L.amount; else if (L.elig[0] === p) onlyP += L.amount; }
     for (let c = 0; c < this.NC; c++) {
@@ -1244,6 +1244,10 @@ class PreflopSolver {
         const pl = 1 + PLAY169[c] * (PLAY169[c] > 0 ? pPos : pNeg) * nd.playK, plo = 1 + PLAY169[oc] * (PLAY169[oc] > 0 ? pPos : pNeg) * nd.playK;
         const a = nd.R[p] * pl * Math.pow(eq, nd.gamma), b = nd.R[o] * plo * Math.pow(1 - eq, nd.gamma);
         share = a + b > 0 ? a / (a + b) : 0.5;
+        // implied odds (cfg.implied, default 0): hands with nut potential (pairs, suited connectors, suited aces) win
+        // extra money from the stacks behind when they hit; a zero-sum transfer in share points, growing with the
+        // stack-to-pot ratio like the rest of the playability term
+        if (io > 0) { const tp = io * Math.max(0, PLAY169[c]) * nd.playK, to = io * Math.max(0, PLAY169[oc]) * nd.playK; share = Math.min(1, Math.max(0, share + tp * (1 - share) - to * share)); }
       }
       else share = eq;
       let u;

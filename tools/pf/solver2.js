@@ -20,7 +20,7 @@ const JAM_CAP_NONBLIND3 = +(process.env.JAMCAP3 || 25);   // non-blind 3-bettors
 // defends ~67%). See tools/pf/out/ref30_F.txt, ref40_F.txt.
 const env = (k, d) => (process.env[k] !== undefined ? +process.env[k] : d);
 // kInit: an out-of-position preflop aggressor (a blind 3-bettor, a squeezer) gets back this share of the positional penalty
-const MODEL = { pPos: env('PPOS', 1), pNeg: env('PNEG', 1), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
+const MODEL = { io: env('IO', 0), pPos: env('PPOS', 1), pNeg: env('PNEG', 1), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
 // Multiway flops (three or more players see the flop). The engine settles these with a random-board showdown and
 // splits the realization leak evenly between everyone, so a hand with no equity still collects a share of the pot and
 // suitedness/position-by-hand play no part. MW=1 uses the heads-up model generalized instead: each player's multiway
@@ -60,7 +60,7 @@ const PLAY = (() => {
   return t;
 })();
 class PF2 extends E.PreflopSolver {
-  constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, playPos: MODEL.pPos, playNeg: MODEL.pNeg, ...cfg }; super(cfg); }
+  constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, playPos: MODEL.pPos, playNeg: MODEL.pNeg, implied: MODEL.io, ...cfg }; super(cfg); }
   prepTerminal(nd) {
     super.prepTerminal(nd);
     if (nd.kind !== 'flop') return;
@@ -118,9 +118,19 @@ class PF2 extends E.PreflopSolver {
           let w = 0; for (let t = q + 1; t < ord.length; t++) w += b[ord[t]];
           if (w > 0) for (let t = q + 1; t < ord.length; t++) y[ord[t]] += ((bi - keep) * b[ord[t]]) / w; else y[i] += bi - keep;
         }
-        for (const i of el) fin[i] += L.amount * ((1 - MW.leak) * (x[i] / xs) + MW.leak * y[i]);
-      } else for (const i of el) fin[i] += (L.amount * x[i]) / xs;
+        for (const i of el) y[i] = (1 - MW.leak) * (x[i] / xs) + MW.leak * y[i];
+        this.mwImplied(nd, cls, el, y); for (const i of el) fin[i] += L.amount * y[i];
+      } else { const y = this._mwY || (this._mwY = new Float64Array(this.n)); for (const i of el) y[i] = x[i] / xs; this.mwImplied(nd, cls, el, y); for (const i of el) fin[i] += L.amount * y[i]; }
     }
+  }
+  // implied odds multiway (MODEL.io): each player with nut potential gains io * PLAY+ * playK share points, paid by
+  // everyone in proportion to their current share (zero-sum), as in the heads-up model
+  mwImplied(nd, cls, el, y) {
+    const io = MODEL.io; if (!(io > 0) || !(nd.playK > 0)) return;
+    let T = 0; const t = this._mwT || (this._mwT = new Float64Array(this.n));
+    for (const i of el) { t[i] = io * Math.max(0, PLAY[cls[i]] * MODEL.pPos) * nd.playK; T += t[i]; }
+    for (const i of el) y[i] = Math.max(0, y[i] + t[i] - T * y[i]);
+    let s = 0; for (const i of el) s += y[i]; if (s > 0) for (const i of el) y[i] /= s;
   }
   mwTermVec(nd, p, out) {
     const n = this.n, st = this.cfg.stacks, cls = this.cls, save = cls[p], alive = !nd.folded[p];
