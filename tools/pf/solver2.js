@@ -27,7 +27,10 @@ const MODEL = { rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S
 // equity is estimated from the exact heads-up class equities against the actual opponents (Bradley-Terry: exact when
 // two players), then share = R * playability * equity^gamma, normalized. Playability and the strength curve can be
 // made stronger multiway (MWPLAY, MWGAM) and the out-of-position leak larger (MWR), as the course teaches.
-const MW = { on: env('MW', 0), play: env('MWPLAY', 1), gam: env('MWGAM', 0), r: env('MWR', 1) };
+// pen: extra weight on the playability PENALTIES (offsuit aces, offsuit junk) with three or more in; leak: 0 shares each
+// player's positional leak among everyone (plain normalization), 1 gives it to the players who act after him, in
+// proportion to their strength (position means the players behind you get to exploit your checks).
+const MW = { on: env('MW', 0), play: env('MWPLAY', 1), gam: env('MWGAM', 0), r: env('MWR', 1), pen: env('MWPEN', 1), leak: env('MWLEAK', 0) };
 const PLAY = (() => {
   const RK = '23456789TJQKA', t = new Float64Array(169);
   E.CLASS_NAMES.forEach((nm, i) => {
@@ -93,9 +96,21 @@ class PF2 extends E.PreflopSolver {
       if (k === 1) { fin[el[0]] += L.amount; continue; }
       let ss = 0;
       for (const i of el) { let lg = 0; for (const j of el) if (j !== i) lg += LO[cls[i] * NC + cls[j]]; s[i] = Math.exp(lg / (2 * (k - 1))); ss += s[i]; }
-      const g = nd.gamma + MW.gam * (k - 2), mr = k >= 3 ? MW.r : 1, mp = k >= 3 ? MW.play : 1; let xs = 0;
-      for (const i of el) { x[i] = (1 - (1 - nd.R[i]) * mr) * (1 + PLAY[cls[i]] * nd.playK * mp) * Math.pow(s[i] / ss, g); xs += x[i]; }
-      for (const i of el) fin[i] += (L.amount * x[i]) / xs;
+      const g = nd.gamma + MW.gam * (k - 2), mr = k >= 3 ? MW.r : 1, mp = k >= 3 ? MW.play : 1, pen = k >= 3 ? MW.pen : 1; let xs = 0, bs = 0;
+      const b = this._mwB || (this._mwB = new Float64Array(this.n));
+      for (const i of el) { const pl = PLAY[cls[i]]; b[i] = (1 + (pl < 0 ? pl * pen : pl) * nd.playK * mp) * Math.pow(s[i] / ss, g); bs += b[i]; x[i] = (1 - (1 - nd.R[i]) * mr) * b[i]; xs += x[i]; }
+      if (k >= 3 && MW.leak > 0) {
+        // leak to position: each player keeps R of his base share, the rest goes to the players acting after him
+        const rank = this._mwRank || (this._mwRank = (() => { const o = this.cfg.postOrder || [...Array(this.n).keys()], r = new Int32Array(this.n); o.forEach((p, q) => (r[p] = q)); return r; })());
+        const ord = Array.from(el).sort((p, q) => rank[p] - rank[q]), y = this._mwY || (this._mwY = new Float64Array(this.n));
+        for (const i of el) y[i] = 0;
+        for (let q = 0; q < ord.length; q++) {
+          const i = ord[q], bi = b[i] / bs, keep = bi * (1 - (1 - nd.R[i]) * mr); y[i] += keep;
+          let w = 0; for (let t = q + 1; t < ord.length; t++) w += b[ord[t]];
+          if (w > 0) for (let t = q + 1; t < ord.length; t++) y[ord[t]] += ((bi - keep) * b[ord[t]]) / w; else y[i] += bi - keep;
+        }
+        for (const i of el) fin[i] += L.amount * ((1 - MW.leak) * (x[i] / xs) + MW.leak * y[i]);
+      } else for (const i of el) fin[i] += (L.amount * x[i]) / xs;
     }
   }
   mwTermVec(nd, p, out) {
