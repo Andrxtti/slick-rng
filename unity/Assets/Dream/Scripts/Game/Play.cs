@@ -118,6 +118,8 @@ namespace CFDream
         // the same seat, the same stacks, the same action in front of you; a spot leaves the list once you get it right
         public static List<MisSpot> Misses(State s)
         {
+            // the hand library was rebuilt (Beta 1.81): misses graded against the old library don't carry over
+            if (s.FlagN("libv") < 2) { s.pg.mis.Clear(); s.SetFlag("libv", 2); }
             var seen = new HashSet<string>(); var outp = new List<MisSpot>();
             for (int i = s.pg.mis.Count - 1; i >= 0; i--) { var m = s.pg.mis[i]; if (Valid(m) && seen.Add(m.g + "|" + m.t + "|" + m.n + "|" + m.c)) outp.Add(m); }
             return outp;
@@ -252,14 +254,20 @@ namespace CFDream
             if (ev != null && ev.Count == strat.Count && ev.All(x => !double.IsNaN(x) && !double.IsInfinity(x))) { best = ev.IndexOf(ev.Max()); loss = Math.Max(0, ev[best] - ev[j]); }
             var T = LossSteps.TryGetValue(unit, out var t) ? t : LossSteps["bb"];
             string lab;
-            if (loss == null) { double rel = fmax > 0 ? mine / fmax : 0; lab = mine < 0.05 ? (rel < 0.02 ? "blunder" : "mistake") : rel >= 0.9 ? "best" : rel >= 0.5 ? "good" : "inaccuracy"; }
-            else { double l = loss.Value; lab = l <= 1e-9 ? "best" : l <= T[0] ? "excellent" : l <= T[1] ? "good" : l <= T[2] ? "inaccuracy" : l <= T[3] ? "mistake" : "blunder"; }
-            // the solver's mix is the truth: a play it makes often is never worse than Good
-            if (mine >= 0.6 || j == sb) lab = (lab == "best" || lab == "excellent") ? lab : "best";
-            else if (mine >= 0.25 && (lab == "inaccuracy" || lab == "mistake" || lab == "blunder")) lab = "good";
-            else if (mine < 0.05 && (lab == "best" || lab == "excellent" || lab == "good")) lab = "inaccuracy";
-            // a clear answer and you picked something it almost never does: a real error, not a slip
-            if (mine <= 0.12 && fmax >= 0.7) lab = fmax >= 0.88 && mine <= 0.04 && (loss == null || loss > T[0]) ? (lab == "blunder" || loss == null || loss > T[1] ? "blunder" : "mistake") : lab == "blunder" ? "blunder" : "mistake";
+            if (loss == null)
+            {
+                // no EVs: grade by how often the solver makes the play
+                double rel = fmax > 0 ? mine / fmax : 0; lab = mine < 0.05 ? (rel < 0.02 ? "blunder" : "mistake") : rel >= 0.9 ? "best" : rel >= 0.5 ? "good" : "inaccuracy";
+                if (mine >= 0.6 || j == sb) lab = "best"; else if (mine >= 0.25 && (lab == "inaccuracy" || lab == "mistake" || lab == "blunder")) lab = "good";
+            }
+            else
+            {
+                // EV is the truth: the grade is what the play costs. A play that costs (almost) nothing is never called a
+                // mistake just because the solver happens to pick another play of equal value more often.
+                double l = loss.Value; lab = l <= 1e-9 ? "best" : l <= T[0] ? "excellent" : l <= T[1] ? "good" : l <= T[2] ? "inaccuracy" : l <= T[3] ? "mistake" : "blunder";
+                if (j == best || (j == sb && l <= T[0])) lab = "best";
+                else if (mine >= 0.25 && (lab == "inaccuracy" || lab == "mistake" || lab == "blunder")) lab = "good";
+            }
             // rare on purpose: only the very closest spots, and Brilliant only for a brave play
             if (lab == "best" && hard >= 0.95) lab = (kind == "allin" || kind == "raise" || kind == "raiseB" || kind == "call") && mine <= 0.8 ? "brilliant" : "great";
             return (lab, loss, best);
@@ -270,10 +278,7 @@ namespace CFDream
             var sp = run.spot; var strat = sp.strat;
             var ev = sp.ev != null && sp.evScale != 1 ? sp.ev.Select(x => x * sp.evScale).ToList() : sp.ev;
             var g = LabelFor(strat, ev, j, sp.unit == "bbicm" ? "bb" : sp.unit, sp.hard, sp.acts[j]);
-            // the limp angle: the solver completes from the small blind and you raised — the conventional play, not a
-            // leak: partial credit (never worse than an inaccuracy) and the limp gets explained
-            bool limpSpot = sp.acts[g.bestIdx] == "call" && sp.path.Count(k => k != "fold") == 0 && (sp.acts[j] == "raise" || sp.acts[j] == "raiseB") && hero0(sp) == "SB";
-            if (limpSpot && (g.lab == "mistake" || g.lab == "blunder")) g.lab = "inaccuracy";
+            bool limpSpot = false;   // the SB complete is a real solver play now: graded on EV like everything else
             var L = DB.Labels[g.lab];
             string tier = L.tier; bool ok = tier != "bad"; int pts = L.score - (tier == "bad" ? 60 : 0);
             int before = run.stack; if (run.drill == null) run.stack = Math.Max(0, Math.Min(200, run.stack + L.life));
@@ -491,9 +496,14 @@ namespace CFDream
             bool icm = r.stage == "bubble" || r.stage == "satbubble" || r.stage == "deep" || r.stage == "final";
             bool loose = h.mineK != "fold" && h.bestK == "fold", tight = h.mineK == "fold" && h.bestK != "fold"; string c = h.cat;
             if (h.limp) return $"Raising is fine here. The solver completes from the small blind with this hand instead: at {h.bb} bb the limp keeps the pot small, lets you see a flop with your whole range and leaves a raise behind for when the big blind attacks. Limping is a small-blind-only play; from any other seat, open-raise.";
-            if (!loose && !tight) return $"Right idea, wrong size. The solver prefers {h.best} here.";
+            if (!loose && !tight)
+            {
+                bool bothRaise = (h.mineK == "raise" || h.mineK == "allin") && (h.bestK == "raise" || h.bestK == "allin");
+                return bothRaise ? $"Right idea, wrong size. The solver prefers {h.best} here." : $"The solver prefers {h.best} here.";
+            }
             if (c == "Facing a jam") return loose ? "Calling a jam takes a much stronger hand than shoving one." + (icm ? " Near the money, stronger still: busting costs more than chips." : "") : "This hand is ahead of their shoving range often enough. Folding gives up too much." + (icm ? " Even with ICM, this one is a call." : "");
-            if (c == "First in / vs limps") return loose ? $"Too loose from {h.pos}. With players still to act behind you, open fewer hands." : $"This is a profitable open from {h.pos}. Folding lets the blinds walk.";
+            if (c == "First in" || c == "First in / vs limps") return loose ? $"Too loose from {h.pos}. With players still to act behind you, open fewer hands." : $"This is a profitable open from {h.pos}. Folding lets the blinds walk.";
+            if (c == "Facing a limp") return loose ? "Over a limp, the big blind raises its strong hands and checks the rest. This one checks." : "Raise this one over the limp. The small blind's range is capped.";
             if (c == "Facing a raise") return loose ? "Facing a raise, play tighter than when you open. Their range is already strong." : $"Good enough to continue from {h.pos}. Folding here is too tight.";
             return loose ? "Against a 3-bet or more, only the top of your range keeps going." : "You're folding too much to aggression. This hand wants to continue.";
         }

@@ -145,6 +145,7 @@ namespace CFDream
             foreach (var k in SkillKeys(h, r.stage)) { if (!p.sk.TryGetValue(k, out var a)) p.sk[k] = a = new List<int>(); a.Add(sc); if (a.Count > 30) a.RemoveAt(0); }
             if (r.tier == "bad" && run.spot != null)
             {
+                if (s.FlagN("libv") < 2) { p.mis.Clear(); s.SetFlag("libv", 2); }   // misses from the old library are dropped once
                 p.mis.Add(new MisSpot { g = run.spot.gid, t = run.spot.tableIndex, n = run.spot.nodeIndex, c = run.spot.cls, p = string.Join(",", run.spot.path), lab = r.lab, d = Career.Now() });
                 if (p.mis.Count > 60) p.mis.RemoveAt(0);
             }
