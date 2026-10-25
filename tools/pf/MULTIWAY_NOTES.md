@@ -84,7 +84,28 @@ paid course and is never committed or shipped.
 - Heads-up 100bb: GTO Wizard flats A8o/A9o from the SB vs a BTN open but folds A2o-A7o (A5o 3-bets or folds); BTN vs CO
   flats A9o+ only. Our old SB/BTN flats of A2o-A7o were wrong (heads-up model issue).
 
-## Refit result (Oct 25, 100bb 8-max chip EV, 18 charts with his on-camera corrections applied)
+## Second refit, against GTO Wizard (Oct 25 evening)
+
+What moved the model and what did not (all 100bb 8-max, full re-solves, scored on 19 GTO Wizard nodes):
+- Multiway knobs (playability x1.5-3, flatter or steeper strength curve, position ladder, leak routing, per-player
+  playability, smaller initiative bonus): 84-86% agreement whatever the setting; BTN overcalls stuck at 10-16% vs 18-21%.
+- Scaling the whole playability table (bonuses 2-4x, penalties 1-3x): same. The multiway node did not move even at 4x.
+- Diagnosis: equity-share settlement. 22 has ~20% equity 3-way, collects ~2.0bb for a 2.3bb call and folds; GTO Wizard's
+  own EV view has 22 at +0.65bb, 44 +0.79, 54s +0.21, ATo/AJo 0 (fold). Set-mining and nut draws win big pots when they
+  hit; a share-by-equity rule cannot express that.
+- Fix: a zero-sum implied-odds transfer (MODEL.io, engine cfg.implied): pairs, suited connectors and suited aces gain
+  io * PLAY+ * playK share points, paid by the others in proportion to their share; heads-up and multiway alike. With
+  io 0.8 and the offsuit penalty x2: 86.6% agreement (the course charts score 86.3% against the same nodes), SB and BB
+  within a few points, heads-up BTN vs CO / BTN vs UTG within 3-4 points. BTN overcalls still 11-15% vs 18-21%.
+- Why the BTN overcall is still narrow at 100bb: the opener's response to a squeeze. After two callers and an SB squeeze,
+  our UTG folds 29% of its range and 4-bets or jams 49%; GTO Wizard folds 62% and re-raises 17%. That heads-up
+  over-aggression (jams of 100bb that are rarely right) makes calling behind an open expensive in our tree. It fades
+  with stack depth: at 25bb our solves already agree with GTO Wizard at 88.7% with BTN/SB/HJ within 1-4 points.
+  Logged as the heads-up calibration item (4-bet/jam structure at 60bb+), not a multiway problem.
+- Per-hand EVs at rare multiway nodes are noisy in short solves (the BTN overcall node is reached in <1% of deals); the
+  strategies are fine (every visit updates all 169 hands), the EV readout is not. One more reason for the two-solve gate.
+
+## Refit result (Oct 25 afternoon, 100bb 8-max chip EV, 18 charts with his on-camera corrections applied; superseded)
 
 Settings scanned by full re-solves (450 s each, two per round), scored by hand-weighted agreement with the charts:
 
