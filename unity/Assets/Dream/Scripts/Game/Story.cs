@@ -188,14 +188,15 @@ namespace CFDream
             Insert("c4", 4, B("n", "Under the lights everything shows. The rail can see your hole cards. The table can see your face."));
             Insert("c4", 5, B("slick", "Cameras change people. Don't let them change your ranges. Play the hand you'd play in an empty room."));
             Insert("c4", 7, B("mom", "youre on the STREAM. my mom is watching. MY MOM", text: true));
-            Insert("c5", 1, B("n", "Nobody in this room is scared. That's the problem with it."));
-            Insert("c5", 3, B("you", "Welcome to the club."));
-            Insert("c5", 6, B("mom", "a HOUSE. you bought in for a HOUSE. im not telling your mother", text: true));
+            Insert("c5", 2, B("you", "Welcome to the club."));
+            Insert("c5", 5, B("mom", "a HOUSE. you bought in for a HOUSE. im not telling your mother", text: true));
             Insert("c6", 1, B("n", "Day one. A ballroom the size of an airport. Two hundred tables, and somewhere in the noise, a seat with your name on it."));
             Insert("c6", 3, B("ghost", "Still here, kid. So am I."));
             Insert("c7", 1, B("n", "Stu. Colt. Chance. The Ghost. And a kid from Floor 34 who got told to redo the Henderson deck."));
             Insert("c7", 3, B("slick", "There's nobody left to teach you. So teach somebody. I sat on that stool once too, remember."));
             Insert("c7", 4, B("you", "I remember."));
+            // the openers name the next date, like Chapter 2 does
+            foreach (var k in new[] { "c3", "c5", "c6" }) if (DB.Scenes.TryGetValue(k, out var oc) && oc.beats.Count > 0) oc.beats[0].fn = true;
             // the lessons: the first time you bust in a chapter, Slick finds you and names the leak (and the Spacepad drills it)
             Put("lesson1", "diner", "A lesson", "Fold the junk", "hub",
                 B("n", "Lucky Seven. 1:40 AM. The pie is the same. You are a little poorer."),
@@ -227,6 +228,8 @@ namespace CFDream
                 B("you", "There isn't one."),
                 B("slick", "There's one in every spot they don't study. Odd stacks. Four-bet pots. Limped pots with antes. The book is thin there. Be the one who read it."),
                 B("slick", "Your misses in the strange spots. That's the list now. Drill those."));
+            // the lessons talk about the hand that actually cost you, when there is one (the written story is the fallback)
+            for (int L = 1; L <= 4; L++) if (DB.Scenes.TryGetValue("lesson" + L, out var ls) && ls.beats.Count > 3) { ls.beats[1].fn = true; ls.beats[2].fn = true; ls.beats[3].fn = true; if (L == 3) ls.beats[0].fn = true; }
             // the boss texts you while you still work for him
             Put("derek_job", "office", "Meanwhile", "Floor 34", "hub",
                 new Beat { sp = "derek", t = "Saw your name on a poker site. Is THAT why the Henderson numbers were late?", text = true,
@@ -403,6 +406,20 @@ namespace CFDream
         static void Replace(string id, int i, string sp, string t) { if (DB.Scenes.TryGetValue(id, out var sc) && i < sc.beats.Count) { sc.beats[i].sp = sp; sc.beats[i].t = t; sc.beats[i].fn = false; } }
 
         // beats whose text depends on the career
+        // the hand that cost you most in the event you just played (null when there isn't a clear one)
+        static HandInfo LessonHand(Result r)
+        {
+            if (r == null) return null;
+            var dec = r.keys.FirstOrDefault(x => x.tier == "bad") ?? r.all.OrderBy(x => x.pts).FirstOrDefault();
+            var h = dec?.hand; if (h == null || h.cards == null || h.cards.Length < 2 || string.IsNullOrEmpty(h.best) || string.IsNullOrEmpty(h.mine) || h.mineK == h.bestK) return null;
+            return h;
+        }
+        static string LessonRank(int c) { var r = Cards.Rank(c); return r == "T" ? "10" : r; }
+        static string LessonHole(HandInfo h) => $"{LessonRank(h.cards[0])}{Cards.SuitSym(h.cards[0])} {LessonRank(h.cards[1])}{Cards.SuitSym(h.cards[1])}";
+        static string LessonPos(string pos)
+        {
+            switch (pos) { case "BTN": return "the button"; case "SB": return "the small blind"; case "BB": return "the big blind"; case "CO": return "the cutoff"; case "HJ": return "the hijack"; case "UTG": case "UTG+1": case "MP": return "early position"; default: return string.IsNullOrEmpty(pos) ? "the table" : pos; }
+        }
         public static string Text(string sceneId, Beat b, int index, State s)
         {
             if (!b.fn) return b.t ?? "";
@@ -421,7 +438,20 @@ namespace CFDream
                     case "after_cooler:1": return new[] { "...Brutal.", "Right play. Wrong deck.", "Don't tilt. Don't tilt. Don't tilt." }[v];
                 }
             }
-            if (sceneId == "c2" && index == 0) { string nx = Calendar.NextCircuit(s); return "You've outgrown Biscayne. " + (nx == "now" ? "The Circuit is at Silver Strike right now." : $"The next Circuit stop at Silver Strike starts {nx}.") + " Every event gives a ring. Go get one."; }
+            if (sceneId == "c3" && index == 0) { string nx = Calendar.NextWcs(s); return "Every June, Las Vegas hosts the WCS Summer Series. 112 degrees outside, 68 inside, ten thousand people chasing the same gold. " + (nx == "now" ? "It's running right now." : $"It starts {nx}. It's on your calendar."); }
+            if (sceneId == "c5" && index == 0) { string nx = Calendar.NextTitan(s); return "A private terminal. A plane with your name on the manifest. A buy-in that used to be a house. " + (nx == "now" ? "The Series is on right now." : $"The next Titan Series starts {nx}."); }
+            if (sceneId == "c6" && index == 0) { string nx = Calendar.NextMain(s); return "Every July: eight thousand players, ten thousand dollars each.\nOne of them ends up on the cover of every poker magazine in the world.\n" + (nx == "today" ? "The Main Event starts today." : $"The next Main Event is {nx}."); }
+            if (sceneId.StartsWith("lesson") && sceneId.Length == 7 && char.IsDigit(sceneId[6]))
+            {
+                var lh = LessonHand(Game.Last);
+                if (lh == null) return b.t ?? "";
+                int L = sceneId[6] - '0';
+                if (L == 3 && index == 0) return "A Vegas hallway at 3 AM. Slot machines, and a little regret.";
+                if (index == 1) return $"Tell me about {LessonHole(lh)} from {LessonPos(lh.pos)}.";
+                if (index == 2) switch (lh.mineK) { case "fold": return "I let it go. It felt too dangerous."; case "call": return "I called. I thought I was ahead."; case "raise": case "raiseB": return "I raised. I thought I could take it."; case "allin": return "I jammed. I thought it was my spot."; default: return "I did what felt right."; }
+                if (index == 3) return $"The solver wanted {lh.best}. You chose {lh.mine}. " + (L == 1 ? "Then the hand didn't get you. The first decision did. Everything after was a story you told yourself." : L == 2 ? "When nobody has anything, the one who bets small and often takes it. Every free card you give is a gift." : L == 3 ? "Near the bubble, the chips you lose are worth more than the chips you win. That is the whole of ICM." : "A bluff is a bet against a person, not a board. Pick the person first.");
+            }
+                        if (sceneId == "c2" && index == 0) { string nx = Calendar.NextCircuit(s); return "You've outgrown Biscayne. " + (nx == "now" ? "The Circuit is at Silver Strike right now." : $"The next Circuit stop at Silver Strike starts {nx}.") + " Every event gives a ring. Go get one."; }
             if (sceneId == "c2" && index == 2) return s.job == "nights" ? "You're the kid with the day job? I had one too. Spreadsheets and everything. Play your game and let them find out." : "You're the kid who quit the cubicle? I was an accountant. Spreadsheets and everything. Play your game and let them find out.";
             if (sceneId == "ft_intro")
             {

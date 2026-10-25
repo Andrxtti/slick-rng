@@ -73,18 +73,27 @@ namespace CFDream
             S("rt5d", "Royal Tour Five Diamond", "tv", "👑", 12, 5, 7, ("1", "rpt3500"), ("4", "rpt10k")),
             S("hall", "Hall of Legends Invitational", "hall", "🏛️", 12, 18, 1, ("0", "legends")),
         };
-        // the next Circuit stop from today: "February 10", or "today" when one is running
-        public static string NextCircuit(State s)
+        // the next start of a series from today: "February 10", or "now" when one is running
+        static string NextOn(State s, Func<SeriesDef, bool> pick)
         {
             int best = int.MaxValue; string nm = null;
             foreach (var sr in Series)
                 foreach (var Y in new[] { Date(s.cal.d).Y, Date(s.cal.d).Y + 1 })
                 {
-                    if (sr.wcs || sr.venue != "casino") continue;
+                    if (!pick(sr)) continue;
                     int s0 = DayOf(Y, sr.m, sr.from), end = s0 + sr.days - 1; if (end < s.cal.d) continue;
                     int at = Math.Max(s0, s.cal.d); if (at < best) { best = at; nm = s0 <= s.cal.d ? "now" : MonL[sr.m - 1] + " " + sr.from; }
                 }
             return nm ?? "soon";
+        }
+        public static string NextCircuit(State s) => NextOn(s, sr => !sr.wcs && sr.venue == "casino");
+        public static string NextWcs(State s) => NextOn(s, sr => sr.wcs);
+        public static string NextTitan(State s) => NextOn(s, sr => sr.venue == "titan");
+        // the Main Event is one day, July 5: "July 5", or "today"
+        public static string NextMain(State s)
+        {
+            foreach (var Y in new[] { Date(s.cal.d).Y, Date(s.cal.d).Y + 1 }) { int d = DayOf(Y, 7, 5); if (d == s.cal.d) return "today"; if (d > s.cal.d) return "July 5"; }
+            return "July 5";
         }
         public static List<SeriesOn> SeriesOnDay(int d)
         {

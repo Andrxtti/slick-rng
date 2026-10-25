@@ -461,16 +461,10 @@
 "music":"grind"
 },
 {
-"sp":"n",
-"shot":"wide",
-"on":"you",
-"act":"Looking Around",
-"music":"tension"
-},
-{
 "sp":"trent",
 "shot":"two",
-"act":"Shrugging"
+"act":"Shrugging",
+"music":"tension"
 },
 {
 "sp":"you",
