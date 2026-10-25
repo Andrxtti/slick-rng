@@ -41,8 +41,9 @@ for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
             if ai >= 0:
                 keep = [r for r in n['r'] if not (r[0] in VALUE and r[2].index(max(r[2])) == ai)]
                 dropped['value jam vs small raise'] = dropped.get('value jam vs small raise', 0) + len(n['r']) - len(keep); n['r'] = keep
-        if n['v']['cat'] == 'Facing a 3-bet or more' and eff <= 25 + 1e-9:
-            # flatting a 3-bet with 25bb or less (low stack-to-pot ratio): the course plays these jam-or-fold
+        if n['v']['cat'] == 'Facing a 3-bet or more' and eff <= 35 + 1e-9:
+            # flatting a 3-bet with 35bb or less (stack-to-pot under ~2): the course plays these jam-or-fold, and our
+            # flop model (no stack-off) flatters calling there
             drop('call', 'short 3-bet flat')
         if len(n['r']) < (8 if not n['p'] or all(k == 'fold' for k in n['p']) else 5): dropped['spots'] += 1; continue
         assert len(n['a']) == len(n['v']['opts']) and all(kind(o) == k for o, k in zip(n['v']['opts'], n['a'])), (f, n['a'], n['v']['opts'])
