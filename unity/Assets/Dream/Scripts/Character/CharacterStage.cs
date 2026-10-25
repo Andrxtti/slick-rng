@@ -268,7 +268,7 @@ namespace CFDream.Character
         }
         void ExitScene()
         {
-            inScene = false; shotKey = null; Cinema(false); body?.Act(null); npc?.Act(null);
+            inScene = false; shotKey = null; Cinema(false); body?.Act(null); npc?.Act(null); Phone = false; if (phoneGo != null) phoneGo.SetActive(false);
             if (ext != null) ext.gameObject.SetActive(false);
             confetti = null;   // it lives in the set
             if (room != null && room.tier.StartsWith("set_")) { room.root.SetActive(false); Destroy(room.root); room = null; }
@@ -464,10 +464,33 @@ namespace CFDream.Character
             cam.transform.LookAt(transform.TransformPoint(look));
         }
         // who looks at whom, and the speaker's hands: the listener watches the speaker, the speaker talks with a hand
+        // a text message beat: your phone is up in your right hand, the screen toward your face
+        public bool Phone; GameObject phoneGo; bool phoneUp;
+        void PhoneProp(Gestures g, Transform head)
+        {
+            bool want = Phone && g != null && head != null;
+            if (!want) { if (phoneGo != null) phoneGo.SetActive(false); if (phoneUp) { g?.Right(Vector3.zero, 0); phoneUp = false; } return; }
+            if (phoneGo == null)
+            {
+                phoneGo = new GameObject("Phone") { layer = Layer };
+                GameObject Part(string n, PrimitiveType pt, Vector3 pos, Vector3 scale, Material m, float ry = 0)
+                {
+                    var go = GameObject.CreatePrimitive(pt); go.name = n; go.layer = Layer; Destroy(go.GetComponent<Collider>());
+                    go.transform.SetParent(phoneGo.transform, false); go.transform.localPosition = pos; go.transform.localScale = scale; go.transform.localRotation = Quaternion.Euler(0, ry, 0);
+                    go.GetComponent<MeshRenderer>().sharedMaterial = m; return go;
+                }
+                Part("Body", PrimitiveType.Cube, Vector3.zero, new Vector3(0.075f, 0.152f, 0.009f), Mats.Plastic(new Color(0.06f, 0.06f, 0.07f), 0.7f));
+                Part("Screen", PrimitiveType.Quad, new Vector3(0, 0, 0.0048f), new Vector3(0.068f, 0.142f, 1), Mats.Get(new Color(0.62f, 0.85f, 1f), 0f, 0.9f, 0.9f), 180);
+                var hold = phoneGo.AddComponent<PhoneHold>(); hold.pivot = pivot; hold.hand = () => Bone(HumanBodyBones.RightHand); hold.head = () => Bone(HumanBodyBones.Head);
+            }
+            phoneGo.SetActive(true); phoneUp = true;
+            g.Right(head.position - Vector3.up * 0.40f + pivot.forward * 0.30f + pivot.right * 0.12f, 0.9f);   // lift the hand to chest height, in front
+        }
         void Acting()
         {
             actT += Time.deltaTime;
             var gy = GesturesOf(body); var gn = GesturesOf(npc);
+            PhoneProp(gy, Bone(HumanBodyBones.Head));
             var hy = Bone(HumanBodyBones.Head); var hn = npc?.Bone(HumanBodyBones.Head);
             if (hy == null && hn == null) return;
             Vector3 P = hy != null ? hy.position : transform.TransformPoint(HeadOf(true)), Q = hn != null ? hn.position : transform.TransformPoint(HeadOf(false));
@@ -703,7 +726,7 @@ namespace CFDream.Character
         bool down; float lastX; Vector2 downAt; int pid = -1;
         readonly string framing;
         public string Tier, Pet;            // "room" views: which home, and who lives there with you
-        public CharacterSpec NpcSpec; public string ShotKind = "wide", Mood, Act, React; public bool SpeakerIsYou = true, Narration;   // "scene" views
+        public CharacterSpec NpcSpec; public string ShotKind = "wide", Mood, Act, React; public bool SpeakerIsYou = true, Narration, Phone;   // "scene" views
         bool Room => framing == "room";
         bool SceneMode => framing == "scene";
 
@@ -735,7 +758,7 @@ namespace CFDream.Character
             st.Attach(this);
             SetTexture(st);
             st.Show(spec);
-            if (SceneMode) { st.ShowNpc(NpcSpec); st.Shot(ShotKind, SpeakerIsYou, 6f, Narration, Act, React); st.Pose(Mood); }
+            if (SceneMode) { st.Phone = Phone; st.ShowNpc(NpcSpec); st.Shot(ShotKind, SpeakerIsYou, 6f, Narration, Act, React); st.Pose(Mood); }
             Label hint = null;
             if (!st.HasBody && fallback != null && fallback.parent == null)
             {
@@ -749,7 +772,7 @@ namespace CFDream.Character
             RegisterCallback<DetachFromPanelEvent>(e => st.Changed -= onChanged);
             if (st.HasBody && fallback != null && fallback.parent == this) { Remove(fallback); if (hint != null && hint.parent == this) Remove(hint); }
             // a room view's texture follows the view's shape
-            if (Room || SceneMode) RegisterCallback<GeometryChangedEvent>(e => { if (Aspect() > 0 && (st.InRoom || SceneMode)) { st.RoomTexture(Aspect()); SetTexture(st); if (SceneMode) st.Shot(ShotKind, SpeakerIsYou, 6f, Narration, Act, React); } });
+            if (Room || SceneMode) RegisterCallback<GeometryChangedEvent>(e => { if (Aspect() > 0 && (st.InRoom || SceneMode)) { st.RoomTexture(Aspect()); SetTexture(st); if (SceneMode) { st.Phone = Phone; st.Shot(ShotKind, SpeakerIsYou, 6f, Narration, Act, React); } } });
         }
         void SetTexture(CharacterStage st)
         {

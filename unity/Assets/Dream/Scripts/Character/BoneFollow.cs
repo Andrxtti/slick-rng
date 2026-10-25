@@ -37,4 +37,17 @@ namespace CFDream.Character
             return null;
         }
     }
+
+    // the phone in your hand: after the arm settles each frame, it sits in the palm with the screen toward your face
+    [DefaultExecutionOrder(1000)]
+    public class PhoneHold : MonoBehaviour
+    {
+        public Transform pivot; public Func<Transform> hand, head;
+        void LateUpdate()
+        {
+            Transform h = hand?.Invoke(), hd = head?.Invoke(); if (h == null || hd == null || pivot == null) return;
+            Vector3 face = (hd.position - h.position).normalized;
+            transform.SetPositionAndRotation(h.position + Vector3.up * 0.035f + face * 0.03f, Quaternion.LookRotation(face, pivot.up));
+        }
+    }
 }

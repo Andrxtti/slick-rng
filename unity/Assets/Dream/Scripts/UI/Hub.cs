@@ -451,6 +451,8 @@ namespace CFDream.UI
                     : "Pick the nights you'll play. Full-time, *any night* works: *3 online games*, or a *live game plus 1 online*. Planning tells the game *which nights to take you to*. Tap *Done* when you're set.", rows));
                 box.Add(U.Btn("Done", () => { Calendar.PlanDone(s); DreamApp.CloseModal(); if (first) Game.FirstPlanDone(); else Game.Hub(); }, "gold wide").Mt(12));
             });
+            // the very first plan can't be skipped: no X, so the week always gets picked
+            if (first) DreamApp.I.Modal.Query(className: "icon-btn").ForEach(e => e.style.display = DisplayStyle.None);
         }
 
         static VisualElement Job(State s)

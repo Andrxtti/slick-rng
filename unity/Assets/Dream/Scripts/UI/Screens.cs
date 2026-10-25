@@ -332,7 +332,7 @@ namespace CFDream.UI
                     if (b.mood == "win" || b.mood == "bust" || b.mood == "cooler") shot = sc.i == 0 ? "wide" : "cu";
                     if (!string.IsNullOrEmpty(b.shot) && sc.extra.Count == 0) shot = b.shot;   // the shot list wins over the formula
                     string setTier = def.place == "home" ? st.Eq("home") : "set_" + (def.place ?? "cardroom");
-                    var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = (b.on == "you" && sc.extra.Count == 0) || speakerYou || other == null, Narration = b.sp == "n" || b.text, Mood = b.mood, Act = sc.extra.Count == 0 ? b.act : null, React = sc.extra.Count == 0 ? b.react : null };
+                    var film = new CharacterView(CharacterSpec.From(st), null, 0, 0, "scene") { Tier = setTier, NpcSpec = ofig != null ? CharacterSpec.From(ofig.look, ofig.eq, ofig.dye, ofig.fin) : null, ShotKind = shot, SpeakerIsYou = (b.on == "you" && sc.extra.Count == 0) || speakerYou || other == null, Narration = b.sp == "n" || b.text, Phone = b.text && sc.extra.Count == 0, Mood = b.mood, Act = sc.extra.Count == 0 ? b.act : null, React = sc.extra.Count == 0 ? b.react : null };
                     film.AddToClassList("film");
                     Film(film, def, sc, tint);
                     stage.Add(film); stage.AddToClassList("movie");

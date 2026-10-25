@@ -63,7 +63,7 @@ namespace CFDream
             Render();
             if (Run != null) return;
             // home after the office: look around, then Slick's offer lands on your phone
-            if (s.FlagN("needjob") > 0) { if (CFDream.UI.Tips.Seen(s, "t10") || CFDream.UI.Tips.Off(s)) OfferSoon(4000); return; }
+            if (s.FlagN("needjob") > 0) { OfferSoon(CFDream.UI.Tips.Seen(s, "t10") || CFDream.UI.Tips.Off(s) ? 4000 : 40000); return; }   // the walking tip normally sends it sooner; the long wait is a safety net
             // the first week: the Spacepad opens on its own, then the planner
             if (s.FlagN("needplan") > 0)
                 CFDream.UI.Tips.Show("t12", "Your Spacepad", "This is your *Spacepad*, your laptop for everything poker: tonight's games, the calendar, your money and your job. The tabs at the bottom take you *Home*, to the *Closet*, *Online*, your *Career* and the *Story*.",
@@ -71,13 +71,13 @@ namespace CFDream
         }
         // the walking tip is done: give them a moment in the apartment before the phone buzzes
         public static void HomeTipDone() { if (State != null && State.FlagN("needjob") > 0) OfferSoon(2500); }
-        static bool offerSet;
+        static int offerGen;
         static void OfferSoon(int ms)
         {
-            if (offerSet) return; offerSet = true;
+            int gen = ++offerGen;   // a newer call (the walking tip finishing) replaces the safety-net wait
             CFDream.UI.Tips.Later(ms, () =>
             {
-                offerSet = false;
+                if (gen != offerGen) return;
                 if (State == null || State.FlagN("needjob") <= 0 || Run != null || View == View.Scene || View == View.Transit) return;
                 CFDream.UI.DreamApp.CloseModal(); Sound.Play("text", 0.8f); PlayScene("p_offer");
             });
