@@ -9,13 +9,18 @@
 const E = require('../../app/engine.js');
 
 const OPEN = (eff) => (eff >= 50 ? 2.3 : eff >= 35 ? 2.2 : eff >= 25 ? 2.1 : 2.0);
-const SB_OPEN = (eff) => (eff >= 40 ? 3.0 : eff >= 20 ? 2.5 : 2.0);
+const SB_OPEN = (eff) => (eff >= 75 ? 4.0 : eff >= 28 ? 3.5 : eff >= 18 ? 3.0 : 2.5);   // solved BvB sizes (8-max ChipEV, 12.5% ante)
 const ISO = (eff) => (eff >= 30 ? 3.5 : 3.0);           // BB raise over an SB complete
-const JAM_CAP = { 1: 25, 2: 50, 3: 100 };                // deepest effective stack where a jam is on the menu, by raise level
+const JAM_CAP = { 1: 25, 2: 50, 3: 100 };
+const JAM_CAP_NONBLIND3 = +(process.env.JAMCAP3 || 25);   // non-blind 3-bettors jam only at 25bb or less (small 3-bets above that)                // deepest effective stack where a jam is on the menu, by raise level
 
-// postflop realization, fitted to published solver equity-realization reports (IP ~1.15, OOP ~0.8 in
-// single-raised pots at 20-100bb): the positional penalty holds until stacks are nearly all in
-const MODEL = { rLow: 0.70, gammaK: 0.0, s0: 1.0, s1: 2.0 };
+// postflop realization. Aggregate EQR fitted to published solver reports (IP ~1.15, OOP ~0.8 in single-raised pots);
+// the hand-strength curve (gammaK) and the low-SPR fade (s0/s1) fitted to Pairrd frames from the RYE Masterclass
+// (30bb 8-max: UTG RFI 17.4%, HJ vs UTG call 9.3 / 3-bet 5.2, UTG vs 3-bet fold 6.8 / call 7.4 / jam 3.8; 40bb BB vs UTG
+// defends ~67%). See tools/pf/out/ref30_F.txt, ref40_F.txt.
+const env = (k, d) => (process.env[k] !== undefined ? +process.env[k] : d);
+// kInit: an out-of-position preflop aggressor (a blind 3-bettor, a squeezer) gets back this share of the positional penalty
+const MODEL = { rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
 class PF2 extends E.PreflopSolver {
   constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, ...cfg }; super(cfg); }
   prepTerminal(nd) {
@@ -25,8 +30,39 @@ class PF2 extends E.PreflopSolver {
     const order = (this.cfg.postOrder || alive).filter((i) => alive.includes(i)), k = order.length;
     const behind = alive.map((i) => this.cfg.stacks[i] - nd.put[i]).sort((a, b) => b - a)[1], spr = behind / Math.max(pot, 1e-9);
     const ramp = Math.min(1, Math.max(0, (spr - MODEL.s0) / MODEL.s1)), rLow = this.cfg.rLow;
-    order.forEach((i, r) => { const r0 = k === 1 ? 1 : rLow + (1 - rLow) * (r / (k - 1)); nd.R[i] = 1 - (1 - r0) * ramp; });
-    nd.gamma = 1 + this.cfg.gammaK * Math.log(1 + spr);
+    order.forEach((i, r) => {
+      let r0 = k === 1 ? 1 : rLow + (1 - rLow) * (r / (k - 1));
+      if (i === nd.aggr && r < k - 1) r0 += (1 - r0) * MODEL.kInit;
+      if (nd.aggr < 0 && r < k - 1) r0 += (1 - r0) * MODEL.kLimp;                   // limped pot: nobody has the initiative
+      nd.R[i] = 1 - (1 - r0) * ramp;
+    });
+    nd.gamma = 1 + this.cfg.gammaK * Math.log(1 + spr) * (MODEL.gRamp ? ramp : 1);   // hand-strength curve fades with the positional edge as stacks get short
+    // stacks left behind still get played: at a low stack-to-pot ratio the rest usually goes in by the turn, which is
+    // where value hands get paid (the reason to 3-bet small and let them jam). A share pAll of these flops is settled as
+    // an all-in showdown for the remaining stacks; it fades from 1 at SPR 0.25 to 0 at SPR MODEL.pA.
+    nd.pAll = MODEL.pA > 0.25 ? Math.pow(Math.min(1, Math.max(0, (MODEL.pA - spr) / (MODEL.pA - 0.25))), MODEL.pAk) : 0;
+    if (nd.pAll > 0) {
+      const tw = { kind: 'show', put: nd.put.slice(), folded: nd.folded.slice(), aggr: nd.aggr, twin: true };
+      for (const i of alive) tw.put[i] = this.cfg.stacks[i];
+      super.prepTerminal(tw); nd.twin = tw;
+    } else nd.twin = null;
+  }
+  // heads-up: how often the rest goes in depends on the matchup. Close matchups get it in; a dominated hand mostly
+  // gives up on the flop (losing only the pot), so the stack-off share scales with 2*min(eq, 1-eq). Zero-sum by symmetry.
+  termVec2(nd, p, o, out) {
+    super.termVec2(nd, p, o, out);
+    if (nd.kind !== 'flop' || !nd.twin || !(nd.pAll > 0)) return;
+    const tmp = this._twv2 || (this._twv2 = new Float64Array(this.NC)); super.termVec2(nd.twin, p, o, tmp);
+    const oc = this.cls[o], NC = this.NC;
+    for (let c = 0; c < NC; c++) { const eq = this.EQ[c * NC + oc], q = nd.pAll * Math.min(1, 2 * Math.min(eq, 1 - eq) * MODEL.pM); out[c] = (1 - q) * out[c] + q * tmp[c]; }
+  }
+  // multiway pots, and players who already folded (their ICM equity still moves with the others' stacks)
+  termVec(nd, p, out) {
+    super.termVec(nd, p, out);
+    if (nd.kind !== 'flop' || !nd.twin || !(nd.pAll > 0)) return;
+    if (nd.alive.length === 2 && nd.alive.includes(p)) return;                     // handled per matchup in termVec2
+    const tmp = this._twv || (this._twv = new Float64Array(this.NC)); super.termVec(nd.twin, p, tmp);
+    const q = nd.pAll * MODEL.pMw; for (let c = 0; c < this.NC; c++) out[c] = (1 - q) * out[c] + q * tmp[c];
   }
   buildTree() {
     const cfg = this.cfg, n = this.n, st = cfg.stacks;
@@ -57,7 +93,7 @@ class PF2 extends E.PreflopSolver {
       let others = 0; for (let j = 0; j < n; j++) if (j !== p && !s.folded[j] && !s.allin[j]) others++;
       const callers = s.vol.filter((v, j) => v && !s.folded[j]).length - 1;
       const eff = effOf(s, p), L = s.level + 1;
-      const jamOk = eff <= (JAM_CAP[L] || 1e9) + 1e-9 || L >= 4;
+      const jamOk = eff <= ((L === 2 && name !== 'SB' && name !== 'BB') ? JAM_CAP_NONBLIND3 : (JAM_CAP[L] || 1e9)) + 1e-9 || L >= 4;
       if (cfg.pushFold) { if (toCall > 1e-9) o.push({ k: 'fold' }); else o.push({ k: 'check' }); if (s.level === 0 && toCall > 1e-9) { o.push({ k: 'allin', to: st[p], L: 1 }); } else if (s.level >= 1) o.push({ k: 'call' }); return o; }
       if (toCall > 1e-9) {
         o.push({ k: 'fold' });
@@ -77,10 +113,18 @@ class PF2 extends E.PreflopSolver {
       if (s.level >= 3 && !inVol) return o;                                        // cold vs a 4-bet: fold only
       let to = 0;
       if (L === 1) to = name === 'SB' ? SB_OPEN(eff) : name === 'BB' ? ISO(eff) : OPEN(eff);
-      else if (L === 2) { const ip = inPos(s, p), mult = ip ? 3.0 : (name === 'SB' || name === 'BB') ? 3.8 : 3.4; to = s.bet * mult + Math.max(0, callers) * s.bet; }
-      else if (L === 3) to = s.bet * (inPos(s, p) ? 2.2 : 2.4);
+      else if (L === 2) {
+        // 3-bet sizes by depth (RYE Masterclass anchors: 2.75x at 20bb vs a min-raise, ~3x at 30bb, 3-3.2x IP / ~3.5x OOP
+        // deep), squeezes much bigger (+1.5 opens per caller: ~13bb at 100bb vs a 2.3x open and a call)
+        // in position = acts after the opener (and any callers) postflop; players still to act behind don't count
+        const ip = postRank(p) > postRank(s.raiser) && s.vol.every((v, j) => !v || j === p || s.folded[j] || postRank(p) > postRank(j)), blind = name === 'SB' || name === 'BB';
+        let mult = eff <= 25 ? (ip ? 2.75 : 3.0) : eff <= 50 ? (ip ? 2.9 : 3.3) : (ip ? 3.1 : blind ? 3.6 : 3.4);
+        if (name === 'SB' && cfg.names[s.raiser] === 'BB') mult = 2.8;          // SB limp, BB raises: the re-raise is small
+        to = s.bet * mult + Math.max(0, callers) * (eff <= 25 ? 0.75 : 1.5) * s.bet;
+      }
+      else if (L === 3) { const ip4 = postRank(p) > postRank(s.raiser); to = s.bet * (eff >= 50 ? (ip4 ? 2.5 : 2.8) : (ip4 ? 2.2 : 2.3)); }   // 4-bets: 6 -> 13 at 30bb
       const coldVs3 = s.level === 2 && !inVol;
-      const sized = L <= 3 && !coldVs3 && to > 0 && to < st[p] * 0.4 && to >= s.bet + s.lastRaise - 1e-9;
+      const sized = L <= 3 && !coldVs3 && to > 0 && to < st[p] * (L === 3 ? 0.5 : 0.4) && to >= s.bet + s.lastRaise - 1e-9;
       if (sized) o.push({ k: 'raise', to: r1(to), L });
       if (jamOk || !sized) o.push({ k: 'allin', to: st[p], L });
       return o;
@@ -100,7 +144,7 @@ class PF2 extends E.PreflopSolver {
       const p = next(s);
       if (p < 0) {
         const lv = live(s); let free = 0; for (let j = 0; j < n; j++) if (!s.folded[j] && !s.allin[j]) free++;
-        const nd = { kind: lv === 1 ? 'fold' : free >= 2 ? 'flop' : 'show', put: s.put.slice(), folded: s.folded.slice() };
+        const nd = { kind: lv === 1 ? 'fold' : free >= 2 ? 'flop' : 'show', put: s.put.slice(), folded: s.folded.slice(), aggr: s.raiser };
         this.prepTerminal(nd); this.nodes.push(nd); return this.nodes.length - 1;
       }
       const os = opts(s, p);
