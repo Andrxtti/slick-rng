@@ -20,7 +20,9 @@ const JAM_CAP_NONBLIND3 = +(process.env.JAMCAP3 || 25);   // non-blind 3-bettors
 // defends ~67%). See tools/pf/out/ref30_F.txt, ref40_F.txt.
 const env = (k, d) => (process.env[k] !== undefined ? +process.env[k] : d);
 // kInit: an out-of-position preflop aggressor (a blind 3-bettor, a squeezer) gets back this share of the positional penalty
-const MODEL = { io: env('IO', 0), pPos: env('PPOS', 1), pNeg: env('PNEG', 1), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
+// io 0.8 / pNeg 2: fitted to GTO Wizard's chip-EV solutions on Oct 25 (86.6% hand agreement at 100bb, 89.7% at 25bb over
+// the multiway and heads-up nodes in gwcmp.js); see MULTIWAY_NOTES.md
+const MODEL = { io: env('IO', 0.8), pPos: env('PPOS', 1), pNeg: env('PNEG', 2), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
 // Multiway flops (three or more players see the flop). The engine settles these with a random-board showdown and
 // splits the realization leak evenly between everyone, so a hand with no equity still collects a share of the pot and
 // suitedness/position-by-hand play no part. MW=1 uses the heads-up model generalized instead: each player's multiway
@@ -32,14 +34,14 @@ const MODEL = { io: env('IO', 0), pPos: env('PPOS', 1), pNeg: env('PNEG', 1), rL
 // proportion to their strength (position means the players behind you get to exploit your checks).
 // pos: shape of the position ladder with three or more in. 1 = evenly spaced (the heads-up rule extended); higher
 // values pull the middle seats toward the first to act, since only the last to act really has position in a multiway pot.
-// Defaults are the refit of Oct 25 against the course's 18 multiway charts (see MULTIWAY_NOTES.md): 87% hand agreement vs
-// 71% for the engine's own settlement, every group within a few points and never looser than the charts. MW=0 restores
-// the engine settlement.
+// Defaults (Oct 25 evening): the plain generalization of the heads-up model, no extra multiway tuning; the implied-odds
+// term and offsuit penalty above do the work. The afternoon's chart-fitted settings (play 1.5, gam 0.3, pen 2, pos 2)
+// imitated the course's ICM-tightened BB in chip EV and are withdrawn. MW=0 restores the engine settlement.
 // playk: extra playability weight per player beyond three (nut potential and implied odds matter more the more players
 // see the flop; offsuit broadways suffer more too).
 // init: how much of the preflop aggressor's initiative bonus (MODEL.kInit) survives with three or more in. A c-bet into two
 // or more players gets through far less often, so 1 keeps the heads-up bonus and 0 removes it multiway.
-const MW = { on: env('MW', 1), play: env('MWPLAY', 1.5), gam: env('MWGAM', 0.3), r: env('MWR', 1), pen: env('MWPEN', 2), leak: env('MWLEAK', 0), pos: env('MWPOS', 2), playk: env('MWPLAYK', 0), init: env('MWINIT', 1) };
+const MW = { on: env('MW', 1), play: env('MWPLAY', 1), gam: env('MWGAM', 0), r: env('MWR', 1), pen: env('MWPEN', 1), leak: env('MWLEAK', 0), pos: env('MWPOS', 1), playk: env('MWPLAYK', 0), init: env('MWINIT', 1) };
 const PLAY = (() => {
   const RK = '23456789TJQKA', t = new Float64Array(169);
   E.CLASS_NAMES.forEach((nm, i) => {
