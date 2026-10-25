@@ -22,6 +22,11 @@ for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
         # short-stack flats from a seat that doesn't close the action: the course teaches shove-or-fold at 12bb and
         # under, and that is where our flop model is weakest, so those hands are never quizzed
         hero = n['v']['seats'][n['h']]
+        # multiway (two or more opponents still in with a voluntary action): the postflop model has no real multiway
+        # term yet, so these spots are held back until they are verified against the course's multiway material
+        VOL = ('Raise', 'Call', 'Jam', 'Complete', 'Limp')
+        if sum(1 for i, x in enumerate(n['v']['seats']) if i != n['h'] and not x[3] and x[4].startswith(VOL)) >= 2:
+            dropped['multiway held back'] = dropped.get('multiway held back', 0) + 1; continue
         eff = min(hero[1], max([x[1] for i, x in enumerate(n['v']['seats']) if i != n['h'] and not x[3]] or [hero[1]]))
         def drop(kind, why):
             if kind not in n['a']: return
