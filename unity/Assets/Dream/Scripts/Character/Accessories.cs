@@ -329,6 +329,7 @@ namespace CFDream.Character
             var root = Root(c, "Glasses " + w.id, head);
             Vector3 E = C + c.up * c.M(c.f.eyeUp) + c.fwd * c.M(c.f.eyeFwd);
             float gap = c.M(c.f.eyeGap);
+            if (id == "shades") return PixelShades(c, root, C, E);   // Slick's 8-bit shades: deal with it
             string fr = "#151515", lens = "#ffffff1f"; float frT = 0.0026f, rx = 0.024f, ry = 0.019f; bool wide = false, metalFrame = false;
             switch (id)
             {
@@ -365,6 +366,29 @@ namespace CFDream.Character
             TubePart(root, "bridge", MeshKit.Ellipse(E + c.up * c.M(0.004f), c.right, c.up, gap - c.M(rx), c.M(0.004f), 10, 0, Mathf.PI), c.M(frT * 0.8f), frame, false);
             Temples(c, root, C, E, gap + c.M(rx), frT, frame);
             if (id == "masq") TubePart(root, "ribbon", MeshKit.Ellipse(C + c.up * c.M(c.f.eyeUp), c.right, c.fwd, c.M(c.f.headR + 0.003f), c.M(c.f.eyeFwd), 30, Mathf.PI * 1.1f, Mathf.PI * 1.9f), c.M(0.0018f), Mats.Fabric(Hex("#3a1458")), false);
+            return root;
+        }
+        // the meme glasses, pixel for pixel: a black bar, two stepped lenses, a white glint in each
+        static readonly string[] Pix = {
+            "XXXXXXXXXXXXXXXXXXXXXX",
+            ".XWWXXXXXX..XWWXXXXXX.",
+            "..XWXXXXX....XWXXXXX..",
+            "...XXXXX......XXXXX...",
+        };
+        static GameObject PixelShades(Ctx c, GameObject root, Vector3 C, Vector3 E)
+        {
+            float px = c.M(0.0056f); var rot = Quaternion.LookRotation(c.fwd, c.up);
+            var box = MeshKit.Box(new Vector3(px, px, px * 0.7f));
+            var black = Mats.Plastic(Hex("#0a0a0c"), 0.35f); var white = Mats.Plastic(Hex("#f4f4f4"), 0.2f);
+            int cols = Pix[0].Length;
+            for (int r = 0; r < Pix.Length; r++)
+                for (int k = 0; k < cols; k++)
+                {
+                    char ch = Pix[r][k]; if (ch == '.') continue;
+                    var pos = E + c.right * ((k - (cols - 1) / 2f) * px) + c.up * ((1.2f - r) * px);
+                    Part(root, box, ch == 'W' ? white : black, pos, rot);
+                }
+            Temples(c, root, C, E + c.up * (1.2f * px), cols / 2f * px, 0.003f, black);
             return root;
         }
         static void Temples(Ctx c, GameObject root, Vector3 C, Vector3 E, float halfW, float frT, Material frame)

@@ -12,6 +12,7 @@ namespace CFDream.UI
         public Look look = new Look();
         public Dictionary<string, string> eq = new Dictionary<string, string>();
         public Dictionary<string, int> dye = new Dictionary<string, int>(), fin = new Dictionary<string, int>();
+        public string photo;   // a drawn face to use instead of the vector portrait (Slick)
         public string E(string slot) => eq.TryGetValue(slot, out var v) && !string.IsNullOrEmpty(v) ? v : "none";
 
         public static Fig Of(State s) => new Fig { look = s.look, eq = s.eq, dye = s.dye, fin = s.fin };
@@ -25,7 +26,8 @@ namespace CFDream.UI
             var eq = J.O(p, "eq"); if (eq != null) foreach (var kv in eq) if (kv.Value is string s) f.eq[kv.Key] = s;
             return f;
         }
-        public static Fig Slick() => new Fig { look = new Look { skin = 3, hair = "slick", hairC = 0, facial = "stubble", eyeC = 1 }, eq = new Dictionary<string, string> { { "outfit", "leather" }, { "eyes", "shades" }, { "chain", "silver" } } };
+        // Slick: messy dark hair, a dark long-sleeve, the 8-bit shades (the Slick RNG face)
+        public static Fig Slick() => new Fig { photo = "Dream/slick_face", look = new Look { skin = 4, hair = "short", hairC = 0, facial = "none", eyeC = 1 }, eq = new Dictionary<string, string> { { "outfit", "track" }, { "eyes", "shades" } } };
         public static Fig For(string who)
         {
             if (who == "slick") return Slick();
@@ -51,9 +53,31 @@ namespace CFDream.UI
         {
             fig = f ?? new Fig(); this.ring = ring;
             style.width = size; style.height = size * 1.1f; style.flexShrink = 0;
+            var tex = string.IsNullOrEmpty(fig.photo) ? null : Resources.Load<Texture2D>(fig.photo);
+            if (tex != null)
+            {
+                style.height = size; style.backgroundImage = new StyleBackground(tex); style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
+                style.borderTopLeftRadius = style.borderTopRightRadius = style.borderBottomLeftRadius = style.borderBottomRightRadius = size / 2;
+                if (ring) { style.borderTopWidth = style.borderBottomWidth = style.borderLeftWidth = style.borderRightWidth = 2; style.borderTopColor = style.borderBottomColor = style.borderLeftColor = style.borderRightColor = C.H("#5aa9de"); }
+                return;
+            }
             generateVisualContent += Draw;
         }
 
+        // the 8-bit shades in the drawn portrait
+        static readonly string[] Pix = { "XXXXXXXXXXXXXXXXXXXXXX", ".XWWXXXXXX..XWWXXXXXX.", "..XWXXXXX....XWXXXXX..", "...XXXXX......XXXXX..." };
+        void PixelShades(Painter2D p, float cx, float ey, float sp)
+        {
+            int cols = Pix[0].Length; float px = (2 * sp + 11f) / cols, x0 = cx - cols * px / 2, y0 = ey - 1.6f * px;
+            for (int r = 0; r < Pix.Length; r++)
+                for (int k = 0; k < cols; k++)
+                {
+                    char ch = Pix[r][k]; if (ch == '.') continue;
+                    float x = x0 + k * px, y = y0 + r * px;
+                    p.fillColor = ch == 'W' ? C.H("#f4f4f4") : C.H("#0a0a0c");
+                    p.BeginPath(); p.MoveTo(P(x, y)); p.LineTo(P(x + px + 0.05f, y)); p.LineTo(P(x + px + 0.05f, y + px + 0.05f)); p.LineTo(P(x, y + px + 0.05f)); p.ClosePath(); p.Fill();
+                }
+        }
         static Color Pal(string key, int i, string fb)
         {
             var l = DB.List(key); if (l == null || l.Count == 0) return C.H(fb);
@@ -214,6 +238,7 @@ namespace CFDream.UI
             string eyes = fig.E("eyes");
             if (eyes != "none")
             {
+                if (eyes == "shades") { PixelShades(p, cx, ey, sp); goto doneEyes; }
                 bool dark = eyes == "shades" || eyes == "aviator" || eyes == "tinted" || eyes == "sport";
                 Color fr = eyes == "aviator" ? C.H("#d8c27a") : eyes == "readers" ? C.H("#6b5a45") : C.H("#151515"), lens = eyes == "tinted" ? C.A(C.H("#b65a2a"), 0.55f) : C.A(C.H("#0d0d10"), dark ? 0.85f : 0.08f);
                 float rw = eyes == "round" ? 4.2f : eyes == "sport" ? 5.4f : 4.8f, rh = eyes == "round" ? 4.2f : eyes == "aviator" ? 4.2f : 3.4f;
@@ -225,6 +250,7 @@ namespace CFDream.UI
                 Line(p, fr, 0.9f, cx - sp + rw, ey, cx + sp - rw, ey);
                 Line(p, fr, 0.8f, cx - sp - rw, ey, cx - fw, ey - 1); Line(p, fr, 0.8f, cx + sp + rw, ey, cx + fw, ey - 1);
             }
+            doneEyes:
 
             // headwear
             if (hat != "none")

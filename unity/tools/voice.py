@@ -46,7 +46,7 @@ def key_of(sp, t): return hashlib.md5((sp + "|" + t.replace("\r", "")).encode("u
 def speakable(t):
     t = t.replace("\n", ". ").replace("…", "...").replace("—", ", ").replace("–", ", ").replace("·", ", ")
     t = t.replace("$", "$").replace("&", " and ").replace("%", " percent").replace("#", " number ")
-    t = t.replace("GTO", "G T O").replace("ICM", "I C M").replace("WCS", "W C S").replace("SnG", "sit and go").replace("CF Tilt", "C F Tilt").replace("bb", " big blinds")
+    t = t.replace("GTO", "G T O").replace("ICM", "I C M").replace("WCS", "W C S").replace("SnG", "sit and go").replace("CF Tilt", "C F Tilt").replace("bb", " big blinds").replace("Mustich", "Mustick")
     t = "".join(ch for ch in t if ch.isprintable())
     while "  " in t: t = t.replace("  ", " ")
     return t.strip()
