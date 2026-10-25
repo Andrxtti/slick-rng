@@ -24,7 +24,7 @@ namespace CFDream.UI
         static VisualElement layer;
         static string showing; static bool pending;
         public static bool Busy => showing != null || pending;
-        static readonly Color Dim = new Color(0.02f, 0.02f, 0.03f, 0.72f);
+        static readonly Color Dim = new Color(0.01f, 0.01f, 0.015f, 0.9f);   // blended in linear space: 0.9 reads as a strong dim
         const string Lime = "#b8ff2e", Blue = "#7fbde6";
 
         public static bool Off(State s) => s != null && s.FlagN("tips_off") > 0;
