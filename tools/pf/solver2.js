@@ -26,7 +26,7 @@ const env = (k, d) => (process.env[k] !== undefined ? +process.env[k] : d);
 // kInit: an out-of-position preflop aggressor (a blind 3-bettor, a squeezer) gets back this share of the positional penalty
 // io 0.8 / pNeg 2: fitted to GTO Wizard's chip-EV solutions on Oct 25 (86.6% hand agreement at 100bb, 89.7% at 25bb over
 // the multiway and heads-up nodes in gwcmp.js); see MULTIWAY_NOTES.md
-const MODEL = { io: env('IO', 0.8), pPos: env('PPOS', 1), pNeg: env('PNEG', 2), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
+const MODEL = { io: env('IO', 0.8), pPos: env('PPOS', 1), pNeg: env('PNEG', 2), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), gRe: env('GRE', 0), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6) };
 // Multiway flops (three or more players see the flop). The engine settles these with a random-board showdown and
 // splits the realization leak evenly between everyone, so a hand with no equity still collects a share of the pot and
 // suitedness/position-by-hand play no part. MW=1 uses the heads-up model generalized instead: each player's multiway
@@ -80,7 +80,9 @@ class PF2 extends E.PreflopSolver {
       if (nd.aggr < 0 && r < k - 1) r0 += (1 - r0) * MODEL.kLimp;                   // limped pot: nobody has the initiative
       nd.R[i] = 1 - (1 - r0) * ramp;
     });
-    nd.gamma = 1 + this.cfg.gammaK * Math.log(1 + spr) * (MODEL.gRamp ? ramp : 1);   // hand-strength curve fades with the positional edge as stacks get short
+    // hand-strength curve; steeper in re-raised pots (gRe per raise level past the open: ranges are strong and tight there,
+    // so a weak hand realizes even less of its equity), fades with the positional edge as stacks get short (gRamp)
+    nd.gamma = 1 + this.cfg.gammaK * (1 + MODEL.gRe * Math.max(0, (nd.level || 1) - 1)) * Math.log(1 + spr) * (MODEL.gRamp ? ramp : 1);
     // stacks left behind still get played: at a low stack-to-pot ratio the rest usually goes in by the turn, which is
     // where value hands get paid (the reason to 3-bet small and let them jam). A share pAll of these flops is settled as
     // an all-in showdown for the remaining stacks; it fades from 1 at SPR 0.25 to 0 at SPR MODEL.pA.
@@ -244,7 +246,7 @@ class PF2 extends E.PreflopSolver {
       const p = next(s);
       if (p < 0) {
         const lv = live(s); let free = 0; for (let j = 0; j < n; j++) if (!s.folded[j] && !s.allin[j]) free++;
-        const nd = { kind: lv === 1 ? 'fold' : free >= 2 ? 'flop' : 'show', put: s.put.slice(), folded: s.folded.slice(), aggr: s.raiser };
+        const nd = { kind: lv === 1 ? 'fold' : free >= 2 ? 'flop' : 'show', put: s.put.slice(), folded: s.folded.slice(), aggr: s.raiser, level: s.level };
         this.prepTerminal(nd); this.nodes.push(nd); return this.nodes.length - 1;
       }
       const os = opts(s, p);

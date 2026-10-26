@@ -43,7 +43,9 @@ const SPOTS = [
 const s = new PF2(cfg);
 const f = (keys) => { let id = 0; for (const k of keys) { const nd = s.nodes[id]; if (!nd || nd.kind !== 'act') return -1; const a = nd.actions.findIndex((x) => x.k === k); if (a < 0) return -1; id = nd.children[a]; } return id; };
 const SIZE = new Array(169).fill(0); for (let i = 0; i < E.NUM_COMBOS; i++) SIZE[E.CLASS_OF[i]]++;
-const ids = SPOTS.map(([t, p]) => { const id = f(p); if (id < 0 || s.nodes[id].kind !== 'act') throw new Error('no node for ' + t); return id; });
+// spots whose line does not exist at this depth (a 4-bet below the jam cap, say) are skipped with a note
+for (let i = SPOTS.length - 1; i >= 0; i--) { const id = f(SPOTS[i][1]); if (id < 0 || s.nodes[id].kind !== 'act') { console.log('no node at ' + S + 'bb for ' + SPOTS[i][0] + ', skipped'); SPOTS.splice(i, 1); } }
+const ids = SPOTS.map(([t, p]) => f(p));
 const width = (id) => { const nd = s.nodes[id], fi = nd.actions.findIndex((a) => a.k === 'fold'); let w = 0; for (let c = 0; c < 169; c++) w += SIZE[c] * (1 - s.avg(id, c)[fi]); return (100 * w) / 1326; };
 const t0 = Date.now(), step = Math.min(300, SECS);
 for (let done = 0; done < SECS; done += step) {
