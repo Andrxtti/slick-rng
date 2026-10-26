@@ -12,6 +12,10 @@ const OPEN = (eff) => (eff >= 50 ? 2.3 : eff >= 35 ? 2.2 : eff >= 25 ? 2.1 : 2.0
 const SB_OPEN = (eff) => (eff >= 75 ? 4.0 : eff >= 28 ? 3.5 : eff >= 18 ? 3.0 : 2.5);   // solved BvB sizes (8-max ChipEV, 12.5% ante)
 const ISO = (eff) => (eff >= 30 ? 3.5 : 3.0);           // BB raise over an SB complete
 const JAM_CAP = { 1: 25, 2: 50, 3: 100 };
+// 3-bet size as a multiple of the open, by effective stack: the course's short-stack anchors (2.75x in position / 3.0x
+// out of position at 25bb and under), then a line through GTO Wizard's 40 / 60 / 100bb sizes
+const oop3 = (e) => (e <= 25 ? 3.0 : e <= 40 ? 3.0 + ((e - 25) / 15) * 0.5 : e <= 60 ? 3.5 + ((e - 40) / 20) * 0.25 : e <= 100 ? 3.75 + ((e - 60) / 40) * 0.75 : 4.5);
+const ip3 = (e) => oop3(e) - (e <= 25 ? 0.25 : e >= 50 ? 0.5 : 0.25 + ((e - 25) / 25) * 0.25);
 const JAM_CAP_NONBLIND3 = +(process.env.JAMCAP3 || 25);   // non-blind 3-bettors jam only at 25bb or less (small 3-bets above that)                // deepest effective stack where a jam is on the menu, by raise level
 
 // postflop realization. Aggregate EQR fitted to published solver reports (IP ~1.15, OOP ~0.8 in single-raised pots);
@@ -211,12 +215,14 @@ class PF2 extends E.PreflopSolver {
         // 3-bet sizes by depth (RYE Masterclass anchors: 2.75x at 20bb vs a min-raise, ~3x at 30bb, 3-3.2x IP / ~3.5x OOP
         // deep), squeezes much bigger (+1.5 opens per caller: ~13bb at 100bb vs a 2.3x open and a call)
         // in position = acts after the opener (and any callers) postflop; players still to act behind don't count
-        const ip = postRank(p) > postRank(s.raiser) && s.vol.every((v, j) => !v || j === p || s.folded[j] || postRank(p) > postRank(j)), blind = name === 'SB' || name === 'BB';
-        let mult = eff <= 25 ? (ip ? 2.75 : 3.0) : eff <= 50 ? (ip ? 2.9 : 3.3) : (ip ? 3.1 : blind ? 3.6 : 3.4);
+        const ip = postRank(p) > postRank(s.raiser) && s.vol.every((v, j) => !v || j === p || s.folded[j] || postRank(p) > postRank(j));
+        // deeper, GTO Wizard's MTT chip-EV sizes (read Oct 26): SB 3-bet vs BTN 3.5x at 40bb, 3.75x at 60bb, 4.5x at
+        // 100bb; BTN 3-bet vs UTG 4.0x at 100bb; a squeeze adds 0.5x per caller (5.5x vs an open and two calls)
+        let mult = ip ? ip3(eff) : oop3(eff);
         if (name === 'SB' && cfg.names[s.raiser] === 'BB') mult = 2.8;          // SB limp, BB raises: the re-raise is small
-        to = s.bet * mult + Math.max(0, callers) * (eff <= 25 ? 0.75 : 1.5) * s.bet;
+        to = s.bet * mult + Math.max(0, callers) * (eff <= 25 ? 0.75 : 0.5) * s.bet;
       }
-      else if (L === 3) { const ip4 = postRank(p) > postRank(s.raiser); to = s.bet * (eff >= 50 ? (ip4 ? 2.5 : 2.8) : (ip4 ? 2.2 : 2.3)); }   // 4-bets: 6 -> 13 at 30bb
+      else if (L === 3) to = s.bet * (eff >= 75 ? 2.2 : 2.0);   // 4-bets: GTO Wizard 2.2x at 100bb, 2.0x at 40-60bb (where the jam does most of the work)
       const coldVs3 = s.level === 2 && !inVol;
       const sized = L <= 3 && !coldVs3 && to > 0 && to < st[p] * (L === 3 ? 0.5 : 0.4) && to >= s.bet + s.lastRaise - 1e-9;
       if (sized) o.push({ k: 'raise', to: r1(to), L });

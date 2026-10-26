@@ -35,6 +35,10 @@ const SPOTS = [
   ['BB vs BTN open', [...F(5), 'raise', 'fold']],
   ['UTG1 vs UTG open', ['raise']],
   ['CO vs UTG open', ['raise', 'fold', 'fold', 'fold']],
+  // 3-bet / 4-bet structure (GTO Wizard reference nodes read Oct 26)
+  ['BTN vs SB 3-bet', [...F(5), 'raise', 'raise', 'fold']],
+  ['SB vs BTN 4-bet', [...F(5), 'raise', 'raise', 'fold', 'raise']],
+  ['UTG vs CO/BTN flats + SB squeeze', ['raise', 'fold', 'fold', 'fold', 'call', 'call', 'raise', 'fold']],
 ];
 const s = new PF2(cfg);
 const f = (keys) => { let id = 0; for (const k of keys) { const nd = s.nodes[id]; if (!nd || nd.kind !== 'act') return -1; const a = nd.actions.findIndex((x) => x.k === k); if (a < 0) return -1; id = nd.children[a]; } return id; };
