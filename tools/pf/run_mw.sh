@@ -11,7 +11,7 @@ worker() {
     b=$(basename "$f" .json); o="$OUTD/$b.json"
     [ -s "$o" ] && continue
     mkdir "$OUTD/.claim/$b" 2>/dev/null || continue
-    T=${SECS:-300}; case $b in shove-*) T=${SHOVE_SECS:-240};; ring-*) T=${RING_SECS:-480};; esac
+    T=${SECS:-300}; case $b in shove-*) T=${SHOVE_SECS:-240};; ring-*) T=${RING_SECS:-480};; bubble-*) T=${BUBBLE_SECS:-$T};; sat-*) T=${SAT_SECS:-$T};; esac
     if node solve_lib.js "$f" "$T" "${EVS}" "$o" >> "$OUTD/log.txt" 2>&1; then echo "done $b" >> "$OUTD/log.txt"; else echo "FAIL $b" >> "$OUTD/log.txt"; rm -rf "$OUTD/.claim/$b"; fi
   done
 }

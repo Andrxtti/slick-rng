@@ -67,7 +67,7 @@ const GAP = unit === 'icm' ? 0.02 : 0.12;
 const PREMIUM = new Set(['AA', 'KK', 'QQ', 'JJ', 'AKs', 'AKo']), NAMES = E.CLASS_NAMES;
 const EQR = (() => { const v = []; for (let c = 0; c < NC; c++) { let s2 = 0, w = 0; for (let o = 0; o < NC; o++) { s2 += E.EQ169[c * NC + o] * SIZE[o]; w += SIZE[o]; } v.push(s2 / w); } return v; })();
 const RANK = (() => { const idx = [...Array(NC).keys()].sort((a, b) => EQR[b] - EQR[a]); const r = new Array(NC); idx.forEach((c, i) => (r[c] = i)); return r; })();
-const out = [];
+const out = [], verdicts = [];
 let firsts = 0, seconds = 0, fragile = 0, bvbSkip = 0, flatSkip = 0;
 const cands = found.filter((f) => f.clean && s.nodes[f.id].actions.some((a) => a.k === 'fold'));
 cands.sort((x, y) => y.prob - x.prob);
@@ -80,7 +80,14 @@ for (const f of cands) {
     const others = f.path.filter((e) => e.q !== sb && e.q !== bb);
     if ((hn === 'SB' || hn === 'BB') && sb >= 0 && bb >= 0 && others.every((e) => e.k === 'fold') && Math.min(cfg.stacks[sb], cfg.stacks[bb]) <= 25 + 1e-9) { bvbSkip++; continue; } }
   const jams = nonfold.filter((e) => e.k === 'allin').length; if (jams >= 2) continue;
-  if (f.first) { if (f.prob < 0.002 || firsts >= 16) continue; }
+  if (f.first ? f.prob < 0.002 : f.prob < 0.0005) continue;
+  // this pass's verdict on every candidate node, dealt here or not (the spot caps below pick different spots from one
+  // solve to the next): the clear best action by hand class, '.' where this pass saw a mix or an inconsistency. Other
+  // passes' dealt hands are checked against these, so a hand only ships when independent solves agree on it.
+  { const g = new Array(NC).fill('.');
+    for (let c = 0; c < NC; c++) { const st = s.avg(f.id, c), ev = s.evOf2(f.id, c) || s.evOf(f.id, c); if (!ev) continue; const top = Math.max(...st), fav = st.indexOf(top); if (top >= 0.55 && ev[fav] >= Math.max(...ev) - tol) g[c] = String(fav); }
+    verdicts.push([f.h, f.path.map((e) => e.k), keys, g.join('')]); }
+  if (f.first) { if (firsts >= 16) continue; }
   else { const mine = f.path.filter((e) => e.q === f.h); if (seconds >= 8 || nonfold.length > 2 || !['raise', 'allin'].includes(nonfold[nonfold.length - 1].k) || f.prob < 0.0005 || !mine.length) continue; }
   const aggro = nonfold.length > 0 && nonfold.some((e) => e.k === 'raise' || e.k === 'allin');
   const rows = []; let tried = 0, incons = 0; const best = new Array(NC).fill('.');
@@ -131,6 +138,6 @@ for (const f of cands) {
 }
 // self-check: every label must describe its own action
 for (const n of out) n.a.forEach((k, i) => { const l = n.v.opts[i].toLowerCase(); const ok = k === 'fold' ? l === 'fold' : k === 'check' ? l === 'check' : k === 'call' ? (l.startsWith('call') || l === 'complete') : k === 'allin' ? l.startsWith('jam') : /^(raise|3-bet|4-bet)/.test(l); if (!ok) throw new Error('label mismatch ' + k + ' / ' + l); });
-const res = { gid: D.gid, unit, snap: D.snap, file: file.split('/').pop(), model: { rLow: base.rLow, gammaK: base.gammaK, s0: MODEL.s0, s1: MODEL.s1, kInit: MODEL.kInit, pA: MODEL.pA, jamCap3: +(process.env.JAMCAP3 || 25) }, fragile, bvbSkip, flatSkip, iters: s.iters, nodes: s.nodes.length, secs: Math.round((Date.now() - t0) / 1000), spots: out };
+const res = { gid: D.gid, unit, snap: D.snap, file: file.split('/').pop(), model: { rLow: base.rLow, gammaK: base.gammaK, s0: MODEL.s0, s1: MODEL.s1, kInit: MODEL.kInit, pA: MODEL.pA, jamCap3: +(process.env.JAMCAP3 || 25) }, fragile, bvbSkip, flatSkip, iters: s.iters, nodes: s.nodes.length, secs: Math.round((Date.now() - t0) / 1000), spots: out, verdicts };
 fs.writeFileSync(OUT, JSON.stringify(res));
 process.stderr.write(`done ${res.file}: ${out.length} spots (${firsts} first, ${seconds} second), ${fragile} model-sensitive hands held back, ${bvbSkip} short BvB spots skipped, ${flatSkip} short flats held back, in ${res.secs}s\n`);
