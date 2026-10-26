@@ -151,3 +151,19 @@ under-penalized), it feeds the BB's multiway defense, and it belongs to the head
 - The shipped library is untouched. Turning the model on means re-solving all 56 tables through the gate (about 3 hours
   on this machine), then reviewing the 22 held-back multiway spots one by one (mwreview.js) against his 20-40bb
   guidance before any of them is dealt again.
+
+## Heads-up 3-bet / 4-bet structure (Oct 26 evening, A-1)
+
+GTO Wizard MTT chip-EV sizes read from the account (gw/SIZES.md): SB 3-bet vs BTN 3.5x at 40bb, 3.75x at 60bb, 4.5x
+at 100bb; BTN 3-bet vs UTG 4.0x at 100bb; a squeeze adds 0.5x per caller; 4-bets 2.2x at 100bb, 2.0x at 40-60bb (where
+the jam does most of the work: 3.7-6.2% jams, under 0.3% small 4-bets); 5-bets 2.1x or jam. Our tree now follows a
+depth curve through those points above 25bb (the course's 2.75x / 3.0x anchors stay at 25bb and under).
+Sizes alone left the opener and the 3-bettor continuing far too much (BTN vs SB 3-bet 62% of its range vs 45%, opener
+vs squeeze 67% vs 31%): offsuit aces, JTo/QTo and suited junk flatting 3-bets in position. A global steeper strength
+curve (gammaK 0.22-0.3) fixed that but folded the BB out of single-raised multiway pots (60 -> 51 vs GTO Wizard 67),
+so the steepness now scales with the raise level at the flop only (MODEL.gRe = 1: x2 in 3-bet pots, x3 in 4-bet pots).
+Result at 100bb 8-max: BTN vs SB 3-bet 47% (GW 45, agreement 82%), opener vs squeeze 46% (31, 73%), SB vs BTN 4-bet 67%
+(58, 57%: still loose, the one open item), every single-raised node unchanged, 25bb unchanged at 89.6%.
+Tested on a 3-handed BTN/SB/BB tree (hu.js), where these nodes are dense; in the 8-max tree the squeeze line is reached
+in ~0.2% of deals and a 600 s solve leaves most hands there at the starting mix. The Dream library (solved Oct 26
+morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solved for this; the chart library is.
