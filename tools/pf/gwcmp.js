@@ -23,12 +23,15 @@ const norm = (k) => k.replace(/R[\d.]+/g, 'R');
 const GW = {};
 for (const f of fs.readdirSync(path.join(__dirname, 'gw')).filter((x) => /^gw\d+\.txt$/.test(x))) for (const line of fs.readFileSync(path.join(__dirname, 'gw', f), 'utf8').trim().split('\n')) {
   const [key, body] = line.split('\t'); const parts = key.split('|'); const k = Math.round(+parts[0]) + '|' + norm(parts.slice(1).join('|')); const p = new Array(169);
-  for (const tok of body.trim().split(/\s+/)) { const [h, codes] = tok.split(':'); const o = { fold: 0, call: 0, raise: 0 }; for (const m of codes.matchAll(/([arcf])(\d+)/g)) o[m[1] === 'f' ? 'fold' : m[1] === 'c' ? 'call' : 'raise'] += +m[2] / 100; const s = o.fold + o.call + o.raise || 1; for (const a in o) o[a] /= s; p[N.indexOf(h)] = o; }
+  for (const tok of body.trim().split(/\s+/)) { const [h, codes] = tok.split(':'); const o = { fold: 0, call: 0, raise: 0 }; for (const m of codes.matchAll(/([arcf])(\d+)/g)) o[m[1] === 'f' ? 'fold' : m[1] === 'c' ? 'call' : 'raise'] += +m[2] / 100; const s = o.fold + o.call + o.raise; if (s > 0) for (const a in o) o[a] /= s; p[N.indexOf(h)] = o; }
   GW[k] = p;
 }
 const ours = (sp, c) => { const st = sp.st[c], o = { fold: 0, call: 0, raise: 0 }; sp.acts.forEach((k, i) => { o[k === 'allin' ? 'raise' : k] += st[i]; }); return o; };
-const width = (f) => { let w = 0, r = 0; for (let c = 0; c < 169; c++) { const o = f(c); w += SIZE[c] * (1 - o.fold); r += SIZE[c] * o.raise; } return [(100 * w) / 1326, (100 * r) / 1326]; };
-const agree = (f, g) => { let a = 0; for (let c = 0; c < 169; c++) { const o = f(c), q = g(c); a += SIZE[c] * (Math.min(o.fold, q.fold) + Math.min(o.call, q.call) + Math.min(o.raise, q.raise)); } return (100 * a) / 1326; };
+// hands GTO Wizard lists at the node (at a 3-bet or 4-bet node only the hands that got there have an entry); the
+// others count neither in widths nor in agreement
+const has = (o) => o && o.fold + o.call + o.raise > 0.5;
+const width = (f, g) => { let w = 0, r = 0, n = 0; for (let c = 0; c < 169; c++) { if (g && !has(g(c))) continue; const o = f(c); n += SIZE[c]; w += SIZE[c] * (1 - o.fold); r += SIZE[c] * o.raise; } return [(100 * w) / n, (100 * r) / n]; };
+const agree = (f, g) => { let a = 0, n = 0; for (let c = 0; c < 169; c++) { const q = g(c); if (!has(q)) continue; const o = f(c); n += SIZE[c]; a += SIZE[c] * (Math.min(o.fold, q.fold) + Math.min(o.call, q.call) + Math.min(o.raise, q.raise)); } return (100 * a) / n; };
 const runs = process.argv.slice(2).map((f) => ({ tag: path.basename(f, '.json').replace(/^mw\d+_/, ''), d: require(path.resolve(f)) }));
 const STACK = runs.length ? Math.round(runs[0].d.stack || 100) : 100;
 if (runs.some((r) => Math.round(r.d.stack || 100) !== STACK)) throw new Error('all runs must share one stack');
@@ -38,9 +41,9 @@ console.log(hdr);
 const tot = { rye: [], runs: runs.map(() => []) };
 for (const [k0, title] of Object.entries(MAP)) {
   const g = GW[STACK + '|' + norm(k0)]; if (!g) continue;
-  const gw = (c) => g[c], ch = STACK === 100 ? X[title] : null; const [wg, rg] = width(gw);
+  const gw = (c) => g[c], ch = STACK === 100 ? X[title] : null; const [wg, rg] = width(gw, gw);
   const row = [title.padEnd(29), `${wg.toFixed(0).padStart(3)}/${ch ? width((c) => ch.p[c])[0].toFixed(0).padStart(3) : ' - '}  (sq ${rg.toFixed(0)}/${ch ? width((c) => ch.p[c])[1].toFixed(0) : '-'})`];
-  for (const r of runs) { const sp = r.d.spots.find((s) => s.title === title); row.push(sp ? width((c) => ours(sp, c))[0].toFixed(0).padStart(12) : '-'.padStart(12)); }
+  for (const r of runs) { const sp = r.d.spots.find((s) => s.title === title); row.push(sp ? width((c) => ours(sp, c), gw)[0].toFixed(0).padStart(12) : '-'.padStart(12)); }
   const ag = ch ? agree((c) => ch.p[c], gw) : NaN; row.push(` | ${isNaN(ag) ? '   -' : ag.toFixed(0).padStart(3) + '%'}`); if (!isNaN(ag)) tot.rye.push(ag);
   runs.forEach((r, i) => { const sp = r.d.spots.find((s) => s.title === title); const a = sp ? agree((c) => ours(sp, c), gw) : NaN; row.push(isNaN(a) ? '-'.padStart(12) : (a.toFixed(0) + '%').padStart(12)); if (!isNaN(a)) tot.runs[i].push(a); });
   console.log(row.join('  '));
