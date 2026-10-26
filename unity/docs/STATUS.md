@@ -1,5 +1,21 @@
 # The Dream: status after Beta 1.69 (2026-10-24)
 
+## Beta 1.82 (2026-10-26): the verified hand library
+Every one of the 50 library tables (a table = one tournament situation: players, stacks, bubble/ITM/satellite/ring) was
+solved three separate times from scratch under the fitted realization model (implied odds 0.8, offsuit penalty 2x,
+multiway flop model on), and a hand is dealt only where the solves agree on its best play (tools/pf/consensus.py; a
+"not sure" from any solve counts as disagreement). Solves run to an iteration target, not a clock, so a slow machine
+cannot weaken a pass. Of 36,437 candidate hands, 21,915 ship in 927 spots: bubble 279 spots / 5,763 hands, shove 445 /
+10,646, ring 174 / 4,694, satellite 29 / 812 (3 of 4 satellite tables; the fourth has no stable answers: the solves
+land on different jam-or-fold strategies, which is satellite play being satellite play, so it ships nothing).
+Versus the Beta 1.81 library, 63 of 11,249 shared hands changed their best answer (0.6%), nearly all marginal flats
+facing a raise (A5s, A3s, 33, 44) that are now folds, the direction the GTO Wizard fit pointed.
+Multiway spots that reach a flop are back in (41 of them), with two hand families never quizzed there, per the course:
+offsuit junk flats from the big blind behind a raise and a caller (32o, J4o, K6o...: folds in MTTs), and TT+/AQ+ flats
+at 15bb or less with a jam on the menu (short-stack play jams them). Saved misses reset once (they index spot positions).
+Still out, unchanged: short flats from a seat that doesn't close the action, SB flats to 30bb, value jams when a small
+re-raise is offered at 35bb or less, 3-bet flats at 35bb or less, blind re-jams over 25bb with a small 3-bet available.
+
 ## Live
 Beta 1.69 at https://andrxtti.github.io/slick-rng/beta/app/ — Miami story, cinema scenes (coverage, DOF, establishing shots),
 third-person home, Study drill, Mixamo acting in scenes, re-voiced cast.
