@@ -3,7 +3,8 @@
 # Run it again whenever it was stopped (the 2h background limit); it clears stale claims and continues where it was.
 #   bash overnight.sh          -> appends progress lines to STATUS.txt, ends with "PIPELINE DONE" when everything is finished
 cd "$(dirname "$0")"
-N=$(ls cfgs/*.json | wc -l)
+# the library is the shove/bubble/sat/ring tables (the same globs run_mw.sh walks; cash-* configs are not in the library)
+N=$(ls cfgs/shove-*.json cfgs/bubble-*.json cfgs/sat-*.json cfgs/ring-*.json | wc -l)
 status() { echo "$(date '+%m-%d %H:%M') $*" >> STATUS.txt; }
 run_pass() { # $1 = output dir
   local d=$1; mkdir -p "$d/.claim"
