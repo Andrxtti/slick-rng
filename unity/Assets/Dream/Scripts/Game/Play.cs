@@ -118,8 +118,9 @@ namespace CFDream
         // the same seat, the same stacks, the same action in front of you; a spot leaves the list once you get it right
         public static List<MisSpot> Misses(State s)
         {
-            // the hand library was rebuilt (Beta 1.81): misses graded against the old library don't carry over
-            if (s.FlagN("libv") < 2) { s.pg.mis.Clear(); s.SetFlag("libv", 2); }
+            // the hand library was rebuilt (Beta 1.81, again in 1.82): misses point at spot positions in the library,
+            // so misses graded against an older library don't carry over
+            if (s.FlagN("libv") < 3) { s.pg.mis.Clear(); s.SetFlag("libv", 3); }
             var seen = new HashSet<string>(); var outp = new List<MisSpot>();
             for (int i = s.pg.mis.Count - 1; i >= 0; i--) { var m = s.pg.mis[i]; if (Valid(m) && seen.Add(m.g + "|" + m.t + "|" + m.n + "|" + m.c)) outp.Add(m); }
             return outp;
