@@ -4,14 +4,18 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../unity/Assets/Dream/Resources/Dream/spots.json')
 lib = {}; stats = {}; dropped = {'spots': 0}
 NAMES = json.loads(os.popen("node -e \"process.stdout.write(JSON.stringify(require('" + HERE + "/../../app/engine.js').CLASS_NAMES))\"").read())
-MWFLOP = json.loads(os.popen('node ' + HERE + '/mwflop.js').read())
+LIBDIR = os.environ.get('LIBDIR', 'out')   # LIBDIR=out_final exports the consensus library
+MWFLOP = json.loads(os.popen('LIBDIR=' + LIBDIR + ' node ' + HERE + '/mwflop.js').read())
+# hand classes ranked by all-in equity against a random hand (0 = AA); 60 and beyond is junk
+RANK = json.loads(os.popen("node -e \"const E=require('" + HERE + "/../../app/engine.js');const S=new Array(169).fill(0);for(let i=0;i<E.NUM_COMBOS;i++)S[E.CLASS_OF[i]]++;const q=[];for(let c=0;c<169;c++){let s=0,w=0;for(let o=0;o<169;o++){s+=E.EQ169[c*169+o]*S[o];w+=S[o]}q.push(s/w)}const idx=[...Array(169).keys()].sort((a,b)=>q[b]-q[a]);const r=new Array(169);idx.forEach((c,i)=>r[c]=i);process.stdout.write(JSON.stringify(r))\"").read())
 VALUE = {NAMES.index(h) for h in ('AA', 'KK', 'QQ', 'JJ', 'TT', 'AKs', 'AKo', 'AQs', 'AQo')}
 def kind(lbl):
     l = lbl.lower()
     return 'fold' if l == 'fold' else 'check' if l == 'check' else 'call' if (l.startswith('call') or l == 'complete') else 'allin' if l.startswith('jam') else 'raise'
-for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
+for f in sorted(glob.glob(os.path.join(HERE, LIBDIR, '*.json'))):
     if f.endswith('probe.json') or os.path.basename(f).startswith('ref'): continue
     d = json.load(open(f)); spots = d.get('spots') or []
+    if 'gid' not in d: continue   # fit/probe outputs (mw100_*.json and the like) share the folder
     if len(spots) < (2 if d['gid'] == 'sat' else 4): continue
     t = d['snap'].get('t222') or {}
     T = {'u': d['unit'], 'k': 1, 'left': t.get('left'), 'paid': t.get('paid'), 'avg': t.get('avg'), 'icm': d['unit'] == 'icm', 'bbAnte': bool(t.get('bbAnte')), 'n': []}
@@ -23,12 +27,16 @@ for f in sorted(glob.glob(os.path.join(HERE, 'out', '*.json'))):
         # short-stack flats from a seat that doesn't close the action: the course teaches shove-or-fold at 12bb and
         # under, and that is where our flop model is weakest, so those hands are never quizzed
         hero = n['v']['seats'][n['h']]
-        # multiway spots that reach a flop (two or more opponents in, and some line below the hero's decision sees a
-        # flop) depend on the multiway postflop model, which is held back until it is verified against the course's
-        # multiway charts. Multiway spots that only end in folds or all-in showdowns are exact all-in math and stay in.
-        if os.path.basename(f) + '|' + ','.join(n['p']) in MWFLOP:
-            dropped['multiway held back'] = dropped.get('multiway held back', 0) + 1; continue
         eff = min(hero[1], max([x[1] for i, x in enumerate(n['v']['seats']) if i != n['h'] and not x[3]] or [hero[1]]))
+        # multiway spots that reach a flop (two or more opponents in, and some line below the hero's decision sees a
+        # flop) depend on the multiway postflop model (fitted to GTO Wizard chip EV at 100bb/25bb and to the course's
+        # multiway charts, see MULTIWAY_NOTES.md). Two hand families there follow the course over the model and are
+        # never quizzed: offsuit junk flats (the course folds them in MTTs; our blind realization is too kind to them
+        # three-way) and TT+/AQ+ flats at 15bb or less with a jam on the menu (short-stack play jams them).
+        if os.path.basename(f) + '|' + ','.join(n['p']) in MWFLOP and 'call' in n['a']:
+            ci, jam = n['a'].index('call'), 'allin' in n['a']
+            keep = [r for r in n['r'] if not (r[2].index(max(r[2])) == ci and ((NAMES[r[0]].endswith('o') and RANK[r[0]] >= 60) or (r[0] in VALUE and jam and eff <= 15 + 1e-9)))]
+            dropped['multiway junk flat / short strong flat'] = dropped.get('multiway junk flat / short strong flat', 0) + len(n['r']) - len(keep); n['r'] = keep
         def drop(kind, why):
             if kind not in n['a']: return
             ki = n['a'].index(kind); keep = [r for r in n['r'] if r[2].index(max(r[2])) != ki]

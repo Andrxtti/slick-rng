@@ -6,7 +6,7 @@
 const fs = require('fs');
 const { PF2 } = require('./solver2.js');
 const VOL = ['Raise', 'Call', 'Jam', 'Complete', 'Limp'];
-const OUT = __dirname + '/out', res = {}, trees = {};
+const OUT = __dirname + '/' + (process.env.LIBDIR || 'out'), res = {}, trees = {};   // LIBDIR=out_final to scan another library dir
 for (const f of fs.readdirSync(OUT).filter((x) => x.endsWith('.json') && !x.startsWith('mw') && !x.startsWith('ref') && !x.endsWith('probe.json'))) {
   const d = JSON.parse(fs.readFileSync(OUT + '/' + f)); if (!d.spots || !d.file) continue;
   for (const n of d.spots) {
