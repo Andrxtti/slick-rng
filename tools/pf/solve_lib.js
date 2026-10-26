@@ -9,7 +9,10 @@ const t0 = Date.now(); const s = new PF2(cfg);
 const NC = 169, SIZE = new Array(NC).fill(0); for (let i = 0; i < E.NUM_COMBOS; i++) SIZE[E.CLASS_OF[i]]++;
 const nP = cfg.names.length;
 process.stderr.write(`${file.split('/').pop()} players ${nP} nodes ${s.nodes.length}\n`);
-for (let k = 0; k < SECS / 30; k++) { s.run(30000); process.stderr.write(`  ${Math.round((Date.now() - t0) / 1000)}s iters ${s.iters}\n`); }
+// TARGET_ITERS makes the solve comparable to an earlier pass whatever the machine's speed: it keeps going past SECS
+// until that many iterations are done (capped at 3x SECS)
+const TARGET = +(process.env.TARGET_ITERS || 0);
+for (let k = 0; k < SECS / 30 || (TARGET > 0 && s.iters < TARGET && Date.now() - t0 < 3 * SECS * 1000); k++) { s.run(30000); process.stderr.write(`  ${Math.round((Date.now() - t0) / 1000)}s iters ${s.iters}\n`); }
 // two independent evaluation passes: a hand is only trusted when both agree on the best play
 s.evalPass(EVS * 500); const EVA = Float64Array.from(s.EV2), EWA = Float64Array.from(s.EW2);
 s.EV2.fill(0); s.EW2.fill(0); s.evalPass(EVS * 500); const EVB = Float64Array.from(s.EV2), EWB = Float64Array.from(s.EW2);
