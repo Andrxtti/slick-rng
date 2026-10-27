@@ -14,3 +14,5 @@ full_STATUS.txt
 old_full/
 calib/
 calib_log.txt
+fit_log.txt
+fit_best.json

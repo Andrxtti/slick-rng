@@ -7,6 +7,8 @@
 //  vs an all-in:        fold / call
 // No open-limps outside the SB, no "raise to all-but-1bb". Sizes scale with depth and position.
 const E = require('../../app/engine.js');
+// calibration: PLAYSET='{"sGap1":0.15}' overrides the playability family constants (see PLAY_DEFAULT in engine.js)
+if (process.env.PLAYSET) E.PLAY169.set(E.buildPlay({ ...E.PLAY_DEFAULT, ...JSON.parse(process.env.PLAYSET) }));
 
 const OPEN = (eff) => (eff >= 50 ? 2.3 : eff >= 35 ? 2.2 : eff >= 25 ? 2.1 : 2.0);
 const SB_OPEN = (eff) => (eff >= 75 ? 4.0 : eff >= 28 ? 3.5 : eff >= 18 ? 3.0 : 2.5);   // solved BvB sizes (8-max ChipEV, 12.5% ante)

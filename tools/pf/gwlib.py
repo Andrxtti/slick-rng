@@ -13,6 +13,7 @@ def lib(d):
     return LIB[d]
 import os
 QUIET = bool(os.environ.get('QUIET'))
+EXCL = np.array([nm[-1] == 'o' and len(nm) == 3 and nm[0] != 'A' and not (nm[0] in 'TJQK' and nm[1] in 'TJQK') for nm in NAMES])   # offsuit junk: the course folds these, so they are not scored against GW
 for a in sys.argv[1:]:
     d0, p0 = a.split('='); OVR[int(d0)] = p0
 rows = []
@@ -34,7 +35,7 @@ for f in sorted(glob.glob('gw/gw*.txt')):
             h, codes = tk.split(':'); o = [0, 0, 0]
             for m in re.finditer(r'([arcf])(\d+)', codes): o[0 if m[1] == 'f' else 1 if m[1] == 'c' else 2] += int(m[2]) / 100
             if h in IDX: gw[IDX[h]] = o
-        has = ~np.isnan(gw).any(1) & (np.nan_to_num(gw).sum(1) > 0.5)
+        has = ~np.isnan(gw).any(1) & (np.nan_to_num(gw).sum(1) > 0.5) & ~(EXCL if os.environ.get('EXCL') else np.zeros(169, bool))
         ag = (np.minimum(ours, np.nan_to_num(gw)).sum(1) * SIZE)[has].sum() / SIZE[has].sum()
         vf = ((np.minimum(ours, np.nan_to_num(gw)).sum(1) < 0.7) & has)
         wo = (SIZE * (1 - ours[:, 0]))[has].sum() / SIZE[has].sum(); wg = (SIZE * (1 - gw[:, 0]))[has].sum() / SIZE[has].sum()
