@@ -71,8 +71,10 @@ const PLAY = (() => {
   return t;
 })();
 if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its own copy of the table: calibrate both
-// calibration: PLAYMW=<file.json> adds a per-class correction (169 numbers) to the multiway playability table only
-if (process.env.PLAYMW) { const dd = JSON.parse(require('fs').readFileSync(process.env.PLAYMW, 'utf8')); for (let i = 0; i < 169; i++) PLAY[i] += dd[i] || 0; }
+// per-class correction (169 numbers) to the multiway playability table only, fitted to GTO Wizard's multiway nodes
+// (model_mw.json, frozen by build_all.sh). PLAYMW=<file.json> overrides it for calibration runs; PLAYMW=none turns it off.
+{ const fs0 = require('fs'), pm = process.env.PLAYMW || (fs0.existsSync(__dirname + '/model_mw.json') ? __dirname + '/model_mw.json' : 'none');
+  if (pm !== 'none') { const dd = JSON.parse(fs0.readFileSync(pm, 'utf8')); for (let i = 0; i < 169; i++) PLAY[i] += dd[i] || 0; } }
 class PF2 extends E.PreflopSolver {
   constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, playPos: MODEL.pPos, playNeg: MODEL.pNeg, implied: MODEL.io, ...cfg }; super(cfg); }
   prepTerminal(nd) {

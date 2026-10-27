@@ -9,7 +9,7 @@ LIB = {}
 OVR = {}   # depth -> path to a solve_full output (calibration runs); default is the shipped library
 def lib(d):
     if d not in LIB:
-        j = json.load(open(OVR.get(d) or f'../../app/lib/chart-{d}bb.json')); LIB[d] = {n['p']: n for n in j['nodes']}
+        j = json.load(open(OVR.get(d) or f'../../app/lib/m8-d{d}.json')); LIB[d] = {n['p']: n for n in j['nodes']}
     return LIB[d]
 import os
 QUIET = bool(os.environ.get('QUIET'))
