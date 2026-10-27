@@ -12,3 +12,5 @@ out_chart_STATUS.txt
 full_p*/
 full_STATUS.txt
 old_full/
+calib/
+calib_log.txt
