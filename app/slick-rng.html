@@ -3787,6 +3787,13 @@ function seatsFromStacks() {
   S.slots.forEach((sl) => (sl.active = t.stacks[sl.id] > 0));
   if (S.slots.filter((x) => x.active).length < 2) { [0, 1].forEach((i) => { if (!(t.stacks[i] > 0)) t.stacks[i] = t.avg > 0 ? t.avg : 25; S.slots[i].active = true; }); }
 }
+// General MTT view (no tournament details entered): n seats, equal stacks, big blind ante, chips. Matches the pre-solved library.
+function isGeneral() { const t = S.t222; return !t.stacksSet && !t.leftSet && !t.paidSet; }
+function generalMtt(n, v) {
+  const t = S.t222; S.gStack = v; t.bbAnte = true;
+  for (let i = 0; i < 9; i++) t.stacks[i] = i < n ? v : 0;
+  seatsFromStacks(); S.hist = []; S.overrides = {}; S.board = []; S.button = 0;
+}
 function slotCount() { return S.table === '6' ? 6 : S.table === '8' ? 8 : 9; }
 function makeSlots() {
   S.slots = Array.from({ length: slotCount() }, (_, i) => ({ id: i, active: true }));
@@ -4607,7 +4614,7 @@ function renderIcmBox() {
 function bind222() {
   const t = S.t222;
   $('tSat').onclick = () => { t.payouts = Array(t.paid).fill(1).join(','); $('tPay').value = t.payouts; save222(); render222b(); render(); markStale(); };
-  $('tClear').onclick = () => { t.leftSet = t.paidSet = t.paidAuto = t.stacksSet = false; t.icm = false; t.entrants = t.buyin = t.gtd = 0; save222(); render(); markStale(); };
+  $('tClear').onclick = () => { t.leftSet = t.paidSet = t.paidAuto = t.stacksSet = false; t.icm = false; generalMtt(8, S.gStack || 100); t.entrants = t.buyin = t.gtd = 0; save222(); replay(); { const nx = nextActor(); S.sel = nx ? nx.id : null; } render(); markStale(); };
   $('pkoOn').addEventListener('change', (e) => { t.pko.on = e.target.checked; save222(); render(); markStale(); });
   $('bbAnte').addEventListener('change', (e) => { t.bbAnte = e.target.checked; save222(); replay(); render(); markStale(); });
   // what-if: values update live while dragging; the solver restarts when you let go
@@ -4759,9 +4766,56 @@ function pfConfig() {
 // Deep stacks need postflop play solved inside the preflop solve; until the native build
 // can do that, only stacks where pots are mostly all-in get the GTO preflop solver.
 function pfIsDeep(cfg) { if (cfg.game === 'plo') return false; const st = [...cfg.stacks].sort((a, b) => b - a); return (st[1] || st[0]) > PF_DEEP; }
+// ---------------------------------------------------------------- pre-solved chart library (8-max, chips, big-blind ante)
+// Each depth is solved offline three times; a hand's strategy is the mean of the solves and is only treated as verified
+// where all three agree (flagged hands come back in `x`). Anything the library does not hold falls back to the live solver.
+const LIB = { depths: [15, 25, 40, 60, 100], t: {}, p: {}, fail: {} };
+const libB64 = (b) => { const bin = atob(b), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
+function libFetch(d) {
+  if (LIB.p[d]) return LIB.p[d];
+  LIB.p[d] = fetch(`lib/chart-${d}bb.json`).then((r) => (r.ok ? r.json() : null)).then((j) => {
+    if (!j) throw new Error('no library file');
+    const m = new Map(); for (const n of j.nodes) m.set(n.p, n);
+    LIB.t[d] = { names: j.names, nodes: m }; pfGen++; pfRefresh(); return LIB.t[d];
+  }).catch(() => { LIB.fail[d] = true; pfKey = null; pfEnsure(); return null; });
+  return LIB.p[d];
+}
+// the library table that matches this exact setup, or 0
+function libDepth(cfg) {
+  if (cfg.game !== 'nlh' || cfg.hu || !cfg.payoff || cfg.payoff.type !== 'chips' || cfg.names.join() !== 'UTG,UTG+1,LJ,HJ,CO,BTN,SB,BB') return 0;
+  if (cfg.ante !== 1 || cfg.posts.join() !== '0,0,0,0,0,0,0.5,1' || cfg.sizes.open !== 2 || cfg.sizes.b3 !== 6 || cfg.sizes.b4 !== 14 || cfg.sizes.b5 !== 30) return 0;
+  const st = cfg.stacks, d = st[0];
+  if (!LIB.depths.includes(d) || LIB.fail[d] || !st.slice(0, 7).every((x) => x === d) || st[7] !== d - 1) return 0;
+  return d;
+}
+function libDecode(n) {
+  if (n._d) return n._d;
+  const na = n.a.length, s8 = libB64(n.s), e8 = libB64(n.e), e16 = new Int16Array(e8.buffer, e8.byteOffset, e8.byteLength >> 1), x = n.x ? libB64(n.x) : null;
+  const strat = [], ev = [], flag = new Array(169).fill(false);
+  for (let c = 0; c < 169; c++) {
+    strat.push(Array.from(s8.subarray(c * na, c * na + na), (v) => v / 255));
+    ev.push(Array.from(e16.subarray(c * na, c * na + na), (v) => v / 100));
+    if (x) flag[c] = !!(x[c >> 3] & (0x80 >> (c & 7)));
+  }
+  return (n._d = { strat, ev, flag });
+}
+function libResult(d, hist) {
+  const tab = LIB.t[d]; if (!tab) return null;
+  const keys = hist.map((e) => e.k), nP = tab.names.length, reach = Array.from({ length: nP }, () => new Array(169).fill(1));
+  for (let i = 0; i <= keys.length; i++) {
+    const n = tab.nodes.get(keys.slice(0, i).join('|'));
+    if (!n) return i === keys.length && i > 0 && !nextActor() ? { ok: true, terminal: true, reach, lib: d } : { ok: false };
+    const dn = libDecode(n);
+    if (i === keys.length) return { ok: true, player: n.h, actions: n.a.map((k, j) => ({ k, to: n.to[j] })), strat: dn.strat, ev: dn.ev, reach, lib: d, flag: dn.flag };
+    const a = n.a.indexOf(keys[i]); if (a < 0) return { ok: false };
+    const r = reach[n.h]; for (let c = 0; c < 169; c++) r[c] *= dn.strat[c][a];
+  }
+  return { ok: false };
+}
 function pfEnsure() {
   const cfg = pfConfig(), key = JSON.stringify(cfg);
   if (key === pfKey) return;
+  { const d = libDepth(cfg); if (d) { pfKey = key; pfCache.clear(); pfAsked.clear(); pfParts.clear(); clearTimeout(pfTimer); pfWorkers.forEach((w) => w.postMessage({ cmd: 'pfStop' })); pfState = { iters: 0, done: true, solving: false, t0: performance.now(), error: null, deep: false, lib: d }; libFetch(d); return; } }
   if (window.__pfHold) return; // the trainer is showing a pre-solved spot: don't burn the phone's CPU
   pfKey = key; pfCache.clear(); pfAsked.clear(); pfParts.clear(); pfIters.fill(0); pfDoneW.fill(false);
   PF_SECONDS = window.__pfSec || (cfg.game === 'plo' ? 360 : PF_SECONDS_NLH);
@@ -4775,6 +4829,7 @@ function pfEnsure() {
 }
 function pfLookup(hist) {
   if (!pfKey || pfState.deep) return null;
+  if (pfState.lib) return libResult(pfState.lib, hist);
   const path = hist.map((e) => (e.to !== undefined ? { k: e.k, to: e.to } : { k: e.k })), ck = pfKey + '|' + JSON.stringify(path);
   const hit = pfCache.get(ck);
   if ((!hit || hit.gen !== pfGen) && !pfAsked.has(ck + '#' + pfGen)) {
@@ -4837,6 +4892,7 @@ pfcWorker.onmessage = (ev) => {
 };
 function pfNote(solved) {
   if (pfState.error) return `GTO preflop unavailable: ${esc(pfState.error)}`;
+  if (pfState.lib) return !LIB.t[pfState.lib] ? 'Loading the pre-solved library…' : !solved ? 'Starting estimate · this line is outside the pre-solved library' : `GTO preflop · pre-solved · ${pfState.lib} bb · 8-max`;
   if (pfState.deep) return `Starting estimate · GTO preflop solving covers stacks up to ${PF_DEEP} bb for now`;
   const approx = pfState.mid ? ' · approximate: flop play modeled' : '';
   if (!solved) return pfState.solving ? 'Starting estimate · GTO preflop solving…' : 'Starting estimate · this line is outside the solved tree';
@@ -10468,7 +10524,7 @@ function updateIcmFlag() {
 function syncSpot() {
   syncNav(); updateIcmFlag();
   const g = S.game, t = S.t222, hero = seatById(0);
-  $('spType').value = g; $('spFormat').value = S.table;
+  $('spType').value = g; { const na = S.slots.filter((x) => x.active).length; $('spFormat').value = g === '222' ? (na === 6 ? '6' : na === 8 ? '8' : 'custom') : S.table; }
   const curStack = g === 'cash' ? S.stack : hero ? baseStack(hero) : (t.stacks[0] || 25);
   const base = g === 'cash' ? [40, 60, 100, 150, 200, 300] : [5, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 80, 100];
   const list = base.includes(curStack) ? base : [...base, curStack].sort((a, b) => a - b);
@@ -10488,11 +10544,15 @@ function syncSpot() {
   else { $('spMoreL').textContent = 'Open size'; $('spMoreV').textContent = `${fmt(S.sz.open)} bb`; }
 }
 $('spType').onchange = (e) => { const b = document.querySelector(`[data-game="${e.target.value}"]`); if (b) b.click(); };
-$('spFormat').onchange = (e) => { const b = document.querySelector(`[data-table="${e.target.value}"]`); if (b) b.click(); };
+$('spFormat').onchange = (e) => {
+  if (S.game === '222' && isGeneral()) { generalMtt(e.target.value === '6' ? 6 : e.target.value === '8' ? 8 : 9, S.gStack || 100); save222(); replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; view = 'pre'; render(); markStale(); return; }
+  const b = document.querySelector(`[data-table="${e.target.value}"]`); if (b) b.click();
+};
 $('spStack').onchange = (e) => {
   const v = +e.target.value;
   if (S.game === 'cash') { S.stack = v; $('stack').value = v; replay(); render(); markStale(); return; }
-  if (!icmOn()) { for (const x of S.slots) if (x.active) S.t222.stacks[x.id] = v; seatsFromStacks(); S.hist = []; S.overrides = {}; } else S.t222.stacks[0] = v;
+  if (!icmOn() && isGeneral()) generalMtt(S.slots.filter((x) => x.active).length || 8, v);
+  else if (!icmOn()) { for (const x of S.slots) if (x.active) S.t222.stacks[x.id] = v; seatsFromStacks(); S.hist = []; S.overrides = {}; } else S.t222.stacks[0] = v;
   save222(); replay(); render(); markStale();
 };
 $('spPos').onchange = (e) => { if (e.target.value === '') return; S.sel = +e.target.value; customFor = null; view = 'pre'; render(); };
@@ -10551,7 +10611,7 @@ document.addEventListener('keydown', (e) => { if (e.key !== 'Escape' || $('launc
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
   $('leftWrap').hidden = true; $('stackWrap').hidden = S.game === '222'; applySubtab(); $('tableSeg').hidden = S.game === '222';
-  if (S.game === '222') seatsFromStacks();
+  if (S.game === '222') { if (isGeneral()) generalMtt(8, S.gStack || 100); else seatsFromStacks(); }
   else if (S.table === 'custom' && S.cashTable) { S.table = S.cashTable; makeSlots(); document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.table === S.table)); }
   S.hist = []; S.overrides = {}; S.board = []; activeSlot = null;
   fillStacks(); replay(); const n0 = nextActor(); S.sel = n0 ? n0.id : null; view = 'pre'; render(); markStale();
