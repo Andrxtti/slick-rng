@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Confirmed Fire Dream</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4766,27 +4767,29 @@ function pfConfig() {
 // Deep stacks need postflop play solved inside the preflop solve; until the native build
 // can do that, only stacks where pots are mostly all-in get the GTO preflop solver.
 function pfIsDeep(cfg) { if (cfg.game === 'plo') return false; const st = [...cfg.stacks].sort((a, b) => b - a); return (st[1] || st[0]) > PF_DEEP; }
-// ---------------------------------------------------------------- pre-solved chart library (8-max, chips, big-blind ante)
-// Each depth is solved offline three times; a hand's strategy is the mean of the solves and is only treated as verified
-// where all three agree (flagged hands come back in `x`). Anything the library does not hold falls back to the live solver.
-const LIB = { depths: [15, 25, 40, 60, 100], t: {}, p: {}, fail: {} };
+// ---------------------------------------------------------------- pre-solved chart library (6-max and 8-max, chips, big-blind ante)
+// Each table is solved offline three times; a hand's strategy is the mean of the solves and is only treated as verified
+// where all three agree (flagged hands come back in `flag`). Anything the library does not hold falls back to the live solver.
+const LIB = { depths: [10, 15, 20, 25, 30, 40, 50, 60, 80, 100], fmts: { 'UTG,UTG+1,LJ,HJ,CO,BTN,SB,BB': '8', 'UTG,HJ,CO,BTN,SB,BB': '6' }, t: {}, p: {}, fail: {} };
 const libB64 = (b) => { const bin = atob(b), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
-function libFetch(d) {
-  if (LIB.p[d]) return LIB.p[d];
-  LIB.p[d] = fetch(`lib/chart-${d}bb.json`).then((r) => (r.ok ? r.json() : null)).then((j) => {
+function libFetch(id) {
+  if (LIB.p[id]) return LIB.p[id];
+  LIB.p[id] = fetch(`lib/m${id.replace('-', '-d')}.json`).then((r) => (r.ok ? r.json() : null)).then((j) => {
     if (!j) throw new Error('no library file');
     const m = new Map(); for (const n of j.nodes) m.set(n.p, n);
-    LIB.t[d] = { names: j.names, nodes: m }; pfGen++; pfRefresh(); return LIB.t[d];
-  }).catch(() => { LIB.fail[d] = true; pfKey = null; pfEnsure(); return null; });
-  return LIB.p[d];
+    LIB.t[id] = { names: j.names, nodes: m }; pfGen++; pfRefresh(); return LIB.t[id];
+  }).catch(() => { LIB.fail[id] = true; pfKey = null; pfEnsure(); return null; });
+  return LIB.p[id];
 }
-// the library table that matches this exact setup, or 0
+// the library table ("8-100" = 8-max, 100 bb) that matches this exact setup, or ''
 function libDepth(cfg) {
-  if (cfg.game !== 'nlh' || cfg.hu || !cfg.payoff || cfg.payoff.type !== 'chips' || cfg.names.join() !== 'UTG,UTG+1,LJ,HJ,CO,BTN,SB,BB') return 0;
-  if (cfg.ante !== 1 || cfg.posts.join() !== '0,0,0,0,0,0,0.5,1' || cfg.sizes.open !== 2 || cfg.sizes.b3 !== 6 || cfg.sizes.b4 !== 14 || cfg.sizes.b5 !== 30) return 0;
-  const st = cfg.stacks, d = st[0];
-  if (!LIB.depths.includes(d) || LIB.fail[d] || !st.slice(0, 7).every((x) => x === d) || st[7] !== d - 1) return 0;
-  return d;
+  const fmt = LIB.fmts[cfg.names.join()];
+  if (!fmt || cfg.game !== 'nlh' || cfg.hu || !cfg.payoff || cfg.payoff.type !== 'chips') return '';
+  const n = cfg.names.length, posts = Array(n - 2).fill(0).concat([0.5, 1]);
+  if (cfg.ante !== 1 || cfg.posts.join() !== posts.join() || cfg.sizes.open !== 2 || cfg.sizes.b3 !== 6 || cfg.sizes.b4 !== 14 || cfg.sizes.b5 !== 30) return '';
+  const st = cfg.stacks, d = st[0], id = fmt + '-' + d;
+  if (!LIB.depths.includes(d) || LIB.fail[id] || !st.slice(0, n - 1).every((x) => x === d) || st[n - 1] !== d - 1) return '';
+  return id;
 }
 function libDecode(n) {
   if (n._d) return n._d;
@@ -4799,14 +4802,14 @@ function libDecode(n) {
   }
   return (n._d = { strat, ev, flag });
 }
-function libResult(d, hist) {
-  const tab = LIB.t[d]; if (!tab) return null;
+function libResult(id, hist) {
+  const tab = LIB.t[id]; if (!tab) return null;
   const keys = hist.map((e) => e.k), nP = tab.names.length, reach = Array.from({ length: nP }, () => new Array(169).fill(1));
   for (let i = 0; i <= keys.length; i++) {
     const n = tab.nodes.get(keys.slice(0, i).join('|'));
-    if (!n) return i === keys.length && i > 0 && !nextActor() ? { ok: true, terminal: true, reach, lib: d } : { ok: false };
+    if (!n) return i === keys.length && i > 0 && !nextActor() ? { ok: true, terminal: true, reach, lib: id } : { ok: false };
     const dn = libDecode(n);
-    if (i === keys.length) return { ok: true, player: n.h, actions: n.a.map((k, j) => ({ k, to: n.to[j] })), strat: dn.strat, ev: dn.ev, reach, lib: d, flag: dn.flag };
+    if (i === keys.length) return { ok: true, player: n.h, actions: n.a.map((k, j) => ({ k, to: n.to[j] })), strat: dn.strat, ev: dn.ev, reach, lib: id, flag: dn.flag };
     const a = n.a.indexOf(keys[i]); if (a < 0) return { ok: false };
     const r = reach[n.h]; for (let c = 0; c < 169; c++) r[c] *= dn.strat[c][a];
   }
@@ -4892,7 +4895,7 @@ pfcWorker.onmessage = (ev) => {
 };
 function pfNote(solved) {
   if (pfState.error) return `GTO preflop unavailable: ${esc(pfState.error)}`;
-  if (pfState.lib) return !LIB.t[pfState.lib] ? 'Loading the pre-solved library…' : !solved ? 'Starting estimate · this line is outside the pre-solved library' : `GTO preflop · pre-solved · ${pfState.lib} bb · 8-max`;
+  if (pfState.lib) return !LIB.t[pfState.lib] ? 'Loading the pre-solved library…' : !solved ? 'Starting estimate · this line is outside the pre-solved library' : `GTO preflop · pre-solved · ${pfState.lib.split('-')[1]} bb · ${pfState.lib.split('-')[0]}-max`;
   if (pfState.deep) return `Starting estimate · GTO preflop solving covers stacks up to ${PF_DEEP} bb for now`;
   const approx = pfState.mid ? ' · approximate: flop play modeled' : '';
   if (!solved) return pfState.solving ? 'Starting estimate · GTO preflop solving…' : 'Starting estimate · this line is outside the solved tree';
@@ -10526,7 +10529,7 @@ function syncSpot() {
   const g = S.game, t = S.t222, hero = seatById(0);
   $('spType').value = g; { const na = S.slots.filter((x) => x.active).length; $('spFormat').value = g === '222' ? (na === 6 ? '6' : na === 8 ? '8' : 'custom') : S.table; }
   const curStack = g === 'cash' ? S.stack : hero ? baseStack(hero) : (t.stacks[0] || 25);
-  const base = g === 'cash' ? [40, 60, 100, 150, 200, 300] : [5, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 80, 100];
+  const base = g === 'cash' ? [40, 60, 100, 150, 200, 300] : isGeneral() ? LIB.depths : [5, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 80, 100];
   const list = base.includes(curStack) ? base : [...base, curStack].sort((a, b) => a - b);
   $('spStackL').textContent = g === 'cash' || !icmOn() ? 'Stack' : 'Hero stack';
   $('spStack').innerHTML = list.map((x) => `<option value="${x}" ${x === curStack ? 'selected' : ''}>${fmt(x)} bb</option>`).join('');
