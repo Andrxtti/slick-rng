@@ -712,6 +712,11 @@ button.next:hover:not(:disabled) { background: rgba(92, 191, 100, .16); border-c
 .solvectl .go { display: flex; gap: 6px; }
 .solvectl .go button { padding-inline: 22px; }
 .solverow { display: grid; gap: 6px; }
+.subtabs { display: flex; gap: 4px; margin: 0 0 10px; border-bottom: 1px solid var(--line, #2a2f3a); }
+.subtabs[hidden] { display: none; }
+.subtabs button { background: none; border: 0; border-bottom: 2px solid transparent; color: inherit; opacity: .65; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+.subtabs button[aria-selected="true"] { opacity: 1; border-bottom-color: #5aa9de; }
+@media (min-width: 761px) { body.pg-mtt:not(.st-tourney) .spotbar { display: block; padding: 8px; margin: 0 0 10px; } body.pg-mtt .spotbar #spTypeT, body.pg-mtt .spotbar #spPosT, body.pg-mtt .spotbar #spAction, body.pg-mtt .spotbar #spMore { display: none; } body.pg-mtt .spotbar .tiles { display: flex; gap: 8px; } }
 .meter { height: 6px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
 .meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--hero), var(--carolina)); transition: width .25s linear; border-radius: 999px; }
 .status { font-size: 12px; color: var(--muted); }
@@ -1700,6 +1705,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
       <button class="tile solver-only" id="spAction" type="button"><span class="tl">Action</span><span class="tv" id="spActionV"></span></button>
     </div>
   </section>
+  <nav class="subtabs" id="t222tabs" role="tablist" aria-label="Solver or tournament details" hidden><button type="button" role="tab" data-st="solver" aria-selected="true">Solver</button><button type="button" role="tab" data-st="tourney" aria-selected="false">Tournament details</button></nav>
   <section class="panel tourney t222" id="t222" hidden>
     <details id="t222d" open>
       <summary><span class="eyebrow">Tournament</span><span class="sumchips" id="t222sum"></span><span class="chev" aria-hidden="true">▾</span></summary>
@@ -4091,6 +4097,15 @@ function parsePayouts() {
 }
 // PKO: bounties are entered in the same money as the payouts; convert to % of the prize pool
 function rawPaySum() { const t = S.t222; return t.payouts.split(/[,\s]+/).map(Number).filter((x) => x > 0).slice(0, t.paid).reduce((a, b) => a + b, 0); }
+S.subtab = 'solver';
+// Solver tab = general chip-EV lookup; Tournament details tab (after it) holds the ICM inputs
+function applySubtab() {
+  const m = S.game === '222';
+  $('t222tabs').hidden = !m; $('t222').hidden = !m || S.subtab !== 'tourney';
+  document.body.classList.toggle('st-tourney', m && S.subtab === 'tourney');
+  $('t222tabs').querySelectorAll('[data-st]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.st === S.subtab)));
+}
+function setSubtab(v) { S.subtab = v; applySubtab(); if (v === 'tourney') { $('t222d').open = true; render222(); } }
 function icmOn() { return S.game === '222' && S.t222.icm !== false; }
 function pkoOn() { return icmOn() && S.t222.pko && S.t222.pko.on; }
 function bountyPct(seat) { const t = S.t222, raw = rawPaySum(), b = t.pko.b[seat.id]; return raw > 0 && b > 0 ? (b / raw) * 100 : 0; }
@@ -4454,7 +4469,7 @@ function render222Sum() {
 function render222() {
   const t = S.t222; render222Sum();
   { const ae = document.activeElement; if (ae && ae.closest && ae.closest('#t222') && ae.type !== 'range' && ae.type !== 'checkbox' && ae.tagName !== 'BUTTON') return; } // don't rebuild while typing
-  $('tLeft').value = t.leftSet ? t.left : ''; $('tPaid').value = t.paidSet ? t.paid : ''; $('tPay').value = t.payouts;
+  $('tLeft').value = t.leftSet ? t.left : ''; $('tPaid').value = t.paidSet ? t.paid : ''; $('tPay').value = t.paidSet ? t.payouts : '';
   $('wiLeft').max = Math.max(75, t.entrants || 0, t.left);
   $('tEnt').value = t.entrants || ''; $('tBuy').value = t.buyin || ''; $('tGtd').value = t.gtd || '';
   const ts = $('tSeats'); ts.innerHTML = '';
@@ -4462,14 +4477,14 @@ function render222() {
     const seat = slot.active ? seatById(slot.id) : null, id = slot.id;
     const l = document.createElement('label'); l.className = 'stk' + (seat ? '' : ' empty');
     const now = seat ? stackOf(seat) - seat.put : 0;
-    l.innerHTML = `<span>${seatLabel(id)}${seat ? (seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`) : '<em>empty</em>'}</span><input type="number" min="0" step="0.5" value="${seat ? baseStack(seat) : ''}" placeholder="empty" aria-label="${seatLabel(id)} stack (blank = empty seat)">`; if (isHero(id)) l.classList.add('hero');
+    l.innerHTML = `<span>${seatLabel(id)}${seat ? (seat.put > 0 ? `<em>${seat.pos} · ${fmt(now)} left</em>` : `<em>${seat.pos}</em>`) : '<em>empty</em>'}</span><input type="number" min="0" step="0.5" value="${seat && t.stacksSet ? baseStack(seat) : ''}" placeholder="${seat ? fmt(baseStack(seat)) : 'empty'}" aria-label="${seatLabel(id)} stack (blank = empty seat)">`; if (isHero(id)) l.classList.add('hero');
     l.querySelector('input').addEventListener('change', (e) => {
       const v = parseFloat(e.target.value), filled = S.slots.filter((x) => x.active).length;
       if (!(v > 0)) {
-        if (id === 0 || (slot.active && filled <= 2)) { e.target.value = seat ? baseStack(seat) : ''; return; } // Hero and at least two players stay seated
+        if (id === 0 || (slot.active && filled <= 2)) { e.target.value = seat && t.stacksSet ? baseStack(seat) : ''; return; } // Hero and at least two players stay seated
         t.stacks[id] = 0;
       } else t.stacks[id] = v;
-      seatsFromStacks(); S.hist = []; S.overrides = {}; save222(); replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render(); markStale();
+      t.stacksSet = true; seatsFromStacks(); S.hist = []; S.overrides = {}; save222(); replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render(); markStale();
     });
     ts.appendChild(l);
   }
@@ -4592,7 +4607,7 @@ function renderIcmBox() {
 function bind222() {
   const t = S.t222;
   $('tSat').onclick = () => { t.payouts = Array(t.paid).fill(1).join(','); $('tPay').value = t.payouts; save222(); render222b(); render(); markStale(); };
-  $('tClear').onclick = () => { t.leftSet = t.paidSet = t.paidAuto = false; t.icm = false; t.entrants = t.buyin = t.gtd = 0; save222(); render(); markStale(); };
+  $('tClear').onclick = () => { t.leftSet = t.paidSet = t.paidAuto = t.stacksSet = false; t.icm = false; t.entrants = t.buyin = t.gtd = 0; save222(); render(); markStale(); };
   $('pkoOn').addEventListener('change', (e) => { t.pko.on = e.target.checked; save222(); render(); markStale(); });
   $('bbAnte').addEventListener('change', (e) => { t.bbAnte = e.target.checked; save222(); replay(); render(); markStale(); });
   // what-if: values update live while dragging; the solver restarts when you let go
@@ -5122,7 +5137,7 @@ function applySetup(x) {
   S.hist = []; S.overrides = {}; S.board = []; S.sel = null; activeSlot = null; view = 'pre';
   document.querySelectorAll('[data-game]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.game === S.game));
   document.querySelectorAll('[data-table]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.table === S.table));
-  $('stackWrap').hidden = S.game === '222'; $('t222').hidden = S.game !== '222'; fillStacks();
+  $('stackWrap').hidden = S.game === '222'; applySubtab(); fillStacks();
   replay(); const nx = nextActor(); S.sel = nx ? nx.id : null; render();
 }
 function randomSetup() {
@@ -10457,7 +10472,7 @@ function syncSpot() {
   const curStack = g === 'cash' ? S.stack : hero ? baseStack(hero) : (t.stacks[0] || 25);
   const base = g === 'cash' ? [40, 60, 100, 150, 200, 300] : [5, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 80, 100];
   const list = base.includes(curStack) ? base : [...base, curStack].sort((a, b) => a - b);
-  $('spStackL').textContent = g === 'cash' ? 'Stack' : 'Hero stack';
+  $('spStackL').textContent = g === 'cash' || !icmOn() ? 'Stack' : 'Hero stack';
   $('spStack').innerHTML = list.map((x) => `<option value="${x}" ${x === curStack ? 'selected' : ''}>${fmt(x)} bb</option>`).join('');
   // seat whose chart is shown
   const seats = S.slots.filter((x) => x.active).map((x) => seatById(x.id)).filter(Boolean);
@@ -10477,17 +10492,19 @@ $('spFormat').onchange = (e) => { const b = document.querySelector(`[data-table=
 $('spStack').onchange = (e) => {
   const v = +e.target.value;
   if (S.game === 'cash') { S.stack = v; $('stack').value = v; replay(); render(); markStale(); return; }
-  S.t222.stacks[0] = v; save222(); replay(); render(); markStale();
+  if (!icmOn()) { for (const x of S.slots) if (x.active) S.t222.stacks[x.id] = v; seatsFromStacks(); S.hist = []; S.overrides = {}; } else S.t222.stacks[0] = v;
+  save222(); replay(); render(); markStale();
 };
 $('spPos').onchange = (e) => { if (e.target.value === '') return; S.sel = +e.target.value; customFor = null; view = 'pre'; render(); };
 const goTo = (el) => el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 $('spAction').onclick = () => goTo($('tableBar'));
 $('spMore').onclick = () => {
-  if (S.game === '222') { $('t222d').open = true; if (phoneQ.matches) { setPage('details'); scrollTo(0, 0); } else goTo($('t222')); }
+  if (S.game === '222') { setSubtab('tourney'); if (phoneQ.matches) { setPage('details'); scrollTo(0, 0); } else goTo($('t222tabs')); }
   else { $('pfSizes').open = true; goTo($('pfSizes')); }
 };
 const phoneQ = matchMedia('(max-width: 760px)');
-$('icmFlag').onclick = () => { $('t222d').open = true; if (phoneQ.matches) { setPage('details'); scrollTo(0, 0); } else goTo($('t222')); };
+$('icmFlag').onclick = () => { setSubtab('tourney'); if (phoneQ.matches) { setPage('details'); scrollTo(0, 0); } else goTo($('t222tabs')); };
+$('t222tabs').querySelectorAll('[data-st]').forEach((b) => (b.onclick = () => setSubtab(b.dataset.st)));
 document.querySelectorAll('.tabbar [data-tab]').forEach((b) => (b.onclick = () => {
   const tab = b.dataset.tab;
   if (tab === 'home') { showLaunch('home'); return; }
@@ -10533,7 +10550,7 @@ document.addEventListener('keydown', (e) => { if (e.key !== 'Escape' || $('launc
 // ---------------------------------------------------------------- controls
 document.querySelectorAll('[data-game]').forEach((b) => (b.onclick = () => {
   S.game = b.dataset.game; document.querySelectorAll('[data-game]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  $('leftWrap').hidden = true; $('stackWrap').hidden = S.game === '222'; $('t222').hidden = S.game !== '222'; $('tableSeg').hidden = S.game === '222';
+  $('leftWrap').hidden = true; $('stackWrap').hidden = S.game === '222'; applySubtab(); $('tableSeg').hidden = S.game === '222';
   if (S.game === '222') seatsFromStacks();
   else if (S.table === 'custom' && S.cashTable) { S.table = S.cashTable; makeSlots(); document.querySelectorAll('[data-table]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.table === S.table)); }
   S.hist = []; S.overrides = {}; S.board = []; activeSlot = null;
