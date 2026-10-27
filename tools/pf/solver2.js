@@ -71,6 +71,8 @@ const PLAY = (() => {
   return t;
 })();
 if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its own copy of the table: calibrate both
+// calibration: PLAYMW=<file.json> adds a per-class correction (169 numbers) to the multiway playability table only
+if (process.env.PLAYMW) { const dd = JSON.parse(require('fs').readFileSync(process.env.PLAYMW, 'utf8')); for (let i = 0; i < 169; i++) PLAY[i] += dd[i] || 0; }
 class PF2 extends E.PreflopSolver {
   constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, playPos: MODEL.pPos, playNeg: MODEL.pNeg, implied: MODEL.io, ...cfg }; super(cfg); }
   prepTerminal(nd) {
