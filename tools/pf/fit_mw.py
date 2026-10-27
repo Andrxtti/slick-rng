@@ -33,15 +33,17 @@ if os.path.exists('fit_mw_best.json') and os.environ.get('RESUME'): delta = np.a
 for it in range(int(os.environ.get('ITERS', 8))):
     json.dump(delta.tolist(), open(f'calib/mw_delta_{it}.json', 'w')); tag = f'mw{it}'
     out = score(tag, {'PLAYMW': f'calib/mw_delta_{it}.json', 'EXCL': '1'})
-    diff = np.zeros(169); cnt = np.zeros(169); mw_err = []
-    for d, path, g in GW:
+    diff = np.zeros(169); cnt = np.zeros(169); mw_err = []; hold_err = []
+    for ni, (d, path, g) in enumerate(GW):
         oc = ours_cont(d, path, tag)
         if oc is None: continue
+        held = ni % 3 == 0     # every third node is held out of the fit and only scored
         for c, gc in g.items():
             if JUNK[c]: continue
+            if held: hold_err.append(abs(gc - oc[c]) * SZ[c]); continue
             diff[c] += gc - oc[c]; cnt[c] += 1; mw_err.append(abs(gc - oc[c]) * SZ[c])
     m = np.where(cnt > 0, diff / np.maximum(cnt, 1), 0)
-    print(f'iter {it}: {out} | multiway mean |continue error| {np.sum(mw_err)/sum(SZ[c] for _ in [0] for c in [0]) if False else np.mean(mw_err)/np.mean(SZ):.3f}  mean signed (GW-ours) {np.mean(m[cnt>0]):+.3f}', file=log, flush=True)
+    print(f'iter {it}: {out} | multiway mean |continue error| {np.sum(mw_err)/sum(SZ[c] for _ in [0] for c in [0]) if False else np.mean(mw_err)/np.mean(SZ):.3f}  mean signed (GW-ours) {np.mean(m[cnt>0]):+.3f} | HELD-OUT nodes mean |error| {np.mean(hold_err)/np.mean(SZ):.3f}', file=log, flush=True)
     delta = np.clip(delta + gain * m * np.minimum(cnt, 6) / 6, -lim, lim)
     json.dump(delta.tolist(), open('fit_mw_best.json', 'w'))
 print('DONE', file=log, flush=True)
