@@ -7,7 +7,7 @@ const D = JSON.parse(fs.readFileSync(file, 'utf8'));
 const cfg = { ...D.cfg }; delete cfg.allowLimps; delete cfg.leave1; delete cfg.lite; cfg.maxNodes = 900000;
 const t0 = Date.now(), s = new PF2(cfg), NC = 169, nP = cfg.names.length;
 const SIZE = new Array(NC).fill(0); for (let i = 0; i < E.NUM_COMBOS; i++) SIZE[E.CLASS_OF[i]]++;
-const TARGET = +(process.env.TARGET_ITERS || 0), MINP = +(process.env.MINP || 3e-4);
+const TARGET = +(process.env.TARGET_ITERS || 0), MINP = +(process.env.MINP || 1e-4);
 for (let k = 0; k < SECS / 30 || (TARGET > 0 && s.iters < TARGET && Date.now() - t0 < 3 * SECS * 1000); k++) { s.run(30000); process.stderr.write(`  ${Math.round((Date.now() - t0) / 1000)}s iters ${s.iters}\n`); }
 s.evalPass(EVS * 1000);
 const nodes = [];
