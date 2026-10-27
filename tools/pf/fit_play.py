@@ -11,7 +11,7 @@ def score(tag, cur):
     m = re.search(r'([\d.]+)% over (\d+)', out); return float(m.group(1)) if m else -1
 log = open('fit_log.txt', 'a'); cur = dict(D)
 best = score('fit0', cur); print('base', best, file=log, flush=True)
-for rnd in range(2):
+for rnd in range(int(os.environ.get('ROUNDS', 1))):
     step = 0.03 if rnd == 0 else 0.015
     for k in FIT:
         cand = []

@@ -70,6 +70,7 @@ const PLAY = (() => {
   });
   return t;
 })();
+if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its own copy of the table: calibrate both
 class PF2 extends E.PreflopSolver {
   constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, playPos: MODEL.pPos, playNeg: MODEL.pNeg, implied: MODEL.io, ...cfg }; super(cfg); }
   prepTerminal(nd) {
