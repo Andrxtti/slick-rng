@@ -185,3 +185,18 @@ morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solv
   The app engine already capped 4-bet jams at 70bb for exactly this reason (no stack-off play in the flop model); the
   library solver now uses the same cap. Settling a share of low-SPR flops as all-in (PA) only halved the jams and cost
   the 25bb tables, so it stays off.
+
+## Oct 28 (afternoon): 100bb re-raise composition, with 13 new GTO Wizard nodes
+
+- Reference set is now 53 nodes (35 at 100bb: every seat facing each open, the opener facing a 3-bet from BTN/BB,
+  the 3-bettor facing a 4-bet, CO facing a BTN 3-bet; 16 at 25bb; one each at 40/60). gw/extract.js reads a spot
+  straight off the GTO Wizard page (strategy bands + the hand's weight at the node; unreachable hands are skipped).
+  Shipped 4.5 library: 77.9% over the 53, 75.6% at 100bb.
+- Tree error found with probe_ev.js (EV of a hand's raise split by the next player's reply): cold players facing a
+  3-bet could only fold or JAM, so at 100bb the blinds jammed AA/KK/AK and A5s 3-4% each over every 3-bet. A suited
+  3-bet lost 9bb to each of those; hands that could call a jam didn't. Fixed: cold vs a 3-bet gets a sized 4-bet while
+  the jam cap (70bb) is off, a jam when it's on (same as the app engine).
+- Model error seen in the same probe: when the opener CALLS a 3-bet (SPR ~4.6), the in-position 3-bettor keeps a full
+  27-point positional leak from the caller, so JJ collects 77% of the pot, 88 58%, AQo 60%. That makes 3-betting
+  pairs and offsuit broadways far too good. Candidate fix: the positional edge should fade with SPR well above 2
+  (S1 knob: ramp = (SPR-0.25)/S1), tested at S1 = 5 and 10 on the PC.
