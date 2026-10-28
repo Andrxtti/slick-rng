@@ -1,6 +1,6 @@
 // Slick RNG offline support. The page comes from the network when online (so updates
 // arrive right away) and from the cache when offline; icons and fonts are cached.
-const CACHE = 'slick-rng-4.4.1';
+const CACHE = 'slick-rng-4.4.2';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/slick-badge.jpg', 'icons/dwi.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {
