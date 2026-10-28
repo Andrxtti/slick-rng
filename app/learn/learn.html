@@ -1,0 +1,158 @@
+<div class="learn" id="learn" hidden role="dialog" aria-modal="true" aria-labelledby="learnTitle">
+  <div class="lrn-top">
+    <button type="button" class="lrn-back" id="learnClose" aria-label="Back to the app">‹ Back</button>
+    <div class="lrn-title" id="learnTitle">LEARN</div>
+    <span class="grow"></span>
+    <span class="lrn-sub">How the solver works · coaching</span>
+  </div>
+  <div class="lrn-body">
+    <nav class="lrn-nav" aria-label="Learn sections">
+      <button type="button" data-sec="start" aria-current="true">Start here</button>
+      <button type="button" data-sec="solver">How spots are built</button>
+      <button type="button" data-sec="multiway">Multiway pots</button>
+      <button type="button" data-sec="icm">ICM and short stacks</button>
+      <button type="button" data-sec="players">Player types</button>
+    </nav>
+    <div class="lrn-main" id="learnMain">
+
+<article data-sec="start">
+  <h2>Start here</h2>
+  <p class="lede">Confirmed Fire Poker has two halves. The <b>Solver</b> shows how to play a spot. The <b>Trainer</b> deals you spots and scores your decisions against the solver. This section explains what the solver is doing and teaches the spots where tournament play goes beyond a chart.</p>
+  <h3>Reading a spot</h3>
+  <ul>
+    <li><b>The table</b> sets the spot: the format (6-max, 8-max or 9-handed), the stack depth, and the action so far. Tap an action to move the hand forward, or tap a seat to see that player's options.</li>
+    <li><b>The action tiles</b> show how often the whole range takes each action, and the <b>EV</b> of that action: the average gain over folding, in big blinds, for the hands that take it. Fold is always +0.00.</li>
+    <li><b>The hand grid</b> colors each hand by its mix: <span class="sw f"></span>fold, <span class="sw c"></span>call or limp, <span class="sw r"></span>raise, <span class="sw j"></span>all-in. Tap a hand to see its exact frequencies and the EV of every option.</li>
+    <li><b>Mixed hands</b> (a cell split into two colors) are close in value. Either action is fine, and mixing keeps you hard to read.</li>
+  </ul>
+  <h3>The badge above the grid</h3>
+  <ul>
+    <li><b>GTO preflop · pre-solved</b>: the spot comes from the hand library, solved ahead of time (see <a href="#learn/solver" data-go="solver">How spots are built</a>). It opens instantly and gives the same answer every time.</li>
+    <li><b>GTO preflop · solving</b>: your exact setup is being solved on your device, live. Custom stacks, odd table sizes and tournament details take this path. The numbers firm up as it runs.</li>
+  </ul>
+  <h3>Chip EV or ICM</h3>
+  <p>The MTT solver opens in <b>chip EV</b>, where every chip is worth the same. That is the right baseline for the early stages and for learning standard ranges. Fill in the <b>Tournament details</b> tab (players left, places paid and the stacks) and the solver switches to <b>ICM</b>, where chips are worth prize money. It plays tighter where busting costs you a pay jump, and more aggressively where your stack puts pressure on others. See <a href="#learn/icm" data-go="icm">ICM and short stacks</a>.</p>
+</article>
+
+<article data-sec="solver" hidden>
+  <h2>How spots are built</h2>
+  <p class="lede">Preflop strategy comes from a game-theory solver: every player keeps adjusting until nobody can gain by changing their play. The solver plays the hand out until the flop. From the flop on, it settles the pot with a model of how much of its equity each hand actually wins.</p>
+  <h3>Chip EV: built to match GTO</h3>
+  <p>Heads-up and single-raised chip-EV spots are the baseline, and they are checked against GTO Wizard's MTT chip-EV solutions. The model of the flop is fitted to those solutions: how much a hand's position, its strength and its playability (pairs, suited connectors and suited aces make more of their equity, offsuit junk makes less) are worth at each stack depth.</p>
+  <p>Where two actions are close in value, the solver may mix a hand a little differently from another solver. The range as a whole plays the same way.</p>
+  <h3>The hand library</h3>
+  <ul>
+    <li>6-max and 8-max tournament tables at 10, 15, 20, 25, 30, 40, 50, 60, 80 and 100 big blinds, chip EV, big blind ante.</li>
+    <li>Every table is solved three separate times and the three answers are averaged. A hand is marked unsettled only when the solves disagree on it and the difference actually costs EV.</li>
+    <li>Bet sizes follow tournament practice and change with depth: opens of 2 to 2.3bb (the small blind raises bigger), 3-bets of about 2.75 to 4.5 times the open, squeezes bigger again, and 4-bets of 2 to 2.2 times. All-ins come in as stacks get shorter: open-jams at 25bb and under, 3-bet jams at 25bb and under (50bb and under from the blinds), and 4-bet jams at 70bb and under.</li>
+    <li>Limps are only part of the library from the small blind. Limping from other seats is a tournament tool, covered in <a href="#learn/icm" data-go="icm">ICM and short stacks</a>.</li>
+  </ul>
+  <h3>Multiway pots</h3>
+  <p>When three or more players see the flop, each hand's share of the pot is estimated against all of the opponents at once. Hands that make strong hands (sets, flushes, straights) gain in multiway pots, and hands that get dominated (offsuit broadways and weak offsuit aces) lose value. The model is fitted to GTO Wizard's multiway chip-EV spots.</p>
+  <p>From the blinds, our multiway ranges also follow Confirmed Fire coaching. Offsuit junk in the big blind (hands like 53o, Q5o or J7o) is a fold in a multiway pot unless the price makes folding a clear mistake, which mostly happens at 20bb and under. <a href="#learn/multiway" data-go="multiway">Multiway pots</a> explains why, and teaches the spots where tournament coaching goes further than a chip-EV chart.</p>
+  <h3>ICM</h3>
+  <p>With tournament details filled in, every result is scored in prize equity instead of chips. Chips are converted to prize money with the standard Independent Chip Model (ICM), using the stacks at your table, the players left in the tournament and the payouts. Players at other tables count at the average stack. The <b>ICM vs chips</b> button marks the hands that play tighter or looser than they would in a chip-only game.</p>
+  <h3>What isn't a full solve</h3>
+  <p>No preflop tool solves every flop, turn and river of every line. That would take server farms. Ours settles the flop with the fitted model above. Multiway and ICM spots go further than any chart can, so they lean on the model and on Confirmed Fire coaching more than heads-up chip-EV spots do. Where we follow the coaching, this section says so.</p>
+</article>
+
+<article data-sec="multiway" hidden>
+  <h2>Multiway pots</h2>
+  <p class="lede">Most tournament tables are 8 or 9 handed, so you see a lot of opens with a call behind. These pots play differently from heads-up pots, and this is where a chart alone teaches you least.</p>
+  <h3>Why multiway is different</h3>
+  <ul>
+    <li><b>The price looks great, but you don't realize your equity.</b> Closing the action in the big blind three-way, you often need less than 20% equity to call. Out of position against two ranges, though, weak hands miss the flop, check, and get bet off the pot. Raw equity overstates what they win.</li>
+    <li><b>Making the best hand matters more than having it now.</b> Against two or more players, one pair is rarely good enough to win a big pot. The hands that win big multiway pots are sets, flushes and straights.</li>
+    <li><b>Everyone in the pot has a range.</b> A squeeze has to get through two players, not one, so bluffs need blockers and a backup plan.</li>
+  </ul>
+  <h3>Hands that go up, hands that go down</h3>
+  <ul>
+    <li><b>Up:</b> small and medium pairs (sets), suited connectors and gappers (straights and flushes), suited aces (the nut flush). In the big blind, offsuit connectors make straights that don't collide with the openers' high cards, which is why 76o, 87o and 98o are among the last offsuit hands to fold.</li>
+    <li><b>Down:</b> offsuit broadways (KJo, QTo, JTo) and weak offsuit aces. They make second-best hands and are often dominated by the opener.</li>
+    <li><b>Card removal:</b> speculative calls work best with low cards that don't overlap the openers' ranges.</li>
+  </ul>
+  <h3>Big blind vs an open and a call</h3>
+  <ul>
+    <li>Fold offsuit junk (53o, Q5o, J7o and the like) unless the price makes folding a clear mistake. At about 15bb and under the pot odds are so good that most of these hands are calls. From about 25bb up they're folds, and 20bb is in between, where only the better ones call.</li>
+    <li>T9o, 98o and 97o look playable but make second-best straights and pairs against the openers' ranges. With deeper stacks they fold like the rest. The connected ones (87o, 98o) are among the last offsuit hands to go.</li>
+    <li>When the small blind is the caller, you can defend a little wider. There are more checks, and you sometimes get to play in position against the small blind.</li>
+    <li>Against early-position opens, squeeze mostly for value and bluff rarely. AQo is often just a call or a fold there.</li>
+  </ul>
+  <h3>Squeezing</h3>
+  <ul>
+    <li><b>Value:</b> AA–JJ, AK and AQs. Add TT–88 as the opener gets later, or when the small blind is also in.</li>
+    <li><b>Bluffs:</b> suited aces (A5s above all), suited broadways with blockers (KTs, QTs, JTs) and suited connectors. Offsuit bluffs are rare, mainly AQo against early opens and small offsuit aces from the big blind.</li>
+    <li><b>Size:</b> squeezes are bigger than 3-bets, about half an open more for each caller when deep, and about three-quarters of an open more at 25bb and under. Deep, only the very top of the range is happy to get it all in after squeezing.</li>
+    <li><b>Short stacks:</b> at around 20bb, squeeze small (about 7bb) or jam. From the small blind against an open and a call, mostly jam.</li>
+  </ul>
+  <h3>Overcalling on the button</h3>
+  <ul>
+    <li>Calling behind an open on the button is tighter than a chip-EV chart suggests. The blinds can squeeze, which costs you the call.</li>
+    <li>Behind a tight early-position opener you are better protected. AQo, AQs and TT are comfortable flats, and even JJ can flat.</li>
+    <li>When the hijack opens and the cutoff calls, the cutoff is often weak. Squeeze wide.</li>
+  </ul>
+  <h3>Where Confirmed Fire coaching overrides chip EV</h3>
+  <p>Chip-EV solvers defend the big blind very wide multiway, including offsuit junk. Our solver only keeps those calls when the price makes folding a clear mistake, by at least 0.15bb in chip EV, following Confirmed Fire coaching. Below that edge the call is a fold: chip EV ignores how much a tournament stack is worth, and these hands win small pots and lose big ones. Tap one of those hands and you'll still see the call's chip EV, so you can see how close it is. The rest of this page is coaching to use alongside the chart, especially once ICM is in play, where good players tighten their multiway calls further.</p>
+</article>
+
+<article data-sec="icm" hidden>
+  <h2>ICM and short stacks</h2>
+  <p class="lede">In a tournament, chips aren't money. Losing your stack ends your run, and every pay jump you pass is real money. ICM (the Independent Chip Model) turns stacks into prize equity, and that changes the right play.</p>
+  <h3>The core idea</h3>
+  <ul>
+    <li><b>Chips you lose are worth more than chips you win.</b> Doubling your stack doesn't double your prize equity, but losing it all takes it to zero. So you need more than a coin flip to call off your tournament life. That extra edge is the <b>risk premium</b>.</li>
+    <li><b>Covering matters.</b> A big stack can pressure medium stacks, which can't call without risking their run. A short stack facing the big stack is less exposed: it can only lose what it has.</li>
+    <li><b>Other short stacks matter.</b> If someone at the table is about to bust, a medium stack gains just by waiting.</li>
+  </ul>
+  <h3>By stage</h3>
+  <ul>
+    <li><b>Early:</b> very little ICM. Chip EV is a good guide.</li>
+    <li><b>Soft bubble</b> (a few tables from the money): calling ranges start to tighten, mostly for the medium stacks.</li>
+    <li><b>Bubble:</b> the biggest ICM effect. Medium stacks fold a lot against the covering stacks, and big stacks open and 3-bet much wider.</li>
+    <li><b>In the money:</b> the pressure eases, then returns before every big pay jump.</li>
+    <li><b>Final table:</b> the jumps are biggest. Stack sizes around the table shape every decision.</li>
+  </ul>
+  <p>Fill in <b>Tournament details</b> and use the <b>ICM vs chips</b> button to see exactly which hands change.</p>
+  <h3>Short-stack plays the chart doesn't show</h3>
+  <p>The hand library keeps the tree simple: raise, call, fold or jam, with limps only from the small blind. Real tournament play has two more tools at short stacks. They come in mostly with ICM pressure and big antes.</p>
+  <ul>
+    <li><b>Limping</b> at about 10–20bb, mostly late position and the small blind, with a plan for when someone raises. <b>Limp-fold</b> gives up only the limp. <b>Limp-call</b> sees a flop. <b>Limp-raise</b> or <b>limp-jam</b> traps with hands that want action. The <b>Limp plan</b> panel shows a plan against each player behind. Under ICM, keeping your stack often beats the trap.</li>
+    <li><b>Raising and leaving 1bb behind</b> at 40bb and under. Instead of jamming, you raise to everything but one big blind. You are committed against a normal re-shove, but if two players go to war behind you, you can still fold and survive. On bubbles and at final tables, staying alive is worth a lot.</li>
+  </ul>
+  <p>Raising with 1bb behind is part of the live (on-device) solve at 40bb and under. Limping from seats other than the small blind isn't solved: outside the pre-solved spots the table lets you enter a limp, and the Limp plan shows a coaching plan for it. Neither play is in the pre-solved library.</p>
+</article>
+
+<article data-sec="players" hidden>
+  <h2>Player types</h2>
+  <p class="lede">GTO is the strategy nobody can beat. Real opponents leak, and you win the most by noticing how. Here are the common types, how to spot them, and how to shift your ranges against each one.</p>
+  <p class="note">The numbers are rough guides from tracking stats: <b>VPIP</b> (how often they put money in preflop) and <b>PFR</b> (how often they raise preflop). Without stats, watch what they show down and how often they act.</p>
+  <div class="ptypes">
+    <section><h3>Nit</h3><p class="tag">VPIP under ~15 · PFR close to VPIP</p>
+      <p><b>Spot them:</b> they fold almost everything and only play premiums. Their 3-bets mean real hands.</p>
+      <p><b>Adjust:</b> steal their blinds wider and fold more to their 3-bets and 4-bets. Bluff them more often, since they fold too much, but don't expect thin value bets to get paid. Don't pay off their big bets.</p></section>
+    <section><h3>TAG (tight-aggressive)</h3><p class="tag">VPIP ~18–25 · PFR ~15–20</p>
+      <p><b>Spot them:</b> solid, selective and aggressive. Usually a regular.</p>
+      <p><b>Adjust:</b> stay close to the solver. Look for small leaks: some overfold to 3-bets, others don't defend their blinds enough.</p></section>
+    <section><h3>LAG (loose-aggressive)</h3><p class="tag">VPIP ~25–35 · PFR ~20–30</p>
+      <p><b>Spot them:</b> they open wide, 3-bet often and keep the pressure on.</p>
+      <p><b>Adjust:</b> defend wider against their opens and re-raise them with a wider value range. Call down a little lighter, and let them bluff into your strong hands.</p></section>
+    <section><h3>Maniac</h3><p class="tag">VPIP 40+ · PFR 30+</p>
+      <p><b>Spot them:</b> they raise and re-raise constantly, often with weak hands.</p>
+      <p><b>Adjust:</b> trap more and bluff less. Call down and get it in wider for value, and cut your bluffs almost completely. Expect swings. They will win some pots, but your strong hands get paid.</p></section>
+    <section><h3>Calling station</h3><p class="tag">VPIP high · PFR low (e.g. 40 / 8)</p>
+      <p><b>Spot them:</b> they call too much and rarely raise. They show down weak pairs and missed draws.</p>
+      <p><b>Adjust:</b> isolate their limps with a wide value range and bet bigger for value. Stop bluffing them: they don't fold.</p></section>
+    <section><h3>Recreational</h3><p class="tag">Loose, passive, inconsistent</p>
+      <p><b>Spot them:</b> limps, odd bet sizes, playing for fun. Often the source of most of the table's profit.</p>
+      <p><b>Adjust:</b> isolate their limps, play more pots in position against them, value-bet relentlessly and keep it simple.</p></section>
+    <section><h3>Pro</h3><p class="tag">Balanced and hard to read</p>
+      <p><b>Spot them:</b> sensible sizes, a few well-timed bluffs, and ranges that look like the solver's.</p>
+      <p><b>Adjust:</b> play the solver's strategy. Pick your battles and avoid marginal spots out of position against them.</p></section>
+  </div>
+  <h3>Coming to the solver</h3>
+  <p>A <b>Versus</b> option is on the way. You'll pick a player type and the solver's ranges will widen or tighten against it, with the changes shaded so you can see what moved and why. The same two-click adjustment will be here in Learn.</p>
+</article>
+
+    </div>
+  </div>
+</div>
