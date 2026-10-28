@@ -76,7 +76,10 @@ if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its 
 { const fs0 = require('fs'), pm = process.env.PLAYMW || (fs0.existsSync(__dirname + '/model_mw.json') ? __dirname + '/model_mw.json' : 'none');
   if (pm !== 'none') { const dd = JSON.parse(fs0.readFileSync(pm, 'utf8')); for (let i = 0; i < 169; i++) PLAY[i] += dd[i] || 0; } }
 class PF2 extends E.PreflopSolver {
-  constructor(cfg) { cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, playPos: MODEL.pPos, playNeg: MODEL.pNeg, implied: MODEL.io, ...cfg }; super(cfg); }
+  constructor(cfg) {
+    const ex = {}; for (const [k, e] of [['playSpan', 'PSPAN'], ['pairSpan', 'PAIRSPAN'], ['ioSpan', 'IOSPAN'], ['pRe', 'PRE']]) if (process.env[e] !== undefined) ex[k] = +process.env[e];
+    cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, gRe: MODEL.gRe, playPos: MODEL.pPos, playNeg: MODEL.pNeg, implied: MODEL.io, ...ex, ...cfg }; super(cfg);
+  }
   prepTerminal(nd) {
     super.prepTerminal(nd);
     if (nd.kind !== 'flop') return;
@@ -125,7 +128,7 @@ class PF2 extends E.PreflopSolver {
       for (const i of el) { let lg = 0; for (const j of el) if (j !== i) lg += LO[cls[i] * NC + cls[j]]; s[i] = Math.exp(lg / (2 * (k - 1))); ss += s[i]; }
       const g = nd.gamma + MW.gam * (k - 2), mr = k >= 3 ? MW.r : 1, mp = k >= 3 ? MW.play + MW.playk * (k - 3) : 1, pen = k >= 3 ? MW.pen : 1; let xs = 0, bs = 0;
       const b = this._mwB || (this._mwB = new Float64Array(this.n));
-      for (const i of el) { const pl0 = PLAY[cls[i]], pl = pl0 * (pl0 > 0 ? MODEL.pPos : MODEL.pNeg); b[i] = (1 + (pl < 0 ? pl * pen : pl) * nd.playK * mp) * Math.pow(s[i] / ss, g); bs += b[i]; x[i] = (1 - (1 - nd.R[i]) * mr) * b[i]; xs += x[i]; }
+      for (const i of el) { const pt = E.playTerm(nd, cls[i], PLAY[cls[i]], MODEL.pPos, MODEL.pNeg); b[i] = (1 + (pt < 0 ? pt * pen : pt) * mp) * Math.pow(s[i] / ss, g); bs += b[i]; x[i] = (1 - (1 - nd.R[i]) * mr) * b[i]; xs += x[i]; }
       if (k >= 3 && MW.leak > 0) {
         // leak to position: each player keeps R of his base share, the rest goes to the players acting after him
         const rank = this._mwRank || (this._mwRank = (() => { const o = this.cfg.postOrder || [...Array(this.n).keys()], r = new Int32Array(this.n); o.forEach((p, q) => (r[p] = q)); return r; })());
@@ -146,7 +149,7 @@ class PF2 extends E.PreflopSolver {
   mwImplied(nd, cls, el, y) {
     const io = MODEL.io; if (!(io > 0) || !(nd.playK > 0)) return;
     let T = 0; const t = this._mwT || (this._mwT = new Float64Array(this.n));
-    for (const i of el) { t[i] = io * Math.max(0, PLAY[cls[i]] * MODEL.pPos) * nd.playK; T += t[i]; }
+    for (const i of el) { t[i] = io * Math.max(0, PLAY[cls[i]] * MODEL.pPos) * E.ioTerm(nd, cls[i]); T += t[i]; }
     for (const i of el) y[i] = Math.max(0, y[i] + t[i] - T * y[i]);
     let s = 0; for (const i of el) s += y[i]; if (s > 0) for (const i of el) y[i] /= s;
   }
