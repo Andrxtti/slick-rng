@@ -1,3 +1,9 @@
+# Hand-off 2026-10-28 (evening)
+- Solver: Beta 4.7 ships tonight with a re-raise model fitted to GTO Wizard's own 3-bet-pot EVs (100bb agreement
+  76.5 -> 78.2%). The Dream's hand library is being re-solved on that model on the PC worker overnight (150 jobs,
+  C:\Dev\cfp-worker\out\dream-*.json); the solver session exports spots.json from it in the morning.
+- Overnight game work runs in Claude Code on the PC from `unity/docs/OVERNIGHT.md` (branch dream-night).
+
 # The Dream: status after Beta 1.69 (2026-10-24)
 
 ## Beta 1.82 (2026-10-26): the verified hand library
