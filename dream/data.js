@@ -35,7 +35,7 @@ const DR_PEOPLE = {
   lou:    { name: 'Tommy "The Shark" Maio', role: 'Biscayne regular since 1989', c: '#d9b36c', look: { skin: 2, hair: 'slick', hairC: 0, facial: 'stubble' }, eq: { outfit: 'suit', eyes: 'tinted', head: 'none', chain: 'cuban', patch: 'none' } },
   host:   { name: 'Nick "Baby Goat" Twogloves', role: 'Stream host. Plays the feature table when he is not calling it', c: '#f878b8', look: { skin: 3, hair: 'quiff', hairC: 1, facial: 'stubble' }, eq: { outfit: 'designer', eyes: 'none', head: 'none', chain: 'silver', patch: 'none' }, mouth: 'smile' },
   ghost:  { name: 'Bio The Ghost', role: '14 bracelets. Never explains.', c: '#f3ecdc', look: { skin: 5, hair: 'buzz', hairC: 0, facial: 'goatee', eyeC: 1 }, eq: { outfit: 'tux', eyes: 'aviator', head: 'none', chain: 'none', patch: 'none' } },
-  mom:    { name: 'David Pec', role: 'Your best friend. Texts in all caps', c: '#5cbf64', look: { skin: 2, hair: 'fade', hairC: 1, facial: 'stubble' }, eq: { outfit: 'hoodie', eyes: 'none', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
+  mom:    { name: 'David Pec', role: 'Your best friend. Texts in all caps', c: '#5cbf64', look: { skin: 1, hair: 'fade', hairC: 1, facial: 'stubble' }, eq: { outfit: 'hoodie', eyes: 'readers', head: 'none', chain: 'none', patch: 'none' }, mouth: 'smile' },
 };
 
 // era: old school, boom, online high stakes, high roller/GTO, rising stars
