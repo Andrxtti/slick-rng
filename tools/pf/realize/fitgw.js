@@ -17,7 +17,7 @@ for (const mk in GW) {
   const W = cfg.ranges.map((s) => { const w = new Float64Array(NC); for (const t of s.split(',')) { const [h, x] = t.split(':'); w[IDX[h]] = +x; } return w; });
   const pts = Object.entries(GW[mk].share).map(([h, s]) => ({ c: IDX[h], s: Math.min(0.97, s), w: SIZE[IDX[h]] * (W[cfg.caller][IDX[h]] || 0.01) }));
   // folds: the call share must stay below the price (hinge), weighted like a full-range hand
-  const lim = GW[mk].cost / GW[mk].pot - 0.01; for (const h of GW[mk].folds || []) pts.push({ c: IDX[h], s: lim, w: SIZE[IDX[h]], hinge: true });
+  const lim = GW[mk].cost / GW[mk].pot - (+process.env.MARGIN || 0.01); for (const h of GW[mk].folds || []) pts.push({ c: IDX[h], s: lim, w: SIZE[IDX[h]], hinge: true });
   data.push({ mk, cfg, W, pts });
 }
 // aggressor-side targets from our real postflop solves (realize outputs), lower weight (REALW, default 0.3)
