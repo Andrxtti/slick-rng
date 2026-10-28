@@ -139,9 +139,9 @@ The braces after a line are the shot list (unity/tools/direction.py: shot, who m
 ## c4 — Chapter 4 · The Tour (tv)
 
 1. Narrator [n]: A soundstage in Hollywood, Florida. Three cameras, a hole-card reader, and forty thousand people watching you blink.  {ext@flash~grind}
-2. Dex Marlow [host]: Welcome back to the feature table! Joining us: the cubicle kid with a bracelet, and people are calling it a fluke.  {two:Pointing}
+2. Nick "Baby Goat" Twogloves [host]: Welcome back to the feature table! Joining us: the cubicle kid with a bracelet, and people are calling it a fluke.  {two:Pointing}
 3. You [you]: People insist on calling it luck.  {push:Talking@swell}
-4. Dex Marlow [host]: Ooh. We have a quote. Producers, put that on a T-shirt.  {cu:Clapping@flash}
+4. Nick "Baby Goat" Twogloves [host]: Ooh. We have a quote. Producers, put that on a T-shirt.  {cu:Clapping@flash}
 5. Narrator [n]: Under the lights everything shows. The rail can see your hole cards. The table can see your face.  {wide^:Looking Around}
 6. Slick [slick]: Cameras change people. Don't let them change your ranges. Play the hand you'd play in an empty room.  {ots:Pointing>Head Nod Yes}
 7. Kristen Foxglove [L:kfoxglove]: Cameras make people do stupid things. Don't be people.  {cu:Shaking Head No}
@@ -158,9 +158,9 @@ The braces after a line are the shot list (unity/tools/direction.py: shot, who m
 
 ## tour1 — Chapter 4 · The interview (tv)
 
-1. Dex Marlow [host]: Champion! Fifty thousand people are watching on stream. How does it feel?  {two:Pointing@flash~triumph}
-    - Choice: "People insist on calling it luck." | Dex Marlow [host]: THERE it is. The chat is going absolutely crazy.
-    - Choice: "I just tried to make good decisions." | Dex Marlow [host]: Humble AND dangerous. The worst combination for everyone else.
+1. Nick "Baby Goat" Twogloves [host]: Champion! Fifty thousand people are watching on stream. How does it feel?  {two:Pointing@flash~triumph}
+    - Choice: "People insist on calling it luck." | Nick "Baby Goat" Twogloves [host]: THERE it is. The chat is going absolutely crazy.
+    - Choice: "I just tried to make good decisions." | Nick "Baby Goat" Twogloves [host]: Humble AND dangerous. The worst combination for everyone else.
 2. Kristen Foxglove [L:kfoxglove]: Nice result. Now everyone has a file on you. Welcome to the Tour.  {cu:Pointing>Head Nod Yes}
 
 ## c5 — Chapter 5 · High Roller (titan)
