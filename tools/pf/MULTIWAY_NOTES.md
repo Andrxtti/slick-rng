@@ -240,3 +240,12 @@ morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solv
 - First calibration (v1 table without the fold constraints, aggRe 1.43): 100bb 76.5 -> 77.4% (40 nodes, RFI nodes
   added), 25bb 81.9 -> 81.9. BB-vs-open nodes improved 3-7 points; the vs-3-bet nodes got worse because the
   caller now called suited junk GW folds (the fit had no fold constraints). v2 adds the hinge on folds -> calib3.
+- Calibration rounds (100bb over 40 nodes / 25bb): base 76.5 / 81.9; v2 table (aggRe inactive: the tree's state
+  clone dropped the last-raiser field - fixed) 77.7 / 81.7; v3 (fit on our own 3-bet ranges, aggRe 1.32 live)
+  77.0 / 81.9; v4 (3%-of-pot fold margin) 77.1 / 81.1. The suited-junk calls vs 3-bets (K4s, Q6s, J7s) survive every
+  fit: they sit within 0.3bb of indifference, and the solver's own 3-bet range shifts under them.
+- Course rule 2 (course_rules.py): facing a 3-bet or bigger, suited junk (top card below an ace, gap >= 3, low card
+  <= 8), offsuit junk and offsuit aces below ATo fold unless calling beats folding by 0.5bb. Chip-EV neutral by
+  construction; v3 + rule: 78.2 / 81.9 (base + rule 77.1). Adopted: aggRe 1.32 is now the engine default, the v3
+  tables are embedded (REAL_MULT), and the 20-table library is rebuilding on the PC (60 solves, lib-p{1,2,3}-*).
+  The Dream library finished its PC passes on the previous model and will be re-solved on this one.
