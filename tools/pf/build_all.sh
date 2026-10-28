@@ -37,4 +37,5 @@ for P in 1 2 3; do
 done
 # ---- stage 2: consensus into the app library, then gates
 rm -rf ../../app/lib; python3 consensus_full.py ../../app/lib bfull_p1 bfull_p2 bfull_p3 > consensus_build.txt 2>&1
+python3 course_rules.py ../../app/lib >> consensus_build.txt 2>&1   # course rules (big blind folds offsuit junk multiway)
 python3 build_gates.py && log "BUILD COMPLETE" || log "GATES FAILED (see build_report.md)"
