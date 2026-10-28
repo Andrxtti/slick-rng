@@ -200,3 +200,26 @@ morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solv
   27-point positional leak from the caller, so JJ collects 77% of the pot, 88 58%, AQo 60%. That makes 3-betting
   pairs and offsuit broadways far too good. Candidate fix: the positional edge should fade with SPR well above 2
   (S1 knob: ramp = (SPR-0.25)/S1), tested at S1 = 5 and 10 on the PC.
+
+## Oct 28 (afternoon, 2) — calibration result, postflop check, real-postflop realization
+
+- Calibration solves on the PC (8 min each, 100bb and 25bb): base (with the cold-jam tree fix) 75.4% / 81.9%,
+  S1=5 75.4 / 81.0, S1=10 74.9 / 78.4, S1=5+PRE1 76.0 / 80.3, PSPAN3 76.4 / 81.3, S1=5+PSPAN3 76.4 / 81.5,
+  S1=10+PSPAN3 76.3 / 78.8. The positional-fade idea does nothing; PSPAN3 is +1 point at 100bb (noise level).
+  The composition error is unchanged: at every 100bb node the big misses are 54s 65s 76s 87s 77 88 99.
+- Where it comes from (BTN vs SB 3-bet, 100bb): GW calls 10.4 with K8s-K4s, Q8s, J8s (100%) and folds A9o/A8o;
+  we fold the suited kings (call EV -2.67 vs fold -2.3) and call the offsuit aces (-1.49). GW 4-bets AA only 59%,
+  bluffs A6s/K5s/K4s/A9o/ATo; we 4-bet AQo 93%, KQo 79%, KJo 49%. In a 3-bet pot at SPR ~3.7 our model gives
+  dominated offsuit hands too much and suited playable hands too little. The fitted PLAY_RE table (frequency fit,
+  bounded ±0.3) did not fix it.
+- GW postflop check (one flop per day on this plan): BTN opens 2.5, BB calls, Ks7d2c. GW: BTN bets 33% 75.6% /
+  checks 24.4%; BB vs the bet raises 23% / calls 37% / folds 40%. Ours (sampled engine, 50/200 buckets, 7 min on
+  the 2-core box): BTN 72.4 / 27.6, BB 25.0 / 38.8 / 36.2; per-hand top-action agreement 93.8% (BTN) and 82.8%
+  (BB); mean |diff| 10.7 / 15.1 points. Our BB donks 12% (GW's tree has no small donk). gw/post_K72.txt, gwpost.js.
+- ICM check: GW's ICM solutions (8-max, 1000 players, bubble, 152 left) need the Elite Tournament tier - locked on
+  this account. Reference for ICM stays icmref.js (RYE frames) until another source is available.
+- New approach for the re-raise mix: realization from REAL postflop solves. tools/pf/realize/solve_full.js solves a
+  heads-up flop (GW ranges from gw100.txt, pot, stacks) with the sampled engine and records each class's mean
+  utility (= pot share with the money behind) and all-in equity; 8 matchups x 12 flops on the PC (3-bet pots SB/BB
+  vs BTN, BB vs UTG, CO vs BTN 3-bet; a 4-bet pot; single-raised BB vs BTN/CO/UTG). realize/fit.js fits per-class
+  multipliers on the playability factor so the preflop model's share matches the real share, per raise level.
