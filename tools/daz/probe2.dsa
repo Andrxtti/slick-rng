@@ -1,0 +1,24 @@
+// Probe 2: what the Unity bridge action exposes to scripts, and which Genesis 9 hair / clothing / material presets exist.
+var DIR = new DzFileInfo(getScriptFileName()).path();
+function readText(p) { var f = new DzFile(p); if (!f.exists()) return ""; f.open(DzFile.ReadOnly); var t = f.read(); f.close(); return t; }
+var CFG = JSON.parse(readText(DIR + "/run.cfg.json"));
+var LOG = [];
+function log(s) { LOG.push(String(s)); var f = new DzFile(CFG.log); f.open(DzFile.WriteOnly | DzFile.Truncate); f.write(LOG.join("\n")); f.close(); }
+function finish() { var f = new DzFile(CFG.done); f.open(DzFile.WriteOnly); f.write("done"); f.close(); }
+function walk(dir, depth, out) {
+  var d = new DzDir(dir); if (!d.exists()) return;
+  var files = d.entryList(["*.duf"], DzDir.Files); for (var i = 0; i < files.length; i++) out.push(dir + "/" + files[i]);
+  if (depth <= 0) return;
+  var subs = d.entryList([], DzDir.Dirs | DzDir.NoDotAndDotDot); for (var j = 0; j < subs.length; j++) walk(dir + "/" + subs[j], depth - 1, out);
+}
+try {
+  var am = MainWindow.getActionMgr(), ua = am.findAction("DzUnityAction");
+  log("DzUnityAction: " + (ua ? ua.text : "not found"));
+  if (ua) { var keys = []; for (var k in ua) keys.push(k); log("members: " + keys.join(", ")); }
+  var lib = "C:/Users/Public/Documents/My DAZ 3D Library", out = [];
+  walk(lib + "/People/Genesis 9", 4, out);
+  log("Genesis 9 content (" + out.length + " files):\n" + out.join("\n"));
+  var sc = []; walk(lib + "/Scripts", 3, sc); var us = []; for (var s = 0; s < sc.length; s++) if (/unity|bridge/i.test(sc[s])) us.push(sc[s]);
+  var dsa = new DzDir(lib + "/Scripts"); log("scripts with unity/bridge: " + us.join(" ; "));
+} catch (e) { log("ERROR " + e); }
+finish();
