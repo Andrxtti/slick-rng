@@ -32,6 +32,14 @@ game. Read all of it before touching anything. Work through the tasks in order; 
 
 ## Tasks (in order)
 
+0. **Cutscene render pipeline (the art plan's first milestone, see `unity/docs/ART_DIRECTION.md`).** Add the Unity
+   Recorder package to the project (`com.unity.recorder` in `Packages/manifest.json`), then a remote command
+   `render <sceneId>` in `Editor/DreamRemote.cs` that enters Play mode, starts that story scene (see
+   `DreamCutscenes.cs` / `Game.Story` for how scenes are started), records the Game view at 1920x1080, 30 fps, with
+   the cinema volume profile active, until the scene ends, and writes `C:\Dev\Builds\Cutscenes\<sceneId>.mp4`
+   (H.264 is fine for now). Render `p_diner` and `p_office` as the baseline with the current characters and leave the
+   files there. Also a `render-all` that does every scene in direction.json in order. Log timings.
+
 1. **Steven's test notes.** Fix list from his Beta 1.70/1.82 testing; items known so far from STATUS.md: opening
    order of the first scenes, the diner scene, joystick feel at home, body clips on UMA characters (odd poses, sliding
    feet in Talking / Breathing Idle / Victory / Defeated / Fist Pump), voice colour of narrator / Slick / Tommy /
