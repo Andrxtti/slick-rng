@@ -249,3 +249,23 @@ morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solv
   construction; v3 + rule: 78.2 / 81.9 (base + rule 77.1). Adopted: aggRe 1.32 is now the engine default, the v3
   tables are embedded (REAL_MULT), and the 20-table library is rebuilding on the PC (60 solves, lib-p{1,2,3}-*).
   The Dream library finished its PC passes on the previous model and will be re-solved on this one.
+
+## Oct 28 (night) — aggRe was dead code in the solver; refit through the solver's own code; not adopted
+
+- Found while checking before the rebuild: PF2 (solver2.js) builds its own tree and its prepTerminal rebuilds R after the
+  engine's, so cfg.aggRe never reached a solve (the engine-side clone fix only touched the page's tree). Every "aggRe"
+  calibration so far measured the REAL_MULT table alone. Fixed in PF2.prepTerminal (heads-up re-raised pots, the last
+  raiser's R times aggRe, ramped); probe_model.js now shows each setting (AGGRE, PLAYREAL, PLAYPOT) moving the solver's
+  own terminal valuation.
+- realize/fitgw2.js refits through PF2.prepTerminal + PF2.termVec2 on a hand-made terminal; checked equal to a real
+  m8-d100 tree terminal to 5 decimals. GW ranges, GW caller EVs (incl. fold hinges), 5 re-raised nodes, 268 targets:
+  rms 0.043 -> 0.013, aggRe 1.4, suited connectors x1.2-1.35, TT/JJ x0.5. Leave-one-out: every held-out node improves
+  (0.072->0.032, 0.044->0.025, 0.036->0.011, 0.038->0.012, 0.019->0.011).
+- Calibration (8-min solves, two runs each, model stamped in every output and checked): base 76.4 / 75.4 (100bb),
+  81.1 / 79.9 (25bb); fit 76.2 / 76.1, 79.1 / 80.3. Run-to-run noise ~1 point; the fit shows no gain at 100bb and
+  slightly lower at 25bb. Not adopted: the shipped model stays (aggRe 1, no REAL_MULT table; solver2 now loads a table
+  only from an explicit PLAYREAL). Better valuation of 3-bet pots did not move the strategies toward GW, so the
+  remaining disagreement is not in that valuation. Course rule 2 (junk vs 3-bets, 0.5bb) +0.6 at 100bb, 0 at 25bb.
+- The 4.7 library builds on the shipped model + the cold-jam tree fix + course rules 1-2, every pass run to the 4.5/4.6
+  build's iteration counts (pc_build.py emits the jobs; solve_full.js MAXSECS lets the target, not the clock, end a
+  solve; cloud_build.sh runs the cloud share). 40 solves on the PC, 20 on the cloud.

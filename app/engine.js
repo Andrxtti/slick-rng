@@ -846,8 +846,6 @@ PLAY_HU.set([0.02,0,0,0.063,0,0,0.104,0,0.005,0,0,-0.264,0,-0.257,0,-0.022,0,0,0
 // terminals. All ones until fitted; the fitted values are set below the tables.
 const REAL_MULT = [null, new Float32Array(NCLASS).fill(1), new Float32Array(NCLASS).fill(1), new Float32Array(NCLASS).fill(1)];
 // FITTED_REAL_BEGIN (written by tools/pf/realize/embed.py; same values as tools/pf/model_real.json)
-REAL_MULT[2].set([0.923,1.37,1,0.923,1.317,1,1.37,1,0.923,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.33,1,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.33,1,1.33,1,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.33,1,1.33,1,1.33,1,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.252,1,1.317,1,1.37,1,0.628,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.252,1,1.317,1,1.203,1.173,0.628,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.252,1,1.203,1.173,1.203,1.173,0.874,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.203,1.173,1.203,1.173,1.203,1.173,0.874,1.041,0.961,1.041,0.961,1.041,0.961,1.041,0.961,1.089,0.961,1.089,0.961,1.089,0.961,1.089,0.961,1.203,1.173,1.203,1.173,1.203,1.173,1.203,1.173,0.874]);
-REAL_MULT[3].set([0.923,1.37,1,0.923,1.317,1,1.37,1,0.923,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.33,1,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.33,1,1.33,1,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.33,1,1.33,1,1.33,1,1.252,1,1.317,1,1.37,1,0.923,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.252,1,1.317,1,1.37,1,0.628,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.252,1,1.317,1,1.203,1.173,0.628,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.252,1,1.203,1.173,1.203,1.173,0.874,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.33,1,1.203,1.173,1.203,1.173,1.203,1.173,0.874,1.041,0.961,1.041,0.961,1.041,0.961,1.041,0.961,1.089,0.961,1.089,0.961,1.089,0.961,1.089,0.961,1.203,1.173,1.203,1.173,1.203,1.173,1.203,1.173,0.874]);
 // FITTED_REAL_END
 function playTerm(nd, c, v, pPos, pNeg, hu) {
   v += (nd.level || 1) >= 2 ? PLAY_RE[c] : hu ? PLAY_HU[c] : 0;
@@ -1121,7 +1119,7 @@ class PreflopSolver {
       order.forEach((i, r) => { const r0 = k === 1 ? 1 : rLow + (1 - rLow) * (r / (k - 1)); nd.R[i] = 1 - (1 - r0) * ramp; }); nd.ramp = ramp;
       // the last raiser's range advantage in re-raised pots (fitted to real postflop solves, tools/pf/realize): aggRe
       // scales the aggressor's realization factor, growing with the SPR like the positional edge
-      if ((nd.level || 1) >= 2 && nd.agg !== undefined) nd.R[nd.agg] *= 1 + ((this.cfg.aggRe ?? 1.32) - 1) * ramp;   // fitted to GTO Wizard's 3-bet-pot EVs (tools/pf/realize): 1.32
+      if ((nd.level || 1) >= 2 && nd.agg !== undefined && alive.length === 2 && (this.cfg.aggRe ?? 1) !== 1) nd.R[nd.agg] *= 1 + (this.cfg.aggRe - 1) * ramp;   // set from tools/pf/realize once calibrated; 1 = off
       nd.gamma = 1 + (this.cfg.gammaK !== undefined ? this.cfg.gammaK : 0.15) * (1 + (this.cfg.gRe ?? 1) * Math.max(0, (nd.level || 1) - 1)) * Math.log(1 + spr);   // fitted model (tools/pf): twice as steep in a 3-bet pot, three times in a 4-bet pot
       // playability fades out at low SPR: no play left at SPR 1, full effect from SPR 1 + playSpan (default 6).
       // pairSpan: pairs' own fade (set value needs deep stacks); ioSpan: the implied-odds term's fade;

@@ -2,13 +2,16 @@
 //   node solve_full.js <cfg.json> <solveSecs> <evalSecs> <out.json>      (TARGET_ITERS, MINP env)
 const fs = require('fs');
 const { PF2, label, E } = require('./solver2.js');
+// what model this solve ran under, written into the output so a finished job can be checked before it is trusted
+const modelStamp = (s) => { const h = (a) => { let x = 0; for (let i = 0; i < a.length; i++) x = (x * 31 + Math.round(a[i] * 1000)) >>> 0; return x.toString(16); };
+  return { aggRe: s.cfg.aggRe, rLow: s.cfg.rLow, gammaK: s.cfg.gammaK, implied: s.cfg.implied, playReal: process.env.PLAYREAL || 'default', realL2: h(E.REAL_MULT[2]), realL3: h(E.REAL_MULT[3]), playRe: h(E.PLAY_RE), playHu: h(E.PLAY_HU) }; };
 const [file, SECS = 600, EVS = 60, OUT] = process.argv.slice(2);
 const D = JSON.parse(fs.readFileSync(file, 'utf8'));
 const cfg = { ...D.cfg }; delete cfg.allowLimps; delete cfg.leave1; delete cfg.lite; cfg.maxNodes = 900000;
 const t0 = Date.now(), s = new PF2(cfg), NC = 169, nP = cfg.names.length;
 const SIZE = new Array(NC).fill(0); for (let i = 0; i < E.NUM_COMBOS; i++) SIZE[E.CLASS_OF[i]]++;
-const TARGET = +(process.env.TARGET_ITERS || 0), MINP = +(process.env.MINP || 1e-4);
-for (let k = 0; k < SECS / 30 || (TARGET > 0 && s.iters < TARGET && Date.now() - t0 < 3 * SECS * 1000); k++) { s.run(30000); process.stderr.write(`  ${Math.round((Date.now() - t0) / 1000)}s iters ${s.iters}\n`); }
+const TARGET = +(process.env.TARGET_ITERS || 0), MINP = +(process.env.MINP || 1e-4), MAXSECS = +(process.env.MAXSECS || 3 * SECS);   // a target keeps the solve going past SECS, up to MAXSECS
+for (let k = 0; k < SECS / 30 || (TARGET > 0 && s.iters < TARGET && Date.now() - t0 < MAXSECS * 1000); k++) { s.run(30000); process.stderr.write(`  ${Math.round((Date.now() - t0) / 1000)}s iters ${s.iters}\n`); }
 s.evalPass(EVS * 1000);
 const nodes = [];
 const b64 = (u8) => Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength).toString('base64');
@@ -31,5 +34,5 @@ function walk(id, reach, path, prob) {
   }
 }
 walk(0, Array.from({ length: nP }, () => new Float64Array(NC).fill(1)), [], 1);
-fs.writeFileSync(OUT, JSON.stringify({ file: file.split('/').pop(), names: cfg.names, stacks: cfg.stacks, ante: cfg.ante, iters: s.iters, secs: Math.round((Date.now() - t0) / 1000), nodes }));
+fs.writeFileSync(OUT, JSON.stringify({ file: file.split('/').pop(), names: cfg.names, stacks: cfg.stacks, ante: cfg.ante, iters: s.iters, target: TARGET, secs: Math.round((Date.now() - t0) / 1000), model: modelStamp(s), nodes }));
 console.log('saved', OUT, nodes.length, 'nodes', Math.round(fs.statSync(OUT).size / 1024), 'KB, iters', s.iters, 'in', Math.round((Date.now() - t0) / 1000), 's');

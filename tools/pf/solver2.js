@@ -31,7 +31,7 @@ const env = (k, d) => (process.env[k] !== undefined ? +process.env[k] : d);
 // gRe 1: the strength curve is twice as steep on a 3-bet-pot flop, three times in a 4-bet pot (Oct 26, with GTO Wizard's
 // 3-bet / squeeze / 4-bet sizes): BTN vs SB 3-bet continues 47% (GTO Wizard 45) instead of 62%, opener vs squeeze 46%
 // (31) instead of 67%, single-raised pots and 25bb unchanged (89.6%)
-const MODEL = { io: env('IO', 0.8), pPos: env('PPOS', 1), pNeg: env('PNEG', 2), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), gRe: env('GRE', 1), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6), aggRe: env('AGGRE', 1.32) };
+const MODEL = { io: env('IO', 0.8), pPos: env('PPOS', 1), pNeg: env('PNEG', 2), rLow: env('RLOW', 0.73), gammaK: env('GAMMAK', 0.15), s0: env('S0', 0.25), s1: env('S1', 1.75), kInit: env('KINIT', 0.5), kLimp: env('KLIMP', 0), gRamp: env('GRAMP', 0), gRe: env('GRE', 1), pA: env('PA', 0), pAk: env('PAK', 1), pM: env('PM', 1), pMw: env('PMW', 0.6), aggRe: env('AGGRE', 1) };
 // Multiway flops (three or more players see the flop). The engine settles these with a random-board showdown and
 // splits the realization leak evenly between everyone, so a hand with no equity still collects a share of the pot and
 // suitedness/position-by-hand play no part. MW=1 uses the heads-up model generalized instead: each player's multiway
@@ -82,7 +82,7 @@ if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its 
   else { const dd = JSON.parse(fs0.readFileSync(pp, 'utf8')); for (let i = 0; i < 169; i++) { E.PLAY_RE[i] = (dd.re || [])[i] || 0; E.PLAY_HU[i] = (dd.hu || [])[i] || 0; } }
   // PLAYREAL=<file.json> {l1: [169], l2: [169], l3: [169]}: realization multipliers from real postflop solves
   // (realize/fit.js); default model_real.json when present, PLAYREAL=none turns them off (all ones)
-  const pr = process.env.PLAYREAL || (fs0.existsSync(__dirname + '/model_real.json') ? __dirname + '/model_real.json' : 'none');
+  const pr = process.env.PLAYREAL || 'none';   // only an explicit PLAYREAL loads a table (calibration showed no gain; see MULTIWAY_NOTES Oct 28)
   for (let l = 1; l <= 3; l++) E.REAL_MULT[l].fill(1);
   if (pr !== 'none') { const dd = JSON.parse(fs0.readFileSync(pr, 'utf8')); for (let l = 1; l <= 3; l++) { const t = dd['l' + l]; if (t) for (let i = 0; i < 169; i++) E.REAL_MULT[l][i] = t[i] || 1; } } }
 class PF2 extends E.PreflopSolver {
@@ -103,6 +103,9 @@ class PF2 extends E.PreflopSolver {
       if (nd.aggr < 0 && r < k - 1) r0 += (1 - r0) * MODEL.kLimp;                   // limped pot: nobody has the initiative
       nd.R[i] = 1 - (1 - r0) * ramp;
     });
+    // re-raised heads-up pots: the last raiser's range advantage (cfg.aggRe, fitted to GTO Wizard's 3-bet-pot EVs by
+    // realize/fitgw.js through this same code). 1 = off. Applied here because this method rebuilds R after the engine's.
+    if (k === 2 && (nd.level || 1) >= 2 && nd.aggr >= 0 && alive.includes(nd.aggr) && this.cfg.aggRe && this.cfg.aggRe !== 1) nd.R[nd.aggr] *= 1 + (this.cfg.aggRe - 1) * ramp;
     // hand-strength curve; steeper in re-raised pots (gRe per raise level past the open: ranges are strong and tight there,
     // so a weak hand realizes even less of its equity), fades with the positional edge as stacks get short (gRamp)
     nd.gamma = 1 + this.cfg.gammaK * (1 + MODEL.gRe * Math.max(0, (nd.level || 1) - 1)) * Math.log(1 + spr) * (MODEL.gRamp ? ramp : 1);
