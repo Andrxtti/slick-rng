@@ -11,7 +11,7 @@ if errorlevel 1 (
   pause
   exit /b
 )
-echo Leave this window open. Solves run in the background at low priority.
+echo Leave this window open. This PC is solving at full speed.
 echo.
 node worker.js
 pause

@@ -4,8 +4,8 @@ const fs = require('fs'), path = require('path'), os = require('os'), { spawn } 
 const R = __dirname, J = (d) => path.join(R, d);
 for (const d of ['jobs', 'running', 'done', 'failed', 'out', 'logs']) fs.mkdirSync(J(d), { recursive: true });
 const CPUS = os.cpus().length, TOTAL_MB = Math.round(os.totalmem() / 1e6);
-// leave two threads for Windows and you; each solve needs about 0.3 GB of memory
-const SLOTS = +(process.env.SLOTS || Math.max(1, Math.min(CPUS - 2, Math.floor((TOTAL_MB - 3000) / 400))));
+// the PC is dedicated to solving: one solve per thread (each needs about 0.3 GB of memory)
+const SLOTS = +(process.env.SLOTS || Math.max(1, Math.min(CPUS, Math.floor((TOTAL_MB - 2500) / 350))));
 let running = 0; const live = new Map();
 const log = (m) => { const l = `${new Date().toLocaleString()}  ${m}\n`; process.stdout.write(l); fs.appendFileSync(J('logs/worker.log'), l); };
 const beat = () => fs.writeFileSync(J('heartbeat.json'), JSON.stringify({ t: Date.now(), slots: SLOTS, running, jobs: [...live.keys()], cpus: CPUS,
@@ -19,7 +19,8 @@ function next() {
     running++; live.set(job.id, Date.now()); log(`start ${job.id}`);
     const p = spawn(process.execPath, ['solve_full.js', job.cfg, String(job.secs), String(job.evs || 60), tmp],
       { cwd: J(job.cwd || 'tools/pf'), env: { ...process.env, ...(job.env || {}) }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
-    try { os.setPriority(p.pid, os.constants.priority.PRIORITY_BELOW_NORMAL); } catch (e) {}
+    // above normal: ahead of everything else on the PC, but Windows and the Claude app (the link to this PC) stay responsive
+    try { os.setPriority(p.pid, os.constants.priority.PRIORITY_ABOVE_NORMAL); } catch (e) {}
     const lf = fs.createWriteStream(J('logs/' + job.id + '.log')); p.stdout.pipe(lf); p.stderr.pipe(lf);
     p.on('exit', (code) => {
       running--; const mins = ((Date.now() - live.get(job.id)) / 60000).toFixed(1); live.delete(job.id);
