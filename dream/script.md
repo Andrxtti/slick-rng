@@ -193,7 +193,7 @@ The braces after a line are the shot list (unity/tools/direction.py: shot, who m
 
 1. Narrator [n]: Every July: eight thousand players, ten thousand dollars each. / One of them ends up on the cover of every poker magazine in the world.  {ext@crowd~grind}
 2. Narrator [n]: Day one. A ballroom the size of an airport. Two hundred tables, and somewhere in the noise, a seat with your name on it.  {wide^:Looking Around}
-3. Michael Mizrockie [L:mizrockie]: Defending champ. If you want it, you'll have to take it from me.  {cu:Pointing@sting}
+3. Michael Mightyrocky [L:mizrockie]: Defending champ. If you want it, you'll have to take it from me.  {cu:Pointing@sting}
 4. Bio The Ghost [ghost]: Still here, kid. So am I.  {ecu:Talking~tension}
 5. David Pec [mom] (text): BRO YOU ARE ON TV?? SIT UP STRAIGHT
 6. Slick [slick]: Nine-year-old you watched this on a fuzzy TV. Go show him how it ends.  {push:Talking@swell~grind}

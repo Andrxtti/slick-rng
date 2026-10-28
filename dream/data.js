@@ -60,18 +60,14 @@ const DR_LEGENDS = [
   { id: 'chillwick', name: 'Stephen Chillwick', nick: 'Mr. Consistency', era: 'High roller', ch: 5, style: 'Final table every week. Never flustered.', line: 'Good luck. Genuinely.' },
   { id: 'kahoon', name: 'Jason Kahoon', nick: 'The Gym Rat', era: 'High roller', ch: 5, style: 'Works out at 5 AM, studies at 6, wins Titans by dinner.', line: 'Discipline beats talent. I have both.' },
   { id: 'loophole', name: 'Linus Loophole', nick: 'The Machine', era: 'High roller', ch: 5, style: 'Plays so close to perfect that the solver checks HIS work.', line: 'Your frequency is off by four percent.' },
-  { id: 'hackston', name: 'Isaac Hackston', nick: 'The Professor', era: 'High roller', ch: 5, style: 'Four cards or two, he has solved it.', line: 'Interesting sizing. Incorrect, but interesting.' },
-  { id: 'addemup', name: 'Michael Addemup', nick: 'The Titan Slayer', era: 'High roller', ch: 5, style: 'Wins the biggest buy-ins in the world, then disappears.', line: 'Shove.' },
+  { id: 'hackston', name: 'Isaac Maskedman', nick: 'The Professor', era: 'High roller', ch: 5, style: 'Four cards or two, he has solved it.', line: 'Interesting sizing. Incorrect, but interesting.' },
+  { id: 'addemup', name: 'Mark Holdz', nick: 'The Titan Slayer', era: 'High roller', ch: 5, style: 'Wins the biggest buy-ins in the world, then disappears.', line: 'Shove.' },
   { id: 'foxglove', name: 'Alex Foxglove', nick: 'The Tour Machine', era: 'High roller', ch: 4, style: 'Top of the leaderboard so often they named the trophy room after him.', line: 'Leaderboard points are points.' },
   { id: 'kfoxglove', name: 'Kristen Foxglove', nick: 'The Queen of the Tour', era: 'High roller', ch: 4, style: 'Multiple player-of-the-year titles. Reads people for a living.', line: "You're nervous. Your left hand gives it away." },
-  { id: 'martini', name: 'Artur Martini', nick: 'Player of the Year', era: 'High roller', ch: 5, style: 'Shaken, never stirred. Top of the Titan rankings.', line: 'Another one for the cabinet.' },
+  { id: 'martini', name: 'Shane Dawb', nick: 'Player of the Year', era: 'High roller', ch: 5, style: 'Never shaken. Top of the Titan rankings.', line: 'Another one for the cabinet.' },
   { id: 'lonestar', name: 'Jesse Lonestar', nick: 'Gorilla Mode', era: 'Rising star', ch: 5, style: 'Nine wins in one year. When he goes gorilla mode, run.', line: 'GORILLA. MODE.' },
-  { id: 'mocha', name: 'Kayhan Mocha', nick: 'The Norwegian Storm', era: 'Rising star', ch: 5, style: 'Topped the money list with a $7.7 million invitational win.', line: 'Cold out there. Colder in here.' },
-  { id: 'daisies', name: 'Seth Daisies', nick: 'The Quarter-Million Man', era: 'Rising star', ch: 5, style: 'First bracelet was a $250K Super High Roller. Started at the top.', line: 'Go big or go home. I went big.' },
-  { id: 'bindr', name: 'Bernhard Bindr', nick: 'The Breakout', era: 'Rising star', ch: 5, style: 'Came out of nowhere with a $10 million win. Like you.', line: 'Everyone was a nobody once.' },
-  { id: 'punchline', name: 'Punnat Punchline', nick: 'The Bangkok Banker', era: 'Rising star', ch: 5, style: 'Three Titan titles in one year. All business.', line: 'This is my office.' },
   { id: 'glazer', name: 'Nicky Parmesan', nick: 'Blocked', era: 'Rising star', ch: 3, style: 'Three bracelets in one summer. Mixed-game wizard.', line: 'Pick a game. Any game.' },
-  { id: 'mizrockie', name: 'Michael Mizrockie', nick: 'The Grinder', era: 'Rising star', ch: 6, style: 'Won the Main Event and the Players Championship in the same summer. Defending champ.', line: "Defending champ. You'll have to take it from me." },
+  { id: 'mizrockie', name: 'Michael Mightyrocky', nick: 'The Grinder', era: 'Rising star', ch: 6, style: 'Won the Main Event and the Players Championship in the same summer. Defending champ.', line: "Defending champ. You'll have to take it from me." },
 ];
 const drLegend = (id) => DR_LEGENDS.find((l) => l.id === id);
 // every legend gets a fixed look from their name: older eras go gray and suited, newer ones hoodies and headphones
@@ -143,13 +139,13 @@ const DR_EVENTS = [
   { id: 'rpt10k', ch: 4, kind: 'mtt', name: 'Royal Tour $10,000 Barcelona Championship', venue: 'tv', buyin: 10000, field: 421, title: 'tour', legends: ['sidle', 'swan', 'escandalo', 'mizrockie'], blurb: 'The crown jewel of the Tour.' },
   { id: 'sat25k', ch: 5, kind: 'sat', name: 'Titan $25K Satellite', venue: 'titan', buyin: 2700, field: 104, seats: 10, target: 't25k', blurb: 'Ten seats into the Titan $25,000. Ninety-four people go home with nothing.' },
   { id: 'private', ch: 5, kind: 'cash', name: '$100/$200 Private Game', venue: 'titan', buyin: 40000, blurb: 'Penthouse game. Invitation from Mustich, of all people.' },
-  { id: 't25k', ch: 5, kind: 'mtt', name: 'Titan $25,000 Short Deck Invitational', venue: 'titan', buyin: 25000, field: 142, title: 'titan', legends: ['chillwick', 'kahoon', 'lonestar', 'bindr'], blurb: 'The entry point to the biggest games on earth.' },
-  { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000 Super High Roller', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'punchline', 'mocha', 'trent'], blurb: 'Sixty-eight of the best players alive. And Mustich.' },
+  { id: 't25k', ch: 5, kind: 'mtt', name: 'Titan $25,000 Short Deck Invitational', venue: 'titan', buyin: 25000, field: 142, title: 'titan', legends: ['chillwick', 'kahoon', 'lonestar'], blurb: 'The entry point to the biggest games on earth.' },
+  { id: 't100k', ch: 5, kind: 'mtt', name: 'Titan $100,000 Super High Roller', venue: 'titan', buyin: 100000, field: 68, title: 'titan', legends: ['holdz', 'bonanza', 'loophole', 'martini', 'trent'], blurb: 'Sixty-eight of the best players alive. And Mustich.' },
   { id: 'tilt2100', ch: 5, kind: 'mtt', online: true, name: 'CF Tilt $2,100 Thursday Thriller', venue: 'cftilt', buyin: 2100, field: 210, blurb: 'Online side event. Half the Titan field logs in for this one.' },
-  { id: 't250k', ch: 5, kind: 'mtt', name: 'Titan $250,000 The Big One', venue: 'titan', buyin: 250000, field: 40, title: 'titan', legends: ['addemup', 'kenny', 'hackston', 'antionius', 'daisies'], blurb: 'The richest table in the world.' },
+  { id: 't250k', ch: 5, kind: 'mtt', name: 'Titan $250,000 The Big One', venue: 'titan', buyin: 250000, field: 40, title: 'titan', legends: ['addemup', 'kenny', 'hackston', 'antionius'], blurb: 'The richest table in the world.' },
   { id: 'satmain', ch: 6, kind: 'sat', name: 'Main Event Mega Satellite', venue: 'main', buyin: 1100, field: 704, seats: 70, target: 'main', blurb: "The accountant's route: a cheap seat into the biggest tournament on earth." },
   { id: 'main', ch: 6, kind: 'mtt', name: 'WCS $10,000 Main Event', venue: 'main', buyin: 10000, field: 8402, title: 'me', boss: 'ghost', legends: ['mizrockie'], blurb: 'Eight thousand dreamers. One world champion.' },
-  { id: 'legends', ch: 7, kind: 'mtt', name: 'Legends Invitational', venue: 'hall', buyin: 50000, field: 33, title: 'bracelet', legends: ['hungar', 'brunswick', 'chance', 'hellbent', 'mizrockie'], blurb: 'Every era. One table. A bracelet for the winner.' },
+  { id: 'legends', ch: 7, kind: 'mtt', name: 'Legends Invitational', venue: 'hall', buyin: 50000, field: 29, title: 'bracelet', legends: ['hungar', 'brunswick', 'chance', 'hellbent', 'mizrockie'], blurb: 'Every era. One table. A bracelet for the winner.' },
 ];
 // the Daily Grind: one free sponsored freeroll a day, online on CF Tilt Poker
 const DR_DAILY = { id: 'daily', ch: 1, kind: 'mtt', online: true, venue: 'cftilt', name: 'The Daily Grind', buyin: 0, field: 60, free: true, daily: true, blurb: 'One free sponsored freeroll a day. Keep the streak alive for exclusive gear.' };

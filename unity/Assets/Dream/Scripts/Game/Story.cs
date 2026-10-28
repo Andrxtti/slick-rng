@@ -321,10 +321,6 @@ namespace CFDream
             { "L:kfoxglove", "You were nervous the whole final table. I noticed." },
             { "L:martini", "Another one for the cabinet." },
             { "L:lonestar", "GORILLA. MODE. CHAMPION." },
-            { "L:mocha", "Cold out there. Warm in here, with this." },
-            { "L:daisies", "Went big. Went home with it." },
-            { "L:bindr", "Everyone was a nobody once. Not today." },
-            { "L:punchline", "This is my office. Thank you for visiting." },
             { "L:glazer", "Pick a game. I'll win that one too." },
             { "L:mizrockie", "Champ of everything. Get used to it." },
         };
@@ -354,8 +350,6 @@ namespace CFDream
             { "L:hackston", "Interesting sizing. Correct, this time." }, { "L:addemup", "Nice." },
             { "L:foxglove", "Points are points. You earned these." }, { "L:kfoxglove", "You weren't nervous at all. I was wrong." },
             { "L:martini", "One for your cabinet, then." }, { "L:lonestar", "Gorilla mode... off." },
-            { "L:mocha", "Cold out there. Colder now." }, { "L:daisies", "Went big. Went home." },
-            { "L:bindr", "Everyone's a nobody once. You're not anymore." }, { "L:punchline", "My office. Your trophy." },
             { "L:glazer", "Fine. Pick a different game next time." }, { "L:mizrockie", "Defending champ, defeated. Take it." },
         };
         public static string WinLine(string sp) => sp == "trent" ? "Write it down. Some people are born for this." : sp == "lou" ? "Not today, kid. Thirty years of practice." : sp == "ghost" ? "Busted is information. Read it." : ClassicWin.TryGetValue(sp, out var t) ? t : "Good game.";
