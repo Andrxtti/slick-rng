@@ -1276,11 +1276,11 @@ body.learning { overflow: hidden; }
   </ul>
   <h3>Multiway pots</h3>
   <p>When three or more players see the flop, each hand's share of the pot is estimated against all of the opponents at once. Hands that make strong hands (sets, flushes, straights) gain in multiway pots, and hands that get dominated (offsuit broadways and weak offsuit aces) lose value. The model is fitted to GTO Wizard's multiway chip-EV spots.</p>
-  <p>From the blinds, our multiway ranges also follow the tournament coaching we study with. Offsuit junk in the big blind (hands like 53o, Q5o or J7o) is a fold in a multiway pot, even where a chip-EV solve calls it. <a href="#learn/multiway" data-go="multiway">Multiway pots</a> explains why, and teaches the spots where tournament coaching goes further than a chip-EV chart.</p>
+  <p>From the blinds, our multiway ranges also follow Confirmed Fire coaching. Offsuit junk in the big blind (hands like 53o, Q5o or J7o) is a fold in a multiway pot, even where a chip-EV solve calls it. <a href="#learn/multiway" data-go="multiway">Multiway pots</a> explains why, and teaches the spots where tournament coaching goes further than a chip-EV chart.</p>
   <h3>ICM</h3>
   <p>With tournament details filled in, every result is scored in prize equity instead of chips. Chips are converted to prize money with the standard Independent Chip Model (ICM), using the stacks at your table, the players left in the tournament and the payouts. Players at other tables count at the average stack. The <b>ICM vs chips</b> button marks the hands that play tighter or looser than they would in a chip-only game.</p>
   <h3>What isn't a full solve</h3>
-  <p>No preflop tool solves every flop, turn and river of every line. That would take server farms. Ours settles the flop with the fitted model above. Multiway and ICM spots go further than any chart can, so they lean on the model and on tournament coaching more than heads-up chip-EV spots do. Where we follow the coaching, this section says so.</p>
+  <p>No preflop tool solves every flop, turn and river of every line. That would take server farms. Ours settles the flop with the fitted model above. Multiway and ICM spots go further than any chart can, so they lean on the model and on Confirmed Fire coaching more than heads-up chip-EV spots do. Where we follow the coaching, this section says so.</p>
 </article>
 
 <article data-sec="multiway" hidden>
@@ -1300,7 +1300,7 @@ body.learning { overflow: hidden; }
   </ul>
   <h3>Big blind vs an open and a call</h3>
   <ul>
-    <li>Fold offsuit junk (53o, Q5o, J7o and the like). Tournament coaching folds these, and so does our solver.</li>
+    <li>Fold offsuit junk (53o, Q5o, J7o and the like). Confirmed Fire coaching folds these, and so does our solver.</li>
     <li>T9o, 98o and 97o look playable but are folds: they make second-best straights and pairs against the openers' ranges. The low connectors (54o to 87o) play better.</li>
     <li>When the small blind is the caller, you can defend a little wider. There are more checks, and you sometimes get to play in position against the small blind.</li>
     <li>Against early-position opens, squeeze mostly for value and bluff rarely. AQo is often just a call or a fold there.</li>
@@ -1318,8 +1318,8 @@ body.learning { overflow: hidden; }
     <li>Behind a tight early-position opener you are better protected. AQo, AQs and TT are comfortable flats, and even JJ can flat.</li>
     <li>When the hijack opens and the cutoff calls, the cutoff is often weak. Squeeze wide.</li>
   </ul>
-  <h3>Where we follow the coaching over the solver</h3>
-  <p>Chip-EV solvers defend the big blind very wide multiway, including offsuit junk. Our solver folds that junk, as tournament coaching does: chip EV ignores how much a tournament stack is worth, and these hands win small pots and lose big ones. Tap one of those hands and you'll still see the call's chip EV, so you can see how close it is. The rest of this page is coaching to use alongside the chart, especially once ICM is in play, where good players tighten their multiway calls further.</p>
+  <h3>Where Confirmed Fire coaching overrides chip EV</h3>
+  <p>Chip-EV solvers defend the big blind very wide multiway, including offsuit junk. Our solver folds that junk, following Confirmed Fire coaching: chip EV ignores how much a tournament stack is worth, and these hands win small pots and lose big ones. Tap one of those hands and you'll still see the call's chip EV, so you can see how close it is. The rest of this page is coaching to use alongside the chart, especially once ICM is in play, where good players tighten their multiway calls further.</p>
 </article>
 
 <article data-sec="icm" hidden>
