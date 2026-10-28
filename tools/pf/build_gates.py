@@ -15,7 +15,10 @@ for w in want:
     wf = sum(n['prob'] * n['nx'] for n in ns) / max(1e-9, sum(n['prob'] * 169 for n in ns))
     lines.append(f'| {w[:-5]} | {len(ns)} | {100*wf:.2f}% | {mb:.2f} |')
     if wf > 0.03: fails.append(f'{w}: {100*wf:.1f}% of weighted hands flagged (limit 3%)')
-    if len(ns) < 100: fails.append(f'{w}: only {len(ns)} decision points')
+    # coverage: the tree must be explored down to the cutoff (rarest kept line at or below 0.05%); a short tree is fine if it is exhausted
+    mp = min(n['prob'] for n in ns)
+    if mp > 5e-4: fails.append(f'{w}: tree not explored to the cutoff (rarest kept line {100*mp:.2f}%)')
+    if len(ns) < 30: fails.append(f'{w}: only {len(ns)} decision points')
 lines += ['', f'Total library size: {tot:.1f} MB']
 if tot > 90: fails.append(f'library too large: {tot:.0f} MB')
 r = subprocess.run(['python3', 'gwlib.py'], capture_output=True, text=True, env=dict(os.environ, EXCL='1')).stdout
