@@ -63,7 +63,7 @@ const DR_LEGENDS = [
   { id: 'addemup', name: 'Mark Holdz', nick: 'The Titan Slayer', era: 'High roller', ch: 5, style: 'Wins the biggest buy-ins in the world, then disappears.', line: 'Shove.' },
   { id: 'foxglove', name: 'Alex Foxglove', nick: 'The Tour Machine', era: 'High roller', ch: 4, style: 'Top of the leaderboard so often they named the trophy room after him.', line: 'Leaderboard points are points.' },
   { id: 'kfoxglove', name: 'Kristen Foxglove', nick: 'The Queen of the Tour', era: 'High roller', ch: 4, style: 'Multiple player-of-the-year titles. Reads people for a living.', line: "You're nervous. Your left hand gives it away." },
-  { id: 'martini', name: 'Shane Dawb', nick: 'Player of the Year', era: 'High roller', ch: 5, style: 'Never shaken. Top of the Titan rankings.', line: 'Another one for the cabinet.' },
+  { id: 'martini', name: 'Shane Dawb', nick: 'Player of the Year', era: 'High roller', ch: 5, style: 'Top of the player rankings. Every game, every event, every year.', line: 'Another one for the cabinet.' },
   { id: 'lonestar', name: 'Jesse Lonestar', nick: 'Gorilla Mode', era: 'Rising star', ch: 5, style: 'Nine wins in one year. When he goes gorilla mode, run.', line: 'GORILLA. MODE.' },
   { id: 'glazer', name: 'Nicky Parmesan', nick: 'Blocked', era: 'Rising star', ch: 3, style: 'Three bracelets in one summer. Mixed-game wizard.', line: 'Pick a game. Any game.' },
   { id: 'mizrockie', name: 'Michael Mightyrocky', nick: 'The Grinder', era: 'Rising star', ch: 6, style: 'Won the Main Event and the Players Championship in the same summer. Defending champ.', line: "Defending champ. You'll have to take it from me." },
