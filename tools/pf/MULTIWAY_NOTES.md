@@ -223,3 +223,20 @@ morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solv
   utility (= pot share with the money behind) and all-in equity; 8 matchups x 12 flops on the PC (3-bet pots SB/BB
   vs BTN, BB vs UTG, CO vs BTN 3-bet; a 4-bet pot; single-raised BB vs BTN/CO/UTG). realize/fit.js fits per-class
   multipliers on the playability factor so the preflop model's share matches the real share, per raise level.
+
+## Oct 28 (evening) — realization fitted to GTO Wizard's own EVs
+
+- Our postflop solver vs GW on the caller side of 3-bet pots (12 flops, GW ranges): BTN vs BB 3-bet matches on
+  average (mean diff +0.001 of pot) with hand noise ±0.1; UTG vs BB 3-bet is 0.04 low, and in both the sampled
+  solver (50/200 buckets) undervalues suited connectors (76s 0.26 vs GW 0.40) and overvalues pairs (88 0.45 vs
+  0.38). So the fit target is GW's own per-hand EVs (gw/ev100.txt, 13 nodes): for a pure call, share =
+  (EV + cost) / pot; for a call/fold mix, share = cost / pot; for a fold, share < cost / pot (hinge).
+  realize/gwshare.py builds the targets, realize/fitgw.js fits aggRe (last raiser's realization factor), and 16
+  hand-category multipliers on the playability factor (REAL_MULT in engine.js, ramp-scaled like the positional edge).
+- Level 2 (3-bet pots), 214 targets: rms 0.064 -> 0.015. aggRe 1.6 (the 3-bettor's range advantage), suited
+  connectors x1.43 / x1.30 / x1.25 (one-, two-, three-gap), suited broadways x1.11, mid pairs (TT/JJ) x0.54, low
+  pairs x0.90, suited aces x0.95, weak offsuit aces x0.68. Level 3 (one 4-bet node, 18 hands): aggRe 1.4 again;
+  level 2's table is reused. Level 1 (BB vs opens): the existing model already fits (rms 0.037); left alone.
+- First calibration (v1 table without the fold constraints, aggRe 1.43): 100bb 76.5 -> 77.4% (40 nodes, RFI nodes
+  added), 25bb 81.9 -> 81.9. BB-vs-open nodes improved 3-7 points; the vs-3-bet nodes got worse because the
+  caller now called suited junk GW folds (the fit had no fold constraints). v2 adds the hinge on folds -> calib3.

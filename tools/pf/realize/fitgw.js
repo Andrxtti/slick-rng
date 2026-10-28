@@ -16,6 +16,8 @@ for (const mk in GW) {
   const cfg = JSON.parse(fs.readFileSync(__dirname + `/gwcfgs/${mk}.json`, 'utf8')); if (cfg.level !== LEVEL) continue;
   const W = cfg.ranges.map((s) => { const w = new Float64Array(NC); for (const t of s.split(',')) { const [h, x] = t.split(':'); w[IDX[h]] = +x; } return w; });
   const pts = Object.entries(GW[mk].share).map(([h, s]) => ({ c: IDX[h], s: Math.min(0.97, s), w: SIZE[IDX[h]] * (W[cfg.caller][IDX[h]] || 0.01) }));
+  // folds: the call share must stay below the price (hinge), weighted like a full-range hand
+  const lim = GW[mk].cost / GW[mk].pot - 0.01; for (const h of GW[mk].folds || []) pts.push({ c: IDX[h], s: lim, w: SIZE[IDX[h]], hinge: true });
   data.push({ mk, cfg, W, pts });
 }
 // aggressor-side targets from our real postflop solves (realize outputs), lower weight (REALW, default 0.3)
@@ -65,13 +67,13 @@ function rms(print) {
   let se = 0, n = 0; const rows = [];
   for (const d of data) {
     const nd = nodeFor(d.cfg), p = d.cfg.caller, wo = d.W[1 - p];
-    for (const pt of d.pts) { let s = 0, t = 0; for (let o = 0; o < NC; o++) { const w = wo[o] * SIZE[o]; if (!(w > 0)) continue; s += w * share(nd, pt.c, o, p); t += w; } const m = s / t; se += pt.w * (m - pt.s) ** 2; n += pt.w; rows.push({ mk: d.mk, h: E.CLASS_NAMES[pt.c], gw: pt.s, m, w: pt.w }); }
+    for (const pt of d.pts) { let s = 0, t = 0; for (let o = 0; o < NC; o++) { const w = wo[o] * SIZE[o]; if (!(w > 0)) continue; s += w * share(nd, pt.c, o, p); t += w; } const m = s / t; const e = pt.hinge ? Math.max(0, m - pt.s) : m - pt.s; se += pt.w * e * e; n += pt.w; rows.push({ mk: d.mk, h: E.CLASS_NAMES[pt.c] + (pt.hinge ? '(fold)' : ''), gw: pt.s, m, w: pt.w, e }); }
   }
-  if (print) { rows.sort((a, b) => Math.abs(b.m - b.gw) * b.w - Math.abs(a.m - a.gw) * a.w); console.log('  worst:', rows.slice(0, 14).map((r) => `${r.mk} ${r.h} GW ${r.gw.toFixed(2)} model ${r.m.toFixed(2)}`).join('; ')); }
+  if (print) { rows.sort((a, b) => Math.abs(b.e) * b.w - Math.abs(a.e) * a.w); console.log('  worst:', rows.slice(0, 14).map((r) => `${r.mk} ${r.h} GW ${r.gw.toFixed(2)} model ${r.m.toFixed(2)}`).join('; ')); }
   return Math.sqrt(se / n);
 }
 // categories with no direct (caller-side) data stay at 1
-const catN = new Array(CATS.length).fill(0); for (const d of data) if (!d.mk.endsWith('/agg')) for (const pt of d.pts) catN[catOf[pt.c]]++;
+const catN = new Array(CATS.length).fill(0), catEq = new Array(CATS.length).fill(0); for (const d of data) if (!d.mk.endsWith('/agg')) for (const pt of d.pts) { catN[catOf[pt.c]]++; if (!pt.hinge) catEq[catOf[pt.c]]++; }
 console.log('data points per category:', CATS.map((k, i) => `${k} ${catN[i]}`).join(', '));
 console.log('rms before', rms(true).toFixed(4));
 // coordinate descent
@@ -81,7 +83,7 @@ for (let round = 0; round < 12; round++) {
   moved |= tryStep(() => P.aggRe, (v) => (P.aggRe = Math.max(0.5, Math.min(3, v))), st * 2);
   if (process.env.FIXRLOW !== '1') moved |= tryStep(() => P.rLow, (v) => (P.rLow = Math.max(0.3, Math.min(1.2, v))), st);
   if (process.env.FITAGGG === '1') moved |= tryStep(() => P.aggG, (v) => (P.aggG = Math.max(0.5, Math.min(3, v))), st * 2);
-  for (let k = 0; k < CATS.length; k++) if (catN[k] >= 2) moved |= tryStep(() => P.theta[k], (v) => (P.theta[k] = Math.max(-1.2, Math.min(1.2, v))), st);
+  for (let k = 0; k < CATS.length; k++) if (catN[k] >= 2) moved |= tryStep(() => P.theta[k], (v) => (P.theta[k] = Math.max(-1.2, Math.min(catEq[k] >= 2 ? 1.2 : 0, v))), st);   // fold-only categories can only go down
   console.log(`round ${round} rms ${rms().toFixed(4)} aggRe ${P.aggRe.toFixed(2)} aggG ${P.aggG.toFixed(2)} rLow ${P.rLow.toFixed(2)}`);
   if (!moved) break;
 }

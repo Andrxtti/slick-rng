@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""GTO Wizard's realized pot share for the CALLER at 100bb re-raised nodes, from the per-hand EVs (gw/gw100_ev.txt):
+"""GTO Wizard's realized pot share for the CALLER at 100bb re-raised nodes, from the per-hand EVs (gw/ev100.txt):
    pure calls: share = (EV + cost) / pot;  call/fold mixes: share = cost / pot (indifference).
    Prints per matchup; also compares with our real postflop solves when an out dir is given.
    python3 realize/gwshare.py [outDir]"""
 import re, sys, json, os
 H = os.path.dirname(os.path.abspath(__file__)); PF = os.path.dirname(H)
 EV = {}; ST = {}
-for l in open(PF + '/gw/gw100_ev.txt'):
+for l in open(PF + '/gw/ev100.txt'):
     k, b = l.rstrip('\n').split('\t'); EV[k.split('|')[1]] = {t.split('=')[0]: float(t.split('=')[1]) for t in b.split()}
 for l in open(PF + '/gw/gw100.txt'):
     k, b = l.rstrip('\n').split('\t')[:2]; d = {}
@@ -26,7 +26,8 @@ for node, (mk, who, cost, pot) in NODES.items():
         if r > 0.05: continue
         if c >= 0.95: sh[h] = round((ev + cost) / pot, 3)
         elif c >= 0.05 and f >= 0.05: sh[h] = round(cost / pot, 3)
-    out[mk] = {'caller': who, 'cost': cost, 'pot': pot, 'share': sh}
+    folds = [h for h, m in ST[node].items() if m.get('f', 0) >= 0.95 and h in EV[node]]   # hands that reach the node and fold: call share < cost/pot
+    out[mk] = {'caller': who, 'cost': cost, 'pot': pot, 'share': sh, 'folds': folds}
     print(mk, who, f'cost {cost} pot {pot} indifference share {cost/pot:.3f}:', ' '.join(f'{h}={v}' for h, v in sorted(sh.items(), key=lambda x: -x[1])))
 json.dump(out, open(H + '/gw_caller_share.json', 'w'))
 if len(sys.argv) > 1:
