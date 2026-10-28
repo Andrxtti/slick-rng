@@ -167,3 +167,21 @@ Result at 100bb 8-max: BTN vs SB 3-bet 47% (GW 45, agreement 82%), opener vs squ
 Tested on a 3-handed BTN/SB/BB tree (hu.js), where these nodes are dense; in the 8-max tree the squeeze line is reached
 in ~0.2% of deals and a 600 s solve leaves most hands there at the starting mix. The Dream library (solved Oct 26
 morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solved for this; the chart library is.
+
+## Oct 28: what the remaining gap to GTO Wizard is made of
+
+- Scoring now keeps jams apart from smaller raises wherever our tree offers both (gwlib.py JAMSEP, default on). The old
+  metric counted a 100bb 4-bet jam as agreeing with GTO Wizard's 22bb 4-bet. Shipped library on the honest metric: 80.6%
+  (82.1% on the old one), 41 nodes, offsuit junk excluded.
+- The biggest systematic error is composition, not width. Facing an open (and in squeeze spots) GTO Wizard raises with
+  suited hands (A5s-A8s, KJs-KTs, QJs, JTs, T9s, 76s, 65s) and flat-calls pairs 66-99 and offsuit broadways (AQo, AJo, KQo);
+  our model does the reverse. About 6 of the 19 disagreement points are this swap; another ~2 are jams vs small raises,
+  the rest are fold/call width (suited junk and weak offsuit aces called too often, offsuit broadways folded too often).
+- Global knobs (playability fade by SPR, pair-only fade, extra playability in 3-bet pots, flatter strength curve in
+  3-bet pots) all moved the score by less than run-to-run noise (about 1 point). The fix is per-class corrections by pot
+  type, fitted the same way as the multiway correction: model_pot.json, re-raised pots and heads-up single-raised pots
+  (fit_pot.py, every third node held out).
+- 4-bet jams: the library solver allowed a 4-bet jam up to 100bb and jammed ~89% of its 4-bets at 100bb (GTO Wizard ~5%).
+  The app engine already capped 4-bet jams at 70bb for exactly this reason (no stack-off play in the flop model); the
+  library solver now uses the same cap. Settling a share of low-SPR flops as all-in (PA) only halved the jams and cost
+  the 25bb tables, so it stays off.

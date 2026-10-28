@@ -28,12 +28,14 @@ for f in sorted(glob.glob('gw/gw*.txt')):
         if n is None: rows.append((d, path, None, None, None, None)); continue
         na = len(n['a']); S = np.frombuffer(base64.b64decode(n['s']), np.uint8).reshape(169, na) / 255
         X = np.unpackbits(np.frombuffer(base64.b64decode(n['x']), np.uint8))[:169].astype(bool) if 'x' in n else np.zeros(169, bool)
-        ours = np.zeros((169, 3))
-        for j, a in enumerate(n['a']): ours[:, 0 if a == 'fold' else 1 if a in ('call', 'check') else 2] += S[:, j]
-        gw = np.full((169, 3), np.nan)
+        # jams are scored apart from smaller raises when our node offers both (JAMSEP=0 merges them, the old metric)
+        sep = os.environ.get('JAMSEP', '1') != '0' and 'allin' in n['a'] and any(a not in ('fold', 'call', 'check', 'allin') for a in n['a'])
+        ours = np.zeros((169, 4))
+        for j, a in enumerate(n['a']): ours[:, 0 if a == 'fold' else 1 if a in ('call', 'check') else 3 if (a == 'allin' and sep) else 2] += S[:, j]
+        gw = np.full((169, 4), np.nan)
         for tk in body.split():
-            h, codes = tk.split(':'); o = [0, 0, 0]
-            for m in re.finditer(r'([arcf])(\d+)', codes): o[0 if m[1] == 'f' else 1 if m[1] == 'c' else 2] += int(m[2]) / 100
+            h, codes = tk.split(':'); o = [0, 0, 0, 0]
+            for m in re.finditer(r'([arcf])(\d+)', codes): o[0 if m[1] == 'f' else 1 if m[1] == 'c' else 3 if (m[1] == 'a' and sep) else 2] += int(m[2]) / 100
             if h in IDX: gw[IDX[h]] = o
         has = ~np.isnan(gw).any(1) & (np.nan_to_num(gw).sum(1) > 0.5) & ~(EXCL if os.environ.get('EXCL') else np.zeros(169, bool))
         ag = (np.minimum(ours, np.nan_to_num(gw)).sum(1) * SIZE)[has].sum() / SIZE[has].sum()

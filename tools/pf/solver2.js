@@ -13,7 +13,7 @@ if (process.env.PLAYSET) E.PLAY169.set(E.buildPlay({ ...E.PLAY_DEFAULT, ...JSON.
 const OPEN = (eff) => (eff >= 50 ? 2.3 : eff >= 35 ? 2.2 : eff >= 25 ? 2.1 : 2.0);
 const SB_OPEN = (eff) => (eff >= 75 ? 4.0 : eff >= 28 ? 3.5 : eff >= 18 ? 3.0 : 2.5);   // solved BvB sizes (8-max ChipEV, 12.5% ante)
 const ISO = (eff) => (eff >= 30 ? 3.5 : 3.0);           // BB raise over an SB complete
-const JAM_CAP = { 1: 25, 2: 50, 3: 100 };
+const JAM_CAP = { 1: 25, 2: 50, 3: +(process.env.JAMCAP4 || 70) };   // 4-bet jams only at 70bb or less, as in the app engine: GTO Wizard 4-bets small at 100bb (jams ~5% of 4-bets) and jams at 40-60bb
 // 3-bet size as a multiple of the open, by effective stack: the course's short-stack anchors (2.75x in position / 3.0x
 // out of position at 25bb and under), then a line through GTO Wizard's 40 / 60 / 100bb sizes
 const oop3 = (e) => (e <= 25 ? 3.0 : e <= 40 ? 3.0 + ((e - 25) / 15) * 0.5 : e <= 60 ? 3.5 + ((e - 40) / 20) * 0.25 : e <= 100 ? 3.75 + ((e - 60) / 40) * 0.75 : 4.5);
@@ -74,7 +74,12 @@ if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its 
 // per-class correction (169 numbers) to the multiway playability table only, fitted to GTO Wizard's multiway nodes
 // (model_mw.json, frozen by build_all.sh). PLAYMW=<file.json> overrides it for calibration runs; PLAYMW=none turns it off.
 { const fs0 = require('fs'), pm = process.env.PLAYMW || (fs0.existsSync(__dirname + '/model_mw.json') ? __dirname + '/model_mw.json' : 'none');
-  if (pm !== 'none') { const dd = JSON.parse(fs0.readFileSync(pm, 'utf8')); for (let i = 0; i < 169; i++) PLAY[i] += dd[i] || 0; } }
+  if (pm !== 'none') { const dd = JSON.parse(fs0.readFileSync(pm, 'utf8')); for (let i = 0; i < 169; i++) PLAY[i] += dd[i] || 0; }
+  // PLAYPOT=<file.json> {re: [169], hu: [169]}: per-class corrections for re-raised pots and heads-up single-raised pots
+  // (fit_pot.py); default model_pot.json when present, PLAYPOT=none turns them off
+  const pp = process.env.PLAYPOT || (fs0.existsSync(__dirname + '/model_pot.json') ? __dirname + '/model_pot.json' : 'none');
+  if (pp === 'none') { E.PLAY_RE.fill(0); E.PLAY_HU.fill(0); }
+  else { const dd = JSON.parse(fs0.readFileSync(pp, 'utf8')); for (let i = 0; i < 169; i++) { E.PLAY_RE[i] = (dd.re || [])[i] || 0; E.PLAY_HU[i] = (dd.hu || [])[i] || 0; } } }
 class PF2 extends E.PreflopSolver {
   constructor(cfg) {
     const ex = {}; for (const [k, e] of [['playSpan', 'PSPAN'], ['pairSpan', 'PAIRSPAN'], ['ioSpan', 'IOSPAN'], ['pRe', 'PRE']]) if (process.env[e] !== undefined) ex[k] = +process.env[e];
@@ -128,7 +133,7 @@ class PF2 extends E.PreflopSolver {
       for (const i of el) { let lg = 0; for (const j of el) if (j !== i) lg += LO[cls[i] * NC + cls[j]]; s[i] = Math.exp(lg / (2 * (k - 1))); ss += s[i]; }
       const g = nd.gamma + MW.gam * (k - 2), mr = k >= 3 ? MW.r : 1, mp = k >= 3 ? MW.play + MW.playk * (k - 3) : 1, pen = k >= 3 ? MW.pen : 1; let xs = 0, bs = 0;
       const b = this._mwB || (this._mwB = new Float64Array(this.n));
-      for (const i of el) { const pt = E.playTerm(nd, cls[i], PLAY[cls[i]], MODEL.pPos, MODEL.pNeg); b[i] = (1 + (pt < 0 ? pt * pen : pt) * mp) * Math.pow(s[i] / ss, g); bs += b[i]; x[i] = (1 - (1 - nd.R[i]) * mr) * b[i]; xs += x[i]; }
+      for (const i of el) { const pt = E.playTerm(nd, cls[i], PLAY[cls[i]], MODEL.pPos, MODEL.pNeg, false); b[i] = (1 + (pt < 0 ? pt * pen : pt) * mp) * Math.pow(s[i] / ss, g); bs += b[i]; x[i] = (1 - (1 - nd.R[i]) * mr) * b[i]; xs += x[i]; }
       if (k >= 3 && MW.leak > 0) {
         // leak to position: each player keeps R of his base share, the rest goes to the players acting after him
         const rank = this._mwRank || (this._mwRank = (() => { const o = this.cfg.postOrder || [...Array(this.n).keys()], r = new Int32Array(this.n); o.forEach((p, q) => (r[p] = q)); return r; })());

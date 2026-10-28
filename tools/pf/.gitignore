@@ -22,3 +22,7 @@ fit_mw_best.json
 bfull_p*/
 build_state.txt
 consensus_build.txt
+old_full_*/
+calib_log3.txt
+calib_log4.txt
+fit_pot_log.txt
