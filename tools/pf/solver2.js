@@ -243,8 +243,11 @@ class PF2 extends E.PreflopSolver {
         to = s.bet * mult + Math.max(0, callers) * (eff <= 25 ? 0.75 : 0.5) * s.bet;
       }
       else if (L === 3) to = s.bet * (eff >= 75 ? 2.2 : 2.0);   // 4-bets: GTO Wizard 2.2x at 100bb, 2.0x at 40-60bb (where the jam does most of the work)
+      // cold against a 3-bet (nobody in yet): a sized 4-bet while a jam is off the menu (the 70bb cap above), a jam
+      // when it is on; never both. Until Oct 28 cold players could only fold or jam, so at 100bb the blinds jammed
+      // AA/KK/AK and A5s over every 3-bet, which punished suited 3-bets and skewed the whole 3-bet range.
       const coldVs3 = s.level === 2 && !inVol;
-      const sized = L <= 3 && !coldVs3 && to > 0 && to < st[p] * (L === 3 ? 0.5 : 0.4) && to >= s.bet + s.lastRaise - 1e-9;
+      const sized = L <= 3 && !(coldVs3 && jamOk) && to > 0 && to < st[p] * (L === 3 ? 0.5 : 0.4) && to >= s.bet + s.lastRaise - 1e-9;
       if (sized) o.push({ k: 'raise', to: r1(to), L });
       if (jamOk || !sized) o.push({ k: 'allin', to: st[p], L });
       return o;
