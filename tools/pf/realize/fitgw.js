@@ -13,7 +13,7 @@ for (let l = 1; l <= 3; l++) E.REAL_MULT[l].fill(1);
 const GW = JSON.parse(fs.readFileSync(__dirname + '/gw_caller_share.json', 'utf8'));
 const data = [];
 for (const mk in GW) {
-  const cfg = JSON.parse(fs.readFileSync(__dirname + `/gwcfgs/${mk}.json`, 'utf8')); if (cfg.level !== LEVEL) continue;
+  const cfg = JSON.parse(fs.readFileSync(__dirname + `/${process.env.CFGDIR || 'gwcfgs'}/${mk}.json`, 'utf8')); if (cfg.level !== LEVEL) continue;
   const W = cfg.ranges.map((s) => { const w = new Float64Array(NC); for (const t of s.split(',')) { const [h, x] = t.split(':'); w[IDX[h]] = +x; } return w; });
   const pts = Object.entries(GW[mk].share).map(([h, s]) => ({ c: IDX[h], s: Math.min(0.97, s), w: SIZE[IDX[h]] * (W[cfg.caller][IDX[h]] || 0.01) }));
   // folds: the call share must stay below the price (hinge), weighted like a full-range hand
@@ -75,7 +75,9 @@ function rms(print) {
 // categories with no direct (caller-side) data stay at 1
 const catN = new Array(CATS.length).fill(0), catEq = new Array(CATS.length).fill(0); for (const d of data) if (!d.mk.endsWith('/agg')) for (const pt of d.pts) { catN[catOf[pt.c]]++; if (!pt.hinge) catEq[catOf[pt.c]]++; }
 console.log('data points per category:', CATS.map((k, i) => `${k} ${catN[i]}`).join(', '));
+if (process.env.INIT) { const t = JSON.parse(fs.readFileSync(process.env.INIT, 'utf8')); const arr = t.l2 || t.mult; for (let k = 0; k < CATS.length; k++) { const c = catOf.indexOf(k); if (c >= 0) P.theta[k] = Math.log(arr[c]); } if (process.env.AGGRE0) P.aggRe = +process.env.AGGRE0; }
 console.log('rms before', rms(true).toFixed(4));
+if (process.env.NOFIT === '1') { if (process.env.SHOW) for (const d of data) { const nd = nodeFor(d.cfg), p = d.cfg.caller, wo = d.W[1 - p]; const out = []; for (const h of process.env.SHOW.split(',')) { const c = IDX[h]; let s = 0, t = 0; for (let o = 0; o < NC; o++) { const w = wo[o] * SIZE[o]; if (!(w > 0)) continue; s += w * share(nd, c, o, p); t += w; } out.push(`${h} ${(s / t).toFixed(3)}`); } console.log('SHOW', d.mk, `limit ${(GW[d.mk].cost / GW[d.mk].pot).toFixed(3)}:`, out.join('  ')); } process.exit(0); }
 // coordinate descent
 const tryStep = (get, set, step) => { const base = rms(); const v0 = get(); set(v0 + step); if (rms() < base) return true; set(v0 - step); if (rms() < base) return true; set(v0); return false; };
 for (let round = 0; round < 12; round++) {
@@ -90,3 +92,4 @@ for (let round = 0; round < 12; round++) {
 console.log('rms after', rms(true).toFixed(4));
 console.log('categories:', CATS.map((k, i) => `${k} x${Math.exp(P.theta[i]).toFixed(2)}`).join('  '));
 if (WRITE) { fs.writeFileSync(__dirname + `/mult_L${LEVEL}.json`, JSON.stringify({ level: LEVEL, aggRe: +P.aggRe.toFixed(3), aggG: +P.aggG.toFixed(3), rLow: +P.rLow.toFixed(3), cats: Object.fromEntries(CATS.map((k, i) => [k, +Math.exp(P.theta[i]).toFixed(3)])), mult: Array.from(mult, (x) => +x.toFixed(4)) })); console.log('wrote mult_L' + LEVEL + '.json'); }
+if (process.env.SHOW) { for (const d of data) { const nd = nodeFor(d.cfg), p = d.cfg.caller, wo = d.W[1 - p]; const out = []; for (const h of process.env.SHOW.split(',')) { const c = IDX[h]; let s = 0, t = 0; for (let o = 0; o < NC; o++) { const w = wo[o] * SIZE[o]; if (!(w > 0)) continue; s += w * share(nd, c, o, p); t += w; } out.push(`${h} ${(s / t).toFixed(3)}`); } console.log('SHOW', d.mk, `limit ${(GW[d.mk].cost / GW[d.mk].pot).toFixed(3)}:`, out.join('  ')); } }
