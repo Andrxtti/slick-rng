@@ -79,7 +79,12 @@ if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its 
   // (fit_pot.py); default model_pot.json when present, PLAYPOT=none turns them off
   const pp = process.env.PLAYPOT || (fs0.existsSync(__dirname + '/model_pot.json') ? __dirname + '/model_pot.json' : 'none');
   if (pp === 'none') { E.PLAY_RE.fill(0); E.PLAY_HU.fill(0); }
-  else { const dd = JSON.parse(fs0.readFileSync(pp, 'utf8')); for (let i = 0; i < 169; i++) { E.PLAY_RE[i] = (dd.re || [])[i] || 0; E.PLAY_HU[i] = (dd.hu || [])[i] || 0; } } }
+  else { const dd = JSON.parse(fs0.readFileSync(pp, 'utf8')); for (let i = 0; i < 169; i++) { E.PLAY_RE[i] = (dd.re || [])[i] || 0; E.PLAY_HU[i] = (dd.hu || [])[i] || 0; } }
+  // PLAYREAL=<file.json> {l1: [169], l2: [169], l3: [169]}: realization multipliers from real postflop solves
+  // (realize/fit.js); default model_real.json when present, PLAYREAL=none turns them off (all ones)
+  const pr = process.env.PLAYREAL || (fs0.existsSync(__dirname + '/model_real.json') ? __dirname + '/model_real.json' : 'none');
+  for (let l = 1; l <= 3; l++) E.REAL_MULT[l].fill(1);
+  if (pr !== 'none') { const dd = JSON.parse(fs0.readFileSync(pr, 'utf8')); for (let l = 1; l <= 3; l++) { const t = dd['l' + l]; if (t) for (let i = 0; i < 169; i++) E.REAL_MULT[l][i] = t[i] || 1; } } }
 class PF2 extends E.PreflopSolver {
   constructor(cfg) {
     const ex = {}; for (const [k, e] of [['playSpan', 'PSPAN'], ['pairSpan', 'PAIRSPAN'], ['ioSpan', 'IOSPAN'], ['pRe', 'PRE']]) if (process.env[e] !== undefined) ex[k] = +process.env[e];

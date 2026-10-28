@@ -22,7 +22,10 @@ for (const f of files) {
 const keys = Object.keys(groups); if (!keys.length) { console.log('no data'); process.exit(1); }
 console.log('matchups:', keys.map((k) => `${k} (${groups[k].flops} flops)`).join(', '));
 // preflop model pieces (mirrors PreflopSolver.prepTerminal / termVec2 for a heads-up flop terminal)
-const M = Object.assign({ rLow: 0.73, gammaK: 0.15, gRe: 1, playSpan: 5, playPos: 1, playNeg: 2, implied: 0.8 }, JSON.parse(fs.readFileSync(__dirname + '/../model_mw.json', 'utf8')).model || {});
+const S2 = require('../solver2.js');   // loads model_pot.json / model_real.json into the engine tables like the solver does
+const ex = {}; for (const [k, e] of [['playSpan', 'PSPAN'], ['pairSpan', 'PAIRSPAN'], ['ioSpan', 'IOSPAN'], ['pRe', 'PRE']]) if (process.env[e] !== undefined) ex[k] = +process.env[e];
+const M = { rLow: S2.MODEL.rLow, gammaK: S2.MODEL.gammaK, gRe: S2.MODEL.gRe, playSpan: 5, playPos: S2.MODEL.pPos, playNeg: S2.MODEL.pNeg, implied: S2.MODEL.io, ...ex };
+if (process.env.PLAYREAL !== 'none') for (let l = 1; l <= 3; l++) E.REAL_MULT[l].fill(1);   // fit from the unmultiplied model
 const parseRange = (s) => { const w = new Float64Array(NC); for (const t of s.split(',')) { const [h, x] = t.split(':'); w[IDX[h]] = +x; } return w; };
 function nodeFor(cfg) {
   const pot = cfg.pot, behind = Math.min(...cfg.stacks), spr = behind / pot, level = cfg.level || 1;
