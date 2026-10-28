@@ -71,12 +71,12 @@ Movement: posture, tells, how they talk with their hands
 Reference: image file or one-line inspiration
 ```
 - **You** — the player; face sculpted in the closet (15 sliders), default look from the brief.
-- **Slick** — (brief pending)
-- **Natso SweetLou** — Corporate Lou, Floor 34 (brief pending)
-- **Tommy "The Shark" Maio** — (brief pending)
-- **Bio "The Ghost"** — the GOAT, the Main Event (brief pending)
-- **Mustich** — the rival (brief pending)
-- **Miles "The Snowplow" Gnomey**, **Rosa**, **Derek**, **David** — supporting (briefs pending)
+Briefs live in `unity/docs/characters/<name>.md` (reference images are used for type only, never likeness):
+slick, natso, tommy, bio, mustich, gnomey, twogloves, david — all eight written 2026-10-28.
+- **Legends** (32, dream/data.js DR_LEGENDS) — parody tributes to real pros, so every face is original: era, build, one
+  signature prop and a colour, drawn from the style line. Built on the three shared bodies.
+- **Extras** — dealers (one per venue uniform), rail and crowd, Floor 34 staff, table opponents: the three shared
+  bodies with heads, hair and outfits from the kit.
 
 ## 7. Build order (model · effort)
 

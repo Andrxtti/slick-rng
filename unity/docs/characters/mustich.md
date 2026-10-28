@@ -1,25 +1,33 @@
 # Mustich — character brief
 
-From Steven's description (2026-10-28): a ginger, skinny Irishman with thin-framed glasses. The rival.
+Sources: Steven's description (2026-10-28: a ginger, skinny Irishman with thin-framed glasses) and a reference photo he
+sent the same evening. The photo is used for type only (hair, glasses, skin, the laugh, the clothes), never as a
+likeness, and only the man in it is used.
 
 ## Brief
 
-**Mustich** · trust-fund pro, your rival through Chapter 1 and the Biscayne Classic · 26 · 6'1", rail-thin, narrow
-shoulders, long neck, sits back in the chair like he owns it
-- Face: narrow and pale with freckles across the nose and cheeks, a little sunburnt at the tip; sharp chin; light
-  green-grey eyes; ginger hair, short at the sides and swept up and back on top, always a bit too styled. Clean-shaven,
-  or a thin ginger moustache that he thinks is a look (the name).
-- Glasses: thin gold wire frames, small rectangular or round lenses (data: "Wire round frames").
-- Wardrobe: Standard — navy blazer over a white tee, slim chinos, white leather trainers, a thin silver chain. Signature —
-  an Irish-green quarter-zip with a crest-free logo patch, noise-cancelling headphones around his neck. Iconic — the
-  Classic final: a tweed blazer, open collar, his dad's watch.
-- Movement: smirks before he speaks, spins a chip on the felt, checks his phone (the solver app) between hands.
+**Mustich** · trust-fund pro, your rival through Chapter 1 and the Biscayne Classic, still around at the Titan ·
+early-to-mid 30s · 6'0", skinny, narrow shoulders, long neck, sits back in the chair like he owns it
+- Face: long and lean, fair skin that goes ruddy across the cheeks and nose when he laughs, a light dusting of freckles,
+  light blue-grey eyes. Hair: ginger going on auburn, short and cropped all round, a little thin at the temples, never
+  styled. Clean-shaven, a trace of ginger stubble late in the day.
+- Glasses: thin gunmetal half-rim rectangles (metal brow bar, no frame under the lens). Data: "Blue-light readers".
+- The laugh: a huge open-mouthed laugh, head tilted, all teeth. It is his weapon: he laughs when he wins a pot off you
+  and laughs harder when he loses one. At the table, between laughs, the smug half-smile (data mouth: smug).
+- Wardrobe: Standard — a charcoal heather tee under a navy blazer, slim chinos, white leather trainers, a thin silver
+  chain. Signature — an Irish-green quarter-zip with a plain patch, noise-cancelling headphones around his neck.
+  Iconic — the Classic final: a tweed blazer over the charcoal tee, his dad's watch.
+- Movement: leans back, then lunges into the laugh. Spins a chip on the felt, checks his phone (the solver app)
+  between hands.
 - Accent: light Dublin lilt (voice casting note).
 
 ## Build map (free Genesis 9 content)
 
-- Genesis 9 + Base Masculine 0.8; Height +0.2, Proportion Smaller +0.15, Shoulder Width -0.25, Chest Width -0.25,
-  Chest Depth -0.2, Neck Length +0.25, Arms Length +0.1.
-- Skin: the palest G9 Masculine Skin; freckles as a skin texture overlay in Unity (to do).
-- Hair: Mavick Hair in Red, styled up; a thin moustache from the Mavick Beard at its shortest, or none.
-- Glasses: made prop (thin gold wire). Blazer, tee, quarter-zip: made clothing (to do).
+- Genesis 9 + Base Masculine 0.85; Height +0.1, Proportion Smaller +0.15, Shoulder Width -0.25, Chest Width -0.25,
+  Chest Depth -0.2, Neck Length +0.2, Arms Length +0.1.
+- Skin: the palest G9 Masculine Skin; cheek and nose flush in the skin material; freckles as a texture overlay in Unity.
+- Hair: Mavick Hair in Red/Auburn, cut down to a short crop (made short-crop piece later). Stubble: Mavick Beard at its
+  shortest in ginger, low opacity, or none.
+- Glasses: made prop (gunmetal half-rim). Tee: G9 Base Shirt in charcoal heather (works now); blazer, quarter-zip: made
+  clothing (to do).
+- Expressions: "laugh" (FACS smile + jaw open + head tilt) as his react default; "smug" (one-sided lip corner) at the table.
