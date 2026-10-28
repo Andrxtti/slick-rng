@@ -976,7 +976,8 @@ details.adv summary:hover { color: var(--fg); }
   /* MTT: Details page and Chart page */
   body.pg-details .results, body.pg-details .spotbar, body.pg-details #tableBar, body.pg-details #postBar { display: none !important; }
   body.pg-mtt:not(.pg-details) .tourney { display: none !important; }
-  body.pg-mtt .spotbar { display: none !important; }
+  #t222tabs { display: none !important; }
+  body.pg-mtt .spotbar #spMore { display: none; }   /* MTT on a phone: the spot tiles drive the general view; sizes follow the library */
   body.pg-mtt .felt .seat.out { display: none; }
   body.pg-details .tourney > details > summary { pointer-events: none; }
   body.pg-details .tourney > details > summary .chev { display: none; }
@@ -1074,6 +1075,59 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
 }
 @media (max-width: 760px) { .icmflag { order: 0; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+/* LEARN CSS BEGIN */
+/* ---------- Learn: how the solver works + coaching (full-screen view over the app) */
+.learn { position: fixed; inset: 0; z-index: 70; background: var(--bg); display: grid; grid-template-rows: auto 1fr; color: var(--fg); }
+.learn[hidden] { display: none; }
+body.learning { overflow: hidden; }
+.lrn-top { display: flex; align-items: center; gap: 14px; padding: 12px max(20px, env(safe-area-inset-right, 0px)) 12px max(20px, env(safe-area-inset-left, 0px));
+  padding-top: calc(12px + env(safe-area-inset-top, 0px)); border-bottom: 1px solid var(--line); background: var(--bg-2); }
+.lrn-back { font-family: var(--font-display); font-weight: 600; letter-spacing: .06em; font-size: 15px; padding: 7px 14px; }
+.lrn-title { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: .14em; }
+.lrn-sub { color: var(--muted); font-size: 13px; }
+.lrn-body { display: grid; grid-template-columns: 230px minmax(0, 1fr); min-height: 0; }
+.lrn-nav { display: flex; flex-direction: column; gap: 4px; padding: 20px 12px 20px 20px; border-right: 1px solid var(--line); overflow-y: auto; }
+.lrn-nav button { text-align: left; background: transparent; border: 1px solid transparent; color: var(--muted); padding: 10px 12px; border-radius: var(--r);
+  font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .04em; box-shadow: none; }
+.lrn-nav button:hover:not(:disabled) { background: var(--panel-2); border-color: var(--line); color: var(--fg); }
+.lrn-nav button[aria-current="true"] { background: var(--panel-2); border-color: var(--line-2); color: var(--fg); box-shadow: inset 3px 0 0 var(--hero); }
+.lrn-main { overflow-y: auto; padding: 28px 32px 80px; -webkit-overflow-scrolling: touch; }
+.lrn-main article { max-width: 760px; }
+.lrn-main article[hidden] { display: none; }
+.lrn-main h2 { font-family: var(--font-display); font-size: 30px; letter-spacing: .06em; text-transform: uppercase; margin: 0 0 12px; }
+.lrn-main h3 { font-family: var(--font-display); font-size: 19px; letter-spacing: .05em; text-transform: uppercase; color: var(--carolina); margin: 28px 0 8px; }
+.lrn-main p, .lrn-main li { line-height: 1.6; font-size: 15px; color: #e6dfcf; }
+.lrn-main p { margin: 0 0 12px; }
+.lrn-main ul { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 8px; }
+.lrn-main b { color: var(--fg); }
+.lrn-main a { color: var(--hero); text-decoration: none; border-bottom: 1px solid rgba(90, 169, 222, .35); }
+.lrn-main a:hover { border-bottom-color: var(--hero); }
+.lrn-main .lede { font-size: 17px; color: var(--fg); line-height: 1.55; }
+.lrn-main .note { color: var(--muted); font-size: 14px; }
+.lrn-main .sw { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin: 0 5px 0 2px; vertical-align: -1px; }
+.lrn-main .sw.f { background: var(--a-fold); } .lrn-main .sw.c { background: var(--a-pass); }
+.lrn-main .sw.r { background: var(--a-bet); } .lrn-main .sw.j { background: var(--a-allin); }
+.ptypes { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin: 16px 0 8px; }
+.ptypes section { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 14px 16px; }
+.ptypes h3 { margin: 0 0 2px; }
+.ptypes .tag { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.ptypes p { font-size: 14px; }
+.lrnlink { background: none; border: 0; box-shadow: none; padding: 0; color: var(--muted); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.lrnlink:hover:not(:disabled) { background: none; border: 0; color: var(--hero); }
+@media (max-width: 760px) {
+  .lrn-sub { display: none; }
+  .lrn-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
+  .lrn-nav { flex-direction: row; overflow-x: auto; overflow-y: hidden; border-right: 0; border-bottom: 1px solid var(--line); padding: 10px 16px; gap: 6px; scrollbar-width: none; }
+  .lrn-nav::-webkit-scrollbar { display: none; }
+  .lrn-nav button { white-space: nowrap; flex: none; font-size: 14px; padding: 8px 12px; }
+  .lrn-nav button[aria-current="true"] { box-shadow: inset 0 -2px 0 var(--hero); }
+  .lrn-main { padding: 20px 16px calc(40px + env(safe-area-inset-bottom, 0px)); }
+  .lrn-main h2 { font-size: 25px; }
+  .lrn-main .lede { font-size: 16px; }
+  .ptypes { grid-template-columns: minmax(0, 1fr); }
+}
+.lhome-learn { justify-self: center; margin: 2px 0 6px; font-size: 13px; }
+/* LEARN CSS END */
 </style>
 
 <header class="top">
@@ -1085,7 +1139,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
     </div>
     <span class="grow"></span>
     <nav class="nav" aria-label="Setup">
-      <div class="seg mode" role="group" aria-label="Mode"><button id="modeSolver" aria-pressed="true">Solver</button><button id="modeTrainer" aria-pressed="false">Trainer</button></div>
+      <div class="seg mode" role="group" aria-label="Mode"><button id="modeSolver" aria-pressed="true">Solver</button><button id="modeTrainer" aria-pressed="false">Trainer</button><button id="modeLearn" aria-pressed="false" data-learn="start">Learn</button></div>
       <div class="seg" role="group" aria-label="Game"><button data-game="cash" aria-pressed="true">Cash</button><button data-game="222" aria-pressed="false">MTT</button></div>
       <div class="seg" id="tableSeg" role="group" aria-label="Table"><button data-table="6" aria-pressed="true">6-max</button><button data-table="8" aria-pressed="false">8-max</button><button data-table="custom" aria-pressed="false">Custom</button></div>
       <label class="row" id="stackWrap"><span class="label">Stack</span><select id="stack" aria-label="Starting stack"></select></label>
@@ -1245,8 +1299,200 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
   <button type="button" data-tab="details"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="16" rx="2"/><path d="M8 9h8M8 12.5h8M8 16h5"/></svg>Details</button>
   <button type="button" data-tab="chart"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/></svg>Chart</button>
   <button type="button" data-tab="trainer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>Trainer</button>
+  <button type="button" data-learn="start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5c2.5-1.2 5-1.2 7 .5v13c-2-1.7-4.5-1.7-7-.5z"/><path d="M19 5.5c-2.5-1.2-5-1.2-7 .5v13c2-1.7 4.5-1.7 7-.5z"/></svg>Learn</button>
 </nav>
 
+<!-- LEARN BEGIN -->
+<div class="learn" id="learn" hidden role="dialog" aria-modal="true" aria-labelledby="learnTitle">
+  <div class="lrn-top">
+    <button type="button" class="lrn-back" id="learnClose" aria-label="Back to the app">‹ Back</button>
+    <div class="lrn-title" id="learnTitle">LEARN</div>
+    <span class="grow"></span>
+    <span class="lrn-sub">How the solver works · coaching</span>
+  </div>
+  <div class="lrn-body">
+    <nav class="lrn-nav" aria-label="Learn sections">
+      <button type="button" data-sec="start" aria-current="true">Start here</button>
+      <button type="button" data-sec="solver">How spots are built</button>
+      <button type="button" data-sec="multiway">Multiway pots</button>
+      <button type="button" data-sec="icm">ICM and short stacks</button>
+      <button type="button" data-sec="players">Player types</button>
+    </nav>
+    <div class="lrn-main" id="learnMain">
+
+<article data-sec="start">
+  <h2>Start here</h2>
+  <p class="lede">Confirmed Fire Poker has two halves. The <b>Solver</b> shows how to play a spot. The <b>Trainer</b> deals you spots and scores your decisions against the solver. This section explains what the solver is doing and teaches the spots where tournament play goes beyond a chart.</p>
+  <h3>Reading a spot</h3>
+  <ul>
+    <li><b>The table</b> sets the spot: the format (6-max, 8-max or 9-handed), the stack depth, and the action so far. Tap an action to move the hand forward, or tap a seat to see that player's options.</li>
+    <li><b>The action tiles</b> show how often the whole range takes each action, and the <b>EV</b> of that action: the average gain over folding, in big blinds, for the hands that take it. Fold is always +0.00.</li>
+    <li><b>The hand grid</b> colors each hand by its mix: <span class="sw f"></span>fold, <span class="sw c"></span>call or limp, <span class="sw r"></span>raise, <span class="sw j"></span>all-in. Tap a hand to see its exact frequencies and the EV of every option.</li>
+    <li><b>Mixed hands</b> (a cell split into two colors) are close in value. Either action is fine, and mixing keeps you hard to read.</li>
+  </ul>
+  <h3>The badge above the grid</h3>
+  <ul>
+    <li><b>GTO preflop · pre-solved</b>: the spot comes from the hand library, solved ahead of time (see <a href="#learn/solver" data-go="solver">How spots are built</a>). It opens instantly and gives the same answer every time.</li>
+    <li><b>GTO preflop · solving</b>: your exact setup is being solved on your device, live. Custom stacks, odd table sizes and tournament details take this path. The numbers firm up as it runs.</li>
+  </ul>
+  <h3>Chip EV or ICM</h3>
+  <p>The MTT solver opens in <b>chip EV</b>, where every chip is worth the same. That is the right baseline for the early stages and for learning standard ranges. Fill in the <b>Tournament details</b> tab (players left, places paid and the stacks) and the solver switches to <b>ICM</b>, where chips are worth prize money. It plays tighter where busting costs you a pay jump, and more aggressively where your stack puts pressure on others. See <a href="#learn/icm" data-go="icm">ICM and short stacks</a>.</p>
+</article>
+
+<article data-sec="solver" hidden>
+  <h2>How spots are built</h2>
+  <p class="lede">Preflop strategy comes from a game-theory solver: every player keeps adjusting until nobody can gain by changing their play. The solver plays the hand out until the flop. From the flop on, it settles the pot with a model of how much of its equity each hand actually wins.</p>
+  <h3>Chip EV: built to match GTO</h3>
+  <p>Heads-up and single-raised chip-EV spots are the baseline, and they are checked against GTO Wizard's MTT chip-EV solutions. The model of the flop is fitted to those solutions: how much a hand's position, its strength and its playability (pairs, suited connectors and suited aces make more of their equity, offsuit junk makes less) are worth at each stack depth.</p>
+  <p>Where two actions are close in value, the solver may mix a hand a little differently from another solver. The range as a whole plays the same way.</p>
+  <h3>The hand library</h3>
+  <ul>
+    <li>6-max and 8-max tournament tables at 10, 15, 20, 25, 30, 40, 50, 60, 80 and 100 big blinds, chip EV, big blind ante.</li>
+    <li>Every table is solved three separate times and the three answers are averaged. A hand is marked unsettled only when the solves disagree on it and the difference actually costs EV.</li>
+    <li>Bet sizes follow tournament practice and change with depth: opens of 2 to 2.3bb (the small blind raises bigger), 3-bets of about 2.75 to 4.5 times the open, squeezes bigger again, and 4-bets of 2 to 2.2 times. All-ins come in as stacks get shorter: open-jams at 25bb and under, 3-bet jams at 25bb and under (50bb and under from the blinds), and 4-bet jams at 70bb and under.</li>
+    <li>Limps are only part of the library from the small blind. Limping from other seats is a tournament tool, covered in <a href="#learn/icm" data-go="icm">ICM and short stacks</a>.</li>
+  </ul>
+  <h3>Multiway pots</h3>
+  <p>When three or more players see the flop, each hand's share of the pot is estimated against all of the opponents at once. Hands that make strong hands (sets, flushes, straights) gain in multiway pots, and hands that get dominated (offsuit broadways and weak offsuit aces) lose value. The model is fitted to GTO Wizard's multiway chip-EV spots.</p>
+  <p>From the blinds, our multiway ranges also follow the tournament coaching we study with. Offsuit junk in the big blind (hands like 53o, Q5o or J7o) is a fold in a multiway pot, even where a chip-EV solve calls it. <a href="#learn/multiway" data-go="multiway">Multiway pots</a> explains why, and teaches the spots where tournament coaching goes further than a chip-EV chart.</p>
+  <h3>ICM</h3>
+  <p>With tournament details filled in, every result is scored in prize equity instead of chips. Chips are converted to prize money with the standard Independent Chip Model (ICM), using the stacks at your table, the players left in the tournament and the payouts. Players at other tables count at the average stack. The <b>ICM vs chips</b> button marks the hands that play tighter or looser than they would in a chip-only game.</p>
+  <h3>What isn't a full solve</h3>
+  <p>No preflop tool solves every flop, turn and river of every line. That would take server farms. Ours settles the flop with the fitted model above. Multiway and ICM spots go further than any chart can, so they lean on the model and on tournament coaching more than heads-up chip-EV spots do. Where we follow the coaching, this section says so.</p>
+</article>
+
+<article data-sec="multiway" hidden>
+  <h2>Multiway pots</h2>
+  <p class="lede">Most tournament tables are 8 or 9 handed, so you see a lot of opens with a call behind. These pots play differently from heads-up pots, and this is where a chart alone teaches you least.</p>
+  <h3>Why multiway is different</h3>
+  <ul>
+    <li><b>The price looks great, but you don't realize your equity.</b> Closing the action in the big blind three-way, you often need only about 17% equity to call. Out of position against two ranges, though, weak hands miss the flop, check, and get bet off the pot. Raw equity overstates what they win.</li>
+    <li><b>Making the best hand matters more than having it now.</b> Against two or more players, one pair is rarely good enough to win a big pot. The hands that win big multiway pots are sets, flushes and straights.</li>
+    <li><b>Everyone in the pot has a range.</b> A squeeze has to get through two players, not one, so bluffs need blockers and a backup plan.</li>
+  </ul>
+  <h3>Hands that go up, hands that go down</h3>
+  <ul>
+    <li><b>Up:</b> small and medium pairs (sets), suited connectors and gappers (straights and flushes), suited aces (the nut flush). In the big blind, low offsuit connectors like 54o, 65o and 76o also play fine. Their straights don't collide with the openers' high cards.</li>
+    <li><b>Down:</b> offsuit broadways (KJo, QTo, JTo) and weak offsuit aces. They make second-best hands and are often dominated by the opener.</li>
+    <li><b>Card removal:</b> speculative calls work best with low cards that don't overlap the openers' ranges.</li>
+  </ul>
+  <h3>Big blind vs an open and a call</h3>
+  <ul>
+    <li>Fold offsuit junk (53o, Q5o, J7o and the like). Tournament coaching folds these, and so does our solver.</li>
+    <li>Hands like T9o, 98o and 97o are borderline. 97o is mostly a fold, and 98o folds against strong players. The low connectors (65o, 54o, 76o) play better.</li>
+    <li>When the small blind is the caller, you can defend a little wider. There are more checks, and you sometimes get to play in position against the small blind.</li>
+    <li>Against early-position opens, squeeze mostly for value and bluff rarely. AQo is often just a call or a fold there.</li>
+  </ul>
+  <h3>Squeezing</h3>
+  <ul>
+    <li><b>Value:</b> AA–JJ, AK and AQs. Add TT–88 as the opener gets later, or when the small blind is also in.</li>
+    <li><b>Bluffs:</b> suited aces (A5s above all), suited broadways with blockers (KTs, QTs, JTs) and suited connectors. Offsuit bluffs are rare, mainly AQo against early opens and small offsuit aces from the big blind.</li>
+    <li><b>Size:</b> squeezes are bigger than 3-bets, about half an open more for each caller when deep, and about three-quarters of an open more at 25bb and under. Deep, only the very top of the range is happy to get it all in after squeezing.</li>
+    <li><b>Short stacks:</b> at around 20bb, squeeze small (about 7bb) or jam. From the small blind against an open and a call, mostly jam.</li>
+  </ul>
+  <h3>Overcalling on the button</h3>
+  <ul>
+    <li>Calling behind an open on the button is tighter than a chip-EV chart suggests. The blinds can squeeze, which costs you the call.</li>
+    <li>Behind a tight early-position opener you are better protected. AQo, AQs and TT are comfortable flats, and even JJ can flat.</li>
+    <li>When the hijack opens and the cutoff calls, the cutoff is often weak. Squeeze wide.</li>
+  </ul>
+  <h3>Where we follow the coaching over the solver</h3>
+  <p>Chip-EV solvers defend the big blind very wide multiway, including offsuit junk. Our solver folds that junk, as tournament coaching does: chip EV ignores how much a tournament stack is worth, and these hands win small pots and lose big ones. The rest of this page is coaching to use alongside the chart, especially once ICM is in play, where good players tighten their multiway calls further.</p>
+</article>
+
+<article data-sec="icm" hidden>
+  <h2>ICM and short stacks</h2>
+  <p class="lede">In a tournament, chips aren't money. Losing your stack ends your run, and every pay jump you pass is real money. ICM (the Independent Chip Model) turns stacks into prize equity, and that changes the right play.</p>
+  <h3>The core idea</h3>
+  <ul>
+    <li><b>Chips you lose are worth more than chips you win.</b> Doubling your stack doesn't double your prize equity, but losing it all takes it to zero. So you need more than a coin flip to call off your tournament life. That extra edge is the <b>risk premium</b>.</li>
+    <li><b>Covering matters.</b> A big stack can pressure medium stacks, which can't call without risking their run. A short stack facing the big stack is less exposed: it can only lose what it has.</li>
+    <li><b>Other short stacks matter.</b> If someone at the table is about to bust, a medium stack gains just by waiting.</li>
+  </ul>
+  <h3>By stage</h3>
+  <ul>
+    <li><b>Early:</b> very little ICM. Chip EV is a good guide.</li>
+    <li><b>Soft bubble</b> (a few tables from the money): calling ranges start to tighten, mostly for the medium stacks.</li>
+    <li><b>Bubble:</b> the biggest ICM effect. Medium stacks fold a lot against the covering stacks, and big stacks open and 3-bet much wider.</li>
+    <li><b>In the money:</b> the pressure eases, then returns before every big pay jump.</li>
+    <li><b>Final table:</b> the jumps are biggest. Stack sizes around the table shape every decision.</li>
+  </ul>
+  <p>Fill in <b>Tournament details</b> and use the <b>ICM vs chips</b> button to see exactly which hands change.</p>
+  <h3>Short-stack plays the chart doesn't show</h3>
+  <p>The hand library keeps the tree simple: raise, call, fold or jam, with limps only from the small blind. Real tournament play has two more tools at short stacks. They come in mostly with ICM pressure and big antes.</p>
+  <ul>
+    <li><b>Limping</b> at about 10–20bb, mostly late position and the small blind, with a plan for when someone raises. <b>Limp-fold</b> gives up only the limp. <b>Limp-call</b> sees a flop. <b>Limp-raise</b> or <b>limp-jam</b> traps with hands that want action. The <b>Limp plan</b> panel shows a plan against each player behind. Under ICM, keeping your stack often beats the trap.</li>
+    <li><b>Raising and leaving 1bb behind</b> at 40bb and under. Instead of jamming, you raise to everything but one big blind. You are committed against a normal re-shove, but if two players go to war behind you, you can still fold and survive. On bubbles and at final tables, staying alive is worth a lot.</li>
+  </ul>
+  <p>Raising with 1bb behind is part of the live (on-device) solve at 40bb and under. Limping from seats other than the small blind isn't solved: outside the pre-solved spots the table lets you enter a limp, and the Limp plan shows a coaching plan for it. Neither play is in the pre-solved library.</p>
+</article>
+
+<article data-sec="players" hidden>
+  <h2>Player types</h2>
+  <p class="lede">GTO is the strategy nobody can beat. Real opponents leak, and you win the most by noticing how. Here are the common types, how to spot them, and how to shift your ranges against each one.</p>
+  <p class="note">The numbers are rough guides from tracking stats: <b>VPIP</b> (how often they put money in preflop) and <b>PFR</b> (how often they raise preflop). Without stats, watch what they show down and how often they act.</p>
+  <div class="ptypes">
+    <section><h3>Nit</h3><p class="tag">VPIP under ~15 · PFR close to VPIP</p>
+      <p><b>Spot them:</b> they fold almost everything and only play premiums. Their 3-bets mean real hands.</p>
+      <p><b>Adjust:</b> steal their blinds wider and fold more to their 3-bets and 4-bets. Don't pay off their big bets. Value-bet thinner, since they rarely bluff-raise.</p></section>
+    <section><h3>TAG (tight-aggressive)</h3><p class="tag">VPIP ~18–25 · PFR ~15–20</p>
+      <p><b>Spot them:</b> solid, selective and aggressive. Usually a regular.</p>
+      <p><b>Adjust:</b> stay close to the solver. Look for small leaks: some overfold to 3-bets, others don't defend their blinds enough.</p></section>
+    <section><h3>LAG (loose-aggressive)</h3><p class="tag">VPIP ~25–35 · PFR ~20–30</p>
+      <p><b>Spot them:</b> they open wide, 3-bet often and keep the pressure on.</p>
+      <p><b>Adjust:</b> defend wider against their opens and 4-bet bluff less. Widen your value 3-bets and 4-bets, and let them bluff into your strong hands.</p></section>
+    <section><h3>Maniac</h3><p class="tag">VPIP 40+ · PFR 30+</p>
+      <p><b>Spot them:</b> they raise and re-raise constantly, often with weak hands.</p>
+      <p><b>Adjust:</b> tighten up and trap. Call down and get it in wider for value, and cut your bluffs almost completely. Expect swings. They will win some pots, but your strong hands get paid.</p></section>
+    <section><h3>Calling station</h3><p class="tag">VPIP high · PFR low (e.g. 40 / 8)</p>
+      <p><b>Spot them:</b> they call too much and rarely raise. They show down weak pairs and missed draws.</p>
+      <p><b>Adjust:</b> isolate their limps with a wide value range and bet bigger for value. Stop bluffing them: they don't fold.</p></section>
+    <section><h3>Recreational</h3><p class="tag">Loose, passive, inconsistent</p>
+      <p><b>Spot them:</b> limps, odd bet sizes, playing for fun. Often the source of most of the table's profit.</p>
+      <p><b>Adjust:</b> isolate their limps, play more pots in position against them, value-bet relentlessly and keep it simple.</p></section>
+    <section><h3>Pro</h3><p class="tag">Balanced and hard to read</p>
+      <p><b>Spot them:</b> sensible sizes, a few well-timed bluffs, and ranges that look like the solver's.</p>
+      <p><b>Adjust:</b> play the solver's strategy. Pick your battles and avoid marginal spots out of position against them.</p></section>
+  </div>
+  <h3>Coming to the solver</h3>
+  <p>A <b>Versus</b> option is on the way. You'll pick a player type and the solver's ranges will widen or tighten against it, with the changes shaded so you can see what moved and why. The same two-click adjustment will be here in Learn.</p>
+</article>
+
+    </div>
+  </div>
+</div>
+<script>
+// ---------------------------------------------------------------- Learn: how the solver works + coaching
+(() => {
+  const L = document.getElementById('learn'); if (!L) return;
+  const secs = [...L.querySelectorAll('.lrn-main article')], navs = [...L.querySelectorAll('.lrn-nav [data-sec]')];
+  const show = (sec) => {
+    if (!secs.some((a) => a.dataset.sec === sec)) sec = 'start';
+    secs.forEach((a) => (a.hidden = a.dataset.sec !== sec));
+    navs.forEach((b) => b.setAttribute('aria-current', b.dataset.sec === sec ? 'true' : 'false'));
+    L.querySelector('.lrn-main').scrollTop = 0;
+    const cur = navs.find((b) => b.dataset.sec === sec); if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  };
+  const open = (sec) => {
+    L.hidden = false; document.body.classList.add('learning'); show(sec || 'start');
+    try { history.replaceState(null, '', '#learn/' + (sec || 'start')); } catch (e) {}
+    const b = document.getElementById('modeLearn'); if (b) b.setAttribute('aria-pressed', 'true');
+  };
+  const close = () => {
+    L.hidden = true; document.body.classList.remove('learning');
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    const b = document.getElementById('modeLearn'); if (b) b.setAttribute('aria-pressed', 'false');
+  };
+  window.openLearn = open;
+  navs.forEach((b) => (b.onclick = () => { show(b.dataset.sec); try { history.replaceState(null, '', '#learn/' + b.dataset.sec); } catch (e) {} }));
+  L.addEventListener('click', (e) => { const a = e.target.closest('[data-go]'); if (a) { e.preventDefault(); show(a.dataset.go); } });
+  document.getElementById('learnClose').onclick = close;
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !L.hidden) close(); });
+  document.addEventListener('click', (e) => { const a = e.target.closest('[data-learn]'); if (a) { e.preventDefault(); open(a.dataset.learn); } });
+  const m = /^#learn(?:\/(\w+))?$/.exec(location.hash); if (m) open(m[1]);
+})();
+</script>
+<!-- LEARN END -->
 <div class="launch" id="launch">
   <div class="lscreen" id="lsHome">
     <div class="lhead"><div class="wordmark">CONFIRMED <span>FIRE</span> POKER</div><div class="subtag">Slick RNG Solver</div></div>
@@ -1254,6 +1500,7 @@ body.plo .tabbar [data-tab="trainer"] { display: none; }
       <button class="half h-solver" id="goSolver" type="button"><svg class="px" viewBox="0 0 24 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#efe4c8" d="M10 1h4v1h-4zM9 2h1v1h-1zM14 2h1v1h-1zM8 3h1v1h-1zM15 3h1v1h-1zM4 4h16v1h-16zM2 5h1v1h-1zM5 5h1v1h-1zM9 5h1v1h-1zM13 5h1v1h-1zM17 5h1v1h-1zM20 5h1v1h-1zM4 6h16v1h-16z"/><path fill="#5aa9de" d="M10 2h1v1h-1zM12 2h2v1h-2zM9 3h1v1h-1zM11 3h4v1h-4z"/><path fill="#fff6e0" d="M11 2h1v1h-1zM10 3h1v1h-1z"/><path fill="#7e705a" d="M3 5h1v1h-1zM6 5h2v1h-2zM10 5h2v1h-2zM14 5h2v1h-2zM18 5h2v1h-2z"/><path fill="#e8704f" d="M4 5h1v1h-1zM8 5h1v1h-1zM12 5h1v1h-1zM16 5h1v1h-1z"/><path fill="#3a342b" d="M7 7h10v1h-10z"/><path fill="#5aa9de" fill-opacity="0.33" d="M8 8h8v1h-8zM7 9h10v1h-10zM6 10h12v1h-12zM5 11h14v1h-14z"/><path fill="#ec8fab" d="M6 12h5v1h-5zM13 12h5v1h-5zM4 13h3v1h-3zM8 13h3v1h-3zM13 13h3v1h-3zM17 13h3v1h-3zM3 14h2v1h-2zM7 14h2v1h-2zM10 14h2v1h-2zM14 14h2v1h-2zM17 14h1v1h-1zM20 14h2v1h-2zM3 15h1v1h-1zM5 15h2v1h-2zM8 15h4v1h-4zM14 15h3v1h-3zM18 15h1v1h-1zM20 15h2v1h-2zM2 16h3v1h-3zM7 16h3v1h-3zM11 16h1v1h-1zM14 16h1v1h-1zM16 16h3v1h-3zM21 16h2v1h-2zM2 17h6v1h-6zM9 17h4v1h-4zM15 17h2v1h-2zM18 17h6v1h-6zM2 18h2v1h-2zM5 18h3v1h-3zM9 18h2v1h-2zM12 18h1v1h-1zM15 18h1v1h-1zM17 18h1v1h-1zM19 18h3v1h-3zM23 18h1v1h-1zM3 19h3v1h-3zM8 19h5v1h-5zM15 19h4v1h-4zM21 19h2v1h-2zM3 20h5v1h-5zM9 20h2v1h-2zM12 20h1v1h-1zM15 20h1v1h-1zM17 20h2v1h-2zM20 20h3v1h-3zM4 21h6v1h-6zM11 21h2v1h-2zM15 21h2v1h-2zM18 21h4v1h-4zM5 22h8v1h-8zM15 22h6v1h-6zM6 23h3v1h-3zM11 23h1v1h-1zM16 23h1v1h-1zM19 23h1v1h-1z"/><path fill="#f7c2d1" d="M7 13h1v1h-1zM16 13h1v1h-1zM5 14h2v1h-2zM18 14h2v1h-2zM4 15h1v1h-1zM19 15h1v1h-1zM10 16h1v1h-1zM15 16h1v1h-1zM4 18h1v1h-1zM11 18h1v1h-1zM16 18h1v1h-1zM22 18h1v1h-1zM8 20h1v1h-1zM19 20h1v1h-1z"/><path fill="#b9547a" d="M11 13h2v1h-2zM9 14h1v1h-1zM12 14h2v1h-2zM16 14h1v1h-1zM7 15h1v1h-1zM12 15h2v1h-2zM17 15h1v1h-1zM5 16h2v1h-2zM12 16h2v1h-2zM19 16h2v1h-2zM8 17h1v1h-1zM13 17h2v1h-2zM17 17h1v1h-1zM8 18h1v1h-1zM13 18h2v1h-2zM18 18h1v1h-1zM6 19h2v1h-2zM13 19h2v1h-2zM19 19h2v1h-2zM11 20h1v1h-1zM13 20h2v1h-2zM16 20h1v1h-1zM10 21h1v1h-1zM13 21h2v1h-2zM17 21h1v1h-1zM9 23h2v1h-2zM17 23h2v1h-2z"/></svg><b>Solver</b><small>Charts · ICM · postflop</small></button>
       <button class="half h-trainer" id="goTrainer" type="button"><svg class="px" viewBox="0 0 32 24" shape-rendering="crispEdges" aria-hidden="true"><path fill="#d9434f" d="M16 2h9v1h-9zM16 3h9v1h-9zM14 4h8v1h-8zM25 4h2v1h-2zM14 5h8v1h-8zM25 5h2v1h-2zM13 6h12v1h-12zM27 6h1v1h-1zM13 7h1v1h-1zM15 7h2v1h-2zM20 7h8v1h-8zM13 8h1v1h-1zM15 8h2v1h-2zM20 8h8v1h-8zM13 9h1v1h-1zM15 9h1v1h-1zM19 9h9v1h-9zM16 10h1v1h-1zM19 10h9v1h-9zM19 11h9v1h-9zM16 12h12v1h-12zM13 13h1v1h-1zM15 13h1v1h-1zM17 13h11v1h-11zM15 14h2v1h-2zM18 14h10v1h-10zM16 15h9v1h-9zM27 15h1v1h-1zM16 16h9v1h-9zM27 16h1v1h-1zM17 17h10v1h-10z"/><path fill="#f7c2d1" d="M22 4h3v1h-3zM22 5h3v1h-3zM25 6h2v1h-2z"/><path fill="#f0c35a" d="M14 7h1v1h-1zM11 8h1v1h-1zM14 8h1v1h-1zM17 8h1v1h-1zM12 9h1v1h-1zM16 9h1v1h-1zM11 11h2v1h-2zM16 11h2v1h-2zM12 13h1v1h-1zM16 13h1v1h-1zM11 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM14 15h1v1h-1z"/><path fill="#8e1a2c" d="M17 7h3v1h-3zM18 8h2v1h-2zM17 9h2v1h-2zM17 10h2v1h-2zM18 11h1v1h-1zM25 15h2v1h-2zM25 16h2v1h-2z"/><path fill="#efe4c8" d="M28 7h4v1h-4zM28 8h4v1h-4zM30 9h2v1h-2zM28 10h4v1h-4zM28 11h4v1h-4zM30 12h2v1h-2zM0 13h2v1h-2zM30 13h2v1h-2zM0 14h1v1h-1zM28 14h4v1h-4zM0 15h2v1h-2zM0 16h1v1h-1zM0 17h2v1h-2z"/><path fill="#e8704f" d="M14 9h1v1h-1zM13 10h3v1h-3zM13 11h1v1h-1zM15 11h1v1h-1zM13 12h3v1h-3zM14 13h1v1h-1z"/><path fill="#7e705a" d="M28 9h2v1h-2zM28 12h2v1h-2zM28 13h2v1h-2zM1 14h1v1h-1zM1 16h1v1h-1z"/><path fill="#5aa9de" d="M4 10h6v1h-6zM3 11h1v1h-1zM6 11h5v1h-5zM2 12h1v1h-1zM4 12h8v1h-8zM2 13h5v1h-5zM9 13h3v1h-3zM2 14h6v1h-6zM9 14h2v1h-2zM2 15h6v1h-6zM9 15h3v1h-3zM2 16h10v1h-10zM2 17h9v1h-9zM2 18h1v1h-1zM4 18h6v1h-6zM3 19h6v1h-6z"/><path fill="#fff6e0" d="M4 11h2v1h-2zM14 11h1v1h-1zM3 12h1v1h-1z"/><path fill="#2f6f9e" d="M7 13h2v1h-2zM8 14h1v1h-1zM8 15h1v1h-1zM3 18h1v1h-1z"/></svg><b>Trainer</b><small>Drill spots · find leaks</small></button>
     </div>
+    <button type="button" class="lrnlink lhome-learn" data-learn="start">New here? How the solver works ›</button>
   </div>
   <div class="lscreen" id="lsVariant" hidden>
     <div class="lhead"><button class="lback" id="lsBackV" type="button" aria-label="Back">‹ Back</button><div class="wordmark" id="lsVTitle">SOLVER</div><div class="subtag">Hold'em or Omaha</div></div>
@@ -3717,7 +3964,8 @@ function preflopReport() {
     }
     const icmTight = chips ? Object.values(classes).filter((e) => e.icmDiff > 0.25).length : 0;
     const icmLoose = chips ? Object.values(classes).filter((e) => e.icmDiff < -0.25).length : 0;
-    return { kind: 'action', preflop: true, name: seat.pos, sub, board: [], pot: potNow(), history: [], ev, baseIdx, evUnit, callInfo, overlay: !!chips, icmTight, icmLoose, limped, limpPlan, heroId: ctx.id, plo: S.variant === 'plo', buckets,
+    const mwSpot = T.seats.filter((x) => x !== seat && !x.folded && x.acts.some((a) => a.k !== 'fold' && a.k !== 'check')).length >= 2;
+    return { kind: 'action', preflop: true, learn: cfgNow.payoff.type === 'icm' ? 'icm' : mwSpot ? 'multiway' : 'solver', name: seat.pos, sub, board: [], pot: potNow(), history: [], ev, baseIdx, evUnit, callInfo, overlay: !!chips, icmTight, icmLoose, limped, limpPlan, heroId: ctx.id, plo: S.variant === 'plo', buckets,
       actions: labels, actionTypes: opts.map((o) => (o.k === 'fold' ? 'fold' : o.k === 'raise' || o.k === 'raiseB' ? 'bet' : o.k === 'allin' ? 'allin' : 'call')),
       overall, classes, totalReach: total, cur: ctx.cur ? ctx.cur.k : null, curIndex, solved: !!solved,
       pick: (i) => { const o = opts[i], e = { id: ctx.id, k: o.k }; choose(ctx.mode === 'edit' ? [...S.hist.slice(0, ctx.idx), e, ...S.hist.slice(ctx.idx + 1)] : [...ctx.base, e]); } };
@@ -4401,7 +4649,7 @@ function renderNode() {
   const who = T.seats.find((x) => x.pos === name), heroTag = who && isHero(who.id) ? ' <span class="herotag">(Hero)</span>' : '';
   const stk = who ? `<span class="stkchip mono">${fmt(baseStack(who))} bb</span>` : '';
   v.innerHTML = `<div class="node">
-    <div class="nodetitle"><h2>${esc(name)}${heroTag}</h2>${stk}${r.preflop ? `<span class="muted">${esc(r.sub)}</span>` : ''}<span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}${r.preflop ? `<span class="grow"></span>${r.solved && r.evUnit === '%' ? `<button class="mini ${S.overlay ? 'on' : ''}" id="ovBtn" title="Mark hands that play differently because of ICM">ICM vs chips</button>` : ''}<span class="pfnote ${r.solved ? 'ok' : ''}">${pfNote(r.solved)}</span>` : ''}</div>
+    <div class="nodetitle"><h2>${esc(name)}${heroTag}</h2>${stk}${r.preflop ? `<span class="muted">${esc(r.sub)}</span>` : ''}<span class="muted mono">pot ${fmt(r.pot)}</span> ${boardStr}${r.preflop ? `<span class="grow"></span>${r.solved && r.evUnit === '%' ? `<button class="mini ${S.overlay ? 'on' : ''}" id="ovBtn" title="Mark hands that play differently because of ICM">ICM vs chips</button>` : ''}<span class="pfnote ${r.solved ? 'ok' : ''}">${pfNote(r.solved)}</span><button type="button" class="lrnlink" data-learn="${r.learn || 'solver'}">How it's built</button>` : ''}</div>
     ${r.overlay ? `<div class="hint"><span class="ovt">ICM ↓</span> ${r.icmTight} hand types play tighter than in a chip-only game · <span class="ovl">ICM ↑</span> ${r.icmLoose} looser${pfcState.done ? '' : ' (chip-only solve still running)'}</div>` : (S.overlay && r.solved ? '<div class="hint">Chip-only comparison solving…</div>' : '')}
     <div class="actions">${r.actions.map((a, i) => `<button class="act${r.cur && r.preflop && ctxKind(r, i) ? ' cur' : ''}" data-a="${i}"><i style="background:${col[i]}"></i><strong>${esc(a)}</strong><small>${(r.overall[i] * 100).toFixed(1)}%${r.ev && r.ev[i] !== null && r.ev[r.baseIdx] !== null ? `<em>EV ${fmtEv(r.ev[i] - r.ev[r.baseIdx], r.evUnit)}</em>` : ''}</small></button>`).join('')}</div>
     <div class="freqbar">${r.overall.map((f, i) => `<i style="width:${f * 100}%;background:${col[i]}"></i>`).join('')}</div>
@@ -6017,6 +6265,8 @@ function syncNav() {
     if (b.dataset.tab === cur) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
   });
   if (det) $('t222d').open = true;
+  // on a phone the Details page is the tournament form (the Solver | Tournament details tabs are desktop-only)
+  if (det && matchMedia('(max-width: 760px)').matches && S.subtab !== 'tourney') { S.subtab = 'tourney'; applySubtab(); }
 }
 // ICM flag over the chart + glow when the spot is an ICM spot
 function updateIcmFlag() {
@@ -6079,7 +6329,7 @@ document.querySelectorAll('.tabbar [data-tab]').forEach((b) => (b.onclick = () =
   const tab = b.dataset.tab;
   if (tab === 'home') { showLaunch('home'); return; }
   if (tab === 'trainer') { if (S.variant === 'plo') setVariant('nlh'); if (S.mode !== 'trainer') setMode('trainer'); }
-  else { if (S.mode !== 'solver') setMode('solver'); setPage(tab); }
+  else { if (S.mode !== 'solver') setMode('solver'); if (tab === 'details' && S.game === '222') setSubtab('tourney'); setPage(tab); }
   syncSpot(); scrollTo({ top: 0, behavior: 'auto' });
 }));
 // ---------------------------------------------------------------- launch: Solver | Trainer, then Cash | MTT
@@ -6091,7 +6341,7 @@ function hideLaunch() { $('launch').hidden = true; document.body.classList.remov
 function pickGame(g) {
   if (S.mode !== 'solver') setMode('solver');
   if (S.game !== g) document.querySelector(`[data-game="${g}"]`).click();
-  setPage(g === '222' ? 'details' : 'chart'); syncSpot(); hideLaunch();
+  setPage('chart'); syncSpot(); hideLaunch();   // MTT opens on the solver, like cash; Details holds the tournament
 }
 // NLH or PLO: switching resets the hand (different deck use, sizes and solver)
 function setVariant(v) {
