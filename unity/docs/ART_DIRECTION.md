@@ -48,7 +48,7 @@ Each set is dressed once, lit once, then only cameras change.
 | tv | Tour TV table | key lights in a black room | none | cameras, boom, the hole-card lens |
 | titan | High-roller lounge | cold white, blue glass | blue | marble, a view, the trophy |
 | main | Main Event | wall of lights, the stage | white/gold | the bracelet, the rail |
-| hall | Hall of Legends | gold on black | gold | 28 portraits, 14 bracelets |
+| hall | Hall of Legends | gold on black | gold | 27 portraits, 14 bracelets |
 | home | the player's place | time of day | warm | whatever they have unlocked |
 
 ## 5. Delivery: video cutscenes, real-time home and table
@@ -73,7 +73,7 @@ Reference: image file or one-line inspiration
 - **You** — the player; face sculpted in the closet (15 sliders), default look from the brief.
 Briefs live in `unity/docs/characters/<name>.md` (reference images are used for type only, never likeness):
 slick, natso, tommy, bio, mustich, gnomey, twogloves, david — all eight written 2026-10-28.
-- **Legends** (28, dream/data.js DR_LEGENDS) — parody tributes to real pros, so every face is original: era, build, one
+- **Legends** (27, dream/data.js DR_LEGENDS) — parody tributes to real pros, so every face is original: era, build, one
   signature prop and a colour, drawn from the style line. Built on the three shared bodies.
 - **Extras** — dealers (one per venue uniform), rail and crowd, Floor 34 staff, table opponents: the three shared
   bodies with heads, hair and outfits from the kit.
