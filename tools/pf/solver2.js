@@ -87,7 +87,7 @@ if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its 
   if (pr !== 'none') { const dd = JSON.parse(fs0.readFileSync(pr, 'utf8')); for (let l = 1; l <= 3; l++) { const t = dd['l' + l]; if (t) for (let i = 0; i < 169; i++) E.REAL_MULT[l][i] = t[i] || 1; } } }
 class PF2 extends E.PreflopSolver {
   constructor(cfg) {
-    const ex = {}; for (const [k, e] of [['playSpan', 'PSPAN'], ['pairSpan', 'PAIRSPAN'], ['ioSpan', 'IOSPAN'], ['pRe', 'PRE']]) if (process.env[e] !== undefined) ex[k] = +process.env[e];
+    const ex = {}; for (const [k, e] of [['playSpan', 'PSPAN'], ['pairSpan', 'PAIRSPAN'], ['ioSpan', 'IOSPAN'], ['pRe', 'PRE'], ['aggRe', 'AGGRE']]) if (process.env[e] !== undefined) ex[k] = +process.env[e];
     cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, gRe: MODEL.gRe, playPos: MODEL.pPos, playNeg: MODEL.pNeg, implied: MODEL.io, ...ex, ...cfg }; super(cfg);
   }
   prepTerminal(nd) {

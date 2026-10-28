@@ -846,6 +846,8 @@ PLAY_HU.set([0.02,0,0,0.063,0,0,0.104,0,0.005,0,0,-0.264,0,-0.257,0,-0.022,0,0,0
 // terminals. All ones until fitted; the fitted values are set below the tables.
 const REAL_MULT = [null, new Float32Array(NCLASS).fill(1), new Float32Array(NCLASS).fill(1), new Float32Array(NCLASS).fill(1)];
 // FITTED_REAL_BEGIN (written by tools/pf/realize/embed.py; same values as tools/pf/model_real.json)
+REAL_MULT[2].set([0.878,1.391,1,0.878,1.259,1,1.391,1,0.878,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.046,1,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.046,1,1.046,1,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.046,1,1.046,1,1.046,1,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.215,1,1.259,1,1.391,1,0.538,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.215,1,1.259,1,1.073,1,0.538,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.215,1,1.073,1,1.073,1,0.98,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.073,1,1.073,1,1.073,1,0.98,0.918,1,0.918,1,0.918,1,0.918,1,0.914,1,0.914,1,0.914,1,0.914,1,1.073,1,1.073,1,1.073,1,1.073,1,0.98]);
+REAL_MULT[3].set([0.878,1.391,1,0.878,1.259,1,1.391,1,0.878,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.046,1,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.046,1,1.046,1,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.046,1,1.046,1,1.046,1,1.215,1,1.259,1,1.391,1,0.878,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.215,1,1.259,1,1.391,1,0.538,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.215,1,1.259,1,1.073,1,0.538,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.215,1,1.073,1,1.073,1,0.98,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.046,1,1.073,1,1.073,1,1.073,1,0.98,0.918,1,0.918,1,0.918,1,0.918,1,0.914,1,0.914,1,0.914,1,0.914,1,1.073,1,1.073,1,1.073,1,1.073,1,0.98]);
 // FITTED_REAL_END
 function playTerm(nd, c, v, pPos, pNeg, hu) {
   v += (nd.level || 1) >= 2 ? PLAY_RE[c] : hu ? PLAY_HU[c] : 0;
@@ -1066,7 +1068,7 @@ class PreflopSolver {
       else if (a.k === 'call') { t.put[p] = Math.min(t.bet, st[p]); if (t.put[p] >= st[p] - 1e-9) t.allin[p] = true; }
       else if (a.k === 'raise' || a.k === 'raiseB' || a.k === 'allin') {
         const to = Math.min(a.to, st[p]), raise = to - t.bet; t.put[p] = to; if (to >= st[p] - 1e-9) t.allin[p] = true;
-        if (raise > 1e-9) { t.level++; if (raise >= t.lastRaise - 1e-9) t.lastRaise = raise; t.bet = to; for (let j = 0; j < n; j++) if (j !== p && !t.folded[j] && !t.allin[j]) t.needs[j] = true; }
+        if (raise > 1e-9) { t.level++; t.agg = p; if (raise >= t.lastRaise - 1e-9) t.lastRaise = raise; t.bet = to; for (let j = 0; j < n; j++) if (j !== p && !t.folded[j] && !t.allin[j]) t.needs[j] = true; }
       }
       return t;
     };
@@ -1074,7 +1076,7 @@ class PreflopSolver {
       const p = next(s);
       if (p < 0) {
         const lv = live(s); let free = 0; for (let j = 0; j < n; j++) if (!s.folded[j] && !s.allin[j]) free++;
-        const nd = { kind: lv === 1 ? 'fold' : free >= 2 ? 'flop' : 'show', put: s.put.slice(), folded: s.folded.slice(), level: s.level };
+        const nd = { kind: lv === 1 ? 'fold' : free >= 2 ? 'flop' : 'show', put: s.put.slice(), folded: s.folded.slice(), level: s.level, agg: s.agg };
         this.prepTerminal(nd); this.nodes.push(nd); return this.nodes.length - 1;
       }
       const os = opts(s, p);
@@ -1116,7 +1118,10 @@ class PreflopSolver {
       // stack-to-pot ratio falls toward 0.25 (where the pot is played as an all-in)
       const behind = alive.map((i) => this.cfg.stacks[i] - nd.put[i]).sort((a, b) => b - a)[1], spr = behind / Math.max(pot, 1e-9);
       const ramp = Math.min(1, Math.max(0, (spr - 0.25) / 1.75)), rLow = this.cfg.rLow !== undefined ? this.cfg.rLow : 0.73;
-      order.forEach((i, r) => { const r0 = k === 1 ? 1 : rLow + (1 - rLow) * (r / (k - 1)); nd.R[i] = 1 - (1 - r0) * ramp; });
+      order.forEach((i, r) => { const r0 = k === 1 ? 1 : rLow + (1 - rLow) * (r / (k - 1)); nd.R[i] = 1 - (1 - r0) * ramp; }); nd.ramp = ramp;
+      // the last raiser's range advantage in re-raised pots (fitted to real postflop solves, tools/pf/realize): aggRe
+      // scales the aggressor's realization factor, growing with the SPR like the positional edge
+      if ((nd.level || 1) >= 2 && nd.agg !== undefined && this.cfg.aggRe) nd.R[nd.agg] *= 1 + (this.cfg.aggRe - 1) * ramp;
       nd.gamma = 1 + (this.cfg.gammaK !== undefined ? this.cfg.gammaK : 0.15) * (1 + (this.cfg.gRe ?? 1) * Math.max(0, (nd.level || 1) - 1)) * Math.log(1 + spr);   // fitted model (tools/pf): twice as steep in a 3-bet pot, three times in a 4-bet pot
       // playability fades out at low SPR: no play left at SPR 1, full effect from SPR 1 + playSpan (default 6).
       // pairSpan: pairs' own fade (set value needs deep stacks); ioSpan: the implied-odds term's fade;
@@ -1271,8 +1276,8 @@ class PreflopSolver {
         // playability: with chips behind, pairs, suited connectors and suited aces make more of their equity
         // (sets, flushes, straights, the nut draws) and offsuit junk makes less; grows with the stack-to-pot ratio
         // cfg.playPos / cfg.playNeg scale the bonuses and the penalties of the table (calibration hooks; default 1)
-        const rm = REAL_MULT[Math.min(3, nd.level || 1)];
-        const pl = (1 + playTerm(nd, c, PLAY169[c], pPos, pNeg, true)) * rm[c], plo = (1 + playTerm(nd, oc, PLAY169[oc], pPos, pNeg, true)) * rm[oc];
+        const rm = REAL_MULT[Math.min(3, nd.level || 1)], rk = nd.ramp === undefined ? 1 : nd.ramp;   // fitted at 100bb; fades with the SPR like the positional edge
+        const pl = (1 + playTerm(nd, c, PLAY169[c], pPos, pNeg, true)) * (1 + (rm[c] - 1) * rk), plo = (1 + playTerm(nd, oc, PLAY169[oc], pPos, pNeg, true)) * (1 + (rm[oc] - 1) * rk);
         const a = nd.R[p] * pl * Math.pow(eq, nd.gamma), b = nd.R[o] * plo * Math.pow(1 - eq, nd.gamma);
         share = a + b > 0 ? a / (a + b) : 0.5;
         // implied odds (cfg.implied, default 0): hands with nut potential (pairs, suited connectors, suited aces) win

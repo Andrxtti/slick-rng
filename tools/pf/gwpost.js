@@ -13,7 +13,7 @@ const rangeOf = (H) => Object.entries(H).map(([h, x]) => `${h}:${x.w.toFixed(2)}
 const spot = E.makeSpot({ players: [
   { name: 'BB', stack: 97.5, range: rangeOf(bb.H) },
   { name: 'BTN', stack: 97.5, range: rangeOf(btn.H) } ],
-  board: 'Ks7d2c', pot: 6.5, sizes: { flop: { bet: '33%, 100%', raise: '2.7x' }, turn: { bet: '50%, 100%', raise: '2.5x' }, river: { bet: '50%, 100%, a', raise: '2.5x, a' } } });
+  board: 'Ks7d2c', pot: 6.5, sizes: { flop: { bet: '33%, 100%', raise: '2.7x' }, turn: { bet: '50%, 100%', raise: '2.5x' }, river: { bet: '50%, 100%, a', raise: '2.5x, a' } }, abstraction: process.env.TB ? { turnBuckets: +process.env.TB, riverBuckets: +process.env.RB } : undefined });
 // what the app runs for a full-range flop spot: the sampled engine with card abstraction (exact CFR needs >4GB here)
 const sv = new E.Solver(spot);
 console.log('sampled solver, nodes', sv.nodes.length, 'buckets', spot.turnBuckets, spot.riverBuckets);
