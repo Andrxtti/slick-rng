@@ -30,6 +30,8 @@ namespace CFDream.EditorTools
             { "uma-setup", DreamUMASetup.Setup },
             { "voice-list", DreamVoice.Export },
             { "acting-build", DreamAnim.Build },
+            { "render-all", DreamRender.RenderAll },   // render every scene to Builds/Cutscenes (see DreamRender)
+            { "resolve", () => UnityEditor.PackageManager.Client.Resolve() },   // re-read Packages/manifest.json (after editing it by hand)
             { "script-export", DreamScript.Export },
 #if DREAM_UMA
             { "export-uvs", DreamUMATools.ExportUVs }, { "build-clothes", DreamClothes.Build },
@@ -81,6 +83,19 @@ namespace CFDream.EditorTools
 #else
                     result = "no UMA";
 #endif
+                }
+                else if (c.StartsWith("render "))   // render <id>: record a story scene to Builds/Cutscenes/<id>.mp4
+                {
+                    DreamRender.Render(c.Substring(7).Trim()); result = "queued";
+                }
+                else if (c.StartsWith("pkg-add "))   // pkg-add <id@version>: add a package through the Package Manager and log the outcome
+                {
+                    var req = UnityEditor.PackageManager.Client.Add(raw.Trim().Substring(8).Trim());
+                    EditorApplication.CallbackFunction poll = null;
+                    poll = () => { if (!req.IsCompleted) return; EditorApplication.update -= poll;
+                        var msg = req.Status == UnityEditor.PackageManager.StatusCode.Success ? $"added {req.Result.packageId}" : "failed: " + req.Error?.message;
+                        try { File.AppendAllText(Out, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} pkg-add: {msg}\n"); } catch { } Debug.Log("[Dream] " + msg); };
+                    EditorApplication.update += poll; result = "started";
                 }
                 else if (c.StartsWith("scene "))   // scene <id>: play a story scene (replay)
                 {
