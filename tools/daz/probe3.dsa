@@ -1,0 +1,108 @@
+// Probe 3: what each free masculine base looks like, so the cast can start from the right face.
+// For the base Genesis 9 (Base Masculine at 100 %) and each installed male character (Matt, Ty, Fabrice): load it,
+// log the shaping morphs it sets, and render a front and a three-quarter head shot to renders/<name>_{front,34}.png.
+// Paths come from run.cfg.json (written next to this script by solve_full.js).
+var DIR = new DzFileInfo(getScriptFileName()).path();
+function readText(p) { var f = new DzFile(p); if (!f.exists()) return ""; f.open(DzFile.ReadOnly); var t = f.read(); f.close(); return t; }
+var CFG = JSON.parse(readText(DIR + "/run.cfg.json"));
+var LOG = [];
+function log(s) { LOG.push(String(s)); var f = new DzFile(CFG.log); f.open(DzFile.WriteOnly | DzFile.Truncate); f.write(LOG.join("\n")); f.close(); }
+function finish() { var f = new DzFile(CFG.done); f.open(DzFile.WriteOnly); f.write("done"); f.close(); }
+
+var LIB = "C:/Users/Public/Documents/My DAZ 3D Library/People/Genesis 9/";
+var OUTDIR = DIR + "/renders";
+var cm = App.getContentMgr(), rm = App.getRenderMgr();
+
+function figures() { var out = []; for (var i = 0; i < Scene.getNumNodes(); i++) { var n = Scene.getNode(i); if (n.inherits("DzFigure") && !n.getParent()) out.push(n); } return out; }
+function morphValues(fig) {
+  var obj = fig.getObject(), out = {};
+  for (var m = 0; obj && m < obj.getNumModifiers(); m++) {
+    var mod = obj.getModifier(m); if (!mod.inherits("DzMorph")) continue;
+    var vc = mod.getValueControl(); if (!vc) continue;
+    out[mod.name] = { label: vc.getLabel(), path: vc.getPath(), v: vc.getValue() };
+  }
+  return out;
+}
+function setMorph(fig, name, v) {
+  var obj = fig.getObject(); var mod = obj ? obj.findModifier(name) : null;
+  if (!mod || !mod.getValueControl()) { log("  no morph " + name); return false; }
+  mod.getValueControl().setValue(v); return true;
+}
+function propByLabel(el, label) {
+  var p = el.findProperty ? el.findProperty(label) : null; if (p) return p;
+  for (var i = 0; i < el.getNumProperties(); i++) if (el.getProperty(i).getLabel() == label) return el.getProperty(i);
+  return null;
+}
+// Iray with a time cap; log what the renderers are called
+function setupRenderer() {
+  var names = []; for (var i = 0; i < rm.getNumRenderers(); i++) names.push(rm.getRenderer(i).getName() + " (" + rm.getRenderer(i).className() + ")");
+  log("renderers: " + names.join(" ; "));
+  var r = rm.findRenderer("DzIrayRenderer"); if (r) rm.setActiveRenderer(r);
+  log("active renderer: " + rm.getActiveRenderer().getName());
+  var els = rm.getRenderElementObjects ? rm.getRenderElementObjects() : [];
+  for (var e = 0; e < els.length; e++) {
+    var el = els[e]; if (!el || !el.getNumProperties) continue;
+    var ms = propByLabel(el, "Max Samples"), mt = propByLabel(el, "Max Time (secs)");
+    if (ms) { ms.setValue(400); log("  Max Samples -> 400"); }
+    if (mt) { mt.setValue(75); log("  Max Time -> 75 s"); }
+  }
+}
+var CAM = null;
+function camera() {
+  if (CAM) return CAM;
+  CAM = new DzBasicCamera(); CAM.setName("cfProbeCam"); CAM.setLabel("cfProbeCam"); Scene.addNode(CAM);
+  var fl = propByLabel(CAM, "Focal Length"); if (fl) fl.setValue(85); else log("  camera: no Focal Length property");
+  return CAM;
+}
+function shot(fig, file, yawDeg) {
+  var head = fig.findBone("head"); if (!head) { log("  no head bone"); return; }
+  var p = head.getWSPos(), cx = p.x, cy = p.y + 9, cz = p.z + 3, d = 110, a = yawDeg * Math.PI / 180;
+  var cam = camera();
+  if (!Scene.findNode(cam.name)) Scene.addNode(cam);
+  cam.setWSPos(new DzVec3(cx + d * Math.sin(a), cy + 2, cz + d * Math.cos(a)));
+  cam.aimAt(new DzVec3(cx, cy, cz));
+  var vp = MainWindow.getViewportMgr().getActiveViewport().get3DViewport(); vp.setCamera(cam);
+  var ro = rm.getRenderOptions();
+  ro.renderImgToId = DzRenderOptions.DirectToFile; ro.renderImgFilename = file;
+  ro.isAspectConstrained = false; ro.imageSize = new Size(640, 800);
+  var t0 = new Date().getTime(); var ok = rm.doRender(ro);
+  log("  render " + file + " ok=" + ok + " exists=" + new DzFile(file).exists() + " " + Math.round((new Date().getTime() - t0) / 1000) + "s");
+}
+function loadFigure(preset) {
+  Scene.clear(); CAM = null;
+  cm.openFile(LIB + "Genesis 9.duf", false);
+  var f = figures(); if (!f.length) { log("  Genesis 9 did not load"); return null; }
+  var g9 = f[0]; g9.select(true); Scene.setPrimarySelection(g9);
+  if (preset) {
+    var ok = cm.openFile(LIB + preset, true);
+    f = figures(); log("  opened " + preset + " ok=" + ok + ", figures now " + f.length);
+    if (f.length > 1) { for (var i = 0; i < f.length; i++) if (f[i] === g9) Scene.removeNode(g9); f = figures(); }
+  }
+  var fig = f[f.length - 1]; var bb = fig.getWSBoundingBox();
+  log("  figure " + fig.getLabel() + " height " + Math.round(bb.max.y - bb.min.y) + " cm");
+  return fig;
+}
+
+try {
+  log("Daz Studio " + App.versionString);
+  new DzDir(DIR).mkdir("renders");
+  setupRenderer();
+  var base = null;
+  var CASES = [["base_masc", null], ["matt", "Characters/Matt for Genesis 9.duf"], ["ty", "Characters/Ty for Genesis 9.duf"], ["fabrice", "Characters/Fabrice for Genesis 9.duf"]];
+  for (var c = 0; c < CASES.length; c++) {
+    var nm = CASES[c][0], preset = CASES[c][1];
+    log("== " + nm);
+    var fig = loadFigure(preset); if (!fig) continue;
+    if (!preset) { setMorph(fig, "BaseMasculine_head_bs_Head", 1); setMorph(fig, "BaseMasculine_body_bs_Body", 1); cm.openFile(LIB + "Materials/Daz Originals/Base Materials/G9 Masculine Skin 01 MAT.duf", true); }
+    var mv = morphValues(fig);
+    if (!preset) base = mv;
+    else {
+      var diff = [];
+      for (var k in mv) { var b = base && base[k] ? base[k].v : 0; if (Math.abs(mv[k].v - b) > 0.01) diff.push(k + " = " + mv[k].v.toFixed(3) + " | " + mv[k].label + " | " + mv[k].path); if (!(base && base[k])) diff.push("NEW " + k + " | " + mv[k].label + " | " + mv[k].path); }
+      log("  morphs set/new (" + diff.length + "):\n  " + diff.slice(0, 120).join("\n  "));
+    }
+    shot(fig, OUTDIR + "/" + nm + "_front.png", 0);
+    shot(fig, OUTDIR + "/" + nm + "_34.png", 35);
+  }
+} catch (e) { log("ERROR " + e + (e.lineNumber ? " line " + e.lineNumber : "")); }
+finish();
