@@ -3307,7 +3307,7 @@ function freshTable() {
   const names = namesFor(n), m = n - 2;
   const seats = act.map((s, i) => ({ id: s.id, pos: names[i], d: names[i] === 'SB' || names[i] === 'BB' ? -1 : m - 1 - i,
     put: names[i] === 'SB' ? 0.5 : names[i] === 'BB' ? 1 : 0, folded: false, allin: false, needs: true, acts: [] }));
-  T = { seats, bet: 1, level: 0, lastRaise: 1, cur: -1, hu: act.length === 2 };
+  T = { seats, bet: 1, level: 0, lastRaise: 1, cur: -1, hu: act.length === 2, keys: [] };   // keys: the actions taken so far, in order
 }
 function live() { return T.seats.filter((s) => !s.folded); }
 function nextActor() {
@@ -3353,6 +3353,17 @@ function options(seat) {
     return o;
   }
   const L = T.level + 1, to = defaultRaise(L);
+  // a pre-solved library spot: offer exactly the library's actions at the library's sizes
+  if (pfState && pfState.lib) {
+    const lr = libResult(pfState.lib, (T.keys || []).map((k) => ({ k })));
+    if (lr && lr.ok && !lr.terminal && lr.player === T.seats.indexOf(seat)) {
+      return lr.actions.map((a) => a.k === 'fold' ? { k: 'fold', t: 'Fold', cls: 'fold' }
+        : a.k === 'check' ? { k: 'check', t: 'Check', cls: 'pass' }
+        : a.k === 'call' ? { k: 'call', t: left <= toCall + 1e-9 ? `Call all-in ${fmt(st)}` : T.level === 0 ? (seat.pos === 'SB' ? 'Complete' : 'Limp') : `Call ${fmt(T.bet)}`, cls: 'pass' }
+        : a.k === 'allin' || a.to >= st - 1e-9 ? { k: 'allin', to: st, t: `${jamName(L)} ${fmt(st)}`, cls: 'jam', L }
+        : { k: a.k, to: a.to, t: `${raiseName(L)} ${fmt(a.to)}`, cls: 'agg', L });
+    }
+  }
   if (to < st - 1e-9) o.push({ k: 'raise', to, t: `${raiseName(L)} ${fmt(to)}`, cls: 'agg', L });
   // commit everything but 1bb (short stacks, tournaments): stays alive to fold if there is wild action behind
   const keep = st - 1;
@@ -3361,6 +3372,7 @@ function options(seat) {
   return o;
 }
 function apply(seat, o) {
+  if (T.keys) T.keys.push(o.k);
   const facing = T.level, vsAllin = T.seats.some((x) => x.allin && x.put >= T.bet - 1e-9 && x !== seat);
   if (o.k === 'fold') { seat.folded = true; seat.acts.push({ k: 'fold', label: 'Fold' }); }
   else if (o.k === 'check') seat.acts.push({ k: 'check', label: 'Check' });
@@ -3634,7 +3646,8 @@ function preflopReport() {
     const chipsR = solved && S.overlay ? pfcLookup(ctx.base) : null;
     const chips = chipsR && chipsR.ok && !chipsR.terminal && chipsR.player === pIdx ? chipsR : null;
     const cmap = chips ? opts.map((o) => chips.actions.findIndex((x) => x.k === o.k)) : null;
-    const evTot = new Array(na).fill(0), evW = new Array(na).fill(0);
+    // action EVs on the tiles: the average gain over folding (or checking) for the hands that take that action
+    const evTot = new Array(na).fill(0), evW = new Array(na).fill(0), bi = Math.max(0, opts.findIndex((o) => o.k === 'fold' || o.k === 'check'));
     const pri = opts.map((_, i) => i).sort((a, b) => order.indexOf(opts[a].k) - order.indexOf(opts[b].k));
     const classes = {}, overall = new Array(na).fill(0); let total = 0, buckets = null;
     if (S.variant === 'plo') {
@@ -3649,7 +3662,7 @@ function preflopReport() {
           buckets.push({ r, w, s: sv, ev });
           if (w <= 1e-9) continue;
           total += w; for (let a = 0; a < na; a++) overall[a] += w * sv[a];
-          if (ev) for (let a = 0; a < na; a++) if (ev[a] !== null) { evTot[a] += w * ev[a]; evW[a] += w; }
+          if (ev && ev[bi] !== null) for (let a = 0; a < na; a++) if (ev[a] !== null) { const wa = w * sv[a]; evTot[a] += wa * (ev[a] - ev[bi]); evW[a] += wa; }
         }
       }
     }
@@ -3665,7 +3678,7 @@ function preflopReport() {
       }
       const k = Engine.comboClass(c), e = classes[k] || (classes[k] = { w: 0, s: new Array(na).fill(0), combos: [], cls });
       if (evOn && !e.ev && solved.ev[cls]) e.ev = opts.map((_, i) => (map[i] >= 0 ? solved.ev[cls][map[i]] : null));
-      if (e.ev) for (let a = 0; a < na; a++) if (e.ev[a] !== null) { evTot[a] += r * e.ev[a]; evW[a] += r; }
+      if (e.ev && e.ev[bi] !== null) for (let a = 0; a < na; a++) if (e.ev[a] !== null) { const wa = r * sv[a]; evTot[a] += wa * (e.ev[a] - e.ev[bi]); evW[a] += wa; }
       if (chips && e.icmDiff === undefined) {
         const fi = opts.findIndex((o) => o.k === 'fold' || o.k === 'check'), cs = chips.strat[cls];
         const contChips = fi >= 0 && cmap[fi] >= 0 ? 1 - cs[cmap[fi]] : 1, contIcm = fi >= 0 ? 1 - sv[fi] : 1;
@@ -3691,7 +3704,7 @@ function preflopReport() {
       if (!limpPlan.length) limpPlan = null; else limpPlan.base = h0;
     }
     const curIndex = ctx.cur ? opts.findIndex((o) => o.k === ctx.cur.k) : -1;
-    const ev = evOn ? evTot.map((x, a) => (evW[a] > 0 ? x / evW[a] : null)) : null;
+    const ev = evOn ? evTot.map((x, a) => (a === bi ? 0 : evW[a] > 1e-6 ? x / evW[a] : null)) : null;
     const baseIdx = Math.max(0, opts.findIndex((o) => o.k === 'fold' || o.k === 'check'));
     const evUnit = cfgNow.payoff.type === 'icm' ? '%' : 'bb';
     // facing an all-in with a call available: the call math against the jammer
