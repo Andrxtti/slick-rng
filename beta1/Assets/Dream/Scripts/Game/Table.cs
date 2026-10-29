@@ -83,8 +83,8 @@ namespace Dream.Game
                 Seat(table, sp.seats[i], i == hero, x, y, answered == null, ev.online, tall, fit.aspectRatio);
             }
             float aspect = fit.aspectRatio;
-            float py = tall ? 0.53f : 0.43f;   // landscape: under the "Biscayne" / "CF Tilt" logo (which sits at 0.64)
-            Chips(table, sp.pot, 0.5f, py, tall ? 0.18f : 0.1f, aspect);   // the pot
+            float py = tall ? 0.53f : 0.4f;   // landscape: under the "Biscayne" / "CF Tilt" logo (which sits at 0.6-0.68)
+            Chips(table, sp.pot, 0.5f, py, tall ? 0.15f : 0.075f, aspect, 5);   // the pot, a short stack
             Ui.At(Ui.Num(table, $"pot {Bb(sp.pot)} bb", 30, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, py - 0.09f, 0.7f, py - 0.03f);
             Ui.At(Ui.Label(table, sp.cat, 24, new Color(1, 1, 1, 0.6f)), 0.2f, py - 0.14f, 0.8f, py - 0.09f);
 
@@ -214,12 +214,13 @@ namespace Dream.Game
                 Ui.Label(av, name.Substring(0, 2).ToUpperInvariant(), 18, Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
             }
             Ui.At(Ui.Label(box, name, online && !you ? 18 : 22, fg, TextAnchor.MiddleCenter, FontStyle.Bold), 0.04f, 0.5f, 0.96f, 0.95f);
-            Ui.At(Ui.Num(box, seat.stack - seat.put <= 0.01 ? "all in" : Bb(seat.stack - seat.put) + " bb", 22, fg), 0, 0.06f, 1, 0.5f);
-            if (!string.IsNullOrEmpty(seat.act) || seat.put > 0)
+            Ui.At(Ui.Num(box, seat.folded ? "folded" : seat.stack - seat.put <= 0.01 ? "all in" : Bb(seat.stack - seat.put) + " bb", 22, fg), 0, 0.06f, 1, 0.5f);
+            if (!seat.folded && (!string.IsNullOrEmpty(seat.act) || seat.put > 0))   // a fold reads on the plate, not on the felt (it sat on the logo)
             {
                 // the action already carries its size ("Jam 7.9", "Raise 2.3"); otherwise the amount in (blinds), or both
                 string act = seat.act ?? "", bet = act.Any(char.IsDigit) || act.StartsWith("Fold") ? act : (act + (seat.put > 0 ? " " + Bb(seat.put) : "")).Trim();
                 float bx = x + (0.5f - x) * 0.5f, by = y + (0.5f - y) * 0.5f;
+                if (you && !tall) { bx = x + 0.15f; by = y + 0.15f; }   // your bet beside your plate: straight up it sat on the pot
                 var chips = Ui.Box(table, "Bet"); Ui.Fill(chips);
                 if (seat.put > 0 && !act.StartsWith("Fold")) Chips(chips, seat.put, bx, by + (tall ? 0.008f : 0.015f), tall ? 0.15f : 0.084f, aspect);   // chips at twice their old size (task 8)
                 var label = Ui.At(Ui.Num(chips, bet, 20, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), bx - 0.08f, by - (tall ? 0.03f : 0.05f), bx + 0.08f, by - (tall ? 0.008f : 0.012f));
@@ -234,10 +235,10 @@ namespace Dream.Game
 
         // a stack of side-view chips for an amount in big blinds (denomination by size, one chip per step, ~9 px apart)
         // w is in plate widths; aspect (plate width / height) turns it into plate heights so the chip keeps its shape
-        static void Chips(RectTransform parent, double bb, float x, float y, float w, float aspect)
+        static void Chips(RectTransform parent, double bb, float x, float y, float w, float aspect, int most = 9)
         {
             string den = bb < 2 ? "5" : bb < 8 ? "25" : bb < 25 ? "100" : bb < 60 ? "500" : "1K";
-            int n = Mathf.Clamp((int)Math.Round(bb < 2 ? bb * 2 : bb < 8 ? bb : bb / 4), 1, 9);
+            int n = Mathf.Clamp((int)Math.Round(bb < 2 ? bb * 2 : bb < 8 ? bb : bb / 4), 1, most);
             float hh = w * aspect * 0.42f, step = hh * 0.36f;
             for (int i = 0; i < n; i++) Kit(parent, $"chips/chip_{den}_side", x - w / 2, y + i * step, x + w / 2, y + i * step + hh);
         }
