@@ -1,0 +1,146 @@
+{
+ "chips": {
+  "1": {
+   "top": "chip_1.png",
+   "side": "chip_1_side.png",
+   "stack_step_px": 9
+  },
+  "5": {
+   "top": "chip_5.png",
+   "side": "chip_5_side.png",
+   "stack_step_px": 9
+  },
+  "25": {
+   "top": "chip_25.png",
+   "side": "chip_25_side.png",
+   "stack_step_px": 9
+  },
+  "100": {
+   "top": "chip_100.png",
+   "side": "chip_100_side.png",
+   "stack_step_px": 9
+  },
+  "500": {
+   "top": "chip_500.png",
+   "side": "chip_500_side.png",
+   "stack_step_px": 9
+  },
+  "1K": {
+   "top": "chip_1K.png",
+   "side": "chip_1K_side.png",
+   "stack_step_px": 9
+  }
+ },
+ "ui": {
+  "pill.png": {
+   "size": [
+    128,
+    128
+   ],
+   "border_LRTB": [
+    63,
+    63,
+    63,
+    63
+   ],
+   "image_type": "Sliced",
+   "pixels_per_unit_multiplier": 1
+  },
+  "rounded_24.png": {
+   "size": [
+    96,
+    96
+   ],
+   "border_LRTB": [
+    26,
+    26,
+    26,
+    26
+   ],
+   "image_type": "Sliced",
+   "pixels_per_unit_multiplier": 1
+  },
+  "rounded_12.png": {
+   "size": [
+    48,
+    48
+   ],
+   "border_LRTB": [
+    14,
+    14,
+    14,
+    14
+   ],
+   "image_type": "Sliced",
+   "pixels_per_unit_multiplier": 1
+  },
+  "pill_outline.png": {
+   "size": [
+    128,
+    128
+   ],
+   "border_LRTB": [
+    63,
+    63,
+    63,
+    63
+   ],
+   "image_type": "Sliced",
+   "pixels_per_unit_multiplier": 1
+  },
+  "seat_plate.png": {
+   "size": [
+    96,
+    96
+   ],
+   "border_LRTB": [
+    24,
+    24,
+    24,
+    24
+   ],
+   "image_type": "Sliced",
+   "pixels_per_unit_multiplier": 1
+  },
+  "card_shadow.png": {
+   "size": [
+    128,
+    128
+   ],
+   "border_LRTB": [
+    50,
+    50,
+    50,
+    50
+   ],
+   "image_type": "Sliced",
+   "note": "black: use as is, offset 0,-6 px under a card"
+  },
+  "glow.png": {
+   "size": [
+    192,
+    192
+   ],
+   "border_LRTB": [
+    80,
+    80,
+    80,
+    80
+   ],
+   "image_type": "Sliced"
+  }
+ },
+ "cards": {
+  "size": [
+   360,
+   504
+  ],
+  "names": "rank+suit, e.g. As, Td, 7h; backs back_live.png and back_online.png",
+  "colours": {
+   "s": "#18181E",
+   "h": "#C62828",
+   "d": "#1E5CCD",
+   "c": "#1C8440"
+  }
+ }
+}
