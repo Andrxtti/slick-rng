@@ -2,9 +2,11 @@
 // Run through the PC worker like the probes: job json { "script": "build_char.dsa", "secs": 2400, "args": { "spec": "chars/slick.json" } }
 // The spec (paths relative to the Genesis 9 content folder, People/Genesis 9/):
 //   name      file stem for renders and the Unity asset
-//   preset    a character preset to start from (e.g. "Characters/Fabrice for Genesis 9.duf"), or null for the plain base
+//   preset    (avoid: character presets open a dialog that hangs headless; use chars)
+//   chars     { "Matt": 0.6, "Fabrice": 0.4 } face/body blend of the Base Characters 9 controls, set by value
 //   morphs    { morphName: value } set on the figure after the preset (Base Masculine, proportions, character blends)
 //   skin      a skin MAT preset applied to the figure, or null to keep the preset's
+//   mats      further material presets on the figure (e.g. a character's Eyes MAT for eye colour)
 //   wear      [ { file, mat, morphs } ] hair, beard, clothes; each fitted to the figure, then its material preset
 //   shots     ["front", "34", "body"] review renders -> renders/<name>_<shot>.png
 //   export    false, or { root, folder, filename, morphs[] } -> the Daz to Unity bridge, non-interactive
@@ -69,6 +71,24 @@ function render(fig, file, kind) {
   var t0 = new Date().getTime(); var ok = rm.doRender(ro);
   log("  render " + kind + " ok=" + ok + " exists=" + new DzFile(file).exists() + " " + Math.round((new Date().getTime() - t0) / 1000) + "s");
 }
+// Character faces/bodies by value: a shaping preset written on the fly loads each Base Characters 9 control and sets
+// it (e.g. { "Matt": 0.6, "Fabrice": 0.4 }). Character presets themselves open an "apply to selected?" dialog that hangs
+// a headless run; shape presets apply silently.
+function applyCharacters(fig, blend) {
+  var mods = [], anims = [], n = 0;
+  for (var nm in blend) {
+    var id = nm + "_figure_ctrl_Character"; n++;
+    mods.push({ id: id, url: "/data/Daz%203D/Genesis%209/Base/Morphs/Daz%203D/Base%20Characters%209/" + id + ".dsf#" + id });
+    anims.push({ url: "name://@selection#" + id + ":?value/value", keys: [[0, blend[nm]]] });
+  }
+  if (!n) return;
+  var duf = { file_version: "0.6.0.0", asset_info: { id: "/cf_shape.duf", type: "preset_shape", contributor: { author: "Confirmed Fire" } }, scene: { modifiers: mods, animations: anims } };
+  var path = DIR + "/cf_shape.duf", f = new DzFile(path); f.open(DzFile.WriteOnly | DzFile.Truncate); f.write(JSON.stringify(duf)); f.close();
+  selectOnly(fig); var ok = cm.openFile(path, true);
+  var obj = fig.getObject(), seen = [];
+  for (var m = 0; obj && m < obj.getNumModifiers(); m++) { var md = obj.getModifier(m); for (var nm2 in blend) if (md.name.indexOf(nm2 + "_") == 0) { var vc = md.getValueControl ? md.getValueControl() : null; seen.push(md.name + "=" + (vc ? vc.getValue().toFixed(2) : "?")); } }
+  log("  characters " + JSON.stringify(blend) + " ok=" + ok + " loaded: " + (seen.join(", ") || "none found by name"));
+}
 function exportUnity(fig, ex) {
   var ua = MainWindow.getActionMgr().findAction("DzUnityAction");
   if (!ua) { log("  Daz to Unity bridge not found"); return; }
@@ -99,8 +119,11 @@ try {
     if (figs.length > 1) { Scene.removeNode(fig); fig = rootFigures()[0]; }   // a preset that brought its own figure
     selectOnly(fig); log("  preset " + SPEC.preset);
   }
+  if (SPEC.chars) applyCharacters(fig, SPEC.chars);
   log("  morphs set: " + setMorphs(fig, SPEC.morphs || {}));
   if (SPEC.skin) { selectOnly(fig); open(SPEC.skin, true); log("  skin " + SPEC.skin); }
+  var mats = SPEC.mats || [];
+  for (var mi = 0; mi < mats.length; mi++) { selectOnly(fig); open(mats[mi], true); log("  mat " + mats[mi]); }
   var wear = SPEC.wear || [];
   for (var w = 0; w < wear.length; w++) {
     selectOnly(fig); var before = nodeSet();

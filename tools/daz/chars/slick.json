@@ -1,10 +1,8 @@
 {
   "name": "slick",
-  "note": "From unity/docs/characters/slick.md. Face base provisional (plain Base Masculine) until the probe 3 renders pick a preset; skin 02 provisional until the skin renders.",
-  "preset": null,
+  "note": "From unity/docs/characters/slick.md. Face: Matt (mature, strong) blended with Fabrice (long face, high cheekbones); shape only, skin 02 (warm olive), Fabrice's dark-brown eyes. Probe 3/4 renders, Oct 29.",
+  "chars": { "Matt": 0.6, "Fabrice": 0.4 },
   "morphs": {
-    "BaseMasculine_head_bs_Head": 1,
-    "BaseMasculine_body_bs_Body": 1,
     "body_bs_ProportionHeight": 0.05,
     "body_bs_ProportionShoulderWidth": 0.05,
     "body_bs_ProportionChestDepth": -0.10,
@@ -12,6 +10,7 @@
     "head_bs_ProportionNeckLength": 0.05
   },
   "skin": "Materials/Daz Originals/Base Materials/G9 Masculine Skin 02 MAT.duf",
+  "mats": ["Characters/Daz Originals/Fabrice G9/Materials/Fabrice G9 Eyes.duf"],
   "wear": [
     { "file": "Hair/Daz Originals/Mavick Hair and Beard/Mavick Hair.duf", "mat": "Hair/Daz Originals/Mavick Hair and Beard/Iray Dual Lobe/Mavick Hair Black.duf" },
     { "file": "Hair/Daz Originals/Mavick Hair and Beard/Mavick Beard.duf", "mat": "Hair/Daz Originals/Mavick Hair and Beard/Iray Dual Lobe/Mavick Beard Black.duf" },
