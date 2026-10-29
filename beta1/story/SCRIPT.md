@@ -16,6 +16,11 @@ Edit freely: `python beta1/tools/script_build.py` turns this file into `Assets/D
 
 Films have no choices: the player chooses in the live game, not inside a video.
 
+**Story logic is in Yarn, not here.** This file is the readable script of the acted films (each scene below is one
+short linear film). Which film plays when, the choices (the job decision), the story variables ($job, what has been
+seen), the conditions on later lines, and the phone texts live in `Assets/Dream/Resources/Story/*.yarn`
+(Prologue.yarn, Chapter1.yarn). Edit lines of dialogue in a film here; edit what happens and when in the .yarn files.
+
 ---
 
 ## p_office — Floor 34

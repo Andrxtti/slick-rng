@@ -42,6 +42,44 @@ Steven asked for the quit-or-keep-the-job decision in Beta 1.0. Done, matching t
 - The web build: `C:\Dev\Builds\TheDream-Beta1-Web` (staged, not published). Serve the folder (e.g. `python -m http.server`
   in it) and open it on a phone on the same Wi-Fi.
 
+## Story logic in Yarn Spinner (09:00–09:30)
+Steven asked for Yarn Spinner (MIT, OpenUPM `dev.yarnspinner.unity` 3.2.8, as in the old project) to run the story.
+- **Where things live:** `story/SCRIPT.md` stays the readable script of the *acted films*. The *story logic* moved into
+  `Assets/Dream/Resources/Story/` (`Prologue.yarn`, `Chapter1.yarn`, compiled by `Dream.yarnproject`). It covers which
+  film plays, the choices, the story variables, the conditions on later lines, and the phone texts. SCRIPT.md says so at
+  the top. I didn't move the films' dialogue into Yarn: films are rendered from SCRIPT.md, and Yarn only decides which
+  one plays.
+- **Nodes:**
+  - `Decision` plays `p_after`, asks quit/keep on the choice card, sets `$job`, pays $5,000 or $2,000, then plays
+    `p_quit`/`p_keep` and `c1`.
+  - `BeforeEvent` plays the Classic's opener the first time.
+  - `AfterEvent` handles the job decision after the Local; the broke texts by job via `<<detour Broke>>`; `classic_win`,
+    `classic_lose`, `needle` and `lesson1` on their conditions; then `CheckGoal`.
+  - `AfterSleep` lets a paycheck end the chapter.
+  - `ChapterEnd` sends David's texts for Moonlighters, then the goal and end films.
+- **Commands:** `<<film id>>` (waits for the film), `<<money n "why">>`, `<<stake n>>`.
+- **Line tags:** `#text` (phone texts), `#card` and `#hint` (the choice card).
+- **Variables:**
+  - The game passes in `$bankroll`, `$peak`, `$chapter`, `$room_title`, `$event`, `$won`, `$bust` and `$mistake`
+    before each run.
+  - Yarn owns `$job` and the seen-flags; they're saved with the career.
+  - The calendar rules (one game a day, weekends with the job, Friday paychecks, titles) stay in C#: they're rules, not
+    story.
+- **Code:**
+  - `Scripts/Game/Story.cs` is the runner bridge plus a presenter that draws Yarn's lines and choices in the game's UI.
+  - `Editor/StorySetup.cs` creates the Yarn project through Yarn Spinner's own utility.
+  - The C# copies of the broke texts, David's text, the decision and the film picking were removed from `Flow.cs`.
+- **Checked by playing** (driver runs in `Logs/auto_*.txt`):
+  - Keep: Yarn played `p_keep`, `needle`, `lesson1`, the Classic opener and `classic_lose`, then ended the chapter
+    after a paycheck with David's texts.
+  - Quit: one game a day; Yarn's quit-version broke texts and the stake, repaid in full.
+  - The Moonlighter's broke texts, by running the `AfterEvent` node directly with `$job` = nights and a $10 bankroll
+    (`story` bridge command; screenshot `night-shots/job_keep_broke.png`). Play couldn't get there reliably: even the
+    worst answers cashed at $70.
+- **Bug found:** `InMemoryVariableStorage.TryGetValue<bool>` throws on a string variable instead of returning false,
+  which froze the game on the choice card until I read variables by type.
+- **Web build:** 13.8 MB (+0.7 MB for Yarn), 0 errors.
+
 ## Calls I made without you
 1. **Which brief.** The local checkout had the earlier BETA1.md (port into the old project). Your instructions matched
    the newer "fresh project at `beta1/`" brief on `origin/unity`, so I merged that and followed it.
@@ -133,6 +171,7 @@ characters using them sink. The old project maps standing talkers to them.
 | What | From | Licence | Where |
 |---|---|---|---|
 | Unity packages: URP 17.6.0, Cinemachine 3.1.7, Timeline 1.8.12, Recorder 5.1.7, Input System 1.20.1, uGUI 2.6.0, glTFast 6.20.0 | Unity registry | Unity Companion / Apache-2.0 | `beta1/Packages/manifest.json` |
+| Yarn Spinner for Unity 3.2.8 | OpenUPM (dev.yarnspinner.unity) | MIT | `beta1/Packages/manifest.json` |
 | MakeHuman system assets | files.makehumancommunity.org | CC0 | MPFB user data folder |
 | Piper 2023.11.14-2 (Windows) + en_US-libritts-high voice | github.com/rhasspy/piper releases, huggingface rhasspy/piper-voices | MIT / CC-BY 4.0 data | `C:\Dev\Beta1Assets\tools\piper` |
 | Poly Haven textures, models, HDRIs (listed in ASSETS.md) | api.polyhaven.com | CC0 | `C:\Dev\Beta1Assets\polyhaven` |

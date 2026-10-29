@@ -1,0 +1,76 @@
+// Chapter 1: The Grind. What happens after each event and each night, and the lines that change with the job.
+
+title: BeforeEvent
+---
+// the Classic has its own opener, the first time you sit down in it
+<<if $event == "classic" and not $classic_seen>>
+    <<set $classic_seen to true>>
+    <<film classic>>
+<<endif>>
+===
+
+title: AfterEvent
+---
+// the first tournament ends the prologue: the job decision
+<<if $event == "local">>
+    <<jump Decision>>
+<<endif>>
+<<if $chapter == 1 and $bankroll < 60>>
+    <<detour Broke>>
+<<endif>>
+<<if $event == "classic">>
+    <<if $won>>
+        <<film classic_win>>
+    <<elseif not $classic_lose_seen>>
+        <<set $classic_lose_seen to true>>
+        <<film classic_lose>>
+    <<endif>>
+<<endif>>
+<<if $mistake and not $needle_seen>>
+    <<set $needle_seen to true>>
+    <<film needle>>
+<<endif>>
+<<if $bust and not $lesson_seen>>
+    <<set $lesson_seen to true>>
+    <<film lesson1>>
+<<endif>>
+<<detour CheckGoal>>
+===
+
+title: AfterSleep
+---
+// a paycheck can reach the goal on its own (the old game checks progress after every night)
+<<detour CheckGoal>>
+===
+
+title: CheckGoal
+---
+<<if $chapter == 1 and ($room_title or $bankroll >= 10000)>>
+    <<jump ChapterEnd>>
+<<endif>>
+===
+
+title: Broke
+---
+// rock bottom: Slick's way out depends on the job (old broke / broke_n)
+Slick: Busted? Good. Now you're a poker player. Everybody goes broke once. #text
+<<if $job == "nights">>
+    Slick: You've still got Lou's paycheck. Here's $1,000 till it builds back. Half your profits come back to me until it's paid. #text
+<<else>>
+    Slick: No paycheck to fall back on. Here's $1,000. Half your profits come back to me until it's paid. Respect the roll this time. #text
+<<endif>>
+<<stake 1000>>
+===
+
+title: ChapterEnd
+---
+// with the day job, David texts first at ten thousand (old david1); then the goal and the end of the beta
+<<if $job == "nights" and $peak >= 10000 and not $david_seen>>
+    <<set $david_seen to true>>
+    David: TEN THOUSAND?? FROM POKER?? AND YOU STILL WENT TO WORK TODAY??? #text
+    David: im just saying. lou doesnt deserve you. the felt does #text
+<<endif>>
+<<set $chapter to 2>>
+<<film goal>>
+<<film end>>
+===

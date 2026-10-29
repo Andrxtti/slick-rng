@@ -1,0 +1,48 @@
+// The Dream, Beta 1.0: story logic (Yarn Spinner). The acted scenes are films (story/SCRIPT.md); this decides which
+// film plays, asks the choices in the game's UI, keeps the story variables, and holds the phone texts.
+//   <<film id>>          play a rendered film and wait for it (Films/<id>.mp4)
+//   <<money n "why">>    add to the bankroll
+//   <<stake n>>          Slick lends n; half your profits go back until it's repaid
+// Line tags: #card heads the next choice card, #hint explains the next option (in order), #text is a phone text from
+// the speaker; any other line is a card on black.
+
+title: Variables
+---
+// Variables the game sets before each run (game state, not saved here): $bankroll, $peak, $chapter (0 prologue,
+// 1 Chapter 1), $room_title, and after an event $event, $won, $bust, $mistake.
+<<declare $bankroll = 0>>
+<<declare $peak = 0>>
+<<declare $chapter = 0>>
+<<declare $room_title = false>>
+<<declare $event = "">>
+<<declare $won = false>>
+<<declare $bust = false>>
+<<declare $mistake = false>>
+// Story variables (saved with the career): the job, and what has already been seen.
+<<declare $job = "">>
+<<declare $david_seen = false>>
+<<declare $lesson_seen = false>>
+<<declare $needle_seen = false>>
+<<declare $classic_seen = false>>
+<<declare $classic_lose_seen = false>>
+===
+
+title: Decision
+---
+// Monday morning after the Biscayne Championship. The old game's p_after choice (dream/story.js, Story.cs).
+<<film p_after>>
+Monday, 9:06 AM · Floor 34 #card
+Decision time. #card
+Whatever you pick, Lou finds out today. #card
+Slick backs you with $5,000. Play every day. #hint
+$2,000 saved. A paycheck every Friday. Biscayne on weekends. #hint
+-> Quit. Today.
+    <<set $job to "quit">>
+    <<money 5000 "Quit the 9-to-5. Slick's backing">>
+    <<film p_quit>>
+-> Keep the job. Grind nights.
+    <<set $job to "nights">>
+    <<money 2000 "Kept the day job. Savings">>
+    <<film p_keep>>
+<<film c1>>
+===

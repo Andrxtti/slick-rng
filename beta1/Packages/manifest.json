@@ -45,6 +45,16 @@
     "com.unity.recorder": "5.1.7",
     "com.unity.render-pipelines.universal": "17.6.0",
     "com.unity.timeline": "1.8.12",
-    "com.unity.ugui": "2.6.0"
-  }
+    "com.unity.ugui": "2.6.0",
+    "dev.yarnspinner.unity": "3.2.8"
+  },
+  "scopedRegistries": [
+    {
+      "name": "OpenUPM",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "dev.yarnspinner"
+      ]
+    }
+  ]
 }

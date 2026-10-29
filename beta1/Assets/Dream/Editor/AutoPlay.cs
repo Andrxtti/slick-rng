@@ -20,6 +20,7 @@ namespace Dream.EditorTools
 
         static AutoPlay()
         {
+            Remote.Extra["story"] = a => { var p = a.Split(' '); Flow.I?.TestStory(p[0], p[1], double.Parse(p[2], System.Globalization.CultureInfo.InvariantCulture)); };
             Remote.Extra["auto"] = b =>
             {
                 lose = b.EndsWith(" lose"); broke = b.EndsWith(" broke"); cut = false; branch = b.StartsWith("keep") ? "keep" : "quit"; steps = 0; shot.Clear(); lastHub = null; Films.Played.Clear();
@@ -79,7 +80,7 @@ namespace Dream.EditorTools
             }
             if (Has("BISCAYNE CARD ROOM"))
             {
-                if (broke && !cut) { cut = true; f.S.br = 70; f.S.Write(); W("  (test: bankroll cut to $70)"); f.Hub(); return; }
+                if (broke && !cut && Find("nightly") != null) { cut = true; f.S.br = 70; f.S.Write(); W("  (test: bankroll cut to $70)"); f.Hub(); return; }   // on a day you can play
                 Shot("hub");
                 var texts = Object.FindObjectsByType<Text>(FindObjectsSortMode.None).Select(t => t.text).ToList();
                 string date = texts.FirstOrDefault(t => t.Contains(", ") && (t.StartsWith("Mon") || t.StartsWith("Tue") || t.StartsWith("Wed") || t.StartsWith("Thu") || t.StartsWith("Fri") || t.StartsWith("Sat") || t.StartsWith("Sun")));

@@ -47,3 +47,4 @@ Every third-party asset in the beta1 project, with its source, author and licenc
 | Voices | audio | Piper 2023.11.14-2 (MIT) with en_US-libritts-high (rhasspy/piper-voices; LibriTTS data CC-BY 4.0) | rhasspy / LibriTTS | CC-BY 4.0 voices |
 | Mixamo acting clips (27) | animation | copied from the old project (Assets/Dream/Anim/Mixamo), kept out of git | Adobe Mixamo | Mixamo terms (use in projects, no raw redistribution) |
 | Unity packages incl. glTFast 6.20.0 | code | Unity registry | Unity | Unity Companion / Apache-2.0 (glTFast) |
+| Yarn Spinner for Unity 3.2.8 | code | OpenUPM, dev.yarnspinner.unity | Yarn Spinner Pty. Ltd. | MIT |
