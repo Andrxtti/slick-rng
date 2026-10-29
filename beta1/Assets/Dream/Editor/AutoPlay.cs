@@ -40,6 +40,7 @@ namespace Dream.EditorTools
                 log = new StreamWriter(Path.Combine(Application.dataPath, "..", "Logs", $"auto_{branch}{(acc < 1 ? $"_acc{(int)(acc * 100)}" : lose ? "_lose" : broke ? "_broke" : only != null ? "_" + only : "")}.txt"));
                 PlayerPrefs.DeleteAll();
                 if (!EditorApplication.isPlaying) { UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Dream/Scenes/Main.unity"); EditorApplication.isPlaying = true; }
+                EditorApplication.delayCall += () => Application.runInBackground = true;   // driven unfocused: keep the game loop ticking
                 EditorApplication.update -= Tick; EditorApplication.update += Tick;
             };
         }
@@ -62,6 +63,7 @@ namespace Dream.EditorTools
         static void Tick()
         {
             if (!EditorApplication.isPlaying || EditorApplication.timeSinceStartup < next) return;
+            if (!Application.runInBackground) Application.runInBackground = true;   // driven unfocused: keep the game loop ticking
             next = EditorApplication.timeSinceStartup + 0.2;
             if (++steps > 30000) { Stop("gave up after 30000 steps"); return; }   // a month of Chapter 1 is a lot of hands
             if (Films.Playing) { Films.I.Skip(); return; }
@@ -108,7 +110,7 @@ namespace Dream.EditorTools
                 if (Has("TEN THOUSAND")) Shot("david");
                 Find("Dim")?.onClick.Invoke(); return;
             }
-            var choice = Find("Play poker. For real.") ?? Find("Take Slick's stake");   // the diner question; rock bottom
+            var choice = Find("Play poker. For real.") ?? Find("Take Slick's stake") ?? Find("\"Does it fold");   // the diner question; rock bottom; week two (Mustich)
             if (choice != null) { Shot(choice.name == "Button" && Has("Rock bottom") ? "broke" : "diner_choice"); W("  choose: " + choice.GetComponentInChildren<TMPro.TMP_Text>().text); choice.onClick.Invoke(); return; }
             if (Find("Send feedback") != null)
             {

@@ -314,7 +314,7 @@ namespace Dream.Game
         // where a run that survived finishes: score (accuracy + luck + stack) against a threshold that rises with the field.
         // The old game's values (0.6, 0.04, luck 0.12) let a 70%-accuracy player win about a third of 60-player nightlies
         // and a fifth of 1,104-player online events (Editor/Sim.cs); Test Beta 1.1.4 sets them below (DAY_REPORT, task 5).
-        public static double PlaceBase = 0.95, PlaceSlope = 0.05, PlaceLuck = 0.3, PlaceBand = 0.4, PlaceOnline = 0.08;   // online: a tougher field
+        public static double PlaceBase = 0.95, PlaceSlope = 0.05, PlaceLuck = 0.3, PlaceBand = 0.4, PlaceOnline = 0.02;   // online: a slightly tougher field (0.08 starved the full-time player: Editor/SimCal.cs)
 
         public static int Place(Run run)
         {

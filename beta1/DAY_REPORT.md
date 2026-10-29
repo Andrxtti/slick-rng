@@ -281,3 +281,30 @@ arrator_audition.mp3`.
 
 
 **4. Test Beta 1.1.3 built** (17:38): `C:\Dev\Builds\TheDream-Beta1.1-Web`, Build/ 19.7 MB (+1.8 MB for the voice lines), 0 errors, 29 films + reel; `BUILD_READY.txt` written.
+
+### Task 5: balance by the month (evening, Opus · high)
+Two real month-long bot runs on the game (driver, `auto <keep|quit> acc 0.6`), then 150–200 simulated months per case on the
+real engine with the game's calendar (`Editor/SimCal.cs`, `simcal <keep|quit> <q> <runs>`: day-job schedule of 3 online + 1
+weekend live a week and $1,250 on Fridays, or full-time 1 live + 1 online a day; $600 rent every Friday; Slick's $1,000
+loan at rock bottom, half of profits back). Raw lines: `C:\Dev\Builds\day2\balance_calendar.txt`.
+
+- Bot, keep, career accuracy 70%: bankroll $2,000 (Jan 12) → $2,485 (Jan 17) → $2,750 (Jan 25) → $3,125 (Feb 1) → $3,500
+  (Feb 8); **$5,000 on day 34** (Feb 8), $6,489 at the end card, no loan. Every week beat fired (c1_w2 → c1_w4_eve2).
+- Bot, quit: stalled on Jan 19 at Mustich's new choice (the driver didn't know it; taught), then on an unfocused editor;
+  replaced by the calendar sim, which is many months instead of one.
+- Placement with the online offset at 0.08 (commit 2b4b612): full-time 70% reached $5,000 in only 38% of months and needed
+  Slick's loan in 61%. Moved the online offset to **0.02** (the suggested lever, online prizes for good players, via the
+  field difficulty rather than the payout table):
+
+| player | reaches $5,000 | median day (25–75%) | Slick's loan | median bankroll day 13 / 20 / 27 / 34 / 39 |
+|---|---|---|---|---|
+| keep, 70% | 69% | 25 (18–32) | 0% | $2,514 / $3,198 / $4,445 / $5,369 / $6,019 |
+| quit, 70% | 56% | 18 (13–28) | 48% | $1,558 / $2,021 / $2,621 / $3,455 / $3,764 |
+| keep, 55% | 31% | 32 (27–39) | 0% | $2,278 / $2,808 / $3,279 / $3,823 / $4,473 |
+| quit, 55% | 0% | — | 99% | $646 / $805 / $617 / $672 / $613 |
+
+Not good yet, said plainly: (1) "never before day 20" can't hold with real variance — a full-time 70% player who wins one
+1,104-player online event is over $5,000 in week two (a quarter of the quit months reach it by day 13). Capping it would
+need a schedule rule, not a balance number; Steven's call. (2) The keeping 55% player reaches $5,000 in 31% of months
+almost on the pay cheque alone ($650 a week after rent). (3) The quitting 55% player never gets there and leans on the loan
+all month, which matches "saved by Slick's loan", but more than once. Grading untouched.
