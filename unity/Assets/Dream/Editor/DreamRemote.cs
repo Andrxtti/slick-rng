@@ -84,9 +84,13 @@ namespace CFDream.EditorTools
                     result = "no UMA";
 #endif
                 }
-                else if (c.StartsWith("render "))   // render <id>: record a story scene to Builds/Cutscenes/<id>.mp4
+                else if (c.StartsWith("render "))   // render <id>: record a story scene to Builds/Cutscenes/<id>.mp4 (full-frame film)
                 {
-                    DreamRender.Render(c.Substring(7).Trim()); result = "queued";
+                    DreamRender.WithUI = false; DreamRender.Render(c.Substring(7).Trim()); result = "queued";
+                }
+                else if (c.StartsWith("render-ui "))   // render-ui <id>: the same, recording the phone screen with its UI
+                {
+                    DreamRender.WithUI = true; DreamRender.Render(c.Substring(10).Trim()); result = "queued";
                 }
                 else if (c.StartsWith("pkg-add "))   // pkg-add <id@version>: add a package through the Package Manager and log the outcome
                 {

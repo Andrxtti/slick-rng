@@ -62,6 +62,10 @@ namespace CFDream.Character
         public static bool Talking;        // a line is typing itself out: the speaker's mouth moves
         public bool InRoom => framing == "room";
         public static bool Follow = true;   // your place in third person (a camera behind you) instead of the diorama
+        // offline film renders (DreamRender): the scene camera draws straight to the screen at full frame while the UI is
+        // hidden, and the film look the UI paints over a shot (vignette, grain, the dip to black on cuts) moves into post
+        public static bool Film;
+        Vignette filmVig; FilmGrain filmGrain; ColorAdjustments filmGrade; float filmExposure, filmT0;
         Vector3 followPos; bool followInit;
         public HomeLife Life => life;
         public PetLife Pets => pets;
@@ -112,6 +116,32 @@ namespace CFDream.Character
                 }
             }
             catch (Exception e) { Debug.LogWarning("[Dream] cinema post-processing unavailable: " + e.Message); cinema = null; dof = null; }
+        }
+        // Film mode, every frame of a scene: full frame to the screen, the UI's film look done in post instead
+        void FilmFrame()
+        {
+            if (!Film)
+            {
+                if (cam.targetTexture == null && roomRt != null) cam.targetTexture = roomRt;
+                if (filmVig != null) { filmVig.active = false; filmGrain.active = false; filmGrade.postExposure.value = filmExposure; }
+                return;
+            }
+            if (cam.targetTexture != null) { cam.targetTexture = null; cam.ResetAspect(); }
+            cam.depth = 50;
+            if (cinema == null) return;
+            if (filmVig == null)
+            {
+                var p = cinema.profile;
+                if (!p.TryGet(out filmVig)) filmVig = p.Add<Vignette>(true);
+                filmVig.intensity.Override(0.3f); filmVig.smoothness.Override(0.45f);
+                if (!p.TryGet(out filmGrain)) filmGrain = p.Add<FilmGrain>(true);
+                filmGrain.type.Override(FilmGrainLookup.Thin1); filmGrain.intensity.Override(0.3f); filmGrain.response.Override(0.8f);
+                if (!p.TryGet(out filmGrade)) filmGrade = p.Add<ColorAdjustments>(true);
+                filmExposure = filmGrade.postExposure.value; filmGrade.postExposure.overrideState = true;
+            }
+            filmVig.active = true; filmGrain.active = true;
+            float dip = Mathf.Max(cutFade, 1f - (Time.time - filmT0) / 1.1f);   // the cut dips and the opening fade-in
+            filmGrade.postExposure.value = filmExposure - 9f * Mathf.Clamp01(dip);
         }
         void Cinema(bool on)
         {
@@ -250,6 +280,7 @@ namespace CFDream.Character
             npcPivot.localPosition = them.pos; npcPivot.localRotation = Quaternion.Euler(0, them.yaw, 0);
             if (room.shadow != null) room.shadow.localPosition = new Vector3(you.pos.x, 0, you.pos.z);
             RoomTexture(aspect > 0 ? aspect : (roomRt != null ? roomRt.width / (float)roomRt.height : 0.85f));
+            if (!inScene) filmT0 = Time.time;   // the film render fades in from black when a scene opens
             framing = "scene"; inScene = true; cam.targetTexture = roomRt; cam.farClipPlane = 60; Cinema(true);
             if (shotKey == null) Shot("wide", true, 7f);
             cam.enabled = views.Count > 0;   // the set shows even while the people are still being built
@@ -601,7 +632,7 @@ namespace CFDream.Character
                 if (baseKind == "ext" && sinceShot > 3.6f) { baseKind = shotKind = "wide"; shotT = 0; shotDur = 7f; sinceShot = 0; Sound.Play("cut", 0.5f); cutFade = 1f; Aim(); PlaceCam(0); }
                 if (!reacted && !Reacting && !narr && string.IsNullOrEmpty(mood) && both && baseKind != "wide" && baseKind != "ext" && baseKind != "two" && baseKind != "push" && baseKind != "ecu" && baseKind != "hands" && sinceShot > 4.5f) Reaction(false);
                 else if (Reacting && sinceShot > 3.2f) Reaction(true);
-                PlaceCam(shotT); Acting();
+                FilmFrame(); PlaceCam(shotT); Acting();
                 if (cutFade > 0) cutFade = Mathf.Max(0, cutFade - Time.deltaTime / 0.35f);
                 foreach (var v in views) v.MarkDirtyRepaint(); return;
             }

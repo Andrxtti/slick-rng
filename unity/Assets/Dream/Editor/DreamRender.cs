@@ -4,6 +4,8 @@
 //   remote: render <sceneId>      -> C:\Dev\Builds\Cutscenes\<sceneId>.mp4
 //           render-all            -> every scene with a shot list, in order
 //   Dream > Render > ...          (same, from the menu, in Play mode or not: it enters Play mode itself)
+//   Film (default): the scene camera fills the frame with the UI hidden (CharacterStage.Film); "render-ui <id>" records
+//   the phone screen as the player sees it instead.
 // Needs com.unity.recorder (Packages/manifest.json). Output: 1920x1080, 30 fps, H.264 high quality.
 using System;
 using System.Collections.Generic;
@@ -33,6 +35,7 @@ namespace CFDream.EditorTools
         [MenuItem("Dream/Render/Office (p_office)")] static void MenuOffice() => Render("p_office");
         [MenuItem("Dream/Render/All scenes")] static void MenuAll() => RenderAll();
 
+        public static bool WithUI;   // false: full-frame film; true: the phone screen with its UI, as played
         public static void Render(string id) { queue.Enqueue(id); Log($"queued {id} ({queue.Count} waiting)"); }
         public static void RenderAll()
         {
@@ -88,15 +91,26 @@ namespace CFDream.EditorTools
             rec = new RecorderController(settings);
             rec.PrepareRecording(); rec.StartRecording();
             current = id; lastIndex = -1; lineStart = EditorApplication.timeSinceStartup; started = lineStart;
+            CFDream.Character.CharacterStage.Film = !WithUI; ShowUI(WithUI);
             CFDream.Game.PlayScene(id, true);
-            Log($"recording {id}");
+            Log($"recording {id}" + (WithUI ? " (with UI)" : " (film)"));
+        }
+
+        static void ShowUI(bool on)
+        {
+            foreach (var d in UnityEngine.Object.FindObjectsByType<UnityEngine.UIElements.UIDocument>(FindObjectsSortMode.None))
+            {
+                if (d == null) continue;
+                if (d.rootVisualElement != null) d.rootVisualElement.style.opacity = on ? 1f : 0f;
+                if (d.panelSettings != null) d.panelSettings.clearColor = on;   // the panel clears the screen itself (DreamApp.QuietCamera); in film the camera owns it
+            }
         }
 
         static void End()
         {
             if (rec != null && rec.IsRecording()) rec.StopRecording();
             Log($"{current}: {EditorApplication.timeSinceStartup - started:0.0}s -> {Path.Combine(OutDir, current + ".mp4")}");
-            rec = null; current = null;
+            rec = null; current = null; CFDream.Character.CharacterStage.Film = false; ShowUI(true);
             if (queue.Count == 0) EditorApplication.isPlaying = false;
         }
     }
