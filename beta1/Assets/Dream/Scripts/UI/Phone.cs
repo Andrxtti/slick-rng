@@ -183,7 +183,7 @@ namespace Dream.UI
         public void Choose(string heading, List<string> options, List<string> hints, Action<int> pick)
         {
             Ui.Clear(footer); hint.text = ""; field = null;
-            float topY = 0.03f + 0.1f * options.Count + (heading != null ? 0.045f : 0);
+            float topY = 0.03f + 0.125f * options.Count + (heading != null ? 0.045f : 0);   // room for a two-line option
             footer.anchorMax = new Vector2(0.96f, topY); Fit(topY + 0.01f);   // the conversation moves up out of the way
             float step = 1f / (options.Count + (heading != null ? 0.45f : 0));
             float top = 1;
@@ -191,7 +191,8 @@ namespace Dream.UI
             for (int i = 0; i < options.Count; i++)
             {
                 int k = i; float y1 = top - i * step, y0 = y1 - step * 0.95f;
-                var b = Ui.Button(footer, options[i], () => { field = null; Field(); pick(k); }, i == 0 ? Me : new Color(1, 1, 1, 0.1f), Color.white, 34);
+                var b = Ui.Button(footer, options[i], () => { field = null; Field(); pick(k); }, i == 0 ? Me : new Color(1, 1, 1, 0.1f), Color.white, 32);
+                var bt = b.GetComponentInChildren<TextMeshProUGUI>(); bt.margin = new Vector4(36, 8, 36, 8);   // padding inside the chip
                 Ui.At(b, 0.02f, y0 + step * 0.38f, 0.98f, y1);
                 if (i < hints.Count) Ui.At(Ui.Label(footer, hints[i], 22, Meta, TextAnchor.UpperCenter), 0, y0, 1, y0 + step * 0.34f);
             }

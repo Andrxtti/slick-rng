@@ -12,7 +12,7 @@ namespace Dream.Film
     public static class Materials
     {
         static readonly Dictionary<string, float> Smooth = new Dictionary<string, float>
-        { ["skin"] = 0.46f, ["eyes"] = 0.95f, ["teeth"] = 0.42f, ["tongue"] = 0.5f, ["hair"] = 0.38f, ["haircards"] = 0.42f, ["brows"] = 0.2f, ["lashes"] = 0.2f };
+        { ["skin"] = 0.46f, ["eyes"] = 0.95f, ["teeth"] = 0.3f, ["tongue"] = 0.5f, ["hair"] = 0.38f, ["haircards"] = 0.42f, ["brows"] = 0.2f, ["lashes"] = 0.2f };
 
         public static Material Make(string dir, string part, Dictionary<string, object> man)
         {
@@ -32,7 +32,7 @@ namespace Dream.Film
                 m.EnableKeyword("_NORMALMAP"); m.SetFloat("_BumpScale", 1f);
             }
 #endif
-            if (part == "teeth") tint *= 0.72f;   // teeth and tongue sit in the mouth's shadow: they must never glow
+            if (part == "teeth") tint *= new Color(0.78f, 0.7f, 0.6f);   // teeth sit back in the mouth's shadow: warm, never grey pegs
             if (part == "tongue") tint *= 0.6f;
             m.SetColor("_BaseColor", tint);
 #if UNITY_EDITOR

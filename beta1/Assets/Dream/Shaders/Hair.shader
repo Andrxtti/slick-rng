@@ -22,6 +22,7 @@ Shader "Dream/Hair"
         Pass
         {
             Name "ForwardLit"
+            AlphaToMask On   // with the films' MSAA, strand edges are soft coverage, not hard cut-outs
             Tags { "LightMode" = "UniversalForward" }
             HLSLPROGRAM
             #pragma target 3.5
@@ -77,7 +78,8 @@ Shader "Dream/Hair"
             half4 frag(Varyings i, bool front : SV_IsFrontFace) : SV_Target
             {
                 half4 alb = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv) * _BaseColor;
-                clip(alb.a - _Cutoff);
+                clip(alb.a - _Cutoff * 0.35);   // keep the faint strand edges for alpha-to-coverage
+                alb.rgb *= lerp(0.5, 1, saturate(i.uv.y * 2.5));   // darker at the roots (v = 0 is the root)
                 float3 N = normalize(i.normalWS) * (front ? 1 : -1);
                 float3 T = normalize(i.tangentWS.xyz), B = normalize(cross(N, T) * i.tangentWS.w);   // B runs along the strand (the cards' V)
 
@@ -97,7 +99,7 @@ Shader "Dream/Hair"
                 LIGHT_LOOP_END
                 c.rgb += hl * lerp(0.35, 1, saturate(Luminance(alb.rgb) * 4));   // dark hair shines less, and never white
                 c.rgb = MixFog(c.rgb, inputData.fogCoord);
-                return half4(c.rgb, 1);
+                return half4(c.rgb, saturate((alb.a - _Cutoff * 0.35) / max(1e-3, 1 - _Cutoff * 0.35) * 1.6));
             }
             ENDHLSL
         }
