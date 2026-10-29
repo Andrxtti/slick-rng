@@ -12,7 +12,7 @@
    "next": "",
    "hold": 0.0,
    "text": "He slides a red envelope across the counter.",
-   "voice": ""
+   "voice": "p_diner2_01"
   },
   {
    "n": 2,
@@ -96,7 +96,7 @@
    "next": "",
    "hold": 0.0,
    "text": "He drops cash for both checks and is gone before the bell over the door stops ringing.\nInside the envelope: a seat card, and one line in pen.",
-   "voice": ""
+   "voice": "p_diner2_08"
   },
   {
    "n": 9,
@@ -108,7 +108,7 @@
    "next": "",
    "hold": 0.0,
    "text": "“People insist on calling it luck…”",
-   "voice": ""
+   "voice": "p_diner2_09"
   }
  ],
  "directions": [

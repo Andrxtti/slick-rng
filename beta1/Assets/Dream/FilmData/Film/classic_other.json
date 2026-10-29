@@ -24,7 +24,7 @@
    "next": "",
    "hold": 0.0,
    "text": "Final hand. All in, called, and the board runs clean.",
-   "voice": ""
+   "voice": "classic_other_02"
   },
   {
    "n": 3,
@@ -36,7 +36,7 @@
    "next": "",
    "hold": 0.0,
    "text": "The room comes to its feet. The Biscayne Classic has a new name on the board.",
-   "voice": ""
+   "voice": "classic_other_03"
   },
   {
    "n": 4,

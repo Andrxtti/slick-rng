@@ -12,7 +12,7 @@
    "next": "",
    "hold": 0.0,
    "text": "You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL.",
-   "voice": ""
+   "voice": "p_keep_01"
   },
   {
    "n": 2,
@@ -24,7 +24,7 @@
    "next": "",
    "hold": 0.0,
    "text": "$1,250 lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream.",
-   "voice": ""
+   "voice": "p_keep_02"
   }
  ],
  "directions": [],

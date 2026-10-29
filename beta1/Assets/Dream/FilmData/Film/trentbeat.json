@@ -12,7 +12,7 @@
    "next": "",
    "hold": 0.0,
    "text": "Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs.",
-   "voice": ""
+   "voice": "trentbeat_01"
   },
   {
    "n": 2,
@@ -24,7 +24,7 @@
    "next": "",
    "hold": 0.0,
    "text": "The last card hits the felt. The Biscayne Classic is yours.",
-   "voice": ""
+   "voice": "trentbeat_02"
   },
   {
    "n": 3,

@@ -146,7 +146,7 @@ namespace Dream.UI
         public void Text(string from, string to, string text, Action done) => StartCoroutine(Run(from, to, text, done));
         IEnumerator Run(string from, string to, string text, Action done)
         {
-            bool mine = from == "You";
+            bool mine = from == "You"; float voiced = 0;
             Thread(mine ? to ?? thread ?? "Slick" : from);
             if (field == null) Field();
             hint.text = ""; tapped = false;
@@ -155,7 +155,7 @@ namespace Dream.UI
                 for (int i = 1; i <= text.Length && !tapped; i++) { field.text = text.Substring(0, i); field.color = Color.white; yield return new WaitForSecondsRealtime(0.035f); }
                 field.text = text; yield return Wait(0.35f);
                 field.text = "Text Message"; field.color = Meta;
-                Bubble(text, true);
+                Bubble(text, true); voiced = Dream.Game.Voice.Say("you", text, 0.8f, true);
                 var d = Ui.Label(content, "Delivered", 22, Meta, TextAnchor.MiddleRight); var dr = (RectTransform)d.transform;
                 dr.anchorMin = dr.anchorMax = new Vector2(1, 1); dr.pivot = new Vector2(1, 1); dr.sizeDelta = new Vector2(300, 30); dr.anchoredPosition = new Vector2(-6, -y + 4); y += 26;
             }
@@ -171,10 +171,10 @@ namespace Dream.UI
                     yield return null;
                 }
                 y -= dots.sizeDelta.y + 10; Destroy(dots.gameObject);
-                Bubble(text, false);
+                Bubble(text, false); voiced = Dream.Game.Voice.Say(from, text, 0.8f, true);   // the tone, then the sender reads it, a touch quieter
             }
             tapped = false;
-            yield return Wait(Mathf.Clamp(0.9f + text.Length / 22f, 1.4f, 4.5f));
+            yield return Wait(Mathf.Max(voiced + 0.3f, Mathf.Clamp(0.9f + text.Length / 22f, 1.4f, 4.5f)));
             done();
         }
         IEnumerator Wait(float s) { for (float t = 0; t < s && !tapped; t += Time.unscaledDeltaTime) yield return null; tapped = false; }

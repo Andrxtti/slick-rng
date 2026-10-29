@@ -135,7 +135,7 @@ namespace Dream.Game
                 var to = tags.FirstOrDefault(t => t.StartsWith("to:"))?.Substring(3);
                 Phone.Open().Text(line.CharacterName ?? "", to, text, () => go = true);
             }
-            else AfterPhone(() => Flow.I.Line(text, () => go = true));
+            else AfterPhone(() => { Voice.Say("narrator", text); Flow.I.Line(text, () => { Voice.Hush(); go = true; }); });
             return YarnTask.WaitUntil(() => go);
         }
 

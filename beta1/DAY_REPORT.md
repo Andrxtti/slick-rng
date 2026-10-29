@@ -1,5 +1,3 @@
-SONNET BLOCK DONE — switch to Opus
-
 # The Dream — Test Beta 1.0 day report (2026-10-29, afternoon)
 
 Claude Code on Steven's PC, working `unity/docs/DAY2.md` while Steven is at work. The cloud session reviews stills,
@@ -229,3 +227,55 @@ G3 hair, G4 faces) was already in when the request arrived; it's listed above. T
 - **S8 build:** `C:\Dev\Builds\TheDream-Beta1.1-Web`, **17.9 MB, 0 errors** (+2.6 MB for the table kit). I tried to
   read the console with headless Edge: the page loads, but the engine never logs there (no WebGL headless), so the
   console check is still the cloud session's. Films: 45 MB streamed, graded.
+
+### Evening (16:20 on), the 16:25 list
+**1. S10, film taps and sound (as revised 15:50)** · `1d90af4`
+- **One film screen and one VideoPlayer for the whole session** (`Films.cs`). It's made on the first film, hidden
+  between films, and reused by changing the url, so the page sees one `<video>` element all session, the one the first
+  tap unlocked.
+- **No full-screen tap-to-skip and no "tap to skip" label.** The page owns taps during films. `Skip()` stays for the
+  drivers.
+- **Two watchdogs:** a film that never starts (missing file) or whose clock stops is treated as over, so the story can't
+  hang on black. One fired in testing: `goal.mp4` no longer exists and the old code waited forever.
+- **Check** (editor, `C:\Dev\Builds\day2ilms_audio.txt`): `p_quit` → `p_keep` → `lesson1` with no taps between,
+  1 VideoPlayer the whole time, each film unmuted at volume 1.00, clock advancing, handing over by itself at each end.
+  The page-side check (headless Chromium with autoplay blocked) is for the cloud session on the published build.
+- **Found on the way:** driven from the bridge, the editor is unfocused and stops ticking the game loop (frame count
+  frozen), which looked like films stalling. The `main` test command now sets `runInBackground` at run time (player
+  settings untouched).
+
+**2. N1, US spelling** · `c8e11f3`
+- The only British spelling left in player-facing text was "favourite" (the grade line, `ch1.json`).
+- `export_ch1.py` now applies a US-spelling map to the old game's data, so a re-export keeps it. The diff is that one
+  word; `spots.json` is byte-identical.
+- The other hits (colour, grey, metres) are code comments.
+
+**3. N2 narrator and N3 every unspoken line** (16:05 rules: no audition gate, texts voiced too)
+- **The narrator** is LibriTTS speaker **498**, pace 1.12, −3 semitones, warmth 0.6, compression, a short plate
+  (`aecho 0.8:0.5:40:0.2`).
+  - How it was picked: I rendered "Everybody has a dream. Biscayne Card Room, off the causeway." in 151 speakers
+    (every 6th id) and measured each one's median pitch.
+  - The six deepest were 498 (79 Hz), 186, 342, 600, 174, 42. After the recipe, 498 sits at 65 Hz, the deepest by a
+    clear margin, and stays cleanly voiced.
+  - Audition, in that order: `C:\Dev\Builds\day2
+arrator_audition.mp3`.
+- **Voiced now:**
+  - all 31 narrator cards in the films;
+  - the reel's four title cards ("Everybody has a dream.", "Some people get a seat.", "Some people earn one.",
+    "THE DREAM");
+  - all 16 phone texts, in the sender's voice at 0.8 volume, after a soft two-note message tone (synthesized here,
+    ours), with the bubble held until the voice ends;
+  - Yarn's plain narration lines (the narrator).
+  - Every in-person character line in the films already had a voice.
+- **Left silent, by the rules:**
+  - the 11 {key} cards: `{day2}`, `{day2_you}` ×3 (classic_mustich/other/shark), `{ft_intro}` ×2, `{ft_lost}`,
+    `{ft_won}`, `{saturday}` (p_after);
+  - one Yarn line with a {value} in it;
+  - the choice card's #card/#hint lines (UI heading and option hints, not captions).
+- **How:**
+  - film cards get voice ids in `script_build.py`, and the player holds each card for its voice;
+  - lines outside films go to `Resources/Voice/Lines/<key>.wav`, key = FNV-1a of "who|text", the same in Python and
+    C# (checked: both give `bad533de` for "slick|Hi");
+  - all 29 films re-rendered (card timing changes with the voice, so muxing audio alone would have overlapped lines),
+    republished, and the reel re-cut with the narrator over its cards.
+

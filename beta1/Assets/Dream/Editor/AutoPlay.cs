@@ -17,7 +17,7 @@ namespace Dream.EditorTools
     [InitializeOnLoad]
     public static class AutoPlay
     {
-        static string branch, only; static bool lose, broke, cut; static double next; static int steps; static StreamWriter log; static readonly HashSet<string> shot = new HashSet<string>();
+        static string branch, only; static bool lose, broke, cut; static double acc = 1; static int stakeDay = -1; static double next; static int steps; static StreamWriter log; static readonly HashSet<string> shot = new HashSet<string>();
         static string lastHub, lastText;
 
         static AutoPlay()
@@ -30,11 +30,14 @@ namespace Dream.EditorTools
                 Remote.Log($"films-state: paused {EditorApplication.isPaused} frame {Time.frameCount} t {Time.unscaledTime:0.0} focus {Application.isFocused} runInBackground {Application.runInBackground} | {Object.FindObjectsByType<UnityEngine.Video.VideoPlayer>(FindObjectsSortMode.None).Length} VideoPlayer(s), playing {Films.Playing}"
                     + (vp == null ? "" : $", vp.isPlaying {vp.isPlaying}, time {vp.time:0.0}, muted {vp.GetDirectAudioMute(0)}, volume {vp.GetDirectAudioVolume(0):0.00}, {System.IO.Path.GetFileName(vp.url)}"));
             };
+            Remote.Extra["voice-key"] = a => { var i = a.IndexOf(' '); Remote.Log($"voice-key: {Dream.Game.Voice.Key(a.Substring(0, i), a.Substring(i + 1))}"); };
+            Remote.Extra["voice-last"] = _ => Remote.Log("voice-last: " + Dream.Game.Voice.Last);
             Remote.Extra["story"] = a => { var p = a.Split(' '); Flow.I?.TestStory(p[0], p[1], double.Parse(p[2], System.Globalization.CultureInfo.InvariantCulture)); };
             Remote.Extra["auto"] = b =>
             {
+                var am = System.Text.RegularExpressions.Regex.Match(b, @" acc ([\d.]+)"); acc = am.Success ? double.Parse(am.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture) : 1; stakeDay = -1;
                 lose = b.EndsWith(" lose"); broke = b.EndsWith(" broke"); cut = false; only = b.EndsWith(" online") ? "online" : b.EndsWith(" live") ? "live" : null; Moments.Log.Clear(); branch = b.StartsWith("keep") ? "keep" : "quit"; steps = 0; shot.Clear(); lastHub = null; Films.Played.Clear();
-                log = new StreamWriter(Path.Combine(Application.dataPath, "..", "Logs", $"auto_{branch}{(lose ? "_lose" : broke ? "_broke" : only != null ? "_" + only : "")}.txt"));
+                log = new StreamWriter(Path.Combine(Application.dataPath, "..", "Logs", $"auto_{branch}{(acc < 1 ? $"_acc{(int)(acc * 100)}" : lose ? "_lose" : broke ? "_broke" : only != null ? "_" + only : "")}.txt"));
                 PlayerPrefs.DeleteAll();
                 if (!EditorApplication.isPlaying) { UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Dream/Scenes/Main.unity"); EditorApplication.isPlaying = true; }
                 EditorApplication.update -= Tick; EditorApplication.update += Tick;
@@ -88,7 +91,7 @@ namespace Dream.EditorTools
                 W("creator: " + Object.FindAnyObjectByType<TMPro.TMP_InputField>()?.text); start.onClick.Invoke(); return;
             }
             var f = Flow.I; if (f == null || f.S == null) { Find("Begin")?.onClick.Invoke(); return; }
-            if (Table.Waiting || Has("Coaching by Confirmed Fire")) { Table.AutoStep((lose && f.S.events < 7) || (broke && f.S.debt <= 0 && f.S.events < 3)); return; }   // a spot, or its grade panel (lose: the worst answers for the first games)
+            if (Table.Waiting || Has("Coaching by Confirmed Fire")) { Table.AutoStep((lose && f.S.events < 7) || (broke && f.S.debt <= 0 && f.S.events < 3), acc); return; }   // a spot, or its grade panel (lose: the worst answers for the first games)
             if (Phone.I != null)   // the phone: take the branch when the decision is up, otherwise tap through the texts
             {
                 var pick = Find(branch == "keep" ? "Keep the job" : "Quit. Text Lou");
@@ -120,7 +123,8 @@ namespace Dream.EditorTools
                 if (Has("Busted?")) { W($"  texts: Slick, broke ({f.S.job}): {Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.Contains("paycheck") || t.Contains("No paycheck"))}"); Shot("broke"); }
                 if (Has("TEN THOUSAND")) { W("  texts: David, ten thousand"); Shot("david"); }
                 var res = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.StartsWith("You won") || t.StartsWith("Out in") || t.Contains(" place") || t.StartsWith("Up ") || t.StartsWith("Down ") || t.StartsWith("Coolered"));
-                if (res != null) W($"  result: {res}");
+                var accLine = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.StartsWith("Accuracy"));
+                if (res != null) W($"  result: {res}{(accLine != null ? "  (" + accLine.Split('·')[0].Trim() + ")" : "")}");
                 cont.onClick.Invoke(); return;
             }
             if (Has("tap to continue") && Find("Screen") != null) { Find("Screen").onClick.Invoke(); return; }   // a narrator card
@@ -132,6 +136,7 @@ namespace Dream.EditorTools
                 string date = texts.FirstOrDefault(t => t.Contains(", ") && (t.StartsWith("Mon") || t.StartsWith("Tue") || t.StartsWith("Wed") || t.StartsWith("Thu") || t.StartsWith("Fri") || t.StartsWith("Sat") || t.StartsWith("Sun")));
                 string why = string.Join("; ", texts.Where(t => t.StartsWith("Live games") || t.StartsWith("Your live game") || t.StartsWith("One live game") || t.StartsWith("No online") || t.StartsWith("A live day") || t.StartsWith("Two online")).Distinct());
                 string note = texts.FirstOrDefault(t => t.StartsWith("Payday"));
+                if (stakeDay < 0 && f.S.br >= 5000) { stakeDay = f.S.day; W($"  STAKE: $5,000 reached on day {f.S.day} ({date})"); }
                 string line = $"hub {date} | ${f.S.br:0} | {f.Rep} | {(why == "" ? "can play" : why)}{(note != null ? " | " + note : "")}";
                 if (line != lastHub) { W(line); lastHub = line; }
                 // three smaller games first, so the calendar rules (one live game a day, weekends with the job) get played

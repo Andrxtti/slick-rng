@@ -24,7 +24,7 @@
    "next": "",
    "hold": 0.0,
    "text": "Final hand. Tommy “The Shark” Maio turns over two kings and the whole rail stops breathing.",
-   "voice": ""
+   "voice": "classic_shark_02"
   },
   {
    "n": 3,
@@ -36,7 +36,7 @@
    "next": "",
    "hold": 0.0,
    "text": "The river bricks. Thirty years at this card room, and the old man finally has his trophy.",
-   "voice": ""
+   "voice": "classic_shark_03"
   },
   {
    "n": 4,

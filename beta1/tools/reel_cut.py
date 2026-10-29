@@ -12,6 +12,13 @@ FONT = "C\\:/Windows/Fonts/arialbd.ttf"
 os.makedirs(TMP, exist_ok=True)
 
 
+def narrator_key(text):
+    """the game's Voice.Key("narrator", text): FNV-1a over UTF-16 code units, as in tools/voice.py"""
+    h = 2166136261; data = ("narrator|" + text).encode("utf-16-le")
+    for i in range(0, len(data), 2): h ^= data[i] | (data[i + 1] << 8); h = (h * 16777619) & 0xFFFFFFFF
+    return f"{h:08x}"
+
+
 def cue(scene, line):
     for l in open(os.path.join(ROOT, "Logs", f"film_{scene}.txt"), encoding="utf-8"):
         p = l.split("\t")
@@ -28,11 +35,11 @@ CUT = [
     ("film", "p_office", cue("p_office", 1) + 0.3, 2.6, None, 0),
     ("film", "p_office", cue("p_office", 7) + 0.2, 2.4, None, 0),
     ("film", "p_diner", cue("p_diner", 1) + 0.4, 2.4, None, 0),
-    ("film", "p_diner", cue("p_diner", 14) + 0.0, 2.6, "sting_01", 0.3),
-    ("film", "p_diner", cue("p_diner", 9) + 0.6, 2.6, None, 0),
+    ("film", "p_diner2", cue("p_diner2", 7) + 0.0, 2.6, "sting_01", 0.3),
+    ("film", "p_diner2", cue("p_diner2", 1) + 0.6, 2.6, None, 0),
     ("card", "Some people get a seat.", 0, 3.0, None, 0),
     ("film", "c1", cue("c1", 1) + 0.5, 2.6, None, 0),
-    ("film", "p_seat", cue("p_seat", 3) + 0.2, 3.2, "sting_08", 0.4),
+    ("film", "c1", cue("c1", 3) + 0.2, 3.2, "sting_08", 0.4),
     ("film", "c1", cue("c1", 4) + 0.1, 3.4, "sting_07", 0.4),
     ("card", "Some people earn one.", 0, 3.0, None, 0),
     ("film", "reel_casino", 0.3, 4.6, None, 0),
@@ -41,7 +48,7 @@ CUT = [
     ("film", "reel_titan", 0.3, 4.2, None, 0),
     ("film", "reel_main", 0.5, 6.5, "sting_04", 2.0),
     ("film", "reel_hall", 0.3, 6.4, "sting_05", 1.6),
-    ("film", "p_diner", cue("p_diner", 11) + 0.4, 3.6, "sting_10", 0.6),
+    ("film", "p_diner2", cue("p_diner2", 4) + 0.4, 3.6, "sting_10", 0.6),
     ("card", "THE DREAM", 0, 6.0, None, 0),
 ]
 
@@ -59,6 +66,9 @@ for i, (kind, src, start, dur, sting, soff) in enumerate(CUT):
            "-vf", f"scale=1920:1080,fps=30,{fade}", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16", p)
     parts.append(p)
     if sting: stings.append((os.path.join(VOICE, sting + ".wav"), t + soff))
+    if kind == "card":   # the narrator reads the title card (tools/voice.py makes these clips)
+        nar = os.path.join(ROOT, "Assets", "Dream", "Resources", "Voice", "Lines", narrator_key(src) + ".wav")
+        if os.path.exists(nar): stings.append((nar, t + 0.35))
     cuts.append(t)
     t += dur
 total = t

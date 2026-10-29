@@ -58,7 +58,9 @@ namespace Dream.Game
         static bool LastSaturday(int d) => d == ClassicDay;   // the Classic's day in Chapter 1 (was: the last Saturday of the month)
         static string DateStr(int d) => Date(d).ToString("dddd, MMMM d", System.Globalization.CultureInfo.InvariantCulture);
         public string Rep => S.roomTitle ? "Biscayne Champion" : S.job == "quit" ? "Full-time Dreamer" : "Moonlighter";   // old Career.Rep, Chapter 1
-        public const string FeedbackUrl = "https://github.com/Andrxtti/slick-rng/issues/new?title=The%20Dream%20Test%20Beta%201.1%20feedback";
+        // Steven, 14:54: every build is "Test Beta 1.1.x", x bumped per build, until he says 2.0
+        public const string Version = "1.1.3";
+        public const string FeedbackUrl = "https://github.com/Andrxtti/slick-rng/issues/new?title=The%20Dream%20Test%20Beta%20" + Version + "%20feedback";
 
         // ------------------------------------------------------------ the calendar (old Calendar.cs, Chapter 1)
         // what's on today: the nightly and the Global Rush every day, the Classic on the last Saturday of the month,
@@ -142,7 +144,7 @@ namespace Dream.Game
             var s = Screen(Ui.Night);
             Ui.At(Ui.Label(s, "CONFIRMED FIRE PRESENTS", 26, Ui.Dim), 0, 0.8f, 1, 0.83f);
             Ui.At(Ui.Title(s, "The Dream", 150, Ui.Ink), 0, 0.64f, 1, 0.8f);
-            Ui.At(Ui.Label(s, "TEST BETA 1.1", 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.6f, 1, 0.635f);
+            Ui.At(Ui.Label(s, "TEST BETA " + Version, 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.6f, 1, 0.635f);
             Ui.At(Ui.Label(s, "Chapter 1 · The Grind", 36, Ui.Ink), 0, 0.565f, 1, 0.6f);
             Ui.At(Ui.Label(s, "Every decision is a real solver spot.\nCoaching by Confirmed Fire.", 30, Ui.Dim), 0.1f, 0.46f, 0.9f, 0.53f);
             bool can = S != null && S.step != "new";
@@ -270,7 +272,7 @@ namespace Dream.Game
         // run a story node with a given job and bankroll (the test command "story <node> <job> <bankroll>")
         public void TestStory(string node, string job, double br)
         {
-            S ??= new Save(); S.step = "ch1"; S.job = job; S.br = br; S.day = 13;
+            S ??= new Save(); S.step = "ch1"; S.job = job; S.br = br; S.peak = Math.Max(S.peak, br); S.day = 13;
             S.story.RemoveAll(v => v.StartsWith("$job=")); S.story.Add("$job=" + job);
             story.Run(node, AfterStory, new Story.Outcome { ev = "nightly", bust = true });
         }
@@ -435,7 +437,7 @@ namespace Dream.Game
         public void EndCard()
         {
             var s = Screen(Color.black);
-            Ui.At(Ui.Label(s, "TEST BETA 1.1", 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.68f, 1, 0.71f);
+            Ui.At(Ui.Label(s, "TEST BETA " + Version, 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.68f, 1, 0.71f);
             Ui.At(Ui.Title(s, "Chapter 2: The Circuit", 84, Ui.Ink), 0.05f, 0.58f, 0.95f, 0.67f);
             Ui.At(Ui.Label(s, "coming soon", 40, Ui.Dim), 0.05f, 0.535f, 0.95f, 0.575f);
             Ui.At(Ui.Num(s, $"{S.name}, {Rep}  ·  {Ui.Money(S.br)}  ·  {S.events} events  ·  {S.decisions} decisions", 28, Ui.Dim), 0.05f, 0.46f, 0.95f, 0.5f);

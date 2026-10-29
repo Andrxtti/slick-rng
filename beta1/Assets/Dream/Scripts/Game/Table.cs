@@ -110,12 +110,14 @@ namespace Dream.Game
         // for the test driver (Editor/AutoPlay): answer the spot on screen with the solver's best play, or go on
         public static bool Waiting;
         public static bool Online => run != null && run.ev.online;   // the event on the table is CF Tilt (for the test driver's stills)
-        public static void AutoStep(bool worst = false)
+        public static void AutoStep(bool worst = false, double bestChance = 1)
         {
             if (run == null) return;
             if (!Waiting) { Next(); return; }
             var sp = run.spot; int pick = Hands.Grade(sp, 0).bestIdx;
             if (worst) { var order = Enumerable.Range(0, sp.acts.Count).OrderBy(j => Lib.Labels[Hands.Grade(sp, j).lab].score).ToList(); pick = order[0]; }
+            else if (bestChance < 1 && UnityEngine.Random.value > bestChance && sp.acts.Count > 1)   // a human: sometimes another play
+            { var others = Enumerable.Range(0, sp.acts.Count).Where(j => j != pick).ToList(); pick = others[UnityEngine.Random.Range(0, others.Count)]; }
             Answer(pick);
         }
 

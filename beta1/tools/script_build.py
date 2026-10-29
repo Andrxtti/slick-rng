@@ -50,7 +50,9 @@ def build():
             shot, subject, act, nxt, hold = parse_cue(cue)
             text = "" if text.strip() == "-" else text.strip().replace(" / ", "\n")   # " / " breaks a card's line
             cur["lines"].append({"n": int(n), "who": who, "name": name, "shot": shot, "subject": subject, "act": act,
-                                 "next": nxt, "hold": hold, "text": text, "voice": "" if who == "card" else f"{cur['id']}_{int(n):02d}"})
+                                 "next": nxt, "hold": hold, "text": text,
+                                 # every line is voiced; a card by the narrator, except a {key} card (its number is filled in at play time)
+                                 "voice": "" if (who == "card" and ("{" in text or not text)) else f"{cur['id']}_{int(n):02d}"})
     os.makedirs(OUT, exist_ok=True)
     for sid, sc in scenes.items():
         with open(os.path.join(OUT, sid + ".json"), "w", encoding="utf-8") as f: json.dump(sc, f, indent=1, ensure_ascii=False)

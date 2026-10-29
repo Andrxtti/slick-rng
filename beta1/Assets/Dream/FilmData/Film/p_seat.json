@@ -12,7 +12,7 @@
    "next": "",
    "hold": 0.0,
    "text": "Saturday. 11:40 AM. Biscayne Card Room, off the causeway.\nCarpet from 1994. Coffee from this morning, maybe.",
-   "voice": ""
+   "voice": "p_seat_01"
   },
   {
    "n": 2,
@@ -60,7 +60,7 @@
    "next": "",
    "hold": 0.0,
    "text": "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway.",
-   "voice": ""
+   "voice": "p_seat_05"
   }
  ],
  "directions": [

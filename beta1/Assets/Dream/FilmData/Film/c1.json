@@ -12,7 +12,7 @@
    "next": "",
    "hold": 0.0,
    "text": "Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe.\nTwenty tables, every one of them a classroom.",
-   "voice": ""
+   "voice": "c1_01"
   },
   {
    "n": 2,
@@ -60,7 +60,7 @@
    "next": "",
    "hold": 0.0,
    "text": "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Biscayne Classic all year.",
-   "voice": ""
+   "voice": "c1_05"
   },
   {
    "n": 6,
@@ -72,7 +72,7 @@
    "next": "",
    "hold": 0.0,
    "text": "Goal: the Biscayne Classic, Saturday, February 14. Build your bankroll to $5,000 before it.",
-   "voice": ""
+   "voice": "c1_06"
   }
  ],
  "directions": [
