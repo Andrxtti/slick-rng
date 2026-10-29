@@ -1,0 +1,39 @@
+{
+  "name": "slick_v2",
+  "note": "From unity/docs/characters/slick.md. Face: Matt (mature, strong) blended with Fabrice (long face, high cheekbones); shape only, skin 02 (warm olive), Fabrice's dark-brown eyes. Probe 3/4 renders, Oct 29. v2: no beard (stubble later as a skin texture in Unity); hair brought forward with Mavick's front dials. v2: no beard (stubble goes in as a skin texture later), hair front pulled down, skin 01 (lighter) in place of 02.",
+  "chars": {
+    "Matt": 0.6,
+    "Fabrice": 0.4
+  },
+  "morphs": {
+    "body_bs_ProportionHeight": 0.05,
+    "body_bs_ProportionShoulderWidth": 0.05,
+    "body_bs_ProportionChestDepth": -0.1,
+    "body_bs_ProportionChestWidth": -0.05,
+    "head_bs_ProportionNeckLength": 0.05
+  },
+  "skin": "Materials/Daz Originals/Base Materials/G9 Masculine Skin 01 MAT.duf",
+  "mats": [
+    "Characters/Daz Originals/Fabrice G9/Materials/Fabrice G9 Eyes.duf"
+  ],
+  "wear": [
+    {
+      "file": "Clothing/Daz Originals/Base Clothing/G9 Base Shirt.duf",
+      "mat": "Clothing/Daz Originals/Base Clothing/Materials/G9 Base Shirt Black.duf",
+      "morphs": {
+        "Front Hair down": 1.0,
+        "Front Hairline down": 0.5
+      }
+    },
+    {
+      "file": "Clothing/Daz Originals/Base Clothing/G9 Base Shorts.duf",
+      "mat": "Clothing/Daz Originals/Base Clothing/Materials/G9 Base Shorts Black.duf"
+    }
+  ],
+  "shots": [
+    "front",
+    "34"
+  ],
+  "renderSecs": 90,
+  "export": false
+}
