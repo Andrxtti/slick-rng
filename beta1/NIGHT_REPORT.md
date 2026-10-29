@@ -1,8 +1,38 @@
 # The Dream — Beta 1.0 night report (2026-10-29, 01:15–03:45 ET)
 
 Written by Claude Code (Opus 5.5) on Steven's PC from `unity/docs/BETA1.md` (the 01:25 "built fresh" brief on
-`origin/unity`, merged into `beta1`). Everything is committed on `beta1` locally. **Pushing failed** (GitHub asked for a
-sign-in nobody was there to give), so the commits are in `C:\Dev\slick-rng` only. Run `git push -u origin beta1` when you're up.
+`origin/unity`, merged into `beta1`). Everything is committed and pushed to `origin/beta1`.
+
+## Morning change (08:30–09:00): the job decision is back
+Steven asked for the quit-or-keep-the-job decision in Beta 1.0. Done, matching the old Unity game (`Calendar.cs`,
+`Story.cs`, `Career.cs`):
+- **Script:** `p_after` ends on "Decision time." New `p_quit` (you tell Lou to redo it himself; Slick's $5,000; David's
+  all-caps text) and `p_keep` (you keep the lanyard; Saturdays are yours; Slick's "a paycheck buys you time to learn").
+  Voiced with Piper and rendered as films. Stills: `night-shots/p_after_sheet.jpg`, `p_quit_sheet.jpg`, `p_keep_sheet.jpg`.
+- **The choice:** after the `p_after` film, a full-screen card ("Quit. Today." / "Keep the job. Grind nights.") plays the
+  chosen film, then `c1`. The choice is saved (closing the app on the card brings the card back). Still:
+  `night-shots/job_keep_choice.png`.
+- **Chapter 1 rules:**
+  - **Quit:** Slick's `GiftQuit` $5,000; one live game a day, any day; title "Full-time Dreamer".
+  - **Keep:** $2,000 savings; live card-room games on weekends only, one per week (weeks run Sunday to Saturday, as in the
+    old game); +$2,000 every Friday; title "Moonlighter". The hub shows the date, why a game is locked, and a Sleep button
+    that skips to the next playable day (old `SkipTo`).
+  - **Both:** "Biscayne Champion" replaces either title once the Classic is won. The bankroll now starts at $0 before the
+    free Local, as in the old game (my $1,000 starting savings is gone).
+- **Lines that change with the job, carried over:** going broke (Slick's way out differs: old `broke` vs `broke_n`), and
+  David's "TEN THOUSAND?? … AND YOU STILL WENT TO WORK TODAY???" at $10,000 for Moonlighters (old `david1`). The stake is
+  now really repaid from half your profits, as the old message promised. The Chapter 2 lines that change with the job
+  (Chris Schillings's intro, quit2, quit250, derek_job) are past the beta and not built.
+- **Checked by playing:** a test driver (`auto quit|keep [lose|broke]` on the bridge) played the game from the title to
+  the end card six times. Logs are in `beta1/Logs/auto_*.txt`; screenshots are `night-shots/job_*`.
+  - Quit: one game a day, Monday through Sunday; the stake taken when broke and repaid in full.
+  - Keep: Monday locked, Saturday with the Friday paycheck, then one game per weekend; David's text before the goal.
+  - Not reached in play: the Moonlighter's broke text. Fridays kept refilling the roll first, which is the day job working.
+- **Noticed while testing:** with the day job, after a Sunday game the next one is the *following* Sunday, never the
+  Saturday between them (one live game per Sunday-to-Saturday week). That's the old game's rule and I kept it; if you'd
+  rather "one game per Saturday+Sunday weekend", it's one line in `Flow.CantPlay`.
+- **Also fixed:** close-ups blocked by Lou's back (wider actor clearance), and the first shot of a film aiming before the
+  seated pose had settled. Web build rebuilt (13.1 MB, 0 errors; 15 films).
 
 ## Watch these first
 - `C:\Dev\Builds\Beta1\Reel\the_dream_reel_1080p.mp4` (73 s; 720p version next to it). This is the highlight reel.
@@ -31,9 +61,8 @@ sign-in nobody was there to give), so the commits are in `C:\Dev\slick-rng` only
    our own, made by code.
 6. **Music.** No CC0/CC-BY track was fetched. The reel's score (drone, impacts, riser, boom) and the room tones are
    synthesized with ffmpeg here, so they're ours. Swap in a real track when you pick one (`tools/reel_cut.py`).
-7. **Films have no choices.** Choices in the old prologue (quit/keep job) were cut. The player chooses at the table.
-   Chapter 1 starts with $1,000 savings plus whatever the Biscayne Championship pays; going broke brings a $1,000 stake
-   from Slick.
+7. **Films have no choices.** The game asks them between films (the job decision is a choice card after `p_after`;
+   see the morning change above). Going broke brings a $1,000 stake from Slick, repaid from half your profits.
 8. **Chapter 1 events:** the four live card-room events (1/2 cash, Midnight Rush, Sunday Deepstack, the Classic). The
    CF Tilt online events and the freeroll were left out to keep the beta to the card room.
 9. **Feedback link** on the end card opens a GitHub issue on the repo. Change `Flow.FeedbackUrl` if you'd rather email.
@@ -97,9 +126,8 @@ characters using them sink. The old project maps standing talkers to them.
 ## What I need from you
 1. **Face videos** (Eric first): ~15 s head turns, neutral and smiling. Then I'll build the heads properly.
 2. **Music:** pick a CC0/CC-BY trailer track, or keep the synthesized score.
-3. **Decide:** keep the quit/keep-job choice out of the films (my call), and the feedback route (GitHub issue vs email).
-4. **Push:** run `git push -u origin beta1` (sign-in needed).
-5. **Publish** the web build when you're happy (I didn't).
+3. **Decide:** the feedback route (GitHub issue vs email), and the weekend rule above.
+4. **Publish** the web build when you're happy (I didn't).
 
 ## Installs and downloads (all free, official sources)
 | What | From | Licence | Where |
