@@ -37,12 +37,14 @@ namespace Dream.EditorTools
             {
                 foreach (var b in UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None))
                 {
-                    var t = b.GetComponentInChildren<UnityEngine.UI.Text>();
+                    var t = b.GetComponentInChildren<TMPro.TMP_Text>();
                     if ((t != null && t.text.StartsWith(label, StringComparison.OrdinalIgnoreCase)) || b.name == label) { b.onClick.Invoke(); return; }
                 }
                 Log("tap: no button " + label);
             };
             Extra["erase"] = _ => PlayerPrefs.DeleteAll();
+            // TextMeshPro's shaders and settings (from the uGUI package), needed once for the brand fonts
+            Extra["tmp-essentials"] = _ => AssetDatabase.ImportPackage("Packages/com.unity.ugui/Package Resources/TMP Essential Resources.unitypackage", false);
         }
 
         public static void Log(string m)

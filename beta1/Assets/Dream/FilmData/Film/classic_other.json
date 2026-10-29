@@ -1,0 +1,86 @@
+{
+ "id": "classic_other",
+ "title": "The Biscayne Classic, Day 2",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ecu",
+   "subject": "you",
+   "act": "sad",
+   "next": "",
+   "hold": 0.0,
+   "text": "{day2}",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Final hand. All in, called, and the board runs clean.",
+   "voice": ""
+  },
+  {
+   "n": 3,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "The room comes to its feet. The Biscayne Classic has a new name on the board.",
+   "voice": ""
+  },
+  {
+   "n": 4,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Somebody had to keep you humble, kid.",
+   "voice": "classic_other_04"
+  },
+  {
+   "n": 5,
+   "who": "card",
+   "name": "CARD",
+   "shot": "push",
+   "subject": "you",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "{day2_you}",
+   "voice": ""
+  },
+  {
+   "n": 6,
+   "who": "gnomey",
+   "name": "MILES",
+   "shot": "two",
+   "subject": "",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "The name goes on the board by the cage. Next month, it could be yours.",
+   "voice": "classic_other_06"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Sunday night",
+ "cast": [
+  "slick",
+  "gnomey",
+  "you"
+ ]
+}

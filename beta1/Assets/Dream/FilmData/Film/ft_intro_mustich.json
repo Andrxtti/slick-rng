@@ -1,0 +1,49 @@
+{
+ "id": "ft_intro_mustich",
+ "title": "Final table (the Biscayne Classic)",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "{ft_intro}",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "lean",
+   "next": "",
+   "hold": 0.0,
+   "text": "Final table. Dad flew in for this. Don't embarrass yourself.",
+   "voice": "ft_intro_mustich_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "nod",
+   "next": "",
+   "hold": 0.0,
+   "text": "Let's play.",
+   "voice": "ft_intro_mustich_03"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Sunday",
+ "cast": [
+  "mustich",
+  "you"
+ ]
+}

@@ -10,18 +10,20 @@
    "subject": "",
    "act": "idle",
    "next": "",
-   "text": "Lucky Seven Diner. 2:13 AM.",
+   "hold": 0.0,
+   "text": "2:13 AM. The deck is done.\nYou are not.",
    "voice": ""
   },
   {
    "n": 2,
    "who": "slick",
-   "name": "SLICK",
+   "name": "STRANGER",
    "shot": "two",
    "subject": "",
    "act": "idle",
    "next": "",
-   "text": "You're staring at that pie like it owes you money.",
+   "hold": 0.0,
+   "text": "You're doing the thing where you stare at the pie like it owes you money.",
    "voice": "p_diner_02"
   },
   {
@@ -32,18 +34,20 @@
    "subject": "you",
    "act": "shrug",
    "next": "",
+   "hold": 0.0,
    "text": "Long day.",
    "voice": "p_diner_03"
   },
   {
    "n": 4,
    "who": "slick",
-   "name": "SLICK",
+   "name": "STRANGER",
    "shot": "cu",
    "subject": "slick",
    "act": "talk",
    "next": "",
-   "text": "Long year, by the look of you. Spreadsheets?",
+   "hold": 0.0,
+   "text": "Long life, by the look of it. What do you do?",
    "voice": "p_diner_04"
   },
   {
@@ -54,132 +58,27 @@
    "subject": "you",
    "act": "talk",
    "next": "",
-   "text": "For a guy who signs his name on them.",
+   "hold": 0.0,
+   "text": "Spreadsheets. For a guy who takes credit for them.",
    "voice": "p_diner_05"
   },
   {
    "n": 6,
    "who": "slick",
-   "name": "SLICK",
-   "shot": "ots",
+   "name": "STRANGER",
+   "shot": "push",
    "subject": "slick",
    "act": "lean",
    "next": "",
-   "text": "And what did you want? Before the lanyard.",
+   "hold": 0.0,
+   "text": "And what did you want to do?",
    "voice": "p_diner_06"
-  },
-  {
-   "n": 7,
-   "who": "you",
-   "name": "YOU",
-   "shot": "cu",
-   "subject": "you",
-   "act": "think",
-   "next": "",
-   "text": "Poker. For real. I know how that sounds at two in the morning.",
-   "voice": "p_diner_07"
-  },
-  {
-   "n": 8,
-   "who": "slick",
-   "name": "SLICK",
-   "shot": "cu",
-   "subject": "slick",
-   "act": "talk",
-   "next": "",
-   "text": "At two in the morning, it's the only true thing anybody says in here.",
-   "voice": "p_diner_08"
-  },
-  {
-   "n": 9,
-   "who": "slick",
-   "name": "SLICK",
-   "shot": "insert",
-   "subject": "envelope",
-   "act": "talk",
-   "next": "",
-   "text": "Biscayne Card Room. Saturday, noon. The seat's paid.",
-   "voice": "p_diner_09"
-  },
-  {
-   "n": 10,
-   "who": "you",
-   "name": "YOU",
-   "shot": "cu",
-   "subject": "you",
-   "act": "talk",
-   "next": "",
-   "text": "Why would you do that for a stranger?",
-   "voice": "p_diner_10"
-  },
-  {
-   "n": 11,
-   "who": "slick",
-   "name": "SLICK",
-   "shot": "push",
-   "subject": "slick",
-   "act": "talk",
-   "next": "",
-   "text": "Because I sat on that stool once. Somebody bought my pie.",
-   "voice": "p_diner_11"
-  },
-  {
-   "n": 12,
-   "who": "slick",
-   "name": "SLICK",
-   "shot": "cu",
-   "subject": "slick",
-   "act": "point",
-   "next": "nod",
-   "text": "Three things. Fold the junk. Lean on the scared ones. And near the money, play the money, not the chips.",
-   "voice": "p_diner_12"
-  },
-  {
-   "n": 13,
-   "who": "you",
-   "name": "YOU",
-   "shot": "ots",
-   "subject": "slick",
-   "act": "talk",
-   "next": "",
-   "text": "Who are you?",
-   "voice": "p_diner_13"
-  },
-  {
-   "n": 14,
-   "who": "slick",
-   "name": "SLICK",
-   "shot": "ecu",
-   "subject": "slick",
-   "act": "idle",
-   "next": "",
-   "text": "People call me Slick.",
-   "voice": "p_diner_14"
-  },
-  {
-   "n": 15,
-   "who": "card",
-   "name": "CARD",
-   "shot": "ecu",
-   "subject": "you",
-   "act": "think",
-   "next": "",
-   "text": "Inside, one line in pen: \"People insist on calling it luck.\"",
-   "voice": ""
   }
  ],
  "directions": [
   {
    "after": 0,
-   "text": "rain on the window, the neon buzz, the pie case hum; a booth radio low"
-  },
-  {
-   "after": 8,
-   "text": "he slides a red envelope along the counter; the chrome catches the neon"
-  },
-  {
-   "after": 14,
-   "text": "he leaves cash for both checks; the bell over the door rings; you look down at the envelope"
+   "text": "rain on the window, the neon buzz, the pie case hum"
   }
  ],
  "place": "diner",

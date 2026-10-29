@@ -1,0 +1,49 @@
+{
+ "id": "ft_won_tommy",
+ "title": "Final table, won",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "{ft_won}",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "cu",
+   "subject": "tommy",
+   "act": "laugh",
+   "next": "",
+   "hold": 0.0,
+   "text": "Ha! The kid got me. Thirty years and the kid got me.",
+   "voice": "ft_won_tommy_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "nod",
+   "next": "",
+   "hold": 0.0,
+   "text": "Good game.",
+   "voice": "ft_won_tommy_03"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Saturday night",
+ "cast": [
+  "tommy",
+  "you"
+ ]
+}

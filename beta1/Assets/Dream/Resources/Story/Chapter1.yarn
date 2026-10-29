@@ -1,38 +1,44 @@
-// Chapter 1: The Grind. What happens after each event and each night, and the lines that change with the job.
-
-title: BeforeEvent
----
-// the Classic has its own opener, the first time you sit down in it
-<<if $event == "classic" and not $classic_seen>>
-    <<set $classic_seen to true>>
-    <<film classic>>
-<<endif>>
-===
+// Chapter 1: The Grind. What happens after each event, in Steven's order (the old game's Play.cs queue): the final
+// table, the Classic's days, the first title, the first cooler or bust, going broke, then the goal.
 
 title: AfterEvent
 ---
-// the first tournament ends the prologue: the job decision
+// the final table, if you met someone there (ft_won_tommy, ft_lost_tommy)
+<<if $ft_end != "">>
+    <<film {$ft_end}>>
+<<endif>>
+// the first tournament ends the prologue: Monday, and the job decision at home
 <<if $event == "local">>
-    <<jump Decision>>
+    <<jump Monday>>
 <<endif>>
-<<if $chapter == 1 and $bankroll < 60>>
-    <<detour Broke>>
+<<if $event == "classic" and $qualified>>
+    <<film classic_day1>>
+    <<clock "11:58 PM">>
+    Slick: Day 2. Go to sleep. Don't celebrate yet. #text
 <<endif>>
-<<if $event == "classic">>
+<<if $event == "classic2">>
     <<if $won>>
-        <<film classic_win>>
-    <<elseif not $classic_lose_seen>>
-        <<set $classic_lose_seen to true>>
-        <<film classic_lose>>
+        <<film trentbeat>>
+    <<else>>
+        <<film {$classic_end}>>
     <<endif>>
 <<endif>>
-<<if $mistake and not $needle_seen>>
-    <<set $needle_seen to true>>
-    <<film needle>>
+<<if $won and not $firstwin_seen>>
+    <<set $firstwin_seen to true>>
+    <<film firstwin>>
 <<endif>>
-<<if $bust and not $lesson_seen>>
+<<if $cooler and not $badbeat_seen>>
+    <<set $badbeat_seen to true>>
+    <<film badbeat>>
+    <<clock "2:16 AM">>
+    Mustich: Heard you got coolered. Brutal. Maybe this game just isn't for everyone. #text
+    <<film badbeat2>>
+<<elseif $bust and not $lesson_seen>>
     <<set $lesson_seen to true>>
     <<film lesson1>>
+<<endif>>
+<<if $chapter == 1 and $bankroll < 55>>
+    <<detour Broke>>
 <<endif>>
 <<detour CheckGoal>>
 ===
@@ -52,25 +58,36 @@ title: CheckGoal
 
 title: Broke
 ---
-// rock bottom: Slick's way out depends on the job (old broke / broke_n)
-Slick: Busted? Good. Now you're a poker player. Everybody goes broke once. #text
+// rock bottom at the Lucky Seven: Slick's way out depends on the job (old broke / broke_n)
+<<film broke>>
 <<if $job == "nights">>
-    Slick: You've still got Lou's paycheck. Here's $1,000 till it builds back. Half your profits come back to me until it's paid. #text
+    <<film broke_n>>
 <<else>>
-    Slick: No paycheck to fall back on. Here's $1,000. Half your profits come back to me until it's paid. Respect the roll this time. #text
+    <<film broke_q>>
 <<endif>>
-<<stake 1000>>
+Rock bottom #card
+$1,000 now. Half your profits go back to Slick until it's repaid. #hint
+CF Tilt's Comeback Freeroll is open to you while your roll is low. #hint
+-> Take Slick's stake
+    <<stake 1000>>
+    <<film broke_stake>>
+-> Grind the freerolls
+    <<film broke_free>>
+-> Ask Lou for the job back <<if $job == "quit">>
+    Lou laughs for a full ten seconds. "Your job? We gave it to the intern." That night Slick sends $500: "Make it last."
+    <<money 500 "From Slick, after Lou said no">>
 ===
 
 title: ChapterEnd
 ---
-// with the day job, David texts first at ten thousand (old david1); then the goal and the end of the beta
+// with the day job, David texts first at ten thousand (old david1); then Slick sends you to the Circuit
 <<if $job == "nights" and $peak >= 10000 and not $david_seen>>
     <<set $david_seen to true>>
+    <<clock "6:02 PM">>
     David: TEN THOUSAND?? FROM POKER?? AND YOU STILL WENT TO WORK TODAY??? #text
     David: im just saying. lou doesnt deserve you. the felt does #text
 <<endif>>
 <<set $chapter to 2>>
-<<film goal>>
-<<film end>>
+<<clock "1:13 AM">>
+Slick: You've outgrown Biscayne. The Circuit stops at Silver Strike every couple of months. Every event gives a ring. Check the calendar. #text
 ===

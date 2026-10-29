@@ -1,0 +1,25 @@
+{
+ "id": "broke_free",
+ "title": "The freerolls",
+ "lines": [
+  {
+   "n": 1,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "nod",
+   "next": "",
+   "hold": 0.0,
+   "text": "Free money is the best money. Show me you can build it back from zero.",
+   "voice": "broke_free_01"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:15 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

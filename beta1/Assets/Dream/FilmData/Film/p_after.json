@@ -10,19 +10,21 @@
    "subject": "lou",
    "act": "point",
    "next": "",
-   "text": "Henderson numbers. Where are they?",
+   "hold": 0.0,
+   "text": "You look different. Did you finish the Henderson numbers?",
    "voice": "p_after_01"
   },
   {
    "n": 2,
-   "who": "you",
-   "name": "YOU",
+   "who": "card",
+   "name": "CARD",
    "shot": "cu",
    "subject": "you",
    "act": "think",
    "next": "",
-   "text": "I played eleven hours on Saturday. I made decisions that mattered. And now this.",
-   "voice": "p_after_02"
+   "hold": 0.0,
+   "text": "{saturday}",
+   "voice": ""
   },
   {
    "n": 3,
@@ -32,29 +34,20 @@
    "subject": "lou",
    "act": "lean",
    "next": "",
-   "text": "Hello? Weekend's over, champ.",
+   "hold": 0.0,
+   "text": "Hello? I'm talking to you. Weekend's over, champ.",
    "voice": "p_after_03"
   },
   {
    "n": 4,
-   "who": "you",
-   "name": "YOU",
+   "who": "card",
+   "name": "CARD",
    "shot": "push",
    "subject": "you",
    "act": "idle",
    "next": "",
-   "text": "Weekend's over.",
-   "voice": "p_after_04"
-  },
-  {
-   "n": 5,
-   "who": "card",
-   "name": "CARD",
-   "shot": "ecu",
-   "subject": "you",
-   "act": "think",
-   "next": "",
-   "text": "Decision time.",
+   "hold": 0.0,
+   "text": "Seven more hours of spreadsheets. Your mind never leaves table nine.",
    "voice": ""
   }
  ],

@@ -1,0 +1,86 @@
+{
+ "id": "classic_mustich",
+ "title": "The Biscayne Classic, Day 2",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ecu",
+   "subject": "you",
+   "act": "sad",
+   "next": "",
+   "hold": 0.0,
+   "text": "{day2}",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Final hand. Mustich shoves with his dad watching from the rail. Called. An ace on the river.",
+   "voice": ""
+  },
+  {
+   "n": 3,
+   "who": "card",
+   "name": "CARD",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "fist",
+   "next": "",
+   "hold": 0.0,
+   "text": "The room explodes. Mustich holds the trophy over his head like he bought it.",
+   "voice": ""
+  },
+  {
+   "n": 4,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "laugh",
+   "next": "",
+   "hold": 0.0,
+   "text": "Write it down, Florida. Some people are born for this.",
+   "voice": "classic_mustich_04"
+  },
+  {
+   "n": 5,
+   "who": "card",
+   "name": "CARD",
+   "shot": "push",
+   "subject": "you",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "{day2_you}",
+   "voice": ""
+  },
+  {
+   "n": 6,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "two",
+   "subject": "",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Next month, kid. That trophy isn't going anywhere.",
+   "voice": "classic_mustich_06"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Sunday night",
+ "cast": [
+  "mustich",
+  "tommy",
+  "you"
+ ]
+}

@@ -67,6 +67,21 @@ namespace Dream.Film
                 fog = new Color(0.5f, 0.35f, 0.35f), fogDensity = 0.004f,
                 sky = "Assets/Dream/FilmSets/office/sky.hdr", skyExposure = 0.5f, skyTint = new Color(1f, 0.7f, 0.66f), skyRotation = 0,
             };
+            // your apartment, Monday night: the city through the blinds (a shadowed spot, so the slats stripe the room and
+            // you), the strip light under the cabinets, a lamp by the sofa, the phone's glow
+            Looks["home"] = new Look
+            {
+                lamps =
+                {
+                    ["L_fill"] = new Lamp(new Color(0.35f, 0.45f, 0.9f), 1.2f, 5f),
+                    ["L_city"] = new Lamp(new Color(0.62f, 0.74f, 1f), 14f, 10f, 38, true),
+                    ["L_strip"] = new Lamp(Tungsten, 1.1f, 2.6f),
+                    ["L_lamp"] = new Lamp(Tungsten, 1.4f, 4f),
+                    ["L_phone"] = new Lamp(new Color(0.7f, 0.82f, 1f), 0.12f, 0.6f),
+                },
+                ambient = new Color(0.025f, 0.03f, 0.045f), fog = new Color(0.04f, 0.05f, 0.08f), fogDensity = 0.008f, key = 0.55f, exposure = 0.45f,
+                sky = "Assets/Dream/FilmSets/home/sky.hdr", skyExposure = 0.35f, skyTint = new Color(0.8f, 0.85f, 1f), skyRotation = 200,
+            };
         }
 
         static readonly Look CardRoom = Looks["cardroom"] = new Look

@@ -1,7 +1,10 @@
-# The Dream — Beta 1.0 script
+# The Dream — Test Beta 1.0 script
 
-Written fresh for Beta 1.0 (2026-10-29). Same premise, same people, new scenes and words.
-Edit freely: `python beta1/tools/script_build.py` turns this file into `Assets/Dream/Resources/Film/<scene>.json`, then
+**The Prologue and Chapter 1 are Steven's script, in his words** (the old game's `dream/story.js` scenes with the Unity
+game's `Story.cs` overrides, which win where they differ). This file stages them as film: shots, blocking, acting,
+pacing. The dialogue is his; the only changes are listed in `beta1/DAY_REPORT.md` ("Rhythm fixes"). Chapter 2 onward is
+being written by the cloud session (`unity/docs/STORY.md`).
+Edit freely: `python beta1/tools/script_build.py` turns this file into one JSON per film, then
 `python beta1/tools/voice.py` voices any changed line. Re-render the scene to see it.
 
 ## How a line is written
@@ -13,6 +16,10 @@ Edit freely: `python beta1/tools/script_build.py` turns this file into `Assets/D
 - `acting` is the body: a clip name (`talk`, `nod`, `shrug`, `point`, `lean`, `think`, `laugh`, `idle`, `fist`, `clap`,
   `sad`, `stand`, `sit`) and optionally `> <next clip>`.
 - A line in `{ }` under a scene is a stage direction for the render (sound, light, movement); it is not spoken.
+- `CARD` lines are the narrator: words on screen, never voiced. With a shot they sit over the picture; ` / ` breaks the
+  line. The game draws them (and subtitles for every spoken line) over the video in the brand fonts, so they stay sharp
+  on phones. A `{key}` in a card is filled in by the game when the film plays (your result on Saturday, who you met at
+  the final table). A third cue part like `2.5s` holds the shot that long; a card of just `-` shows no words.
 
 Films have no choices: the player chooses in the live game, not inside a video.
 
@@ -23,155 +30,263 @@ seen), the conditions on later lines, and the phone texts live in `Assets/Dream/
 
 ---
 
+
 ## p_office — Floor 34
 place: office · time: Monday, 6:47 PM · cast: lou, you
 The beat: the job takes everything, and he finally notices.
 {sunset through the glass, cleaners' vacuum far off, the air handler hum}
 
-1. CARD [card] (ext): Brickell, Miami. Floor 34. 6:47 PM.
-2. NATSO [lou] (ots lou; point): The Henderson deck. All of it again. On my desk by eight.
-3. YOU [you] (cu you; talk): You signed off on it Friday.
-4. NATSO [lou] (cu lou; lean): And tonight I'm un-signing. Partners liked the model, by the way. I told them it was my idea.
-5. NATSO [lou] (two; nod > idle): Team player. That's what I love about you.
-{Lou leaves frame; the motion-sensor lights click off down the floor, one bank at a time}
-6. YOU [you] (push you; think): Nine years old, I watched a man push every chip he had into the middle with nothing. He never showed. The whole room went quiet.
-7. YOU [you] (ecu you; think): Somewhere along the way I traded that for a lanyard.
+1. CARD [card] (ext): Monday. 6:47 PM. Floor 34, Brickell. / Everyone else went home an hour ago. Out the glass, the bay is going pink.
+2. NATSO [lou] (ots lou; point): The Henderson deck. Redo it. All of it. On my desk by eight.
+3. YOU [you] (cu you; talk): I sent it Friday. You signed off on it.
+4. NATSO [lou] (cu lou; lean): And now I'm un-signing off on it. Problem?
+5. YOU [you] (cu you; idle): No problem, Lou.
+6. NATSO [lou] (two; nod > idle): Great. Oh, and I told the partners the new model was my idea. Team player, right?
+7. CARD [card] (push you; think): You were nine the first time you saw it on TV. / A final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing.
+8. CARD [card] (ecu you; think): The room went silent. His opponent folded. He never showed. / He made it look like he could see the future.
+9. YOU [you] (ecu you; think): Somewhere along the way I traded that for a lanyard.
 
 ## p_diner — The Lucky Seven
 place: diner · time: 2:13 AM · cast: slick, you
-The beat: a stranger who has been where you are hands you a door. Slick says almost nothing, and every word lands.
-{rain on the window, the neon buzz, the pie case hum; a booth radio low}
+The beat: a stranger at the counter, and the question nobody has asked him in years. Ends on the question; the game
+asks it ("Play poker. For real." / "Doesn't matter now."), then plays p_diner_yes or p_diner_no, then p_diner2.
+{rain on the window, the neon buzz, the pie case hum}
 
-1. CARD [card] (ext): Lucky Seven Diner. 2:13 AM.
-2. SLICK [slick] (two; idle): You're staring at that pie like it owes you money.
+1. CARD [card] (ext): 2:13 AM. The deck is done. / You are not.
+2. STRANGER [slick] (two; idle): You're doing the thing where you stare at the pie like it owes you money.
 3. YOU [you] (cu you; shrug): Long day.
-4. SLICK [slick] (cu slick; talk): Long year, by the look of you. Spreadsheets?
-5. YOU [you] (cu you; talk): For a guy who signs his name on them.
-6. SLICK [slick] (ots slick; lean): And what did you want? Before the lanyard.
-7. YOU [you] (cu you; think): Poker. For real. I know how that sounds at two in the morning.
-8. SLICK [slick] (cu slick; talk): At two in the morning, it's the only true thing anybody says in here.
+4. STRANGER [slick] (cu slick; talk): Long life, by the look of it. What do you do?
+5. YOU [you] (cu you; talk): Spreadsheets. For a guy who takes credit for them.
+6. STRANGER [slick] (push slick; lean): And what did you want to do?
+
+## p_diner_yes — The honest answer
+place: diner · time: 2:13 AM · cast: slick, you
+
+1. YOU [you] (cu you; think): Play poker. For real.
+2. STRANGER [slick] (cu slick; laugh): Ha. Everybody says that at 2 AM. Almost nobody means it.
+
+## p_diner_no — The other answer
+place: diner · time: 2:13 AM · cast: slick, you
+
+1. YOU [you] (cu you; shrug): Doesn't matter now.
+2. STRANGER [slick] (push slick; talk): It always matters. You just stopped saying it out loud.
+
+## p_diner2 — The envelope
+place: diner · time: 2:14 AM · cast: slick, you
+The beat: a stranger who has been where you are hands you a door. Slick says almost nothing, and every word lands.
 {he slides a red envelope along the counter; the chrome catches the neon}
-9. SLICK [slick] (insert envelope; talk): Biscayne Card Room. Saturday, noon. The seat's paid.
-10. YOU [you] (cu you; talk): Why would you do that for a stranger?
-11. SLICK [slick] (push slick; talk): Because I sat on that stool once. Somebody bought my pie.
-12. SLICK [slick] (cu slick; point > nod): Three things. Fold the junk. Lean on the scared ones. And near the money, play the money, not the chips.
-13. YOU [you] (ots slick; talk): Who are you?
-14. SLICK [slick] (ecu slick; idle): People call me Slick.
-{he leaves cash for both checks; the bell over the door rings; you look down at the envelope}
-15. CARD [card] (ecu you; think): Inside, one line in pen: "People insist on calling it luck."
+
+1. CARD [card] (insert envelope; idle): He slides a red envelope across the counter.
+2. STRANGER [slick] (insert envelope; talk): The Biscayne Championship. Saturday, noon. Two-fifty seat. It's paid.
+3. YOU [you] (cu you; talk): Why would you give that to a stranger?
+4. STRANGER [slick] (push slick; talk): Because I sat on that stool once. Somebody bought my pie too.
+5. STRANGER [slick] (cu slick; point > nod): Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips.
+6. YOU [you] (ots slick; talk): Who are you?
+7. SLICK [slick] (ecu slick; idle): People call me Slick.
+{the bell over the door rings; his stool is empty}
+8. CARD [card] (wide; idle): He drops cash for both checks and is gone before the bell over the door stops ringing. / Inside the envelope: a seat card, and one line in pen.
+9. CARD [card] (insert envelope; idle): “People insist on calling it luck…”
 
 ## p_seat — The first seat
-place: cardroom · time: Saturday, 11:58 AM · cast: gnomey, tommy, you, dealer
-The beat: walking into the room where you don't belong yet.
-{the clatter of chips like rain on a tin roof, a floor call far off, a cash game laughing}
+place: cardroom · time: Saturday, 11:40 AM · cast: gnomey, you
+The beat: walking into the room where you don't belong yet. Miles takes the envelope at the cage.
+{the clatter of chips like rain on a tin roof, a floor call far off}
 
-1. CARD [card] (ext): Biscayne Card Room. Saturday, noon.
-2. GNOMEY [gnomey] (two; point): Seat card. Table nine, seat four. Phones off the felt. Welcome to Biscayne.
-3. TOMMY [tommy] (cu tommy; lean): New face. You're the kid with the free seat. Word gets around a small room, kid.
-4. TOMMY [tommy] (ots tommy; talk): Thirty-five years at these tables. Here's free advice: this room eats dreamers for breakfast.
-5. YOU [you] (cu you; talk): Then I'll try to be lunch.
-6. DEALER [dealer] (insert cards; idle): Shuffle up and deal.
+1. CARD [card] (ext): Saturday. 11:40 AM. Biscayne Card Room, off the causeway. / Carpet from 1994. Coffee from this morning, maybe.
+2. MILES [gnomey] (two; idle): Help you?
+3. YOU [you] (cu you; talk): Somebody bought me a seat. The Biscayne Championship.
+4. MILES [gnomey] (cu gnomey; point): Free seat? Lucky you. Table nine, seat four. Cards in the air at noon.
+5. CARD [card] (wide; idle): A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway.
+
+## ft_intro_tommy — Final table (the Biscayne Championship)
+place: cardroom · time: Saturday night · cast: tommy, you
+Plays when you reach the final table of an event Tommy is in.
+
+1. CARD [card] (wide; idle): {ft_intro}
+2. TOMMY [tommy] (cu tommy; lean): Thirty years, kid, and I still get butterflies at a final table.
+3. YOU [you] (cu you; nod): Let's play.
+
+## ft_won_tommy — Final table, won
+place: cardroom · time: Saturday night · cast: tommy, you
+
+1. CARD [card] (wide; idle): {ft_won}
+2. TOMMY [tommy] (cu tommy; laugh): Ha! The kid got me. Thirty years and the kid got me.
+3. YOU [you] (cu you; nod): Good game.
+
+## ft_lost_tommy — Final table, lost
+place: cardroom · time: Saturday night · cast: tommy, you
+
+1. CARD [card] (wide; idle): {ft_lost}
+2. TOMMY [tommy] (cu tommy; shrug): Not today, kid. Thirty years of practice.
+3. YOU [you] (cu you; nod): Good game. I'll see you again.
+
+## ft_intro_mustich — Final table (the Biscayne Classic)
+place: cardroom · time: Sunday · cast: mustich, you
+
+1. CARD [card] (wide; idle): {ft_intro}
+2. MUSTICH [mustich] (cu mustich; lean): Final table. Dad flew in for this. Don't embarrass yourself.
+3. YOU [you] (cu you; nod): Let's play.
 
 ## p_after — Monday again
 place: office · time: Monday, 9:04 AM · cast: lou, you
-The beat: the job looks smaller now, and it's time to choose. The film ends on the choice; the game asks it.
+The beat: the job looks smaller now. No choice here any more: that comes tonight, at home.
 
-1. NATSO [lou] (ots lou; point): Henderson numbers. Where are they?
-2. YOU [you] (cu you; think): I played eleven hours on Saturday. I made decisions that mattered. And now this.
-3. NATSO [lou] (cu lou; lean): Hello? Weekend's over, champ.
-4. YOU [you] (push you; idle): Weekend's over.
-5. CARD [card] (ecu you; think): Decision time.
+1. NATSO [lou] (ots lou; point): You look different. Did you finish the Henderson numbers?
+2. CARD [card] (cu you; think): {saturday}
+3. NATSO [lou] (cu lou; lean): Hello? I'm talking to you. Weekend's over, champ.
+4. CARD [card] (push you; idle): Seven more hours of spreadsheets. Your mind never leaves table nine.
 
-## p_quit — Quit. Today.
-place: office · time: Monday, 9:06 AM · cast: lou, you
-The beat: the best thirty-four floors of your life. Plays when you choose to quit.
-{the floor goes quiet; somebody stops typing}
+## p_offer — Monday night
+place: home · time: Monday, 11:20 PM · cast: you
+The beat: the apartment at night, the city through the blinds, the phone on the counter. Slick's texts and the choice
+come next, on the phone, in the game.
+{the phone buzzes on the counter}
 
-1. YOU [you] (cu you; talk): Lou? The Henderson deck. Redo it yourself.
-2. NATSO [lou] (cu lou; lean): You'll be back. They always come back.
-3. YOU [you] (push you; idle): Not this one.
-4. CARD [card] (wide): No paycheck. No plan B. Slick: "Five thousand in your account. Not a loan. Don't make me regret it."
-5. CARD [card] (ext): David: "BRO. YOU QUIT YOUR JOB?? CALL ME"
+1. CARD [card] (wide; idle): Monday night. Your phone buzzes on the counter.
+2. CARD [card] (insert phone; idle; 2.5s): -
+3. CARD [card] (push you; think; 2.5s): -
 
-## p_keep — Keep the job
-place: office · time: Monday, 9:06 AM · cast: lou, you
-The beat: you keep the lanyard, and the dream gets the nights. Plays when you choose to keep the job.
+## p_quit — Sent
+place: home · time: Monday, 11:24 PM · cast: you
+Plays after you text Lou.
 
-1. NATSO [lou] (ots lou; point): Eight o'clock. Don't make me ask twice.
-2. YOU [you] (cu you; nod): On your desk by eight, Lou.
-3. YOU [you] (push you; think): Days are his. Saturdays are mine.
-4. CARD [card] (wide): Two thousand in savings. A paycheck every Friday. Biscayne on weekends.
-5. CARD [card] (ext): Slick: "Smart. A paycheck buys you time to learn. Never play above your roll."
+1. CARD [card] (push you; idle): Sent. No paycheck. No plan B. / You have never felt lighter.
+
+## p_keep — BANKROLL
+place: home · time: Monday, 11:24 PM · cast: you
+Plays when you keep the job.
+
+1. CARD [card] (insert laptop; idle): You keep the lanyard. / But tonight you open a new spreadsheet and name it BANKROLL.
+2. CARD [card] (cu you; think): $2,000 lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream.
 
 ## c1 — The Grind
 place: cardroom · time: Tuesday, 7:02 PM · cast: gnomey, tommy, mustich, you
 The beat: the room, the people, the goal.
 {sodium light, the list board squeaks, the palms outside going black}
 
-1. CARD [card] (ext): Chapter 1. The Grind.
-2. GNOMEY [gnomey] (two; point): You came back. Most don't. One-two has a seat. Midnight Rush starts at twelve.
-3. TOMMY [tommy] (cu tommy; talk): Told you, kid. Mayor of this room. I see everything.
-4. MUSTICH [mustich] (cu mustich; laugh): Ah, the free-seat lad. Lovely hoodie. Did it come with the seat?
-5. MUSTICH [mustich] (ots mustich; lean): I've had my name on the Classic list for a year. Don't get attached to it.
-6. YOU [you] (push you; idle): Ten thousand. Or the Classic. Whichever comes first.
-7. CARD [card] (wide): Goal: win the Biscayne Classic, or build a $10,000 bankroll.
+1. CARD [card] (ext; idle): Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe. / Twenty tables, every one of them a classroom.
+2. MILES [gnomey] (two; point): Back again? Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven.
+3. TOMMY [tommy] (cu tommy; point): Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast.
+4. MUSTICH [mustich] (cu mustich; laugh): Cute hoodie. Did it come with the free seat?
+5. CARD [card] (ots mustich; idle): Mustich. Dad's money, a solver subscription, and a smile you want to wipe off. / He's been circling the Biscayne Classic all year.
+6. CARD [card] (wide; idle): Goal: win the Biscayne Classic, or build your bankroll to $10,000.
 
-## lesson1 — Fold the junk
-place: diner · time: 1:40 AM · cast: slick, you
-Plays after your first bust in Chapter 1.
+## classic_day1 — Bags and tags
+place: cardroom · time: Saturday, 11:50 PM · cast: gnomey, mustich, you
+Plays when you survive Day 1 of the Biscayne Classic. Slick's text follows on the phone.
 
-1. CARD [card] (ext): Lucky Seven. 1:40 AM.
-2. SLICK [slick] (two; idle): Tell me the hand.
-3. YOU [you] (cu you; sad): King-jack, early position. Raised, got three-bet, called. Flopped a jack. He had kings.
-4. SLICK [slick] (push slick; talk): Then the flop didn't beat you. The first decision did. Everything after that was a story you told yourself.
-5. SLICK [slick] (cu slick; point > nod): Fold the junk. It isn't advice. It's arithmetic.
+1. CARD [card] (wide; idle): Bags and tags. Two hundred and twelve started this morning. Forty come back tomorrow, and you're one of them.
+2. MILES [gnomey] (two; point): Bag your chips, write your name on it. Day 2 is noon tomorrow. Don't be late.
+3. MUSTICH [mustich] (cu mustich; lean): Look who survived. Don't get used to it.
 
-## needle — Mustich
-place: cardroom · time: night · cast: mustich, you
-Plays when Mustich wins a pot from you in Chapter 1 (once).
-
-1. MUSTICH [mustich] (cu mustich; laugh): Oh, that's brilliant. Thank you. Genuinely. Dad'll want to hear about that one.
-2. YOU [you] (cu you; idle): Enjoy it.
-3. MUSTICH [mustich] (ots mustich; lean): I always do.
-
-## classic — The Biscayne Classic
-place: cardroom · time: Saturday, 1:00 PM · cast: gnomey, mustich, tommy, you
-Plays when you sit down in the Classic.
-
-1. CARD [card] (ext): The Biscayne Classic. 212 players. One trophy.
-2. GNOMEY [gnomey] (wide; point): Two hundred and twelve runners. Final table by the cage. Good luck, all.
-3. MUSTICH [mustich] (cu mustich; laugh): Your table or mine, I'll see you at the end of it.
-4. TOMMY [tommy] (ots tommy; talk): Thirty years I've chased that trophy. Don't let a kid with a solver take it home.
-
-## classic_win — Gold at Biscayne
-place: cardroom · time: Saturday, 11:47 PM · cast: mustich, tommy, gnomey, you
+## trentbeat — The Biscayne Classic
+place: cardroom · time: Sunday night · cast: mustich, tommy, gnomey, you
 Plays when you win the Classic.
 
-1. CARD [card] (wide): The last card hits the felt.
-2. MUSTICH [mustich] (cu mustich; shrug): Well. Dad says the Classic's a rounding error anyway.
-3. TOMMY [tommy] (cu tommy; clap): Don't listen to him, kid. You earned it. Every chip.
-4. GNOMEY [gnomey] (two; point): Your name goes on the board by the cage. Permanent marker.
-5. YOU [you] (push you; fist): Permanent.
+1. CARD [card] (wide; idle): Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs.
+2. CARD [card] (push you; fist): The last card hits the felt. The Biscayne Classic is yours.
+3. MUSTICH [mustich] (cu mustich; shrug): Enjoy it. Dad says the Classic is a rounding error.
+4. TOMMY [tommy] (cu tommy; clap): Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it.
+5. MILES [gnomey] (two; point): Your name goes on the board by the cage. Permanent marker. Congratulations.
 
-## classic_lose — Out of the Classic
-place: cardroom · time: night · cast: tommy, you
-Plays when you bust the Classic.
+## classic_mustich — The Biscayne Classic, Day 2
+place: cardroom · time: Sunday night · cast: mustich, tommy, you
+Plays when you're out of Day 2 and Mustich wins it.
 
-1. TOMMY [tommy] (two; lean): Happens to all of us, kid. Thirty years it's happened to me.
-2. YOU [you] (cu you; sad): Doesn't make it feel better.
-3. TOMMY [tommy] (cu tommy; talk): No. But the list is up again next month.
+1. CARD [card] (ecu you; sad): {day2}
+2. CARD [card] (wide; idle): Final hand. Mustich shoves with his dad watching from the rail. Called. An ace on the river.
+3. CARD [card] (cu mustich; fist): The room explodes. Mustich holds the trophy over his head like he bought it.
+4. MUSTICH [mustich] (cu mustich; laugh): Write it down, Florida. Some people are born for this.
+5. CARD [card] (push you; idle): {day2_you}
+6. TOMMY [tommy] (two; talk): Next month, kid. That trophy isn't going anywhere.
 
-## goal — Ten thousand
+## classic_shark — The Biscayne Classic, Day 2
+place: cardroom · time: Sunday night · cast: tommy, gnomey, you
+Plays when you're out of Day 2 and Tommy wins it.
+
+1. CARD [card] (ecu you; sad): {day2}
+2. CARD [card] (wide; idle): Final hand. Tommy “The Shark” Maio turns over two kings and the whole rail stops breathing.
+3. CARD [card] (cu tommy; idle): The river bricks. Thirty years at this card room, and the old man finally has his trophy.
+4. TOMMY [tommy] (cu tommy; fist): Thirty years! You hear me? Thirty years!
+5. CARD [card] (push you; idle): {day2_you}
+6. MILES [gnomey] (two; point): His name goes on the board by the cage. Next month, it could be yours.
+
+## classic_other — The Biscayne Classic, Day 2
+place: cardroom · time: Sunday night · cast: slick, gnomey, you
+Plays when you're out of Day 2 and somebody else wins it. (In the old game a legend could win it; the legends aren't
+built yet, so it's Slick, who is in that list too.)
+
+1. CARD [card] (ecu you; sad): {day2}
+2. CARD [card] (wide; idle): Final hand. All in, called, and the board runs clean.
+3. CARD [card] (wide; idle): The room comes to its feet. The Biscayne Classic has a new name on the board.
+4. SLICK [slick] (cu slick; idle): Somebody had to keep you humble, kid.
+5. CARD [card] (push you; idle): {day2_you}
+6. MILES [gnomey] (two; point): The name goes on the board by the cage. Next month, it could be yours.
+
+## lesson1 — A lesson: fold the junk
+place: diner · time: 1:40 AM · cast: slick, you
+Plays the first time you bust out of the money in Chapter 1 (not a cooler).
+
+1. CARD [card] (ext; idle): Lucky Seven. 1:40 AM. The pie is the same. You are a little poorer.
+2. SLICK [slick] (two; idle): Tell me the hand that got you.
+3. YOU [you] (cu you; sad): King-jack, early position. I raised. Got three-bet. Called. Flopped a jack. Lost everything to kings.
+4. SLICK [slick] (push slick; talk): Then the hand didn't get you. The first decision did. From early, king-jack is a fold. Everything after was a story you told yourself.
+5. SLICK [slick] (cu slick; point > nod): Fold the junk. That's not advice, it's arithmetic. Your misses are on the Spacepad. Drill them until the fold is boring.
+
+## firstwin — First title
 place: diner · time: 2:13 AM · cast: slick, you
-Plays when Chapter 1's goal is reached, before the end card.
+Plays after your first tournament win.
 
-1. SLICK [slick] (two; idle): You're not staring at the pie anymore.
-2. YOU [you] (cu you; talk): I did it. Biscayne's done.
-3. SLICK [slick] (cu slick; talk): Biscayne was the classroom. The Circuit is the exam. Bigger rooms. Better players. Rings.
-4. SLICK [slick] (push slick; nod): People will call it luck. Let them.
+1. SLICK [slick] (cu slick; talk): Saw the photo. Trophy, big grin, terrible lighting. Proud of you, kid.
+2. SLICK [slick] (two; point): Left something in your locker. Every champion needs a pair.
+3. CARD [card] (cu you; laugh): Inside: a pair of pixelated sunglasses and a note. / “Deal with it.”
+
+## badbeat — Bad beat
+place: diner · time: 2:13 AM · cast: slick, you
+Plays after your first cooler. Mustich's text comes next on the phone, then badbeat2.
+
+1. CARD [card] (ext; idle): Lucky Seven Diner. Same stool, same pie. The feeling is not the same.
+2. YOU [you] (cu you; sad): I did everything right. Every decision. And I'm out.
+3. SLICK [slick] (cu slick; talk): Then you had a good day. You just did not get paid for it.
+4. SLICK [slick] (push slick; talk): Over one hand, the cards pay whoever they like. Over ten thousand, they pay whoever studied. Play for the ten thousand.
+
+## badbeat2 — Bad beat (after Mustich's text)
+place: diner · time: 2:15 AM · cast: slick, you
+
+1. YOU [you] (cu you; idle): He's right about one thing. It isn't for everyone.
+2. SLICK [slick] (push slick; nod): Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list.
+
+## broke — Rock bottom
+place: diner · time: 2:13 AM · cast: slick, you
+Plays when the bankroll can't buy into anything. Then broke_q (full-time) or broke_n (day job), then the choice.
+
+1. CARD [card] (ext; idle): Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet.
+2. SLICK [slick] (two; idle): Busted?
+3. YOU [you] (cu you; sad): Every last dollar.
+4. SLICK [slick] (cu slick; talk): Good. Now you're a poker player. Everybody goes broke once. The good ones learn why.
+
+## broke_q — Rock bottom (full-time)
+place: diner · time: 2:14 AM · cast: slick, you
+
+1. SLICK [slick] (push slick; point): Here's how you climb out. Freerolls on CF Tilt every day. A real job while you rebuild. Or my money, and half your profits until it's back.
+
+## broke_n — Rock bottom (day job)
+place: diner · time: 2:14 AM · cast: slick, you
+
+1. SLICK [slick] (push slick; point): You've still got Lou's paycheck. Freerolls on CF Tilt while it builds back. Or my money, and half your profits until it's back.
+
+## broke_stake — Slick's stake
+place: diner · time: 2:15 AM · cast: slick, you
+
+1. SLICK [slick] (cu slick; nod): Half your profits come back to me until it's paid. Respect the roll this time.
+
+## broke_free — The freerolls
+place: diner · time: 2:15 AM · cast: slick, you
+
+1. SLICK [slick] (cu slick; nod): Free money is the best money. Show me you can build it back from zero.
 
 ## end — End card
-1. CARD [card] (ext): Beta 1.0. Chapter 2: The Circuit, coming soon.
+1. CARD [card] (ext): Test Beta 1.0. Chapter 2: The Circuit, coming soon.
 
 ---
 

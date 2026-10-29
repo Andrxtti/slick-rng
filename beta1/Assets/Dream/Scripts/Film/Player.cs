@@ -8,8 +8,9 @@ using UnityEngine.UI;
 namespace Dream.Film
 {
     // Plays one scene of the script as film: loads the set and the cast, then for each line cuts to its shot, plays the
-    // voice and the acting, and holds for the length of the voice plus a beat. Cards are captions over the shot (or on
-    // black when there is no set). The render command (Editor/Render.cs) records it and stops on Take.Done.
+    // voice and the acting, and holds for the length of the voice plus a beat. Cards (the narrator) and subtitles are not
+    // burned into the picture: their times go to <id>.json next to the film, and the game draws them over the video in the
+    // brand fonts (sharp on any screen, and a {key} in a card is filled in when it plays). Editor/Render.cs records it.
     public class Player : MonoBehaviour
     {
         public string sceneId = "p_diner";   // played when no render is asking for one
@@ -17,9 +18,12 @@ namespace Dream.Film
 
         Scene sc; GameObject set; Camera cam; AudioSource voice; Volume volume; DepthOfField dof;
         readonly Dictionary<string, Actor> actors = new Dictionary<string, Actor>();
-        Text caption; Image black; CanvasGroup capGroup;
+        Image black;
         AudioSource sfx, room;
         Shot shot; Light key, fill; System.IO.StreamWriter cue;
+        [System.Serializable] public class Caption { public float t, len; public string who, name, text; }
+        [System.Serializable] class Captions { public List<Caption> lines = new List<Caption>(); }
+        readonly Captions captions = new Captions();
 
         IEnumerator Start()
         {
@@ -28,7 +32,7 @@ namespace Dream.Film
             if (sc == null) { Debug.LogWarning("[Dream] no film " + id); Take.Done = true; yield break; }
             Sets.Current = null;
             if (!string.IsNullOrEmpty(sc.place)) set = Sets.Load(sc.place);
-            BuildCamera(); BuildCaption();   // after the set: the grade reads the set's look
+            BuildCamera(); BuildBlack();   // after the set: the grade reads the set's look
             if (set != null)
                 foreach (var who in sc.cast)
                 {
@@ -53,6 +57,7 @@ namespace Dream.Film
             try { cue = new System.IO.StreamWriter(System.IO.Path.Combine(Application.dataPath, "..", "Logs", $"film_{id}.txt")); } catch { }
             foreach (var l in sc.lines) yield return PlayLine(l);
             cue?.Close();
+            if (Take.Recording) try { System.IO.File.WriteAllText(System.IO.Path.Combine(@"C:\Dev\Builds\Beta1\Film", id + ".json"), JsonUtility.ToJson(captions, true)); } catch { }
             yield return Fade(1f, 0.6f);
             Take.Done = true;
         }
@@ -65,9 +70,12 @@ namespace Dream.Film
             cue?.WriteLine($"{l.n}	{Time.time:0.00}	{l.shot} {l.subject}	{l.who}: {l.text}	{(shot != null ? $"cam {shot.to} focus {shot.focus}" : "")}"); cue?.Flush();
             AudioClip clip = string.IsNullOrEmpty(l.voice) ? null : Data.Load<AudioClip>($"Voice/{l.voice}.wav");
             foreach (var d in sc.directions)   // sounds the stage directions call for
+            {
                 if (d.after == l.n - 1 && d.text.Contains("bell")) sfx.PlayOneShot(Data.Load<AudioClip>("Sfx/bell.wav"), 0.7f);
-            float len = l.hold > 0 ? Mathf.Max(l.hold, clip != null ? clip.length + Beat : 0) : clip != null ? clip.length + Beat : CardHold;
-            if (l.who == "card" && !string.IsNullOrEmpty(l.text)) { caption.text = l.text; StartCoroutine(FadeCaption(len)); }
+                if (d.after == l.n - 1 && d.text.Contains("buzz")) sfx.PlayOneShot(Data.Load<AudioClip>("Sfx/buzz.wav"), 0.8f);
+            }
+            float len = l.hold > 0 ? Mathf.Max(l.hold, clip != null ? clip.length + Beat : 0) : clip != null ? clip.length + Beat : ReadTime(l.text);
+            if (!string.IsNullOrEmpty(l.text)) captions.lines.Add(new Caption { t = Time.time, len = len, who = l.who, name = l.name, text = l.text });
             if (actors.TryGetValue(l.who, out var speaker))
             {
                 speaker.Act(l.act, l.next, len);
@@ -106,6 +114,9 @@ namespace Dream.Film
             fill.intensity = 0.5f * (Sets.Current?.key ?? 1f);
         }
 
+        // a narrator card stays up long enough to read twice at an easy pace; a {key} card (filled in later) gets a fixed beat
+        static float ReadTime(string text) => string.IsNullOrEmpty(text) ? CardHold : text.Contains("{") ? 4.5f : Mathf.Max(CardHold, 1.6f + text.Length / 15f);
+
         Actor Other(string who) { foreach (var kv in actors) if (kv.Key != who) return kv.Value; return null; }
 
         void BuildCamera()
@@ -139,29 +150,15 @@ namespace Dream.Film
             dof.focalLength.Override(50f); dof.aperture.Override(2.4f); dof.bladeCount.Override(7);
         }
 
-        void BuildCaption()
+        void BuildBlack()
         {
-            var canvas = new GameObject("Captions").AddComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 10;
+            var canvas = new GameObject("Black").AddComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 10;
             var scaler = canvas.gameObject.AddComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; scaler.referenceResolution = new Vector2(1920, 1080);
             black = new GameObject("Black").AddComponent<Image>(); black.transform.SetParent(canvas.transform, false);
             Stretch(black.rectTransform); black.color = Color.clear; black.raycastTarget = false;
-            caption = new GameObject("Caption").AddComponent<Text>(); caption.transform.SetParent(canvas.transform, false);
-            Stretch(caption.rectTransform); caption.rectTransform.offsetMin = new Vector2(160, 110); caption.rectTransform.offsetMax = new Vector2(-160, -110);
-            caption.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); caption.fontSize = 44; caption.color = new Color(0.96f, 0.94f, 0.9f);
-            caption.alignment = TextAnchor.LowerCenter; caption.horizontalOverflow = HorizontalWrapMode.Wrap;
-            var sh = caption.gameObject.AddComponent<Shadow>(); sh.effectColor = new Color(0, 0, 0, 0.8f); sh.effectDistance = new Vector2(2, -2);
-            capGroup = caption.gameObject.AddComponent<CanvasGroup>(); capGroup.alpha = 0;
         }
 
         static void Stretch(RectTransform r) { r.anchorMin = Vector2.zero; r.anchorMax = Vector2.one; r.offsetMin = r.offsetMax = Vector2.zero; }
-
-        IEnumerator FadeCaption(float hold)
-        {
-            for (float t = 0; t < 0.5f; t += Time.deltaTime) { capGroup.alpha = t / 0.5f; yield return null; }
-            capGroup.alpha = 1; yield return new WaitForSeconds(Mathf.Max(0, hold - 1.0f));
-            for (float t = 0; t < 0.5f; t += Time.deltaTime) { capGroup.alpha = 1 - t / 0.5f; yield return null; }
-            capGroup.alpha = 0;
-        }
 
         IEnumerator Fade(float to, float time)
         {

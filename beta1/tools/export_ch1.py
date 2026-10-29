@@ -18,8 +18,20 @@ print("spots.json copied, sha256", h[0][:16])
 
 d = json.load(open(os.path.join(OLD, "dream_data.json"), encoding="utf-8"))
 data = d["data"]
-events = [e for e in data["DR_EVENTS"] if e.get("ch") in (0, 1) and not e.get("online") and e.get("venue") == "cardroom"]
-fields = sorted({str(e["field"]) for e in events if "field" in e})
+# Chapter 1's events as Steven's Unity game ran them (old Story.cs ApplyOverrides): the free Biscayne Championship, the
+# Winn Nightly $110, CF Tilt's $55 Global Rush (online), the Biscayne Classic over two days (Day 1 bags 40 for Day 2,
+# which pays the whole 212-player prize pool), and the Comeback Freeroll when the roll runs low.
+ev = {e["id"]: dict(e) for e in data["DR_EVENTS"]}
+nightly = dict(ev["nightly"], name="The Winn Nightly $110", buyin=110, field=60, turbo=False, blurb="Biscayne's nightly. Sixty players, deep enough to actually play.")
+glob = dict(ev["tilt11"], id="glob55", name="CF $55 Global Rush", buyin=55, field=1104, turbo=False, blurb="CF Tilt's nightly flagship. Players from everywhere, a real prize pool.")
+day1 = dict(ev["classic"], name="Biscayne Classic · Day 1", kind="sat", seats=40, target="classic2", stages=["early", "middle"], perS=[4, 3],
+            blurb="The big one at Biscayne, over two days. Survive Saturday and bag your chips for Sunday. Mustich wants it too.")
+day1.pop("title", None); day1.pop("boss", None)
+day2 = dict(ev["classic"], id="classic2", name="Biscayne Classic · Day 2", field=40, reentry=False, free=True, stages=["bubble", "deep", "final"], perS=[2, 2, 3],
+            blurb="Forty players come back Sunday. Thirty-two get paid. One gets the trophy.")
+free = dict(ev["freeroll"], prizeBase=1)
+events = [ev["local"], nightly, glob, day1, day2, free]
+fields = sorted({str(e["field"]) for e in events if "field" in e} | {"212"})
 ch = data["DR_CHAPTERS"] if "DR_CHAPTERS" in data else None
 out = {
     "labels": data["DR_LABELS"],

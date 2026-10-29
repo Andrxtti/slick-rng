@@ -10,77 +10,69 @@
    "subject": "",
    "act": "idle",
    "next": "",
-   "text": "Biscayne Card Room. Saturday, noon.",
+   "hold": 0.0,
+   "text": "Saturday. 11:40 AM. Biscayne Card Room, off the causeway.\nCarpet from 1994. Coffee from this morning, maybe.",
    "voice": ""
   },
   {
    "n": 2,
    "who": "gnomey",
-   "name": "GNOMEY",
+   "name": "MILES",
    "shot": "two",
    "subject": "",
-   "act": "point",
+   "act": "idle",
    "next": "",
-   "text": "Seat card. Table nine, seat four. Phones off the felt. Welcome to Biscayne.",
+   "hold": 0.0,
+   "text": "Help you?",
    "voice": "p_seat_02"
   },
   {
    "n": 3,
-   "who": "tommy",
-   "name": "TOMMY",
-   "shot": "cu",
-   "subject": "tommy",
-   "act": "lean",
-   "next": "",
-   "text": "New face. You're the kid with the free seat. Word gets around a small room, kid.",
-   "voice": "p_seat_03"
-  },
-  {
-   "n": 4,
-   "who": "tommy",
-   "name": "TOMMY",
-   "shot": "ots",
-   "subject": "tommy",
-   "act": "talk",
-   "next": "",
-   "text": "Thirty-five years at these tables. Here's free advice: this room eats dreamers for breakfast.",
-   "voice": "p_seat_04"
-  },
-  {
-   "n": 5,
    "who": "you",
    "name": "YOU",
    "shot": "cu",
    "subject": "you",
    "act": "talk",
    "next": "",
-   "text": "Then I'll try to be lunch.",
-   "voice": "p_seat_05"
+   "hold": 0.0,
+   "text": "Somebody bought me a seat. The Biscayne Championship.",
+   "voice": "p_seat_03"
   },
   {
-   "n": 6,
-   "who": "dealer",
-   "name": "DEALER",
-   "shot": "insert",
-   "subject": "cards",
+   "n": 4,
+   "who": "gnomey",
+   "name": "MILES",
+   "shot": "cu",
+   "subject": "gnomey",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "Free seat? Lucky you. Table nine, seat four. Cards in the air at noon.",
+   "voice": "p_seat_04"
+  },
+  {
+   "n": 5,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
    "act": "idle",
    "next": "",
-   "text": "Shuffle up and deal.",
-   "voice": "p_seat_06"
+   "hold": 0.0,
+   "text": "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway.",
+   "voice": ""
   }
  ],
  "directions": [
   {
    "after": 0,
-   "text": "the clatter of chips like rain on a tin roof, a floor call far off, a cash game laughing"
+   "text": "the clatter of chips like rain on a tin roof, a floor call far off"
   }
  ],
  "place": "cardroom",
- "time": "Saturday, 11:58 AM",
+ "time": "Saturday, 11:40 AM",
  "cast": [
   "gnomey",
-  "tommy",
-  "you",
-  "dealer"
+  "you"
  ]
 }

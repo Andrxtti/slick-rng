@@ -1,0 +1,37 @@
+{
+ "id": "badbeat2",
+ "title": "Bad beat (after Mustich's text)",
+ "lines": [
+  {
+   "n": 1,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "He's right about one thing. It isn't for everyone.",
+   "voice": "badbeat2_01"
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "push",
+   "subject": "slick",
+   "act": "nod",
+   "next": "",
+   "hold": 0.0,
+   "text": "Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list.",
+   "voice": "badbeat2_02"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:15 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

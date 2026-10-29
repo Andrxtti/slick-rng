@@ -1,0 +1,130 @@
+{
+ "id": "p_diner2",
+ "title": "The envelope",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "insert",
+   "subject": "envelope",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "He slides a red envelope across the counter.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "STRANGER",
+   "shot": "insert",
+   "subject": "envelope",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "The Biscayne Championship. Saturday, noon. Two-fifty seat. It's paid.",
+   "voice": "p_diner2_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Why would you give that to a stranger?",
+   "voice": "p_diner2_03"
+  },
+  {
+   "n": 4,
+   "who": "slick",
+   "name": "STRANGER",
+   "shot": "push",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Because I sat on that stool once. Somebody bought my pie too.",
+   "voice": "p_diner2_04"
+  },
+  {
+   "n": 5,
+   "who": "slick",
+   "name": "STRANGER",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "point",
+   "next": "nod",
+   "hold": 0.0,
+   "text": "Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips.",
+   "voice": "p_diner2_05"
+  },
+  {
+   "n": 6,
+   "who": "you",
+   "name": "YOU",
+   "shot": "ots",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Who are you?",
+   "voice": "p_diner2_06"
+  },
+  {
+   "n": 7,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "ecu",
+   "subject": "slick",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "People call me Slick.",
+   "voice": "p_diner2_07"
+  },
+  {
+   "n": 8,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "He drops cash for both checks and is gone before the bell over the door stops ringing.\nInside the envelope: a seat card, and one line in pen.",
+   "voice": ""
+  },
+  {
+   "n": 9,
+   "who": "card",
+   "name": "CARD",
+   "shot": "insert",
+   "subject": "envelope",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "“People insist on calling it luck…”",
+   "voice": ""
+  }
+ ],
+ "directions": [
+  {
+   "after": 0,
+   "text": "he slides a red envelope along the counter; the chrome catches the neon"
+  },
+  {
+   "after": 7,
+   "text": "the bell over the door rings; his stool is empty"
+  }
+ ],
+ "place": "diner",
+ "time": "2:14 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

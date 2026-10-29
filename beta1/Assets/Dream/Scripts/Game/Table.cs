@@ -12,6 +12,8 @@ namespace Dream.Game
     {
         static Sprite felt, rounded;
         static RectTransform root; static Run run; static Action<bool> done; static bool mistake;
+        // a new level is about to be dealt: the game may play something first (the final-table film) and then go on
+        public static Func<Run, Action, bool> OnLevel;
 
         public static Color Hex(string h) => ColorUtility.TryParseHtmlString(h, out var c) ? c : Color.white;
 
@@ -133,8 +135,9 @@ namespace Dream.Game
         {
             var what = Hands.Next(run);
             if (what == "finish" || what == "cooler") { var d = done; run = null; d(mistake); return; }
-            Hands.Deal(run); Draw(null);
-            if (what == "level") Toast("Next level: " + StageName(run.Stage));
+            void Go() { Hands.Deal(run); Draw(null); if (what == "level") Toast("Next level: " + StageName(run.Stage)); }
+            if (what == "level" && OnLevel != null && OnLevel(run, Go)) return;
+            Go();
         }
 
         static void Toast(string text)

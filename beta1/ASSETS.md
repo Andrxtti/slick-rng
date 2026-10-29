@@ -48,3 +48,14 @@ Every third-party asset in the beta1 project, with its source, author and licenc
 | Mixamo acting clips (27) | animation | copied from the old project (Assets/Dream/Anim/Mixamo), kept out of git | Adobe Mixamo | Mixamo terms (use in projects, no raw redistribution) |
 | Unity packages incl. glTFast 6.20.0 | code | Unity registry | Unity | Unity Companion / Apache-2.0 (glTFast) |
 | Yarn Spinner for Unity 3.2.8 | code | OpenUPM, dev.yarnspinner.unity | Yarn Spinner Pty. Ltd. | MIT |
+| modern_buildings_night | hdri | Poly Haven, https://polyhaven.com/a/modern_buildings_night | Greg Zaal | CC0 |
+| sofa_02 | model | Poly Haven, https://polyhaven.com/a/sofa_02 | Kirill Sannikov | CC0 |
+| modern_coffee_table_01 | model | Poly Haven, https://polyhaven.com/a/modern_coffee_table_01 | Amin | CC0 |
+| potted_plant_02 | model | Poly Haven, https://polyhaven.com/a/potted_plant_02 | Rico Cilliers | CC0 |
+| metal_stool_01 | model | Poly Haven, https://polyhaven.com/a/metal_stool_01 | Ulan Cabanilla | CC0 |
+| modern_ceiling_lamp_01 | model | Poly Haven, https://polyhaven.com/a/modern_ceiling_lamp_01 | James Ray Cock | CC0 |
+| wine_bottles_01 | model | Poly Haven, https://polyhaven.com/a/wine_bottles_01 | Rico Cilliers, Jurita Burger | CC0 |
+| vintage_electric_kettle | model | Poly Haven, https://polyhaven.com/a/vintage_electric_kettle | SV Garip | CC0 |
+| cardboard_box_01 | model | Poly Haven, https://polyhaven.com/a/cardboard_box_01 | Rahul Chaudhary | CC0 |
+| side_table_01 | model | Poly Haven, https://polyhaven.com/a/side_table_01 | James Ray Cock | CC0 |
+| wood_floor | tex | Poly Haven, https://polyhaven.com/a/wood_floor | Dimitrios Savva | CC0 |

@@ -32,18 +32,23 @@ namespace Dream.Game
             st.runner.AddCommandHandler<string>("film", st.Film);
             st.runner.AddCommandHandler<float, string>("money", st.Money);
             st.runner.AddCommandHandler<float>("stake", st.Stake);
+            st.runner.AddCommandHandler<string>("clock", t => Phone.Clock = t);   // the time on the phone's status bar
             go.SetActive(true);
             return st;
         }
 
         // run a node with the game state it needs; then is called when the node (and anything it jumps to) is over
-        public void Run(string node, Action then, string ev = "", bool won = false, bool bust = false, bool mistake = false)
+        // what just happened at the table, for the story to react to
+        public class Outcome { public string ev = "", ftEnd = "", classicEnd = ""; public bool won, bust, cooler, qualified; }
+
+        public void Run(string node, Action then, Outcome o = null)
         {
-            var S = F.S;
+            var S = F.S; o ??= new Outcome();
             Load(S);
             vars.SetValue("$bankroll", (float)S.br); vars.SetValue("$peak", (float)S.peak); vars.SetValue("$room_title", S.roomTitle);
             vars.SetValue("$chapter", S.step == "prologue" || S.step == "choice" ? 0f : S.step == "done" ? 2f : 1f);
-            vars.SetValue("$event", ev); vars.SetValue("$won", won); vars.SetValue("$bust", bust); vars.SetValue("$mistake", mistake);
+            vars.SetValue("$event", o.ev); vars.SetValue("$won", o.won); vars.SetValue("$bust", o.bust); vars.SetValue("$cooler", o.cooler);
+            vars.SetValue("$qualified", o.qualified); vars.SetValue("$ft_end", o.ftEnd); vars.SetValue("$classic_end", o.classicEnd);
             done = then;
             _ = runner.StartDialogue(node);
         }
@@ -60,7 +65,7 @@ namespace Dream.Game
         }
 
         // the story variables live in the save (job, seen flags); game state comes from the game each run
-        static readonly string[] Saved = { "$job", "$david_seen", "$lesson_seen", "$needle_seen", "$classic_seen", "$classic_lose_seen" };
+        static readonly string[] Saved = { "$job", "$honest", "$david_seen", "$lesson_seen", "$badbeat_seen", "$firstwin_seen" };
         void Load(Save S)
         {
             foreach (var kv in S.story)
@@ -84,7 +89,7 @@ namespace Dream.Game
         YarnTask Film(string id)
         {
             bool over = false;
-            Films.Play(new[] { id }, () => over = true);
+            StoryPresenter.AfterPhone(() => Films.Play(new[] { id }, () => over = true));   // finish reading the texts first
             return YarnTask.WaitUntil(() => over);
         }
 
@@ -101,15 +106,22 @@ namespace Dream.Game
         }
     }
 
-    // Yarn's lines and choices in the game's UI: #text lines build a phone conversation (tap to go on), #card and #hint
-    // lines set up the next choice card, options become its buttons; any other line is a plain card on black.
+    // Yarn's lines and choices in the game's UI. #text lines go to the phone (Phone.cs): the speaker is the sender, "You"
+    // sends to the contact in #to:<name>. #card and #hint lines set up the next choice: on the phone if it's up (reply
+    // chips under the heading), otherwise a full-screen choice card. Any other line is a narrator card on black. When
+    // something that isn't a text comes next (a film, a card, the end), the phone waits for a tap and puts itself away.
     public class StoryPresenter : DialoguePresenterBase
     {
-        readonly List<string> card = new List<string>(), hints = new List<string>(), thread = new List<string>();
-        string threadFrom;
+        readonly List<string> card = new List<string>(), hints = new List<string>();
 
-        public override YarnTask OnDialogueStartedAsync() { thread.Clear(); threadFrom = null; return YarnTask.CompletedTask; }
-        public override YarnTask OnDialogueCompleteAsync() => YarnTask.CompletedTask;
+        public static void AfterPhone(Action next) { if (Phone.I != null) Phone.I.Done(next); else next(); }
+
+        public override YarnTask OnDialogueStartedAsync() => YarnTask.CompletedTask;
+        public override YarnTask OnDialogueCompleteAsync()
+        {
+            bool go = false; AfterPhone(() => go = true);
+            return YarnTask.WaitUntil(() => go);
+        }
 
         public override YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
         {
@@ -119,12 +131,10 @@ namespace Dream.Game
             bool go = false;
             if (tags.Contains("text"))
             {
-                var from = line.CharacterName ?? "";
-                if (from != threadFrom) { thread.Clear(); threadFrom = from; }
-                thread.Add(text);
-                Flow.I.Texts(from, thread, () => go = true);
+                var to = tags.FirstOrDefault(t => t.StartsWith("to:"))?.Substring(3);
+                Phone.Open().Text(line.CharacterName ?? "", to, text, () => go = true);
             }
-            else Flow.I.Line(text, () => go = true);
+            else AfterPhone(() => Flow.I.Line(text, () => go = true));
             return YarnTask.WaitUntil(() => go);
         }
 
@@ -132,8 +142,10 @@ namespace Dream.Game
         {
             DialogueOption? picked = null;
             var shown = options.Where(o => o.IsAvailable).ToList();
-            Flow.I.ChoiceCard(card.ToList(), shown.Select(o => o.Line.TextWithoutCharacterName.Text).ToList(), hints.ToList(), i => picked = shown[i]);
-            card.Clear(); hints.Clear(); thread.Clear(); threadFrom = null;
+            var labels = shown.Select(o => o.Line.TextWithoutCharacterName.Text).ToList();
+            if (Phone.I != null) Phone.I.Choose(card.Count > 0 ? string.Join(" ", card) : null, labels, hints.ToList(), i => picked = shown[i]);
+            else Flow.I.ChoiceCard(card.ToList(), labels, hints.ToList(), i => picked = shown[i]);
+            card.Clear(); hints.Clear();
             return WaitFor(() => picked);
         }
 

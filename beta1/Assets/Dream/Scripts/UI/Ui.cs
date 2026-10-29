@@ -1,14 +1,32 @@
 using System;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Dream.UI
 {
+    public enum Face { Body, Display, Mono }
+
     // Small uGUI builders: every screen is code, laid out for a phone held upright (1080 x 1920 reference).
+    // Type is TextMeshPro in the brand fonts (all OFL, Resources/Fonts, licences in Assets/Dream/Fonts-Licenses):
+    // Gloock for display (titles, big numbers in a story beat), Inter for everything you read, IBM Plex Mono for money
+    // and counts. The scale, at the 1080-wide reference: Display 132 / 96 / 72 / 56, Body 44 lead / 36 / 30 / 26 small /
+    // 22 micro, labels in caps get +8 tracking. Bold asks for Inter SemiBold (Bold only at 56 and up).
     public static class Ui
     {
-        public static Font Font => Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        static readonly Dictionary<string, TMP_FontAsset> fonts = new Dictionary<string, TMP_FontAsset>();
+        public static TMP_FontAsset Font(string file)
+        {
+            if (fonts.TryGetValue(file, out var f)) return f;
+            var src = Resources.Load<Font>("Fonts/" + file);
+            f = src == null ? TMP_Settings.defaultFontAsset : TMP_FontAsset.CreateFontAsset(src, 90, 9, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 1024, 1024);
+            f.name = file; fonts[file] = f; return f;
+        }
+        public static TMP_FontAsset Body => Font("Inter-Regular"); public static TMP_FontAsset Semi => Font("Inter-SemiBold");
+        public static TMP_FontAsset Heavy => Font("Inter-Bold"); public static TMP_FontAsset Display => Font("Gloock-Regular");
+        public static TMP_FontAsset Mono => Font("IBMPlexMono-Regular"); public static TMP_FontAsset MonoBold => Font("IBMPlexMono-Bold");
         public static readonly Color Ink = new Color(0.95f, 0.93f, 0.88f), Dim = new Color(0.62f, 0.6f, 0.56f),
             Gold = new Color(0.95f, 0.76f, 0.35f), Night = new Color(0.07f, 0.065f, 0.09f), Card = new Color(0.13f, 0.12f, 0.15f),
             Felt = new Color(0.12f, 0.35f, 0.23f), Neon = new Color(1f, 0.31f, 0.64f), Aqua = new Color(0.18f, 0.83f, 0.78f);
@@ -36,6 +54,38 @@ namespace Dream.UI
             var r = (RectTransform)go.transform; Fill(r); return r;
         }
 
+        // a white rounded rectangle, 9-sliced, drawn once by code (anti-aliased edge): tint it with Image.color.
+        // radius: corner radius in reference pixels
+        static Sprite round;
+        public static Sprite Round
+        {
+            get
+            {
+                if (round != null) return round;
+                const int N = 128, R = 60;
+                var tex = new Texture2D(N, N, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+                var px = new Color32[N * N];
+                for (int y = 0; y < N; y++)
+                    for (int x = 0; x < N; x++)
+                    {
+                        float cx = Mathf.Clamp(x + 0.5f, R, N - R), cy = Mathf.Clamp(y + 0.5f, R, N - R);
+                        float d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), new Vector2(cx, cy));
+                        px[y * N + x] = new Color32(255, 255, 255, (byte)(Mathf.Clamp01(R - d + 0.5f) * 255));
+                    }
+                tex.SetPixels32(px); tex.Apply();
+                return round = Sprite.Create(tex, new Rect(0, 0, N, N), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect, new Vector4(R, R, R, R));
+            }
+        }
+        public static Image Rounded(Image img, float radius)
+        {
+            img.sprite = Round; img.type = Image.Type.Sliced; img.pixelsPerUnitMultiplier = 60f / Mathf.Max(1f, radius);
+            return img;
+        }
+        public static RectTransform Tile(Transform parent, string name, Color color, float radius = 28)
+        {
+            var r = Panel(parent, name, color); Rounded(r.GetComponent<Image>(), radius); return r;
+        }
+
         public static RectTransform Box(Transform parent, string name)
         {
             var go = new GameObject(name, typeof(RectTransform)); go.transform.SetParent(parent, false);
@@ -51,18 +101,36 @@ namespace Dream.UI
             return c;
         }
 
-        public static Text Label(Transform parent, string text, int size, Color color, TextAnchor align = TextAnchor.MiddleCenter, FontStyle style = FontStyle.Normal)
+        public static TextMeshProUGUI Label(Transform parent, string text, int size, Color color, TextAnchor align = TextAnchor.MiddleCenter, FontStyle style = FontStyle.Normal, Face face = Face.Body)
         {
             var go = new GameObject("Text", typeof(RectTransform)); go.transform.SetParent(parent, false);
-            var t = go.AddComponent<Text>(); t.font = Font; t.text = text; t.fontSize = size; t.color = color; t.alignment = align; t.fontStyle = style;
-            t.horizontalOverflow = HorizontalWrapMode.Wrap; t.verticalOverflow = VerticalWrapMode.Overflow; t.raycastTarget = false;
+            var t = go.AddComponent<TextMeshProUGUI>();
+            bool bold = style == FontStyle.Bold || style == FontStyle.BoldAndItalic;
+            t.font = face == Face.Display ? Display : face == Face.Mono ? (bold ? MonoBold : Mono) : bold ? (size >= 56 ? Heavy : Semi) : Body;
+            t.text = text; t.fontSize = size; t.color = color; t.alignment = Align(align); t.raycastTarget = false;
+            if (style == FontStyle.Italic || style == FontStyle.BoldAndItalic) t.fontStyle = FontStyles.Italic;
+            t.textWrappingMode = TextWrappingModes.Normal; t.overflowMode = TextOverflowModes.Overflow;
+            if (face == Face.Body && text.Length > 1 && text.Length < 40 && text == text.ToUpperInvariant() && text.IndexOfAny("ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray()) >= 0)
+                t.characterSpacing = 8;   // caps labels breathe
+            if (face == Face.Display) t.characterSpacing = -1;
+            if (face == Face.Body && size <= 36) t.lineSpacing = 6;
             Fill((RectTransform)go.transform); return t;
         }
+        public static TextMeshProUGUI Title(Transform parent, string text, int size, Color color, TextAnchor align = TextAnchor.MiddleCenter) => Label(parent, text, size, color, align, FontStyle.Normal, Face.Display);
+        public static TextMeshProUGUI Num(Transform parent, string text, int size, Color color, TextAnchor align = TextAnchor.MiddleCenter, FontStyle style = FontStyle.Normal) => Label(parent, text, size, color, align, style, Face.Mono);
+
+        static TextAlignmentOptions Align(TextAnchor a) => a switch
+        {
+            TextAnchor.UpperLeft => TextAlignmentOptions.TopLeft, TextAnchor.UpperCenter => TextAlignmentOptions.Top, TextAnchor.UpperRight => TextAlignmentOptions.TopRight,
+            TextAnchor.MiddleLeft => TextAlignmentOptions.Left, TextAnchor.MiddleRight => TextAlignmentOptions.Right,
+            TextAnchor.LowerLeft => TextAlignmentOptions.BottomLeft, TextAnchor.LowerCenter => TextAlignmentOptions.Bottom, TextAnchor.LowerRight => TextAlignmentOptions.BottomRight,
+            _ => TextAlignmentOptions.Center,
+        };
 
         public static Button Button(Transform parent, string text, Action onClick, Color bg, Color fg, int size = 46)
         {
             var go = new GameObject("Button", typeof(RectTransform), typeof(Image), typeof(Button)); go.transform.SetParent(parent, false);
-            go.GetComponent<Image>().color = bg;
+            Rounded(go.GetComponent<Image>(), 999).color = bg;   // a pill
             var b = go.GetComponent<Button>(); b.onClick.AddListener(() => onClick());
             var cb = b.colors; cb.highlightedColor = new Color(1, 1, 1, 0.92f); cb.pressedColor = new Color(0.8f, 0.8f, 0.8f); b.colors = cb;
             Label(go.transform, text, size, fg, TextAnchor.MiddleCenter, FontStyle.Bold);

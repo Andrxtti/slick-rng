@@ -1,0 +1,75 @@
+{
+ "id": "trentbeat",
+ "title": "The Biscayne Classic",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "card",
+   "name": "CARD",
+   "shot": "push",
+   "subject": "you",
+   "act": "fist",
+   "next": "",
+   "hold": 0.0,
+   "text": "The last card hits the felt. The Biscayne Classic is yours.",
+   "voice": ""
+  },
+  {
+   "n": 3,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "shrug",
+   "next": "",
+   "hold": 0.0,
+   "text": "Enjoy it. Dad says the Classic is a rounding error.",
+   "voice": "trentbeat_03"
+  },
+  {
+   "n": 4,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "cu",
+   "subject": "tommy",
+   "act": "clap",
+   "next": "",
+   "hold": 0.0,
+   "text": "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it.",
+   "voice": "trentbeat_04"
+  },
+  {
+   "n": 5,
+   "who": "gnomey",
+   "name": "MILES",
+   "shot": "two",
+   "subject": "",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "Your name goes on the board by the cage. Permanent marker. Congratulations.",
+   "voice": "trentbeat_05"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Sunday night",
+ "cast": [
+  "mustich",
+  "tommy",
+  "gnomey",
+  "you"
+ ]
+}

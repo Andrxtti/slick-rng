@@ -1,0 +1,50 @@
+{
+ "id": "classic_day1",
+ "title": "Bags and tags",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Bags and tags. Two hundred and twelve started this morning. Forty come back tomorrow, and you're one of them.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "gnomey",
+   "name": "MILES",
+   "shot": "two",
+   "subject": "",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "Bag your chips, write your name on it. Day 2 is noon tomorrow. Don't be late.",
+   "voice": "classic_day1_02"
+  },
+  {
+   "n": 3,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "lean",
+   "next": "",
+   "hold": 0.0,
+   "text": "Look who survived. Don't get used to it.",
+   "voice": "classic_day1_03"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Saturday, 11:50 PM",
+ "cast": [
+  "gnomey",
+  "mustich",
+  "you"
+ ]
+}

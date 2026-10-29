@@ -1,15 +1,19 @@
-// The Dream, Beta 1.0: story logic (Yarn Spinner). The acted scenes are films (story/SCRIPT.md); this decides which
-// film plays, asks the choices in the game's UI, keeps the story variables, and holds the phone texts.
+// The Dream, Test Beta 1.0: story logic (Yarn Spinner). The Prologue and Chapter 1 are Steven's script, in his words
+// (the old game's dream/story.js scenes with the Unity game's Story.cs overrides). The acted scenes are films
+// (story/SCRIPT.md); this decides which film plays, asks the choices in the game's UI, keeps the story variables, and
+// holds the phone texts.
 //   <<film id>>          play a rendered film and wait for it (Films/<id>.mp4)
 //   <<money n "why">>    add to the bankroll
 //   <<stake n>>          Slick lends n; half your profits go back until it's repaid
-// Line tags: #card heads the next choice card, #hint explains the next option (in order), #text is a phone text from
-// the speaker; any other line is a card on black.
+//   <<clock "11:20 PM">> the time on the phone's status bar
+// Line tags: #text is a phone text from the speaker ("You" sends, to the contact in #to:<name>); #card heads the next
+// choice and #hint explains the next option (in order); any other line is a narrator card on black.
 
 title: Variables
 ---
 // Variables the game sets before each run (game state, not saved here): $bankroll, $peak, $chapter (0 prologue,
-// 1 Chapter 1), $room_title, and after an event $event, $won, $bust, $mistake.
+// 1 Chapter 1), $room_title, and after an event $event, $won, $bust, $cooler, $qualified (made Day 2 of the Classic),
+// $ft_end (the final-table film to play, or "") and $classic_end (who won Day 2 when you didn't).
 <<declare $bankroll = 0>>
 <<declare $peak = 0>>
 <<declare $chapter = 0>>
@@ -17,32 +21,62 @@ title: Variables
 <<declare $event = "">>
 <<declare $won = false>>
 <<declare $bust = false>>
-<<declare $mistake = false>>
-// Story variables (saved with the career): the job, and what has already been seen.
+<<declare $cooler = false>>
+<<declare $qualified = false>>
+<<declare $ft_end = "">>
+<<declare $classic_end = "">>
+// Story variables (saved with the career): the job, the diner answer, and what has already been seen.
 <<declare $job = "">>
+<<declare $honest = false>>
 <<declare $david_seen = false>>
 <<declare $lesson_seen = false>>
-<<declare $needle_seen = false>>
-<<declare $classic_seen = false>>
-<<declare $classic_lose_seen = false>>
+<<declare $badbeat_seen = false>>
+<<declare $firstwin_seen = false>>
 ===
 
-title: Decision
+title: Prologue
 ---
-// Monday morning after the Biscayne Championship. The old game's p_after choice (dream/story.js, Story.cs).
+// Monday, Floor 34; 2:13 AM at the Lucky Seven (the question, his answer); Saturday at the card room
+<<film p_office>>
+<<film p_diner>>
+And what did you want to do? #card
+-> Play poker. For real.
+    <<set $honest to true>>
+    <<film p_diner_yes>>
+-> Doesn't matter now.
+    <<set $honest to false>>
+    <<film p_diner_no>>
+<<film p_diner2>>
+<<film p_seat>>
+===
+
+title: Monday
+---
+// After the Biscayne Championship: Monday at the office (no choice there any more), then Monday night at home, where
+// Slick's text forces the decision (Story.cs p_after, p_offer, p_quit, p_keep)
 <<film p_after>>
-Monday, 9:06 AM · Floor 34 #card
+<<clock "11:20 PM">>
+<<film p_offer>>
+Slick: Saw your results from Saturday. Here's my offer. #text
+Slick: Quit Lou. I'll put $5,000 in your account tomorrow. Not a loan. Don't make me regret it. #text
+Slick: Or keep the job and play on the side. Your call, kid. It's the biggest one you'll make. #text
 Decision time. #card
-Whatever you pick, Lou finds out today. #card
-Slick backs you with $5,000. Play every day. #hint
-$2,000 saved. A paycheck every Friday. Biscayne on weekends. #hint
--> Quit. Today.
+Slick's $5,000. One live game a day, any day. #hint
+$2,000 saved, $2,000 every Friday. Live games on weekends. #hint
+-> Quit. Text Lou tonight.
     <<set $job to "quit">>
-    <<money 5000 "Quit the 9-to-5. Slick's backing">>
+    You: Lou. Redo it yourself. #text #to:Lou
     <<film p_quit>>
--> Keep the job. Grind nights.
+    <<money 5000 "Quit the 9-to-5. Slick's backing">>
+    <<clock "11:31 PM">>
+    Slick: Done. $5,000 is in your account. Not a loan. Don't make me regret it. #text
+    Slick: Rent is due on the first. Never play above your roll. #text
+    David: BRO. YOU QUIT YOUR JOB?? CALL ME #text
+-> Keep the job. Grind nights and weekends.
     <<set $job to "nights">>
     <<money 2000 "Kept the day job. Savings">>
     <<film p_keep>>
+    <<clock "11:48 PM">>
+    Slick: Smart. A paycheck buys you time to learn. Never play above your roll. Text me when you win something. #text
 <<film c1>>
 ===

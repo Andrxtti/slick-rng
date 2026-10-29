@@ -1,0 +1,49 @@
+{
+ "id": "ft_lost_tommy",
+ "title": "Final table, lost",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "{ft_lost}",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "cu",
+   "subject": "tommy",
+   "act": "shrug",
+   "next": "",
+   "hold": 0.0,
+   "text": "Not today, kid. Thirty years of practice.",
+   "voice": "ft_lost_tommy_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "nod",
+   "next": "",
+   "hold": 0.0,
+   "text": "Good game. I'll see you again.",
+   "voice": "ft_lost_tommy_03"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Saturday night",
+ "cast": [
+  "tommy",
+  "you"
+ ]
+}

@@ -1,0 +1,61 @@
+{
+ "id": "broke",
+ "title": "Rock bottom",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "two",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Busted?",
+   "voice": "broke_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "sad",
+   "next": "",
+   "hold": 0.0,
+   "text": "Every last dollar.",
+   "voice": "broke_03"
+  },
+  {
+   "n": 4,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why.",
+   "voice": "broke_04"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:13 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

@@ -46,12 +46,14 @@ namespace Dream.Game
     public class LabelDef { public string id, n, icon, c, tier, line; public int score, life; }
     public class EventDef
     {
-        public string id, kind, name, venue, title, boss, blurb; public int ch, buyin, field, seats; public bool free, turbo, reentry; public double soft, prizeBase;
+        public string id, kind, name, venue, title, boss, blurb, target; public int ch, buyin, field, seats; public bool free, turbo, reentry, online; public double soft, prizeBase;
+        public List<string> stages; public List<int> perS;   // a fixed plan (the Classic's two days), as the old EventDef
         public static EventDef From(Dictionary<string, object> o) => new EventDef
         {
             id = J.S(o, "id"), kind = J.S(o, "kind"), name = J.S(o, "name"), venue = J.S(o, "venue"), title = J.S(o, "title"), boss = J.S(o, "boss"), blurb = J.S(o, "blurb", ""),
             ch = J.I(o, "ch"), buyin = J.I(o, "buyin"), field = J.I(o, "field"), seats = J.I(o, "seats"), free = J.B(o, "free"), turbo = J.B(o, "turbo"), reentry = J.B(o, "reentry"),
-            soft = J.N(o, "soft"), prizeBase = J.N(o, "prizeBase"),
+            soft = J.N(o, "soft"), prizeBase = J.N(o, "prizeBase"), target = J.S(o, "target"), online = J.B(o, "online"),
+            stages = J.Has(o, "stages") ? J.Strs(J.G(o, "stages")) : null, perS = J.Has(o, "perS") ? J.Nums(J.G(o, "perS")).Select(x => (int)x).ToList() : null,
         };
     }
 
@@ -123,6 +125,7 @@ namespace Dream.Game
 
         public static (List<string> stages, List<int> perS) PlanFor(EventDef ev, int ch)
         {
+            if (ev.stages != null && ev.stages.Count > 0) return (ev.stages, ev.perS);
             if (ev.kind == "cash") return (new List<string> { "cash" }, null);
             if (ev.kind == "sat") return (new List<string> { "early", "satbubble" }, null);
             if (ev.turbo) return (new List<string> { "early", "middle", "bubble", "final" }, new List<int> { 1, 2, 2, 2 });
@@ -145,7 +148,7 @@ namespace Dream.Game
             return run;
         }
 
-        static bool LiveEv(EventDef ev) => true;   // Beta 1.0 plays only the live card room (big-blind ante tables)
+        static bool LiveEv(EventDef ev) => !ev.online;   // live rooms play big-blind-ante tables, online plays classic antes (old Play.LiveEv)
         static bool Fit(string stage, Dictionary<string, object> t, bool turbo)
         {
             double avg = J.N(t, "avg", 40), left = J.N(t, "left", 99);
@@ -295,11 +298,11 @@ namespace Dream.Game
         public static int Paid(EventDef ev)
         {
             if (ev.kind == "sat") return ev.seats;
-            var p = Lib.Payouts(ev.field); return p != null ? J.I(p, "paid") : Math.Max(1, ev.field / 7);
+            var p = Lib.Payouts(ev.id == "classic2" ? 212 : ev.field); return p != null ? J.I(p, "paid") : Math.Max(1, ev.field / 7);   // Day 2 pays the whole Classic's prize pool
         }
         public static double PrizeFor(EventDef ev, int place)
         {
-            var p = Lib.Payouts(ev.field); if (p == null) return 0;
+            var p = Lib.Payouts(ev.id == "classic2" ? 212 : ev.field); if (p == null) return 0;
             var am = J.Nums(J.L(p, "amounts")); if (place < 1 || place > am.Count) return 0;
             return Math.Round(am[place - 1] * (ev.prizeBase > 0 ? ev.prizeBase : ev.buyin));
         }

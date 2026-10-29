@@ -1,0 +1,25 @@
+{
+ "id": "broke_q",
+ "title": "Rock bottom (full-time)",
+ "lines": [
+  {
+   "n": 1,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "push",
+   "subject": "slick",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "Here's how you climb out. Freerolls on CF Tilt every day. A real job while you rebuild. Or my money, and half your profits until it's back.",
+   "voice": "broke_q_01"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:14 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

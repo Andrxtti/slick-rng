@@ -10,7 +10,8 @@
    "subject": "",
    "act": "idle",
    "next": "",
-   "text": "Beta 1.0. Chapter 2: The Circuit, coming soon.",
+   "hold": 0.0,
+   "text": "Test Beta 1.0. Chapter 2: The Circuit, coming soon.",
    "voice": ""
   }
  ],

@@ -1,0 +1,37 @@
+{
+ "id": "p_diner_no",
+ "title": "The other answer",
+ "lines": [
+  {
+   "n": 1,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "shrug",
+   "next": "",
+   "hold": 0.0,
+   "text": "Doesn't matter now.",
+   "voice": "p_diner_no_01"
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "STRANGER",
+   "shot": "push",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "It always matters. You just stopped saying it out loud.",
+   "voice": "p_diner_no_02"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:13 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

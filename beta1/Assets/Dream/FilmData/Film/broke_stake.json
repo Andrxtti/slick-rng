@@ -1,0 +1,25 @@
+{
+ "id": "broke_stake",
+ "title": "Slick's stake",
+ "lines": [
+  {
+   "n": 1,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "nod",
+   "next": "",
+   "hold": 0.0,
+   "text": "Half your profits come back to me until it's paid. Respect the roll this time.",
+   "voice": "broke_stake_01"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:15 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

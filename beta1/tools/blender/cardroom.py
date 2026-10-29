@@ -103,6 +103,7 @@ mark("MARK_you", (yx, yy, 0.55), math.degrees(ya) + 90 + 180)
 mark("MARK_dealer", (HX, HY - 0.95, 0.0), 0)
 mark("MARK_tommy", (yx + 0.75, yy + 0.55, 0.0), 160)
 mark("MARK_gnomey", (yx - 0.9, yy + 0.7, 0.0), 210)
+mark("MARK_slick", (yx + 0.75, yy + 0.55, 0.0), 160)   # Tommy's spot (classic_other: Slick holds the trophy; Tommy is not in that film)
 mx, my = 2.2 + math.cos(math.tau * 5 / 9) * 1.75, 3.5 + math.sin(math.tau * 5 / 9) * 1.05
 mark("MARK_mustich", (mx, my, 0.55), math.degrees(math.tau * 5 / 9) + 90 + 180)
 mark("CAM_ext", (8.5, 12.5, 3.0), 0)

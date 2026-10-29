@@ -1,0 +1,49 @@
+{
+ "id": "firstwin",
+ "title": "First title",
+ "lines": [
+  {
+   "n": 1,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Saw the photo. Trophy, big grin, terrible lighting. Proud of you, kid.",
+   "voice": "firstwin_01"
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "two",
+   "subject": "",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "Left something in your locker. Every champion needs a pair.",
+   "voice": "firstwin_02"
+  },
+  {
+   "n": 3,
+   "who": "card",
+   "name": "CARD",
+   "shot": "cu",
+   "subject": "you",
+   "act": "laugh",
+   "next": "",
+   "hold": 0.0,
+   "text": "Inside: a pair of pixelated sunglasses and a note.\n“Deal with it.”",
+   "voice": ""
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:13 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

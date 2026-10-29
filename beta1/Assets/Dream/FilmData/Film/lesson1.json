@@ -1,6 +1,6 @@
 {
  "id": "lesson1",
- "title": "Fold the junk",
+ "title": "A lesson: fold the junk",
  "lines": [
   {
    "n": 1,
@@ -10,7 +10,8 @@
    "subject": "",
    "act": "idle",
    "next": "",
-   "text": "Lucky Seven. 1:40 AM.",
+   "hold": 0.0,
+   "text": "Lucky Seven. 1:40 AM. The pie is the same. You are a little poorer.",
    "voice": ""
   },
   {
@@ -21,7 +22,8 @@
    "subject": "",
    "act": "idle",
    "next": "",
-   "text": "Tell me the hand.",
+   "hold": 0.0,
+   "text": "Tell me the hand that got you.",
    "voice": "lesson1_02"
   },
   {
@@ -32,7 +34,8 @@
    "subject": "you",
    "act": "sad",
    "next": "",
-   "text": "King-jack, early position. Raised, got three-bet, called. Flopped a jack. He had kings.",
+   "hold": 0.0,
+   "text": "King-jack, early position. I raised. Got three-bet. Called. Flopped a jack. Lost everything to kings.",
    "voice": "lesson1_03"
   },
   {
@@ -43,7 +46,8 @@
    "subject": "slick",
    "act": "talk",
    "next": "",
-   "text": "Then the flop didn't beat you. The first decision did. Everything after that was a story you told yourself.",
+   "hold": 0.0,
+   "text": "Then the hand didn't get you. The first decision did. From early, king-jack is a fold. Everything after was a story you told yourself.",
    "voice": "lesson1_04"
   },
   {
@@ -54,7 +58,8 @@
    "subject": "slick",
    "act": "point",
    "next": "nod",
-   "text": "Fold the junk. It isn't advice. It's arithmetic.",
+   "hold": 0.0,
+   "text": "Fold the junk. That's not advice, it's arithmetic. Your misses are on the Spacepad. Drill them until the fold is boring.",
    "voice": "lesson1_05"
   }
  ],

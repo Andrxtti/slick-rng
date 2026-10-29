@@ -1,0 +1,53 @@
+{
+ "id": "p_offer",
+ "title": "Monday night",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Monday night. Your phone buzzes on the counter.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "card",
+   "name": "CARD",
+   "shot": "insert",
+   "subject": "phone",
+   "act": "idle",
+   "next": "",
+   "hold": 2.5,
+   "text": "",
+   "voice": ""
+  },
+  {
+   "n": 3,
+   "who": "card",
+   "name": "CARD",
+   "shot": "push",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "hold": 2.5,
+   "text": "",
+   "voice": ""
+  }
+ ],
+ "directions": [
+  {
+   "after": 0,
+   "text": "the phone buzzes on the counter"
+  }
+ ],
+ "place": "home",
+ "time": "Monday, 11:20 PM",
+ "cast": [
+  "you"
+ ]
+}

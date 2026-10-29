@@ -40,12 +40,12 @@ namespace Dream.EditorTools
             foreach (var b in Object.FindObjectsByType<Button>(FindObjectsSortMode.None))
             {
                 if (!b.interactable || !b.isActiveAndEnabled) continue;
-                var t = b.transform.childCount > 0 ? b.transform.GetChild(0).GetComponent<Text>() : null;
+                var t = b.transform.childCount > 0 ? b.transform.GetChild(0).GetComponent<TMPro.TMP_Text>() : null;
                 if (b.name == label || (t != null && t.text.StartsWith(label))) return b;
             }
             return null;
         }
-        static bool Has(string text) => Object.FindObjectsByType<Text>(FindObjectsSortMode.None).Any(t => t.text.StartsWith(text));
+        static bool Has(string text) => Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Any(t => t.text.StartsWith(text));
         static void Shot(string name) { if (shot.Add(name)) ScreenCapture.CaptureScreenshot(Path.Combine(Application.dataPath, "..", "Logs", $"{branch}_{name}.png")); }
 
         static void Tick()
@@ -74,9 +74,9 @@ namespace Dream.EditorTools
             var cont = Find("Continue");
             if (cont != null)
             {
-                if (Has("Busted?")) { W($"  texts: Slick, broke ({f.S.job}): {Object.FindObjectsByType<Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.Contains("paycheck") || t.Contains("No paycheck"))}"); Shot("broke"); }
+                if (Has("Busted?")) { W($"  texts: Slick, broke ({f.S.job}): {Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.Contains("paycheck") || t.Contains("No paycheck"))}"); Shot("broke"); }
                 if (Has("TEN THOUSAND")) { W("  texts: David, ten thousand"); Shot("david"); }
-                var res = Object.FindObjectsByType<Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.StartsWith("You won") || t.StartsWith("Out in") || t.Contains(" place") || t.StartsWith("Up ") || t.StartsWith("Down ") || t.StartsWith("Coolered"));
+                var res = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.StartsWith("You won") || t.StartsWith("Out in") || t.Contains(" place") || t.StartsWith("Up ") || t.StartsWith("Down ") || t.StartsWith("Coolered"));
                 if (res != null) W($"  result: {res}");
                 cont.onClick.Invoke(); return;
             }
@@ -84,7 +84,7 @@ namespace Dream.EditorTools
             {
                 if (broke && !cut && Find("nightly") != null) { cut = true; f.S.br = 70; f.S.Write(); W("  (test: bankroll cut to $70)"); f.Hub(); return; }   // on a day you can play
                 Shot("hub");
-                var texts = Object.FindObjectsByType<Text>(FindObjectsSortMode.None).Select(t => t.text).ToList();
+                var texts = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).ToList();
                 string date = texts.FirstOrDefault(t => t.Contains(", ") && (t.StartsWith("Mon") || t.StartsWith("Tue") || t.StartsWith("Wed") || t.StartsWith("Thu") || t.StartsWith("Fri") || t.StartsWith("Sat") || t.StartsWith("Sun")));
                 string why = texts.FirstOrDefault(t => t.StartsWith("Live games") || t.StartsWith("Your live game") || t.StartsWith("One live game"));
                 string note = texts.FirstOrDefault(t => t.StartsWith("Payday"));

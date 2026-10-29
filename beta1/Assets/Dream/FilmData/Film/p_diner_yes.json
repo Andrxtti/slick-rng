@@ -1,0 +1,37 @@
+{
+ "id": "p_diner_yes",
+ "title": "The honest answer",
+ "lines": [
+  {
+   "n": 1,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "hold": 0.0,
+   "text": "Play poker. For real.",
+   "voice": "p_diner_yes_01"
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "STRANGER",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "laugh",
+   "next": "",
+   "hold": 0.0,
+   "text": "Ha. Everybody says that at 2 AM. Almost nobody means it.",
+   "voice": "p_diner_yes_02"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:13 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}
