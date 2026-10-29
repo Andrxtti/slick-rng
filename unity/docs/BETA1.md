@@ -115,8 +115,10 @@ Faces are **recreations** only for people who agreed (Steven has their messages,
 - **Unity 6000.6.7f1**: `C:\Program Files\Unity\Hub\Editor\6000.6.7f1\Editor\Unity.exe`.
   - Create the project headless: `Unity.exe -batchmode -createProject C:\Dev\slick-rng\beta1 -quit`. Then set up URP
     (package plus pipeline asset) by script, or open it once in the editor.
-  - Free Unity packages worth using: Universal RP, Cinemachine, Timeline, Recorder, Input System. Optional: Yarn Spinner
-    (MIT, via OpenUPM).
+  - Free Unity packages worth using: Universal RP, Cinemachine, Timeline, Recorder, Input System, and **Yarn Spinner
+    (required, Steven 2026-10-29)**: MIT, OpenUPM package `dev.yarnspinner.unity`. It runs the story logic: decision
+    points (starting with quit/keep the job), story variables (job, bankroll, results), conditional lines, and phone-text
+    conversations. Acted scenes stay short linear films; Yarn decides which film plays and asks the choices in the UI.
   - Recorder 5.1.3 resolved in the old project; it came from a local `file:` package, so check what installs cleanly.
   - Compile errors: run with `-logFile`, then grep `error CS`.
 - **Blender 5.2.3**: `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe`.
