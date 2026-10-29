@@ -155,6 +155,7 @@ def build():
             mh = os.path.join(MPFB_USER, "eyes", "materials", SPEC.get("eye_color", "brown") + ".mhmat")
         material_for(ob, mname, mh)
         ob.name = mname
+    if SPEC.get("mask"): add_mask(base, SPEC["mask"], manifest)
     json.dump(manifest, open(os.path.join(OUT, "manifest.json"), "w"), indent=1)
     return base, rig
 
@@ -202,6 +203,42 @@ def paint_beard(base, img_path, b):
     px = px * (1 - a) + col * a
     im.pixels[:] = px.ravel(); im.filepath_raw = img_path; im.file_format = "PNG"; im.save()
     log("beard painted", int((mask > 0.5).sum()), "px")
+
+
+def add_mask(base, spec, manifest):
+    """Bio's fabric mask, nose to chin: a copy of that part of the face, pushed out 4 mm, skinned like the face, with
+    our own busy illustrated print (generated here, so the design is ours)."""
+    import numpy as np
+    me = base.data.copy(); ob = base.copy(); ob.data = me; ob.name = "mask"; bpy.context.collection.objects.link(ob)
+    ob.shape_key_clear()
+    mw = ob.matrix_world; vs = [mw @ v.co for v in me.vertices]
+    head_z = max(v.z for v in vs) - 0.25
+    nose = min((v for v in vs if abs(v.x) < 0.006 and v.z > head_z), key=lambda v: v.y)
+    keep = set()
+    for i, v in enumerate(vs):
+        x, dz, back = abs(v.x - nose.x), v.z - nose.z, v.y - nose.y
+        if -0.115 < dz < 0.03 and back < 0.085 - max(0, x - 0.06) * 0.5 and x < 0.085: keep.add(i)
+    bpy.context.view_layer.objects.active = ob
+    bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="DESELECT"); bpy.ops.object.mode_set(mode="OBJECT")
+    for v in me.vertices: v.select = v.index not in keep
+    bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.delete(type="VERT"); bpy.ops.object.mode_set(mode="OBJECT")
+    for v in me.vertices: v.co += v.normal * 0.004
+    rng = np.random.default_rng(spec.get("seed", 14)); N = 1024
+    img = np.zeros((N, N, 4), np.float32); img[..., :3] = (0.1, 0.55, 0.6); img[..., 3] = 1
+    yy, xx = np.mgrid[0:N, 0:N]
+    pal = [(1, 0.31, 0.64), (0.18, 0.83, 0.78), (1, 0.85, 0.2), (0.45, 0.25, 0.75), (0.97, 0.95, 0.9), (0.08, 0.08, 0.12)]
+    for _ in range(1400):
+        cx, cy, r = rng.integers(0, N), rng.integers(0, N), rng.integers(3, 13)
+        d = (xx - cx) ** 2 + ((yy - cy) * rng.uniform(0.5, 1.6)) ** 2
+        img[d < r * r, :3] = pal[rng.integers(0, len(pal))]
+        img[(d >= r * r) & (d < (r + 2) ** 2), :3] = (0.05, 0.05, 0.08)   # ink outline
+    im = bpy.data.images.new("mask_print", N, N); im.pixels[:] = img.ravel()
+    im.filepath_raw = os.path.join(OUT, "tex", "mask_diffuse.png"); im.file_format = "PNG"; im.save()
+    m = bpy.data.materials.new("mask"); me.materials.clear(); me.materials.append(m)
+    m.use_nodes = True; tn = m.node_tree.nodes.new("ShaderNodeTexImage"); tn.image = im
+    m.node_tree.links.new(tn.outputs["Color"], m.node_tree.nodes["Principled BSDF"].inputs["Base Color"])
+    manifest["materials"]["mask"] = {"diffuse": "tex/mask_diffuse.png"}
+    log("mask", len(me.vertices), "verts")
 
 
 def export(base, rig):

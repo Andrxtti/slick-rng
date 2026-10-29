@@ -1,0 +1,10 @@
+{
+ "name": "gnomey",
+ "note": "Miles 'The Snowplow' Gnomey, from characters/gnomey.md and his photo (consent 2026-10-29): early 30s, stocky front-rower, broad square face, straight dark brows, brown eyes, short black hair, full thick dark beard squared at the bottom. The staff polo stands in as a black shirt; no crest or sponsor marks.",
+ "macro": {"gender": 1.0, "age": 0.56, "muscle": 0.8, "weight": 0.68, "height": 0.45, "proportions": 0.5, "race": {"asian": 0.15, "caucasian": 0.75, "african": 0.1}},
+ "targets": {"head/head-square": 0.6, "head/head-scale-horiz-incr": 0.2, "chin/chin-width-incr": 0.5, "neck/neck-scale-horiz-incr": 0.7, "eyebrows/eyebrows-trans-down": 0.3, "nose/nose-volume-incr": 0.2},
+ "skin": "middleage_caucasian_male", "eye_color": "brown", "eyebrows": "eyebrow001", "eyelashes": "eyelashes01", "hair": "short01",
+ "clothes": ["male_casualsuit06", "shoes03"],
+ "beard": {"density": 0.97, "color": [0.03, 0.025, 0.022], "reach": 0.7},
+ "colors": {"hair": [0.06, 0.05, 0.045], "brows": [0.08, 0.06, 0.05], "skin": [0.93, 0.82, 0.7], "cloth_male_casualsuit06": [0.12, 0.12, 0.13]}
+}

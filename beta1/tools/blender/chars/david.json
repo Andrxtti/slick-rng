@@ -1,0 +1,9 @@
+{
+ "name": "david",
+ "note": "David Pec, from characters/david.md and his photo (consent 2026-10-29): late 20s, solid, open boyish face with full cheeks, fair rosy skin, bright blue eyes, short light-brown hair combed back, clean-shaven, big grin. His hoodie stands in as a grey casual shirt (no hoodie in the free assets).",
+ "macro": {"gender": 1.0, "age": 0.53, "muscle": 0.6, "weight": 0.6, "height": 0.55, "proportions": 0.6, "race": {"asian": 0.0, "caucasian": 1.0, "african": 0.0}},
+ "targets": {"head/head-round": 0.3, "cheek/l-cheek-volume-incr": 0.4, "cheek/r-cheek-volume-incr": 0.4, "neck/neck-scale-horiz-incr": 0.4, "mouth/mouth-scale-horiz-incr": 0.2},
+ "skin": "young_caucasian_male", "eye_color": "blue", "eyebrows": "eyebrow002", "eyelashes": "eyelashes01", "hair": "short02",
+ "clothes": ["male_casualsuit01", "shoes01"],
+ "colors": {"hair": [0.5, 0.38, 0.27], "brows": [0.5, 0.38, 0.28], "skin": [1.0, 0.9, 0.86], "cloth_male_casualsuit01": [0.55, 0.55, 0.58]}
+}

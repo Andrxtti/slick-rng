@@ -1,0 +1,10 @@
+{
+ "name": "bio",
+ "note": "Bio 'The Ghost', from characters/bio.md and his photo (consent 2026-10-29): ageless early 30s, 5 ft 9, slight, calm narrow eyes, thick straight brown hair with a fringe; the fabric mask nose to chin with our own busy print. The white hoodie stands in as a white tee.",
+ "macro": {"gender": 1.0, "age": 0.56, "muscle": 0.45, "weight": 0.4, "height": 0.45, "proportions": 0.6, "race": {"asian": 0.95, "caucasian": 0.05, "african": 0.0}},
+ "targets": {"eyes/l-eye-height2-decr": 0.4, "eyes/r-eye-height2-decr": 0.4, "head/head-round": 0.2},
+ "skin": "young_asian_male", "eye_color": "brown", "eyebrows": "eyebrow002", "eyelashes": "eyelashes01", "hair": "short03",
+ "clothes": ["male_casualsuit06", "shoes01"],
+ "mask": {"seed": 14},
+ "colors": {"hair": [0.32, 0.22, 0.15], "brows": [0.25, 0.18, 0.12], "skin": [0.97, 0.87, 0.76], "cloth_male_casualsuit06": [1.0, 1.0, 1.0]}
+}

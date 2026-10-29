@@ -1,0 +1,56 @@
+{
+ "name": "mustich",
+ "note": "Mustich, from characters/mustich.md and his photo (consent 2026-10-29): early-mid 30s, 6 ft, skinny, long lean face, fair skin ruddy at the cheeks, light blue-grey eyes, short cropped ginger hair, clean-shaven. The thin gunmetal half-rim glasses are still to make.",
+ "macro": {
+  "gender": 1.0,
+  "age": 0.58,
+  "muscle": 0.45,
+  "weight": 0.3,
+  "height": 0.68,
+  "proportions": 0.7,
+  "race": {
+   "asian": 0.0,
+   "caucasian": 1.0,
+   "african": 0.0
+  }
+ },
+ "targets": {
+  "head/head-oval": 0.5,
+  "head/head-scale-vert-incr": 0.35,
+  "head/head-fat-decr": 0.5,
+  "chin/chin-height-incr": 0.3,
+  "nose/nose-scale-vert-incr": 0.3,
+  "neck/neck-scale-horiz-decr": 0.3
+ },
+ "skin": "young_caucasian_male2",
+ "eye_color": "lightblue",
+ "eyebrows": "eyebrow003",
+ "eyelashes": "eyelashes01",
+ "hair": "short02",
+ "clothes": [
+  "male_casualsuit06",
+  "shoes02"
+ ],
+ "colors": {
+  "hair": [
+   1.0,
+   0.55,
+   0.32
+  ],
+  "brows": [
+   0.65,
+   0.38,
+   0.22
+  ],
+  "skin": [
+   1.0,
+   0.86,
+   0.8
+  ],
+  "cloth_male_casualsuit06": [
+   0.32,
+   0.32,
+   0.34
+  ]
+ }
+}
