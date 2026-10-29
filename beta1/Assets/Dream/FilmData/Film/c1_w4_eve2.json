@@ -1,0 +1,36 @@
+{
+ "id": "c1_w4_eve2",
+ "title": "The night before (after the texts)",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "push",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "hold": 0.0,
+   "text": "You have {br}. The Classic is $340. You've never been more afraid, and it feels like the first honest feeling you've had in a year.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Saturday. Biscayne. The big one.",
+   "voice": "c1_w4_eve2_02"
+  }
+ ],
+ "directions": [],
+ "place": "home",
+ "time": "Friday, February 13, 11:40 PM",
+ "cast": [
+  "you"
+ ]
+}

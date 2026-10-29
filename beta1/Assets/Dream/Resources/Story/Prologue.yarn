@@ -36,6 +36,16 @@ title: Variables
 <<declare $badbeat_seen = false>>
 <<declare $firstwin_seen = false>>
 <<declare $stake_seen = false>>
+// the month (unity/docs/CH1_WEEKS.md): the calendar day (Mon 12 Jan = 7, the Classic Sat 14 Feb = 40), what you owe
+// Slick, and each weekly beat once
+<<declare $day = 0>>
+<<declare $debt = 0>>
+<<declare $debt_s = "">>
+<<declare $wk2 = false>>
+<<declare $wk3 = false>>
+<<declare $wk3d = false>>
+<<declare $wk4a = false>>
+<<declare $wk4b = false>>
 ===
 
 title: Prologue

@@ -17,7 +17,7 @@ namespace Dream.EditorTools
     [InitializeOnLoad]
     public static class AutoPlay
     {
-        static string branch, only; static bool lose, broke, cut; static double acc = 1; static int stakeDay = -1; static double next; static int steps; static StreamWriter log; static readonly HashSet<string> shot = new HashSet<string>();
+        static string branch, only; static bool lose, broke, cut; static double acc = 1; static int stakeDay = -1, accSum, accN; static double next; static int steps; static StreamWriter log; static readonly HashSet<string> shot = new HashSet<string>();
         static string lastHub, lastText;
 
         static AutoPlay()
@@ -35,7 +35,7 @@ namespace Dream.EditorTools
             Remote.Extra["story"] = a => { var p = a.Split(' '); Flow.I?.TestStory(p[0], p[1], double.Parse(p[2], System.Globalization.CultureInfo.InvariantCulture)); };
             Remote.Extra["auto"] = b =>
             {
-                var am = System.Text.RegularExpressions.Regex.Match(b, @" acc ([\d.]+)"); acc = am.Success ? double.Parse(am.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture) : 1; stakeDay = -1;
+                var am = System.Text.RegularExpressions.Regex.Match(b, @" acc ([\d.]+)"); acc = am.Success ? double.Parse(am.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture) : 1; stakeDay = -1; accSum = accN = 0;
                 lose = b.EndsWith(" lose"); broke = b.EndsWith(" broke"); cut = false; only = b.EndsWith(" online") ? "online" : b.EndsWith(" live") ? "live" : null; Moments.Log.Clear(); branch = b.StartsWith("keep") ? "keep" : "quit"; steps = 0; shot.Clear(); lastHub = null; Films.Played.Clear();
                 log = new StreamWriter(Path.Combine(Application.dataPath, "..", "Logs", $"auto_{branch}{(acc < 1 ? $"_acc{(int)(acc * 100)}" : lose ? "_lose" : broke ? "_broke" : only != null ? "_" + only : "")}.txt"));
                 PlayerPrefs.DeleteAll();
@@ -123,8 +123,13 @@ namespace Dream.EditorTools
                 if (Has("Busted?")) { W($"  texts: Slick, broke ({f.S.job}): {Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.Contains("paycheck") || t.Contains("No paycheck"))}"); Shot("broke"); }
                 if (Has("TEN THOUSAND")) { W("  texts: David, ten thousand"); Shot("david"); }
                 var res = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.StartsWith("You won") || t.StartsWith("Out in") || t.Contains(" place") || t.StartsWith("Up ") || t.StartsWith("Down ") || t.StartsWith("Coolered"));
-                var accLine = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.StartsWith("Accuracy"));
-                if (res != null) W($"  result: {res}{(accLine != null ? "  (" + accLine.Split('·')[0].Trim() + ")" : "")}");
+                var accLine = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).FirstOrDefault(t => t.StartsWith("ACCURACY"));
+                if (accLine != null && res != null)   // running accuracy over the career, weighted by decisions
+                {
+                    var m = System.Text.RegularExpressions.Regex.Match(accLine, @"ACCURACY (\d+)%\s*·\s*(\d+)");
+                    if (m.Success) { accSum += int.Parse(m.Groups[1].Value) * int.Parse(m.Groups[2].Value); accN += int.Parse(m.Groups[2].Value); }
+                }
+                if (res != null) W($"  result: {res}{(accLine != null ? "  (" + accLine.Split('·')[0].Trim() + (accN > 0 ? $", career {accSum / accN}%" : "") + ")" : "")}");
                 cont.onClick.Invoke(); return;
             }
             if (Has("tap to continue") && Find("Screen") != null) { Find("Screen").onClick.Invoke(); return; }   // a narrator card

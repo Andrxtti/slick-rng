@@ -171,6 +171,82 @@ The beat: the room, the people, the goal.
 5. CARD [card] (push mustich; idle): Mustich. Dad's money, a solver subscription, and a smile you want to wipe off. / He's been circling the Biscayne Classic all year.
 6. CARD [card] (wide; idle): Goal: the Biscayne Classic, Saturday, February 14. Build your bankroll to $5,000 before it.
 
+## c1_w2 — Week two
+place: cardroom · time: Monday, January 19, 7:10 PM · cast: gnomey, mustich, tommy, you
+From `unity/docs/CH1_WEEKS.md` (draft: Steven hasn't read these yet). Plays before your first live game on or after
+Monday 19 January. Mustich's question is asked in the game; his answer is `c1_w2_a` or `c1_w2_b`, then `c1_w2b`.
+{the list board squeaks; a new poster by the cage}
+
+1. CARD [card] (ext; idle): Second Monday. The room knows your name now, mostly. The coffee is the same coffee.
+2. MILES [gnomey] (two; point): Poster's up by the cage. Biscayne Classic, Saturday, February fourteenth. Two hundred and twelve seats, three-forty to get in. Sign-up sheet's on the clipboard.
+3. CARD [card] (push mustich; idle): Eleven names on it already. The twelfth, in careful handwriting, is Mustich.
+4. MUSTICH [mustich] (cu mustich; shrug): Don't look so surprised. I've been studying this room for a year. You've been studying it for a week.
+5. MUSTICH [mustich] (ots mustich; point): I ran your bubble hands through my solver last night. Do you want to know what it said?
+
+## c1_w2_a — Week two: "Does it fold for you too?"
+place: cardroom · time: Monday, January 19, 7:11 PM · cast: mustich, you
+
+1. MUSTICH [mustich] (cu mustich; shrug): It folds for me when it's right. You fold when you're scared. Different thing.
+
+## c1_w2_b — Week two: say nothing
+place: cardroom · time: Monday, January 19, 7:11 PM · cast: mustich, you
+
+1. MUSTICH [mustich] (cu mustich; nod): Nothing. Good. That's the first correct play you've made all week.
+
+## c1_w2b — Week two: Tommy
+place: cardroom · time: Monday, January 19, 7:12 PM · cast: tommy, you
+
+1. TOMMY [tommy] (two; talk): Kid. Come here. That boy's father owns three car dealerships and none of them has ever lost a dime to a cooler.
+2. TOMMY [tommy] (ots tommy; point > nod): He'll play the Classic like a man who has never been hungry. Hungry beats scared. Scared beats nothing. Remember the order.
+3. CARD [card] (wide; idle): Goal: the Biscayne Classic, Saturday, February 14. Build your bankroll to $5,000 before it.
+
+## c1_w3_diner_keep — Week three: the Lucky Seven (day job)
+place: diner · time: 12:40 AM · cast: slick, you
+From CH1_WEEKS.md (draft). The first night after Friday 30 January's texts that you've played a live event.
+
+1. CARD [card] (ext; idle): Lucky Seven. Past midnight. The pie is the same. You are not as poor as last week.
+2. SLICK [slick] (two; talk): Tell me one hand you folded this week that you wanted to play.
+3. YOU [you] (cu you; think): Ace-queen, under the gun, deep stacks. Somebody three-bet me and I folded. It was probably good.
+4. SLICK [slick] (push slick; point): Probably? Okay. Hold on to the word. In a week you'll be sitting there with a stack you can feel, and "probably" will cost you the thing you built.
+5. SLICK [slick] (cu slick; talk): The roll isn't your score. It's your air. Every time you play above it, you're holding your breath. Nobody wins holding their breath.
+6. SLICK [slick] (two; shrug): And you're doing it on four hours of sleep, with a boss who thinks a bonus is a hug. That's allowed. It just has a price. Write it down.
+7. CARD [card] (wide; idle): Goal: build your bankroll to $5,000 before the Classic. {days} days.
+
+## c1_w3_diner_quit — Week three: the Lucky Seven (full-time)
+place: diner · time: 12:40 AM · cast: slick, you
+From CH1_WEEKS.md (draft). As above, full-time.
+
+1. CARD [card] (ext; idle): Lucky Seven. Past midnight. The pie is the same. You are not as poor as last week.
+2. SLICK [slick] (two; talk): Tell me one hand you folded this week that you wanted to play.
+3. YOU [you] (cu you; think): Ace-queen, under the gun, deep stacks. Somebody three-bet me and I folded. It was probably good.
+4. SLICK [slick] (push slick; point): Probably? Okay. Hold on to the word. In a week you'll be sitting there with a stack you can feel, and "probably" will cost you the thing you built.
+5. SLICK [slick] (cu slick; talk): The roll isn't your score. It's your air. Every time you play above it, you're holding your breath. Nobody wins holding their breath.
+6. SLICK [slick] (two; shrug): And you quit the one thing that paid on time. That's allowed. It just means you're not allowed to be sloppy. Write that down too.
+7. CARD [card] (wide; idle): Goal: build your bankroll to $5,000 before the Classic. {days} days.
+
+## c1_w4_diner — Classic week
+place: diner · time: Sunday, 1:10 AM · cast: slick, you
+From CH1_WEEKS.md (draft). The first night on or after Monday 9 February.
+
+1. CARD [card] (ext; idle): Lucky Seven, the Sunday before the Classic. Slick has a legal pad. He doesn't take notes. He draws one line down the middle.
+2. SLICK [slick] (two; talk): Two days. Day one is for staying alive. Day two is for the ones who stayed alive, and they all sit near each other.
+3. SLICK [slick] (push slick; point): There'll be two hundred and twelve people on Saturday, and about thirty of them know what they're doing. You are going to meet all thirty. Don't be the one who flinches first.
+4. YOU [you] (cu you; think): What do I do if I get scared?
+5. SLICK [slick] (cu slick; talk): Be scared. Then fold the right hand. They're two different jobs. People mix them up.
+6. SLICK [slick] (ots slick; shrug): Eat something. Chips don't count calories, but you do.
+
+## c1_w4_eve — The night before
+place: home · time: Friday, February 13, 11:30 PM · cast: you
+From CH1_WEEKS.md (draft). Friday 13 February. The texts come next, on the phone, in the game; then `c1_w4_eve2`.
+
+1. CARD [card] (wide; idle): Friday night. A month of days became one. The apartment is quiet. The bay is a black stripe between two buildings.
+
+## c1_w4_eve2 — The night before (after the texts)
+place: home · time: Friday, February 13, 11:40 PM · cast: you
+
+1. CARD [card] (push you; think): You have {br}. The Classic is $340. You've never been more afraid, and it feels like the first honest feeling you've had in a year.
+2. CARD [card] (wide; idle): Saturday. Biscayne. The big one.
+
 ## classic_day1 — Bags and tags
 place: cardroom · time: Saturday, 11:50 PM · cast: gnomey, mustich, you
 Plays when you survive Day 1 of the Biscayne Classic. Slick's text follows on the phone.

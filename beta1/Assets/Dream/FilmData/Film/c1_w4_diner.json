@@ -1,0 +1,85 @@
+{
+ "id": "c1_w4_diner",
+ "title": "Classic week",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Lucky Seven, the Sunday before the Classic. Slick has a legal pad. He doesn't take notes. He draws one line down the middle.",
+   "voice": "c1_w4_diner_01"
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "two",
+   "subject": "",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Two days. Day one is for staying alive. Day two is for the ones who stayed alive, and they all sit near each other.",
+   "voice": "c1_w4_diner_02"
+  },
+  {
+   "n": 3,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "push",
+   "subject": "slick",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "There'll be two hundred and twelve people on Saturday, and about thirty of them know what they're doing. You are going to meet all thirty. Don't be the one who flinches first.",
+   "voice": "c1_w4_diner_03"
+  },
+  {
+   "n": 4,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "hold": 0.0,
+   "text": "What do I do if I get scared?",
+   "voice": "c1_w4_diner_04"
+  },
+  {
+   "n": 5,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Be scared. Then fold the right hand. They're two different jobs. People mix them up.",
+   "voice": "c1_w4_diner_05"
+  },
+  {
+   "n": 6,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "ots",
+   "subject": "slick",
+   "act": "shrug",
+   "next": "",
+   "hold": 0.0,
+   "text": "Eat something. Chips don't count calories, but you do.",
+   "voice": "c1_w4_diner_06"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "Sunday, 1:10 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

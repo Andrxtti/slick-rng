@@ -1,0 +1,97 @@
+{
+ "id": "c1_w3_diner_keep",
+ "title": "Week three: the Lucky Seven (day job)",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Lucky Seven. Past midnight. The pie is the same. You are not as poor as last week.",
+   "voice": "c1_w3_diner_keep_01"
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "two",
+   "subject": "",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Tell me one hand you folded this week that you wanted to play.",
+   "voice": "c1_w3_diner_keep_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "hold": 0.0,
+   "text": "Ace-queen, under the gun, deep stacks. Somebody three-bet me and I folded. It was probably good.",
+   "voice": "c1_w3_diner_keep_03"
+  },
+  {
+   "n": 4,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "push",
+   "subject": "slick",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "Probably? Okay. Hold on to the word. In a week you'll be sitting there with a stack you can feel, and \"probably\" will cost you the thing you built.",
+   "voice": "c1_w3_diner_keep_04"
+  },
+  {
+   "n": 5,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "The roll isn't your score. It's your air. Every time you play above it, you're holding your breath. Nobody wins holding their breath.",
+   "voice": "c1_w3_diner_keep_05"
+  },
+  {
+   "n": 6,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "two",
+   "subject": "",
+   "act": "shrug",
+   "next": "",
+   "hold": 0.0,
+   "text": "And you're doing it on four hours of sleep, with a boss who thinks a bonus is a hug. That's allowed. It just has a price. Write it down.",
+   "voice": "c1_w3_diner_keep_06"
+  },
+  {
+   "n": 7,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Goal: build your bankroll to $5,000 before the Classic. {days} days.",
+   "voice": ""
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "12:40 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

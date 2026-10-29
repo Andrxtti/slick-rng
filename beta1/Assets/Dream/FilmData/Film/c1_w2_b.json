@@ -1,0 +1,25 @@
+{
+ "id": "c1_w2_b",
+ "title": "Week two: say nothing",
+ "lines": [
+  {
+   "n": 1,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "nod",
+   "next": "",
+   "hold": 0.0,
+   "text": "Nothing. Good. That's the first correct play you've made all week.",
+   "voice": "c1_w2_b_01"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Monday, January 19, 7:11 PM",
+ "cast": [
+  "mustich",
+  "you"
+ ]
+}

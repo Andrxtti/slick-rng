@@ -1,0 +1,25 @@
+{
+ "id": "c1_w2_a",
+ "title": "Week two: \"Does it fold for you too?\"",
+ "lines": [
+  {
+   "n": 1,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "shrug",
+   "next": "",
+   "hold": 0.0,
+   "text": "It folds for me when it's right. You fold when you're scared. Different thing.",
+   "voice": "c1_w2_a_01"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Monday, January 19, 7:11 PM",
+ "cast": [
+  "mustich",
+  "you"
+ ]
+}

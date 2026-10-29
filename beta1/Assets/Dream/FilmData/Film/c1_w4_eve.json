@@ -1,0 +1,24 @@
+{
+ "id": "c1_w4_eve",
+ "title": "The night before",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Friday night. A month of days became one. The apartment is quiet. The bay is a black stripe between two buildings.",
+   "voice": "c1_w4_eve_01"
+  }
+ ],
+ "directions": [],
+ "place": "home",
+ "time": "Friday, February 13, 11:30 PM",
+ "cast": [
+  "you"
+ ]
+}

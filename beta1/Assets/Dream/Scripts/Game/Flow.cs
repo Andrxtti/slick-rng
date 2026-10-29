@@ -228,7 +228,7 @@ namespace Dream.Game
                 Ui.At(Ui.Num(row, price, 36, Ui.Gold, TextAnchor.MiddleRight, FontStyle.Bold), 0.68f, 0.48f, 0.95f, 0.85f);
                 Ui.At(Ui.Label(row, ev.kind == "sat" ? $"{ev.field:N0} players · {ev.seats} return" : $"{ev.field:N0} players", 22, Ui.Dim, TextAnchor.MiddleRight), 0.6f, 0.15f, 0.95f, 0.45f);
                 var b = row.gameObject.AddComponent<Button>(); var id = ev.id;
-                b.interactable = afford; b.onClick.AddListener(() => Play(id));
+                b.interactable = afford; b.onClick.AddListener(() => Enter(id));
                 y -= 0.112f;
             }
             if (LastSaturday(S.day + 1) || LastSaturday(S.day + 2) || LastSaturday(S.day + 3))
@@ -307,6 +307,13 @@ namespace Dream.Game
         }
 
         // ------------------------------------------------------------ an event
+        // before an event: Yarn may have a scene first (week two plays before your first live game from 19 January)
+        void Enter(string id)
+        {
+            var ev = Lib.Event(id);
+            story.Run("BeforeEvent", () => Play(id), new Story.Outcome { ev = id, online = ev.online });
+        }
+
         void Play(string id)
         {
             var ev = Lib.Event(id);
@@ -387,6 +394,9 @@ namespace Dream.Game
             string place = Ord(S.lastPlace), cash = Ui.Money(S.lastPrize);
             switch (key)
             {
+                case "days": return Math.Max(0, ClassicDay - S.day).ToString();   // days to the Classic (CH1_WEEKS {days})
+                case "br": return Ui.Money(S.br);
+                case "debt": return Ui.Money(S.debt);
                 case "saturday":
                     return S.lastPrize > 0 ? $"You finished {place} on Saturday and took home {cash}.\nYou've replayed every hand in your head since."
                         : "You busted Saturday. And you have never felt more alive.\nYou've replayed every hand in your head since.";

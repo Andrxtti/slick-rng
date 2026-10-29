@@ -1,0 +1,49 @@
+{
+ "id": "c1_w2b",
+ "title": "Week two: Tommy",
+ "lines": [
+  {
+   "n": 1,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "two",
+   "subject": "",
+   "act": "talk",
+   "next": "",
+   "hold": 0.0,
+   "text": "Kid. Come here. That boy's father owns three car dealerships and none of them has ever lost a dime to a cooler.",
+   "voice": "c1_w2b_01"
+  },
+  {
+   "n": 2,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "ots",
+   "subject": "tommy",
+   "act": "point",
+   "next": "nod",
+   "hold": 0.0,
+   "text": "He'll play the Classic like a man who has never been hungry. Hungry beats scared. Scared beats nothing. Remember the order.",
+   "voice": "c1_w2b_02"
+  },
+  {
+   "n": 3,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Goal: the Biscayne Classic, Saturday, February 14. Build your bankroll to $5,000 before it.",
+   "voice": "c1_w2b_03"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Monday, January 19, 7:12 PM",
+ "cast": [
+  "tommy",
+  "you"
+ ]
+}

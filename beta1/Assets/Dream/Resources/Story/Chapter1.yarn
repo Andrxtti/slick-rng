@@ -1,6 +1,21 @@
 // Chapter 1: The Grind. What happens after each event, in Steven's order (the old game's Play.cs queue): the final
 // table, the Classic's days, the first title, the first cooler or bust, going broke, then the goal.
 
+title: BeforeEvent
+---
+// week two (CH1_WEEKS.md): the first live game you start on or after Monday 19 January. Live only: it's in the room.
+<<if $chapter == 1 and not $online and $day >= 14 and not $wk2>>
+    <<set $wk2 to true>>
+    <<film c1_w2>>
+    I ran your bubble hands through my solver last night. #card
+    -> "Does it fold for you too?"
+        <<film c1_w2_a>>
+    -> Say nothing.
+        <<film c1_w2_b>>
+    <<film c1_w2b>>
+<<endif>>
+===
+
 title: AfterEvent
 ---
 // the final table, if you met someone there (ft_won_tommy, ft_lost_tommy)
@@ -47,11 +62,59 @@ title: AfterEvent
 <<if $chapter == 1 and $bankroll < 55>>
     <<detour Broke>>
 <<endif>>
+// week three at the diner: the first night after Friday 30 January's texts that you've played a live event
+<<if $chapter == 1 and not $online and $wk3 and not $wk3d and not $classic_done>>
+    <<set $wk3d to true>>
+    <<if $job == "nights">>
+        <<film c1_w3_diner_keep>>
+    <<else>>
+        <<film c1_w3_diner_quit>>
+    <<endif>>
+<<endif>>
 <<detour CheckGoal>>
 ===
 
 title: AfterSleep
 ---
+// week three: Friday 30 January, with the pay and the rent. Texts read anywhere.
+<<if $chapter == 1 and $day >= 25 and not $wk3 and not $classic_done>>
+    <<set $wk3 to true>>
+    <<clock "8:05 AM">>
+    <<if $job == "nights">>
+        Friday. The pay lands. $600 leaves the same morning for the apartment.
+    <<else>>
+        Friday. $600 leaves the same morning for the apartment.
+    <<endif>>
+    Slick: Rent's in. Good. Look at what's left, not at what you won. #text
+    <<if $debt > 0>>
+        Slick: You still owe me {$debt_s}. Half of every profit comes back to me until it's gone. That's not interest. That's the lesson. #text
+    <<else>>
+        Slick: You owe me nothing now. Which means every dollar you lose from here is yours. Notice how that feels. #text
+    <<endif>>
+    <<if $job == "nights">>
+        Lou: Henderson deck, Monday, 9. Nobody gets the weekend off for "a hobby." #text
+        David: you look tired in that photo. quit the deck. or dont. but sleep #text
+    <<else>>
+        David: rent day!!! how are we feeling. be honest. honest = fine. dishonest = I bring soup #text
+    <<endif>>
+<<endif>>
+// Classic week: the first night on or after Monday 9 February, at the diner
+<<if $chapter == 1 and $day >= 35 and not $wk4a and not $classic_done>>
+    <<set $wk4a to true>>
+    <<film c1_w4_diner>>
+<<endif>>
+// the night before: Friday 13 February (or the morning of, if the calendar jumped past it)
+<<if $chapter == 1 and $day >= 39 and not $wk4b and not $classic_done>>
+    <<set $wk4b to true>>
+    <<film c1_w4_eve>>
+    <<clock "11:34 PM">>
+    Slick: Early night. No new hands tonight, only the ones you've already missed. Review them. Then sleep. #text
+    David: TOMORROW!!! I'll be on my couch screaming at a stream of nothing. Fold the junk. I'm so proud I could scream. I'm screaming. #text
+    <<if $job == "nights">>
+        Lou: Henderson numbers, Monday, 9. Good luck with your "event." #text
+    <<endif>>
+    <<film c1_w4_eve2>>
+<<endif>>
 // the night can end the chapter (the Classic's day gone by) or cross the milestone (a paycheck)
 <<detour CheckGoal>>
 ===

@@ -311,6 +311,11 @@ namespace Dream.Game
             var am = J.Nums(J.L(p, "amounts")); if (place < 1 || place > am.Count) return 0;
             return Math.Round(am[place - 1] * (ev.prizeBase > 0 ? ev.prizeBase : ev.buyin));
         }
+        // where a run that survived finishes: score (accuracy + luck + stack) against a threshold that rises with the field.
+        // The old game's values (0.6, 0.04, luck 0.12) let a 70%-accuracy player win about a third of 60-player nightlies
+        // and a fifth of 1,104-player online events (Editor/Sim.cs); Test Beta 1.1.4 sets them below (DAY_REPORT, task 5).
+        public static double PlaceBase = 0.95, PlaceSlope = 0.05, PlaceLuck = 0.3, PlaceBand = 0.4, PlaceOnline = 0.08;   // online: a tougher field
+
         public static int Place(Run run)
         {
             var ev = run.ev; var rng = run.rng; int N = Math.Max(1, ev.field);
@@ -325,12 +330,12 @@ namespace Dream.Game
                 var ranges = new[] { new[] { 7, 9 }, new[] { 4, 6 }, new[] { 2, 3 } }; var rg = ranges[Math.Min(2, run.h * 3 / Math.Max(1, Per(run)))];
                 return Between(Math.Min(rg[0], N), Math.Min(rg[1], N));
             }
-            double winT = 0.6 + 0.04 * Math.Log10(N) + 0.01 * Math.Min(6, ev.ch), luck = (rng.Next() - 0.5) * 0.12, score = pct + luck + (run.stack - 100) / 1000.0;
+            double winT = PlaceBase + PlaceSlope * Math.Log10(N) + 0.01 * Math.Min(6, ev.ch) + (ev.online ? PlaceOnline : 0), luck = (rng.Next() - 0.5) * PlaceLuck, score = pct + luck + (run.stack - 100) / 1000.0;
             if (score >= winT) return 1;
-            if (score >= winT - 0.12) return 2;
-            if (score >= winT - 0.22) return 3;
-            if (score >= winT - 0.36) return Between(4, Math.Min(9, N));
-            if (score >= winT - 0.55) return Between(Math.Min(10, P), Math.Max(10, P));
+            if (score >= winT - 0.12 * PlaceBand) return 2;
+            if (score >= winT - 0.22 * PlaceBand) return 3;
+            if (score >= winT - 0.36 * PlaceBand) return Between(4, Math.Min(9, N));
+            if (score >= winT - 0.55 * PlaceBand) return Between(Math.Min(10, P), Math.Max(10, P));
             return Between(P + 1, Math.Max(P + 2, (int)Math.Round(P * 1.3)));
         }
 

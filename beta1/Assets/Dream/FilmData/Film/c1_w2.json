@@ -1,0 +1,80 @@
+{
+ "id": "c1_w2",
+ "title": "Week two",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Second Monday. The room knows your name now, mostly. The coffee is the same coffee.",
+   "voice": "c1_w2_01"
+  },
+  {
+   "n": 2,
+   "who": "gnomey",
+   "name": "MILES",
+   "shot": "two",
+   "subject": "",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "Poster's up by the cage. Biscayne Classic, Saturday, February fourteenth. Two hundred and twelve seats, three-forty to get in. Sign-up sheet's on the clipboard.",
+   "voice": "c1_w2_02"
+  },
+  {
+   "n": 3,
+   "who": "card",
+   "name": "CARD",
+   "shot": "push",
+   "subject": "mustich",
+   "act": "idle",
+   "next": "",
+   "hold": 0.0,
+   "text": "Eleven names on it already. The twelfth, in careful handwriting, is Mustich.",
+   "voice": "c1_w2_03"
+  },
+  {
+   "n": 4,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "shrug",
+   "next": "",
+   "hold": 0.0,
+   "text": "Don't look so surprised. I've been studying this room for a year. You've been studying it for a week.",
+   "voice": "c1_w2_04"
+  },
+  {
+   "n": 5,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "ots",
+   "subject": "mustich",
+   "act": "point",
+   "next": "",
+   "hold": 0.0,
+   "text": "I ran your bubble hands through my solver last night. Do you want to know what it said?",
+   "voice": "c1_w2_05"
+  }
+ ],
+ "directions": [
+  {
+   "after": 0,
+   "text": "the list board squeaks; a new poster by the cage"
+  }
+ ],
+ "place": "cardroom",
+ "time": "Monday, January 19, 7:10 PM",
+ "cast": [
+  "gnomey",
+  "mustich",
+  "tommy",
+  "you"
+ ]
+}
