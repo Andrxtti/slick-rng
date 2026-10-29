@@ -1,0 +1,1 @@
+{ "cmds": ["if not exist C:\\Dev\\cfp-worker\\tmp mkdir C:\\Dev\\cfp-worker\\tmp", "curl -s -L -o C:\\Dev\\cfp-worker\\tmp\\yarnspinner.json https://package.openupm.com/dev.yarnspinner.unity", "dir C:\\Dev\\cfp-worker\\tmp"] }

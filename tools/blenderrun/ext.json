@@ -1,0 +1,8 @@
+{ "exe": "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe",
+  "steps": [
+    ["--online-mode", "-c", "extension", "sync"],
+    ["--online-mode", "-c", "extension", "install", "-e", "mpfb"],
+    ["-c", "extension", "list"],
+    ["-b", "-P", "C:/Dev/cfp-worker/tools/blenderrun/enable.py"],
+    ["-b", "-P", "C:/Dev/cfp-worker/tools/blenderrun/addons.py"]
+  ] }
