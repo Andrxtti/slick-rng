@@ -36,3 +36,14 @@ Every third-party asset in the beta1 project, with its source, author and licenc
 | calathea_orbifolia_01 | model | Poly Haven, https://polyhaven.com/a/calathea_orbifolia_01 | Rob Tuytel, Rico Cilliers | CC0 |
 | wall_clock | model | Poly Haven, https://polyhaven.com/a/wall_clock | PierreB3D | CC0 |
 | binder_notebook | model | Poly Haven, https://polyhaven.com/a/binder_notebook | DaDrood | CC0 |
+
+## Not from Poly Haven
+| asset | kind | source | author | licence |
+|---|---|---|---|---|
+| MakeHuman system assets (base mesh targets, skins, eyes, brows, lashes, teeth, hair, clothes) | characters | files.makehumancommunity.org/asset_packs/makehuman_system_assets (via MPFB 2) | MakeHuman team / Data Collection AB | CC0 |
+| MPFB 2 generated characters (tools/blender/chars/*.json) | characters | made here | Confirmed Fire | CC0 (MPFB output) |
+| Bio's mask print, beards, felt, suit pips | textures | generated in code here | Confirmed Fire | ours |
+| Room tones (diner rain/neon, office, card room), door bell, reel score | audio | synthesized with ffmpeg here (tools/reel_cut.py, see night report) | Confirmed Fire | ours |
+| Voices | audio | Piper 2023.11.14-2 (MIT) with en_US-libritts-high (rhasspy/piper-voices; LibriTTS data CC-BY 4.0) | rhasspy / LibriTTS | CC-BY 4.0 voices |
+| Mixamo acting clips (27) | animation | copied from the old project (Assets/Dream/Anim/Mixamo), kept out of git | Adobe Mixamo | Mixamo terms (use in projects, no raw redistribution) |
+| Unity packages incl. glTFast 6.20.0 | code | Unity registry | Unity | Unity Companion / Apache-2.0 (glTFast) |
