@@ -1,0 +1,1 @@
+{ "cmds": ["tasklist /NH | findstr /I git", "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng config --get credential.helper", "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng remote -v"] }
