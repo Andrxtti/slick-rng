@@ -4,9 +4,11 @@ Source: the Confirmed Fire logo (docs/icons/slick-badge.jpg, slick-dwi.jpg): a y
 tousled hair, zip jacket, the 8-bit "deal with it" sunglasses. Slick is that figure made human and aged into the
 stranger at the diner.
 
-Steven, Oct 28: Slick is East Asian, and the comparison is facial: the face type of Johnny Tran in The Fast and the
-Furious. He is modelled on poker player Eric Chang, "SlickRic". We build the face type (the features below), not a
-copy of the actor's or Eric's actual face.
+Steven, Oct 28: Slick is poker player Eric Chang, "SlickRic", and Eric has agreed to his likeness being used (Steven
+has his verification). So Slick's face is built from Eric's own photos/footage. The Johnny Tran comparison (The Fast
+and the Furious) is a style reference for the face type only; the actor's face is never copied.
+Reference needed from Eric: clear photos (front, both three-quarters, both profiles, neutral and smiling, even light,
+no glasses) or a short phone video turning his head slowly; hair as he wears it.
 
 ## Brief
 
