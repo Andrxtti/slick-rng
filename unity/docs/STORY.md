@@ -20,7 +20,9 @@ players".
 - The last river of the Main Event is the player's call or fold, and the cards decide (`c6_final`, new `c6_fold`).
 - Kept as written: Colt and the pie, Slick in Vegas for the Main, Lou's firm Halvorsen & Pike.
 - Bio wears a mask, not glasses (Steven). Only Slick wears dark glasses.
-- Still to settle with Steven: who was the man on TV (the twist), now that Bio has no glasses.
+- The twist, settled (Steven: "just adjust the verbiage to the storyline"): his Prologue says the man on TV wore dark
+  glasses, and only Slick wears them. So Slick was the man on TV, and Bio was the one who folded. The spine below is
+  rewritten that way.
 
 Format, same as `dream/script.md`:
 - Each scene is `## id — Chapter · title (place)`, then numbered lines `Name [speaker id]: line {shot}`.
@@ -50,29 +52,35 @@ Format, same as `dream/script.md`:
 
 ## The spine
 
-**The question under the whole game:** who was the man in dark glasses on the fuzzy TV, and who folded to him?
+**The question under the whole game:** who was the man in dark glasses on the fuzzy TV, what happened to him, and who
+folded to him?
 
-When you were fourteen, you watched the World Championship of Cards final table on TV. A man in dark glasses moved all in on the river
-with nothing. You could see his cards because the hole-card camera showed them to the audience. His opponent thought
-for four minutes and folded the winning hand. The man never showed. In the interview afterwards he said one line:
-*"People insist on calling it luck."*
+When you were fourteen, you watched the World Championship of Cards final on TV. A man in dark glasses moved all in on
+the river with nothing. You could see his cards because the hole-card camera showed them to the audience. His opponent
+thought for four minutes and folded the winning hand. The man never showed. In the interview afterwards he said one
+line: *"People insist on calling it luck."*
 
-- **The man in dark glasses was Bio "The Ghost".** That was the first of his fourteen bracelets.
-- **The opponent who folded was Slick.** The fold went round the world. "The Fold" became a meme before memes. Slick
-  never sat at a final table again.
-  - Somebody bought his pie at the Lucky Seven the night he came home. It was Colt the Cowboy (Chapter 2).
-  - He has spent ten years at 2:13 AM, buying other people's pie. He writes Bio's line in pen on every envelope,
-    because it is the lie he wants you to beat. It wasn't luck. Bio read a person, and the person flinched.
-- **The misdirection:** Slick has worn dark glasses ever since that night. So for two chapters, you and the player
-  assume Slick was the man on the TV. Chapter 3 puts a man in dark glasses at the feature table. That's Bio.
-  Chapter 4 settles it.
-- **The story pays it off in three steps:**
-  - Hints in Chapter 2 (Armadillo Fatts' story, Colt's pie).
-  - Bio's "Tell Slick I said hello" at the end of Chapter 3.
-  - Slick's confession in Chapter 4.
-
-  At the Main Event final table, the same spot comes round: a river jam from Bio. Whatever the cards do, this time
-  somebody doesn't flinch. In Legacy, Slick lets the Hall of Legends hang the portrait he asked them to leave out.
+- **The man in dark glasses was Slick.** He won the world title with seven-deuce, and the line in your envelope is his
+  own, from that interview. Steven's Prologue already plants it: the stranger at the diner wears dark glasses, and the
+  envelope carries the line.
+- **What happened to him:** he spent the next year believing one perfect read made him bulletproof. He played above his
+  roll every night until the game took back every dollar. He came home to Calle Ocho broke, and Colt the Cowboy bought
+  his pie at the Lucky Seven (Chapter 2). He has spent ten years at 2:13 AM since, buying other people's pie. That is
+  where "Never play above your roll" comes from.
+- **The opponent who folded was Bio "The Ghost".** He has worn the mask since that night, so nobody can read his face
+  again. Fourteen bracelets, the most of anyone alive, and never the one he lost to Slick: the Main Event (c5_score:
+  "there's only one he still cares about every year").
+- **Why Slick writes the line on every envelope:** it is the cockiest thing he ever said, and he wants someone to prove
+  it right the long way. It wasn't luck. He read a person, and the person flinched. Everything he teaches is so you
+  never flinch, and so you never think one great read makes you bulletproof.
+- **How the player finds out:**
+  - Chapter 2: Armadillo Fatts tells the story of the final and quotes the interview line. It's the line in your
+    envelope. Then Colt says he bought pie for a broke kid in dark glasses on Calle Ocho.
+  - Chapter 3: Bio, in the mask, at the feature table. "Tell Slick I said hello."
+  - Chapter 4: Slick tells it himself, and names the man who folded.
+- **The payoff:** at the Main Event final table Bio jams the river on you, in the seat Slick once had. He looks at you
+  the way Slick looked at him. This time somebody doesn't flinch, whatever the cards do. In Legacy, Slick lets the Hall
+  of Legends hang the champion's portrait he asked them to leave out.
 
 **Every chapter turns a theme over:**
 - Chapter 2, discipline: the money starts to be real.
@@ -225,11 +233,12 @@ Goal: win two Circuit rings and build a $40,000 bankroll.
 1. Narrator [n]: The casino bar at 1 AM. Keno on a television nobody watches. / An enormous man in a white hat is holding court with a plate of wings.  {wide^:Looking Around~night}
 2. Armadillo Fatts [L:armadillo]: Sit down, partner. Everybody who sits gets a story, and nobody gets a refund.  {two:Talking}
 3. Armadillo Fatts [L:armadillo]: Ten years back, give or take. World Championship of Cards, last two players. Kid in dark glasses shoves the river with nothing. Seven-deuce. The whole country can see it on the little camera.  {cu:Pointing}
-4. Armadillo Fatts [L:armadillo]: Other fella has the winner. Thinks four minutes. Folds. Walks out in the rain in his good shoes.  {push:Shaking Head No~tension}
+4. Armadillo Fatts [L:armadillo]: Other fella has the winner. Thinks four minutes. Folds. Wears a mask to this day, so nobody can read him twice.  {push:Shaking Head No~tension}
 5. You [you]: I watched that. I was fourteen.  {ecu:Thinking@hush}
-6. Armadillo Fatts [L:armadillo]: Everybody watched it. Nobody remembers the name of the fella who folded. That's the cruel part, son. You become a story with no name in it.  {cu:Talking@sting}
-7. You [you]: What happened to him?  {ots:Talking}
-8. Armadillo Fatts [L:armadillo]: Same thing that happens to all of us. He went home. / Order the wings. They're better than the story.  {two:Shrugging@tick~none}
+6. Armadillo Fatts [L:armadillo]: Everybody watched it. Then the kid goes on TV and says one thing. "People insist on calling it luck." Cockiest sentence I ever heard.  {cu:Talking@sting}
+7. Narrator [n]: The line in your envelope. Word for word. In pen.  {insert^:Thinking@hush}
+8. You [you]: What happened to him?  {ots:Talking}
+9. Armadillo Fatts [L:armadillo]: Same thing that happens to all of us. He went home. / Order the wings. They're better than the story.  {two:Shrugging@tick~none}
 
 ## c2_mouth — Chapter 2 · The Yapper (casino)
 
@@ -286,7 +295,7 @@ Goal: win two Circuit rings and build a $40,000 bankroll.
 3. Narrator [n]: He raises with ten-deuce, shows it, and wins the pot. The table laughs. He doesn't.  {hands@chips}
 4. Colt the Cowboy [L:brunswick]: Everybody laughs at the ten-deuce. That's why it works. You know who I taught that to? Skinny kid. Dark glasses. Calle Ocho.  {cu:Pointing}
 5. You [you]: The Lucky Seven?  {ecu:Thinking@sting}
-6. Colt the Cowboy [L:brunswick]: Bought him a slice of pie there once. Night he came home from... well. Night he came home. He was soaked through and he wouldn't take off those glasses.  {push:Thinking~tension}
+6. Colt the Cowboy [L:brunswick]: Bought him a slice of pie there once. Night he came home. A year after the big one, and every dollar of it gone. Soaked through, and he wouldn't take off those glasses.  {push:Thinking~tension}
 7. Colt the Cowboy [L:brunswick]: He still buying people's pie?  {cu:Talking}
    - Choice: "Every night." | Colt the Cowboy [L:brunswick]: Good. Then I got my money's worth.
    - Choice: "I don't know who you mean." | Colt the Cowboy [L:brunswick]: Sure you don't. Neither does he.
@@ -297,7 +306,7 @@ Goal: win two Circuit rings and build a $40,000 bankroll.
 2. Slick [slick]: Two rings and forty thousand dollars, none of it borrowed. That's a bankroll. You're not a tourist any more.  {two:Talking>Head Nod Yes}
 3. You [you]: I met Colt the Cowboy.  {cu:Talking}
 4. Slick [slick]: Everyone meets Colt eventually. He's like weather.  {cu:Shrugging}
-5. You [you]: He said he bought a kid in dark glasses a slice of pie here. Once.  {push:Thinking@hush~tension}
+5. You [you]: He said he bought a broke kid in dark glasses a slice of pie here. The night he came home.  {push:Thinking@hush~tension}
 6. Narrator [n]: Slick turns his coffee cup a quarter turn. Then another. He doesn't look up.  {insert@tick}
 7. Slick [slick]: Eat your pie. The Summer starts in June, and Vegas doesn't care who you met.  {ecu:Talking@sting}
 8. Narrator [n]: Goal complete. Chapter 3: The Summer.  {wide^@swell}
@@ -314,7 +323,7 @@ Goal: win a gold bracelet.
 2. Miles "The Snowplow" Gnomey [rosa]: They hired me for the summer! Floor supervisor, rooms A through D. Six weeks, no sunlight. Seat open!  {two:Pointing@tick}
 3. Slick [slick] (text): Every kid who ever loved this game dreams about a bracelet. This is the room where they hand them out. Don't look at the ceiling.
 4. Narrator [n]: You look at the ceiling. Everyone does. Banners of every champion, back to the year your father was born.  {low^:Looking Around@swell}
-5. Narrator [n]: At the feature table sits a man in dark glasses and a mask. Fourteen bracelets. Nobody has seen him smile. / The man from the fuzzy TV.  {cu^:Looking Around@hush~tension}
+5. Narrator [n]: At the feature table sits a man in a black mask. Fourteen bracelets, more than anyone alive. Nobody has seen him smile. Nobody has seen most of his face.  {cu^:Looking Around@hush~tension}
 6. Bio "The Ghost" [ghost]: Kid. Stop looking at me and look at your cards.  {ecu:Talking@sting}
 7. Phil Hellraiser [L:hellbent]: Another internet kid. I'll see you at the final table. Probably not, though. Statistically, not.  {ots:Shrugging}
 8. Narrator [n]: Goal: win a gold bracelet.  {low^@swell~grind}
@@ -395,13 +404,14 @@ Goal: win a gold bracelet.
 ## c3_hello — Chapter 3 · The sportsbook, 4 AM (vegas)
 
 1. Narrator [n]: 4 AM. The sportsbook is empty except for highlights of a game that ended hours ago.  {ext~night}
-2. Narrator [n]: Someone sits two stools down. Dark glasses. The mask hangs off one ear.  {wide^:Looking Around@hush}
+2. Narrator [n]: Someone sits two stools down. The mask hangs off one ear, and the face under it is older than you expected.  {wide^:Looking Around@hush}
 3. Bio "The Ghost" [ghost]: Nice bracelet.  {cu:Talking}
 4. You [you]: You've got fourteen.  {cu:Thinking}
 5. Bio "The Ghost" [ghost]: I've got fourteen. You've got one that matters more. The first one is the only one you don't win for anybody else.  {push:Talking~tension}
-6. Narrator [n]: He stands. He leaves a tip on the bar for a bartender who isn't there.  {hands@tick}
-7. Bio "The Ghost" [ghost]: Tell Slick I said hello.  {ecu:Talking@sting}
-8. Narrator [n]: He's gone before you can ask how he knows the name.  {wide^~none}
+6. Bio "The Ghost" [ghost]: You wait like somebody taught you to. I only know one man who teaches that.  {cu:Talking@hush}
+7. Narrator [n]: He stands. He leaves a tip on the bar for a bartender who isn't there.  {hands@tick}
+8. Bio "The Ghost" [ghost]: Tell Slick I said hello.  {ecu:Talking@sting}
+9. Narrator [n]: He's gone before you can ask how he knows the name.  {wide^~none}
 
 ---
 
@@ -414,13 +424,13 @@ Goal: win two Tour titles (Let's Go! Tour or One Time! Cup) and build a $750,000
 1. Narrator [n]: Lucky Seven Diner. 2:13 AM. You didn't text first. He was already there.  {ext~night}
 2. You [you]: Bio says hello.  {two:Talking}
 3. Narrator [n]: For a long time, nothing. The pie case hums. A car goes by with its windows down, playing something sad in Spanish.  {wide^:Thinking@hush}
-4. Slick [slick]: World Championship of Cards. Last two players. I had him beat on the river and I knew it. Knew it the way you know your own phone number.  {cu:Talking~tension}
-5. Slick [slick]: He shoved. And he looked at me. Not at the board. At me. And I could feel him reading something I didn't know I was writing.  {push:Thinking}
-6. Slick [slick]: Four minutes. Then I folded the best hand I ever held to a man holding seven-deuce, and the whole world got to watch it on a little camera.  {ecu:Shaking Head No@sting}
-7. You [you]: The kid in dark glasses was him. The guy who folded was you.  {cu:Thinking}
-8. Slick [slick]: In the interview, he said "people insist on calling it luck". They put it in the papers. I've been writing it on envelopes for ten years so somebody would prove it wrong.  {cu:Talking}
-9. You [you]: Prove what wrong?  {ots:Talking}
-10. Slick [slick]: That it was luck. It wasn't. He read a person, and the person flinched. That's the whole game, kid. Everything I've taught you is so you never flinch.  {push:Pointing@swell}
+4. Slick [slick]: World Championship of Cards. Last two players. I had seven-deuce and a river that missed everything, and I knew he had me beat. I could see it on him.  {cu:Talking~tension}
+5. Slick [slick]: So I shoved. I didn't look at the board. I looked at him. And I watched him start to doubt he was allowed to win.  {push:Thinking}
+6. Slick [slick]: Four minutes. Then the best player I ever sat with folded the best hand he ever held, and the whole world watched it on a little camera.  {ecu:Shaking Head No@sting}
+7. You [you]: The man in the dark glasses was you. And the one who folded was Bio.  {cu:Thinking}
+8. Slick [slick]: They asked me how. I said "people insist on calling it luck". Cockiest thing I ever said. Then I spent a year proving I could do it every night, above my roll, until the game took back every dollar.  {cu:Talking}
+9. You [you]: And Colt bought your pie.  {ots:Talking@hush}
+10. Slick [slick]: Colt bought my pie. / I write that line on the envelopes so somebody proves it right the long way. It wasn't luck. I read a person, and the person flinched. Everything I've taught you is so you never flinch, and so you never think one great read makes you bulletproof.  {push:Pointing@swell}
 11. Slick [slick]: Now finish your pie. You've got cameras next week, and cameras love a flinch.  {two:Shrugging~night}
 
 ## c4 — Chapter 4 · The Tour (tv)
@@ -448,8 +458,8 @@ Goal: win two Tour titles (Let's Go! Tour or One Time! Cup) and build a $750,000
 2. Slick [slick]: You bluffed the one guy who never folds.  {cu:Talking}
 3. You [you]: The board was perfect for it.  {cu:Shrugging}
 4. Slick [slick]: Perfect for a bluff against a player who folds. He doesn't. A bluff is a bet against a person, not a board. Pick the person first.  {push:Pointing@sting}
-5. You [you]: Is that what Bio did to you?  {cu:Thinking@hush}
-6. Slick [slick]: Bio picked the person first. Then the card. Then the moment. In that order. Ranges, not hands. People, not boards. Drill the river spots.  {two:Pointing>Head Nod Yes@swell}
+5. You [you]: Is that what you did to Bio?  {cu:Thinking@hush}
+6. Slick [slick]: I picked the person first. Then the card. Then the moment. In that order. Ranges, not hands. People, not boards. Drill the river spots.  {two:Pointing>Head Nod Yes@swell}
 
 ## c4_lou — Chapter 4 · The sponsor (tv)
 
@@ -622,9 +632,9 @@ Goal: win the Main Event.
 2. Narrator [n]: He's already on a stool. Dark glasses. Two slices of pie.  {wide^:Looking Around@hush}
 3. Slick [slick]: Ten years since I set foot in this city. The pie's worse.  {two:Talking}
 4. You [you]: If it comes down to him and me. If he shoves the river.  {cu:Thinking~tension}
-5. Slick [slick]: Then it won't be about the cards. It'll be about what he reads in you. He'll be looking for the thing I gave him ten years ago.  {push:Talking}
-6. You [you]: What did you give him?  {cu:Talking}
-7. Slick [slick]: Doubt. I didn't doubt my hand. I doubted I was allowed to win. / Don't give him that. Whatever you decide, decide it like you're allowed.  {ecu:Pointing@sting}
+5. Slick [slick]: Then it won't be about the cards. He'll look at you the way I looked at him. He's waited ten years to put somebody in the seat he was in.  {push:Talking}
+6. You [you]: What did you see in him that night?  {cu:Talking}
+7. Slick [slick]: Doubt. He didn't doubt his hand. He doubted he was allowed to win. / Don't give him that. Whatever you decide, decide it like you're allowed.  {ecu:Pointing@sting}
 8. Narrator [n]: He pays for both slices. He doesn't leave. For the first time, he stays until you do.  {wide^@swell~night}
 
 ## c6_rail — Chapter 6 · The rail (main)
@@ -640,7 +650,7 @@ Goal: win the Main Event.
 
 1. Narrator [n]: Heads-up. Bio "The Ghost" and you. Every chip in the building is on one table.  {wide^:Looking Around~tension}
 2. Nick "Baby Goat" Twogloves [host]: Folks, this is the spot. River. The Ghost moves all in. And if you're old enough... you've seen this movie before.  {two:Pointing@hush}
-3. Narrator [n]: He's not looking at the board. He's looking at you. Looking for something you were fourteen years old the last time you saw.  {ecu^:Thinking}
+3. Narrator [n]: He's not looking at the board. He's looking at you, the way a man in dark glasses once looked at him.  {ecu^:Thinking}
 4. Narrator [n]: On the rail, a man in dark glasses takes them off.  {cu^@sting}
 5. Narrator [n]: You don't flinch. Whatever you do next, you decide it like you're allowed.  {push^:Thinking@swell}
    - Choice: Call. | Narrator [n]: You call. Both hands go face up. The cards decide. → champ / c6_lost
@@ -656,7 +666,7 @@ Goal: win the Main Event.
 
 1. Narrator [n] (win): Confetti. Cameras. A bracelet the size of a doorknob. / Somewhere, a fourteen-year-old with a fuzzy TV is losing his mind.  {wide^:Victory@crowd~triumph}
 2. Bio "The Ghost" [ghost]: Good game, kid.  {two:Shaking Hands 2>Shaking Hands 2@hush~none}
-3. Narrator [n]: He takes off his glasses and his mask. For the first time anyone can remember, Bio "The Ghost" smiles.  {ecu@swell}
+3. Narrator [n]: He takes off the mask. For the first time anyone can remember, Bio "The Ghost" smiles.  {ecu@swell}
 4. Narrator [n]: Then he looks past you, to the rail, and nods at a man he hasn't spoken to in ten years. / Slick nods back.  {push^:Head Nod Yes@swell}
 5. Bio "The Ghost" [ghost]: Now you'll find out the hard part. Everyone will be hunting you.  {cu:Pointing~tension}
 6. Natso SweetLou [derek] (text): Hey buddy! Long time! Saw you on TV. Listen, about that promotion...
@@ -724,10 +734,10 @@ The other seventeen use their `data.js` lines, unchanged.
 
 1. Narrator [n]: The Hall's annual dedication. Twenty-seven frames, and one blank space on the wall that's been there for ten years. Nobody remembers why.  {wide^:Looking Around~tension}
 2. Miles "The Snowplow" Gnomey [rosa]: Tournament director, Hall of Legends Invitational. Me! From the cage at Biscayne! Ladies and gentlemen, take your seats. Seats open!  {two:Pointing@crowd}
-3. Narrator [n]: The curator lifts a cloth from the blank space. A young man in dark glasses at a final table, ten years ago, thinking.  {insert@sting}
-4. Slick [slick]: I asked them to leave it out. I didn't want to be the guy who folded.  {cu:Thinking}
-5. Bio "The Ghost" [ghost]: You were the only one who ever made me wait four minutes. Nobody else ever made me wait at all.  {two:Talking@swell}
-6. Narrator [n]: Two old men shake hands under a portrait neither of them wanted to see. / The room doesn't know why it's clapping. It claps anyway.  {push^:Shaking Hands 2@crowd~triumph}
+3. Narrator [n]: The curator lifts a cloth from the blank space. A young man in dark glasses, ten years ago, holding the world championship trophy.  {insert@sting}
+4. Slick [slick]: I asked them to leave it out. I didn't want to be the champion who went broke a year later.  {cu:Thinking}
+5. Bio "The Ghost" [ghost]: You were the only one who ever made me think for four minutes. Ten years I've worn this thing because of you.  {two:Talking@swell}
+6. Narrator [n]: Two men shake hands under a portrait neither of them wanted to see. / The room doesn't know why it's clapping. It claps anyway.  {push^:Shaking Hands 2@crowd~triumph}
 
 ## c7_fifteen — Legacy · Fifteen (hall)
 
