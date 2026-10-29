@@ -55,12 +55,22 @@ sign-in nobody was there to give), so the commits are in `C:\Dev\slick-rng` only
 | 11 | Hand library and grading | 0ea8656 | spots.json byte copy (sha256 checked). **Same-grade check: 26,609 hands × every answer = 67,896 grades, 0 differences** against the old LabelFor (copied as text by `tools/grade_check_gen.py`) |
 | 12 | Game flow | 18a6bcc | Title → reel (first launch, skippable, replay in hub/title) → prologue films → Biscayne Championship → p_after + c1 → hub → events → results → story films → goal → end card |
 | 13 | Table design | 18a6bcc | Generated felt and rail, seats with stacks and actions, four-colour cards with drawn suits, chess-style grade panel |
-| 14 | Web build | (this commit) | see "Build" below |
+| 14 | Web build | (this commit) | Succeeded, 0 errors. See "Build" below |
 | 15 | This report | (this commit) | |
 
 A bug I found and fixed along the way, worth knowing for the old project too: Mixamo's **"Talking" clip is a seated
 clip** (head at 1.10 m) and **"Pointing" half-crouches** (1.28 m), against about 1.52 m for true standing clips. Standing
 characters using them sink. The old project maps standing talkers to them.
+
+## Build (task 14)
+`C:\Dev\Builds\TheDream-Beta1-Web`, WebGL with gzip and the decompression fallback (works on any static host).
+- Engine payload (Build/): **13.1 MB**: wasm 8.5 MB, data 4.4 MB (most of it the hand library), loader and framework 0.1 MB.
+- Films (StreamingAssets/Films, 720p): 19 MB in all, streamed only when each plays. The reel is 4.6 MB.
+- First screen on LTE, by arithmetic only (not tested on a phone): about 5 s to download at 20 Mbit/s plus wasm
+  startup, so **borderline under 10 s**. At 10 Mbit/s it's ~10.5 s and misses. The easy wins: Brotli on a host that
+  serves it, and a smaller wasm (trim Cinemachine/Timeline/glTFast/Recorder out of the player, which uses none of them).
+- Not checked tonight: iOS Safari's video autoplay rules for the reel (the first tap may be needed to start sound).
+- A Windows Firewall prompt for `adb` (Unity's Android tools) is waiting on screen. I left it alone (system setting).
 
 ## Before / after (C:\Dev\Builds\night-shots)
 `diner_set_before_after.jpg`, `diner_before_after_slick.jpg`, `diner_after_*.png`, `office_before_sheet.jpg` vs
