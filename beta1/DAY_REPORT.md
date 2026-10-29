@@ -279,3 +279,5 @@ arrator_audition.mp3`.
   - all 29 films re-rendered (card timing changes with the voice, so muxing audio alone would have overlapped lines),
     republished, and the reel re-cut with the narrator over its cards.
 
+
+**4. Test Beta 1.1.3 built** (17:38): `C:\Dev\Builds\TheDream-Beta1.1-Web`, Build/ 19.7 MB (+1.8 MB for the voice lines), 0 errors, 29 films + reel; `BUILD_READY.txt` written.
