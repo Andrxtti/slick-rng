@@ -31,7 +31,7 @@ namespace Dream.Film
                     s.mm = e ? 85 : 65; s.fstop = e ? 1.8f : 2.0f;
                     float frame = e ? 0.24f : 0.48f;                       // metres of subject the frame holds, top to bottom
                     float d = frame * 0.5f / Mathf.Tan(VFov(s.mm) * 0.5f * Mathf.Deg2Rad);
-                    var dir = (front * (e ? 0.75f : 0.7f) + toO * (e ? 0.6f : 0.75f)).normalized;   // near the eyeline of the person they talk to
+                    var dir = (Flat(S.Forward) * 0.75f + toO * (e ? 0.6f : 0.7f)).normalized;   // in front of them, near the eyeline of the person they talk to
                     s.focus = S.Eyes; s.aim = S.Eyes - up * frame * (1f / 2f - 1f / 3f);   // eyes on the upper third
                     s.to = S.Eyes + dir * d + up * 0.02f;
                     s.from = kind == "push" ? S.Eyes + dir * d * 1.45f + up * 0.03f : s.to;
@@ -82,7 +82,30 @@ namespace Dream.Film
                     break;
                 }
             }
+            if (S != null && kind != "ext" && kind != "wide") s.Clear(S.Eyes);
             return s;
+        }
+
+        // If something solid sits between the camera and the face, swing around the subject (keeping distance and
+        // height) until the line of sight is clear.
+        void Clear(Vector3 subject)
+        {
+            if (!Blocked(subject, to)) return;
+            for (int step = 1; step <= 8; step++)
+                foreach (var sign in new[] { 1f, -1f })
+                {
+                    var rot = Quaternion.AngleAxis(sign * step * 12f, Vector3.up);
+                    Vector3 nt = subject + rot * (to - subject), nf = subject + rot * (from - subject);
+                    if (Blocked(subject, nt)) continue;
+                    to = nt; from = nf;
+                    return;
+                }
+        }
+
+        static bool Blocked(Vector3 subject, Vector3 cam)
+        {
+            var d = cam - subject; float len = d.magnitude;
+            return Physics.SphereCast(subject + d / len * 0.25f, 0.05f, d / len, out _, Mathf.Max(0, len - 0.25f));
         }
 
         static Transform FindProp(GameObject set, string what)

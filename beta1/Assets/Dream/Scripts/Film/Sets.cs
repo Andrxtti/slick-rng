@@ -27,6 +27,7 @@ namespace Dream.Film
             public Color fog = new Color(0.03f, 0.03f, 0.05f); public float fogDensity = 0.012f;
             public string sky; public float skyExposure = 0.2f; public Color skyTint = Color.white; public float skyRotation;
             public float exposure, temperature, contrast = 12f, saturation;
+            public float key = 1f;   // film key strength in this set (the dark diner needs more than a sunlit office)
         }
 
         static readonly Color Tungsten = new Color(1f, 0.72f, 0.45f);
@@ -49,6 +50,24 @@ namespace Dream.Film
                 exposure = 0.2f, temperature = 0f, contrast = 14f, saturation = 4f,
             },
         };
+
+        static Sets()
+        {
+            Looks["office"] = new Look
+            {
+                lamps =
+                {
+                    // angle -1: a directional light, the low sun through the glass
+                    ["L_sun"] = new Lamp(new Color(1f, 0.55f, 0.42f), 1.6f, 0, -1, true, new Vector3(0.25f, -0.18f, 1f)),
+                    ["L_monitor"] = new Lamp(new Color(0.7f, 0.85f, 1f), 0.5f, 2.2f),
+                    ["L_desklamp"] = new Lamp(Tungsten, 0.45f, 2.0f),
+                    ["L_exit"] = new Lamp(new Color(0.3f, 1f, 0.45f), 0.5f, 3f),
+                },
+                ambient = new Color(0.16f, 0.13f, 0.15f), key = 0.35f, exposure = -0.35f,
+                fog = new Color(0.5f, 0.35f, 0.35f), fogDensity = 0.004f,
+                sky = "Assets/Dream/FilmSets/office/sky.hdr", skyExposure = 0.5f, skyTint = new Color(1f, 0.7f, 0.66f), skyRotation = 0,
+            };
+        }
 
         public static GameObject Load(string place)
         {
@@ -79,13 +98,22 @@ namespace Dream.Film
                 {
                     if (!t.name.StartsWith(kv.Key)) continue;
                     var p = kv.Value; var l = t.gameObject.AddComponent<Light>();
-                    l.type = p.angle > 0 ? LightType.Spot : LightType.Point;
+                    l.type = p.angle < 0 ? LightType.Directional : p.angle > 0 ? LightType.Spot : LightType.Point;
+                    if (p.angle < 0)   // a sun: shine from its mark toward the people, whatever axes the export used
+                    {
+                        var who = Find(set, "MARK_you") ?? set.transform;
+                        t.rotation = Quaternion.LookRotation((who.position + Vector3.up * 0.8f - t.position).normalized);
+                    }
                     l.color = p.c; l.intensity = p.i; l.range = p.range;
                     if (p.angle > 0) { l.spotAngle = p.angle; l.innerSpotAngle = p.angle * 0.5f; t.rotation = Quaternion.LookRotation(p.aim == default ? Vector3.down : p.aim); }
                     l.shadows = p.shadow ? LightShadows.Soft : LightShadows.None;
                     l.shadowBias = 0.02f; l.shadowNormalBias = 0.3f;
                 }
             }
+            // colliders so the camera can tell when a wall or a desk is between it and a face (Shot.Clear)
+            foreach (var mf in set.GetComponentsInChildren<MeshFilter>())
+                if (mf.sharedMesh != null && !mf.name.StartsWith("Glass") && !mf.name.StartsWith("Window") && !mf.name.StartsWith("Door"))
+                    mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
             // glTF glass comes in as "blend" alpha; keep it, but make it reflect like glass
             foreach (var r in set.GetComponentsInChildren<Renderer>())
                 foreach (var m in r.sharedMaterials)

@@ -137,6 +137,9 @@ def build():
         if mname == "skin": bsdf.inputs["Subsurface Weight"].default_value = 0.15; bsdf.inputs["Subsurface Radius"].default_value = (1.0, 0.35, 0.2)
         manifest["materials"][mname] = entry
     material_for(base, "skin", skin)
+    if SPEC.get("beard"):
+        paint_beard(base, os.path.join(OUT, manifest["materials"]["skin"]["diffuse"]), SPEC["beard"])
+        bpy.data.images.load(os.path.join(OUT, manifest["materials"]["skin"]["diffuse"]), check_existing=True).reload()
     for ob in [o for o in bpy.data.objects if o.parent == rig and o != base and o.type == "MESH"]:
         kind, name = parts.get(ob.name, (None, None))
         if kind is None: continue
@@ -154,6 +157,51 @@ def build():
         ob.name = mname
     json.dump(manifest, open(os.path.join(OUT, "manifest.json"), "w"), indent=1)
     return base, rig
+
+
+def paint_beard(base, img_path, b):
+    """Facial hair painted into the skin texture through the face UVs: moustache, chin, jaw, cheeks, sideburns
+    (b: density 0..1, color, reach 0..1 for how high on the cheeks; "stubble" is a low density)."""
+    import numpy as np
+    from mathutils import Vector
+    im = bpy.data.images.load(img_path); W, H = im.size
+    px = np.array(im.pixels[:], dtype=np.float32).reshape(H, W, 4)
+    me = base.data; mw = base.matrix_world; uv = me.uv_layers.active.data
+    vs = [mw @ v.co for v in me.vertices]
+    head_z = max(v.z for v in vs) - 0.25
+    nose = min((v for v in vs if abs(v.x) < 0.006 and v.z > head_z), key=lambda v: v.y)   # the face looks down -Y
+    reach = b.get("reach", 0.5)
+    def weight(c):
+        x, dz, back = abs(c.x - nose.x), c.z - nose.z, c.y - nose.y
+        if back > 0.13 or dz > 0.05 or dz < -0.17: return 0.0
+        if x < 0.027 and -0.052 < dz < -0.028 and back < 0.03: return 0.0                    # lips
+        if x < 0.036 and -0.03 <= dz <= -0.012: return 1.0                                     # moustache
+        if dz < -0.05: return 1.0 if dz > -0.125 else max(0.0, 1 - (-0.125 - dz) / 0.04) * (1 if back < 0.09 else 0)  # chin, under-jaw
+        top = -0.036 + (x - 0.03) * 0.75 * (0.5 + reach)                                        # mouth corner to earlobe
+        if x >= 0.03 and dz < top: return 1.0
+        if x > 0.064 and dz < 0.02 and 0.06 < back < 0.12: return 1.0                          # sideburns
+        return 0.0
+    mask = np.zeros((H, W), np.float32)
+    for poly in me.polygons:
+        c = sum((vs[i] for i in poly.vertices), Vector()) / len(poly.vertices)
+        w = weight(c)
+        if w <= 0: continue
+        us = [uv[li].uv for li in poly.loop_indices]
+        x0, x1 = int(min(u.x for u in us) * W), int(max(u.x for u in us) * W) + 1
+        y0, y1 = int(min(u.y for u in us) * H), int(max(u.y for u in us) * H) + 1
+        if x1 - x0 > W // 8: continue   # a polygon across a seam
+        mask[max(0, y0):min(H, y1), max(0, x0):min(W, x1)] = np.maximum(mask[max(0, y0):min(H, y1), max(0, x0):min(W, x1)], w)
+    k = max(2, W // 300)   # soften the edge (the UV stamps are coarse)
+    for _ in range(9):
+        mask = (np.roll(mask, k, 0) + np.roll(mask, -k, 0) + np.roll(mask, k, 1) + np.roll(mask, -k, 1) + mask) / 5
+    rng = np.random.default_rng(7)
+    hair = rng.random((H, W)).astype(np.float32)
+    hair = (hair + np.roll(hair, 1, 0) + np.roll(hair, 2, 0)) / 3    # short vertical strokes
+    a = np.clip(np.clip(mask * 1.6 - 0.25, 0, 1) * b.get("density", 0.8) * (0.8 + 0.35 * hair), 0, 1)[..., None]
+    col = np.array(b.get("color", [0.05, 0.04, 0.035]) + [1.0], np.float32)
+    px = px * (1 - a) + col * a
+    im.pixels[:] = px.ravel(); im.filepath_raw = img_path; im.file_format = "PNG"; im.save()
+    log("beard painted", int((mask > 0.5).sum()), "px")
 
 
 def export(base, rig):

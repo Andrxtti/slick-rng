@@ -26,3 +26,13 @@ Every third-party asset in the beta1 project, with its source, author and licenc
 | leather_white | tex | Poly Haven, https://polyhaven.com/a/leather_white | Rob Tuytel | CC0 |
 | brick_wall_04 | tex | Poly Haven, https://polyhaven.com/a/brick_wall_04 | Dario Barresi, Dimitrios Savva, Rico Cilliers | CC0 |
 | concrete_pavement_03 | tex | Poly Haven, https://polyhaven.com/a/concrete_pavement_03 | Charlotte Baglioni | CC0 |
+| sunset_jhbcentral | hdri | Poly Haven, https://polyhaven.com/a/sunset_jhbcentral | Greg Zaal, Dimitrios Savva | CC0 |
+| dirty_carpet | tex | Poly Haven, https://polyhaven.com/a/dirty_carpet | Rohit Seervi | CC0 |
+| laminate_floor_02 | tex | Poly Haven, https://polyhaven.com/a/laminate_floor_02 | Dario Barresi, Charlotte Baglioni | CC0 |
+| modern_arm_chair_01 | model | Poly Haven, https://polyhaven.com/a/modern_arm_chair_01 | Vibrant Nordic | CC0 |
+| classic_laptop | model | Poly Haven, https://polyhaven.com/a/classic_laptop | Arrangemonk | CC0 |
+| office_notepads | model | Poly Haven, https://polyhaven.com/a/office_notepads | Ulan Cabanilla | CC0 |
+| desk_lamp_arm_01 | model | Poly Haven, https://polyhaven.com/a/desk_lamp_arm_01 | Yann Kervran, Kuutti Siitonen | CC0 |
+| calathea_orbifolia_01 | model | Poly Haven, https://polyhaven.com/a/calathea_orbifolia_01 | Rob Tuytel, Rico Cilliers | CC0 |
+| wall_clock | model | Poly Haven, https://polyhaven.com/a/wall_clock | PierreB3D | CC0 |
+| binder_notebook | model | Poly Haven, https://polyhaven.com/a/binder_notebook | DaDrood | CC0 |

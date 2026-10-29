@@ -39,7 +39,8 @@ namespace Dream.Film
         };
         static readonly Dictionary<string, string> Stand = new Dictionary<string, string>
         {
-            ["idle"] = "Breathing Idle", ["talk"] = "Talking", ["lean"] = "Talking", ["point"] = "Pointing", ["nod"] = "Head Nod Yes",
+            // Mixamo's "Talking" is a seated clip (head at 1.10 m) and "Pointing" half-crouches (1.28 m): standing talk uses Standing Arguing
+            ["idle"] = "Breathing Idle", ["talk"] = "Standing Arguing", ["lean"] = "Standing Arguing", ["point"] = "Standing Arguing", ["nod"] = "Head Nod Yes",
             ["shrug"] = "Shrugging", ["think"] = "Thinking", ["sad"] = "Sad Idle", ["laugh"] = "Agreeing", ["clap"] = "Clapping",
             ["fist"] = "Fist Pump", ["stand"] = "Breathing Idle", ["sit"] = "Sitting Idle",
         };

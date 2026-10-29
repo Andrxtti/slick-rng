@@ -26,8 +26,9 @@ namespace Dream.Film
             var id = string.IsNullOrEmpty(Take.Id) || Take.Id == "test" ? sceneId : Take.Id;
             sc = Scene.Load(id);
             if (sc == null) { Debug.LogWarning("[Dream] no film " + id); Take.Done = true; yield break; }
-            BuildCamera(); BuildCaption();
+            Sets.Current = null;
             if (!string.IsNullOrEmpty(sc.place)) set = Sets.Load(sc.place);
+            BuildCamera(); BuildCaption();   // after the set: the grade reads the set's look
             if (set != null)
                 foreach (var who in sc.cast)
                 {
@@ -61,7 +62,7 @@ namespace Dream.Film
             Business.Before(sc.id, l.n, set, actors);
             shot = set == null ? null : Shot.Make(l.shot, l.subject, l.who, set, actors, sc);
             if (shot != null) { shot.Apply(cam, dof, 0f); LightFor(shot, l.shot); }
-            cue?.WriteLine($"{l.n}	{Time.time:0.00}	{l.shot} {l.subject}	{l.who}: {l.text}"); cue?.Flush();
+            cue?.WriteLine($"{l.n}	{Time.time:0.00}	{l.shot} {l.subject}	{l.who}: {l.text}	{(shot != null ? $"cam {shot.to} focus {shot.focus}" : "")}"); cue?.Flush();
             AudioClip clip = string.IsNullOrEmpty(l.voice) ? null : Data.Load<AudioClip>($"Voice/{l.voice}.wav");
             foreach (var d in sc.directions)   // sounds the stage directions call for
                 if (d.after == l.n - 1 && d.text.Contains("bell")) sfx.PlayOneShot(Data.Load<AudioClip>("Sfx/bell.wav"), 0.7f);
@@ -100,9 +101,9 @@ namespace Dream.Film
             var toCam = s.to - s.focus; toCam.y = 0; toCam = toCam.sqrMagnitude < 1e-4f ? Vector3.back : toCam.normalized;
             key.transform.position = s.focus + Quaternion.AngleAxis(38, Vector3.up) * toCam * 1.5f + Vector3.up * 0.75f;
             key.transform.LookAt(s.focus);
-            key.intensity = kind == "two" ? 3f : kind == "insert" ? 1.5f : 3.2f;
+            key.intensity = (kind == "two" ? 3f : kind == "insert" ? 1.5f : 3.2f) * (Sets.Current?.key ?? 1f);
             fill.transform.position = s.focus + Quaternion.AngleAxis(-70, Vector3.up) * toCam * 1.4f + Vector3.up * 0.1f;
-            fill.intensity = 0.5f;
+            fill.intensity = 0.5f * (Sets.Current?.key ?? 1f);
         }
 
         Actor Other(string who) { foreach (var kv in actors) if (kv.Key != who) return kv.Value; return null; }
@@ -126,7 +127,7 @@ namespace Dream.Film
             var look = Sets.Current ?? new Sets.Look();
             p.Add<Tonemapping>().mode.Override(TonemappingMode.ACES);
             var bloom = p.Add<Bloom>(); bloom.threshold.Override(0.95f); bloom.intensity.Override(0.9f); bloom.scatter.Override(0.72f);
-            var ca = p.Add<ColorAdjustments>(); ca.postExposure.Override(0.2f); ca.contrast.Override(14f); ca.saturation.Override(4f);
+            var ca = p.Add<ColorAdjustments>(); ca.postExposure.Override(0.2f + look.exposure); ca.contrast.Override(14f); ca.saturation.Override(4f);
             var wb = p.Add<WhiteBalance>(); wb.temperature.Override(4f);
             var smh = p.Add<ShadowsMidtonesHighlights>(); smh.shadows.Override(new Vector4(0.92f, 0.95f, 1.08f, 0f)); smh.highlights.Override(new Vector4(1.06f, 1.0f, 0.92f, 0f));
             var vig = p.Add<Vignette>(); vig.intensity.Override(0.28f); vig.smoothness.Override(0.45f);

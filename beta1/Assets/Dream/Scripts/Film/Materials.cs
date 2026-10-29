@@ -41,6 +41,8 @@ namespace Dream.Film
                 m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
             }
             if (part == "hair" || part == "brows" || part == "lashes") m.SetFloat("_Cull", 0);   // two-sided cards
+            if (part != "eyes" && part != "teeth")   // skin and cloth don't mirror the room (a bright window turned faces chrome)
+            { m.SetFloat("_EnvironmentReflections", 0); m.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF"); }
             return m;
         }
     }

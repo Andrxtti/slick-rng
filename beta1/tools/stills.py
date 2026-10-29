@@ -10,7 +10,7 @@ off = float(sys.argv[sys.argv.index("--offset") + 1]) if "--offset" in sys.argv 
 cues = [l.rstrip("\n").split("\t") for l in open(os.path.join(ROOT, "Logs", f"film_{sid}.txt"), encoding="utf-8") if l.strip()]
 out = os.path.join(FILM, f"{sid}_stills"); os.makedirs(out, exist_ok=True)
 tiles = []
-for k, (n, t, shot, text) in enumerate(cues):
+for k, (n, t, shot, text, *_) in enumerate(cues):
     p = os.path.join(out, f"{int(n):02d}.png")
     end = float(cues[k + 1][1]) if k + 1 < len(cues) else float(t) + 2 * off
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{(float(t) + end) / 2:.2f}", "-i", os.path.join(FILM, sid + ".mp4"), "-frames:v", "1", p], check=True)
