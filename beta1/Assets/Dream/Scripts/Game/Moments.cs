@@ -175,13 +175,15 @@ namespace Dream.Game
             t.fontMaterial.SetFloat("_UnderlaySoftness", 0.45f); t.fontMaterial.SetFloat("_UnderlayDilate", 0.05f);   // a halo inside the atlas padding (more clips to a box)
             return t;
         }
+        // the kit's cards: a face (Table.CardFace), or the back
         static void CardImg(Transform parent, int c, float x0, float y0, float x1, float y1, bool up = true)
         {
-            var card = Ui.At(Ui.Tile(parent, "Card", up ? new Color(0.97f, 0.96f, 0.93f) : new Color(0.55f, 0.1f, 0.14f), 14), x0, y0, x1, y1);
-            if (!up) { Ui.At(Ui.Tile(card, "Back", new Color(0.7f, 0.16f, 0.2f), 10), 0.1f, 0.07f, 0.9f, 0.93f); return; }
-            int suit = c & 3; var col = suit == 0 ? new Color(0.1f, 0.45f, 0.2f) : suit == 1 ? new Color(0.15f, 0.35f, 0.75f) : suit == 2 ? new Color(0.78f, 0.1f, 0.12f) : new Color(0.08f, 0.08f, 0.1f);
-            Ui.At(Ui.Label(card, "23456789TJQKA"[c >> 2].ToString().Replace("T", "10"), 64, col, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.42f, 1, 1);
-            Ui.At(Ui.Label(card, "♣♦♥♠"[suit].ToString(), 56, col), 0, 0.02f, 1, 0.5f);
+            var box = Ui.At(Ui.Box(parent, "C"), x0, y0, x1, y1);
+            box.gameObject.AddComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            box.GetComponent<AspectRatioFitter>().aspectRatio = 360f / 504f;
+            if (up) { Table.CardFace(box, c, 0, 1); return; }
+            var back = new GameObject("Back", typeof(RectTransform)).AddComponent<Image>(); back.transform.SetParent(box, false); Ui.Fill(back.rectTransform);
+            back.sprite = Resources.Load<Sprite>("Kit/cards/back_live"); back.raycastTarget = false;
         }
 
         // ------------------------------------------------------------ 1. the all-in screen

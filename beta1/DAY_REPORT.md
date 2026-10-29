@@ -147,3 +147,30 @@ Steven's 12:13 and 12:16 asks, done in TABLE.md's order. Code: `Scripts/Game/Mom
 
 ### Rhythm fixes to Steven's lines (updated)
 - p_office: "You were nine" → "You were fourteen" (Steven's own change, 11:55: the player is 24).
+### GRAPHICS.md, G1–G8 (Steven 12:39: "continue to actively work on our graphical capabilities") · 13:30
+- **G1 pills:** every button and field uses a 9-slice rounded sprite with a fixed corner radius (34 px buttons, 40 px
+  field; circles only where it's square, like the avatar and send button), so nothing stretches into an ellipse. The
+  phone's choice chips have padding and room for two lines.
+- **G2 table:** rebuilt with the cloud session's kit (`Resources/Kit`, CC0): the racetrack plate (live green / CF Tilt
+  teal, the tall plate when the space is taller than wide) fitted to the screen, seats on the rail as dark-glass plates
+  with the stack in Plex Mono (online: screen names and two-letter avatars, no faces), your seat gold with the kit glow,
+  bets as stacks of side chips in front of each seat, the pot as a stack, the kit's dealer button, and the kit's
+  four-colour cards with shadows (your two fanned). The all-in screen uses the same cards. Import limits keep it light:
+  cards 256 px, chips 128, plates 2048, compressed (`Editor/KitImport.cs`).
+- **G3 hair:** alpha-to-coverage on the hair cards with MSAA 8× for the films, darker roots, highlights tamed. Slick and
+  Tommy moved to MakeHuman's slicked-back shell (`short04`; compared against short01/03 in `work/slick_shells.png`), so
+  Slick's cards go up and back off a clean hairline. I didn't cut the shell: a trim test gave a jagged hairline and was
+  reverted.
+- **G4 faces:** every close-up, OTS and two-shot gets a wider, softer key (60° spot, soft edge), a stronger fill (the
+  shadow side never goes black) and a new cool rim light from behind. The card room's key, ambient and exposure are up;
+  the apartment's warm key is up against the blue window. Adaptive Probe Volumes not done (needs a bake per set).
+- **G5 grades:** `films_publish.py` applies each set's `.cube` (diner_night, office_dusk, cardroom_sodium,
+  apartment_night) at 60% while scaling to 720p. Test frame: `work/grade_pair.png`. Not yet: the URP Color Lookup strip
+  in the live game (the live game is UI only, no 3D camera to grade).
+- **G6 IllusionRP: not attempted.** It installs from a GitHub repository, which isn't on CLAUDE.md's list of allowed
+  sources, and it needs a second editor on a copy of the project (one editor at a time on this PC) switched to DX12. If
+  Steven wants it, it's a session of its own, with the licence read first.
+- **G7 eyes/teeth:** teeth warmer, rougher and set back. The eyes keep their wet 0.95 smoothness; no separate cornea
+  mesh yet.
+- **G8:** the WebGL build uses `URP_Mobile` (Linear upscaling, render scale 1) and always includes the EASU shader.
+  Needs the cloud session's console check.

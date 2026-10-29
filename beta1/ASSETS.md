@@ -67,3 +67,9 @@ Every third-party asset in the beta1 project, with its source, author and licenc
 
 ## Fonts (OFL / free licences, `Assets/Dream/Resources/Fonts`, licence texts in `Assets/Dream/Fonts-Licenses`)
 Gloock, Inter, IBM Plex Mono, DejaVu Sans Bold (symbols), copied from the old project.
+
+## Table kit and film grades (our own, CC0, made in code by the cloud session; `unity/art/README.md`)
+| asset | where in beta1 | source | author | licence |
+|---|---|---|---|---|
+| Table plates live/online (+ portrait), 52 card faces, 2 backs, 6 chips (top and side), dealer button, 9-slice UI sprites | `Assets/Dream/Resources/Kit/` | `unity/art/table_kit/`, made by `unity/tools/art/table.py`, `kit.py` | Confirmed Fire (cloud Claude session) | CC0 1.0 |
+| Film grades `diner_night`, `office_dusk`, `cardroom_sodium`, `apartment_night`, `title_miami` (.cube) | applied by `tools/films_publish.py` | `unity/art/grades/`, made by `unity/tools/art/luts.py` | Confirmed Fire (cloud Claude session) | CC0 1.0 |

@@ -79,7 +79,7 @@ namespace Dream.Film
                     ["L_lamp"] = new Lamp(Tungsten, 1.4f, 4f),
                     ["L_phone"] = new Lamp(new Color(0.7f, 0.82f, 1f), 0.25f, 0.9f),
                 },
-                ambient = new Color(0.025f, 0.03f, 0.045f), fog = new Color(0.04f, 0.05f, 0.08f), fogDensity = 0.008f, key = 0.55f, exposure = 0.45f,
+                ambient = new Color(0.025f, 0.03f, 0.045f), fog = new Color(0.04f, 0.05f, 0.08f), fogDensity = 0.008f, key = 0.8f, exposure = 0.45f,   // G4: a warm key on the face against the blue window
                 sky = "Assets/Dream/FilmSets/home/sky.hdr", skyExposure = 0.35f, skyTint = new Color(0.8f, 0.85f, 1f), skyRotation = 200,
             };
         }
@@ -92,7 +92,7 @@ namespace Dream.Film
                 ["L_window"] = new Lamp(new Color(0.45f, 0.6f, 1f), 3f, 9f),
                 ["L_cage"] = new Lamp(new Color(1f, 0.85f, 0.6f), 1.5f, 4f),
             },
-            ambient = new Color(0.22f, 0.17f, 0.12f), fog = new Color(0.12f, 0.09f, 0.05f), fogDensity = 0.01f, key = 1.3f, exposure = 1.5f,
+            ambient = new Color(0.3f, 0.24f, 0.18f), fog = new Color(0.12f, 0.09f, 0.05f), fogDensity = 0.01f, key = 2.0f, exposure = 1.6f,   // G4: faces out of the murk
         };
 
         static Look Reel(Color key, Color rim, float exposure = 0f) => new Look

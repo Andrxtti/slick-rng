@@ -20,7 +20,7 @@ namespace Dream.Film
         readonly Dictionary<string, Actor> actors = new Dictionary<string, Actor>();
         Image black;
         AudioSource sfx, room;
-        Shot shot; Light key, fill; System.IO.StreamWriter cue;
+        Shot shot; Light key, fill, rim; System.IO.StreamWriter cue;
         [System.Serializable] public class Caption { public float t, len; public string who, name, text; }
         [System.Serializable] class Captions { public List<Caption> lines = new List<Caption>(); }
         readonly Captions captions = new Captions();
@@ -98,20 +98,25 @@ namespace Dream.Film
             if (key == null)
             {
                 key = new GameObject("FilmKey").AddComponent<Light>(); key.type = LightType.Spot; key.shadows = LightShadows.Soft;
-                key.color = new Color(1f, 0.76f, 0.52f); key.spotAngle = 42; key.innerSpotAngle = 20; key.range = 5;
+                key.color = new Color(1f, 0.76f, 0.52f); key.spotAngle = 60; key.innerSpotAngle = 12; key.range = 6;   // wide and soft-edged
                 key.shadowBias = 0.01f; key.shadowNormalBias = 0.2f;
                 fill = new GameObject("FilmFill").AddComponent<Light>(); fill.type = LightType.Point;
                 fill.color = new Color(0.55f, 0.65f, 1f); fill.range = 3.5f; fill.shadows = LightShadows.None;
+                // a faint cool rim from behind the subject: separates hair and shoulders from a dark room (GRAPHICS.md G4)
+                rim = new GameObject("FilmRim").AddComponent<Light>(); rim.type = LightType.Point; rim.shadows = LightShadows.None;
+                rim.color = new Color(0.62f, 0.72f, 1f); rim.range = 2.2f;
             }
             bool close = kind == "cu" || kind == "ecu" || kind == "push" || kind == "ots" || kind == "two" || kind == "insert";
-            key.enabled = fill.enabled = close && set != null;
+            key.enabled = fill.enabled = rim.enabled = close && set != null;
             if (!key.enabled) return;
             var toCam = s.to - s.focus; toCam.y = 0; toCam = toCam.sqrMagnitude < 1e-4f ? Vector3.back : toCam.normalized;
             key.transform.position = s.focus + Quaternion.AngleAxis(38, Vector3.up) * toCam * 1.5f + Vector3.up * 0.75f;
             key.transform.LookAt(s.focus);
             key.intensity = (kind == "two" ? 3f : kind == "insert" ? 0.6f : 3.2f) * (Sets.Current?.key ?? 1f);
             fill.transform.position = s.focus + Quaternion.AngleAxis(-70, Vector3.up) * toCam * 1.4f + Vector3.up * 0.1f;
-            fill.intensity = 0.5f * (Sets.Current?.key ?? 1f);
+            fill.intensity = 0.85f * (Sets.Current?.key ?? 1f);   // the shadow side of a face never goes black
+            rim.transform.position = s.focus - toCam * 0.7f + Vector3.up * 0.45f + Quaternion.AngleAxis(90, Vector3.up) * toCam * 0.35f;
+            rim.intensity = (kind == "insert" ? 0 : 1.1f) * (Sets.Current?.key ?? 1f);
         }
 
         // a narrator card stays up long enough to read twice at an easy pace; a {key} card (filled in later) gets a fixed beat

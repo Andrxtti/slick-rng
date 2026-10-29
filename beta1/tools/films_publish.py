@@ -8,6 +8,8 @@ SRC = r"C:\Dev\Builds\Beta1\Film"
 OUT = os.path.join(ROOT, "Assets", "StreamingAssets", "Films")
 os.makedirs(OUT, exist_ok=True)
 DATA = os.path.join(ROOT, "Assets", "Dream", "FilmData", "Film")
+LUTS = os.path.join(os.path.dirname(ROOT), "unity", "art", "grades")
+GRADES = {"diner": "diner_night.cube", "office": "office_dusk.cube", "cardroom": "cardroom_sodium.cube", "home": "apartment_night.cube"}   # ffmpeg runs in LUTS
 FILMS = sorted(f[:-5] for f in os.listdir(DATA) if f.endswith(".json") and not f.startswith(("reel_", "stings")) and f != "end.json")
 for f in os.listdir(OUT):   # films no longer in the script go
     if f.endswith((".mp4", ".json")) and f.rsplit(".", 1)[0] not in FILMS + ["reel"]: os.remove(os.path.join(OUT, f))
@@ -22,7 +24,11 @@ for src, dst in jobs:
     if src.endswith("_720p.mp4"):
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-c", "copy", "-movflags", "+faststart", dst], check=True)
     else:
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-vf", "scale=1280:720:flags=lanczos", "-c:v", "libx264", "-profile:v", "main", "-crf", "25",
-                        "-preset", "slow", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "112k", "-movflags", "+faststart", dst], check=True)
+        vf = "scale=1280:720:flags=lanczos"
+        grade = GRADES.get(json.load(open(os.path.join(DATA, os.path.basename(src)[:-4] + ".json"), encoding="utf-8")).get("place", ""))
+        if grade:   # the set's film grade (unity/art/grades), mixed in at 60% so it colours without crushing
+            vf = f"scale=1280:720:flags=lanczos,split[a][b];[b]lut3d='{grade}'[g];[a][g]blend=all_mode=normal:all_opacity=0.6"
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-filter_complex" if grade else "-vf", vf, "-c:v", "libx264", "-profile:v", "main", "-crf", "25",
+                        "-preset", "slow", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "112k", "-movflags", "+faststart", dst], check=True, cwd=LUTS)
     total += os.path.getsize(dst); print(f"{os.path.basename(dst):20} {os.path.getsize(dst) / 1e6:5.1f} MB")
 print(f"films: {total / 1e6:.1f} MB")

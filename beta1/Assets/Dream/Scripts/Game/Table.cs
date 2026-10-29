@@ -10,7 +10,7 @@ namespace Dream.Game
 {
     public static class Table
     {
-        static Sprite felt, rounded;
+        static Sprite rounded;
         static RectTransform root; static Run run; static Action<bool> done; static bool mistake;
         // a new level is about to be dealt: the game may play something first (the final-table film) and then go on
         public static Func<Run, Action, bool> OnLevel;
@@ -38,7 +38,7 @@ namespace Dream.Game
                     var node = (System.Collections.Generic.Dictionary<string, object>)nodes[ni];
                     var sp = Hands.BuildSpot(gid, ti, table, node, ni, (System.Collections.Generic.List<object>)J.L(node, "r")[0], 0.5, rng);
                     if (sp.seats[sp.hero].pos != pos || sp.seats.Count < 8 || !sp.seats.Any(v => !string.IsNullOrEmpty(v.act) && v.act.Any(char.IsDigit))) continue;
-                    var r = Hands.Start(Lib.Event("deep"), "spot"); r.libGid = gid; r.libIndex = ti;
+                    var r = Hands.Start(Lib.Event("nightly"), "spot"); r.libGid = gid; r.libIndex = ti;
                     Show(parent, r, _ => { }, sp);
                     return string.Join(" ", sp.seats.Select(v => v.pos + (string.IsNullOrEmpty(v.act) ? "" : "(" + v.act + ")")));
                 }
@@ -60,23 +60,34 @@ namespace Dream.Game
             lf.anchorMax = new Vector2(Mathf.Clamp01(run.stack / 200f), 1);
             Ui.At(Ui.Label(s, ev.kind == "cash" ? "your stack" : "tournament life", 22, Ui.Dim, TextAnchor.MiddleRight), 0.5f, 0.9f, 0.95f, 0.93f);
 
-            // the felt and the seats
-            var table = Ui.At(Ui.Box(s, "Felt"), 0.04f, 0.44f, 0.96f, 0.86f);
-            var fimg = table.gameObject.AddComponent<Image>(); fimg.sprite = Felt(); fimg.preserveAspect = false;
+            // the table: the kit's racetrack plate (Biscayne green live, CF Tilt teal online; the tall plate when the space
+            // is taller than wide), fitted inside its area; seats on the rail, chips in front of them, the pot in the middle
+            var area = Ui.At(Ui.Box(s, "TableArea"), 0.02f, 0.43f, 0.98f, 0.875f);
+            Canvas.ForceUpdateCanvases();
+            bool tall = area.rect.height > area.rect.width * 0.9f;
+            var plateSprite = Resources.Load<Sprite>("Kit/table_" + (ev.online ? "online" : "live") + (tall ? "_portrait" : ""));
+            var table = Ui.Box(area, "Plate"); Ui.Fill(table);
+            var fit = table.gameObject.AddComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            if (plateSprite != null) { var pimg = table.gameObject.AddComponent<Image>(); pimg.sprite = plateSprite; pimg.raycastTarget = false; fit.aspectRatio = plateSprite.rect.width / plateSprite.rect.height; }
+            else fit.aspectRatio = tall ? 0.6f : 2f;
+            Canvas.ForceUpdateCanvases();
             int n = sp.seats.Count, hero = sp.hero;
+            float rx = tall ? 0.4f : 0.43f, ry = tall ? 0.44f : 0.4f;   // the rail, as a share of the plate
             for (int i = 0; i < n; i++)
             {
                 int k = (i - hero + n) % n;                       // you at the bottom; the next seat in order sits to your left (clockwise)
                 float a = -Mathf.PI / 2 - k * 2 * Mathf.PI / n;
-                float x = 0.5f + Mathf.Cos(a) * 0.43f, y = 0.5f + Mathf.Sin(a) * 0.41f;
-                Seat(table, sp.seats[i], i == hero, x, y, answered == null);
+                float x = 0.5f + Mathf.Cos(a) * rx, y = 0.5f + Mathf.Sin(a) * ry;
+                Seat(table, sp.seats[i], i == hero, x, y, answered == null, ev.online, tall, fit.aspectRatio);
             }
-            Ui.At(Ui.Num(table, $"pot {Bb(sp.pot)} bb", 34, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, 0.48f, 0.7f, 0.56f);
-            Ui.At(Ui.Label(table, sp.cat, 26, new Color(1, 1, 1, 0.6f)), 0.25f, 0.42f, 0.75f, 0.48f);
+            float aspect = fit.aspectRatio;
+            Chips(table, sp.pot, 0.5f, 0.53f, tall ? 0.09f : 0.05f, aspect);   // the pot
+            Ui.At(Ui.Num(table, $"pot {Bb(sp.pot)} bb", 30, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, 0.44f, 0.7f, 0.5f);
+            Ui.At(Ui.Label(table, sp.cat, 24, new Color(1, 1, 1, 0.6f)), 0.2f, 0.39f, 0.8f, 0.44f);
 
-            // your cards
-            var cards = Ui.At(Ui.Box(s, "Cards"), 0.3f, 0.31f, 0.7f, 0.43f);
-            var c0 = CardFace(cards, sp.hand[0], 0.02f, 0.48f); var c1 = CardFace(cards, sp.hand[1], 0.52f, 0.98f);
+            // your cards: large, slightly fanned, with the kit's soft shadow
+            var cards = Ui.At(Ui.Box(s, "Cards"), 0.3f, 0.295f, 0.7f, 0.445f);
+            var c0 = CardFace(cards, sp.hand[0], 0.27f, 0.53f, 6f); var c1 = CardFace(cards, sp.hand[1], 0.47f, 0.73f, -6f);
             if (answered == null) { Ui.Slide(c0, new Vector2(60, 420), 0.15f); Ui.Slide(c1, new Vector2(-40, 420), 0.27f); }   // dealt from the middle
 
             Waiting = answered == null;
@@ -166,107 +177,74 @@ namespace Dream.Game
         static string StageName(string st) => st switch { "early" => "Early levels", "middle" => "Middle levels", "bubble" => "The bubble", "final" => "Final table", "deep" => "Deep run", "cash" => "Cash game", _ => st };
         static string Bb(double v) => Math.Abs(v - Math.Round(v)) < 0.01 ? Math.Round(v).ToString("0") : v.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
 
-        static void Seat(RectTransform table, SeatView seat, bool you, float x, float y, bool deal = false)
+        static readonly string[] Screens = { "ripriver_88", "nitbox", "flopzilla", "gr1nd_city", "the_mathematician", "SunnyIsles_Sal", "luckyluke305", "acehigh_andy", "bluffcatcher" };
+        static Image Kit(Transform parent, string path, float x0, float y0, float x1, float y1, Color? tint = null, bool sliced = false)
         {
-            if (you && deal)   // a soft gold glow round your seat while it's your move
+            var img = new GameObject(path, typeof(RectTransform)).AddComponent<Image>(); img.transform.SetParent(parent, false);
+            img.sprite = Resources.Load<Sprite>("Kit/" + path); img.raycastTarget = false; img.color = tint ?? Color.white;
+            if (sliced) { img.type = Image.Type.Sliced; img.pixelsPerUnitMultiplier = 1.4f; } else img.preserveAspect = true;
+            Ui.At(img, x0, y0, x1, y1); return img;
+        }
+
+        // a seat on the rail: the kit's dark-glass plate, the position (or a screen name and two-letter avatar online),
+        // the stack in IBM Plex Mono; your seat in gold with the glow while it's your move
+        static void Seat(RectTransform table, SeatView seat, bool you, float x, float y, bool deal, bool online, bool tall, float aspect)
+        {
+            float w = tall ? 0.15f : 0.095f, h = tall ? 0.045f : 0.075f;
+            if (you && deal)
             {
-                var glow = Ui.At(Ui.Tile(table, "Glow", new Color(0.95f, 0.76f, 0.35f, 0.3f), 40), x - 0.115f, y - 0.075f, x + 0.115f, y + 0.075f);
-                Ui.Pulse(glow.GetComponent<Image>(), 0.08f, 0.45f);
+                var glow = Kit(table, "ui/glow", x - w * 1.45f, y - h * 1.6f, x + w * 1.45f, y + h * 1.6f, new Color(0.95f, 0.76f, 0.35f, 0.5f), true);
+                Ui.Pulse(glow, 0.15f, 0.6f);
             }
-            var box = Ui.At(Ui.Panel(table, seat.pos, you ? new Color(0.95f, 0.76f, 0.35f, 0.95f) : new Color(0.05f, 0.05f, 0.07f, seat.folded ? 0.45f : 0.85f)), x - 0.1f, y - 0.06f, x + 0.1f, y + 0.06f);
-            box.GetComponent<Image>().sprite = Rounded(); box.GetComponent<Image>().type = Image.Type.Sliced;
+            var plate = Kit(table, "ui/seat_plate", x - w, y - h, x + w, y + h, you ? new Color(0.95f, 0.76f, 0.35f, 0.97f) : new Color(0.04f, 0.04f, 0.06f, seat.folded ? 0.5f : 0.86f), true);
+            var box = plate.rectTransform; box.name = seat.pos;
             var fg = you ? Ui.Night : seat.folded ? Ui.Dim : Ui.Ink;
-            Ui.At(Ui.Label(box, you ? "YOU · " + seat.pos : seat.pos, 24, fg, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.5f, 1, 0.95f);
-            Ui.At(Ui.Num(box, seat.stack - seat.put <= 0.01 ? "all in" : Bb(seat.stack - seat.put) + " bb", 24, fg), 0, 0.05f, 1, 0.5f);
+            string name = you ? "YOU · " + seat.pos : online ? Screens[(seat.pos.GetHashCode() & 0x7fff) % Screens.Length] : seat.pos;
+            if (online && !you)   // a two-letter avatar, no faces online
+            {
+                var av = Ui.At(Ui.Tile(box, "Avatar", new Color(0.18f, 0.55f, 0.55f), 999), -0.18f, 0.2f, 0.06f, 0.8f);
+                av.gameObject.AddComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
+                Ui.Label(av, name.Substring(0, 2).ToUpperInvariant(), 18, Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+            }
+            Ui.At(Ui.Label(box, name, online && !you ? 18 : 22, fg, TextAnchor.MiddleCenter, FontStyle.Bold), 0.04f, 0.5f, 0.96f, 0.95f);
+            Ui.At(Ui.Num(box, seat.stack - seat.put <= 0.01 ? "all in" : Bb(seat.stack - seat.put) + " bb", 22, fg), 0, 0.06f, 1, 0.5f);
             if (!string.IsNullOrEmpty(seat.act) || seat.put > 0)
             {
                 // the action already carries its size ("Jam 7.9", "Raise 2.3"); otherwise the amount in (blinds), or both
                 string act = seat.act ?? "", bet = act.Any(char.IsDigit) || act.StartsWith("Fold") ? act : (act + (seat.put > 0 ? " " + Bb(seat.put) : "")).Trim();
-                var chip = Ui.At(Ui.Num(table, bet, 22, Ui.Gold), x - 0.12f + (0.5f - x) * 0.35f, y - 0.03f + (0.5f - y) * 0.45f, x + 0.12f + (0.5f - x) * 0.35f, y + 0.03f + (0.5f - y) * 0.45f);
-                if (deal) { var sz = table.rect.size; Ui.Slide(chip.rectTransform, new Vector2(-(0.5f - x) * 0.35f * sz.x, -(0.5f - y) * 0.45f * sz.y), 0.05f, 0.35f); }   // the bet goes out from the seat
+                float bx = x + (0.5f - x) * 0.38f, by = y + (0.5f - y) * 0.42f;
+                var chips = Ui.Box(table, "Bet"); Ui.Fill(chips);
+                if (seat.put > 0 && !act.StartsWith("Fold")) Chips(chips, seat.put, bx, by + (tall ? 0.008f : 0.015f), tall ? 0.075f : 0.042f, aspect);
+                var label = Ui.At(Ui.Num(chips, bet, 20, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), bx - 0.12f, by - (tall ? 0.03f : 0.05f), bx + 0.12f, by - (tall ? 0.008f : 0.012f));
+                if (deal) { var sz = table.rect.size; Ui.Slide(chips, new Vector2(-(0.5f - x) * 0.38f * sz.x, -(0.5f - y) * 0.42f * sz.y), 0.05f, 0.35f); }   // the bet goes out from the seat
             }
             if (seat.pos == "BTN")   // the dealer button: toward the middle, to one side of the bet
             {
-                float dx = 0.5f - x, dy = 0.5f - y, px = x + dx * 0.32f - dy * 0.22f, py = y + dy * 0.32f + dx * 0.22f;
-                var puck = Ui.At(new GameObject("Dealer", typeof(RectTransform)).AddComponent<Image>(), 0, 0, 1, 1);
-                puck.transform.SetParent(table, false); Ui.At(puck, px - 0.022f, py - 0.04f, px + 0.022f, py + 0.04f);
-                puck.sprite = Circle(); puck.preserveAspect = true; puck.color = new Color(0.97f, 0.96f, 0.93f); puck.raycastTarget = false;
-                Ui.Label(puck.transform, "D", 26, Ui.Night, TextAnchor.MiddleCenter, FontStyle.Bold);
+                float dx = 0.5f - x, dy = 0.5f - y, px = x + dx * 0.3f - dy * 0.25f, py = y + dy * 0.3f + dx * 0.25f, r = tall ? 0.03f : 0.02f;
+                Kit(table, "chips/dealer_button", px - r, py - r * (tall ? 0.6f : 2f), px + r, py + r * (tall ? 0.6f : 2f));
             }
         }
 
-        static RectTransform CardFace(RectTransform parent, int c, float x0, float x1)
+        // a stack of side-view chips for an amount in big blinds (denomination by size, one chip per step, ~9 px apart)
+        // w is in plate widths; aspect (plate width / height) turns it into plate heights so the chip keeps its shape
+        static void Chips(RectTransform parent, double bb, float x, float y, float w, float aspect)
         {
-            var card = Ui.At(Ui.Panel(parent, "Card", new Color(0.97f, 0.96f, 0.93f)), x0, 0, x1, 1);
-            card.GetComponent<Image>().sprite = Rounded(); card.GetComponent<Image>().type = Image.Type.Sliced;
-            int suit = c & 3; var col = suit == 0 ? new Color(0.1f, 0.45f, 0.2f) : suit == 1 ? new Color(0.15f, 0.35f, 0.75f) : suit == 2 ? new Color(0.78f, 0.1f, 0.12f) : new Color(0.08f, 0.08f, 0.1f);   // four-colour deck
-            Ui.At(Ui.Label(card, "23456789TJQKA"[c >> 2].ToString().Replace("T", "10"), 96, col, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.42f, 1, 1);
-            var pip = Ui.At(new GameObject("Suit", typeof(RectTransform)).AddComponent<Image>(), 0.25f, 0.06f, 0.75f, 0.46f);
-            pip.transform.SetParent(card, false); Ui.At(pip, 0.25f, 0.06f, 0.75f, 0.46f);
-            pip.sprite = Suit(suit); pip.color = col; pip.preserveAspect = true; pip.raycastTarget = false;
-            return card;
+            string den = bb < 2 ? "5" : bb < 8 ? "25" : bb < 25 ? "100" : bb < 60 ? "500" : "1K";
+            int n = Mathf.Clamp((int)Math.Round(bb < 2 ? bb * 2 : bb < 8 ? bb : bb / 4), 1, 9);
+            float hh = w * aspect * 0.42f, step = hh * 0.36f;
+            for (int i = 0; i < n; i++) Kit(parent, $"chips/chip_{den}_side", x - w / 2, y + i * step, x + w / 2, y + i * step + hh);
         }
 
-        // generated art: the felt (worn centre, dark rail) and a rounded rectangle for sliced panels
-        static Sprite Felt()
+        // a card from the kit (four-colour faces, "As", "Td"), on its soft shadow, turned by `tilt` degrees
+        public static RectTransform CardFace(RectTransform parent, int c, float x0, float x1, float tilt = 0)
         {
-            if (felt != null) return felt;
-            int W = 512, H = 384; var t = new Texture2D(W, H, TextureFormat.RGBA32, false); var px = new Color32[W * H];
-            var rng = new System.Random(7);
-            for (int y = 0; y < H; y++)
-                for (int x = 0; x < W; x++)
-                {
-                    float u = (x + 0.5f) / W * 2 - 1, v = (y + 0.5f) / H * 2 - 1, d = Mathf.Sqrt(u * u + v * v);
-                    Color c;
-                    if (d > 0.99f) c = new Color(0, 0, 0, 0);
-                    else if (d > 0.9f) c = Color.Lerp(new Color(0.09f, 0.06f, 0.05f), new Color(0.03f, 0.025f, 0.02f), (d - 0.9f) / 0.09f);   // the rail
-                    else
-                    {
-                        var felt0 = new Color(0.16f, 0.42f, 0.28f); var edge = new Color(0.07f, 0.22f, 0.14f);
-                        c = Color.Lerp(felt0, edge, Mathf.SmoothStep(0, 1, d / 0.9f)) * (0.95f + 0.1f * (float)rng.NextDouble());
-                        c.a = 1;
-                    }
-                    px[y * W + x] = c;
-                }
-            t.SetPixels32(px); t.Apply();
-            return felt = Sprite.Create(t, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f));
-        }
-
-        // suit pips drawn from shapes (the built-in font has no suit glyphs on the web): 0 clubs, 1 diamonds, 2 hearts, 3 spades
-        static readonly Sprite[] suits = new Sprite[4];
-        static Sprite Suit(int k)
-        {
-            if (suits[k] != null) return suits[k];
-            int S = 128; var t = new Texture2D(S, S, TextureFormat.RGBA32, false); var px = new Color32[S * S];
-            bool Circle(float x, float y, float cx, float cy, float r) => (x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r;
-            bool Heart(float x, float y) => Circle(x, y, -0.25f, 0.18f, 0.27f) || Circle(x, y, 0.25f, 0.18f, 0.27f) || (y <= 0.2f && y >= -0.75f && Mathf.Abs(x) <= (y + 0.75f) * 0.55f);
-            for (int yy = 0; yy < S; yy++)
-                for (int xx = 0; xx < S; xx++)
-                {
-                    float x = (xx + 0.5f) / S * 2 - 1, y = (yy + 0.5f) / S * 2 - 1; bool on;
-                    if (k == 1) on = Mathf.Abs(x) / 0.62f + Mathf.Abs(y) / 0.9f <= 1;
-                    else if (k == 2) on = Heart(x, y + 0.08f);
-                    else if (k == 3) on = Heart(x, -y + 0.2f) || (y < -0.35f && y > -0.85f && Mathf.Abs(x) <= (-0.35f - y) * 0.45f + 0.05f);
-                    else on = Circle(x, y, 0, 0.38f, 0.28f) || Circle(x, y, -0.32f, -0.05f, 0.28f) || Circle(x, y, 0.32f, -0.05f, 0.28f) || (y < 0 && y > -0.85f && Mathf.Abs(x) <= (-y) * 0.3f + 0.05f);
-                    px[yy * S + xx] = on ? new Color32(255, 255, 255, 255) : new Color32(255, 255, 255, 0);
-                }
-            t.SetPixels32(px); t.Apply();
-            return suits[k] = Sprite.Create(t, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f));
-        }
-
-        static Sprite circle;
-        static Sprite Circle()
-        {
-            if (circle != null) return circle;
-            int S = 64; var t = new Texture2D(S, S, TextureFormat.RGBA32, false); var px = new Color32[S * S];
-            for (int y = 0; y < S; y++)
-                for (int x = 0; x < S; x++)
-                {
-                    float d = Mathf.Sqrt((x + 0.5f - S / 2f) * (x + 0.5f - S / 2f) + (y + 0.5f - S / 2f) * (y + 0.5f - S / 2f));
-                    px[y * S + x] = new Color(1, 1, 1, Mathf.Clamp01(S / 2f - 1 - d + 0.5f));
-                }
-            t.SetPixels32(px); t.Apply();
-            return circle = Sprite.Create(t, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f));
+            var holder = Ui.At(Ui.Box(parent, "Card"), x0, 0, x1, 1);   // the slot takes the card's shape, so the shadow hugs it
+            var slot = Ui.Box(holder, "Face"); Ui.Fill(slot);
+            var af = slot.gameObject.AddComponent<AspectRatioFitter>(); af.aspectMode = AspectRatioFitter.AspectMode.FitInParent; af.aspectRatio = 360f / 504f;
+            Kit(slot, "ui/card_shadow", -0.08f, -0.1f, 1.08f, 1.06f, new Color(0, 0, 0, 0.55f), true);
+            var face = Kit(slot, "cards/" + Hands.Card(c), 0, 0, 1, 1);
+            slot.localRotation = Quaternion.Euler(0, 0, tilt);
+            return holder;
         }
 
         static Sprite Rounded()
