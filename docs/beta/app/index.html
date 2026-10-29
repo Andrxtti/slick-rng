@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="The Dream">
   <meta name="theme-color" content="#0b0a08">
-  <title>The Dream · Test Beta 1.1</title>
+  <title>The Dream · Test Beta 1.1.1</title>
   <link rel="apple-touch-icon" href="TemplateData/icon-180.png">
   <link rel="icon" type="image/png" href="TemplateData/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -27,11 +27,16 @@
     #fill { height: 100%; width: 0; background: #d9b36c; transition: width .2s; }
     #note { margin-top: 14px; color: #6f6555; letter-spacing: .08em; text-transform: none; font-weight: 400; font-size: 12px; text-align: center; max-width: 80%; }
     #note.err { color: #e8705a; }
+    #tap { display: none; margin-top: 22px; padding: 14px 34px; border-radius: 999px; background: #f2c25a; color: #1a1610;
+      font: 600 16px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .04em; text-transform: none; }
+    #load.ready { cursor: pointer; }
+    #load.ready #bar { display: none; }
+    #load.ready #tap { display: block; }
   </style>
 </head>
 <body>
   <div id="wrap"><canvas id="unity-canvas" tabindex="-1"></canvas></div>
-  <div id="load"><div>Confirmed Fire</div><h1>The Dream</h1><div id="bar"><div id="fill"></div></div><div id="note">Test Beta 1.1 · loading the tables…</div></div>
+  <div id="load"><div>Confirmed Fire</div><h1>The Dream</h1><div id="bar"><div id="fill"></div></div><div id="note">Test Beta 1.1.1 · loading the tables…</div><div id="tap">Tap to start · sound on</div></div>
   <script>
     var canvas = document.getElementById("unity-canvas"), load = document.getElementById("load"), fill = document.getElementById("fill"), note = document.getElementById("note");
     var config = {
@@ -52,6 +57,21 @@
     // switch with audioSession "playback" (volume buttons still rule); older iPhones need a looping silent <audio>
     // started from a tap. (Unity resumes its own audio on the first tap; the test run logged "Audio context resumed".)
     try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+    // films (Steven, 14:51 "no sound"): phones only let a <video> play with sound if a tap started it, and Unity makes
+    // a new <video> for each film and starts it later, outside any tap, so it played muted. The start tap below plays a
+    // tiny clip on a pool of video elements (that unlocks each one), and Unity gets those elements when it asks for one.
+    var vpool = [], mkEl = document.createElement.bind(document);
+    document.createElement = function (tag, opt) {
+      if (vpool.length && String(tag).toLowerCase() === "video") { var v = vpool.shift(); try { v.pause(); v.removeAttribute("src"); v.load(); } catch (e) {} return v; }
+      return mkEl(tag, opt);
+    };
+    function primeVideos() {
+      for (var i = 0; i < 32; i++) {
+        var v = mkEl("video"); v.setAttribute("playsinline", ""); v.playsInline = true; v.muted = false; v.src = "TemplateData/prime.mp4";
+        try { var pr = v.play(); if (pr && pr.then) pr.then((function (x) { return function () { x.pause(); }; })(v)).catch(function () {}); } catch (e) {}
+        vpool.push(v);
+      }
+    }
     var silentOn = false, game = null;
     function wakeAudio() {
       try {
@@ -67,7 +87,12 @@
     script.src = "Build/TheDream-Beta1.1-Web.loader.js";
     script.onload = function () {
       createUnityInstance(canvas, config, function (p) { fill.style.width = (100 * p) + "%"; })
-        .then(function (u) { game = u; window.unityInstance = u; load.style.display = "none"; wakeAudio(); })
+        .then(function (u) {
+          game = u; window.unityInstance = u; note.textContent = "Test Beta 1.1.1"; load.className = "ready";
+          function start(e) { e.preventDefault(); e.stopPropagation(); load.removeEventListener("click", start); load.removeEventListener("touchend", start);
+            wakeAudio(); primeVideos(); load.style.display = "none"; }
+          load.addEventListener("touchend", start); load.addEventListener("click", start);
+        })
         .catch(function (m) { note.textContent = String(m); note.className = "err"; });
     };
     script.onerror = function () { note.textContent = "Couldn't load the game files. Check your connection and reload."; note.className = "err"; };
