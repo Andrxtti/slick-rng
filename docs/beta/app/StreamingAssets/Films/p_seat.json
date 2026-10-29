@@ -1,0 +1,39 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 8.800000190734863,
+            "who": "card",
+            "name": "CARD",
+            "text": "Saturday. 11:40 AM. Biscayne Card Room, off the causeway.\nCarpet from 1994. Coffee from this morning, maybe."
+        },
+        {
+            "t": 8.933333396911621,
+            "len": 1.259886622428894,
+            "who": "gnomey",
+            "name": "MILES",
+            "text": "Help you?"
+        },
+        {
+            "t": 10.199999809265137,
+            "len": 3.7772109508514404,
+            "who": "you",
+            "name": "YOU",
+            "text": "Somebody bought me a seat. The Biscayne Championship."
+        },
+        {
+            "t": 14.0,
+            "len": 5.528367042541504,
+            "who": "gnomey",
+            "name": "MILES",
+            "text": "Free seat? Lucky you. Table nine, seat four. Cards in the air at noon."
+        },
+        {
+            "t": 19.53333282470703,
+            "len": 9.733333587646484,
+            "who": "card",
+            "name": "CARD",
+            "text": "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway."
+        }
+    ]
+}

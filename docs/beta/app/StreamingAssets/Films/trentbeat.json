@@ -1,0 +1,39 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 7.800000190734863,
+            "who": "card",
+            "name": "CARD",
+            "text": "Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs."
+        },
+        {
+            "t": 7.9666666984558105,
+            "len": 5.5333333015441895,
+            "who": "card",
+            "name": "CARD",
+            "text": "The last card hits the felt. The Biscayne Classic is yours."
+        },
+        {
+            "t": 13.533333778381348,
+            "len": 3.2790703773498535,
+            "who": "mustich",
+            "name": "MUSTICH",
+            "text": "Enjoy it. Dad says the Classic is a rounding error."
+        },
+        {
+            "t": 16.83333396911621,
+            "len": 5.068004131317139,
+            "who": "tommy",
+            "name": "TOMMY",
+            "text": "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it."
+        },
+        {
+            "t": 21.933334350585938,
+            "len": 5.516122341156006,
+            "who": "gnomey",
+            "name": "MILES",
+            "text": "Your name goes on the board by the cage. Permanent marker. Congratulations."
+        }
+    ]
+}

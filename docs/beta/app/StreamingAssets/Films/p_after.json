@@ -1,0 +1,32 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 3.4205214977264404,
+            "who": "lou",
+            "name": "NATSO",
+            "text": "You look different. Did you finish the Henderson numbers?"
+        },
+        {
+            "t": 3.566666841506958,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "{saturday}"
+        },
+        {
+            "t": 8.100000381469727,
+            "len": 3.9361679553985596,
+            "who": "lou",
+            "name": "NATSO",
+            "text": "Hello? I'm talking to you. Weekend's over, champ."
+        },
+        {
+            "t": 12.066666603088379,
+            "len": 6.133333206176758,
+            "who": "card",
+            "name": "CARD",
+            "text": "Seven more hours of spreadsheets. Your mind never leaves table nine."
+        }
+    ]
+}

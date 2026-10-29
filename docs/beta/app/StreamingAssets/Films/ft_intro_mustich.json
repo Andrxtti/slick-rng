@@ -1,0 +1,25 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "{ft_intro}"
+        },
+        {
+            "t": 4.6666669845581055,
+            "len": 4.098072528839111,
+            "who": "mustich",
+            "name": "MUSTICH",
+            "text": "Final table. Dad flew in for this. Don't embarrass yourself."
+        },
+        {
+            "t": 8.766666412353516,
+            "len": 1.383151888847351,
+            "who": "you",
+            "name": "YOU",
+            "text": "Let's play."
+        }
+    ]
+}

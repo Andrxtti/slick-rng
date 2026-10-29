@@ -1,0 +1,25 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "{ft_won}"
+        },
+        {
+            "t": 4.6666669845581055,
+            "len": 3.7953968048095703,
+            "who": "tommy",
+            "name": "TOMMY",
+            "text": "Ha! The kid got me. Thirty years and the kid got me."
+        },
+        {
+            "t": 8.466667175292969,
+            "len": 1.2591156959533691,
+            "who": "you",
+            "name": "YOU",
+            "text": "Good game."
+        }
+    ]
+}

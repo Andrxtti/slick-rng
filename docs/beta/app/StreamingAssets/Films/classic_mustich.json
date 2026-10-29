@@ -1,0 +1,46 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "{day2}"
+        },
+        {
+            "t": 4.6666669845581055,
+            "len": 7.733333587646484,
+            "who": "card",
+            "name": "CARD",
+            "text": "Final hand. Mustich shoves with his dad watching from the rail. Called. An ace on the river."
+        },
+        {
+            "t": 12.433333396911621,
+            "len": 6.666666507720947,
+            "who": "card",
+            "name": "CARD",
+            "text": "The room explodes. Mustich holds the trophy over his head like he bought it."
+        },
+        {
+            "t": 19.133333206176758,
+            "len": 3.6651928424835205,
+            "who": "mustich",
+            "name": "MUSTICH",
+            "text": "Write it down, Florida. Some people are born for this."
+        },
+        {
+            "t": 22.799999237060547,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "{day2_you}"
+        },
+        {
+            "t": 27.33333396911621,
+            "len": 3.415170192718506,
+            "who": "tommy",
+            "name": "TOMMY",
+            "text": "Next month, kid. That trophy isn't going anywhere."
+        }
+    ]
+}

@@ -1,0 +1,46 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "{day2}"
+        },
+        {
+            "t": 4.6666669845581055,
+            "len": 5.133333206176758,
+            "who": "card",
+            "name": "CARD",
+            "text": "Final hand. All in, called, and the board runs clean."
+        },
+        {
+            "t": 9.833333969116211,
+            "len": 6.733333587646484,
+            "who": "card",
+            "name": "CARD",
+            "text": "The room comes to its feet. The Biscayne Classic has a new name on the board."
+        },
+        {
+            "t": 16.600000381469727,
+            "len": 2.575396776199341,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "Somebody had to keep you humble, kid."
+        },
+        {
+            "t": 19.200000762939453,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "{day2_you}"
+        },
+        {
+            "t": 23.733333587646484,
+            "len": 4.659568786621094,
+            "who": "gnomey",
+            "name": "MILES",
+            "text": "The name goes on the board by the cage. Next month, it could be yours."
+        }
+    ]
+}

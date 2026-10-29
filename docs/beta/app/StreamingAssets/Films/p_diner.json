@@ -1,0 +1,46 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 4.199999809265137,
+            "who": "card",
+            "name": "CARD",
+            "text": "2:13 AM. The deck is done.\nYou are not."
+        },
+        {
+            "t": 4.366666793823242,
+            "len": 3.0465986728668213,
+            "who": "slick",
+            "name": "STRANGER",
+            "text": "You're doing the thing where you stare at the pie like it owes you money."
+        },
+        {
+            "t": 7.433333396911621,
+            "len": 1.4333560466766357,
+            "who": "you",
+            "name": "YOU",
+            "text": "Long day."
+        },
+        {
+            "t": 8.90000057220459,
+            "len": 3.2133560180664063,
+            "who": "slick",
+            "name": "STRANGER",
+            "text": "Long life, by the look of it. What do you do?"
+        },
+        {
+            "t": 12.133333206176758,
+            "len": 3.4833333492279053,
+            "who": "you",
+            "name": "YOU",
+            "text": "Spreadsheets. For a guy who takes credit for them."
+        },
+        {
+            "t": 15.633333206176758,
+            "len": 1.694262981414795,
+            "who": "slick",
+            "name": "STRANGER",
+            "text": "And what did you want to do?"
+        }
+    ]
+}
