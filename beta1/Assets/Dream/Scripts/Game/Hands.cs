@@ -65,6 +65,10 @@ namespace Dream.Game
         public static List<string> ClassNames = new List<string>();
         public static List<EventDef> Events = new List<EventDef>();
 
+        // the editor keeps statics between play sessions (no domain reload): start each one from the data on disk
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Reset() { data = null; spots = null; Labels.Clear(); ClassCombos.Clear(); ClassNames.Clear(); Events.Clear(); }
+
         public static void Load()
         {
             if (data != null) return;

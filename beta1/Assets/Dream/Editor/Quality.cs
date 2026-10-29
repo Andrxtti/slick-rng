@@ -23,6 +23,10 @@ namespace Dream.EditorTools
             var phoneR = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(Dir + "/URP_Renderer_Mobile.asset");
             foreach (var f in phoneR.rendererFeatures.Where(f => f != null && f.GetType().Name == "ScreenSpaceAmbientOcclusion").ToList())
             { phoneR.rendererFeatures.Remove(f); AssetDatabase.RemoveObjectFromAsset(f); }
+            // the live game is UI only (overlay canvases, which post-processing never touches), so the phone renderer runs no
+            // post at all: without post data URP never builds its post passes, so the stripped FSR/EASU shader can't turn
+            // them off with a warning on the web (GRAPHICS.md G8, review 13:25 item 1)
+            var pso = new SerializedObject(phoneR); var pp = pso.FindProperty("postProcessData"); if (pp != null) { pp.objectReferenceValue = null; pso.ApplyModifiedPropertiesWithoutUndo(); }
             EditorUtility.SetDirty(phoneR);
             var mobile = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(Dir + "/URP_Mobile.asset");
             if (mobile != null)

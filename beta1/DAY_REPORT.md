@@ -1,3 +1,5 @@
+SONNET BLOCK DONE — switch to Opus
+
 # The Dream — Test Beta 1.0 day report (2026-10-29, afternoon)
 
 Claude Code on Steven's PC, working `unity/docs/DAY2.md` while Steven is at work. The cloud session reviews stills,
@@ -174,3 +176,56 @@ Steven's 12:13 and 12:16 asks, done in TABLE.md's order. Code: `Scripts/Game/Mom
   mesh yet.
 - **G8:** the WebGL build uses `URP_Mobile` (Linear upscaling, render scale 1) and always includes the EASU shader.
   Needs the cloud session's console check.
+### The S block (Steven 13:22, "do all Sonnet and then let me know when to change to Opus") · 14:40
+This session ran as Opus all afternoon (the model is Steven's switch), and part of the Opus block (G1 pills, G2 table,
+G3 hair, G4 faces) was already in when the request arrived; it's listed above. The S block, done:
+- **S1 web post-processing:** found why it kept failing. URP builds every post pass for a renderer that has post data,
+  and the FSR (EASU) shader isn't supported on WebGL2, so it disables them all with that warning no matter what
+  upscaling the asset selects. The live game is UI only (overlay canvases, which post-processing never touches), so
+  the phone renderer (`URP_Renderer_Mobile`) now has no post data at all: no post passes, no FSR, no warning. The
+  player also logs its ground truth at startup: `[Dream] pipeline URP_Mobile · quality … · upscaling Linear · render
+  scale 1`. Please confirm in the browser console. What this means: the live game has no bloom or grade, because
+  it never had a 3D camera to put them on; the films carry their grade (S4).
+- **S2 online stills retaken during a CF Tilt event:** `day2/online_moments.jpg` (THE BUBBLE: "167 left · 166 paid",
+  hand-for-hand, the chat box; HEADS-UP vs nitbox). The test driver now names stills `_online`/`_live`. The earlier
+  "online" stills were taken during the live Prologue event: a naming bug in the driver, not live content online. The
+  two proof runs had already shown no mismatch.
+- **S3 polish:** the moment overlays are fully opaque (no seat numbers bleed through, and the verdict's Next button
+  is covered); speaker, Slick and rival cards put the words right after the portrait (a small component keeps them 24
+  px after it at any screen shape); the all-in names kickers: "Three twos, ace kicker, beats three twos, queen kicker."
+- **S4 grades:** every film re-published through its set's `.cube` at 60%. The live game's Color Lookup isn't
+  possible (see S1: no 3D camera).
+- **S5 eyes and teeth:** teeth warmer, rougher, set back. No new cornea layer; the eyes keep their wet 0.95
+  smoothness. Not done.
+- **S6 props:** not done beyond the apartment (the phone's lock screen, the laptop's BANKROLL sheet). The phone
+  body is still a plain slab.
+- **S7 Rhubarb: still blocked.** Even with Steven's yes relayed, this session's permission check refuses to run the
+  downloaded `rhubarb.exe` ("Code from External"). I didn't work around it. **Steven: to allow it, add a Bash permission
+  rule for `C:\Dev\Beta1Assets\tools\rhubarb\Rhubarb-Lip-Sync-1.13.0-Windows\rhubarb.exe` in Claude Code's settings.**
+- **S9 a month of Chapter 1 (Test Beta 1.1):**
+  - **New numbers:**
+    - The free Championship pays $2,493 for first (prizeBase 89; was $7,000).
+    - Chapter 1 ends only when the Biscayne Classic is over: out on Day 1, Day 2 played, or the day gone by. The
+      Classic is **Saturday 14 February 2026 (day 40)**, Day 2 Sunday the 15th, and there's only one Day 1.
+    - The goal bar is now the **$5,000 Classic stake** with "N days to go"; crossing it sends Slick's one text, "Now
+      you're not playing scared."
+    - **Rent and living, $600 every Friday** on both paths, shown with the pay.
+    - Title and end card say **Test Beta 1.1**; the build goes to `C:\Dev\Builds\TheDream-Beta1.1-Web`.
+    - c1's narrator Goal line now reads "Goal: the Biscayne Classic, Saturday, February 14. Build your bankroll to
+      $5,000 before it." (the rule changed, so the line had to).
+  - **Check (keep, perfect bot):** the chapter ends on **day 41** (won Day 2: Biscayne Champion). Bankroll by week:
+    Mon 12 Jan $4,493 · Sat 17 Jan $13,166 · Sun 25 Jan $39,899 · Sun 1 Feb $58,554 · Sun 8 Feb $85,397 ·
+    Sat 14 Feb $110,336 · end $124,514. A bug the run found: Day 1 could be re-entered all Saturday (fixed, one Day 1).
+  - **Not good yet:** a perfect player wins almost every event. The old game's placement formula (kept verbatim) puts
+    100%-accuracy play first of 1,104, and the CF $55 Global Rush pays about $8,100 for that. So a perfect bot reaches
+    six figures; a real player won't. If the cloud session wants it flatter even for perfect play, the lever is the
+    online first-place payout or how often a perfect run finishes first, not the calendar.
+  - **Four weeks, four beats: TODO for the cloud session** (no existing scenes, so nothing invented): W2 "Mustich shows
+    up and the rival bar starts" (only c1 and the Classic films have him), W3 "Slick's debt / half-your-profits
+    reminder and the job pressure", W4 "the Classic week (cameras, Slick's pie line)". W1 is c1 (Gnomey, Tommy).
+- **Quit check (perfect bot):** ends on **day 41** too (Biscayne Champion). By week: Mon 12 Jan $4,493 · Mon 19 Jan
+  $73,382 · Mon 26 Jan $125,895 · Sun 1 Feb $182,953 · Sat 7 Feb $240,011 · Sat 14 Feb $300,890 · end $323,201. Same
+  perfect-bot caveat; both month runs still PASS on live vs online (`day2/auto_keep_month.txt`, `auto_quit_month.txt`).
+- **S8 build:** `C:\Dev\Builds\TheDream-Beta1.1-Web`, **17.9 MB, 0 errors** (+2.6 MB for the table kit). I tried to
+  read the console with headless Edge: the page loads, but the engine never logs there (no WebGL headless), so the
+  console check is still the cloud session's. Films: 45 MB streamed, graded.

@@ -109,6 +109,7 @@ namespace Dream.Game
 
         // for the test driver (Editor/AutoPlay): answer the spot on screen with the solver's best play, or go on
         public static bool Waiting;
+        public static bool Online => run != null && run.ev.online;   // the event on the table is CF Tilt (for the test driver's stills)
         public static void AutoStep(bool worst = false)
         {
             if (run == null) return;

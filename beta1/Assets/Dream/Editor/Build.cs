@@ -13,7 +13,7 @@ namespace Dream.EditorTools
     [InitializeOnLoad]
     public static class Build
     {
-        public const string Out = @"C:\Dev\Builds\TheDream-Beta1-Web";
+        public const string Out = @"C:\Dev\Builds\TheDream-Beta1.1-Web";   // Test Beta 1.1 (the 1.0 build stays where it was)
         static Build() { Remote.Extra["build-web"] = _ => Web(); Remote.Extra["film-pipeline"] = _ => { SetPipeline(Film); AssetDatabase.SaveAssets(); Remote.Log("film-pipeline: " + GraphicsSettings.defaultRenderPipeline?.name); }; }
         static RenderPipelineAsset Film => AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>("Assets/Dream/Settings/URP.asset");
 

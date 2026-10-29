@@ -45,7 +45,7 @@ namespace Dream.Game
         {
             var S = F.S; o ??= new Outcome();
             Load(S);
-            vars.SetValue("$name", S.name ?? ""); vars.SetValue("$bankroll", (float)S.br); vars.SetValue("$peak", (float)S.peak); vars.SetValue("$room_title", S.roomTitle);
+            vars.SetValue("$name", S.name ?? ""); vars.SetValue("$classic_done", S.classicDone); vars.SetValue("$bankroll", (float)S.br); vars.SetValue("$peak", (float)S.peak); vars.SetValue("$room_title", S.roomTitle);
             vars.SetValue("$chapter", S.step == "prologue" || S.step == "choice" ? 0f : S.step == "done" ? 2f : 1f);
             vars.SetValue("$event", o.ev); vars.SetValue("$won", o.won); vars.SetValue("$bust", o.bust); vars.SetValue("$cooler", o.cooler);
             vars.SetValue("$qualified", o.qualified); vars.SetValue("$online", o.online); vars.SetValue("$ft_end", o.ftEnd); vars.SetValue("$classic_end", o.classicEnd);
@@ -65,7 +65,7 @@ namespace Dream.Game
         }
 
         // the story variables live in the save (job, seen flags); game state comes from the game each run
-        static readonly string[] Saved = { "$job", "$honest", "$david_seen", "$lesson_seen", "$badbeat_seen", "$firstwin_seen" };
+        static readonly string[] Saved = { "$job", "$honest", "$david_seen", "$lesson_seen", "$badbeat_seen", "$firstwin_seen", "$stake_seen" };
         void Load(Save S)
         {
             foreach (var kv in S.story)

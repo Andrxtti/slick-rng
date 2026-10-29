@@ -52,13 +52,19 @@ title: AfterEvent
 
 title: AfterSleep
 ---
-// a paycheck can reach the goal on its own (the old game checks progress after every night)
+// the night can end the chapter (the Classic's day gone by) or cross the milestone (a paycheck)
 <<detour CheckGoal>>
 ===
 
 title: CheckGoal
 ---
-<<if $chapter == 1 and ($room_title or $bankroll >= 10000)>>
+// Test Beta 1.1: Chapter 1 ends when the Biscayne Classic is over for you (out on Day 1, Day 2 played, or the day gone).
+// $5,000 before it is a milestone, with one text from Slick.
+<<if $chapter == 1 and $peak >= 5000 and not $stake_seen>>
+    <<set $stake_seen to true>>
+    Slick: Now you're not playing scared. #text
+<<endif>>
+<<if $chapter == 1 and $classic_done>>
     <<jump ChapterEnd>>
 <<endif>>
 ===

@@ -30,7 +30,8 @@ day1.pop("title", None); day1.pop("boss", None)
 day2 = dict(ev["classic"], id="classic2", name="Biscayne Classic · Day 2", field=40, reentry=False, free=True, stages=["bubble", "deep", "final"], perS=[2, 2, 3],
             blurb="Forty players come back Sunday. Thirty-two get paid. One gets the trophy.")
 free = dict(ev["freeroll"], prizeBase=1)
-events = [ev["local"], nightly, glob, day1, day2, free]
+local = dict(ev["local"], prizeBase=89)   # Test Beta 1.1: the free Championship pays about $2,500 for first (was $7,000)
+events = [local, nightly, glob, day1, day2, free]
 fields = sorted({str(e["field"]) for e in events if "field" in e} | {"212"})
 ch = data["DR_CHAPTERS"] if "DR_CHAPTERS" in data else None
 out = {

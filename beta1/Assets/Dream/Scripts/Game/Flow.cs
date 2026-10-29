@@ -21,7 +21,7 @@ namespace Dream.Game
         public string job = "";               // "quit" (full-time) or "nights" (kept the day job), as in the old game
         public int day = -1, liveDay = -99, liveWeek = -99;   // calendar day (0 = Mon 5 Jan 2026); last live game day and week
         public int onlineDay = -99, onlineN, onlineWeek = -99, onlineWN;   // online games played today / this week
-        public bool reelSeen, roomTitle, day2;   // day2: your chips are bagged for Day 2 of the Classic
+        public bool reelSeen, roomTitle, day2, classicDone;   // day2: chips bagged for Day 2; classicDone: the Classic is over (Chapter 1 ends)
         public int titles, coolers;
         public List<string> story = new List<string>();   // Yarn's story variables ($job, seen flags), saved as name=value
         public int events, cashes, decisions, perfect;
@@ -40,7 +40,12 @@ namespace Dream.Game
         public static EventDef LastEvent;   // where the story is now: films and lines are checked against it (Moments.FilmOk)
         public Save S;
         Canvas canvas; RectTransform root;
-        public const double Goal = 10000;                                         // the Chapter 1 goal (also in Chapter1.yarn)
+        // Test Beta 1.1 (Steven, 13:31/13:36): Chapter 1 lasts a month and ends with the Biscayne Classic, played on
+        // Saturday 14 February 2026 (day 40; Day 2 on the Sunday). The bankroll no longer ends it: $5,000 before the Classic
+        // is a milestone (Slick's coverage off the table), and a weekly bill keeps online grinding from snowballing.
+        public const int ClassicDay = 40;
+        public const double Goal = 5000;                                          // the Classic stake milestone (also in Chapter1.yarn)
+        public const double Bills = 600;                                          // rent and living, every Friday
         public const double Salary = 1250;                                        // every Friday with the day job (Steven, 11:27: $1,250 a week; the old game paid $2,000)
         public const int GamesCap = 3;                                            // online: per day full-time, per week with the day job
         public const double Low = 400;                                            // old Calendar.LowMark for Chapter 1: the freeroll opens
@@ -50,10 +55,10 @@ namespace Dream.Game
         static int Dow(int d) => (int)Date(d).DayOfWeek;
         static int WeekOf(int d) => (int)Math.Floor((d + 1) / 7.0);               // weeks run Sunday to Saturday
         static bool Weekend(int d) { int w = Dow(d); return w == 0 || w == 6; }
-        static bool LastSaturday(int d) { var t = Date(d); return t.DayOfWeek == DayOfWeek.Saturday && t.Day + 7 > DateTime.DaysInMonth(t.Year, t.Month); }
+        static bool LastSaturday(int d) => d == ClassicDay;   // the Classic's day in Chapter 1 (was: the last Saturday of the month)
         static string DateStr(int d) => Date(d).ToString("dddd, MMMM d", System.Globalization.CultureInfo.InvariantCulture);
         public string Rep => S.roomTitle ? "Biscayne Champion" : S.job == "quit" ? "Full-time Dreamer" : "Moonlighter";   // old Career.Rep, Chapter 1
-        public const string FeedbackUrl = "https://github.com/Andrxtti/slick-rng/issues/new?title=The%20Dream%20Test%20Beta%201.0%20feedback";
+        public const string FeedbackUrl = "https://github.com/Andrxtti/slick-rng/issues/new?title=The%20Dream%20Test%20Beta%201.1%20feedback";
 
         // ------------------------------------------------------------ the calendar (old Calendar.cs, Chapter 1)
         // what's on today: the nightly and the Global Rush every day, the Classic on the last Saturday of the month,
@@ -62,8 +67,8 @@ namespace Dream.Game
         {
             foreach (var ev in Lib.Events.Where(e => e.ch == 1))
             {
-                if (ev.id == "classic" && !LastSaturday(S.day)) continue;
-                if (ev.id == "classic2" && !(S.day2 && Dow(S.day) == 0)) continue;
+                if (ev.id == "classic" && (!LastSaturday(S.day) || S.day2 || S.classicDone)) continue;   // one Day 1: bagged or out, it's done
+                if (ev.id == "classic2" && !(S.day2 && S.day == ClassicDay + 1)) continue;
                 if (ev.id == "freeroll" && S.br >= Low) continue;
                 yield return ev;
             }
@@ -73,7 +78,7 @@ namespace Dream.Game
         // null when you can play it today (old Calendar.CantPlay)
         string CantPlay(EventDef ev)
         {
-            if (ev.id == "classic2") return null;
+            if (ev.id == "classic2" || ev.id == "classic") return null;   // the Classic is its own day, whatever else you played that week
             if (ev.online)
             {
                 if (S.job == "nights") return OnlineWeek >= GamesCap ? "No online games left this week" : null;
@@ -90,6 +95,9 @@ namespace Dream.Game
         void Start()
         {
             I = this; Application.targetFrameRate = 60; LastEvent = null;
+            // ground truth for the web build's console: which pipeline and quality level the player is really running
+            var urp = UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline as UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset;
+            Debug.Log($"[Dream] pipeline {(urp != null ? urp.name : "none")} · quality {QualitySettings.names[QualitySettings.GetQualityLevel()]} · upscaling {(urp != null ? urp.upscalingFilter.ToString() : "-")} · render scale {(urp != null ? urp.renderScale : 0)}");
             var cam = new GameObject("UiCamera").AddComponent<Camera>(); cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = Ui.Night;
             canvas = Ui.Root("Dream"); root = (RectTransform)canvas.transform;
             Lib.Load();
@@ -134,7 +142,7 @@ namespace Dream.Game
             var s = Screen(Ui.Night);
             Ui.At(Ui.Label(s, "CONFIRMED FIRE PRESENTS", 26, Ui.Dim), 0, 0.8f, 1, 0.83f);
             Ui.At(Ui.Title(s, "The Dream", 150, Ui.Ink), 0, 0.64f, 1, 0.8f);
-            Ui.At(Ui.Label(s, "TEST BETA 1.0", 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.6f, 1, 0.635f);
+            Ui.At(Ui.Label(s, "TEST BETA 1.1", 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.6f, 1, 0.635f);
             Ui.At(Ui.Label(s, "Chapter 1 · The Grind", 36, Ui.Ink), 0, 0.565f, 1, 0.6f);
             Ui.At(Ui.Label(s, "Every decision is a real solver spot.\nCoaching by Confirmed Fire.", 30, Ui.Dim), 0.1f, 0.46f, 0.9f, 0.53f);
             bool can = S != null && S.step != "new";
@@ -201,7 +209,8 @@ namespace Dream.Game
             // goal
             var bar = Ui.At(Ui.Tile(s, "GoalBar", Ui.Card, 10), 0.06f, 0.728f, 0.94f, 0.742f);
             var fill = Ui.Tile(bar, "Fill", Ui.Gold, 10); fill.anchorMax = new Vector2(Mathf.Clamp01((float)(S.br / Goal)), 1);
-            Ui.At(Ui.Label(s, "Goal: win the Biscayne Classic, or build your bankroll to $10,000", 26, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.69f, 0.94f, 0.72f);
+            int left = ClassicDay - S.day;
+            Ui.At(Ui.Label(s, $"Classic stake: build {Ui.Money(Goal)} before the Classic  ·  " + (left > 1 ? $"{left} days to go" : left == 1 ? "tomorrow" : left == 0 ? "today" : "played"), 26, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.69f, 0.94f, 0.72f);
             if (note != null) Ui.At(Ui.Label(s, note, 30, Ui.Aqua, TextAnchor.MiddleLeft), 0.06f, 0.645f, 0.94f, 0.685f);
             float y = 0.63f; var today = Today().ToList();
             foreach (var ev in today)
@@ -282,9 +291,14 @@ namespace Dream.Game
             do
             {
                 S.day++;
-                if (S.job == "nights" && Dow(S.day) == 5) { S.br += Salary; news.Add($"Payday. +{Ui.Money(Salary)} from the day job."); }
-                if (S.day2 && Dow(S.day) == 1) { S.day2 = false; news.Add("You missed Day 2 of the Classic. Your chips were blinded out."); }
-                if (S.day2 && Dow(S.day) == 0) news.Add("Day 2 of the Biscayne Classic. Noon. Your chips are bagged.");
+                if (Dow(S.day) == 5)   // Friday: the paycheck (with the day job) and the week's rent and living
+                {
+                    if (S.job == "nights") { S.br += Salary; news.Add($"Payday +{Ui.Money(Salary)}."); }
+                    S.br = Math.Max(0, S.br - Bills); news.Add($"Rent and living \u2212{Ui.Money(Bills)}.");
+                }
+                if (S.day2 && S.day > ClassicDay + 1) { S.day2 = false; news.Add("You missed Day 2 of the Classic. Your chips were blinded out."); }
+                if (S.day2 && S.day == ClassicDay + 1) news.Add("Day 2 of the Biscayne Classic. Noon. Your chips are bagged.");
+                if (!S.classicDone && S.day > ClassicDay + 1) S.classicDone = true;   // the Classic came and went
             } while (stuck && Today().All(e => CantPlay(e) != null) && S.day < 400);
             S.peak = Math.Max(S.peak, S.br); S.Write();
             story.Run("AfterSleep", () => { if (S.step == "done") EndCard(); else Hub(news.Count > 0 ? string.Join("  ", news) : null); });
@@ -296,6 +310,7 @@ namespace Dream.Game
             var ev = Lib.Event(id);
             if (!ev.free) S.br -= ev.buyin;
             if (ev.id == "classic2") S.day2 = false;
+            if (ev.id == "classic2") S.classicDone = true;
             S.Write();
             Hands.Chapter = S.step == "prologue" ? 0 : 1;
             var run = Hands.Start(ev, $"{id}|{DateTime.UtcNow.Ticks}");
@@ -335,6 +350,7 @@ namespace Dream.Game
             if (won && ev.title == "room") S.roomTitle = true;
             if (ev.id == "classic2" && won) S.roomTitle = true;
             if (qualified) S.day2 = true;
+            if (ev.id == "classic" && !qualified) S.classicDone = true;   // out on Day 1: the Classic is over for you
             S.log.Insert(0, ev.kind == "cash" ? $"{ev.name}: {(prize - ev.buyin >= 0 ? "+" : "")}{Ui.Money(prize - ev.buyin)}" : qualified ? $"{ev.name}: bagged for Day 2" : $"{ev.name}: {Ord(place)} of {ev.field}" + (prize > 0 ? $", {Ui.Money(prize)}" : ""));
             bool bust = ev.kind == "cash" ? prize < ev.buyin * 0.5 : ev.kind == "sat" ? !qualified : prize <= 0;
             // who you met at the final table, and how it ended between you (old Play: res.met, Story.FtEnd)
@@ -419,7 +435,7 @@ namespace Dream.Game
         public void EndCard()
         {
             var s = Screen(Color.black);
-            Ui.At(Ui.Label(s, "TEST BETA 1.0", 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.68f, 1, 0.71f);
+            Ui.At(Ui.Label(s, "TEST BETA 1.1", 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.68f, 1, 0.71f);
             Ui.At(Ui.Title(s, "Chapter 2: The Circuit", 84, Ui.Ink), 0.05f, 0.58f, 0.95f, 0.67f);
             Ui.At(Ui.Label(s, "coming soon", 40, Ui.Dim), 0.05f, 0.535f, 0.95f, 0.575f);
             Ui.At(Ui.Num(s, $"{S.name}, {Rep}  ·  {Ui.Money(S.br)}  ·  {S.events} events  ·  {S.decisions} decisions", 28, Ui.Dim), 0.05f, 0.46f, 0.95f, 0.5f);

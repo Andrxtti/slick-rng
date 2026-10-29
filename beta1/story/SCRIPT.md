@@ -169,7 +169,7 @@ The beat: the room, the people, the goal.
 3. TOMMY [tommy] (cu tommy; point): Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast.
 4. MUSTICH [mustich] (cu mustich; laugh): Cute hoodie. Did it come with the free seat?
 5. CARD [card] (push mustich; idle): Mustich. Dad's money, a solver subscription, and a smile you want to wipe off. / He's been circling the Biscayne Classic all year.
-6. CARD [card] (wide; idle): Goal: win the Biscayne Classic, or build your bankroll to $10,000.
+6. CARD [card] (wide; idle): Goal: the Biscayne Classic, Saturday, February 14. Build your bankroll to $5,000 before it.
 
 ## classic_day1 — Bags and tags
 place: cardroom · time: Saturday, 11:50 PM · cast: gnomey, mustich, you

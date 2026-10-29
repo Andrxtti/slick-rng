@@ -25,6 +25,7 @@ title: Variables
 <<declare $cooler = false>>
 <<declare $qualified = false>>
 <<declare $online = false>>
+<<declare $classic_done = false>>
 <<declare $ft_end = "">>
 <<declare $classic_end = "">>
 // Story variables (saved with the career): the job, the diner answer, and what has already been seen.
@@ -34,6 +35,7 @@ title: Variables
 <<declare $lesson_seen = false>>
 <<declare $badbeat_seen = false>>
 <<declare $firstwin_seen = false>>
+<<declare $stake_seen = false>>
 ===
 
 title: Prologue

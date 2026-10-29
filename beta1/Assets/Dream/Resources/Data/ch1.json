@@ -7136,7 +7136,8 @@
    "free": true,
    "title": "local",
    "boss": "lou",
-   "blurb": "Your free seat. Your first real tournament."
+   "blurb": "Your free seat. Your first real tournament.",
+   "prizeBase": 89
   },
   {
    "id": "nightly",

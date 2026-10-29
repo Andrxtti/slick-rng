@@ -123,6 +123,18 @@ namespace Dream.Game
             }
         }
         static string Up(string s) => char.ToUpperInvariant(s[0]) + s.Substring(1);
+
+        // when both make the same hand, the first rank where the two best fives differ: each side's kicker
+        public static (string hero, string opp) Kickers(Showdown sd)
+        {
+            long a = Eval(sd.hero.Concat(sd.board)), b = Eval(sd.opp.Concat(sd.board));
+            for (int i = 4; i >= 0; i--)
+            {
+                int ka = (int)((a >> (i * 4)) & 15), kb = (int)((b >> (i * 4)) & 15);
+                if (ka != kb) return (RankOne[ka], RankOne[kb]);
+            }
+            return ("the same", "the same");
+        }
     }
 
     public static class Moments
@@ -159,6 +171,7 @@ namespace Dream.Game
         public static RawImage Portrait(Transform parent, string who, float x0, float y0, float x1, float y1)
         {
             var holder = Ui.At(Ui.Box(parent, "Portrait"), x0, y0, x1, y1);   // the fitter sizes against its parent, so it gets its own
+            holder.name = "Portrait";
             var frame = Ui.Tile(holder, "Frame", new Color(1, 1, 1, 0.08f), 24);
             frame.gameObject.AddComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             frame.gameObject.AddComponent<RectMask2D>();
@@ -168,6 +181,26 @@ namespace Dream.Game
             if (raw.texture == null) raw.color = Color.clear;
             return raw;
         }
+        // a portrait in a wide card: pin its square to the left edge of its box instead of the middle, so the words
+        // can start right after it
+        static void Hug(RawImage pic, params TextMeshProUGUI[] words)
+        {
+            var frame = (RectTransform)pic.transform.parent; frame.anchorMin = new Vector2(0, 0); frame.anchorMax = new Vector2(0, 1); frame.pivot = new Vector2(0, 0.5f);
+            var f = frame.GetComponent<AspectRatioFitter>(); f.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth; f.aspectRatio = 1;
+            var follow = frame.gameObject.AddComponent<AfterPortrait>(); follow.frame = frame; follow.words = words.Select(w => w.rectTransform).ToArray();
+        }
+        // keeps the words 24 px after the portrait, whatever size the card ends up (the portrait's width is its height)
+        class AfterPortrait : MonoBehaviour
+        {
+            public RectTransform frame; public RectTransform[] words;
+            void LateUpdate()
+            {
+                var holder = (RectTransform)frame.parent; var card = (RectTransform)holder.parent;
+                float x = holder.anchorMin.x * card.rect.width + frame.rect.width + 24;
+                foreach (var w in words) { w.anchorMin = new Vector2(0, w.anchorMin.y); w.offsetMin = new Vector2(x, w.offsetMin.y); }
+            }
+        }
+
         static RectTransform Card(RectTransform root, float y0, float y1) => Ui.At(Ui.Tile(root, "Card", new Color(0.09f, 0.085f, 0.11f, 0.97f), 36), 0.05f, y0, 0.95f, y1);
         static TextMeshProUGUI Glow(TextMeshProUGUI t, Color c)
         {
@@ -225,7 +258,9 @@ namespace Dream.Game
             var res = Ui.At(Ui.Box(o, "Result"), 0.05f, 0.13f, 0.95f, 0.28f); var resg = res.gameObject.AddComponent<CanvasGroup>(); resg.alpha = 0;
             string big = sd.chop ? "Chopped. Split pot." : sd.win ? "You hold!" : Rival(run) != null ? $"{sd.oppName} holds." : "They hold.";
             Ui.At(Ui.Title(res, big, 72, sd.chop ? Cream : sd.win ? Green : Red), 0, 0.5f, 1, 1);
-            string how = sd.chop ? $"{sd.heroHand} each." : sd.heroHand == sd.oppHand ? $"{sd.heroHand} each. The kicker plays." : sd.win ? $"{sd.heroHand} beats {Lower(sd.oppHand)}." : $"{sd.oppHand} beats {Lower(sd.heroHand)}.";
+            string hh = sd.heroHand, oh = sd.oppHand;
+            if (!sd.chop && hh == oh) { var k = Showdown.Kickers(sd); hh += $", {k.hero} kicker,"; oh += $", {k.opp} kicker"; }   // "Three twos, ace kicker, beats three twos, queen kicker."
+            string how = sd.chop ? $"{sd.heroHand} each. Split pot." : sd.win ? $"{hh} beats {Lower(oh)}." : $"{oh.TrimEnd(',')} beats {Lower(hh.TrimEnd(','))}.";
             Ui.At(Ui.Label(res, how, 30, Ui.Ink), 0, 0.25f, 1, 0.5f);
             if (sd.after != sd.before) Ui.At(Ui.Num(res, $"Stack {sd.before} → {sd.after} bb", 28, sd.after > sd.before ? Green : Red), 0, 0, 1, 0.25f);
             var hint = Ui.At(Ui.Label(o, "tap to skip", 22, new Color(1, 1, 1, 0.35f)), 0, 0.015f, 1, 0.045f);
@@ -288,9 +323,9 @@ namespace Dream.Game
                 Ui.At(Ui.Label(b, line, 30, Color.white, TextAnchor.MiddleLeft), 0.05f, 0.05f, 0.95f, 0.95f);
                 return;
             }
-            Portrait(c, "slick", 0.04f, 0.15f, 0.26f, 0.85f);
-            Ui.At(Ui.Label(c, "SLICK", 22, Ui.Aqua, TextAnchor.MiddleLeft, FontStyle.Bold), 0.3f, 0.72f, 0.95f, 0.9f);
-            Ui.At(Ui.Label(c, line, 30, Ui.Ink, TextAnchor.UpperLeft), 0.3f, 0.08f, 0.95f, 0.7f);
+            Hug(Portrait(c, "slick", 0.03f, 0.15f, 0.26f, 0.85f),
+                Ui.At(Ui.Label(c, "SLICK", 22, Ui.Aqua, TextAnchor.MiddleLeft, FontStyle.Bold), 0.2f, 0.72f, 0.96f, 0.9f),
+                Ui.At(Ui.Label(c, line, 30, Ui.Ink, TextAnchor.UpperLeft), 0.2f, 0.08f, 0.96f, 0.7f));
         }
 
         // ------------------------------------------------------------ 2. the level card (Slick's tips, DR_TIPS verbatim)
@@ -322,10 +357,10 @@ namespace Dream.Game
             if (rival != null)   // the rival bar: who's waiting at the final table
             {
                 var c = Card(o, 0.22f, 0.37f);
-                Portrait(c, rival, 0.04f, 0.15f, 0.26f, 0.85f);
-                Ui.At(Ui.Label(c, "AT THE FINAL TABLE", 22, Red, TextAnchor.MiddleLeft, FontStyle.Bold), 0.3f, 0.74f, 0.95f, 0.92f);
-                Ui.At(Ui.Title(c, rival == "Tommy" ? "Tommy \"The Shark\" Maio" : rival, 44, Ui.Ink, TextAnchor.MiddleLeft), 0.3f, 0.48f, 0.95f, 0.74f);
-                Ui.At(Ui.Label(c, Rivals[rival], 26, Ui.Dim, TextAnchor.UpperLeft), 0.3f, 0.06f, 0.95f, 0.46f);
+                Hug(Portrait(c, rival, 0.03f, 0.15f, 0.26f, 0.85f),
+                    Ui.At(Ui.Label(c, "AT THE FINAL TABLE", 22, Red, TextAnchor.MiddleLeft, FontStyle.Bold), 0.2f, 0.74f, 0.96f, 0.92f),
+                    Ui.At(Ui.Title(c, rival == "Tommy" ? "Tommy \"The Shark\" Maio" : rival, 44, Ui.Ink, TextAnchor.MiddleLeft), 0.2f, 0.48f, 0.96f, 0.74f),
+                    Ui.At(Ui.Label(c, Rivals[rival], 26, Ui.Dim, TextAnchor.UpperLeft), 0.2f, 0.06f, 0.96f, 0.46f));
             }
             Ui.At(Ui.Label(o, "tap to deal", 24, new Color(1, 1, 1, 0.4f)), 0, 0.08f, 1, 0.11f);
         }
@@ -399,9 +434,9 @@ namespace Dream.Game
         public static void Speech(Transform o, string who, string line, float y0, float y1)
         {
             var c = Ui.At(Ui.Tile(o, "Speech", new Color(0.97f, 0.95f, 0.9f, 0.97f), 36), 0.05f, y0, 0.95f, y1);
-            Portrait(c, who, 0.03f, 0.1f, 0.2f, 0.9f);
-            Ui.At(Ui.Label(c, who.ToUpperInvariant(), 20, new Color(0.45f, 0.3f, 0.1f), TextAnchor.MiddleLeft, FontStyle.Bold), 0.24f, 0.66f, 0.96f, 0.92f);
-            Ui.At(Ui.Label(c, line, 28, Ui.Night, TextAnchor.UpperLeft), 0.24f, 0.06f, 0.96f, 0.64f);
+            var pic = Portrait(c, who, 0.02f, 0.1f, 0.2f, 0.9f);
+            Hug(pic, Ui.At(Ui.Label(c, who.ToUpperInvariant(), 20, new Color(0.45f, 0.3f, 0.1f), TextAnchor.MiddleLeft, FontStyle.Bold), 0.13f, 0.66f, 0.97f, 0.92f),
+                Ui.At(Ui.Label(c, line, 28, Ui.Night, TextAnchor.UpperLeft), 0.13f, 0.06f, 0.97f, 0.64f));
         }
         // a text arriving on the phone during play: the Messages bubble, small, over the table
         static void Text(RectTransform o, string from, string line, float y0, float y1)

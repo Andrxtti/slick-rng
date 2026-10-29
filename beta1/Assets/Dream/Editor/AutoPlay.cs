@@ -52,8 +52,8 @@ namespace Dream.EditorTools
         static void Tick()
         {
             if (!EditorApplication.isPlaying || EditorApplication.timeSinceStartup < next) return;
-            next = EditorApplication.timeSinceStartup + 0.35;
-            if (++steps > 4000) { Stop("gave up after 4000 steps"); return; }
+            next = EditorApplication.timeSinceStartup + 0.2;
+            if (++steps > 30000) { Stop("gave up after 30000 steps"); return; }   // a month of Chapter 1 is a lot of hands
             var films = Object.FindAnyObjectByType<Films>();
             if (films != null) { films.Skip(); return; }
             // the table's moments: the all-in, the cooler, the level card, the bubble, heads-up, the walk away
@@ -69,7 +69,8 @@ namespace Dream.EditorTools
             {
                 var m = GameObject.Find(name);
                 if (m == null || m.GetComponent<Button>() == null) continue;
-                bool fresh = (Has("THE BUBBLE") && Shot("bubble")) | (Has("HEADS-UP") && Shot("headsup")) | (Has("IN THE MONEY") && Shot("itm")) | (name == "WalkAway" && Shot("walkaway"));
+                string at = Flow.LastEvent == null ? "" : "_" + (Has("CF TILT") || Has("HAND-FOR-HAND") || Has("CHAT") || (Flow.I != null && Table.Online) ? "online" : "live");   // stills say where they were taken
+                bool fresh = (Has("THE BUBBLE") && Shot("bubble" + at)) | (Has("HEADS-UP") && Shot("headsup" + at)) | (Has("IN THE MONEY") && Shot("itm" + at)) | (name == "WalkAway" && Shot("walkaway" + at));
                 if (fresh || Has("ALL IN")) return;   // a screenshot waits a tick; an all-in is still running
                 m.GetComponent<Button>().onClick.Invoke(); return;
             }
