@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="The Dream">
   <meta name="theme-color" content="#0b0a08">
-  <title>The Dream · Test Beta 1.1.1</title>
+  <title>The Dream · Test Beta 1.1.2</title>
   <link rel="apple-touch-icon" href="TemplateData/icon-180.png">
   <link rel="icon" type="image/png" href="TemplateData/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -36,7 +36,7 @@
 </head>
 <body>
   <div id="wrap"><canvas id="unity-canvas" tabindex="-1"></canvas></div>
-  <div id="load"><div>Confirmed Fire</div><h1>The Dream</h1><div id="bar"><div id="fill"></div></div><div id="note">Test Beta 1.1.1 · loading the tables…</div><div id="tap">Tap to start · sound on</div></div>
+  <div id="load"><div>Confirmed Fire</div><h1>The Dream</h1><div id="bar"><div id="fill"></div></div><div id="note">Test Beta 1.1.2 · loading the tables…</div><div id="tap">Tap to start · sound on</div></div>
   <script>
     var canvas = document.getElementById("unity-canvas"), load = document.getElementById("load"), fill = document.getElementById("fill"), note = document.getElementById("note");
     var config = {
@@ -60,11 +60,45 @@
     // films (Steven, 14:51 "no sound"): phones only let a <video> play with sound if a tap started it, and Unity makes
     // a new <video> for each film and starts it later, outside any tap, so it played muted. The start tap below plays a
     // tiny clip on a pool of video elements (that unlocks each one), and Unity gets those elements when it asks for one.
-    var vpool = [], mkEl = document.createElement.bind(document);
+    var vpool = [], vids = [], mkEl = document.createElement.bind(document);
     document.createElement = function (tag, opt) {
-      if (vpool.length && String(tag).toLowerCase() === "video") { var v = vpool.shift(); try { v.pause(); v.removeAttribute("src"); v.load(); } catch (e) {} return v; }
-      return mkEl(tag, opt);
+      if (String(tag).toLowerCase() !== "video") return mkEl(tag, opt);
+      var v = vpool.length ? vpool.shift() : mkEl("video");
+      if (v.src) { try { v.pause(); v.removeAttribute("src"); v.load(); } catch (e) {} }
+      vids.push(v); return v;
     };
+    // a film is on screen while one of Unity's videos holds a film and hasn't ended. While it is, taps never reach the game
+    // (they used to skip the whole film): the first tap turns the sound on if the phone held it back and shows "Skip scene",
+    // and only that button skips (it tells the game the film ended, exactly as if it had played to the end).
+    function film() { for (var i = 0; i < vids.length; i++) { var v = vids[i]; if (v.src.indexOf("/Films/") >= 0 && !v.ended) return v; } return null; }
+    var pill = null, pillTimer = 0;
+    function showPill() {
+      if (!pill) {
+        pill = mkEl("div"); pill.textContent = "Skip scene \u25B8";
+        pill.style.cssText = "position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:9;padding:12px 20px;border-radius:999px;background:rgba(20,18,14,.82);color:#f4dfa6;border:1px solid rgba(242,194,90,.55);font:600 15px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:none";
+        function skip(e) { e.preventDefault(); e.stopPropagation(); var v = film(); if (v) { try { v.pause(); if (v.onended) v.onended.call(v); } catch (x) {} } pill.style.display = "none"; }
+        pill.addEventListener("touchend", skip); pill.addEventListener("click", skip);
+        document.body.appendChild(pill);
+      }
+      pill.style.display = "block"; clearTimeout(pillTimer); pillTimer = setTimeout(function () { pill.style.display = "none"; }, 3000);
+    }
+    ["touchstart", "touchend", "touchmove", "pointerdown", "pointerup", "mousedown", "mouseup", "click"].forEach(function (t) {
+      window.addEventListener(t, function (e) {
+        var v = film(); if (!v || (pill && e.target === pill)) return;
+        e.stopImmediatePropagation(); if (e.cancelable) e.preventDefault();
+        if (t === "touchend" || t === "click") {
+          try { if (v.muted || v.paused) { v.muted = false; var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } } catch (x) {}
+          wakeAudio(); showPill();
+        }
+      }, { capture: true, passive: false });
+    });
+    // ?debug=1: what the phone is doing with sound, on screen (send Claude a screenshot)
+    if (/[?&]debug=1/.test(location.search)) setInterval(function () {
+      var d = document.getElementById("dbg"); if (!d) { d = mkEl("pre"); d.id = "dbg"; d.style.cssText = "position:fixed;left:4px;top:40px;z-index:10;margin:0;padding:6px;background:rgba(0,0,0,.7);color:#9f9;font:10px/1.3 monospace;pointer-events:none;max-width:95%;white-space:pre-wrap"; document.body.appendChild(d); }
+      var ctx = null; try { ctx = game && game.Module && game.Module.WEBAudio && game.Module.WEBAudio.audioContext; } catch (e) {}
+      d.textContent = "session " + (navigator.audioSession ? navigator.audioSession.type : "none") + " · ctx " + (ctx ? ctx.state : "?") + " · pool " + vpool.length + "\n" +
+        vids.slice(-3).map(function (v) { return (v.src.split("/").pop() || "-") + " m" + (+v.muted) + " p" + (+v.paused) + " e" + (+v.ended) + " t" + v.currentTime.toFixed(1) + " rs" + v.readyState + (v.error ? " err" + v.error.code : ""); }).join("\n") + "\n" + navigator.userAgent.slice(0, 120);
+    }, 500);
     function primeVideos() {
       for (var i = 0; i < 32; i++) {
         var v = mkEl("video"); v.setAttribute("playsinline", ""); v.playsInline = true; v.muted = false; v.src = "TemplateData/prime.mp4";
@@ -88,7 +122,7 @@
     script.onload = function () {
       createUnityInstance(canvas, config, function (p) { fill.style.width = (100 * p) + "%"; })
         .then(function (u) {
-          game = u; window.unityInstance = u; note.textContent = "Test Beta 1.1.1"; load.className = "ready";
+          game = u; window.unityInstance = u; note.textContent = "Test Beta 1.1.2"; load.className = "ready";
           function start(e) { e.preventDefault(); e.stopPropagation(); load.removeEventListener("click", start); load.removeEventListener("touchend", start);
             wakeAudio(); primeVideos(); load.style.display = "none"; }
           load.addEventListener("touchend", start); load.addEventListener("click", start);
