@@ -1,0 +1,1 @@
+{ "cmds": ["where claude", "dir /s /b %LOCALAPPDATA%\\Microsoft\\WinGet\\Packages\\Anthropic.ClaudeCode* | findstr /I claude.exe", "claude --version"] }
