@@ -38,7 +38,18 @@ namespace Dream.EditorTools
             PlayerSettings.companyName = "Confirmed Fire"; PlayerSettings.productName = "The Dream";
             AssetDatabase.SaveAssets();
             TestScene();
+            FilmScene();
             Debug.Log("[Dream] setup done");
+        }
+
+        // The film stage: an empty scene with the player; the render command opens it and sets Take.Id.
+        static void FilmScene()
+        {
+            const string path = "Assets/Dream/Scenes/Film.unity";
+            if (File.Exists(path)) return;
+            var s = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            new GameObject("Film").AddComponent<Dream.Film.Player>();
+            EditorSceneManager.SaveScene(s, path);
         }
 
         // A lit test scene: floor, sphere, warm key, cool rim, a slowly orbiting camera.

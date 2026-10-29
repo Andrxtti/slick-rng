@@ -1,6 +1,6 @@
 // Hands-free editor commands: write one command per line into Logs/dream_cmd.txt and the open editor runs it within a
 // second or two, appending what happened to Logs/dream_cmd_out.txt. Only the commands listed here run.
-//   refresh | setup | play | stop | render <id> | status
+//   refresh | setup | resolve | play | stop | render <id> | status
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +21,7 @@ namespace Dream.EditorTools
         {
             { "refresh", () => AssetDatabase.Refresh() },
             { "setup", Setup.Run },
+            { "resolve", () => UnityEditor.PackageManager.Client.Resolve() },   // re-read Packages/manifest.json
             { "play", () => EditorApplication.isPlaying = true },
             { "stop", () => EditorApplication.isPlaying = false },
             { "status", () => Log($"status: playing {EditorApplication.isPlaying} compiling {EditorApplication.isCompiling} scene {UnityEngine.SceneManagement.SceneManager.GetActiveScene().path}") },

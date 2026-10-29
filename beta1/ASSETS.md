@@ -1,0 +1,28 @@
+# Beta 1.0 assets
+
+Every third-party asset in the beta1 project, with its source, author and licence. Sources live in
+`C:\Dev\Beta1Assets` (outside git); CC0 sources can be downloaded again with `tools/fetch_assets.py`.
+
+| asset | kind | source | author | licence |
+|---|---|---|---|---|
+| leather_red_02 | tex | Poly Haven, https://polyhaven.com/a/leather_red_02 | Rob Tuytel | CC0 |
+| floor_tiles_06 | tex | Poly Haven, https://polyhaven.com/a/floor_tiles_06 | Rob Tuytel | CC0 |
+| marble_01 | tex | Poly Haven, https://polyhaven.com/a/marble_01 | Rob Tuytel | CC0 |
+| beige_wall_001 | tex | Poly Haven, https://polyhaven.com/a/beige_wall_001 | Dimitrios Savva, Rico Cilliers | CC0 |
+| dark_paneled_wood | tex | Poly Haven, https://polyhaven.com/a/dark_paneled_wood | Dimitrios Savva | CC0 |
+| ceiling_interior | tex | Poly Haven, https://polyhaven.com/a/ceiling_interior | Dimitrios Savva | CC0 |
+| asphalt_02 | tex | Poly Haven, https://polyhaven.com/a/asphalt_02 | Rob Tuytel | CC0 |
+| modern_evening_street | hdri | Poly Haven, https://polyhaven.com/a/modern_evening_street | Grzegorz Wronkowski | CC0 |
+| metal_stool_02 | model | Poly Haven, https://polyhaven.com/a/metal_stool_02 | Ulan Cabanilla | CC0 |
+| bar_chair_round_01 | model | Poly Haven, https://polyhaven.com/a/bar_chair_round_01 | Dairon Sanchez | CC0 |
+| CashRegister_01 | model | Poly Haven, https://polyhaven.com/a/CashRegister_01 | Joe Seabuhr | CC0 |
+| carrot_cake | model | Poly Haven, https://polyhaven.com/a/carrot_cake | Greg Zaal, James Ray Cock | CC0 |
+| strawberry_chocolate_cake | model | Poly Haven, https://polyhaven.com/a/strawberry_chocolate_cake | Kuutti Siitonen | CC0 |
+| hanging_industrial_lamp | model | Poly Haven, https://polyhaven.com/a/hanging_industrial_lamp | Kuutti Siitonen | CC0 |
+| street_lamp_01 | model | Poly Haven, https://polyhaven.com/a/street_lamp_01 | Josh Dean | CC0 |
+| fire_hydrant | model | Poly Haven, https://polyhaven.com/a/fire_hydrant | Gonçalo Felício | CC0 |
+| tea_set_01 | model | Poly Haven, https://polyhaven.com/a/tea_set_01 | James Ray Cock, Rico Cilliers, Jurita Burger | CC0 |
+| standing_chalkboard_01 | model | Poly Haven, https://polyhaven.com/a/standing_chalkboard_01 | ParzivalCG | CC0 |
+| leather_white | tex | Poly Haven, https://polyhaven.com/a/leather_white | Rob Tuytel | CC0 |
+| brick_wall_04 | tex | Poly Haven, https://polyhaven.com/a/brick_wall_04 | Dario Barresi, Dimitrios Savva, Rico Cilliers | CC0 |
+| concrete_pavement_03 | tex | Poly Haven, https://polyhaven.com/a/concrete_pavement_03 | Charlotte Baglioni | CC0 |
