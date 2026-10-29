@@ -8,6 +8,19 @@ players".
 
 **Status: draft for Steven to read. Nothing gets voiced or rendered until he has.**
 
+**Revised 2026-10-29 11:40 from Steven's answers in the scene tree:**
+- Event names: Flashy Lights Circuit (rings), WCoC, the World Championship of Cards (the Summer bracelets and the Main
+  Event), the Let's Go! Tour and the One Time! Cup (TV), and the Titan. Silver Strike stays as the casino's name.
+- Slick's fold was ten years ago, not twenty ("he's not THAT old").
+- David's fiancée is Katie.
+- Mustich stays a rival to the end. `c7_rival` is gone; `c7_rival` replaces it.
+- The game still ends on the luck line: "People insist on calling it luck."
+- No new side characters: the pro fields are legends and the current cast only.
+- The last river of the Main Event is the player's call or fold, and the cards decide (`c6_final`, new `c6_fold`).
+- Kept as written: Colt and the pie, Slick in Vegas for the Main, Lou's firm Halvorsen & Pike.
+- Still to settle with Steven: the twist (asked again in plain words), and the player's age, now that the TV night was
+  ten years ago.
+
 Format, same as `dream/script.md`:
 - Each scene is `## id — Chapter · title (place)`, then numbered lines `Name [speaker id]: line {shot}`.
 - `(text)` marks a phone text. `- Choice:` is a button (`→` is where it leads; after `|` is the reply).
@@ -38,7 +51,7 @@ Format, same as `dream/script.md`:
 
 **The question under the whole game:** who was the man in dark glasses on the fuzzy TV, and who folded to him?
 
-When you were nine, you watched a world championship final table. A man in dark glasses moved all in on the river
+When you were nine, you watched the World Championship of Cards final table on TV. A man in dark glasses moved all in on the river
 with nothing. You could see his cards because the hole-card camera showed them to the audience. His opponent thought
 for four minutes and folded the winning hand. The man never showed. In the interview afterwards he said one line:
 *"People insist on calling it luck."*
@@ -47,7 +60,7 @@ for four minutes and folded the winning hand. The man never showed. In the inter
 - **The opponent who folded was Slick.** The fold went round the world. "The Fold" became a meme before memes. Slick
   never sat at a final table again.
   - Somebody bought his pie at the Lucky Seven the night he came home. It was Colt the Cowboy (Chapter 2).
-  - He has spent twenty years at 2:13 AM, buying other people's pie. He writes Bio's line in pen on every envelope,
+  - He has spent ten years at 2:13 AM, buying other people's pie. He writes Bio's line in pen on every envelope,
     because it is the lie he wants you to beat. It wasn't luck. Bio read a person, and the person flinched.
 - **The misdirection:** Slick has worn dark glasses ever since that night. So for two chapters, you and the player
   assume Slick was the man on the TV. Chapter 3 puts a man in dark glasses at the feature table. That's Bio.
@@ -77,11 +90,12 @@ for four minutes and folded the winning hand. The man never showed. In the inter
 - **Mustich**, the rival.
   - He wins a bracelet before you do and never lets you forget it.
   - His father cuts him off (Chapter 5).
-  - Bio busts him at the Main, and you find him in a hallway.
-  - In Legacy he asks you to coach him. "So teach somebody."
+  - Bio busts him at the Main, and you find him in a hallway. He's still not your friend.
+  - In Legacy he's still circling: back at the Hall of Legends Invitational, paying his own way, wanting your
+    fifteenth bracelet.
 - **Natso "Corporate Lou" SweetLou**, the comic thread.
   - He sees your ring on Instagram.
-  - His firm sponsors the GLO Cup, so he turns up in a VIP lanyard wanting a LinkedIn photo.
+  - His firm sponsors the One Time! Cup, so he turns up in a VIP lanyard wanting a LinkedIn photo.
   - The promotion text after you win the Main.
   - In Legacy, a conference room named after you that you will never enter.
 - **Tommy "The Shark" Maio.**
@@ -106,25 +120,25 @@ moment. In the game they're the named "boss" at the final table of the event lis
 
 | # | Legend | Era | Chapter | Event (our names) | Scene | Their moment |
 |---|---|---|---|---|---|---|
-| 1 | Chris Schillings | Boom | 2 | Silver Strike Circuit · $580 Ring Event | c2 ✦, ring1 ✦ | The accountant who did it: your mirror, and your first fan |
+| 1 | Chris Schillings | Boom | 2 | Flashy Lights Circuit · $580 Ring Event | c2 ✦, ring1 ✦ | The accountant who did it: your mirror, and your first fan |
 | 2 | Mouthy Michael | Boom | 2 | Circuit · $400 Turbo Ring | c2_mouth ✦ | Talks you into a call. Learn to stop listening |
 | 3 | Sammy Smokes | Boom | 2 | Silver Strike's upstairs game | c2_smokes ✦ | The game you're not rolled for. Discipline |
 | 4 | Armadillo Fatts | Old school | 2 | Silver Strike bar | c2_fatts ✦ | Tells the story of "The Fold": the first hint |
 | 5 | Colt the Cowboy | Old school | 2 | Circuit charity event | c2_cowboy ✦ | Bought a skinny kid's pie on Calle Ocho once: the second hint |
-| 6 | Phil Hellraiser | Boom | 3 | WCS $1,500 Opener | c3 ✦, bracelet1 ✦ | Most bracelets alive, and he'll tell you |
-| 7 | GG Negroni | Boom | 3 | WCS $3,000 Six-Max | c3_gg ✦ | Says your cards out loud. Sometimes he's right |
-| 8 | Gus Handsome | Boom | 3 | Players' dinner, WCS $5,000 | c3_steak ✦ | Any two cards. The life you could have |
+| 6 | Phil Hellraiser | Boom | 3 | WCoC $1,500 Opener | c3 ✦, bracelet1 ✦ | Most bracelets alive, and he'll tell you |
+| 7 | GG Negroni | Boom | 3 | WCoC $3,000 Six-Max | c3_gg ✦ | Says your cards out loud. Sometimes he's right |
+| 8 | Gus Handsome | Boom | 3 | Players' dinner, WCoC $5,000 | c3_steak ✦ | Any two cards. The life you could have |
 | 9 | Antonio Escandalo | Boom | 3 | Players' dinner | c3_steak ✦ | The card trick, and the lesson in misdirection |
 | 10 | Stu Hungar | Old school | 3 | Hallway after the bubble | c3_bubble ✦ | The comeback kid, on comebacks |
-| 11 | Chance Cage | Old school | 3 | WCS $10,000 Heads-Up | c3_chance ✦ | Slow-plays you into the ground. Patience |
-| 12 | Nicky Parmesan | Rising star | 3 | WCS mixed games | c3_parm ✦ | Three bracelets this summer. "Pick a game." |
+| 11 | Chance Cage | Old school | 3 | WCoC $10,000 Heads-Up | c3_chance ✦ | Slow-plays you into the ground. Patience |
+| 12 | Nicky Parmesan | Rising star | 3 | WCoC mixed games | c3_parm ✦ | Three bracelets this summer. "Pick a game." |
 | 13 | Erik Seikick | Boom | 3 | Your bracelet final table | bracelet1 ✦ | Thirty years at the top, three words to you |
-| 14 | Tom Duhhz | Online | 4 | Royal Tour feature table | c4_duhhz ✦ | The six-figure bluff on stream |
-| 15 | Pat Finny | Online | 4 | GLO Cup $25,000 | c4_ice ✦ | Never blinks. You learn stillness |
-| 16 | Kristen Foxglove | High roller | 4 | Royal Tour | c4 ✦, tour1 ✦ | "Everyone has a file on you now." |
+| 14 | Tom Duhhz | Online | 4 | Let's Go! Tour feature table | c4_duhhz ✦ | The six-figure bluff on stream |
+| 15 | Pat Finny | Online | 4 | One Time! Cup $25,000 | c4_ice ✦ | Never blinks. You learn stillness |
+| 16 | Kristen Foxglove | High roller | 4 | Let's Go! Tour | c4 ✦, tour1 ✦ | "Everyone has a file on you now." |
 | 17 | Alex Foxglove | High roller | 4 | Player of the Year race | c4_race ✦ | The tour machine; the leaderboard is a person |
 | 18 | Shane Dawb | High roller | 4 | Player of the Year race | c4_race ✦ | Another one for the cabinet |
-| 19 | Mark Holdz | High roller | 4 | GLO Cup turbo | c4_race ✦ | "Shove." Mr. Volume |
+| 19 | Mark Holdz | High roller | 4 | One Time! Cup turbo | c4_race ✦ | "Shove." Mr. Volume |
 | 20 | Bryan Dartfrog | High roller | 5 | Titan · the backing meeting | c5_money ✦ | Buys a piece of you, or doesn't |
 | 21 | Jay Cocoon | High roller | 5 | Titan hotel gym, 5 AM | c5_gym ✦ | Discipline beats talent |
 | 22 | Fedor Holdum | High roller | 5 | Titan · $100,000 | c5_lab ✦ | "I studied this exact spot this morning." |
@@ -138,33 +152,32 @@ All 27 come back in Legacy, in the Hall and as heads-up challenges (c7_gauntlet)
 
 ## The pro events and their fields (named people, not anonymous seats)
 
-These are our own versions, with our names: the WCS Summer Series is our WSOP, the Titan is our Triton, the Royal Tour
-and the GLO Cup are the TV tour, and the WCS Main Event is the world championship. Each event's final table has eight
-named players besides you, drawn from these lists. The game fills any empty seats with the extras.
+These are our own versions, with our names: the WCoC Summer Series is our WSOP, the Titan is our Triton, the Let's Go! Tour
+and the One Time! Cup are the TV tour, and the WCoC Main Event is the world championship. Each event's final table has eight
+named players besides you, drawn from these lists: legends and the current cast only, no new faces.
 
-- **Silver Strike Circuit** (Chapter 2: rings)
-  - Chris Schillings, Mouthy Michael, Sammy Smokes, Mustich.
-  - Two Biscayne regulars on the road (Tommy "The Shark" Maio at the first stop).
-  - A rail of Circuit grinders: Deb "Four Rings" Alvarez, Big Ray Okafor, the Castellano twins.
-- **WCS Summer Series, Las Vegas** (Chapter 3: bracelets)
-  - $1,500 Opener: Phil Hellraiser, GG Negroni, Mustich, Deb Alvarez.
+- **Flashy Lights Circuit** at Silver Strike Casino (Chapter 2: rings)
+  - Chris Schillings, Mouthy Michael, Sammy Smokes, Mustich, Colt the Cowboy (the charity event).
+  - Tommy "The Shark" Maio at the first stop; Miles "The Snowplow" Gnomey on the floor.
+- **WCoC Summer Series, Las Vegas** (Chapter 3: bracelets)
+  - $1,500 Opener: Phil Hellraiser, GG Negroni, Mustich, Stu Hungar.
   - $3,000 Six-Max: GG Negroni, Gus Handsome.
   - $5,000 Eight-Handed: Gus Handsome, Antonio Escandalo, Erik Seikick.
   - $10,000 Heads-Up: Chance Cage.
   - Mixed games: Nicky Parmesan.
-  - Your bracelet final table: Erik Seikick, Phil Hellraiser, Mustich, and five others.
-- **Royal Poker Tour and GLO Cup** (Chapter 4: TV titles)
+  - Your bracelet final table: Erik Seikick, Phil Hellraiser, Mustich, GG Negroni, Gus Handsome, Stu Hungar, Antonio
+    Escandalo, Nicky Parmesan.
+- **Let's Go! Tour and One Time! Cup** (Chapter 4: TV titles)
   - Tom Duhhz, Pat Finny, Kristen and Alex Foxglove, Shane Dawb, Mark Holdz, Mustich.
   - Nick Twogloves in the booth.
 - **Titan Super High Roller** (Chapter 5: invitation only)
   - Fedor Holdum, Bryan Dartfrog, Stephen Chives, Jay Cocoon, Linus Loophole, Isaac Maskedman, Mustich.
   - Bio is not here (c5_score).
-- **WCS Main Event** (Chapter 6)
+- **WCoC Main Event** (Chapter 6)
   - Day 1: Jesse Lonestar and the ballroom.
   - Deep: Michael Mightyrocky, Mustich, Kristen Foxglove, Tom Duhhz.
-  - The final table: Bio "The Ghost", Michael Mightyrocky, Jesse Lonestar, Shane Dawb, Stephen Chives, Pat Finny,
-    Deb Alvarez (the Circuit grinder who made it), and one qualifier from CF Tilt, Ana Reyes, so the dream is visible in
-    someone else too.
+  - The final table: Bio "The Ghost", Jesse Lonestar, Shane Dawb, Stephen Chives, Pat Finny, Kristen Foxglove, Tom
+    Duhhz, Phil Hellraiser.
 
 ## Sets this needs (for the build list)
 
@@ -210,7 +223,7 @@ Goal: win two Circuit rings and build a $40,000 bankroll.
 
 1. Narrator [n]: The casino bar at 1 AM. Keno on a television nobody watches. / An enormous man in a white hat is holding court with a plate of wings.  {wide^:Looking Around~night}
 2. Armadillo Fatts [L:armadillo]: Sit down, partner. Everybody who sits gets a story, and nobody gets a refund.  {two:Talking}
-3. Armadillo Fatts [L:armadillo]: Twenty-odd years back. World Championship, last two players. Kid in dark glasses shoves the river with nothing. Seven-deuce. The whole country can see it on the little camera.  {cu:Pointing}
+3. Armadillo Fatts [L:armadillo]: Ten years back, give or take. World Championship of Cards, last two players. Kid in dark glasses shoves the river with nothing. Seven-deuce. The whole country can see it on the little camera.  {cu:Pointing}
 4. Armadillo Fatts [L:armadillo]: Other fella has the winner. Thinks four minutes. Folds. Walks out in the rain in his good shoes.  {push:Shaking Head No~tension}
 5. You [you]: I watched that. I was nine.  {ecu:Thinking@hush}
 6. Armadillo Fatts [L:armadillo]: Everybody watched it. Nobody remembers the name of the fella who folded. That's the cruel part, son. You become a story with no name in it.  {cu:Talking@sting}
@@ -296,7 +309,7 @@ Goal: win a gold bracelet.
 
 ## c3 — Chapter 3 · The Summer (vegas)
 
-1. Narrator [n]: Every June, the WCS Summer Series takes over Las Vegas. 112 degrees outside and 68 inside, with ten thousand people chasing the same gold.  {ext~grind}
+1. Narrator [n]: Every June, the WCoC Summer Series takes over Las Vegas. 112 degrees outside and 68 inside, with ten thousand people chasing the same gold.  {ext~grind}
 2. Miles "The Snowplow" Gnomey [rosa]: They hired me for the summer! Floor supervisor, rooms A through D. Six weeks, no sunlight. Seat open!  {two:Pointing@tick}
 3. Slick [slick] (text): Every kid who ever loved this game dreams about a bracelet. This is the room where they hand them out. Don't look at the ceiling.
 4. Narrator [n]: You look at the ceiling. Everyone does. Banners of every champion, back to the year your father was born.  {low^:Looking Around@swell}
@@ -353,11 +366,11 @@ Goal: win a gold bracelet.
 
 ## c3_party — Chapter 3 · The engagement party (home)
 
-1. David Pec [mom] (text): BRO. SATURDAY. YOU'RE COMING. MARISOL SAID YES AND YOU ARE THE FIRST PERSON I TOLD AFTER MY MOM
+1. David Pec [mom] (text): BRO. SATURDAY. YOU'RE COMING. KATIE SAID YES AND YOU ARE THE FIRST PERSON I TOLD AFTER MY MOM
 2. Narrator [n]: Saturday is the $5,000 Eight-Handed. Your best event of the summer, on paper.  {insert^:Texting While Standing~night}
    - Choice: Fly home for the party. | Narrator [n]: You change your flight. The event will run without you. It does.
    - Choice: "I can't, D. It's the 5K. I'll make it up to you." | David Pec [mom] (text): its cool. go win.
-3. David Pec [mom] (text): (if you fly home) YOU CAME??? YOU ACTUALLY CAME??? MARISOL HE CAME
+3. David Pec [mom] (text): (if you fly home) YOU CAME??? YOU ACTUALLY CAME??? KATIE HE CAME
 4. Narrator [n]: (if you stay) its cool. go win. All lowercase. David has never typed lowercase in his life.  {ecu^:Thinking@hush}
 
 ## c3_parm — Chapter 3 · Pick a game (vegas)
@@ -375,7 +388,7 @@ Goal: win a gold bracelet.
 4. Erik Seikick [L:sidle]: You played well.  {two:Shaking Hands 2>Shaking Hands 2@swell}
 5. Narrator [n]: Three words. People have waited thirty years for three words from Erik Seikick.  {push^:Thinking}
 6. Phil Hellraiser [L:hellbent]: Lucky. If I'd been at that final table, we'd be talking about my bracelet number eighteen.  {cu:Shrugging@tick}
-7. David Pec [mom] (text): IS THAT REAL GOLD?? THE WHOLE GROUP CHAT SAW IT. MARISOL CRIED. I CRIED. I'M STILL MAD BUT I CRIED
+7. David Pec [mom] (text): IS THAT REAL GOLD?? THE WHOLE GROUP CHAT SAW IT. KATIE CRIED. I CRIED. I'M STILL MAD BUT I CRIED
 8. Slick [slick] (text): Nine-year-old you is screaming right now. Let him.
 
 ## c3_hello — Chapter 3 · The sportsbook, 4 AM (vegas)
@@ -393,18 +406,18 @@ Goal: win a gold bracelet.
 
 # CHAPTER 4 — THE TOUR
 
-Goal: win two Tour titles (Royal Tour or GLO Cup) and build a $750,000 bankroll.
+Goal: win two Tour titles (Let's Go! Tour or One Time! Cup) and build a $750,000 bankroll.
 
 ## c4_truth — Chapter 4 · The Fold (diner)
 
 1. Narrator [n]: Lucky Seven Diner. 2:13 AM. You didn't text first. He was already there.  {ext~night}
 2. You [you]: Bio says hello.  {two:Talking}
 3. Narrator [n]: For a long time, nothing. The pie case hums. A car goes by with its windows down, playing something sad in Spanish.  {wide^:Thinking@hush}
-4. Slick [slick]: World Championship. Last two players. I had him beat on the river and I knew it. Knew it the way you know your own phone number.  {cu:Talking~tension}
+4. Slick [slick]: World Championship of Cards. Last two players. I had him beat on the river and I knew it. Knew it the way you know your own phone number.  {cu:Talking~tension}
 5. Slick [slick]: He shoved. And he looked at me. Not at the board. At me. And I could feel him reading something I didn't know I was writing.  {push:Thinking}
 6. Slick [slick]: Four minutes. Then I folded the best hand I ever held to a man holding seven-deuce, and the whole world got to watch it on a little camera.  {ecu:Shaking Head No@sting}
 7. You [you]: The kid in dark glasses was him. The guy who folded was you.  {cu:Thinking}
-8. Slick [slick]: In the interview, he said "people insist on calling it luck". They put it in the papers. I've been writing it on envelopes for twenty years so somebody would prove it wrong.  {cu:Talking}
+8. Slick [slick]: In the interview, he said "people insist on calling it luck". They put it in the papers. I've been writing it on envelopes for ten years so somebody would prove it wrong.  {cu:Talking}
 9. You [you]: Prove what wrong?  {ots:Talking}
 10. Slick [slick]: That it was luck. It wasn't. He read a person, and the person flinched. That's the whole game, kid. Everything I've taught you is so you never flinch.  {push:Pointing@swell}
 11. Slick [slick]: Now finish your pie. You've got cameras next week, and cameras love a flinch.  {two:Shrugging~night}
@@ -412,13 +425,13 @@ Goal: win two Tour titles (Royal Tour or GLO Cup) and build a $750,000 bankroll.
 ## c4 — Chapter 4 · The Tour (tv)
 
 1. Narrator [n]: A soundstage in Hollywood, Florida. Three cameras, a hole-card reader, and forty thousand people watching you blink.  {ext@flash~grind}
-2. Nick "Baby Goat" Twogloves [host]: Welcome back to the Royal Poker Tour feature table! Joining us tonight: the cubicle kid with a bracelet. The chat's calling it a fluke.  {two:Pointing}
+2. Nick "Baby Goat" Twogloves [host]: Welcome back to the Let's Go! Tour feature table! Joining us tonight: the cubicle kid with a bracelet. The chat's calling it a fluke.  {two:Pointing}
 3. You [you]: People insist on calling it luck.  {push:Talking@swell}
 4. Nick "Baby Goat" Twogloves [host]: OH. We have a quote. Producers, T-shirt. Now.  {cu:Clapping@flash}
 5. Narrator [n]: Under the lights everything shows. The rail can see your cards. The table can see your face.  {wide^:Looking Around}
 6. Kristen Foxglove [L:kfoxglove]: Cameras make people do stupid things. Don't be people.  {cu:Shaking Head No}
 7. David Pec [mom] (text): youre on the STREAM. my mom is watching. MY MOM. SIT UP STRAIGHT
-8. Narrator [n]: Goal: win two Tour titles (Royal Tour or GLO Cup) and build a $750,000 bankroll.  {wide^@swell}
+8. Narrator [n]: Goal: win two Tour titles (Let's Go! Tour or One Time! Cup) and build a $750,000 bankroll.  {wide^@swell}
 
 ## c4_duhhz — Chapter 4 · Air (tv)
 
@@ -439,7 +452,7 @@ Goal: win two Tour titles (Royal Tour or GLO Cup) and build a $750,000 bankroll.
 
 ## c4_lou — Chapter 4 · The sponsor (tv)
 
-1. Narrator [n]: The GLO Cup VIP lounge. Free shrimp. A banner reading "Halvorsen & Pike: Proud Partner". / You know that logo. You used to wear it on a lanyard.  {ext~grind}
+1. Narrator [n]: The One Time! Cup VIP lounge. Free shrimp. A banner reading "Halvorsen & Pike: Proud Partner". / You know that logo. You used to wear it on a lanyard.  {ext~grind}
 2. Natso SweetLou [derek]: Buddy!! There he is! I told the partners we go way back. Mentor-mentee kind of thing.  {two:Talking}
 3. You [you]: You made me redo the Henderson deck at seven PM on a Monday, Lou.  {cu:Shrugging}
 4. Natso SweetLou [derek]: And look at you now! Character building. Quick photo for LinkedIn? "Proud to have shaped this talent."  {cu:Pointing@tick}
@@ -448,7 +461,7 @@ Goal: win two Tour titles (Royal Tour or GLO Cup) and build a $750,000 bankroll.
 
 ## c4_ice — Chapter 4 · The Finnish Ice (tv)
 
-1. Narrator [n]: GLO Cup, $25,000. Pat Finny hasn't moved in nine minutes. Not his hands. Not his eyes. Possibly not his heart.  {wide^:Looking Around~tension}
+1. Narrator [n]: One Time! Cup, $25,000. Pat Finny hasn't moved in nine minutes. Not his hands. Not his eyes. Possibly not his heart.  {wide^:Looking Around~tension}
 2. Pat Finny [L:antionius]: Your move.  {ecu:Thinking}
 3. Narrator [n]: You try it. Stillness. Breath through the nose. Hands flat. The camera finds nothing to love.  {push^:Thinking@hush}
 4. Pat Finny [L:antionius]: Better. Next time, also stop blinking.  {cu:Head Nod Yes@tick}
@@ -560,7 +573,7 @@ Goal: win two Titan titles and build a $5,000,000 bankroll.
 1. Narrator [n]: Five million dollars. Two tridents. And you're back on a stool at the Lucky Seven, because some things don't change when your bank balance does.  {ext~night}
 2. Slick [slick]: The Main Event. July. Eight thousand players.  {two:Talking}
 3. You [you]: He'll be there.  {cu:Thinking}
-4. Slick [slick]: He's always there. / So am I, this year. I bought a ticket. First time in twenty years.  {push:Talking@sting}
+4. Slick [slick]: He's always there. / So am I, this year. I bought a ticket. First time in ten years.  {push:Talking@sting}
 5. You [you]: You're coming to Vegas?  {cu:Thinking}
 6. Slick [slick]: Somebody has to buy your pie.  {ecu:Head Nod Yes@swell~night}
 
@@ -606,9 +619,9 @@ Goal: win the Main Event.
 
 1. Narrator [n]: The night before the final table. A 24-hour diner off Flamingo Road. Different city. Same hour.  {ext~night}
 2. Narrator [n]: He's already on a stool. Dark glasses. Two slices of pie.  {wide^:Looking Around@hush}
-3. Slick [slick]: Twenty years since I set foot in this city. The pie's worse.  {two:Talking}
+3. Slick [slick]: Ten years since I set foot in this city. The pie's worse.  {two:Talking}
 4. You [you]: If it comes down to him and me. If he shoves the river.  {cu:Thinking~tension}
-5. Slick [slick]: Then it won't be about the cards. It'll be about what he reads in you. He'll be looking for the thing I gave him twenty years ago.  {push:Talking}
+5. Slick [slick]: Then it won't be about the cards. It'll be about what he reads in you. He'll be looking for the thing I gave him ten years ago.  {push:Talking}
 6. You [you]: What did you give him?  {cu:Talking}
 7. Slick [slick]: Doubt. I didn't doubt my hand. I doubted I was allowed to win. / Don't give him that. Whatever you decide, decide it like you're allowed.  {ecu:Pointing@sting}
 8. Narrator [n]: He pays for both slices. He doesn't leave. For the first time, he stays until you do.  {wide^@swell~night}
@@ -620,7 +633,7 @@ Goal: win the Main Event.
 3. Narrator [n]: Not a text. David, in person, with a sign that says "PEOPLE INSIST ON CALLING IT LUCK" in a handwriting you'd know anywhere.  {push^:Clapping@swell}
 4. Tommy "The Shark" Maio [lou]: Thirty-one years. Second time I ever left Biscayne for a game. Somebody had to come make sure you don't get cocky.  {two:Head Nod Yes}
 5. Narrator [n]: Meanwhile, at a sports bar in Brickell, a man in a Halvorsen & Pike quarter-zip tells the bartender he used to manage you.  {cu^:Talking@tick}
-6. Nick "Baby Goat" Twogloves [host]: From the booth, live, worldwide: welcome to the final table of the WCS Main Event.  {two:Pointing@flash}
+6. Nick "Baby Goat" Twogloves [host]: From the booth, live, worldwide: welcome to the final table of the WCoC Main Event.  {two:Pointing@flash}
 
 ## c6_final — Chapter 6 · The river (main)
 
@@ -628,14 +641,22 @@ Goal: win the Main Event.
 2. Nick "Baby Goat" Twogloves [host]: Folks, this is the spot. River. The Ghost moves all in. And if you're old enough... you've seen this movie before.  {two:Pointing@hush}
 3. Narrator [n]: He's not looking at the board. He's looking at you. Looking for something you were nine years old the last time you saw.  {ecu^:Thinking}
 4. Narrator [n]: On the rail, a man in dark glasses takes them off.  {cu^@sting}
-5. Narrator [n]: You don't flinch. Whatever happens next, you decided it like you were allowed.  {push^:Thinking@swell}
+5. Narrator [n]: You don't flinch. Whatever you do next, you decide it like you're allowed.  {push^:Thinking@swell}
+   - Choice: Call. | Narrator [n]: You call. Both hands go face up. The cards decide. → champ / c6_lost
+   - Choice: Fold. | Narrator [n]: You fold. Not fast. Not slow. Like someone who decided. → c6_fold
+
+## c6_fold — Chapter 6 · Not this one (main)
+
+1. Nick "Baby Goat" Twogloves [host]: The kid lets it go! And the Ghost... doesn't show. Of course he doesn't show.  {two:Pointing@flash~tension}
+2. Bio "The Ghost" [ghost]: You thought about it. Good. Most people only think about it afterwards.  {cu:Talking}
+3. Narrator [n]: On the rail, Slick puts his glasses back on. The match isn't over. Neither are you.  {push^:Thinking@swell}
 
 ## champ — World Champion (main)
 
 1. Narrator [n] (win): Confetti. Cameras. A bracelet the size of a doorknob. / Somewhere, a nine-year-old with a fuzzy TV is losing his mind.  {wide^:Victory@crowd~triumph}
 2. Bio "The Ghost" [ghost]: Good game, kid.  {two:Shaking Hands 2>Shaking Hands 2@hush~none}
 3. Narrator [n]: He takes off his glasses and his mask. For the first time anyone can remember, Bio "The Ghost" smiles.  {ecu@swell}
-4. Narrator [n]: Then he looks past you, to the rail, and nods at a man he hasn't spoken to in twenty years. / Slick nods back.  {push^:Head Nod Yes@swell}
+4. Narrator [n]: Then he looks past you, to the rail, and nods at a man he hasn't spoken to in ten years. / Slick nods back.  {push^:Head Nod Yes@swell}
 5. Bio "The Ghost" [ghost]: Now you'll find out the hard part. Everyone will be hunting you.  {cu:Pointing~tension}
 6. Natso SweetLou [derek] (text): Hey buddy! Long time! Saw you on TV. Listen, about that promotion...
 7. Narrator [n]: You leave him on read.  {cu^:Texting While Standing@tick}
@@ -680,14 +701,14 @@ Each legend sends a heads-up challenge card, one line each. These play as the le
 
 The other seventeen use their `data.js` lines, unchanged.
 
-## c7_student — Legacy · So teach somebody (diner)
+## c7_rival — Legacy · Still circling (hall)
 
-1. Narrator [n]: Lucky Seven Diner. 2:13 AM. Your stool. Somebody else's problem sitting on the next one.  {ext~night}
-2. Mustich [trent]: Dad sold the company. Says I can do whatever I want now. Which is the worst thing anyone's ever said to me.  {two:Shrugging}
-3. Mustich [trent]: I want to actually be good. Not sponsored good. Good. / You learned from somebody. Teach me.  {cu:Thinking@hush}
-4. You [you]: Fold the junk. Pressure the scared ones. Near the money, think about what the money's worth.  {push:Pointing}
-5. Mustich [trent]: That's it?  {cu:Shrugging}
-6. You [you]: That's the first night. Eat your pie.  {ecu:Head Nod Yes@swell~night}
+1. Narrator [n]: The Hall of Legends Invitational, final table. Seat five, in a jacket he paid for himself this time: Mustich.  {wide^:Looking Around~tension}
+2. Mustich [trent]: Saw your portrait in the lobby. Very moving. They got your bad side.  {cu:Shrugging@tick}
+3. Mustich [trent]: Dad sold the company. No more stake, no more rail. Turns out I still want to beat you. Annoying, isn't it?  {ots:Talking}
+4. You [you]: For you? Very.  {cu:Shrugging}
+5. Mustich [trent]: Fifteen is just a number, Florida. Somebody's going to take it off you. I'd like it to be someone you can't stand.  {push:Pointing@sting}
+6. Narrator [n]: He grins. The same grin from the Biscayne card room, the first night. You'd miss it if it ever went away. You'll never tell him that.  {two^:Thinking@swell}
 
 ## c7_wedding — Legacy · The best man (home)
 
@@ -700,9 +721,9 @@ The other seventeen use their `data.js` lines, unchanged.
 
 ## c7_portrait — Legacy · The missing frame (hall)
 
-1. Narrator [n]: The Hall's annual dedication. Twenty-seven frames, and one blank space on the wall that's been there for twenty years. Nobody remembers why.  {wide^:Looking Around~tension}
+1. Narrator [n]: The Hall's annual dedication. Twenty-seven frames, and one blank space on the wall that's been there for ten years. Nobody remembers why.  {wide^:Looking Around~tension}
 2. Miles "The Snowplow" Gnomey [rosa]: Tournament director, Hall of Legends Invitational. Me! From the cage at Biscayne! Ladies and gentlemen, take your seats. Seats open!  {two:Pointing@crowd}
-3. Narrator [n]: The curator lifts a cloth from the blank space. A young man in dark glasses at a final table, twenty years ago, thinking.  {insert@sting}
+3. Narrator [n]: The curator lifts a cloth from the blank space. A young man in dark glasses at a final table, ten years ago, thinking.  {insert@sting}
 4. Slick [slick]: I asked them to leave it out. I didn't want to be the guy who folded.  {cu:Thinking}
 5. Bio "The Ghost" [ghost]: You were the only one who ever made me wait four minutes. Nobody else ever made me wait at all.  {two:Talking@swell}
 6. Narrator [n]: Two old men shake hands under a portrait neither of them wanted to see. / The room doesn't know why it's clapping. It claps anyway.  {push^:Shaking Hands 2@crowd~triumph}
@@ -720,8 +741,8 @@ The other seventeen use their `data.js` lines, unchanged.
 1. Narrator [n]: Lucky Seven Diner. 2:13 AM. A kid at the counter is staring at the pie like it owes them money.  {ext~night}
 2. You [you]: You're doing the thing where you stare at the pie like it owes you money.  {two:Talking}
 3. Narrator [n]: You slide a red envelope across the counter. Inside: a seat card, and one line in pen.  {hands@tick~tension}
-4. Narrator [n]: Not his line. Yours.  {ecu^:Thinking@hush}
-5. Narrator [n]: "Decide it like you're allowed."  {push^@swell~triumph}
+4. Narrator [n]: "People insist on calling it luck."  {ecu^:Thinking@hush}
+5. Narrator [n]: Let them.  {push^@swell~triumph}
 6. Narrator [n]: THE DREAM.  {wide^@sting~none}
 
 ---
@@ -734,6 +755,8 @@ The other seventeen use their `data.js` lines, unchanged.
   - c4_lou: the choice sets `$louPhoto`. If set, Lou's Legacy text adds "the LinkedIn post is still doing numbers".
   - c5_money: selling action sets `$soldTitan`. If set, titan1 gets one extra line from Bryan Dartfrog: "Nice. Half
     of that is mine. Worth every cent."
+- **The last river of the Main** (`c6_final`) is dealt live: the player calls or folds. Call: the cards decide
+  (`champ` or `c6_lost`). Fold: `c6_fold`, and the heads-up match plays on to its end.
 - **The quit/keep-the-job thread from Chapter 1 carries on:**
   - "Moonlighter" players get `derek_job` / `quit250` (from the old game) during Chapter 2.
   - By the Titan, everyone has quit.
