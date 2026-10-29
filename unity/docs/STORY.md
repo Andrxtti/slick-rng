@@ -244,7 +244,7 @@ Goal: win two Circuit rings and build a $40,000 bankroll.
 
 1. Narrator [n]: The $400 Turbo Ring, final table. Mouthy Michael has been talking for six straight hours and has no plans to stop.  {wide^:Looking Around~tension}
 2. Mouthy Michael [L:mouth]: You're thinking. Don't think. Thinking is how they get you. You call this? You're not calling this. You're NOT calling this.  {cu:Standing Arguing}
-3. Narrator [n]: Every word is built to put a voice in your head that isn't yours.  {push^:Thinking}
+3. Narrator [n]: Every word is built to put a voice in your head that isn't yours. / Then the break. Fifteen minutes. One message on your phone.  {push^:Thinking}
 4. Slick [slick] (text): Is he talking?
 5. You [you] (text): He hasn't stopped since noon.
 6. Slick [slick] (text): Then he's scared. Comfortable people don't need noise. Play the cards, not the soundtrack.
