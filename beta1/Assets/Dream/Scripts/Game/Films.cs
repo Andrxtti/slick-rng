@@ -11,13 +11,20 @@ using UnityEngine.Video;
 namespace Dream.Game
 {
     // The rendered films (StreamingAssets/Films/<id>.mp4, made by tools/films_publish.py): played one after another,
-    // letterboxed on a black screen, tap to skip. Phones only ever play video. The words are not in the picture: each film
+    // letterboxed on a black screen. Phones only ever play video. ONE film screen and ONE VideoPlayer for the whole
+    // session (on the web, one <video> element): made on the first film, hidden between films, reused by changing the
+    // url, so the sound the first tap unlocked stays unlocked. Taps during a film belong to the web page (index.html
+    // swallows them and shows its own "Skip scene" pill); Skip() stays for the autoplay drivers. The words are not in the picture: each film
     // has <id>.json (when each narrator card and spoken line starts, and for how long), drawn here in the brand fonts:
     // the narrator in Gloock, subtitles in Inter with the speaker's name. Held upright, they sit under the picture.
     public class Films : MonoBehaviour
     {
-        Queue<string> queue; Action done; VideoPlayer vp; RawImage img; RenderTexture rt; GameObject screen; TextMeshProUGUI skip;
+        Queue<string> queue; Action done; VideoPlayer vp; RawImage img; RenderTexture rt; GameObject screen;
         float started;
+        static Films inst;
+        public static Films I => inst;
+        public VideoPlayer Player => vp;
+        public static bool Playing => inst != null && inst.queue != null;   // a film queue is running
         public static readonly List<string> Played = new List<string>();   // every film started this session (test driver)
         public static Func<string, string> Fill = k => "";                 // a card's {key}, filled in by the game
 
@@ -27,17 +34,21 @@ namespace Dream.Game
 
         public static void Play(IEnumerable<string> ids, Action then)
         {
-            var go = new GameObject("Films"); var f = go.AddComponent<Films>();
-            f.queue = new Queue<string>(ids); f.done = then;
-            if (f.queue.Count == 0) { Destroy(go); then(); return; }
-            f.Build(); f.Next();
+            var q = new Queue<string>(ids);
+            if (q.Count == 0) { then(); return; }
+            if (inst == null)
+            {
+                var go = new GameObject("Films"); DontDestroyOnLoad(go);
+                inst = go.AddComponent<Films>(); inst.Build();
+            }
+            inst.queue = q; inst.done = then; inst.screen.SetActive(true);
+            inst.Next();
         }
 
         void Build()
         {
             var c = Ui.Root("FilmScreen"); c.sortingOrder = 50; screen = c.gameObject; screen.transform.SetParent(transform);
-            var bg = Ui.Panel(c.transform, "Black", Color.black);
-            var b = bg.gameObject.AddComponent<Button>(); b.onClick.AddListener(Skip);
+            var bg = Ui.Panel(c.transform, "Black", Color.black);   // blocks taps to the game underneath; no skip here
             img = new GameObject("Film", typeof(RectTransform)).AddComponent<RawImage>(); img.transform.SetParent(bg, false);
             var fit = img.gameObject.AddComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent; fit.aspectRatio = 16f / 9f;
             img.raycastTarget = false;
@@ -49,7 +60,6 @@ namespace Dream.Game
                 t.fontMaterial.EnableKeyword("UNDERLAY_ON"); t.fontMaterial.SetFloat("_UnderlaySoftness", 0.6f);
                 t.fontMaterial.SetFloat("_UnderlayDilate", 0.35f); t.fontMaterial.SetColor("_UnderlayColor", new Color(0, 0, 0, 0.85f));
             }
-            skip = Ui.At(Ui.Label(bg, "tap to skip", 24, new Color(1, 1, 1, 0.4f)), 0, 0.015f, 1, 0.045f);
             rt = new RenderTexture(1280, 720, 0); img.texture = rt;
             vp = gameObject.AddComponent<VideoPlayer>(); vp.playOnAwake = false; vp.renderMode = VideoRenderMode.RenderTexture; vp.targetTexture = rt;
             vp.audioOutputMode = VideoAudioOutputMode.Direct; vp.loopPointReached += _ => Next();
@@ -59,12 +69,17 @@ namespace Dream.Game
         void Next()
         {
             caps = null; showing = null; capGroup.alpha = 0;
-            if (queue.Count == 0) { var d = done; Destroy(gameObject); rt.Release(); d?.Invoke(); return; }
+            if (queue == null) return;   // a late end or error event after the queue finished
+            if (queue.Count == 0)   // the queue is over: hide the screen, keep the player for the next film
+            {
+                var d = done; done = null; queue = null; vp.Stop(); screen.SetActive(false);
+                d?.Invoke(); return;
+            }
             var id = queue.Dequeue(); Played.Add(id);
             var sa = Application.streamingAssetsPath; var dir = (sa.Contains("://") ? sa : "file://" + sa) + "/Films/";
             vp.source = VideoSource.Url;
             vp.url = System.IO.Path.Combine(Application.streamingAssetsPath, "Films", id + ".mp4");
-            vp.Prepare(); vp.prepareCompleted += Started; started = Time.time;
+            vp.prepareCompleted -= Started; vp.prepareCompleted += Started; vp.Prepare(); started = Time.unscaledTime; lastClock = -1; stuckSince = started;
             var req = UnityWebRequest.Get(dir + id + ".json");   // works on the web too (no file access there)
             req.SendWebRequest().completed += _ =>
             {
@@ -74,10 +89,22 @@ namespace Dream.Game
         }
         void Started(VideoPlayer p) { p.prepareCompleted -= Started; p.Play(); }
 
-        public void Skip() { if (Time.time - started < 0.4f) return; vp.Stop(); Next(); }
+        public void Skip() { if (queue == null || Time.unscaledTime - started < 0.4f) return; vp.Stop(); Next(); }
 
+        float lastClock = -1, stuckSince;
         void Update()
         {
+            // watchdogs: a film that never starts (missing, unreadable) or whose clock stops is treated as over, so the
+            // story never hangs on a black screen
+            if (queue != null && vp != null)
+            {
+                if (!vp.isPrepared && Time.unscaledTime - started > 6f) { Debug.LogWarning("[Dream] film never started: " + vp.url); Next(); return; }
+                if (vp.isPrepared && Time.unscaledTime - started > 1f)
+                {
+                    if (Mathf.Abs((float)vp.time - lastClock) > 0.001f) { lastClock = (float)vp.time; stuckSince = Time.unscaledTime; }
+                    else if (Time.unscaledTime - stuckSince > 4f) { Debug.LogWarning($"[Dream] film stalled at {vp.time:0.0}s: {vp.url}"); Next(); return; }
+                }
+            }
             if (caps == null || vp == null || !vp.isPlaying) return;
             float now = (float)vp.time; Caption cur = null;
             foreach (var c in caps.lines) if (now >= c.t && now < c.t + c.len) cur = c;

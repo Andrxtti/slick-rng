@@ -23,6 +23,13 @@ namespace Dream.EditorTools
         static AutoPlay()
         {
             Remote.Extra["spot"] = a => { var p = a.Split(' '); var root = (RectTransform)Object.FindAnyObjectByType<Canvas>().transform; Ui.Clear(root); Remote.Log("spot: " + Table.ShowSeat(root, p[0], p.Length > 1 ? p[1] : "shove")); };
+            Remote.Extra["films"] = ids => Films.Play(ids.Split(' '), () => Remote.Log("films: queue done"));
+            Remote.Extra["films-state"] = _ =>
+            {
+                var vp = Films.I != null ? Films.I.Player : null;
+                Remote.Log($"films-state: paused {EditorApplication.isPaused} frame {Time.frameCount} t {Time.unscaledTime:0.0} focus {Application.isFocused} runInBackground {Application.runInBackground} | {Object.FindObjectsByType<UnityEngine.Video.VideoPlayer>(FindObjectsSortMode.None).Length} VideoPlayer(s), playing {Films.Playing}"
+                    + (vp == null ? "" : $", vp.isPlaying {vp.isPlaying}, time {vp.time:0.0}, muted {vp.GetDirectAudioMute(0)}, volume {vp.GetDirectAudioVolume(0):0.00}, {System.IO.Path.GetFileName(vp.url)}"));
+            };
             Remote.Extra["story"] = a => { var p = a.Split(' '); Flow.I?.TestStory(p[0], p[1], double.Parse(p[2], System.Globalization.CultureInfo.InvariantCulture)); };
             Remote.Extra["auto"] = b =>
             {
@@ -54,8 +61,7 @@ namespace Dream.EditorTools
             if (!EditorApplication.isPlaying || EditorApplication.timeSinceStartup < next) return;
             next = EditorApplication.timeSinceStartup + 0.2;
             if (++steps > 30000) { Stop("gave up after 30000 steps"); return; }   // a month of Chapter 1 is a lot of hands
-            var films = Object.FindAnyObjectByType<Films>();
-            if (films != null) { films.Skip(); return; }
+            if (Films.Playing) { Films.I.Skip(); return; }
             // the table's moments: the all-in, the cooler, the level card, the bubble, heads-up, the walk away
             var verdict = Find("See the verdict") ?? Find("See where you finished");
             if (verdict != null)

@@ -31,7 +31,9 @@ namespace Dream.EditorTools
         {
             EditorApplication.update += Poll;
             // the game, driven for checks: open Main and play; screenshot the Game view; press a button by its label
-            Extra["main"] = _ => { UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Dream/Scenes/Main.unity"); EditorApplication.isPlaying = true; };
+            // runInBackground: the editor sits unfocused while driven from here, and without it the game loop stops ticking
+            // (films "stall", frame count frozen). Set at run time only, so the player settings are untouched.
+            Extra["main"] = _ => { UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Dream/Scenes/Main.unity"); EditorApplication.isPlaying = true; EditorApplication.delayCall += () => Application.runInBackground = true; };
             Extra["shot"] = n => ScreenCapture.CaptureScreenshot(Path.Combine(Dir, (string.IsNullOrEmpty(n) ? "shot" : n) + ".png"));
             Extra["tap"] = label =>
             {
