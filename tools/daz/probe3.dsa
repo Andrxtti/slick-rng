@@ -1,4 +1,4 @@
-// Probe 3: what each free masculine base looks like, so the cast can start from the right face.
+// Probe 3 (v4): what each free masculine base looks like, so the cast can start from the right face.
 // For the base Genesis 9 (Base Masculine at 100 %) and each installed male character (Matt, Ty, Fabrice): load it,
 // log the shaping morphs it sets, and render a front and a three-quarter head shot to renders/<name>_{front,34}.png.
 // Paths come from run.cfg.json (written next to this script by solve_full.js).
@@ -68,6 +68,24 @@ function shot(fig, file, yawDeg) {
   var t0 = new Date().getTime(); var ok = rm.doRender(ro);
   log("  render " + file + " ok=" + ok + " exists=" + new DzFile(file).exists() + " " + Math.round((new Date().getTime() - t0) / 1000) + "s");
 }
+// A shaping preset written on the fly: loads each character's control (Base Characters 9) onto the selected figure and
+// sets its value. Daz applies shape presets silently (a character preset opens a "apply to selected?" dialog instead,
+// which hangs a headless run).
+function applyCharacters(fig, blend) {
+  var mods = [], anims = [];
+  for (var nm in blend) {
+    var id = nm + "_figure_ctrl_Character";
+    mods.push({ id: id, url: "/data/Daz%203D/Genesis%209/Base/Morphs/Daz%203D/Base%20Characters%209/" + id + ".dsf#" + id });
+    anims.push({ url: "name://@selection#" + id + ":?value/value", keys: [[0, blend[nm]]] });
+  }
+  var duf = { file_version: "0.6.0.0", asset_info: { id: "/cf_shape.duf", type: "preset_shape", contributor: { author: "Confirmed Fire" } }, scene: { modifiers: mods, animations: anims } };
+  var path = DIR + "/cf_shape.duf", f = new DzFile(path); f.open(DzFile.WriteOnly | DzFile.Truncate); f.write(JSON.stringify(duf)); f.close();
+  fig.select(true); Scene.setPrimarySelection(fig);
+  var ok = cm.openFile(path, true);
+  var obj = fig.getObject(), got = [];
+  for (var n2 in blend) { var m = obj.findModifier(n2 + "_figure_ctrl_Character"); got.push(n2 + "=" + (m && m.getValueControl() ? m.getValueControl().getValue().toFixed(2) : "missing")); }
+  log("  shape preset ok=" + ok + " " + got.join(", "));
+}
 function loadFigure(preset) {
   Scene.clear(); CAM = null; log("  scene cleared");
   cm.openFile(LIB + "Genesis 9.duf", true);   // clear() then merge: opening with merge=false asks "save changes?" once the scene is modified, which hangs a headless run
@@ -89,11 +107,16 @@ try {
   new DzDir(DIR).mkdir("renders");
   setupRenderer();
   var base = null;
-  var CASES = [["base_masc", null], ["matt", "Characters/Matt for Genesis 9.duf"], ["ty", "Characters/Ty for Genesis 9.duf"], ["fabrice", "Characters/Fabrice for Genesis 9.duf"]];
+  var CASES = [["base_masc", null], ["matt", "Matt"], ["ty", "Ty"], ["fabrice", "Fabrice"]];
   for (var c = 0; c < CASES.length; c++) {
     var nm = CASES[c][0], preset = CASES[c][1];
     log("== " + nm);
-    var fig = loadFigure(preset); if (!fig) continue;
+    var fig = loadFigure(null); if (!fig) continue;
+    if (preset) {
+      var bl = {}; bl[preset] = 1; applyCharacters(fig, bl);
+      fig.select(true); Scene.setPrimarySelection(fig);
+      log("  mat ok=" + cm.openFile(LIB + "Characters/Daz Originals/" + preset + " G9/Materials/" + preset + " G9 All MAT.duf", true));
+    }
     if (!preset) { setMorph(fig, "BaseMasculine_head_bs_Head", 1); setMorph(fig, "BaseMasculine_body_bs_Body", 1); cm.openFile(LIB + "Materials/Daz Originals/Base Materials/G9 Masculine Skin 01 MAT.duf", true); }
     var mv = morphValues(fig);
     if (!preset) base = mv;

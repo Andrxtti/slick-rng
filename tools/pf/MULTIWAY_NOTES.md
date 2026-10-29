@@ -269,3 +269,18 @@ morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solv
 - The 4.7 library builds on the shipped model + the cold-jam tree fix + course rules 1-2, every pass run to the 4.5/4.6
   build's iteration counts (pc_build.py emits the jobs; solve_full.js MAXSECS lets the target, not the clock, end a
   solve; cloud_build.sh runs the cloud share). 40 solves on the PC, 20 on the cloud.
+
+## Oct 28, late — 4.7 library: gate result and the one re-solve
+- All 60 solves verified before merging (iters >= target, model stamp aggRe 1 / playReal none / realL2 d578ffe8 /
+  playRe 30cdedeb / playHu 18ddafe5). Cloud ran six-max passes 1 (all) and 2 (d10, d15, d100); the other 7 six-max
+  pass-2 jobs moved to the PC after md5-checking solver2.js, solve_full.js, engine.js and every m6 config on both.
+- Gate run (consensus -> course rules -> build_gates): 19/20 tables <= 2.4% flagged; **m6-d80 5.71% (FAIL, limit 3%)**.
+  GW agreement 78.9% over 57 nodes (shipped 4.6: 78.5%, same metric). Page test PASS. Candidate archived, app/lib
+  restored to 4.6.
+- Cause: m6-d80 pass 1 (cloud) is an outlier: 538 nodes vs 355/333, mean max-action difference 0.21 vs the other
+  passes, which agree at 0.06 (last build's m6-d80 passes: 0.03-0.06, ~320 nodes). Openings agree to a point; pass 1
+  diverges deep in BTN open / SB flat / BB squeeze lines with extra 4- and 5-bet branches. Not a machine effect:
+  cloud pass 1 of m6-d10..d50 agrees with the PC passes as closely as PC passes agree with each other.
+- Procedure fixed before the result: one fresh solve of m6-d80 (job 0lib3-p4-m6-d80, same model and target
+  2,027,540) replaces pass 1 for that table only; whatever it gives is used. If m6-d80 still fails the gate, the
+  table is investigated and nothing ships. The outlier stays archived (bfull_p1/m6-d80.json).
