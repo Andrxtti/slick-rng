@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="The Dream">
   <meta name="theme-color" content="#0b0a08">
-  <title>The Dream · Beta 1.82</title>
+  <title>The Dream · Test Beta 1.0</title>
   <link rel="apple-touch-icon" href="TemplateData/icon-180.png">
   <link rel="icon" type="image/png" href="TemplateData/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -31,18 +31,18 @@
 </head>
 <body>
   <div id="wrap"><canvas id="unity-canvas" tabindex="-1"></canvas></div>
-  <div id="load"><div>Confirmed Fire</div><h1>The Dream</h1><div id="bar"><div id="fill"></div></div><div id="note">Loading the tables…</div></div>
+  <div id="load"><div>Confirmed Fire</div><h1>The Dream</h1><div id="bar"><div id="fill"></div></div><div id="note">Test Beta 1.0 · loading the tables…</div></div>
   <script>
     var canvas = document.getElementById("unity-canvas"), load = document.getElementById("load"), fill = document.getElementById("fill"), note = document.getElementById("note");
     var config = {
       arguments: [],
-      dataUrl: "Build/TheDream-Web.data.unityweb",
-      frameworkUrl: "Build/TheDream-Web.framework.js.unityweb",
-      codeUrl: "Build/TheDream-Web.wasm.unityweb",
+      dataUrl: "Build/TheDream-Beta1-Web.data.unityweb",
+      frameworkUrl: "Build/TheDream-Beta1-Web.framework.js.unityweb",
+      codeUrl: "Build/TheDream-Beta1-Web.wasm.unityweb",
       streamingAssetsUrl: "StreamingAssets",
       companyName: "Confirmed Fire",
       productName: "The Dream",
-      productVersion: "0.1.0",
+      productVersion: "1.0",
       // sharp text on retina phones without rendering more pixels than the GPU needs
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2.5),
       matchWebGLToCanvasSize: true,
@@ -52,7 +52,7 @@
     // a pinch or double-tap zoom on iPhone would fight the game's own gestures
     document.addEventListener("gesturestart", function (e) { e.preventDefault(); }, { passive: false });
     var script = document.createElement("script");
-    script.src = "Build/TheDream-Web.loader.js";
+    script.src = "Build/TheDream-Beta1-Web.loader.js";
     script.onload = function () {
       createUnityInstance(canvas, config, function (p) { fill.style.width = (100 * p) + "%"; })
         .then(function () { load.style.display = "none"; })
