@@ -12,9 +12,11 @@ namespace Dream.Game
     [Serializable]
     public class Save
     {
-        public string step = "new";           // new, prologue, ch1, done
-        public double br;                     // bankroll
-        public bool reelSeen, roomTitle, lessonSeen, needleSeen, classicSeen, classicLoseSeen;
+        public string step = "new";           // new, prologue, choice, ch1, done
+        public double br, peak, debt;         // bankroll, best bankroll, what's owed to Slick
+        public string job = "";               // "quit" (full-time) or "nights" (kept the day job), as in the old game
+        public int day = -1, liveDay = -99, liveWeek = -99;   // calendar day (0 = Mon 5 Jan 2026); last live game day and week
+        public bool reelSeen, roomTitle, lessonSeen, needleSeen, classicSeen, classicLoseSeen, davidSeen;
         public int events, cashes, decisions, perfect;
         public List<string> log = new List<string>();
 
@@ -29,7 +31,22 @@ namespace Dream.Game
         public static Flow I;
         public Save S;
         Canvas canvas; RectTransform root;
-        public const double Goal = 10000, Savings = 1000, Stake = 1000;
+        public const double Goal = 10000, Stake = 1000;
+        public const double GiftQuit = 5000, KeepSavings = 2000, Salary = 2000;   // old Calendar.GiftQuit, keep-the-job savings, Calendar.Salary
+        static readonly DateTime Day0 = new DateTime(2026, 1, 5);                 // old Calendar.Day0: a Monday
+        static int Dow(int d) => (int)Day0.AddDays(d).DayOfWeek;
+        static int WeekOf(int d) => (int)Math.Floor((d + 1) / 7.0);               // weeks run Sunday to Saturday
+        static bool Weekend(int d) { int w = Dow(d); return w == 0 || w == 6; }
+        static string DateStr(int d) => Day0.AddDays(d).ToString("dddd, MMM d", System.Globalization.CultureInfo.InvariantCulture);
+        public string Rep => S.roomTitle ? "Biscayne Champion" : S.job == "quit" ? "Full-time Dreamer" : "Moonlighter";   // old Career.Rep, Chapter 1
+        // old Calendar.CantPlay for live card-room games: null when you can play today
+        string CantPlay()
+        {
+            if (S.job == "nights" && !Weekend(S.day)) return "Live games are weekends only while you have the day job";
+            if (S.job == "nights" && S.liveWeek == WeekOf(S.day)) return "Your live game this weekend is played";
+            if (S.job != "nights" && S.liveDay == S.day) return "One live game a day";
+            return null;
+        }
         public const string FeedbackUrl = "https://github.com/Andrxtti/slick-rng/issues/new?title=The%20Dream%20Beta%201.0%20feedback";
 
         void Start()
@@ -60,7 +77,7 @@ namespace Dream.Game
         void NewCareer()
         {
             bool seen = S != null && S.reelSeen;
-            S = new Save { step = "prologue", br = Savings, reelSeen = true }; S.Write();
+            S = new Save { step = "prologue", br = 0, day = 5, reelSeen = true }; S.Write();   // Saturday: the Biscayne Championship (free); the bankroll starts at zero, as in the old game
             var films = new List<string>(); if (!seen) films.Add("reel");
             films.AddRange(new[] { "p_office", "p_diner", "p_seat" });
             Films.Play(films, () => Play("local"));
@@ -69,6 +86,7 @@ namespace Dream.Game
         void Resume()
         {
             if (S.step == "prologue") { Films.Play(new[] { "p_seat" }, () => Play("local")); return; }
+            if (S.step == "choice") { JobChoice(); return; }
             if (S.step == "done") { EndCard(); return; }
             Hub();
         }
@@ -80,27 +98,95 @@ namespace Dream.Game
             Ui.At(Ui.Label(s, "BISCAYNE CARD ROOM", 40, Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.92f, 0.94f, 0.96f);
             Ui.At(Ui.Label(s, "Chapter 1 · The Grind", 30, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.885f, 0.94f, 0.92f);
             Ui.At(Ui.Label(s, Ui.Money(S.br), 96, Ui.Ink, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.79f, 0.94f, 0.87f);
-            Ui.At(Ui.Label(s, "bankroll", 28, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.765f, 0.5f, 0.79f);
+            Ui.At(Ui.Label(s, "bankroll  ·  " + Rep, 28, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.765f, 0.94f, 0.79f);
+            Ui.At(Ui.Label(s, DateStr(S.day), 28, Ui.Ink, TextAnchor.MiddleRight), 0.5f, 0.885f, 0.94f, 0.92f);
             // goal
             var bar = Ui.At(Ui.Panel(s, "GoalBar", Ui.Card), 0.06f, 0.715f, 0.94f, 0.735f);
             var fill = Ui.Panel(bar, "Fill", Ui.Gold); fill.anchorMax = new Vector2(Mathf.Clamp01((float)(S.br / Goal)), 1);
             Ui.At(Ui.Label(s, "Goal: win the Biscayne Classic, or build a $10,000 bankroll", 28, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.68f, 0.94f, 0.71f);
             if (note != null) Ui.At(Ui.Label(s, note, 32, Ui.Aqua, TextAnchor.MiddleLeft), 0.06f, 0.63f, 0.94f, 0.675f);
-            float y = 0.6f;
+            float y = 0.6f; string why = CantPlay();
             foreach (var ev in Lib.Events.Where(e => e.ch == 1))
             {
-                bool afford = S.br >= ev.buyin;
+                bool afford = S.br >= ev.buyin && why == null;
                 var row = Ui.At(Ui.Panel(s, ev.id, Ui.Card), 0.06f, y - 0.1f, 0.94f, y);
                 Ui.At(Ui.Label(row, ev.name, 40, afford ? Ui.Ink : Ui.Dim, TextAnchor.UpperLeft, FontStyle.Bold), 0.05f, 0.45f, 0.7f, 0.9f);
-                Ui.At(Ui.Label(row, ev.blurb, 26, Ui.Dim, TextAnchor.UpperLeft), 0.05f, 0.08f, 0.7f, 0.45f);
+                Ui.At(Ui.Label(row, why ?? (S.br < ev.buyin ? "Not in your roll" : ev.blurb), 26, why != null || S.br < ev.buyin ? Ui.Neon : Ui.Dim, TextAnchor.UpperLeft), 0.05f, 0.08f, 0.7f, 0.45f);
                 string price = (ev.kind == "cash" ? "Sit with " : "Buy-in ") + Ui.Money(ev.buyin) + (ev.field > 0 ? $"\n{ev.field} players" : "\n100 bb deep");
                 Ui.At(Ui.Label(row, price, 26, Ui.Gold, TextAnchor.MiddleRight), 0.62f, 0.1f, 0.95f, 0.9f);
                 var b = row.gameObject.AddComponent<Button>(); var id = ev.id;
                 b.interactable = afford; b.onClick.AddListener(() => Enter(id));
                 y -= 0.115f;
             }
+            if (why != null) Ui.At(Ui.Button(s, S.job == "nights" ? "Sleep until the weekend" : "Sleep", Sleep, Ui.Aqua, Ui.Night, 42), 0.15f, 0.09f, 0.85f, 0.15f);
             Ui.At(Ui.Button(s, "Replay the reel", () => Films.Play(new[] { "reel" }, () => Hub()), Ui.Card, Ui.Dim, 30), 0.06f, 0.025f, 0.46f, 0.07f);
             Ui.At(Ui.Button(s, "Title", Title, Ui.Card, Ui.Dim, 30), 0.54f, 0.025f, 0.94f, 0.07f);
+        }
+
+        // Decision time: the old p_after choice, as a full-screen card. Quit: Slick's backing, full-time. Keep: savings,
+        // weekends at Biscayne, a paycheck every Friday.
+        public void JobChoice()
+        {
+            S.step = "choice"; S.Write();
+            var s = Screen(Color.black);
+            Ui.At(Ui.Label(s, "Monday, 9:06 AM  ·  Floor 34", 30, Ui.Dim), 0, 0.74f, 1, 0.78f);
+            Ui.At(Ui.Label(s, "Decision time.", 96, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.64f, 1, 0.74f);
+            Ui.At(Ui.Label(s, "Whatever you pick, Lou finds out today.", 30, Ui.Dim), 0.08f, 0.59f, 0.92f, 0.63f);
+            Ui.At(Ui.Button(s, "Quit. Today.", () => Choose("quit"), Ui.Gold, Ui.Night, 56), 0.12f, 0.44f, 0.88f, 0.52f);
+            Ui.At(Ui.Label(s, "Slick backs you with $5,000. Play every day.", 28, Ui.Gold), 0.08f, 0.4f, 0.92f, 0.435f);
+            Ui.At(Ui.Button(s, "Keep the job. Grind nights.", () => Choose("nights"), Ui.Card, Ui.Ink, 52), 0.12f, 0.28f, 0.88f, 0.36f);
+            Ui.At(Ui.Label(s, "$2,000 saved. A paycheck every Friday. Biscayne on weekends.", 28, Ui.Dim), 0.08f, 0.24f, 0.92f, 0.275f);
+        }
+
+        void Choose(string job)
+        {
+            S.job = job; S.step = "ch1"; S.day = 7;   // Monday night: Chapter 1 starts
+            if (job == "quit") { S.br += GiftQuit; S.log.Insert(0, "Quit the 9-to-5. Slick's backing: $5,000"); }
+            else { S.br += KeepSavings; S.log.Insert(0, "Kept the day job. Savings: $2,000"); }
+            S.peak = Math.Max(S.peak, S.br); S.Write();
+            Films.Play(new[] { job == "quit" ? "p_quit" : "p_keep", "c1" }, () => Hub());
+        }
+
+        // sleep to the next day you can play (old Calendar.SkipTo); the day job pays every Friday on the way
+        void Sleep()
+        {
+            var news = new List<string>();
+            do
+            {
+                S.day++;
+                if (S.job == "nights" && Dow(S.day) == 5) { S.br += Salary; news.Add($"Payday. +{Ui.Money(Salary)} from the day job."); }
+            } while (CantPlay() != null);
+            S.peak = Math.Max(S.peak, S.br); S.Write();
+            if (!Closing(new List<string>(), () => Hub(news.Count > 0 ? string.Join("  ", news) : null)))
+                Hub(news.Count > 0 ? string.Join("  ", news) : null);
+        }
+
+        // the end of Chapter 1: with the day job, David texts first (old david1); then the goal and end films
+        bool Closing(List<string> films, Action otherwise)
+        {
+            if (S.step != "ch1" || !(S.roomTitle || S.br >= Goal)) return false;
+            bool david = S.job == "nights" && S.peak >= 10000 && !S.davidSeen;
+            S.davidSeen |= david; S.step = "done"; S.Write();
+            films.Add("goal"); films.Add("end");
+            Action play = () => Films.Play(films, EndCard);
+            if (david) Texts("David", new[] { "TEN THOUSAND?? FROM POKER?? AND YOU STILL WENT TO WORK TODAY???", "im just saying. lou doesnt deserve you. the felt does" }, play);
+            else play();
+            return true;
+        }
+
+        // texts on the phone: sender, the messages, tap to go on
+        public void Texts(string from, IList<string> lines, Action next)
+        {
+            var s = Screen(Ui.Night);
+            Ui.At(Ui.Label(s, from, 44, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.8f, 1, 0.86f);
+            float y = 0.74f;
+            foreach (var l in lines)
+            {
+                var bubble = Ui.At(Ui.Panel(s, "Text", Ui.Card), 0.08f, y - 0.1f, 0.92f, y);
+                Ui.At(Ui.Label(bubble, l, 36, Ui.Ink, TextAnchor.MiddleLeft), 0.05f, 0.05f, 0.95f, 0.95f);
+                y -= 0.12f;
+            }
+            Ui.At(Ui.Button(s, "Continue", next, Ui.Gold, Ui.Night, 48), 0.2f, 0.08f, 0.8f, 0.14f);
         }
 
         void Enter(string id)
@@ -127,7 +213,12 @@ namespace Dream.Game
             var ev = run.ev; int n = run.results.Count; double prize = 0; int place = 0, paid = 0;
             if (ev.kind == "cash") { double net = run.bust ? -ev.buyin : Hands.CashNet(run, (run.rng.Next() - 0.5) * 0.3 + ev.soft * 0.5); prize = ev.buyin + net; }
             else { paid = Hands.Paid(ev); place = Hands.Place(run); prize = place <= paid ? Hands.PrizeFor(ev, place) : 0; }
-            S.br += prize; S.events++; S.decisions += n; S.perfect += run.results.Count(r => r.tier == "perfect");
+            if (S.debt > 0 && prize - (ev.free ? 0 : ev.buyin) > 0)   // half your profits go back to Slick until the stake is repaid
+            {
+                double back = Math.Min(S.debt, Math.Round((prize - ev.buyin) / 2)); S.debt -= back; prize -= back;
+                S.log.Insert(0, $"Repaid Slick {Ui.Money(back)}" + (S.debt <= 0 ? " (all of it)" : ""));
+            }
+            S.br += prize; S.peak = Math.Max(S.peak, S.br); S.events++; S.liveDay = S.day; S.liveWeek = WeekOf(S.day); S.decisions += n; S.perfect += run.results.Count(r => r.tier == "perfect");
             if (prize > 0) S.cashes++;
             bool won = ev.kind != "cash" && place == 1;
             if (won && ev.title == "room") S.roomTitle = true;
@@ -138,12 +229,27 @@ namespace Dream.Game
             if (hadMistake && !S.needleSeen && S.step == "ch1") { films.Add("needle"); S.needleSeen = true; }
             bool bust = ev.kind == "cash" ? prize < ev.buyin * 0.5 : prize <= 0;
             if (bust && !S.lessonSeen && S.step == "ch1") { films.Add("lesson1"); S.lessonSeen = true; }
-            string note = null;
-            if (ev.id == "local") { films.Add("p_after"); films.Add("c1"); S.step = "ch1"; }
+
+            if (ev.id == "local") { films.Add("p_after"); S.step = "choice"; }
+            // with the day job, David texts at $10,000 (old david1), before the chapter closes
+            bool david = S.step == "ch1" && S.job == "nights" && S.peak >= 10000 && !S.davidSeen;
+            if (david) S.davidSeen = true;
             if (S.step == "ch1" && (S.roomTitle || S.br >= Goal)) { films.Add("goal"); films.Add("end"); S.step = "done"; }
-            if (S.step == "ch1" && S.br < 60) { S.br += Stake; note = "Slick staked you $1,000. Half your profits go back until it's repaid."; }
+            // broke: Slick's way out depends on the job (old broke / broke_n); the stake comes back at half your profits
+            string[] broke = null;
+            if (S.step == "ch1" && S.br < 60)
+            {
+                S.br += Stake; S.debt += Stake;
+                broke = S.job == "nights"
+                    ? new[] { "Busted? Good. Now you're a poker player. Everybody goes broke once.", "You've still got Lou's paycheck. Here's $1,000 till it builds back. Half your profits come back to me until it's paid." }
+                    : new[] { "Busted? Good. Now you're a poker player. Everybody goes broke once.", "No paycheck to fall back on. Here's $1,000. Half your profits come back to me until it's paid. Respect the roll this time." };
+            }
             S.Write();
-            Results(run, place, paid, prize, () => Films.Play(films, () => { if (S.step == "done") EndCard(); else Hub(note); }));
+            Action after = () => { if (S.step == "done") EndCard(); else if (S.step == "choice") JobChoice(); else Hub(); };
+            Action texts = () => Films.Play(films, after);
+            if (broke != null) { var t0 = texts; texts = () => Texts("Slick", broke, t0); }
+            if (david) { var t1 = texts; texts = () => Texts("David", new[] { "TEN THOUSAND?? FROM POKER?? AND YOU STILL WENT TO WORK TODAY???", "im just saying. lou doesnt deserve you. the felt does" }, t1); }
+            Results(run, place, paid, prize, texts);
         }
 
         static string Ord(int n) => n + (n % 100 is 11 or 12 or 13 ? "th" : (n % 10) switch { 1 => "st", 2 => "nd", 3 => "rd", _ => "th" });
@@ -178,7 +284,7 @@ namespace Dream.Game
             var s = Screen(Color.black);
             Ui.At(Ui.Label(s, "Beta 1.0", 44, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.66f, 1, 0.71f);
             Ui.At(Ui.Label(s, "Chapter 2: The Circuit\ncoming soon", 72, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.05f, 0.52f, 0.95f, 0.65f);
-            Ui.At(Ui.Label(s, $"Bankroll {Ui.Money(S.br)}  ·  {S.events} events  ·  {S.decisions} decisions", 30, Ui.Dim), 0.05f, 0.45f, 0.95f, 0.49f);
+            Ui.At(Ui.Label(s, $"{Rep}  ·  Bankroll {Ui.Money(S.br)}  ·  {S.events} events  ·  {S.decisions} decisions", 30, Ui.Dim), 0.05f, 0.45f, 0.95f, 0.49f);
             Ui.At(Ui.Button(s, "Send feedback", () => Application.OpenURL(FeedbackUrl), Ui.Gold, Ui.Night, 48), 0.18f, 0.3f, 0.82f, 0.36f);
             Ui.At(Ui.Button(s, "Keep playing Chapter 1", () => { S.step = "ch1"; S.Write(); Hub(); }, Ui.Card, Ui.Ink, 36), 0.18f, 0.21f, 0.82f, 0.26f);
             Ui.At(Ui.Button(s, "Title", Title, Ui.Card, Ui.Dim, 32), 0.3f, 0.12f, 0.7f, 0.17f);

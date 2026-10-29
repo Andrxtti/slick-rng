@@ -53,6 +53,7 @@ namespace Dream.Game
             var cards = Ui.At(Ui.Box(s, "Cards"), 0.3f, 0.31f, 0.7f, 0.43f);
             CardFace(cards, sp.hand[0], 0.02f, 0.48f); CardFace(cards, sp.hand[1], 0.52f, 0.98f);
 
+            Waiting = answered == null;
             if (answered == null)
             {
                 Ui.At(Ui.Label(s, "Your move", 34, Ui.Dim), 0.05f, 0.26f, 0.95f, 0.3f);
@@ -67,6 +68,17 @@ namespace Dream.Game
                 }
             }
             else Grade(s, answered);
+        }
+
+        // for the test driver (Editor/AutoPlay): answer the spot on screen with the solver's best play, or go on
+        public static bool Waiting;
+        public static void AutoStep(bool worst = false)
+        {
+            if (run == null) return;
+            if (!Waiting) { Next(); return; }
+            var sp = run.spot; int pick = Hands.Grade(sp, 0).bestIdx;
+            if (worst) { var order = Enumerable.Range(0, sp.acts.Count).OrderBy(j => Lib.Labels[Hands.Grade(sp, j).lab].score).ToList(); pick = order[0]; }
+            Answer(pick);
         }
 
         static void Answer(int j)
@@ -98,7 +110,7 @@ namespace Dream.Game
         static void Next()
         {
             var what = Hands.Next(run);
-            if (what == "finish" || what == "cooler") { done(mistake); return; }
+            if (what == "finish" || what == "cooler") { var d = done; run = null; d(mistake); return; }
             Hands.Deal(run); Draw(null);
             if (what == "level") Toast("Next level: " + StageName(run.Stage));
         }

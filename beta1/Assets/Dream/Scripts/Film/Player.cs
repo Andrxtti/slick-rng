@@ -48,7 +48,7 @@ namespace Dream.Film
             black.color = set == null ? Color.black : Color.clear;
             var amb = Data.Load<AudioClip>($"Sfx/amb_{sc.place}.wav");   // room tone under everything
             if (amb != null) { room = gameObject.AddComponent<AudioSource>(); room.clip = amb; room.loop = true; room.volume = 0.55f; room.Play(); }
-            yield return null;   // one frame for the probe and the bodies to settle
+            for (int f = 0; f < 6; f++) yield return null;   // a few frames for the probe, the poses and the seat fit to settle before the first shot is aimed
             // the cue sheet: when each line starts in the film (video time), so stills can be pulled per line
             try { cue = new System.IO.StreamWriter(System.IO.Path.Combine(Application.dataPath, "..", "Logs", $"film_{id}.txt")); } catch { }
             foreach (var l in sc.lines) yield return PlayLine(l);

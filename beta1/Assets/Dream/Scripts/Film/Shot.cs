@@ -115,7 +115,7 @@ namespace Dream.Film
         static bool Blocked(Vector3 subject, Vector3 cam, int mask)
         {
             var d = cam - subject; float len = d.magnitude;
-            return Physics.SphereCast(subject + d / len * 0.25f, 0.05f, d / len, out _, Mathf.Max(0, len - 0.25f), mask);
+            return Physics.SphereCast(subject + d / len * 0.25f, 0.12f, d / len, out _, Mathf.Max(0, len - 0.25f), mask);
         }
 
         static Transform FindProp(GameObject set, string what)

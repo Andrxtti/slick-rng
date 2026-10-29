@@ -53,10 +53,10 @@ def main():
     log_path = os.path.join(OUT, "voices.json")
     done = json.load(open(log_path, encoding="utf-8")) if os.path.exists(log_path) else {}
     lines = []
-    for fn in sorted(os.listdir(FILM)):
+    for fn in sorted(f for f in os.listdir(FILM) if f.endswith(".json")):
         data = json.load(open(os.path.join(FILM, fn), encoding="utf-8"))
         for L in data if isinstance(data, list) else data["lines"]:
-            if L.get("voice"): lines.append(L)
+            if L.get("voice") and L.get("text"): lines.append(L)   # reel shots reuse sting voices without text
     todo = [L for L in lines if force or done.get(L["voice"]) != L["text"] or not os.path.exists(os.path.join(OUT, L["voice"] + ".wav"))]
     print(f"{len(lines)} lines, {len(todo)} to voice")
     tmp = os.path.join(PIPER, "tmp"); os.makedirs(tmp, exist_ok=True)

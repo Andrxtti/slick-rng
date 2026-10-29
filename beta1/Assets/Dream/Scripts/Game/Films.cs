@@ -13,6 +13,7 @@ namespace Dream.Game
     {
         Queue<string> queue; Action done; VideoPlayer vp; RawImage img; RenderTexture rt; GameObject screen; Text skip;
         float started;
+        public static readonly List<string> Played = new List<string>();   // every film started this session (test driver)
 
         public static void Play(IEnumerable<string> ids, Action then)
         {
@@ -40,13 +41,13 @@ namespace Dream.Game
         void Next()
         {
             if (queue.Count == 0) { var d = done; Destroy(gameObject); rt.Release(); d?.Invoke(); return; }
-            var id = queue.Dequeue();
+            var id = queue.Dequeue(); Played.Add(id);
             vp.source = VideoSource.Url;
             vp.url = System.IO.Path.Combine(Application.streamingAssetsPath, "Films", id + ".mp4");
             vp.Prepare(); vp.prepareCompleted += Started; started = Time.time;
         }
         void Started(VideoPlayer p) { p.prepareCompleted -= Started; p.Play(); }
 
-        void Skip() { if (Time.time - started < 0.4f) return; vp.Stop(); Next(); }
+        public void Skip() { if (Time.time - started < 0.4f) return; vp.Stop(); Next(); }
     }
 }

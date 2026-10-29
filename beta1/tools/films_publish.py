@@ -6,7 +6,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = r"C:\Dev\Builds\Beta1\Film"
 OUT = os.path.join(ROOT, "Assets", "StreamingAssets", "Films")
 os.makedirs(OUT, exist_ok=True)
-FILMS = ["p_office", "p_diner", "p_seat", "p_after", "c1", "lesson1", "needle", "classic", "classic_win", "classic_lose", "goal", "end"]
+FILMS = ["p_office", "p_diner", "p_seat", "p_after", "p_quit", "p_keep", "c1", "lesson1", "needle", "classic", "classic_win", "classic_lose", "goal", "end"]
 jobs = [(os.path.join(SRC, f + ".mp4"), os.path.join(OUT, f + ".mp4")) for f in FILMS]
 jobs.append((r"C:\Dev\Builds\Beta1\Reel\the_dream_reel_720p.mp4", os.path.join(OUT, "reel.mp4")))
 total = 0

@@ -1,0 +1,73 @@
+{
+ "id": "p_quit",
+ "title": "Quit. Today.",
+ "lines": [
+  {
+   "n": 1,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "talk",
+   "next": "",
+   "text": "Lou? The Henderson deck. Redo it yourself.",
+   "voice": "p_quit_01"
+  },
+  {
+   "n": 2,
+   "who": "lou",
+   "name": "NATSO",
+   "shot": "cu",
+   "subject": "lou",
+   "act": "lean",
+   "next": "",
+   "text": "You'll be back. They always come back.",
+   "voice": "p_quit_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "push",
+   "subject": "you",
+   "act": "idle",
+   "next": "",
+   "text": "Not this one.",
+   "voice": "p_quit_03"
+  },
+  {
+   "n": 4,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "No paycheck. No plan B. Slick: \"Five thousand in your account. Not a loan. Don't make me regret it.\"",
+   "voice": ""
+  },
+  {
+   "n": 5,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "David: \"BRO. YOU QUIT YOUR JOB?? CALL ME\"",
+   "voice": ""
+  }
+ ],
+ "directions": [
+  {
+   "after": 0,
+   "text": "the floor goes quiet; somebody stops typing"
+  }
+ ],
+ "place": "office",
+ "time": "Monday, 9:06 AM",
+ "cast": [
+  "lou",
+  "you"
+ ]
+}

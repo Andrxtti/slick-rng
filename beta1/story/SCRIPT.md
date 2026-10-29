@@ -69,12 +69,34 @@ The beat: walking into the room where you don't belong yet.
 
 ## p_after — Monday again
 place: office · time: Monday, 9:04 AM · cast: lou, you
-The beat: the job looks smaller now.
+The beat: the job looks smaller now, and it's time to choose. The film ends on the choice; the game asks it.
 
 1. NATSO [lou] (ots lou; point): Henderson numbers. Where are they?
 2. YOU [you] (cu you; think): I played eleven hours on Saturday. I made decisions that mattered. And now this.
 3. NATSO [lou] (cu lou; lean): Hello? Weekend's over, champ.
 4. YOU [you] (push you; idle): Weekend's over.
+5. CARD [card] (ecu you; think): Decision time.
+
+## p_quit — Quit. Today.
+place: office · time: Monday, 9:06 AM · cast: lou, you
+The beat: the best thirty-four floors of your life. Plays when you choose to quit.
+{the floor goes quiet; somebody stops typing}
+
+1. YOU [you] (cu you; talk): Lou? The Henderson deck. Redo it yourself.
+2. NATSO [lou] (cu lou; lean): You'll be back. They always come back.
+3. YOU [you] (push you; idle): Not this one.
+4. CARD [card] (wide): No paycheck. No plan B. Slick: "Five thousand in your account. Not a loan. Don't make me regret it."
+5. CARD [card] (ext): David: "BRO. YOU QUIT YOUR JOB?? CALL ME"
+
+## p_keep — Keep the job
+place: office · time: Monday, 9:06 AM · cast: lou, you
+The beat: you keep the lanyard, and the dream gets the nights. Plays when you choose to keep the job.
+
+1. NATSO [lou] (ots lou; point): Eight o'clock. Don't make me ask twice.
+2. YOU [you] (cu you; nod): On your desk by eight, Lou.
+3. YOU [you] (push you; think): Days are his. Saturdays are mine.
+4. CARD [card] (wide): Two thousand in savings. A paycheck every Friday. Biscayne on weekends.
+5. CARD [card] (ext): Slick: "Smart. A paycheck buys you time to learn. Never play above your roll."
 
 ## c1 — The Grind
 place: cardroom · time: Tuesday, 7:02 PM · cast: gnomey, tommy, mustich, you

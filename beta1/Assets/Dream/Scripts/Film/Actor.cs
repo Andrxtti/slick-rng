@@ -24,7 +24,7 @@ namespace Dream.Film
             var a = Cast.Dress(who, go, seated);
             a.Who = who; a.Seated = seated;
             // a body the camera can bump into (Shot.Clear); over-the-shoulder shots ignore this layer
-            var cc = go.AddComponent<CapsuleCollider>(); cc.radius = 0.22f; cc.height = seated ? 1.3f : 1.8f; cc.center = Vector3.up * (cc.height / 2);
+            var cc = go.AddComponent<CapsuleCollider>(); cc.radius = 0.34f; cc.height = seated ? 1.3f : 1.8f; cc.center = Vector3.up * (cc.height / 2);
             go.layer = Layer;
             return a;
         }

@@ -45,6 +45,17 @@
    "next": "",
    "text": "Weekend's over.",
    "voice": "p_after_04"
+  },
+  {
+   "n": 5,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ecu",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "text": "Decision time.",
+   "voice": ""
   }
  ],
  "directions": [],

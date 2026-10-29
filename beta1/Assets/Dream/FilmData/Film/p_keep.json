@@ -1,0 +1,68 @@
+{
+ "id": "p_keep",
+ "title": "Keep the job",
+ "lines": [
+  {
+   "n": 1,
+   "who": "lou",
+   "name": "NATSO",
+   "shot": "ots",
+   "subject": "lou",
+   "act": "point",
+   "next": "",
+   "text": "Eight o'clock. Don't make me ask twice.",
+   "voice": "p_keep_01"
+  },
+  {
+   "n": 2,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "nod",
+   "next": "",
+   "text": "On your desk by eight, Lou.",
+   "voice": "p_keep_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "push",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "text": "Days are his. Saturdays are mine.",
+   "voice": "p_keep_03"
+  },
+  {
+   "n": 4,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Two thousand in savings. A paycheck every Friday. Biscayne on weekends.",
+   "voice": ""
+  },
+  {
+   "n": 5,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Slick: \"Smart. A paycheck buys you time to learn. Never play above your roll.\"",
+   "voice": ""
+  }
+ ],
+ "directions": [],
+ "place": "office",
+ "time": "Monday, 9:06 AM",
+ "cast": [
+  "lou",
+  "you"
+ ]
+}
