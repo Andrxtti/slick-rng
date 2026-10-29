@@ -147,6 +147,20 @@ namespace Dream.UI
             return b;
         }
 
+        // a text field in the display face: a rounded card, the text and its placeholder clipped inside it
+        public static TMP_InputField Input(Transform parent, string placeholder, int size)
+        {
+            var bg = Tile(parent, "Input", Card, 28);
+            var area = Box(bg, "Text Area"); Fill(area); area.gameObject.AddComponent<RectMask2D>(); area.offsetMin = new Vector2(32, 6); area.offsetMax = new Vector2(-32, -6);
+            var ph = Label(area, placeholder, size, new Color(1, 1, 1, 0.25f), TextAnchor.MiddleLeft, FontStyle.Normal, Face.Display);
+            var tx = Label(area, "", size, Ink, TextAnchor.MiddleLeft, FontStyle.Normal, Face.Display);
+            ph.textWrappingMode = tx.textWrappingMode = TextWrappingModes.NoWrap;
+            var f = bg.gameObject.AddComponent<TMP_InputField>();
+            f.textViewport = area; f.textComponent = tx; f.placeholder = ph; f.fontAsset = Display; f.pointSize = size;
+            f.caretColor = Gold; f.customCaretColor = true; f.caretWidth = 4; f.selectionColor = new Color(0.95f, 0.76f, 0.35f, 0.35f);
+            return f;
+        }
+
         public static void Clear(Transform t) { for (int i = t.childCount - 1; i >= 0; i--) UnityEngine.Object.Destroy(t.GetChild(i).gameObject); }
 
         public static string Money(double v) => "$" + Math.Round(v).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);

@@ -56,6 +56,12 @@ namespace Dream.EditorTools
             if (++steps > 4000) { Stop("gave up after 4000 steps"); return; }
             var films = Object.FindAnyObjectByType<Films>();
             if (films != null) { films.Skip(); return; }
+            var start = Find("Start the story");   // the creator: roll the dice once, then go
+            if (start != null)
+            {
+                if (!shot.Contains("creator")) { Find("⚄")?.onClick.Invoke(); Shot("creator"); return; }
+                W("creator: " + Object.FindAnyObjectByType<TMPro.TMP_InputField>()?.text); start.onClick.Invoke(); return;
+            }
             var f = Flow.I; if (f == null || f.S == null) { Find("Begin")?.onClick.Invoke(); return; }
             if (Table.Waiting || Has("Coaching by Confirmed Fire")) { Table.AutoStep((lose && f.S.events < 7) || (broke && f.S.debt <= 0 && f.S.events < 3)); return; }   // a spot, or its grade panel (lose: the worst answers for the first games)
             if (Phone.I != null)   // the phone: take the branch when the decision is up, otherwise tap through the texts

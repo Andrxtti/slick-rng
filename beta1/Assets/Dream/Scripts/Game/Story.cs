@@ -45,7 +45,7 @@ namespace Dream.Game
         {
             var S = F.S; o ??= new Outcome();
             Load(S);
-            vars.SetValue("$bankroll", (float)S.br); vars.SetValue("$peak", (float)S.peak); vars.SetValue("$room_title", S.roomTitle);
+            vars.SetValue("$name", S.name ?? ""); vars.SetValue("$bankroll", (float)S.br); vars.SetValue("$peak", (float)S.peak); vars.SetValue("$room_title", S.roomTitle);
             vars.SetValue("$chapter", S.step == "prologue" || S.step == "choice" ? 0f : S.step == "done" ? 2f : 1f);
             vars.SetValue("$event", o.ev); vars.SetValue("$won", o.won); vars.SetValue("$bust", o.bust); vars.SetValue("$cooler", o.cooler);
             vars.SetValue("$qualified", o.qualified); vars.SetValue("$ft_end", o.ftEnd); vars.SetValue("$classic_end", o.classicEnd);

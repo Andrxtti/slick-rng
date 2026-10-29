@@ -11,9 +11,10 @@
 
 title: Variables
 ---
-// Variables the game sets before each run (game state, not saved here): $bankroll, $peak, $chapter (0 prologue,
+// Variables the game sets before each run (game state, not saved here): $name (from the creator), $bankroll, $peak, $chapter (0 prologue,
 // 1 Chapter 1), $room_title, and after an event $event, $won, $bust, $cooler, $qualified (made Day 2 of the Classic),
 // $ft_end (the final-table film to play, or "") and $classic_end (who won Day 2 when you didn't).
+<<declare $name = "">>
 <<declare $bankroll = 0>>
 <<declare $peak = 0>>
 <<declare $chapter = 0>>
@@ -58,18 +59,18 @@ title: Monday
 <<clock "11:20 PM">>
 <<film p_offer>>
 Slick: Saw your results from Saturday. Here's my offer. #text
-Slick: Quit Lou. I'll put $5,000 in your account tomorrow. Not a loan. Don't make me regret it. #text
+Slick: Quit Lou. I'll put $2,000 in your account tomorrow. Not a loan. Don't make me regret it. #text
 Slick: Or keep the job and play on the side. Your call, kid. It's the biggest one you'll make. #text
 Decision time. #card
-Slick's $5,000. One live game a day, any day. #hint
-$2,000 saved, $2,000 every Friday. Live games on weekends. #hint
+Slick's $2,000. One live game a day, any day. #hint
+$2,000 saved, $1,250 every Friday. Live games on weekends. #hint
 -> Quit. Text Lou tonight.
     <<set $job to "quit">>
     You: Lou. Redo it yourself. #text #to:Lou
     <<film p_quit>>
-    <<money 5000 "Quit the 9-to-5. Slick's backing">>
+    <<money 2000 "Quit the 9-to-5. Slick's backing">>
     <<clock "11:31 PM">>
-    Slick: Done. $5,000 is in your account. Not a loan. Don't make me regret it. #text
+    Slick: Done. $2,000 is in your account. Not a loan. Don't make me regret it. #text
     Slick: Rent is due on the first. Never play above your roll. #text
     David: BRO. YOU QUIT YOUR JOB?? CALL ME #text
 -> Keep the job. Grind nights and weekends.

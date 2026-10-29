@@ -16,6 +16,7 @@ namespace Dream.Game
     public class Save
     {
         public string step = "new";           // new, prologue, choice, ch1, done
+        public string name = "";              // what you typed in the creator (Yarn: $name); "Rookie" if you typed nothing
         public double br, peak, debt;         // bankroll, best bankroll, what's owed to Slick
         public string job = "";               // "quit" (full-time) or "nights" (kept the day job), as in the old game
         public int day = -1, liveDay = -99, liveWeek = -99;   // calendar day (0 = Mon 5 Jan 2026); last live game day and week
@@ -39,7 +40,7 @@ namespace Dream.Game
         public Save S;
         Canvas canvas; RectTransform root;
         public const double Goal = 10000;                                         // the Chapter 1 goal (also in Chapter1.yarn)
-        public const double Salary = 2000;                                        // old Calendar.Salary, every Friday with the day job
+        public const double Salary = 1250;                                        // every Friday with the day job (Steven, 11:27: $1,250 a week; the old game paid $2,000)
         public const int GamesCap = 3;                                            // online: per day full-time, per week with the day job
         public const double Low = 400;                                            // old Calendar.LowMark for Chapter 1: the freeroll opens
         Story story;
@@ -118,8 +119,33 @@ namespace Dream.Game
         void NewCareer()
         {
             bool seen = S != null && S.reelSeen;
-            S = new Save { step = "prologue", br = 0, day = 5, reelSeen = true }; S.Write();   // Saturday: the Biscayne Championship (free); the bankroll starts at zero, as in the old game
-            Films.Play(seen ? new string[0] : new[] { "reel" }, () => story.Run("Prologue", () => Play("local")));
+            Films.Play(seen ? new string[0] : new[] { "reel" }, Create);
+        }
+
+        // the player's first real menu (Steven, 11:27): the character creator, as in the old game's Screens.Create. Your
+        // name, and the dice. The films are rendered with one player, so the dice rolls a name rather than a look.
+        static readonly string[] Names = { "Alex", "Sam", "Jordan", "Nico", "Danny", "Marco", "Chris", "Leo", "Ricky", "Tony", "Matt", "Eddie", "Ray", "Vince", "Jay" };
+        void Create()
+        {
+            var s = Screen(Ui.Night);
+            Ui.At(Ui.Label(s, "CREATE YOUR PLAYER", 26, Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.08f, 0.92f, 0.92f, 0.95f);
+            var pic = Ui.At(Ui.Tile(s, "Portrait", Color.white, 36), 0.14f, 0.43f, 0.86f, 0.9f).GetComponent<Image>();
+            pic.sprite = null; var tex = Resources.Load<Texture2D>("UI/you");
+            if (tex != null) { var raw = new GameObject("You", typeof(RectTransform)).AddComponent<RawImage>(); raw.transform.SetParent(pic.transform, false); raw.texture = tex;
+                var fit = raw.gameObject.AddComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent; fit.aspectRatio = tex.width / (float)tex.height;
+                pic.gameObject.AddComponent<RectMask2D>(); pic.color = Color.clear; }   // the portrait fills the frame, cropped, never stretched
+            Ui.At(Ui.Label(s, "Your name", 26, Ui.Dim, TextAnchor.MiddleLeft), 0.08f, 0.37f, 0.92f, 0.4f);
+            var field = Ui.Input(s, "Rookie", 72); Ui.At(field, 0.08f, 0.29f, 0.76f, 0.37f); field.characterLimit = 18;
+            var dice = Ui.Button(s, "⚄", () => field.text = Names[UnityEngine.Random.Range(0, Names.Length)], Ui.Card, Ui.Gold, 64);
+            Ui.At(dice, 0.79f, 0.295f, 0.92f, 0.365f);
+            Ui.At(Ui.Label(s, "Everyone at Biscayne will still call you kid.", 26, Ui.Dim, TextAnchor.MiddleLeft), 0.08f, 0.24f, 0.92f, 0.28f);
+            Ui.At(Ui.Button(s, "Start the story", () => Begin(field.text), Ui.Gold, Ui.Night, 46), 0.12f, 0.1f, 0.88f, 0.17f);
+        }
+
+        void Begin(string name)
+        {
+            S = new Save { step = "prologue", br = 0, day = 5, reelSeen = true, name = string.IsNullOrWhiteSpace(name) ? "Rookie" : name.Trim() }; S.Write();   // Saturday: the Biscayne Championship (free); the bankroll starts at zero, as in the old game
+            story.Run("Prologue", () => Play("local"));
         }
 
         void Resume()
@@ -138,7 +164,7 @@ namespace Dream.Game
             Ui.At(Ui.Label(s, DateStr(S.day), 28, Ui.Ink, TextAnchor.MiddleRight), 0.5f, 0.93f, 0.94f, 0.96f);
             Ui.At(Ui.Title(s, "Chapter 1 · The Grind", 52, Ui.Ink, TextAnchor.MiddleLeft), 0.06f, 0.885f, 0.94f, 0.93f);
             Ui.At(Ui.Num(s, Ui.Money(S.br), 104, Ui.Ink, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.79f, 0.94f, 0.87f);
-            Ui.At(Ui.Label(s, "BANKROLL  ·  " + Rep.ToUpperInvariant(), 24, Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.765f, 0.94f, 0.79f);
+            Ui.At(Ui.Label(s, "BANKROLL  ·  " + (string.IsNullOrEmpty(S.name) ? "" : S.name.ToUpperInvariant() + "  ·  ") + Rep.ToUpperInvariant(), 24, Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.765f, 0.94f, 0.79f);
             // goal
             var bar = Ui.At(Ui.Tile(s, "GoalBar", Ui.Card, 10), 0.06f, 0.728f, 0.94f, 0.742f);
             var fill = Ui.Tile(bar, "Fill", Ui.Gold, 10); fill.anchorMax = new Vector2(Mathf.Clamp01((float)(S.br / Goal)), 1);
@@ -297,7 +323,7 @@ namespace Dream.Game
         {
             if (metBy == "mustich") return "classic_mustich";
             double r = new System.Random(S.day * 7919 + S.events).NextDouble();
-            return r < 0.2 ? "classic_mustich" : r < 0.32 ? "classic_shark" : "classic_other";
+            return r < 0.4 ? "classic_mustich" : r < 0.75 ? "classic_shark" : "classic_other";   // Steven: mix it up, Tommy and Mustich often
         }
 
         // the words the films leave to the game (old Story.Text)
@@ -353,7 +379,7 @@ namespace Dream.Game
             Ui.At(Ui.Label(s, "TEST BETA 1.0", 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.68f, 1, 0.71f);
             Ui.At(Ui.Title(s, "Chapter 2: The Circuit", 84, Ui.Ink), 0.05f, 0.58f, 0.95f, 0.67f);
             Ui.At(Ui.Label(s, "coming soon", 40, Ui.Dim), 0.05f, 0.535f, 0.95f, 0.575f);
-            Ui.At(Ui.Num(s, $"{Rep}  ·  {Ui.Money(S.br)}  ·  {S.events} events  ·  {S.decisions} decisions", 28, Ui.Dim), 0.05f, 0.46f, 0.95f, 0.5f);
+            Ui.At(Ui.Num(s, $"{S.name}, {Rep}  ·  {Ui.Money(S.br)}  ·  {S.events} events  ·  {S.decisions} decisions", 28, Ui.Dim), 0.05f, 0.46f, 0.95f, 0.5f);
             Ui.At(Ui.Button(s, "Send feedback", () => Application.OpenURL(FeedbackUrl), Ui.Gold, Ui.Night, 44), 0.18f, 0.3f, 0.82f, 0.36f);
             Ui.At(Ui.Button(s, "Keep playing Chapter 1", () => { S.step = "ch1"; S.Write(); Hub(); }, Ui.Card, Ui.Ink, 34), 0.18f, 0.21f, 0.82f, 0.26f);
             Ui.At(Ui.Button(s, "Title", Title, new Color(1, 1, 1, 0.06f), Ui.Dim, 30), 0.3f, 0.12f, 0.7f, 0.17f);

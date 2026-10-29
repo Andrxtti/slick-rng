@@ -66,3 +66,14 @@ None so far. Steven's words are as written, including "Spacepad" in lesson 1 (th
 - **Not good yet:** the phone body in p_offer is a plain slab; insert shots on the diner counter blow out under the key
   light; a perfect player who wins the free Local ($7,000) and quits ($5,000) is past the $10,000 goal after one more
   event (Steven's economy from the old game; I left it). Characters are still last night's faces (priority 4).
+### Steven's 11:27 notes (from INBOX, 11:45)
+- **Character creator** is now the first menu after the reel: "Create your player", your face, your name in Gloock
+  (18 characters, empty means "Rookie" as in the old game) and the dice. Saved with the career, passed to Yarn as
+  `$name`, shown on the hub and the end card; Steven's lines still say "kid". The dice rolls a name, not a look: the films
+  are rendered with one player, so look options would need every film rendered per look. Still: `day2/creator.png`.
+- **Money:** Slick's backing is $2,000 (his texts in p_offer and p_quit, the hint and the bankroll); the paycheck is $1,250
+  every Friday (calendar, the keep hint, p_keep's caption). Keep-path savings stay $2,000.
+- **Classic winners mixed up:** Mustich 40%, Tommy 35%, Slick 25% (always Mustich if he beat you at the final table).
+- **Apartment:** it's already a small studio with water and city through the blinds (Poly Haven "modern_buildings_night").
+  Calling it Brickell with a glimpse of the bay; a closer bay HDRI would be better (on the list).
+- Both branches re-played by the test driver; web build rebuilt: **15.0 MB, 0 errors**. Ready to publish.

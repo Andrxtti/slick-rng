@@ -157,7 +157,7 @@ place: home · time: Monday, 11:24 PM · cast: you
 Plays when you keep the job.
 
 1. CARD [card] (cam laptop; idle): You keep the lanyard. / But tonight you open a new spreadsheet and name it BANKROLL.
-2. CARD [card] (cu you; think): $2,000 lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream.
+2. CARD [card] (cu you; think): $1,250 lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream.
 
 ## c1 — The Grind
 place: cardroom · time: Tuesday, 7:02 PM · cast: gnomey, tommy, mustich, you
