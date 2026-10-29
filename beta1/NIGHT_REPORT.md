@@ -80,6 +80,22 @@ Steven asked for Yarn Spinner (MIT, OpenUPM `dev.yarnspinner.unity` 3.2.8, as in
   which froze the game on the choice card until I read variables by type.
 - **Web build:** 13.8 MB (+0.7 MB for Yarn), 0 errors.
 
+## Table seat order (Steven's bug, 09:50)
+- **Seat order:** seats went counter-clockwise. They now run clockwise, so the next player in order (UTG, UTG+1, UTG+2,
+  LJ, HJ, CO, BTN, SB, BB) sits to your left (`Table.cs`, `a = -PI/2 - k*2*PI/n`).
+- **Checked on four real library spots** (test command `spot <pos>`; screenshots `night-shots/table_seats_*.png`):
+  - you in CO: BTN bottom-left, SB left, BB upper-left;
+  - you in BB: UTG to your left;
+  - you in BTN: SB to your left;
+  - you in UTG: UTG+1 to your left, BB bottom-right.
+- **Dealer button:** a white "D" puck sits beside the BTN seat.
+- **Bet labels:**
+  - an action that carries its size shows once ("Jam 7.9", not "Jam 7.9 7.9");
+  - a fold shows "Fold" (not "Fold 0.5");
+  - blinds show their amount;
+  - a player with nothing behind shows "all in".
+- **Web build:** rebuilt with this and the Yarn work: 13.8 MB, 0 errors.
+
 ## Calls I made without you
 1. **Which brief.** The local checkout had the earlier BETA1.md (port into the old project). Your instructions matched
    the newer "fresh project at `beta1/`" brief on `origin/unity`, so I merged that and followed it.

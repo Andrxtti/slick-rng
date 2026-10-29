@@ -9,6 +9,7 @@ using Dream.Game;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Dream.UI;
 
 namespace Dream.EditorTools
 {
@@ -20,6 +21,7 @@ namespace Dream.EditorTools
 
         static AutoPlay()
         {
+            Remote.Extra["spot"] = a => { var p = a.Split(' '); var root = (RectTransform)Object.FindAnyObjectByType<Canvas>().transform; Ui.Clear(root); Remote.Log("spot: " + Table.ShowSeat(root, p[0], p.Length > 1 ? p[1] : "shove")); };
             Remote.Extra["story"] = a => { var p = a.Split(' '); Flow.I?.TestStory(p[0], p[1], double.Parse(p[2], System.Globalization.CultureInfo.InvariantCulture)); };
             Remote.Extra["auto"] = b =>
             {

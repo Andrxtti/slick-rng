@@ -15,10 +15,32 @@ namespace Dream.Game
 
         public static Color Hex(string h) => ColorUtility.TryParseHtmlString(h, out var c) ? c : Color.white;
 
-        public static void Show(RectTransform parent, Run r, Action<bool> onDone)
+        public static void Show(RectTransform parent, Run r, Action<bool> onDone, Spot preset = null)
         {
             root = parent; run = r; done = onDone; mistake = false;
-            Hands.Deal(run); Draw(null);
+            if (preset != null) run.spot = preset; else Hands.Deal(run);
+            Draw(null);
+        }
+
+        // test command "spot <pos> [gid]": a library spot where you sit in that seat, someone has acted, and there's a BTN
+        public static string ShowSeat(RectTransform parent, string pos, string gid)
+        {
+            Lib.Load(); var rng = new Rng("spot|" + pos);
+            var tables = Lib.Tables(gid);
+            for (int ti = 0; ti < tables.Count; ti++)
+            {
+                var table = (System.Collections.Generic.Dictionary<string, object>)tables[ti]; var nodes = J.L(table, "n");
+                for (int ni = 0; ni < nodes.Count; ni++)
+                {
+                    var node = (System.Collections.Generic.Dictionary<string, object>)nodes[ni];
+                    var sp = Hands.BuildSpot(gid, ti, table, node, ni, (System.Collections.Generic.List<object>)J.L(node, "r")[0], 0.5, rng);
+                    if (sp.seats[sp.hero].pos != pos || sp.seats.Count < 8 || !sp.seats.Any(v => !string.IsNullOrEmpty(v.act) && v.act.Any(char.IsDigit))) continue;
+                    var r = Hands.Start(Lib.Event("deep"), "spot"); r.libGid = gid; r.libIndex = ti;
+                    Show(parent, r, _ => { }, sp);
+                    return string.Join(" ", sp.seats.Select(v => v.pos + (string.IsNullOrEmpty(v.act) ? "" : "(" + v.act + ")")));
+                }
+            }
+            return "no spot with hero " + pos;
         }
 
         static void Draw(Decision answered)
@@ -41,8 +63,8 @@ namespace Dream.Game
             int n = sp.seats.Count, hero = sp.hero;
             for (int i = 0; i < n; i++)
             {
-                int k = (i - hero + n) % n;                       // you at the bottom, the rest clockwise
-                float a = -Mathf.PI / 2 + k * 2 * Mathf.PI / n;
+                int k = (i - hero + n) % n;                       // you at the bottom; the next seat in order sits to your left (clockwise)
+                float a = -Mathf.PI / 2 - k * 2 * Mathf.PI / n;
                 float x = 0.5f + Mathf.Cos(a) * 0.43f, y = 0.5f + Mathf.Sin(a) * 0.41f;
                 Seat(table, sp.seats[i], i == hero, x, y);
             }
@@ -131,10 +153,20 @@ namespace Dream.Game
             box.GetComponent<Image>().sprite = Rounded(); box.GetComponent<Image>().type = Image.Type.Sliced;
             var fg = you ? Ui.Night : seat.folded ? Ui.Dim : Ui.Ink;
             Ui.At(Ui.Label(box, you ? "YOU · " + seat.pos : seat.pos, 24, fg, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.5f, 1, 0.95f);
-            Ui.At(Ui.Label(box, Bb(seat.stack - seat.put) + " bb", 24, fg), 0, 0.05f, 1, 0.5f);
+            Ui.At(Ui.Label(box, seat.stack - seat.put <= 0.01 ? "all in" : Bb(seat.stack - seat.put) + " bb", 24, fg), 0, 0.05f, 1, 0.5f);
             if (!string.IsNullOrEmpty(seat.act) || seat.put > 0)
             {
-                var chip = Ui.At(Ui.Label(table, (string.IsNullOrEmpty(seat.act) ? "" : seat.act + " ") + (seat.put > 0 ? Bb(seat.put) : ""), 22, Ui.Gold), x - 0.12f + (0.5f - x) * 0.35f, y - 0.03f + (0.5f - y) * 0.45f, x + 0.12f + (0.5f - x) * 0.35f, y + 0.03f + (0.5f - y) * 0.45f);
+                // the action already carries its size ("Jam 7.9", "Raise 2.3"); otherwise the amount in (blinds), or both
+                string act = seat.act ?? "", bet = act.Any(char.IsDigit) || act.StartsWith("Fold") ? act : (act + (seat.put > 0 ? " " + Bb(seat.put) : "")).Trim();
+                Ui.At(Ui.Label(table, bet, 22, Ui.Gold), x - 0.12f + (0.5f - x) * 0.35f, y - 0.03f + (0.5f - y) * 0.45f, x + 0.12f + (0.5f - x) * 0.35f, y + 0.03f + (0.5f - y) * 0.45f);
+            }
+            if (seat.pos == "BTN")   // the dealer button: toward the middle, to one side of the bet
+            {
+                float dx = 0.5f - x, dy = 0.5f - y, px = x + dx * 0.32f - dy * 0.22f, py = y + dy * 0.32f + dx * 0.22f;
+                var puck = Ui.At(new GameObject("Dealer", typeof(RectTransform)).AddComponent<Image>(), 0, 0, 1, 1);
+                puck.transform.SetParent(table, false); Ui.At(puck, px - 0.022f, py - 0.04f, px + 0.022f, py + 0.04f);
+                puck.sprite = Circle(); puck.preserveAspect = true; puck.color = new Color(0.97f, 0.96f, 0.93f); puck.raycastTarget = false;
+                Ui.Label(puck.transform, "D", 26, Ui.Night, TextAnchor.MiddleCenter, FontStyle.Bold);
             }
         }
 
@@ -194,6 +226,21 @@ namespace Dream.Game
                 }
             t.SetPixels32(px); t.Apply();
             return suits[k] = Sprite.Create(t, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f));
+        }
+
+        static Sprite circle;
+        static Sprite Circle()
+        {
+            if (circle != null) return circle;
+            int S = 64; var t = new Texture2D(S, S, TextureFormat.RGBA32, false); var px = new Color32[S * S];
+            for (int y = 0; y < S; y++)
+                for (int x = 0; x < S; x++)
+                {
+                    float d = Mathf.Sqrt((x + 0.5f - S / 2f) * (x + 0.5f - S / 2f) + (y + 0.5f - S / 2f) * (y + 0.5f - S / 2f));
+                    px[y * S + x] = new Color(1, 1, 1, Mathf.Clamp01(S / 2f - 1 - d + 0.5f));
+                }
+            t.SetPixels32(px); t.Apply();
+            return circle = Sprite.Create(t, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f));
         }
 
         static Sprite Rounded()
