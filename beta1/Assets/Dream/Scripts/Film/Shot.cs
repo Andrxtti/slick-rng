@@ -31,7 +31,7 @@ namespace Dream.Film
                     s.mm = e ? 85 : 65; s.fstop = e ? 1.8f : 2.0f;
                     float frame = e ? 0.24f : 0.48f;                       // metres of subject the frame holds, top to bottom
                     float d = frame * 0.5f / Mathf.Tan(VFov(s.mm) * 0.5f * Mathf.Deg2Rad);
-                    var dir = (front * (e ? 0.9f : 0.8f) + toO * (e ? 0.35f : 0.6f)).normalized;
+                    var dir = (front * (e ? 0.75f : 0.7f) + toO * (e ? 0.6f : 0.75f)).normalized;   // near the eyeline of the person they talk to
                     s.focus = S.Eyes; s.aim = S.Eyes - up * frame * (1f / 2f - 1f / 3f);   // eyes on the upper third
                     s.to = S.Eyes + dir * d + up * 0.02f;
                     s.from = kind == "push" ? S.Eyes + dir * d * 1.45f + up * 0.03f : s.to;
@@ -66,9 +66,11 @@ namespace Dream.Film
                 case "insert":
                 {
                     var p = FindProp(set, subject) ?? FindProp(set, "envelope");
-                    var at = p != null ? p.position : mid - up * 0.5f;
-                    s.mm = 50; s.fstop = 2.0f; s.shake = 0.6f;
-                    s.to = s.from = at + up * 0.38f - front * 0.28f + toO * 0.08f;
+                    var pr = p != null ? p.GetComponentInChildren<Renderer>() : null;
+                    var at = pr != null ? pr.bounds.center : p != null ? p.position : mid - up * 0.5f;
+                    if (O != null) at = Vector3.Lerp(at, new Vector3(O.transform.position.x, at.y, O.transform.position.z), 0.35f);   // where it is going
+                    s.mm = 40; s.fstop = 2.8f; s.shake = 0.6f;
+                    s.to = s.from = at + up * 0.55f - front * 0.32f;
                     s.aim = at; s.focus = at;
                     break;
                 }

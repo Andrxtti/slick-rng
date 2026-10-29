@@ -29,8 +29,22 @@ namespace Dream.Film
 
         public static Scene Load(string id)
         {
-            var t = Resources.Load<TextAsset>("Film/" + id);
+            var t = Data.Load<TextAsset>($"Film/{id}.json");
             return t == null ? null : JsonUtility.FromJson<Scene>(t.text);
+        }
+    }
+
+    // Film data (scenes, voices, sound) lives in Assets/Dream/FilmData, outside Resources: films are rendered in the
+    // editor and shipped as video, so none of it belongs in the phone build.
+    public static class Data
+    {
+        public static T Load<T>(string rel) where T : UnityEngine.Object
+        {
+#if UNITY_EDITOR
+            return UnityEditor.AssetDatabase.LoadAssetAtPath<T>("Assets/Dream/FilmData/" + rel);
+#else
+            return null;
+#endif
         }
     }
 }

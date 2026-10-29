@@ -1,10 +1,10 @@
-# SCRIPT.md -> one JSON per scene in Assets/Dream/Resources/Film/, plus the stings list for the reel and the voicer.
+# SCRIPT.md -> one JSON per scene in Assets/Dream/FilmData/Film/, plus the stings list for the reel and the voicer.
 #   python beta1/tools/script_build.py
 import json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "story", "SCRIPT.md")
-OUT = os.path.join(ROOT, "Assets", "Dream", "Resources", "Film")
+OUT = os.path.join(ROOT, "Assets", "Dream", "FilmData", "Film")
 
 LINE = re.compile(r"^(\d+)\.\s+(.+?)\s+\[(\w+)\]\s*(?:\((.*?)\))?:\s*(.+)$")
 STING = re.compile(r"^-\s+(.+?)\s+\[(\w+)\]:\s*(.+)$")

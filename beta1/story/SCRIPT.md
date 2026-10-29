@@ -46,14 +46,14 @@ The beat: a stranger who has been where you are hands you a door. Slick says alm
 7. YOU [you] (cu you; think): Poker. For real. I know how that sounds at two in the morning.
 8. SLICK [slick] (cu slick; talk): At two in the morning, it's the only true thing anybody says in here.
 {he slides a red envelope along the counter; the chrome catches the neon}
-9. SLICK [slick] (insert envelope; idle): Biscayne Card Room. Saturday, noon. The seat's paid.
+9. SLICK [slick] (insert envelope; talk): Biscayne Card Room. Saturday, noon. The seat's paid.
 10. YOU [you] (cu you; talk): Why would you do that for a stranger?
 11. SLICK [slick] (push slick; talk): Because I sat on that stool once. Somebody bought my pie.
 12. SLICK [slick] (cu slick; point > nod): Three things. Fold the junk. Lean on the scared ones. And near the money, play the money, not the chips.
 13. YOU [you] (ots slick; talk): Who are you?
 14. SLICK [slick] (ecu slick; idle): People call me Slick.
 {he leaves cash for both checks; the bell over the door rings; you look down at the envelope}
-15. CARD [card] (insert note): Inside, one line in pen: "People insist on calling it luck."
+15. CARD [card] (ecu you; think): Inside, one line in pen: "People insist on calling it luck."
 
 ## p_seat — The first seat
 place: cardroom · time: Saturday, 11:58 AM · cast: gnomey, tommy, you, dealer

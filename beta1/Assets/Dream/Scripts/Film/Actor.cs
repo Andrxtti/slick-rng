@@ -11,7 +11,7 @@ namespace Dream.Film
         public Transform Head;   // the head bone when there is a body
         protected Vector3 lookTarget; protected bool hasLook;
 
-        public virtual Vector3 Eyes => Head != null ? Head.position + Head.up * 0.07f + transform.forward * 0.07f : transform.position + Vector3.up * (Seated ? 0.74f : 1.62f);
+        public virtual Vector3 Eyes => Head != null ? Head.position + Vector3.up * 0.11f + transform.forward * 0.08f : transform.position + Vector3.up * (Seated ? 0.74f : 1.62f);
         public Vector3 Forward => transform.forward;
 
         public static Actor Spawn(string who, Transform mark)

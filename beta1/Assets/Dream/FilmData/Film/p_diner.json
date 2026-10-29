@@ -96,7 +96,7 @@
    "name": "SLICK",
    "shot": "insert",
    "subject": "envelope",
-   "act": "idle",
+   "act": "talk",
    "next": "",
    "text": "Biscayne Card Room. Saturday, noon. The seat's paid.",
    "voice": "p_diner_09"
@@ -160,9 +160,9 @@
    "n": 15,
    "who": "card",
    "name": "CARD",
-   "shot": "insert",
-   "subject": "note",
-   "act": "idle",
+   "shot": "ecu",
+   "subject": "you",
+   "act": "think",
    "next": "",
    "text": "Inside, one line in pen: \"People insist on calling it luck.\"",
    "voice": ""

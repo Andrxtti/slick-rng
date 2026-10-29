@@ -18,7 +18,8 @@ namespace Dream.Film
         Scene sc; GameObject set; Camera cam; AudioSource voice; Volume volume; DepthOfField dof;
         readonly Dictionary<string, Actor> actors = new Dictionary<string, Actor>();
         Text caption; Image black; CanvasGroup capGroup;
-        Shot shot;
+        AudioSource sfx, room;
+        Shot shot; Light key, fill; System.IO.StreamWriter cue;
 
         IEnumerator Start()
         {
@@ -33,9 +34,24 @@ namespace Dream.Film
                     var mark = Sets.Find(set, "MARK_" + who);
                     if (mark != null) actors[who] = Actor.Spawn(who, mark);
                 }
+            if (actors.Count == 2)   // stools swivel: two people talking turn a little toward each other
+            {
+                var a = new List<Actor>(actors.Values);
+                for (int i = 0; i < 2; i++)
+                {
+                    var to = a[1 - i].transform.position - a[i].transform.position; to.y = 0;
+                    var side = Vector3.Dot(to, a[i].transform.right) > 0 ? 1f : -1f;
+                    a[i].transform.Rotate(0, 25f * side, 0);
+                }
+            }
             black.color = set == null ? Color.black : Color.clear;
+            var amb = Data.Load<AudioClip>($"Sfx/amb_{sc.place}.wav");   // room tone under everything
+            if (amb != null) { room = gameObject.AddComponent<AudioSource>(); room.clip = amb; room.loop = true; room.volume = 0.55f; room.Play(); }
             yield return null;   // one frame for the probe and the bodies to settle
+            // the cue sheet: when each line starts in the film (video time), so stills can be pulled per line
+            try { cue = new System.IO.StreamWriter(System.IO.Path.Combine(Application.dataPath, "..", "Logs", $"film_{id}.txt")); } catch { }
             foreach (var l in sc.lines) yield return PlayLine(l);
+            cue?.Close();
             yield return Fade(1f, 0.6f);
             Take.Done = true;
         }
@@ -44,8 +60,11 @@ namespace Dream.Film
         {
             Business.Before(sc.id, l.n, set, actors);
             shot = set == null ? null : Shot.Make(l.shot, l.subject, l.who, set, actors, sc);
-            if (shot != null) { shot.Apply(cam, dof, 0f); }
-            AudioClip clip = string.IsNullOrEmpty(l.voice) ? null : Resources.Load<AudioClip>("Voice/" + l.voice);
+            if (shot != null) { shot.Apply(cam, dof, 0f); LightFor(shot, l.shot); }
+            cue?.WriteLine($"{l.n}	{Time.time:0.00}	{l.shot} {l.subject}	{l.who}: {l.text}"); cue?.Flush();
+            AudioClip clip = string.IsNullOrEmpty(l.voice) ? null : Data.Load<AudioClip>($"Voice/{l.voice}.wav");
+            foreach (var d in sc.directions)   // sounds the stage directions call for
+                if (d.after == l.n - 1 && d.text.Contains("bell")) sfx.PlayOneShot(Data.Load<AudioClip>("Sfx/bell.wav"), 0.7f);
             float len = clip != null ? clip.length + Beat : CardHold;
             if (l.who == "card") { caption.text = l.text; StartCoroutine(FadeCaption(len)); }
             if (actors.TryGetValue(l.who, out var speaker))
@@ -63,6 +82,29 @@ namespace Dream.Film
             }
         }
 
+        // Film lighting cheats per shot, as a gaffer would: a warm key from above and to the side of the camera
+        // (motivated by the pendants), a dim cool fill from the other side (the window). Wides keep the set's light.
+        void LightFor(Shot s, string kind)
+        {
+            if (key == null)
+            {
+                key = new GameObject("FilmKey").AddComponent<Light>(); key.type = LightType.Spot; key.shadows = LightShadows.Soft;
+                key.color = new Color(1f, 0.76f, 0.52f); key.spotAngle = 42; key.innerSpotAngle = 20; key.range = 5;
+                key.shadowBias = 0.01f; key.shadowNormalBias = 0.2f;
+                fill = new GameObject("FilmFill").AddComponent<Light>(); fill.type = LightType.Point;
+                fill.color = new Color(0.55f, 0.65f, 1f); fill.range = 3.5f; fill.shadows = LightShadows.None;
+            }
+            bool close = kind == "cu" || kind == "ecu" || kind == "push" || kind == "ots" || kind == "two" || kind == "insert";
+            key.enabled = fill.enabled = close && set != null;
+            if (!key.enabled) return;
+            var toCam = s.to - s.focus; toCam.y = 0; toCam = toCam.sqrMagnitude < 1e-4f ? Vector3.back : toCam.normalized;
+            key.transform.position = s.focus + Quaternion.AngleAxis(38, Vector3.up) * toCam * 1.5f + Vector3.up * 0.75f;
+            key.transform.LookAt(s.focus);
+            key.intensity = kind == "two" ? 3f : kind == "insert" ? 1.5f : 3.2f;
+            fill.transform.position = s.focus + Quaternion.AngleAxis(-70, Vector3.up) * toCam * 1.4f + Vector3.up * 0.1f;
+            fill.intensity = 0.5f;
+        }
+
         Actor Other(string who) { foreach (var kv in actors) if (kv.Key != who) return kv.Value; return null; }
 
         void BuildCamera()
@@ -76,6 +118,7 @@ namespace Dream.Film
             data.antialiasingQuality = AntialiasingQuality.High; data.stopNaN = true;
             cam.gameObject.AddComponent<AudioListener>();
             voice = gameObject.AddComponent<AudioSource>(); voice.spatialBlend = 0;
+            sfx = gameObject.AddComponent<AudioSource>(); sfx.spatialBlend = 0;
 
             // the cinema look: ACES, a gentle grade, bloom on the neon, shallow focus, grain, vignette
             volume = new GameObject("Look").AddComponent<Volume>(); volume.isGlobal = true;

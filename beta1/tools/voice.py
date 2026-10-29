@@ -1,13 +1,13 @@
-# Voice every line in Resources/Film/*.json with Piper (offline neural TTS, LibriTTS multi-speaker model).
+# Voice every line in FilmData/Film/*.json with Piper (offline neural TTS, LibriTTS multi-speaker model).
 #   python beta1/tools/voice.py [--force]
-# Writes Assets/Dream/Resources/Voice/<voice>.wav (mono, 22.05 kHz) for each line that has no clip yet, or whose text
+# Writes Assets/Dream/FilmData/Voice/<voice>.wav (mono, 22.05 kHz) for each line that has no clip yet, or whose text
 # changed (the text of every clip is kept in Voice/voices.json). Speaker settings come from the old project's
 # unity/tools/voice.py, mapped to the new voice ids.
 import json, os, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILM = os.path.join(ROOT, "Assets", "Dream", "Resources", "Film")
-OUT = os.path.join(ROOT, "Assets", "Dream", "Resources", "Voice")
+FILM = os.path.join(ROOT, "Assets", "Dream", "FilmData", "Film")
+OUT = os.path.join(ROOT, "Assets", "Dream", "FilmData", "Voice")
 PIPER = r"C:\Dev\Beta1Assets\tools\piper"
 BIN = os.path.join(PIPER, "piper", "piper.exe")
 MODEL = os.path.join(PIPER, "en-us-libritts-high.onnx")

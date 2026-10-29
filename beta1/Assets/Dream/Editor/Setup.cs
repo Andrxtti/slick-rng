@@ -26,6 +26,15 @@ namespace Dream.EditorTools
                 AssetDatabase.CreateAsset(asset, Dir + "/URP.asset");
             }
             asset.msaaSampleCount = 4;
+            // Forward+: no per-object light cap (the diner alone has a dozen practicals plus the film key and fill)
+            var rd = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(Dir + "/URP_Renderer.asset");
+            if (rd != null) { rd.renderingMode = RenderingMode.ForwardPlus; EditorUtility.SetDirty(rd); }
+            var so = new SerializedObject(asset);
+            foreach (var (k, v) in new[] { ("m_MainLightShadowmapResolution", 4096), ("m_AdditionalLightsShadowmapResolution", 4096), ("m_ShadowCascadeCount", 4), ("m_SoftShadowQuality", 3) })
+            { var pr = so.FindProperty(k); if (pr != null) pr.intValue = v; }
+            var adds = so.FindProperty("m_AdditionalLightShadowsSupported"); if (adds != null) adds.boolValue = true;
+            var soft = so.FindProperty("m_SoftShadowsSupported"); if (soft != null) soft.boolValue = true;
+            so.ApplyModifiedPropertiesWithoutUndo();
             asset.supportsHDR = true;
             asset.shadowDistance = 30f;
             EditorUtility.SetDirty(asset);
