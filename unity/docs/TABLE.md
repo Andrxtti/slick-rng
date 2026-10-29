@@ -128,8 +128,79 @@ remember your face". Use the brand type, not emoji.
 ## 10. Settings
 "Skip all-in animations" (on/off), saved. The all-in screen still shows its result card when it's on.
 
+## 11. Live or online: every moment knows where it is · Opus · high
+Steven, 12:16: "make sure all scenes are logical, no more 'the dealer stands up' during an online tournament or in
+person convo to legends during online tournaments, stuff like that".
+
+**The rule:** tag every film, Yarn line and table moment with where it can happen, and make Flow refuse anything that
+doesn't fit the event just played or being played. The tags are `live`, `online`, `any` and `story` (a fixed story
+beat). Online events are the CF Tilt ones, for example the CF $55 Global Rush.
+
+**Online, never:**
+- a dealer, the floor, a mic, a cage, a trophy or a room;
+- anyone talking to you in person, whether story cast or legend;
+- the final-table films (`ft_*`), the Classic films (`classic_*`, `trentbeat`) or `p_seat`.
+
+**Online, instead:** a CF Tilt banner on the table, the table's chat box, screen names, the phone for texts, and your
+apartment at night with the laptop (the set and the laptop camera already exist).
+- Story people only reach you online by text. Nobody in the story plays you online in Chapter 1.
+
+**Known offenders to fix:**
+- `after_win`: the old variant "Phones up. Dealer standing. Floor staff grinning." is live only.
+- `after_cash`: "a walk to the cage" and "The cashier counts it twice" are live only.
+- `firstwin`: "Saw the photo. Trophy... Left something in your locker" assumes a live title. After an online first
+  title, use the online lines below.
+- The final-table rival bar and the heads-up splash: online, the opponent is a screen name with no portrait or in-person
+  line.
+
+**Online versions (new):**
+- **after_win** (narrator, one of):
+  - "The final table window flashes gold. First of 1,104. Your name at the top of the CF Tilt lobby."
+  - "Three in the morning, alone in the apartment, and you just beat a thousand people. You say it out loud to nobody."
+  - "The chat fills with gg and one ship it. The laptop fan is the only applause."
+- **after_cash:**
+  - "A cash lands in your CF Tilt balance. You refresh it twice to be sure."
+  - "Out before the end, but paid. The lobby already has the next one starting."
+  - "Min-cash. You close the laptop gently, like it might change its mind."
+- **after_bust:**
+  - "You finished 214th. The table window closes by itself."
+  - "Busted. The tab is gone before you can argue with it."
+  - "The lobby keeps scrolling. Nobody noticed you leave."
+- **after_cooler:**
+  - "Aces into kings, in a window the size of a postcard. It still hurts full size."
+  - "The hand history says you did everything right. The balance says otherwise."
+  - "You watch the replay twice. It doesn't change."
+- **Your line and the witness:** your lines are the same. The witness is always a text, from Slick or David.
+- **firstwin**, if your first title is online:
+  - SLICK (text): "Saw the screenshot. Your name at the top of the lobby. Proud of you, kid."
+  - SLICK (text): "Left something for you at the Lucky Seven. Every champion needs a pair."
+  - Then the narrator line, as Steven wrote it.
+- **The bubble:**
+  - Banner: "HAND-FOR-HAND · every table waits for every other table".
+  - Chat: "fold fold fold", "pls no bubble", "someone just shove already".
+  - Slick's text, as in section 3.
+- **In the money:**
+  - Banner: "You're in the money".
+  - Chat: "gg bubble boy", "ty dealer".
+  - David's text.
+- **Heads-up:**
+  - Banner: "HEADS-UP vs ripriver_88", with the stacks.
+  - No Gnomey, no film.
+- **Table talk:** chat lines from screen names: "nh", "sick", "lol ok", "ship it", "how", "gl". Mustich's and Tommy's
+  lines are live only.
+- **Level card:** "CF Tilt · Level 7 · blinds 400/800 · next level 5:00". Slick's tip arrives as a text.
+
+**The same check for time and place:**
+- A 2:13 AM diner film plays that night, not straight after a noon event. Hold it until the evening slot or the night.
+- Lou appears only at the office or by text.
+- Gnomey appears only at Biscayne.
+- A home scene plays only when you're home.
+
+**The check:** run the autoplay driver through two runs. One plays only online events, the other only live events.
+Log every film and Yarn line that plays, with its tag. Fail on any mismatch, and keep the log in `Logs/`.
+
 ## Order
-1, 7, 8, then 3–6, then 2, 9, 10. Then `build-web`, a DAY_REPORT entry, and the stills in `C:\Dev\Builds\day2\`:
+1, 7, 8, 11, then 3–6, then 2, 9, 10. Then `build-web`, a DAY_REPORT entry, and the stills in `C:\Dev\Builds\day2\`:
 - an all-in that holds;
 - one that doesn't;
 - the bubble;
