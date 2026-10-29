@@ -52,5 +52,9 @@
    0.32,
    0.34
   ]
+ },
+ "hair_cards": {
+  "style": "crop",
+  "seed": 765
  }
 }

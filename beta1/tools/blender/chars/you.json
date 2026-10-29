@@ -10,5 +10,6 @@
  "eyelashes": "eyelashes01",
  "hair": "short02",
  "clothes": ["male_casualsuit01", "shoes01"],
- "colors": {"hair": [0.35, 0.26, 0.2], "brows": [0.45, 0.35, 0.28], "skin": [0.98, 0.9, 0.84]}
+ "colors": {"hair": [0.35, 0.26, 0.2], "brows": [0.45, 0.35, 0.28], "skin": [0.98, 0.9, 0.84]},
+ "hair_cards": {"style": "side", "seed": 349}
 }

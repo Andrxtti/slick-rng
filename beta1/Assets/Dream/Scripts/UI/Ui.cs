@@ -161,8 +161,35 @@ namespace Dream.UI
             return f;
         }
 
+        // small motion, cheap on phones: a UI piece slides in from an offset (reference pixels) and fades up; or pulses
+        public static void Slide(RectTransform r, Vector2 from, float delay, float time = 0.3f) => Motion.On(r).Go(Motion.SlideIn(r, from, delay, time));
+        public static void Pulse(Graphic g, float lo, float hi, float period = 1.4f) => Motion.On(g.rectTransform).Go(Motion.PulseLoop(g, lo, hi, period));
+
         public static void Clear(Transform t) { for (int i = t.childCount - 1; i >= 0; i--) UnityEngine.Object.Destroy(t.GetChild(i).gameObject); }
 
         public static string Money(double v) => "$" + Math.Round(v).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    public class Motion : MonoBehaviour
+    {
+        public static Motion On(RectTransform r) => r.GetComponent<Motion>() ?? r.gameObject.AddComponent<Motion>();
+        public void Go(System.Collections.IEnumerator e) => StartCoroutine(e);
+        public static System.Collections.IEnumerator SlideIn(RectTransform r, Vector2 from, float delay, float time)
+        {
+            var cg = r.GetComponent<CanvasGroup>() ?? r.gameObject.AddComponent<CanvasGroup>(); var end = r.anchoredPosition;
+            cg.alpha = 0; r.anchoredPosition = end + from;
+            for (float t = 0; t < delay; t += Time.unscaledDeltaTime) yield return null;
+            for (float t = 0; t < time; t += Time.unscaledDeltaTime)
+            {
+                float k = 1 - Mathf.Pow(1 - t / time, 3); cg.alpha = Mathf.Clamp01(t / (time * 0.6f)); r.anchoredPosition = end + from * (1 - k);
+                yield return null;
+            }
+            cg.alpha = 1; r.anchoredPosition = end;
+        }
+        public static System.Collections.IEnumerator PulseLoop(Graphic g, float lo, float hi, float period)
+        {
+            var c = g.color;
+            for (float t = 0; ; t += Time.unscaledDeltaTime) { c.a = Mathf.Lerp(lo, hi, 0.5f + 0.5f * Mathf.Sin(t * Mathf.PI * 2 / period)); g.color = c; yield return null; }
+        }
     }
 }

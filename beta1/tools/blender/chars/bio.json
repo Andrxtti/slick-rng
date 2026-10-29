@@ -6,5 +6,6 @@
  "skin": "young_asian_male", "eye_color": "brown", "eyebrows": "eyebrow002", "eyelashes": "eyelashes01", "hair": "short03",
  "clothes": ["male_casualsuit06", "shoes01"],
  "mask": {"seed": 14},
- "colors": {"hair": [0.32, 0.22, 0.15], "brows": [0.25, 0.18, 0.12], "skin": [0.97, 0.87, 0.76], "cloth_male_casualsuit06": [1.0, 1.0, 1.0]}
+ "colors": {"hair": [0.32, 0.22, 0.15], "brows": [0.25, 0.18, 0.12], "skin": [0.97, 0.87, 0.76], "cloth_male_casualsuit06": [1.0, 1.0, 1.0]},
+ "hair_cards": {"style": "fringe", "seed": 314}
 }

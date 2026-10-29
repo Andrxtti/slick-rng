@@ -77,3 +77,27 @@ None so far. Steven's words are as written, including "Spacepad" in lesson 1 (th
 - **Apartment:** it's already a small studio with water and city through the blinds (Poly Haven "modern_buildings_night").
   Calling it Brickell with a glimpse of the bay; a closer bay HDRI would be better (on the list).
 - Both branches re-played by the test driver; web build rebuilt: **15.0 MB, 0 errors**. Ready to publish.
+### Priority 2 (fonts) and 3 (graphics), Batch A1–A2 and C11–13 (12:00)
+- **Type:** every screen uses TextMeshPro in the brand fonts (OFL, `Resources/Fonts`, licences in `Fonts-Licenses`):
+  Gloock for titles, the narrator, the grade name and the name field; Inter for everything you read (caps labels get
+  +8 tracking, small text more line height); IBM Plex Mono for money, stacks, pot and hand lists. DejaVu covers the
+  symbols (★ ✓); the 👍 grade icon (no font on the web) shows ✓✓. Buttons and cards have rounded corners. No Arial
+  anywhere. Title reads "Test Beta 1.0" (C11). Stills: `day2/creator.png`, `phone_quit.png`, `keep_end.png`.
+- **Films (offline):** renders are 2560×1440, scaled down with lanczos (supersampling); SSAO on the film renderer;
+  4K soft shadows were already on; grain down to 0.16; insert key light halved (the counter blow-out).
+- **Phones (live, C12):** the web build switches to `URP_Mobile` (Linear upscaling instead of FSR, whose stripped EASU
+  shader turned post-processing off; no MSAA; 1K shadows, 2 cascades; its own renderer without SSAO), then back.
+- **Skin (A1):** new `Dream/Skin` shader: URP PBR + wrap-lit warm scatter at the terminator from every light + a tiled
+  pore normal map made in code (`FilmData/Tex/pores_n.png`, ours) + slightly rougher where the skin is flushed. Teeth and
+  tongue darkened so they never glow.
+- **Hair (A2):** `tools/blender/hair.py` grows ~12–16k card segments per head over the MakeHuman hair, following each
+  brief: back (Slick, Tommy, David), crop (Mustich, Lou, Gnomey, dealer), tousled (Nick), fringe (Bio), side part (you).
+  Our own strand texture; new `Dream/Hair` shader with two Kajiya-Kay highlights. Still: `day2/diner_hair_check.jpg`,
+  `slick_hair_pair.png` (Blender).
+  **Not good yet:** Slick still reads as a fringe from the front, because the MakeHuman shell underneath hangs over his
+  forehead. Next: trim the shell's front so his cards can go up and back.
+- **Table life (C13):** hole cards deal in from the pot, bets slide out from each seat, your seat glows softly while it's
+  your move. Coroutines on UI only, so it stays light on phones.
+- **Lip-sync (B7) is blocked on a permission:** I downloaded Rhubarb Lip Sync 1.13.0 (MIT, the official GitHub release)
+  to `C:\Dev\Beta1Assets\tools\rhubarb`, but this session wasn't allowed to run the downloaded .exe. Lip-sync stays
+  loudness-driven. If Steven allows running it, it's one script to write the mouth shapes for every line.

@@ -6,5 +6,6 @@
  "skin": "middleage_caucasian_male", "eye_color": "brown", "eyebrows": "eyebrow001", "eyelashes": "eyelashes01", "hair": "short02",
  "clothes": ["male_casualsuit05", "shoes03"],
  "beard": {"density": 0.35, "color": [0.12, 0.1, 0.09], "reach": 0.5},
- "colors": {"hair": [0.1, 0.085, 0.075], "brows": [0.15, 0.12, 0.1], "skin": [0.95, 0.84, 0.72], "cloth_male_casualsuit05": [0.22, 0.25, 0.42]}
+ "colors": {"hair": [0.1, 0.085, 0.075], "brows": [0.15, 0.12, 0.1], "skin": [0.95, 0.84, 0.72], "cloth_male_casualsuit05": [0.22, 0.25, 0.42]},
+ "hair_cards": {"style": "back", "seed": 566}
 }

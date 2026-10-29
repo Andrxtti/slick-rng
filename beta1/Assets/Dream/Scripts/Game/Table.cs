@@ -68,14 +68,15 @@ namespace Dream.Game
                 int k = (i - hero + n) % n;                       // you at the bottom; the next seat in order sits to your left (clockwise)
                 float a = -Mathf.PI / 2 - k * 2 * Mathf.PI / n;
                 float x = 0.5f + Mathf.Cos(a) * 0.43f, y = 0.5f + Mathf.Sin(a) * 0.41f;
-                Seat(table, sp.seats[i], i == hero, x, y);
+                Seat(table, sp.seats[i], i == hero, x, y, answered == null);
             }
             Ui.At(Ui.Num(table, $"pot {Bb(sp.pot)} bb", 34, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, 0.48f, 0.7f, 0.56f);
             Ui.At(Ui.Label(table, sp.cat, 26, new Color(1, 1, 1, 0.6f)), 0.25f, 0.42f, 0.75f, 0.48f);
 
             // your cards
             var cards = Ui.At(Ui.Box(s, "Cards"), 0.3f, 0.31f, 0.7f, 0.43f);
-            CardFace(cards, sp.hand[0], 0.02f, 0.48f); CardFace(cards, sp.hand[1], 0.52f, 0.98f);
+            var c0 = CardFace(cards, sp.hand[0], 0.02f, 0.48f); var c1 = CardFace(cards, sp.hand[1], 0.52f, 0.98f);
+            if (answered == null) { Ui.Slide(c0, new Vector2(60, 420), 0.15f); Ui.Slide(c1, new Vector2(-40, 420), 0.27f); }   // dealt from the middle
 
             Waiting = answered == null;
             if (answered == null)
@@ -150,8 +151,13 @@ namespace Dream.Game
         static string StageName(string st) => st switch { "early" => "Early levels", "middle" => "Middle levels", "bubble" => "The bubble", "final" => "Final table", "deep" => "Deep run", "cash" => "Cash game", _ => st };
         static string Bb(double v) => Math.Abs(v - Math.Round(v)) < 0.01 ? Math.Round(v).ToString("0") : v.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
 
-        static void Seat(RectTransform table, SeatView seat, bool you, float x, float y)
+        static void Seat(RectTransform table, SeatView seat, bool you, float x, float y, bool deal = false)
         {
+            if (you && deal)   // a soft gold glow round your seat while it's your move
+            {
+                var glow = Ui.At(Ui.Tile(table, "Glow", new Color(0.95f, 0.76f, 0.35f, 0.3f), 40), x - 0.115f, y - 0.075f, x + 0.115f, y + 0.075f);
+                Ui.Pulse(glow.GetComponent<Image>(), 0.08f, 0.45f);
+            }
             var box = Ui.At(Ui.Panel(table, seat.pos, you ? new Color(0.95f, 0.76f, 0.35f, 0.95f) : new Color(0.05f, 0.05f, 0.07f, seat.folded ? 0.45f : 0.85f)), x - 0.1f, y - 0.06f, x + 0.1f, y + 0.06f);
             box.GetComponent<Image>().sprite = Rounded(); box.GetComponent<Image>().type = Image.Type.Sliced;
             var fg = you ? Ui.Night : seat.folded ? Ui.Dim : Ui.Ink;
@@ -161,7 +167,8 @@ namespace Dream.Game
             {
                 // the action already carries its size ("Jam 7.9", "Raise 2.3"); otherwise the amount in (blinds), or both
                 string act = seat.act ?? "", bet = act.Any(char.IsDigit) || act.StartsWith("Fold") ? act : (act + (seat.put > 0 ? " " + Bb(seat.put) : "")).Trim();
-                Ui.At(Ui.Num(table, bet, 22, Ui.Gold), x - 0.12f + (0.5f - x) * 0.35f, y - 0.03f + (0.5f - y) * 0.45f, x + 0.12f + (0.5f - x) * 0.35f, y + 0.03f + (0.5f - y) * 0.45f);
+                var chip = Ui.At(Ui.Num(table, bet, 22, Ui.Gold), x - 0.12f + (0.5f - x) * 0.35f, y - 0.03f + (0.5f - y) * 0.45f, x + 0.12f + (0.5f - x) * 0.35f, y + 0.03f + (0.5f - y) * 0.45f);
+                if (deal) { var sz = table.rect.size; Ui.Slide(chip.rectTransform, new Vector2(-(0.5f - x) * 0.35f * sz.x, -(0.5f - y) * 0.45f * sz.y), 0.05f, 0.35f); }   // the bet goes out from the seat
             }
             if (seat.pos == "BTN")   // the dealer button: toward the middle, to one side of the bet
             {
@@ -173,7 +180,7 @@ namespace Dream.Game
             }
         }
 
-        static void CardFace(RectTransform parent, int c, float x0, float x1)
+        static RectTransform CardFace(RectTransform parent, int c, float x0, float x1)
         {
             var card = Ui.At(Ui.Panel(parent, "Card", new Color(0.97f, 0.96f, 0.93f)), x0, 0, x1, 1);
             card.GetComponent<Image>().sprite = Rounded(); card.GetComponent<Image>().type = Image.Type.Sliced;
@@ -182,6 +189,7 @@ namespace Dream.Game
             var pip = Ui.At(new GameObject("Suit", typeof(RectTransform)).AddComponent<Image>(), 0.25f, 0.06f, 0.75f, 0.46f);
             pip.transform.SetParent(card, false); Ui.At(pip, 0.25f, 0.06f, 0.75f, 0.46f);
             pip.sprite = Suit(suit); pip.color = col; pip.preserveAspect = true; pip.raycastTarget = false;
+            return card;
         }
 
         // generated art: the felt (worn centre, dark rail) and a rounded rectangle for sliced panels

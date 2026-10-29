@@ -109,7 +109,7 @@ namespace Dream.Film
             var toCam = s.to - s.focus; toCam.y = 0; toCam = toCam.sqrMagnitude < 1e-4f ? Vector3.back : toCam.normalized;
             key.transform.position = s.focus + Quaternion.AngleAxis(38, Vector3.up) * toCam * 1.5f + Vector3.up * 0.75f;
             key.transform.LookAt(s.focus);
-            key.intensity = (kind == "two" ? 3f : kind == "insert" ? 1.5f : 3.2f) * (Sets.Current?.key ?? 1f);
+            key.intensity = (kind == "two" ? 3f : kind == "insert" ? 0.6f : 3.2f) * (Sets.Current?.key ?? 1f);
             fill.transform.position = s.focus + Quaternion.AngleAxis(-70, Vector3.up) * toCam * 1.4f + Vector3.up * 0.1f;
             fill.intensity = 0.5f * (Sets.Current?.key ?? 1f);
         }

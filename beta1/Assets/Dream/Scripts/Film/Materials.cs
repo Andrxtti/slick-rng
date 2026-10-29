@@ -19,7 +19,8 @@ namespace Dream.Film
             var mats = man["materials"] as Dictionary<string, object>;
             var e = mats != null && mats.TryGetValue(part, out var v) ? v as Dictionary<string, object> : null;
             var skinShader = Shader.Find("Dream/Skin");
-            var m = new Material(part == "skin" && skinShader != null ? skinShader : Shader.Find("Universal Render Pipeline/Lit")) { name = part };
+            var hairShader = Shader.Find("Dream/Hair");   // strand highlights for the hair cards
+            var m = new Material(part == "skin" && skinShader != null ? skinShader : part == "haircards" && hairShader != null ? hairShader : Shader.Find("Universal Render Pipeline/Lit")) { name = part };
             Color tint = Color.white;
             if (man.TryGetValue("colors", out var cs) && cs is Dictionary<string, object> cd && cd.TryGetValue(part, out var cv) && cv is List<object> l)
                 tint = new Color(System.Convert.ToSingle(l[0]), System.Convert.ToSingle(l[1]), System.Convert.ToSingle(l[2]));
