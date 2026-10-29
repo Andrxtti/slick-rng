@@ -29,8 +29,8 @@ Steven asked for the quit-or-keep-the-job decision in Beta 1.0. Done, matching t
   - Keep: Monday locked, Saturday with the Friday paycheck, then one game per weekend; David's text before the goal.
   - Not reached in play: the Moonlighter's broke text. Fridays kept refilling the roll first, which is the day job working.
 - **Noticed while testing:** with the day job, after a Sunday game the next one is the *following* Sunday, never the
-  Saturday between them (one live game per Sunday-to-Saturday week). That's the old game's rule and I kept it; if you'd
-  rather "one game per Saturday+Sunday weekend", it's one line in `Flow.CantPlay`.
+  Saturday between them (one live game per Sunday-to-Saturday week). That's the old game's rule; Steven
+  confirmed (2026-10-29) to keep it for now. Changing it later is one line in `Flow.CantPlay`.
 - **Also fixed:** close-ups blocked by Lou's back (wider actor clearance), and the first shot of a film aiming before the
   seated pose had settled. Web build rebuilt (13.1 MB, 0 errors; 15 films).
 
@@ -126,7 +126,7 @@ characters using them sink. The old project maps standing talkers to them.
 ## What I need from you
 1. **Face videos** (Eric first): ~15 s head turns, neutral and smiling. Then I'll build the heads properly.
 2. **Music:** pick a CC0/CC-BY trailer track, or keep the synthesized score.
-3. **Decide:** the feedback route (GitHub issue vs email), and the weekend rule above.
+3. **Decide:** the feedback route (GitHub issue vs email).
 4. **Publish** the web build when you're happy (I didn't).
 
 ## Installs and downloads (all free, official sources)
