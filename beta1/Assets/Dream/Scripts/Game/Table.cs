@@ -20,8 +20,9 @@ namespace Dream.Game
         public static void Show(RectTransform parent, Run r, Action<bool> onDone, Spot preset = null)
         {
             root = parent; run = r; done = onDone; mistake = false;
-            if (preset != null) run.spot = preset; else Hands.Deal(run);
-            Draw(null);
+            if (preset != null) { run.spot = preset; Draw(null); return; }
+            Hands.Deal(run); Draw(null);
+            Moments.Level(root, run, () => Draw(null));   // the first level: the room (or CF Tilt), the stage, Slick's tip
         }
 
         // test command "spot <pos> [gid]": a library spot where you sit in that seat, someone has acted, and there's a BTN
@@ -110,7 +111,13 @@ namespace Dream.Game
         {
             var r = Hands.Answer(run, j);
             if (r.tier == "bad") mistake = true;
-            Draw(r);
+            void Verdict() { Draw(r); Moments.Talk(root, run, r); }
+            if (Showdown.AllIn(run.spot, j) && Showdown.Plays(run, r))   // the all-in plays out before the verdict
+            {
+                run.showH = run.h; run.showSi = run.si;
+                Moments.AllIn(root, run, Showdown.Make(run, r), Verdict);
+            }
+            else Verdict();
         }
 
         static void Grade(RectTransform s, Decision r)
@@ -134,18 +141,26 @@ namespace Dream.Game
 
         static void Next()
         {
-            var what = Hands.Next(run);
-            if (what == "finish" || what == "cooler") { var d = done; run = null; d(mistake); return; }
-            void Go() { Hands.Deal(run); Draw(null); if (what == "level") Toast("Next level: " + StageName(run.Stage)); }
-            if (what == "level" && OnLevel != null && OnLevel(run, Go)) return;
-            Go();
-        }
-
-        static void Toast(string text)
-        {
-            var t = Ui.At(Ui.Panel(root, "Toast", new Color(0, 0, 0, 0.75f)), 0.1f, 0.6f, 0.9f, 0.66f);
-            Ui.Label(t, text, 40, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold);
-            UnityEngine.Object.Destroy(t.gameObject, 1.6f);
+            string was = run.Stage; var what = Hands.Next(run);
+            var d = done;
+            if (what == "finish") { run = null; d(mistake); return; }
+            if (what == "cooler")   // the all-in that goes wrong, then the cooler card (old Run.cs)
+            {
+                var r0 = run; var last = r0.results.LastOrDefault(); r0.cooler = Moments.CoolerStory(r0);
+                int before = Flow.I != null ? Flow.I.S.coolers : 0; if (Flow.I != null) Flow.I.S.coolers++;
+                void Card() => Moments.Cooler(root, r0, before, () => { run = null; d(mistake); });
+                if (last != null && PlayerPrefs.GetInt("sd_skip", 0) == 0) Moments.AllIn(root, r0, Showdown.Make(r0, last, true), Card); else Card();
+                return;
+            }
+            // a new level: the final-table film, in the money, the level card, the bubble; heads-up before the last hand
+            void Deal() { Hands.Deal(run); Draw(null); }
+            void HeadsUp() { if (run.Stage == "final" && run.h == Hands.Per(run) - 1 && !run.huShown && run.ev.kind == "mtt") { run.huShown = true; Moments.HeadsUp(root, run, Deal); } else Deal(); }
+            if (what != "level") { HeadsUp(); return; }
+            void Bubble() { if ((run.Stage == "bubble" || run.Stage == "satbubble") && !run.bubbleShown) { run.bubbleShown = true; Moments.Bubble(root, run, HeadsUp); } else HeadsUp(); }
+            void LevelCard() => Moments.Level(root, run, Bubble);
+            void Money() { if ((was == "bubble" || was == "satbubble") && !run.itmShown) { run.itmShown = true; Moments.InTheMoney(root, run, LevelCard); } else LevelCard(); }
+            if (OnLevel != null && OnLevel(run, Money)) return;
+            Money();
         }
 
         static string StageName(string st) => st switch { "early" => "Early levels", "middle" => "Middle levels", "bubble" => "The bubble", "final" => "Final table", "deep" => "Deep run", "cash" => "Cash game", _ => st };

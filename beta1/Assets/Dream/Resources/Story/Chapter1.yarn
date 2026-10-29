@@ -25,7 +25,14 @@ title: AfterEvent
 <<endif>>
 <<if $won and not $firstwin_seen>>
     <<set $firstwin_seen to true>>
-    <<film firstwin>>
+    <<if $online>>
+        // an online first title: no photo, no trophy, no locker (TABLE.md §11)
+        Slick: Saw the screenshot. Your name at the top of the lobby. Proud of you, kid. #text
+        Slick: Left something for you at the Lucky Seven. Every champion needs a pair. #text
+        Inside: a pair of pixelated sunglasses and a note. “Deal with it.”
+    <<else>>
+        <<film firstwin>>
+    <<endif>>
 <<endif>>
 <<if $cooler and not $badbeat_seen>>
     <<set $badbeat_seen to true>>

@@ -45,3 +45,5 @@ sysinfo.txt
 /Assets/StreamingAssets/Films/
 /Assets/StreamingAssets/Films.meta
 __pycache__/
+/Assets/StreamingAssets/Music/
+/Assets/StreamingAssets/Music.meta

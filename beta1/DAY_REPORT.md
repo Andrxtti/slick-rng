@@ -101,3 +101,49 @@ None so far. Steven's words are as written, including "Spacepad" in lesson 1 (th
 - **Lip-sync (B7) is blocked on a permission:** I downloaded Rhubarb Lip Sync 1.13.0 (MIT, the official GitHub release)
   to `C:\Dev\Beta1Assets\tools\rhubarb`, but this session wasn't allowed to run the downloaded .exe. Lip-sync stays
   loudness-driven. If Steven allows running it, it's one script to write the mouth shapes for every line.
+### TABLE.md: the moments at the table, and live vs online (13:05) · Opus · high
+Steven's 12:13 and 12:16 asks, done in TABLE.md's order. Code: `Scripts/Game/Moments.cs` (new), hooks in `Table.cs` and
+`Flow.cs`, the online first title in `Chapter1.yarn`.
+- **§1 All-in screen**, ported from the old `Showdown.cs`/`Run.cs` with the dealing logic verbatim (cards dealt to fit
+  the grade). Neon ALL IN in Gloock, "Final table · all in vs Tommy", their cards flip at 0.8 s, the equity bar, the
+  flop at 1.6 s, the turn at 3.0 s, "The river...", the river at 4.6 s, "You hold!" / "Tommy holds." / "Chopped", the
+  hands, "Stack 170 → 180 bb", "See the verdict". It always plays at the bubble and the final table, about half the time
+  otherwise, never two hands running; tap skips; their fold to your shove has its own card. One fix of mine: when both
+  players have the same made hand on the board, it says "Three twos each. The kicker plays." instead of "Three twos
+  beats three twos".
+- **§7 Cooler:** the all-in that goes wrong, then "Nothing you could do", one of the old cooler stories, and Slick's line
+  with his portrait ("That's cooler number 2. ..." from the second on).
+- **§8 Walk away:** before the results, three beats over the room (Biscayne, or your apartment at night when online):
+  the narrator (Steven's three variants each, the new online ones for CF Tilt), your line, and the witness (Tommy, Gnomey
+  or Mustich in person live; a text from Slick or David online).
+- **§2 Level card** before every level: the room or "Next level" (online: "CF Tilt · Level 7 · blinds ..."), the stage,
+  the hands, Slick's DR_TIPS line with his portrait (online: as a text), and at the final table the rival bar
+  (Tommy or Mustich, their PreLine).
+- **§3–5 Bubble, in the money, heads-up**, live with Gnomey on the floor mic and Tommy's/Mustich's lines, online with the
+  CF Tilt banner and the chat box; Slick's and David's texts on both.
+- **§6 Table talk:** Tommy or Mustich after a big swing (live); chat lines from screen names (online).
+- **§9 Results banners** ("Beat Tommy heads-up, for the title", "A title for the trophy room", "Top of the CF Tilt
+  lobby"); **§10** "All-in animations: on/off" on the title screen, saved.
+- **§11 Live or online:** every film is tagged live / story / any (`Moments.FilmTag`), every table moment notes where it
+  is, and Flow refuses a live film after an online event. firstwin after an online first title is Slick's two texts
+  (TABLE.md's lines) and Steven's narrator line, no photo, no locker.
+  **Proof:** `day2/auto_keep_online.txt` (online events only) and `auto_quit_live.txt` (live only): **PASS, no
+  mismatch**. The first live run caught a real bug: the last online event leaked into a new career and refused
+  `p_seat`; fixed.
+  Time and place: every Chapter 1 event ends at night (the Local's films run before Monday), so the diner films always
+  play at night; Lou only appears at the office or by text; Gnomey only at Biscayne.
+- Stills: `day2/allin_holds.png`, `allin_doesnt_cooler.png`, `bubble_live.png`, `bubble_online.png`, `headsup.png`,
+  `walkaway_live.png`, `walkaway_online.png`, `moments_live.jpg`, `moments_sheet.jpg`.
+- **Web post-processing (review item 1):** the web build now always includes URP's FSR (EASU) shader, which URP needs
+  to exist before it runs any post pass. Please confirm the console line is gone. Also found and fixed: a build had left
+  ProjectSettings with no render pipeline. The build now puts back `URP.asset` by name (and there's a `film-pipeline`
+  bridge command).
+- **Steven's 11:55 notes:** "You were fourteen the first time you saw it on TV" (a narrator card, so nothing to
+  re-voice; the caption file is updated). Title music "Retroracing Nightlife" by Bogart VGM (CC-BY 4.0) loops under the
+  title and the creator with a 2.5 s fade-in, stops for the reel and the story, credited on the end card and in
+  `beta1/ASSETS.md`. There is no `unity/docs/ASSETS.md`, and `unity/` is the fallback I don't touch, so the beta's ledger
+  holds it. It's streamed from `StreamingAssets/Music` (1.9 MB at 96 kbps), not in the first download.
+- **Web build:** 15.3 MB, 0 errors. Ready to publish.
+
+### Rhythm fixes to Steven's lines (updated)
+- p_office: "You were nine" → "You were fourteen" (Steven's own change, 11:55: the player is 24).

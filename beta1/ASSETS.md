@@ -59,3 +59,11 @@ Every third-party asset in the beta1 project, with its source, author and licenc
 | cardboard_box_01 | model | Poly Haven, https://polyhaven.com/a/cardboard_box_01 | Rahul Chaudhary | CC0 |
 | side_table_01 | model | Poly Haven, https://polyhaven.com/a/side_table_01 | James Ray Cock | CC0 |
 | wood_floor | tex | Poly Haven, https://polyhaven.com/a/wood_floor | Dimitrios Savva | CC0 |
+
+## Music
+| asset | kind | source | author | licence |
+|---|---|---|---|---|
+| Retroracing Nightlife (title and creator, looped; `StreamingAssets/Music/title.mp3`, re-encoded to 96 kbps from `C:\Dev\Beta1Assets\music\retroracing_nightlife_bogartvgm.mp3`) | music | OpenGameArt, https://opengameart.org/content/retroracing-nightlife | Bogart VGM (credit with facebook.com/BogartVGM) | CC-BY 4.0 |
+
+## Fonts (OFL / free licences, `Assets/Dream/Resources/Fonts`, licence texts in `Assets/Dream/Fonts-Licenses`)
+Gloock, Inter, IBM Plex Mono, DejaVu Sans Bold (symbols), copied from the old project.

@@ -14,7 +14,8 @@ namespace Dream.EditorTools
     public static class Build
     {
         public const string Out = @"C:\Dev\Builds\TheDream-Beta1-Web";
-        static Build() { Remote.Extra["build-web"] = _ => Web(); }
+        static Build() { Remote.Extra["build-web"] = _ => Web(); Remote.Extra["film-pipeline"] = _ => { SetPipeline(Film); AssetDatabase.SaveAssets(); Remote.Log("film-pipeline: " + GraphicsSettings.defaultRenderPipeline?.name); }; }
+        static RenderPipelineAsset Film => AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>("Assets/Dream/Settings/URP.asset");
 
         public static void Web()
         {
@@ -26,7 +27,7 @@ namespace Dream.EditorTools
             PlayerSettings.SetManagedStrippingLevel(UnityEditor.Build.NamedBuildTarget.WebGL, ManagedStrippingLevel.High);
             PlayerSettings.defaultWebScreenWidth = 540; PlayerSettings.defaultWebScreenHeight = 960;
             // phones get their own light pipeline; the films keep URP.asset (4K shadows, MSAA) in the editor
-            var film = GraphicsSettings.defaultRenderPipeline; var phone = Mobile(); Quality.Run();
+            var phone = Mobile(); Quality.Run(); IncludeShader("Hidden/Universal Render Pipeline/Edge Adaptive Spatial Upsampling");
             SetPipeline(phone);
             BuildReport r;
             try
@@ -36,9 +37,20 @@ namespace Dream.EditorTools
                     scenes = new[] { "Assets/Dream/Scenes/Main.unity" }, locationPathName = Out, target = BuildTarget.WebGL, options = BuildOptions.None,
                 });
             }
-            finally { SetPipeline(film); AssetDatabase.SaveAssets(); }   // write the film pipeline back to ProjectSettings
+            finally { SetPipeline(Film); AssetDatabase.SaveAssets(); }   // always back to the film pipeline, by name   // write the film pipeline back to ProjectSettings
             long bytes = 0; foreach (var f in Directory.GetFiles(Path.Combine(Out, "Build"))) bytes += new FileInfo(f).Length;
             Remote.Log($"build-web: {r.summary.result}, {r.summary.totalErrors} errors, Build/ {bytes / 1e6:0.0} MB -> {Out}");
+        }
+
+        // URP turns off every post-processing pass on a platform if one of its shaders is missing: FSR's EASU is stripped
+        // from the web build even with Linear upscaling, so it is always included
+        static void IncludeShader(string name)
+        {
+            var sh = Shader.Find(name); if (sh == null) { Remote.Log("build-web: no shader " + name); return; }
+            var gs = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset")[0]);
+            var list = gs.FindProperty("m_AlwaysIncludedShaders");
+            for (int i = 0; i < list.arraySize; i++) if (list.GetArrayElementAtIndex(i).objectReferenceValue == sh) return;
+            list.arraySize++; list.GetArrayElementAtIndex(list.arraySize - 1).objectReferenceValue = sh; gs.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static void SetPipeline(RenderPipelineAsset a)

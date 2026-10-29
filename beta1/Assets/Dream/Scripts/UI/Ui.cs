@@ -172,11 +172,11 @@ namespace Dream.UI
 
     public class Motion : MonoBehaviour
     {
-        public static Motion On(RectTransform r) => r.GetComponent<Motion>() ?? r.gameObject.AddComponent<Motion>();
+        public static Motion On(RectTransform r) => r.TryGetComponent<Motion>(out var m) ? m : r.gameObject.AddComponent<Motion>();   // (?? misses Unity's fake nulls)
         public void Go(System.Collections.IEnumerator e) => StartCoroutine(e);
         public static System.Collections.IEnumerator SlideIn(RectTransform r, Vector2 from, float delay, float time)
         {
-            var cg = r.GetComponent<CanvasGroup>() ?? r.gameObject.AddComponent<CanvasGroup>(); var end = r.anchoredPosition;
+            var cg = r.TryGetComponent<CanvasGroup>(out var g) ? g : r.gameObject.AddComponent<CanvasGroup>(); var end = r.anchoredPosition;
             cg.alpha = 0; r.anchoredPosition = end + from;
             for (float t = 0; t < delay; t += Time.unscaledDeltaTime) yield return null;
             for (float t = 0; t < time; t += Time.unscaledDeltaTime)

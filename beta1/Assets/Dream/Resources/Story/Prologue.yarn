@@ -24,6 +24,7 @@ title: Variables
 <<declare $bust = false>>
 <<declare $cooler = false>>
 <<declare $qualified = false>>
+<<declare $online = false>>
 <<declare $ft_end = "">>
 <<declare $classic_end = "">>
 // Story variables (saved with the career): the job, the diner answer, and what has already been seen.

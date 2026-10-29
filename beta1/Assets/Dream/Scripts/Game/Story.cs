@@ -39,7 +39,7 @@ namespace Dream.Game
 
         // run a node with the game state it needs; then is called when the node (and anything it jumps to) is over
         // what just happened at the table, for the story to react to
-        public class Outcome { public string ev = "", ftEnd = "", classicEnd = ""; public bool won, bust, cooler, qualified; }
+        public class Outcome { public string ev = "", ftEnd = "", classicEnd = ""; public bool won, bust, cooler, qualified, online; }
 
         public void Run(string node, Action then, Outcome o = null)
         {
@@ -48,7 +48,7 @@ namespace Dream.Game
             vars.SetValue("$name", S.name ?? ""); vars.SetValue("$bankroll", (float)S.br); vars.SetValue("$peak", (float)S.peak); vars.SetValue("$room_title", S.roomTitle);
             vars.SetValue("$chapter", S.step == "prologue" || S.step == "choice" ? 0f : S.step == "done" ? 2f : 1f);
             vars.SetValue("$event", o.ev); vars.SetValue("$won", o.won); vars.SetValue("$bust", o.bust); vars.SetValue("$cooler", o.cooler);
-            vars.SetValue("$qualified", o.qualified); vars.SetValue("$ft_end", o.ftEnd); vars.SetValue("$classic_end", o.classicEnd);
+            vars.SetValue("$qualified", o.qualified); vars.SetValue("$online", o.online); vars.SetValue("$ft_end", o.ftEnd); vars.SetValue("$classic_end", o.classicEnd);
             done = then;
             _ = runner.StartDialogue(node);
         }
@@ -89,6 +89,7 @@ namespace Dream.Game
         YarnTask Film(string id)
         {
             bool over = false;
+            if (!Moments.FilmOk(id, Flow.LastEvent)) return YarnTask.CompletedTask;   // never a live film after an online event
             StoryPresenter.AfterPhone(() => Films.Play(new[] { id }, () => over = true));   // finish reading the texts first
             return YarnTask.WaitUntil(() => over);
         }

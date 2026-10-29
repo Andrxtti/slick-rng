@@ -42,7 +42,7 @@ The beat: the job takes everything, and he finally notices.
 4. NATSO [lou] (cu lou; lean): And now I'm un-signing off on it. Problem?
 5. YOU [you] (cu you; idle): No problem, Lou.
 6. NATSO [lou] (two; nod > idle): Great. Oh, and I told the partners the new model was my idea. Team player, right?
-7. CARD [card] (push you; think): You were nine the first time you saw it on TV. / A final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing.
+7. CARD [card] (push you; think): You were fourteen the first time you saw it on TV. / A final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing.
 8. CARD [card] (ecu you; think): The room went silent. His opponent folded. He never showed. / He made it look like he could see the future.
 9. YOU [you] (ecu you; think): Somewhere along the way I traded that for a lanyard.
 

@@ -22,7 +22,7 @@ namespace Dream.Game
         public int day = -1, liveDay = -99, liveWeek = -99;   // calendar day (0 = Mon 5 Jan 2026); last live game day and week
         public int onlineDay = -99, onlineN, onlineWeek = -99, onlineWN;   // online games played today / this week
         public bool reelSeen, roomTitle, day2;   // day2: your chips are bagged for Day 2 of the Classic
-        public int titles;
+        public int titles, coolers;
         public List<string> story = new List<string>();   // Yarn's story variables ($job, seen flags), saved as name=value
         public int events, cashes, decisions, perfect;
         public string lastEv = ""; public int lastPlace; public double lastPrize; public string lastMet = "";   // for the films' {keys}
@@ -37,6 +37,7 @@ namespace Dream.Game
     public class Flow : MonoBehaviour
     {
         public static Flow I;
+        public static EventDef LastEvent;   // where the story is now: films and lines are checked against it (Moments.FilmOk)
         public Save S;
         Canvas canvas; RectTransform root;
         public const double Goal = 10000;                                         // the Chapter 1 goal (also in Chapter1.yarn)
@@ -88,7 +89,7 @@ namespace Dream.Game
 
         void Start()
         {
-            I = this; Application.targetFrameRate = 60;
+            I = this; Application.targetFrameRate = 60; LastEvent = null;
             var cam = new GameObject("UiCamera").AddComponent<Camera>(); cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = Ui.Night;
             canvas = Ui.Root("Dream"); root = (RectTransform)canvas.transform;
             Lib.Load();
@@ -100,10 +101,36 @@ namespace Dream.Game
 
         RectTransform Screen(Color bg) { Ui.Clear(root); return Ui.Panel(root, "Screen", bg); }
 
+        // the title music (Steven, 11:55): "Retroracing Nightlife" by Bogart VGM, CC-BY 4.0, streamed from
+        // StreamingAssets/Music/title.mp3, looped under the title and the creator with a soft fade-in
+        AudioSource music; bool musicOn;
+        void Music(bool on)
+        {
+            musicOn = on;
+            if (music == null) { music = gameObject.AddComponent<AudioSource>(); music.loop = true; music.volume = 0; StartCoroutine(LoadMusic()); }
+            StartCoroutine(FadeMusic());
+        }
+        System.Collections.IEnumerator LoadMusic()
+        {
+            var sa = Application.streamingAssetsPath; var url = (sa.Contains("://") ? sa : "file://" + sa) + "/Music/title.mp3";
+            using var req = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG);
+            yield return req.SendWebRequest();
+            if (req.result != UnityEngine.Networking.UnityWebRequest.Result.Success) yield break;
+            music.clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(req);
+            if (musicOn) music.Play();
+        }
+        System.Collections.IEnumerator FadeMusic()
+        {
+            if (musicOn && music.clip != null && !music.isPlaying) music.Play();
+            float to = musicOn ? 0.55f : 0f, speed = musicOn ? 0.22f : 0.8f;   // in over ~2.5 s, out in under a second
+            while (music != null && !Mathf.Approximately(music.volume, to) && musicOn == (to > 0)) { music.volume = Mathf.MoveTowards(music.volume, to, Time.unscaledDeltaTime * speed); yield return null; }
+            if (music != null && !musicOn && music.volume <= 0) music.Pause();
+        }
+
         // ------------------------------------------------------------ title
         public void Title()
         {
-            S = Save.Load();
+            S = Save.Load(); Music(true);
             var s = Screen(Ui.Night);
             Ui.At(Ui.Label(s, "CONFIRMED FIRE PRESENTS", 26, Ui.Dim), 0, 0.8f, 1, 0.83f);
             Ui.At(Ui.Title(s, "The Dream", 150, Ui.Ink), 0, 0.64f, 1, 0.8f);
@@ -113,12 +140,16 @@ namespace Dream.Game
             bool can = S != null && S.step != "new";
             Ui.At(Ui.Button(s, can ? "Continue" : "Begin", () => { if (can) Resume(); else NewCareer(); }, Ui.Gold, Ui.Night, 48), 0.18f, 0.3f, 0.82f, 0.36f);
             if (can) Ui.At(Ui.Button(s, "New career", () => { Save.Erase(); NewCareer(); }, Ui.Card, Ui.Ink, 36), 0.18f, 0.22f, 0.82f, 0.27f);
-            Ui.At(Ui.Button(s, "Replay the reel", () => Films.Play(new[] { "reel" }, Title), new Color(1, 1, 1, 0.06f), Ui.Dim, 30), 0.3f, 0.13f, 0.7f, 0.17f);
+            Ui.At(Ui.Button(s, "Replay the reel", () => { Music(false); Films.Play(new[] { "reel" }, Title); }, new Color(1, 1, 1, 0.06f), Ui.Dim, 30), 0.3f, 0.13f, 0.7f, 0.17f);
+            // the one setting (TABLE.md §10): the all-in plays out, or goes straight to its result
+            bool skip = PlayerPrefs.GetInt("sd_skip", 0) > 0;
+            Ui.At(Ui.Button(s, "All-in animations: " + (skip ? "off" : "on"), () => { PlayerPrefs.SetInt("sd_skip", skip ? 0 : 1); PlayerPrefs.Save(); Title(); }, new Color(1, 1, 1, 0.04f), Ui.Dim, 24), 0.3f, 0.08f, 0.7f, 0.115f);
         }
 
         void NewCareer()
         {
             bool seen = S != null && S.reelSeen;
+            if (!seen) Music(false);   // the reel has its own score
             Films.Play(seen ? new string[0] : new[] { "reel" }, Create);
         }
 
@@ -127,7 +158,7 @@ namespace Dream.Game
         static readonly string[] Names = { "Alex", "Sam", "Jordan", "Nico", "Danny", "Marco", "Chris", "Leo", "Ricky", "Tony", "Matt", "Eddie", "Ray", "Vince", "Jay" };
         void Create()
         {
-            var s = Screen(Ui.Night);
+            Music(true); var s = Screen(Ui.Night);
             Ui.At(Ui.Label(s, "CREATE YOUR PLAYER", 26, Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.08f, 0.92f, 0.92f, 0.95f);
             var pic = Ui.At(Ui.Tile(s, "Portrait", Color.white, 36), 0.14f, 0.43f, 0.86f, 0.9f).GetComponent<Image>();
             pic.sprite = null; var tex = Resources.Load<Texture2D>("UI/you");
@@ -145,11 +176,13 @@ namespace Dream.Game
         void Begin(string name)
         {
             S = new Save { step = "prologue", br = 0, day = 5, reelSeen = true, name = string.IsNullOrWhiteSpace(name) ? "Rookie" : name.Trim() }; S.Write();   // Saturday: the Biscayne Championship (free); the bankroll starts at zero, as in the old game
+            LastEvent = null; Music(false);   // a new career is nowhere yet: the prologue's films are story beats
             story.Run("Prologue", () => Play("local"));
         }
 
         void Resume()
         {
+            Music(false);
             if (S.step == "prologue") { Films.Play(new[] { "p_seat" }, () => Play("local")); return; }
             if (S.step == "choice") { story.Run("Monday", AfterStory); return; }
             if (S.step == "done") { EndCard(); return; }
@@ -311,8 +344,12 @@ namespace Dream.Game
             string classicEnd = ev.id == "classic2" && !won ? ClassicLoss(met ? who : null) : "";
             if (ev.id == "local") S.step = "choice";
             S.Write();
-            var o = new Story.Outcome { ev = ev.id, won = won, bust = bust, cooler = run.cooler != null, qualified = qualified, ftEnd = ftEnd, classicEnd = classicEnd };
-            Results(run, place, paid, prize, qualified, () => story.Run("AfterEvent", AfterStory, o));
+            var o = new Story.Outcome { ev = ev.id, won = won, bust = bust, cooler = run.cooler != null, qualified = qualified, ftEnd = ftEnd, classicEnd = classicEnd, online = ev.online };
+            LastEvent = ev;
+            void Res() => Results(run, place, paid, prize, qualified, () => story.Run("AfterEvent", AfterStory, o));
+            string outcome = won ? "win" : run.cooler != null ? "cooler" : prize > 0 ? "cash" : "bust";
+            if (qualified) Res();   // bagging chips has its own film (classic_day1)
+            else { Ui.Clear(root); Moments.WalkAway(root, ev, outcome, place, prize, S.events, Res); }   // the walk away (old after_* scenes)
         }
         static bool Data(string film) => film == "ft_won_tommy" || film == "ft_lost_tommy";   // the final-table endings that are filmed
 
@@ -355,7 +392,13 @@ namespace Dream.Game
             Ui.At(Ui.Title(s, head, 96, Ui.Ink), 0.05f, 0.77f, 0.95f, 0.88f);
             string sub = qualified ? $"Top {ev.seats} of {ev.field} come back Sunday" : prize > 0 ? "Paid " + Ui.Money(prize) : ev.kind == "cash" ? "" : $"{paid} paid of {ev.field}";
             Ui.At(Ui.Num(s, sub, 36, prize > 0 || qualified ? Ui.Gold : Ui.Dim), 0.05f, 0.72f, 0.95f, 0.77f);
-            if (run.cooler != null) Ui.At(Ui.Label(s, "You did nothing wrong. Aces ran into kings between levels.", 28, Ui.Dim), 0.08f, 0.67f, 0.92f, 0.71f);
+            // the big moments (old Run.cs results), in words
+            string met = S.lastMet == "tommy" ? "Tommy" : S.lastMet == "mustich" ? "Mustich" : null, banner = null;
+            if (place == 1 && met != null) banner = $"Beat {met} heads-up, for the title";
+            else if (place == 1) banner = ev.online ? "Top of the CF Tilt lobby" : "A title for the trophy room";
+            else if (met != null && place <= 9) banner = $"Final table with {met}: they'll remember your face";
+            if (banner != null) Ui.At(Ui.Label(s, banner.ToUpperInvariant(), 24, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.05f, 0.665f, 0.95f, 0.695f);
+            if (run.cooler != null && banner == null) Ui.At(Ui.Label(s, "You did nothing wrong. " + run.cooler, 26, Ui.Dim), 0.08f, 0.66f, 0.92f, 0.71f);
             Ui.At(Ui.Label(s, $"ACCURACY {Hands.Accuracy(run.results)}%  ·  {run.results.Count} DECISIONS", 26, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.05f, 0.61f, 0.95f, 0.65f);
             float y = 0.57f;
             foreach (var r in run.results.Take(10))
@@ -383,6 +426,7 @@ namespace Dream.Game
             Ui.At(Ui.Button(s, "Send feedback", () => Application.OpenURL(FeedbackUrl), Ui.Gold, Ui.Night, 44), 0.18f, 0.3f, 0.82f, 0.36f);
             Ui.At(Ui.Button(s, "Keep playing Chapter 1", () => { S.step = "ch1"; S.Write(); Hub(); }, Ui.Card, Ui.Ink, 34), 0.18f, 0.21f, 0.82f, 0.26f);
             Ui.At(Ui.Button(s, "Title", Title, new Color(1, 1, 1, 0.06f), Ui.Dim, 30), 0.3f, 0.12f, 0.7f, 0.17f);
+            Ui.At(Ui.Label(s, "Music: “Retroracing Nightlife” by Bogart VGM (CC-BY 4.0), facebook.com/BogartVGM", 20, new Color(1, 1, 1, 0.4f)), 0.05f, 0.04f, 0.95f, 0.07f);
         }
     }
 }

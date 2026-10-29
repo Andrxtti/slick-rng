@@ -17,7 +17,7 @@ namespace Dream.EditorTools
     [InitializeOnLoad]
     public static class AutoPlay
     {
-        static string branch; static bool lose, broke, cut; static double next; static int steps; static StreamWriter log; static readonly HashSet<string> shot = new HashSet<string>();
+        static string branch, only; static bool lose, broke, cut; static double next; static int steps; static StreamWriter log; static readonly HashSet<string> shot = new HashSet<string>();
         static string lastHub, lastText;
 
         static AutoPlay()
@@ -26,8 +26,8 @@ namespace Dream.EditorTools
             Remote.Extra["story"] = a => { var p = a.Split(' '); Flow.I?.TestStory(p[0], p[1], double.Parse(p[2], System.Globalization.CultureInfo.InvariantCulture)); };
             Remote.Extra["auto"] = b =>
             {
-                lose = b.EndsWith(" lose"); broke = b.EndsWith(" broke"); cut = false; branch = b.StartsWith("keep") ? "keep" : "quit"; steps = 0; shot.Clear(); lastHub = null; Films.Played.Clear();
-                log = new StreamWriter(Path.Combine(Application.dataPath, "..", "Logs", $"auto_{branch}{(lose ? "_lose" : broke ? "_broke" : "")}.txt"));
+                lose = b.EndsWith(" lose"); broke = b.EndsWith(" broke"); cut = false; only = b.EndsWith(" online") ? "online" : b.EndsWith(" live") ? "live" : null; Moments.Log.Clear(); branch = b.StartsWith("keep") ? "keep" : "quit"; steps = 0; shot.Clear(); lastHub = null; Films.Played.Clear();
+                log = new StreamWriter(Path.Combine(Application.dataPath, "..", "Logs", $"auto_{branch}{(lose ? "_lose" : broke ? "_broke" : only != null ? "_" + only : "")}.txt"));
                 PlayerPrefs.DeleteAll();
                 if (!EditorApplication.isPlaying) { UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Dream/Scenes/Main.unity"); EditorApplication.isPlaying = true; }
                 EditorApplication.update -= Tick; EditorApplication.update += Tick;
@@ -47,7 +47,7 @@ namespace Dream.EditorTools
             return null;
         }
         static bool Has(string text) => Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Any(t => t.text.StartsWith(text));
-        static void Shot(string name) { if (shot.Add(name)) ScreenCapture.CaptureScreenshot(Path.Combine(Application.dataPath, "..", "Logs", $"{branch}_{name}.png")); }
+        static bool Shot(string name) { if (!shot.Add(name)) return false; ScreenCapture.CaptureScreenshot(Path.Combine(Application.dataPath, "..", "Logs", $"{branch}_{name}.png")); return true; }
 
         static void Tick()
         {
@@ -56,6 +56,24 @@ namespace Dream.EditorTools
             if (++steps > 4000) { Stop("gave up after 4000 steps"); return; }
             var films = Object.FindAnyObjectByType<Films>();
             if (films != null) { films.Skip(); return; }
+            // the table's moments: the all-in, the cooler, the level card, the bubble, heads-up, the walk away
+            var verdict = Find("See the verdict") ?? Find("See where you finished");
+            if (verdict != null)
+            {
+                bool fresh = Has("ALL IN") && Shot(Has("You hold!") ? "allin_hold" : Has("holds.") ? "allin_lost" : "allin_fold");
+                fresh |= Has("Nothing you could do") && Shot("cooler");
+                if (!fresh) verdict.onClick.Invoke();   // a new screenshot waits a tick (it's taken at the end of the frame)
+                return;
+            }
+            foreach (var name in new[] { "Moment", "WalkAway" })
+            {
+                var m = GameObject.Find(name);
+                if (m == null || m.GetComponent<Button>() == null) continue;
+                bool fresh = (Has("THE BUBBLE") && Shot("bubble")) | (Has("HEADS-UP") && Shot("headsup")) | (Has("IN THE MONEY") && Shot("itm")) | (name == "WalkAway" && Shot("walkaway"));
+                if (fresh || Has("ALL IN")) return;   // a screenshot waits a tick; an all-in is still running
+                m.GetComponent<Button>().onClick.Invoke(); return;
+            }
+            if (GameObject.Find("Talk") != null && Shot("talk")) return;
             var start = Find("Start the story");   // the creator: roll the dice once, then go
             if (start != null)
             {
@@ -110,7 +128,7 @@ namespace Dream.EditorTools
                 string line = $"hub {date} | ${f.S.br:0} | {f.Rep} | {(why == "" ? "can play" : why)}{(note != null ? " | " + note : "")}";
                 if (line != lastHub) { W(line); lastHub = line; }
                 // three smaller games first, so the calendar rules (one live game a day, weekends with the job) get played
-                var order = new[] { "classic2", "classic", "nightly", "glob55", "freeroll" };
+                var order = only == "online" ? new[] { "glob55", "freeroll" } : only == "live" ? new[] { "classic2", "classic", "nightly" } : new[] { "classic2", "classic", "nightly", "glob55", "freeroll" };
                 foreach (var id in order) { var b = Find(id); if (b != null) { W($"  play {id} (${f.S.br:0} before buy-in)"); b.onClick.Invoke(); return; } }
                 var sleep = Find("Sleep") ?? Find("Call it a night"); if (sleep != null) { sleep.onClick.Invoke(); return; }
                 Stop("hub with nothing to do");
@@ -122,6 +140,8 @@ namespace Dream.EditorTools
         static void Stop(string why)
         {
             W(why); W("films: " + string.Join(", ", Films.Played));
+            W("where (TABLE.md 11):"); foreach (var l in Moments.Log) W("  " + l);
+            int bad = Moments.Log.Count(l => l.StartsWith("MISMATCH")); W(bad == 0 ? "PASS: no live/online mismatch" : $"FAIL: {bad} mismatches");
             log?.Close(); log = null; EditorApplication.update -= Tick;
             Remote.Log($"auto {branch}: {why}");
         }

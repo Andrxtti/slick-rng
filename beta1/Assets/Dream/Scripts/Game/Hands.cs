@@ -114,6 +114,7 @@ namespace Dream.Game
         public bool bust, turbo; public string cooler;
         public List<Decision> results = new List<Decision>();
         public Rng rng; public Spot spot;
+        public int showH = -9, showSi = -9, talkH = -99; public bool bubbleShown, itmShown, huShown;   // the table's moments (Moments.cs)
         public string libGid; public int libIndex = -1; public HashSet<int> seen = new HashSet<int>(); public List<string> usedTables = new List<string>();
         public string Stage => stages[Math.Min(si, stages.Count - 1)];
     }
