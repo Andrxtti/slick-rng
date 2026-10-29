@@ -7,8 +7,9 @@ Owner: Steven (GitHub Andrxtti). Two products live here:
 **Current mission: The Dream — Launch Beta 1.0. Read `unity/docs/BETA1.md` in full before doing anything.**
 
 ## Hard rules
-- Work on branch `beta1` (made from `unity`). Commit and push after every task. Never push to `main` (it is the live site)
-  and never write into `docs/` (GitHub Pages).
+- Work on branch `beta1` (made from `unity`) in `C:\Dev\slick-rng`. Commit after every task and push when you can. If
+  GitHub asks for a sign-in nobody is there to give, keep committing locally (the cloud session can read the clone). Never
+  push to `main` (it is the live site) and never write into `docs/` (GitHub Pages).
 - The solver is off-limits: don't touch `tools/pf`, `tools/pfdream`, `app/`, `docs/`, `engine/`, `spots/`, and never
   regenerate `unity/Assets/Dream/Resources/Dream/spots.json`. Never commit `gw/` or any course data.
 - Real people: a face is recreated only for people who agreed (the list is in BETA1.md, "Cast and consent"). Every legend

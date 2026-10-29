@@ -2,7 +2,8 @@
 
 Written 2026-10-29 01:15 ET by the cloud Claude session, from tonight's conversation with Steven. Read all of this, then
 `CLAUDE.md` (rules), `unity/docs/ART_DIRECTION.md`, `unity/docs/STATUS.md`, `dream/README.md` and
-`unity/docs/characters/*.md`. Then work the task list at the bottom, in order, committing after each task.
+`unity/docs/characters/*.md`. Then work the task list at the bottom, in order, committing after each task. Steven is asleep: don't stop to ask;
+make the most reasonable call, write it in the night report, and keep going until every batch is done or truly blocked.
 
 ## 1. What Beta 1.0 is
 
@@ -113,7 +114,7 @@ are in `C:\Dev\CastRefs` (outside the repo; never commit them):
 ## 6. Tasks (in order; commit and push to `beta1` after each)
 
 **Batch 0 — setup** · Opus · low
-0. `git clone -b unity https://github.com/Andrxtti/slick-rng C:\Dev\slick-rng`, then `git checkout -b beta1`.
+0. The repo is cloned at `C:\Dev\slick-rng` (branch `unity`). Run `git pull`, then `git checkout -b beta1`.
    - Check that `Assets/Dream` in the Unity project matches the repo (hash a few files), and that `blender`, `ffmpeg`,
      `python` and `git` run.
    - Send `refresh`, wait for the compile, then `render p_diner`, and look at a contact sheet of the result. This is the
