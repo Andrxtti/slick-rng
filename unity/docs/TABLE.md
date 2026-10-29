@@ -14,7 +14,7 @@ Look: the new brand type (Gloock, Inter, IBM Plex Mono), the same polish as the 
 GPU, skippable with a tap.
 
 ## 1. The all-in screen (old game) · Opus · high
-Source: `unity/Assets/Dream/Scripts/Game/Showdown.cs` and `UI/Run.cs` (`ShowdownView`). Port the behaviour exactly.
+Source: `unity/Assets/Dream/Scripts/Game/Showdown.cs` and `UI/Run.cs` (`ShowdownView`). Port the behavior exactly.
 
 **When it plays:**
 - Your decision puts your stack in the middle: you shove, or you call a shove.
@@ -22,7 +22,7 @@ Source: `unity/Assets/Dream/Scripts/Game/Showdown.cs` and `UI/Run.cs` (`Showdown
 - Never two hands running. Never when "Skip all-in animations" is on in Settings (old flag `sd_skip`).
 
 **What it shows:**
-- "ALL IN" big in Gloock, with a neon-lime glow (old colour #b8ff2e).
+- "ALL IN" big in Gloock, with a neon-lime glow (old color #b8ff2e).
 - The kicker: "Final table · all in vs Mustich" when the opponent is someone from the story.
 - Your hand and theirs. Their cards flip at 0.8 s with a sting.
 - An equity bar ("62% to win") appears when their cards turn over.

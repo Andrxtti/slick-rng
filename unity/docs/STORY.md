@@ -195,7 +195,7 @@ named players besides you, drawn from these lists: legends and the current cast 
   - Tommy's Lincoln on the causeway at dawn.
   - The Silver Strike bar.
   - A Vegas steakhouse booth.
-  - A convention-centre hallway, with fluorescent light, carpet and a bracelet poster.
+  - A convention-center hallway, with fluorescent light, carpet and a bracelet poster.
   - The Titan hotel gym at 5 AM.
   - A Vegas 24-hour diner (the mirror of the Lucky Seven).
   - The Hall of Legends gallery.
@@ -209,7 +209,7 @@ Goal: win two Circuit rings and build a $40,000 bankroll.
 
 ## c2_drive — Chapter 2 · The causeway (car)
 
-1. Narrator [n]: 5:10 AM. The causeway is empty and the bay is the colour of a nickel. / Tommy "The Shark" Maio is driving a 1998 Lincoln like it owes him money.  {ext~grind}
+1. Narrator [n]: 5:10 AM. The causeway is empty and the bay is the color of a nickel. / Tommy "The Shark" Maio is driving a 1998 Lincoln like it owes him money.  {ext~grind}
 2. Tommy "The Shark" Maio [lou]: Thirty years at Biscayne. You know how many times I drove north for a game?  {two:Talking}
 3. You [you]: Once?  {cu:Shrugging}
 4. Tommy "The Shark" Maio [lou]: Never. Not once. Rings are for guys who think they're going somewhere.  {ots:Shaking Head No}
@@ -386,7 +386,7 @@ Goal: win a gold bracelet.
 ## c3_parm — Chapter 3 · Pick a game (vegas)
 
 1. Narrator [n]: The mixed-game room. Eight games in rotation, and a kid in a backwards cap who has won three bracelets in five weeks.  {wide^:Looking Around}
-2. Nicky Parmesan [L:glazer]: Pick a game. Any game. I'll still be the favourite, but it'll be fun for you.  {cu:Pointing}
+2. Nicky Parmesan [L:glazer]: Pick a game. Any game. I'll still be the favorite, but it'll be fun for you.  {cu:Pointing}
 3. You [you]: Hold'em.  {cu:Shrugging}
 4. Nicky Parmesan [L:glazer]: Respect. Knowing your one game is a skill. Most people find out what it is the expensive way.  {two:Head Nod Yes@tick}
 
@@ -394,7 +394,7 @@ Goal: win a gold bracelet.
 
 1. Narrator [n]: Heads-up for the $1,500 Opener bracelet. Across from you: Erik Seikick. Thirty years at the top of this game, and he hasn't said a word to you all night.  {wide^:Looking Around~tension}
 2. Erik Seikick [L:sidle]: ...  {ecu:Thinking}
-3. Narrator [n] (win): The last card. They fasten the bracelet on your wrist, and the room is clapping before you realise it's for you. / Gold. Real gold. Your name in the book forever.  {low^:Victory@crowd~triumph}
+3. Narrator [n] (win): The last card. They fasten the bracelet on your wrist, and the room is clapping before you realize it's for you. / Gold. Real gold. Your name in the book forever.  {low^:Victory@crowd~triumph}
 4. Erik Seikick [L:sidle]: You played well.  {two:Shaking Hands 2>Shaking Hands 2@swell}
 5. Narrator [n]: Three words. People have waited thirty years for three words from Erik Seikick.  {push^:Thinking}
 6. Phil Hellraiser [L:hellbent]: Lucky. If I'd been at that final table, we'd be talking about my bracelet number eighteen.  {cu:Shrugging@tick}
