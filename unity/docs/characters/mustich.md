@@ -1,8 +1,10 @@
 # Mustich — character brief
 
 Sources: Steven's description (2026-10-28: a ginger, skinny Irishman with thin-framed glasses) and a reference photo he
-sent the same evening. The photo is used for type only (hair, glasses, skin, the laugh, the clothes), never as a
-likeness, and only the man in it is used.
+sent the same evening. Mustich agreed to his likeness being used (Steven has the messages, 2026-10-29), so the face is a recreation built from his own photos/footage.
+Only the man in the photo is used.
+Reference needed for the face build (same as Slick's): a ~15 s phone video turning the head slowly in even daylight, no hat or glasses,
+once neutral and once smiling; or photos front, both three-quarters, both profiles.
 
 ## Brief
 

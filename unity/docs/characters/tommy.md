@@ -1,7 +1,9 @@
 # Tommy "The Shark" Maio — character brief
 
-Reference: a film/TV still Steven sent (2026-10-28), used for type only: hair, wardrobe, attitude. The character is not a
-likeness of the actor or of the character in the still, and carries no brand marks (the jacket is unbranded).
+Reference: a film/TV still Steven sent (2026-10-28). The man in it agreed to his likeness being used (Steven has the messages, 2026-10-29), so the face is a recreation built from his own photos/footage.
+The film's character, costume and story stay out: Tommy is ours, and carries no brand marks (the jacket is unbranded).
+Reference needed for the face build (same as Slick's): a ~15 s phone video turning the head slowly in even daylight, no hat or glasses,
+once neutral and once smiling; or photos front, both three-quarters, both profiles.
 
 ## Brief
 

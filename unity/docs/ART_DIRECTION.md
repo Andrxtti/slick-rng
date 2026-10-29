@@ -71,7 +71,8 @@ Movement: posture, tells, how they talk with their hands
 Reference: image file or one-line inspiration
 ```
 - **You** — the player; face sculpted in the closet (15 sliders), default look from the brief.
-Briefs live in `unity/docs/characters/<name>.md` (reference images are used for type only, never likeness):
+Briefs live in `unity/docs/characters/<name>.md`. The people in Steven's reference photos, and Eric for Slick, agreed to
+their likeness being used (2026-10-29), so those faces are recreations from their own photos/footage:
 slick, natso, tommy, bio, mustich, gnomey, twogloves, david — all eight written 2026-10-28.
 - **Legends** (27, dream/data.js DR_LEGENDS) — parody tributes to real pros, so every face is original: era, build, one
   signature prop and a colour, drawn from the style line. Built on the three shared bodies.

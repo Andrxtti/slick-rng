@@ -1,7 +1,9 @@
 # David Pec — character brief
 
-Reference: a photo Steven sent (2026-10-28, the second one; the first photo was Mustich's). Used for type only: hair,
-eyes, the smile, the dressed-up look. Never a likeness, and only David from the photo is used.
+Reference: a photo Steven sent (2026-10-28, the second one; the first photo was Mustich's). David agreed to his likeness being used (Steven has the messages, 2026-10-29), so the face is a recreation built from his own photos/footage.
+Only David from the photo is used.
+Reference needed for the face build (same as Slick's): a ~15 s phone video turning the head slowly in even daylight, no hat or glasses,
+once neutral and once smiling; or photos front, both three-quarters, both profiles.
 
 ## Brief
 

@@ -1,7 +1,9 @@
 # Miles "The Snowplow" Gnomey — character brief
 
-Reference: a photo Steven sent (2026-10-28), used for type only: build, hair, beard, the striped jersey, the crossed arms.
-Not a likeness of the person in the photo; no club crest or sponsor marks.
+Reference: a photo Steven sent (2026-10-28). The man in it agreed to his likeness being used (Steven has the messages, 2026-10-29), so the face is a recreation built from his own photos/footage.
+No club crest or sponsor marks on the jersey.
+Reference needed for the face build (same as Slick's): a ~15 s phone video turning the head slowly in even daylight, no hat or glasses,
+once neutral and once smiling; or photos front, both three-quarters, both profiles.
 
 ## Brief
 

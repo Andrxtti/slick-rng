@@ -1,7 +1,8 @@
 # Natso SweetLou — character brief
 
-Reference: a studio headshot Steven sent (2026-10-28). Used for type only: build, hair, beard, wardrobe. The game character
-is not a likeness of the person in the photo.
+Reference: a studio headshot Steven sent (2026-10-28). The man in it agreed to his likeness being used (Steven has the messages, 2026-10-29), so the face is a recreation built from his own photos/footage.
+Reference needed for the face build (same as Slick's): a ~15 s phone video turning the head slowly in even daylight, no hat or glasses,
+once neutral and once smiling; or photos front, both three-quarters, both profiles.
 
 ## Brief
 

@@ -1,7 +1,9 @@
 # Bio "The Ghost" — character brief
 
-Reference: a tournament photo Steven sent (2026-10-28), used for type only: hair, wardrobe, the mask, the stillness. The
-character is not a likeness of the player in the photo; the mask print is our own design.
+Reference: a tournament photo Steven sent (2026-10-28). The player in it agreed to his likeness being used (Steven has the messages, 2026-10-29), so the face is a recreation built from his own photos/footage.
+The mask print is our own design.
+Reference needed for the face build (same as Slick's): a ~15 s phone video turning the head slowly in even daylight, no hat or glasses,
+once neutral and once smiling; or photos front, both three-quarters, both profiles.
 
 ## Brief
 

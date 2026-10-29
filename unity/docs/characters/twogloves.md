@@ -1,8 +1,9 @@
 # Nick "Baby Goat" Twogloves — character brief (replaces Dex Marlow, the stream host)
 
-Reference: a tournament photo Steven sent (2026-10-28), used for type only: hair, beard, the clear-frame tinted glasses,
-the black polo, the posture. An original character: not a likeness of the player in the photo, and none of that player's
-record or biography (his titles are his own in our world).
+Reference: a tournament photo Steven sent (2026-10-28). The player in it agreed to his likeness being used (Steven has the messages, 2026-10-29), so the face is a recreation built from his own photos/footage.
+None of that player's record or biography is used (his titles are his own in our world).
+Reference needed for the face build (same as Slick's): a ~15 s phone video turning the head slowly in even daylight, no hat or glasses,
+once neutral and once smiling; or photos front, both three-quarters, both profiles.
 
 ## Brief
 
