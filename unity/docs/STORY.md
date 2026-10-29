@@ -11,15 +11,16 @@ players".
 **Revised 2026-10-29 11:40 from Steven's answers in the scene tree:**
 - Event names: Flashy Lights Circuit (rings), WCoC, the World Championship of Cards (the Summer bracelets and the Main
   Event), the Let's Go! Tour and the One Time! Cup (TV), and the Titan. Silver Strike stays as the casino's name.
-- Slick's fold was ten years ago, not twenty ("he's not THAT old").
+- Slick's fold was ten years ago, not twenty ("he's not THAT old"). The player is 24 ("make my guy 24"), so he was
+  fourteen when he watched it on TV.
 - David's fiancée is Katie.
 - Mustich stays a rival to the end. `c7_rival` is gone; `c7_rival` replaces it.
 - The game still ends on the luck line: "People insist on calling it luck."
 - No new side characters: the pro fields are legends and the current cast only.
 - The last river of the Main Event is the player's call or fold, and the cards decide (`c6_final`, new `c6_fold`).
 - Kept as written: Colt and the pie, Slick in Vegas for the Main, Lou's firm Halvorsen & Pike.
-- Still to settle with Steven: the twist (asked again in plain words), and the player's age, now that the TV night was
-  ten years ago.
+- Bio wears a mask, not glasses (Steven). Only Slick wears dark glasses.
+- Still to settle with Steven: who was the man on TV (the twist), now that Bio has no glasses.
 
 Format, same as `dream/script.md`:
 - Each scene is `## id — Chapter · title (place)`, then numbered lines `Name [speaker id]: line {shot}`.
@@ -51,7 +52,7 @@ Format, same as `dream/script.md`:
 
 **The question under the whole game:** who was the man in dark glasses on the fuzzy TV, and who folded to him?
 
-When you were nine, you watched the World Championship of Cards final table on TV. A man in dark glasses moved all in on the river
+When you were fourteen, you watched the World Championship of Cards final table on TV. A man in dark glasses moved all in on the river
 with nothing. You could see his cards because the hole-card camera showed them to the audience. His opponent thought
 for four minutes and folded the winning hand. The man never showed. In the interview afterwards he said one line:
 *"People insist on calling it luck."*
@@ -225,7 +226,7 @@ Goal: win two Circuit rings and build a $40,000 bankroll.
 2. Armadillo Fatts [L:armadillo]: Sit down, partner. Everybody who sits gets a story, and nobody gets a refund.  {two:Talking}
 3. Armadillo Fatts [L:armadillo]: Ten years back, give or take. World Championship of Cards, last two players. Kid in dark glasses shoves the river with nothing. Seven-deuce. The whole country can see it on the little camera.  {cu:Pointing}
 4. Armadillo Fatts [L:armadillo]: Other fella has the winner. Thinks four minutes. Folds. Walks out in the rain in his good shoes.  {push:Shaking Head No~tension}
-5. You [you]: I watched that. I was nine.  {ecu:Thinking@hush}
+5. You [you]: I watched that. I was fourteen.  {ecu:Thinking@hush}
 6. Armadillo Fatts [L:armadillo]: Everybody watched it. Nobody remembers the name of the fella who folded. That's the cruel part, son. You become a story with no name in it.  {cu:Talking@sting}
 7. You [you]: What happened to him?  {ots:Talking}
 8. Armadillo Fatts [L:armadillo]: Same thing that happens to all of us. He went home. / Order the wings. They're better than the story.  {two:Shrugging@tick~none}
@@ -389,7 +390,7 @@ Goal: win a gold bracelet.
 5. Narrator [n]: Three words. People have waited thirty years for three words from Erik Seikick.  {push^:Thinking}
 6. Phil Hellraiser [L:hellbent]: Lucky. If I'd been at that final table, we'd be talking about my bracelet number eighteen.  {cu:Shrugging@tick}
 7. David Pec [mom] (text): IS THAT REAL GOLD?? THE WHOLE GROUP CHAT SAW IT. KATIE CRIED. I CRIED. I'M STILL MAD BUT I CRIED
-8. Slick [slick] (text): Nine-year-old you is screaming right now. Let him.
+8. Slick [slick] (text): Fourteen-year-old you is screaming right now. Let him.
 
 ## c3_hello — Chapter 3 · The sportsbook, 4 AM (vegas)
 
@@ -438,7 +439,7 @@ Goal: win two Tour titles (Let's Go! Tour or One Time! Cup) and build a $750,000
 1. Narrator [n]: The river. Tom Duhhz pushes a stack worth more than your first year on Floor 34 into the middle, and smiles at the camera like it's an old friend.  {wide^:Looking Around~tension}
 2. Tom Duhhz [L:swan]: I have air. Do you want to find out?  {cu:Talking}
 3. Nick "Baby Goat" Twogloves [host]: The hole-card cam says... folks, he is not lying. He has ABSOLUTELY nothing. The question is whether our cubicle kid believes him.  {two:Pointing@flash}
-4. Narrator [n]: Somewhere a nine-year-old is watching a river jam on a little camera. / This time you know which seat you're in.  {ecu^:Thinking@hush}
+4. Narrator [n]: Somewhere a fourteen-year-old is watching a river jam on a little camera. / This time you know which seat you're in.  {ecu^:Thinking@hush}
 5. Tom Duhhz [L:swan]: Truth is the best bluff. Nobody believes it.  {cu:Shrugging@sting}
 
 ## lesson4 — A lesson · People, not boards (tv)
@@ -639,7 +640,7 @@ Goal: win the Main Event.
 
 1. Narrator [n]: Heads-up. Bio "The Ghost" and you. Every chip in the building is on one table.  {wide^:Looking Around~tension}
 2. Nick "Baby Goat" Twogloves [host]: Folks, this is the spot. River. The Ghost moves all in. And if you're old enough... you've seen this movie before.  {two:Pointing@hush}
-3. Narrator [n]: He's not looking at the board. He's looking at you. Looking for something you were nine years old the last time you saw.  {ecu^:Thinking}
+3. Narrator [n]: He's not looking at the board. He's looking at you. Looking for something you were fourteen years old the last time you saw.  {ecu^:Thinking}
 4. Narrator [n]: On the rail, a man in dark glasses takes them off.  {cu^@sting}
 5. Narrator [n]: You don't flinch. Whatever you do next, you decide it like you're allowed.  {push^:Thinking@swell}
    - Choice: Call. | Narrator [n]: You call. Both hands go face up. The cards decide. → champ / c6_lost
@@ -653,7 +654,7 @@ Goal: win the Main Event.
 
 ## champ — World Champion (main)
 
-1. Narrator [n] (win): Confetti. Cameras. A bracelet the size of a doorknob. / Somewhere, a nine-year-old with a fuzzy TV is losing his mind.  {wide^:Victory@crowd~triumph}
+1. Narrator [n] (win): Confetti. Cameras. A bracelet the size of a doorknob. / Somewhere, a fourteen-year-old with a fuzzy TV is losing his mind.  {wide^:Victory@crowd~triumph}
 2. Bio "The Ghost" [ghost]: Good game, kid.  {two:Shaking Hands 2>Shaking Hands 2@hush~none}
 3. Narrator [n]: He takes off his glasses and his mask. For the first time anyone can remember, Bio "The Ghost" smiles.  {ecu@swell}
 4. Narrator [n]: Then he looks past you, to the rail, and nods at a man he hasn't spoken to in ten years. / Slick nods back.  {push^:Head Nod Yes@swell}
