@@ -1,0 +1,7 @@
+{ "cmds": [
+  "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng status --short --branch",
+  "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng log --oneline unity..beta1",
+  "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng diff --stat unity beta1 --shortstat",
+  "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng diff --name-only unity beta1 | findstr /I /R \"\\.jpg$ \\.jpeg$ \\.png$ \\.webp$ \\.mp4$ \\.wav$ \\.blend$ \\.fbx$ CastRefs\"",
+  "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng count-objects -vH"
+] }
