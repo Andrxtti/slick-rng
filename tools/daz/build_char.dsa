@@ -144,6 +144,6 @@ try {
   setupRenderer(SPEC.renderSecs || 90);
   var shots = SPEC.shots || ["front", "34", "body"];
   for (var s = 0; s < shots.length; s++) render(fig, DIR + "/renders/" + SPEC.name + "_" + shots[s] + ".png", shots[s]);
-  if (SPEC.export) exportUnity(fig, SPEC.export);
+  if (SPEC["export"]) exportUnity(fig, SPEC["export"]);   // "export" is reserved in Daz Script (ES3): no dot access
 } catch (e) { log("ERROR " + e + (e.lineNumber ? " line " + e.lineNumber : "")); }
 finish();
