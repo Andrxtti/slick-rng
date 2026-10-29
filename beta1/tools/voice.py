@@ -14,19 +14,19 @@ MODEL = os.path.join(PIPER, "en-us-libritts-high.onnx")
 
 # speaker id, pace (bigger = slower), pitch (semitones), gravel 0..1, warmth 0..1
 CAST = {
-    "slick": (27, 1.08, -1.5, 0.25, 0.3),    # low and cool, a little rasp, never hurried
+    "slick": (27, 1.08, -1.0, 0.25, 0.3),    # low and cool, a little rasp, never hurried
     "you": (57, 1.0, 0.0, 0.0, 0.1),
     "lou": (43, 0.95, 0.5, 0.0, 0.0),        # Natso SweetLou: brisk, pleased with himself
-    "tommy": (3, 1.0, -2.0, 0.45, 0.3),      # Tommy "The Shark": gravel
+    "tommy": (3, 1.0, -1.0, 0.45, 0.3),      # Tommy "The Shark": gravel
     "david": (52, 0.95, 0.0, 0.0, 0.1),      # David Pec: fast and warm
     "mustich": (41, 0.9, 1.0, 0.0, 0.0),     # Mustich: quick, smug, a touch high
     "gnomey": (6, 1.0, -1.0, 0.3, 0.2),      # Miles "The Snowplow" Gnomey
     "nick": (24, 0.92, 0.5, 0.0, 0.2),       # Nick "Baby Goat" Twogloves, the host
-    "bio": (31, 1.15, -2.5, 0.2, 0.5),       # Bio "The Ghost": slow, measured, deep
+    "bio": (31, 1.15, -1.0, 0.2, 0.5),       # Bio "The Ghost": slow, measured, deep
     "dealer": (20, 1.0, 0.0, 0.0, 0.0),
-    # the narrator (Steven, 15:44: "a deep stereotypical movie-trailer male voice"): of the 151 LibriTTS speakers sampled,
-    # 498 is the deepest (median 79 Hz, 65 Hz after the -3 semitones); pace 1.12, warmth 0.6, compression, a short plate
-    "narrator": (498, 1.12, -3.0, 0.0, 0.6),
+    # the narrator: Kokoro, not Piper (tools/narrator.py, N2b: Steven 19:01, the pitch-shifted LibriTTS voice sounded
+    # disguised); the Piper settings here are unused for him. No cast voice shifts more than 1 semitone (that's the effect).
+    "narrator": (498, 1.0, 0.0, 0.0, 0.0),
 }
 CAST["card"] = CAST["n"] = CAST["narrator"]   # narrator cards and Narrator [n] lines
 TRAILER = {"narrator", "card", "n"}
@@ -101,6 +101,7 @@ def reel_cards():
 
 def main():
     force = "--force" in sys.argv
+    redo = set(sys.argv[sys.argv.index("--who") + 1].split(",")) if "--who" in sys.argv else set()   # re-voice these speakers
     os.makedirs(OUT, exist_ok=True); os.makedirs(LINES, exist_ok=True)
     log_path = os.path.join(OUT, "voices.json")
     done = json.load(open(log_path, encoding="utf-8")) if os.path.exists(log_path) else {}
@@ -110,9 +111,15 @@ def main():
         for L in data if isinstance(data, list) else data["lines"]:
             if L.get("voice") and L.get("text"): lines.append(L)   # reel shots reuse sting voices without text
     lines += yarn_lines() + reel_cards()
-    todo = [L for L in lines if force or done.get(L["voice"]) != L["text"] or not os.path.exists(os.path.join(L.get("_out", OUT), L["voice"] + ".wav"))]
+    todo = [L for L in lines if force or L["who"] in redo or done.get(L["voice"]) != L["text"] or not os.path.exists(os.path.join(L.get("_out", OUT), L["voice"] + ".wav"))]
     print(f"{len(lines)} lines, {len(todo)} to voice")
     tmp = os.path.join(PIPER, "tmp"); os.makedirs(tmp, exist_ok=True)
+    import narrator
+    for L in [L for L in todo if L["who"] in TRAILER]:
+        narrator.say(L["text"], os.path.join(L.get("_out", OUT), L["voice"] + ".wav"))
+        done[L["voice"]] = L["text"]
+        print(f"  {L['voice']:16} {L['who']:8} {L['text'][:60]}")
+    todo = [L for L in todo if L["who"] not in TRAILER]
     for pace in sorted({CAST[L["who"]][1] for L in todo}):
         jobs = [L for L in todo if CAST[L["who"]][1] == pace]
         inp = "\n".join(json.dumps({"text": speakable(L["text"]), "speaker_id": CAST[L["who"]][0],

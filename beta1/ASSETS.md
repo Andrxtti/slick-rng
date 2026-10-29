@@ -45,6 +45,7 @@ Every third-party asset in the beta1 project, with its source, author and licenc
 | Bio's mask print, beards, felt, suit pips | textures | generated in code here | Confirmed Fire | ours |
 | Room tones (diner rain/neon, office, card room), door bell, reel score | audio | synthesized with ffmpeg here (tools/reel_cut.py, see night report) | Confirmed Fire | ours |
 | Voices | audio | Piper 2023.11.14-2 (MIT) with en_US-libritts-high (rhasspy/piper-voices; LibriTTS data CC-BY 4.0) | rhasspy / LibriTTS | CC-BY 4.0 voices |
+| Narrator voice | audio | Kokoro-82M v1.0 weights (huggingface.co/hexgrad/Kokoro-82M; ONNX export from github.com/thewh1teagle/kokoro-onnx releases, model-files-v1.0) run with kokoro-onnx 0.6.1 (PyPI, MIT), voice am_onyx at speed 0.9, no pitch shift (tools/narrator.py) | hexgrad / thewh1teagle | Apache-2.0 weights, MIT runtime (offline tool; only the rendered audio ships) |
 | Mixamo acting clips (27) | animation | copied from the old project (Assets/Dream/Anim/Mixamo), kept out of git | Adobe Mixamo | Mixamo terms (use in projects, no raw redistribution) |
 | Unity packages incl. glTFast 6.20.0 | code | Unity registry | Unity | Unity Companion / Apache-2.0 (glTFast) |
 | Yarn Spinner for Unity 3.2.8 | code | OpenUPM, dev.yarnspinner.unity | Yarn Spinner Pty. Ltd. | MIT |

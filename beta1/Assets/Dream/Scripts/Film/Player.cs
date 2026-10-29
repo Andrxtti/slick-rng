@@ -93,6 +93,7 @@ namespace Dream.Film
 
         // Film lighting cheats per shot, as a gaffer would: a warm key from above and to the side of the camera
         // (motivated by the pendants), a dim cool fill from the other side (the window). Wides keep the set's light.
+        ColorAdjustments grade; Bloom glow; float baseExposure;
         void LightFor(Shot s, string kind)
         {
             if (key == null)
@@ -114,9 +115,12 @@ namespace Dream.Film
             key.transform.LookAt(s.focus);
             key.intensity = (kind == "two" ? 3f : kind == "insert" ? 0.6f : 3.2f) * (Sets.Current?.key ?? 1f);
             fill.transform.position = s.focus + Quaternion.AngleAxis(-70, Vector3.up) * toCam * 1.4f + Vector3.up * 0.1f;
-            fill.intensity = 0.85f * (Sets.Current?.key ?? 1f);   // the shadow side of a face never goes black
+            fill.intensity = 0.85f * (Sets.Current?.key ?? 1f) * (Sets.Current?.fill ?? 1f);   // the shadow side of a face never goes black
             rim.transform.position = s.focus - toCam * 0.7f + Vector3.up * 0.45f + Quaternion.AngleAxis(90, Vector3.up) * toCam * 0.35f;
-            rim.intensity = (kind == "insert" ? 0 : 1.1f) * (Sets.Current?.key ?? 1f);
+            rim.intensity = (kind == "insert" ? 0 : 1.1f) * (Sets.Current?.key ?? 1f) * (Sets.Current?.rim ?? 1f);
+            // an insert sits under a practical on a pale surface: pull it 1.5 stops so it doesn't blow out (task 7)
+            if (grade != null) grade.postExposure.value = baseExposure - (kind == "insert" ? 1.5f : 0f);
+            if (glow != null) glow.intensity.value = kind == "insert" ? 0.2f : 0.9f;   // the chrome under a practical blooms into a blob on an insert
         }
 
         // a narrator card stays up long enough to read twice at an easy pace; a {key} card (filled in later) gets a fixed beat
@@ -144,8 +148,8 @@ namespace Dream.Film
             var p = ScriptableObject.CreateInstance<VolumeProfile>(); volume.sharedProfile = p;
             var look = Sets.Current ?? new Sets.Look();
             p.Add<Tonemapping>().mode.Override(TonemappingMode.ACES);
-            var bloom = p.Add<Bloom>(); bloom.threshold.Override(0.95f); bloom.intensity.Override(0.9f); bloom.scatter.Override(0.72f);
-            var ca = p.Add<ColorAdjustments>(); ca.postExposure.Override(0.2f + look.exposure); ca.contrast.Override(14f); ca.saturation.Override(4f);
+            var bloom = p.Add<Bloom>(); bloom.threshold.Override(0.95f); bloom.intensity.Override(0.9f); bloom.scatter.Override(0.72f); glow = bloom;
+            var ca = p.Add<ColorAdjustments>(); ca.postExposure.Override(0.2f + look.exposure); grade = ca; baseExposure = 0.2f + look.exposure; ca.contrast.Override(14f); ca.saturation.Override(4f);
             var wb = p.Add<WhiteBalance>(); wb.temperature.Override(4f);
             var smh = p.Add<ShadowsMidtonesHighlights>(); smh.shadows.Override(new Vector4(0.92f, 0.95f, 1.08f, 0f)); smh.highlights.Override(new Vector4(1.06f, 1.0f, 0.92f, 0f));
             var vig = p.Add<Vignette>(); vig.intensity.Override(0.28f); vig.smoothness.Override(0.45f);

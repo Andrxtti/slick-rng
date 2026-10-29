@@ -27,7 +27,8 @@ namespace Dream.Film
             public Color fog = new Color(0.03f, 0.03f, 0.05f); public float fogDensity = 0.012f;
             public string sky; public float skyExposure = 0.2f; public Color skyTint = Color.white; public float skyRotation;
             public float exposure, temperature, contrast = 12f, saturation;
-            public float key = 1f;   // film key strength in this set (the dark diner needs more than a sunlit office)
+            public float key = 1f;
+            public float fill = 1f, rim = 1f;   // the film fill and rim in this set (the diner's red needs more of both)   // film key strength in this set (the dark diner needs more than a sunlit office)
         }
 
         static readonly Color Tungsten = new Color(1f, 0.72f, 0.45f);
@@ -41,13 +42,13 @@ namespace Dream.Film
                     ["L_pendant"] = new Lamp(Tungsten, 5.5f, 4.5f, 110, true, Vector3.down),
                     ["L_booth"] = new Lamp(Tungsten, 1.6f, 3.5f),
                     ["L_case"] = new Lamp(new Color(1f, 0.85f, 0.6f), 1.2f, 1.6f),
-                    ["L_neon_out"] = new Lamp(new Color(1f, 0.08f, 0.1f), 9f, 11f),
+                    ["L_neon_out"] = new Lamp(new Color(1f, 0.08f, 0.1f), 5f, 11f),   // task 7: was 9, faces drowned in one red
                     ["L_streetlamp"] = new Lamp(new Color(0.55f, 0.7f, 1f), 14f, 18f, 0, true),
-                    ["L_back"] = new Lamp(new Color(1f, 0.6f, 0.4f), 0.8f, 6f),
+                    ["L_back"] = new Lamp(new Color(1f, 0.78f, 0.6f), 0.8f, 6f),
                 },
                 ambient = new Color(0.035f, 0.03f, 0.035f),
                 sky = "Assets/Dream/FilmSets/diner/sky.hdr", skyExposure = 0.08f, skyTint = new Color(0.55f, 0.6f, 1f), skyRotation = 90,
-                exposure = 0.55f, temperature = 0f, contrast = 14f, saturation = 4f,
+                exposure = 0.55f, temperature = 0f, contrast = 14f, saturation = 4f, fill = 1.6f, rim = 1.7f,
             },
         };
 

@@ -308,3 +308,17 @@ Not good yet, said plainly: (1) "never before day 20" can't hold with real varia
 need a schedule rule, not a balance number; Steven's call. (2) The keeping 55% player reaches $5,000 in 31% of months
 almost on the pay cheque alone ($650 a week after rent). (3) The quitting 55% player never gets there and leans on the loan
 all month, which matches "saved by Slick's loan", but more than once. Grading untouched.
+
+### N2b: the narrator, again (evening, Opus · medium; INBOX 19:05, Steven 19:01)
+- Cause, as the cloud said: the -3 semitone `asetrate` shift on a flat LibriTTS reader is the disguised-witness sound.
+- Installed `kokoro-onnx` 0.6.1 (PyPI, MIT) and the Kokoro-82M v1.0 ONNX weights + voices (Apache-2.0; from the kokoro-onnx
+  GitHub release "model-files-v1.0", outside the repo in `C:\Dev\Beta1Assets\dl\kokoro`). Logged in ASSETS.md.
+- `tools/narrator.py`: Kokoro, no pitch shift, slowed only by Kokoro's speed; EQ only (low shelf +4 dB at 120 Hz, -2.5 dB at
+  300 Hz, +2 dB at 3 kHz), 3:1 compression, a short warm room (two early echoes, no plate); phrases split at "/" and full
+  stops with a 0.45 s breath.
+- Audition `C:\Dev\Builds\day2\narrator_audition2.mp3`: am_onyx 0.9, am_fenrir 0.88, bm_george 0.9, am_michael 0.88. I can't
+  listen, so I measured: am_onyx is naturally the deepest (median 86 Hz; fenrir 129, george 141, michael 118, lewis 100) with
+  the steadiest line. **am_onyx at 0.9** voices every narrator line (cards, Yarn narration, the reel's title cards).
+- The cast: no voice shifts more than 1 semitone now (Slick -1.5 -> -1, Tommy -2 -> -1, Bio -2.5 -> -1), still Piper.
+- For tomorrow: Kokoro sounds far more natural than Piper, so it's worth trying for the cast, but its American male voices
+  are few (onyx, michael, fenrir, puck, adam, echo, eric, liam) for nine men. Not changed tonight.

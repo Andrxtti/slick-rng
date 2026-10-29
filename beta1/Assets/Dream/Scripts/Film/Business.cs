@@ -53,7 +53,7 @@ namespace Dream.Film
             public void Go(Transform t, Vector3 towards, float time) => StartCoroutine(Run(t, towards, time));
             IEnumerator Run(Transform t, Vector3 towards, float time)
             {
-                var a = t.position; var b = new Vector3(Mathf.Lerp(a.x, towards.x, 0.8f), a.y, Mathf.Lerp(a.z, towards.z, 0.8f));
+                var a = t.position; var b = new Vector3(Mathf.Lerp(a.x, towards.x, 0.8f), a.y, a.z);   // along the counter, not off its edge
                 for (float u = 0; u < time; u += Time.deltaTime) { float k = 1 - (1 - u / time) * (1 - u / time); t.position = Vector3.Lerp(a, b, k); yield return null; }
                 t.position = b;
             }

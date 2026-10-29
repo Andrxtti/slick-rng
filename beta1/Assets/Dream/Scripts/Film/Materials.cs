@@ -12,7 +12,7 @@ namespace Dream.Film
     public static class Materials
     {
         static readonly Dictionary<string, float> Smooth = new Dictionary<string, float>
-        { ["skin"] = 0.46f, ["eyes"] = 0.95f, ["teeth"] = 0.3f, ["tongue"] = 0.5f, ["hair"] = 0.38f, ["haircards"] = 0.42f, ["brows"] = 0.2f, ["lashes"] = 0.2f };
+        { ["skin"] = 0.36f, ["eyes"] = 0.95f, ["teeth"] = 0.3f, ["tongue"] = 0.5f, ["hair"] = 0.22f, ["haircards"] = 0.42f, ["brows"] = 0.2f, ["lashes"] = 0.2f };   // skin and the hair shell matte (task 7: waxy faces, helmet hair)
 
         public static Material Make(string dir, string part, Dictionary<string, object> man)
         {
@@ -36,6 +36,7 @@ namespace Dream.Film
             if (part == "tongue") tint *= 0.6f;
             m.SetColor("_BaseColor", tint);
 #if UNITY_EDITOR
+            if (part == "skin" && m.HasProperty("_Wrap")) { m.SetFloat("_Wrap", 0.62f); m.SetFloat("_ScatterStrength", 1.0f); }   // a softer terminator (task 7: waxy faces)
             if (part == "skin" && m.HasProperty("_PoreMap")) m.SetTexture("_PoreMap", AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Dream/FilmData/Tex/pores_n.png"));
 #endif
             m.SetFloat("_Smoothness", Smooth.TryGetValue(part, out var sm) ? sm : 0.18f);

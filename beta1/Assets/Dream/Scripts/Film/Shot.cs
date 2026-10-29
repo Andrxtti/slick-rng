@@ -78,7 +78,7 @@ namespace Dream.Film
                     var p = FindProp(set, subject) ?? FindProp(set, "envelope");
                     var pr = p != null ? p.GetComponentInChildren<Renderer>() : null;
                     var at = pr != null ? pr.bounds.center : p != null ? p.position : mid - up * 0.5f;
-                    if (O != null) at = Vector3.Lerp(at, new Vector3(O.transform.position.x, at.y, O.transform.position.z), 0.35f);   // where it is going
+                    if (O != null) at = Vector3.Lerp(at, new Vector3(O.transform.position.x, at.y, at.z), 0.4f);   // where it is going, along the counter
                     s.mm = 40; s.fstop = 2.8f; s.shake = 0.6f;
                     s.to = s.from = at + up * 0.55f - front * 0.32f;
                     s.aim = at; s.focus = at;

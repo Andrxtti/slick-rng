@@ -62,7 +62,9 @@ namespace Dream.Game
 
             // the table: the kit's racetrack plate (Biscayne green live, CF Tilt teal online; the tall plate when the space
             // is taller than wide), fitted inside its area; seats on the rail, chips in front of them, the pot in the middle
-            var area = Ui.At(Ui.Box(s, "TableArea"), 0.02f, 0.43f, 0.98f, 0.875f);
+            Canvas.ForceUpdateCanvases();
+            bool wide = s.rect.width > s.rect.height * 1.2f;   // landscape: the plate takes ~70% of the height, cards and buttons in a strip below
+            var area = Ui.At(Ui.Box(s, "TableArea"), 0.02f, wide ? 0.17f : 0.43f, 0.98f, 0.875f);
             Canvas.ForceUpdateCanvases();
             bool tall = area.rect.height > area.rect.width * 0.9f;
             var plateSprite = Resources.Load<Sprite>("Kit/table_" + (ev.online ? "online" : "live") + (tall ? "_portrait" : ""));
@@ -81,26 +83,28 @@ namespace Dream.Game
                 Seat(table, sp.seats[i], i == hero, x, y, answered == null, ev.online, tall, fit.aspectRatio);
             }
             float aspect = fit.aspectRatio;
-            Chips(table, sp.pot, 0.5f, 0.53f, tall ? 0.09f : 0.05f, aspect);   // the pot
-            Ui.At(Ui.Num(table, $"pot {Bb(sp.pot)} bb", 30, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, 0.44f, 0.7f, 0.5f);
-            Ui.At(Ui.Label(table, sp.cat, 24, new Color(1, 1, 1, 0.6f)), 0.2f, 0.39f, 0.8f, 0.44f);
+            float py = tall ? 0.53f : 0.43f;   // landscape: under the "Biscayne" / "CF Tilt" logo (which sits at 0.64)
+            Chips(table, sp.pot, 0.5f, py, tall ? 0.18f : 0.1f, aspect);   // the pot
+            Ui.At(Ui.Num(table, $"pot {Bb(sp.pot)} bb", 30, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, py - 0.09f, 0.7f, py - 0.03f);
+            Ui.At(Ui.Label(table, sp.cat, 24, new Color(1, 1, 1, 0.6f)), 0.2f, py - 0.14f, 0.8f, py - 0.09f);
 
             // your cards: large, slightly fanned, with the kit's soft shadow
-            var cards = Ui.At(Ui.Box(s, "Cards"), 0.3f, 0.295f, 0.7f, 0.445f);
+            var cards = wide ? Ui.At(Ui.Box(s, "Cards"), 0.02f, 0.015f, 0.26f, 0.165f) : Ui.At(Ui.Box(s, "Cards"), 0.3f, 0.295f, 0.7f, 0.445f);
             var c0 = CardFace(cards, sp.hand[0], 0.27f, 0.53f, 6f); var c1 = CardFace(cards, sp.hand[1], 0.47f, 0.73f, -6f);
             if (answered == null) { Ui.Slide(c0, new Vector2(60, 420), 0.15f); Ui.Slide(c1, new Vector2(-40, 420), 0.27f); }   // dealt from the middle
 
             Waiting = answered == null;
             if (answered == null)
             {
-                Ui.At(Ui.Label(s, "Your move", 34, Ui.Dim), 0.05f, 0.26f, 0.95f, 0.3f);
-                int m = sp.acts.Count; float w = 0.9f / m;
+                if (!wide) Ui.At(Ui.Label(s, "Your move", 34, Ui.Dim), 0.05f, 0.26f, 0.95f, 0.3f);
+                int m = sp.acts.Count; float x0 = wide ? 0.28f : 0.05f, w = (wide ? 0.7f : 0.9f) / m;
                 for (int j = 0; j < m; j++)
                 {
                     int jj = j; string act = sp.acts[j];
                     var col = act == "fold" ? Ui.Card : act == "allin" ? Ui.Neon : Ui.Gold;
                     var b = Ui.Button(s, sp.Label(j), () => Answer(jj), col, act == "fold" ? Ui.Ink : Ui.Night, 40);
-                    Ui.At(b, 0.05f + j * w + 0.01f, 0.13f, 0.05f + (j + 1) * w - 0.01f, 0.23f);
+                    if (wide) Ui.At(b, x0 + j * w + 0.008f, 0.035f, x0 + (j + 1) * w - 0.008f, 0.145f);
+                    else Ui.At(b, 0.05f + j * w + 0.01f, 0.13f, 0.05f + (j + 1) * w - 0.01f, 0.23f);
                     b.GetComponent<Image>().sprite = Rounded(); b.GetComponent<Image>().type = Image.Type.Sliced;
                 }
             }
@@ -215,11 +219,11 @@ namespace Dream.Game
             {
                 // the action already carries its size ("Jam 7.9", "Raise 2.3"); otherwise the amount in (blinds), or both
                 string act = seat.act ?? "", bet = act.Any(char.IsDigit) || act.StartsWith("Fold") ? act : (act + (seat.put > 0 ? " " + Bb(seat.put) : "")).Trim();
-                float bx = x + (0.5f - x) * 0.38f, by = y + (0.5f - y) * 0.42f;
+                float bx = x + (0.5f - x) * 0.5f, by = y + (0.5f - y) * 0.5f;
                 var chips = Ui.Box(table, "Bet"); Ui.Fill(chips);
-                if (seat.put > 0 && !act.StartsWith("Fold")) Chips(chips, seat.put, bx, by + (tall ? 0.008f : 0.015f), tall ? 0.075f : 0.042f, aspect);
-                var label = Ui.At(Ui.Num(chips, bet, 20, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), bx - 0.12f, by - (tall ? 0.03f : 0.05f), bx + 0.12f, by - (tall ? 0.008f : 0.012f));
-                if (deal) { var sz = table.rect.size; Ui.Slide(chips, new Vector2(-(0.5f - x) * 0.38f * sz.x, -(0.5f - y) * 0.42f * sz.y), 0.05f, 0.35f); }   // the bet goes out from the seat
+                if (seat.put > 0 && !act.StartsWith("Fold")) Chips(chips, seat.put, bx, by + (tall ? 0.008f : 0.015f), tall ? 0.15f : 0.084f, aspect);   // chips at twice their old size (task 8)
+                var label = Ui.At(Ui.Num(chips, bet, 20, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), bx - 0.08f, by - (tall ? 0.03f : 0.05f), bx + 0.08f, by - (tall ? 0.008f : 0.012f));
+                if (deal) { var sz = table.rect.size; Ui.Slide(chips, new Vector2(-(0.5f - x) * 0.5f * sz.x, -(0.5f - y) * 0.5f * sz.y), 0.05f, 0.35f); }   // the bet goes out from the seat
             }
             if (seat.pos == "BTN")   // the dealer button: toward the middle, to one side of the bet
             {
