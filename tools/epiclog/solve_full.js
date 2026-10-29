@@ -11,8 +11,12 @@ try {
   if (fs.existsSync(main)) {
     const t = fs.readFileSync(main, 'utf8'); res.bytes = t.length;
     const lines = t.split(/\r?\n/);
-    res.hits = lines.filter((l) => /install|engine|UE_5|error|fail|modal|dialog|prereq|eula|license|denied|disk/i.test(l)).slice(-120).map((l) => l.slice(0, 300));
-    res.tail = lines.slice(-60).map((l) => l.slice(0, 300));
+    const quiet = lines.filter((l) => !/LauncherUsingEOSH/.test(l));   // a harmless warning repeats ten times a second
+    res.hits = quiet.filter((l) => /install|engine|UE_5|error|fail|modal|dialog|prereq|eula|license|denied|disk|catalog|offline|entitled|EoshState|item files/i.test(l)).slice(-80).map((l) => l.slice(0, 300));
+    res.tail = quiet.slice(-80).map((l) => l.slice(0, 300));
   }
+  const cef = path.join(dir, 'cef3.log');
+  if (fs.existsSync(cef)) { const c = fs.readFileSync(cef, 'utf8').split(/\r?\n/); res.cef = c.filter((l) => /error|uncaught|fail|denied|refused/i.test(l)).slice(-40).map((l) => l.slice(0, 300)); res.cefTail = c.slice(-15).map((l) => l.slice(0, 300)); }
+  const wc = path.join(os.homedir(), 'AppData/Local/EpicGamesLauncher/Saved'); try { res.saved = fs.readdirSync(wc); } catch (e) {}
 } catch (e) { res.err = String(e); }
 fs.writeFileSync(OUT, JSON.stringify(res, null, 1));
