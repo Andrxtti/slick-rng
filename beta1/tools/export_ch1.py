@@ -44,5 +44,16 @@ out = {
     "goal": {"bankroll": 10000, "title": "room", "text": "Win the Biscayne Classic or build a $10,000 bankroll"},
     "start": {"bankroll": 2000},
 }
+# US spelling in everything the player reads (Steven, 2026-10-29: "favourite = favorite"); the old data is British
+US = {"favourite": "favorite", "colour": "color", "centre": "center", "realise": "realize", "behaviour": "behavior",
+      "grey": "gray", "theatre": "theater", "cheque": "check", "neighbour": "neighbor", "honour": "honor", "travelling": "traveling"}
+def us(v):
+    if isinstance(v, str):
+        for k, w in US.items(): v = v.replace(k, w).replace(k.capitalize(), w.capitalize())
+        return v
+    if isinstance(v, list): return [us(x) for x in v]
+    if isinstance(v, dict): return {k: us(x) for k, x in v.items()}
+    return v
+out = us(out)
 json.dump(out, open(os.path.join(OUT, "ch1.json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
 print(f"ch1.json: {len(events)} events ({', '.join(e['id'] for e in events)}), payouts for fields {fields}, {len(out['labels'])} labels")
