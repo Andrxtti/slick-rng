@@ -5,6 +5,7 @@ import math, os, sys, shutil
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy
 from kit import reset, mat, box, cyl, text, model, mark, export
+from mathutils import Matrix, Vector
 
 reset()
 R = math.radians
@@ -22,7 +23,7 @@ steel = mat("M_Steel", color=(0.62, 0.63, 0.64), rough=0.3, metal=1.0)
 black = mat("M_Black", color=(0.02, 0.02, 0.025), rough=0.35)
 strip = mat("M_Strip", color=(1.0, 0.85, 0.65), emit=(1.0, 0.78, 0.52), emit_strength=3.0)
 phone_glass = mat("M_PhoneScreen", color=(0.01, 0.012, 0.02), rough=0.45, emit=(0.02, 0.025, 0.04), emit_strength=1.0)
-notif = mat("M_Notif", color=(0.3, 0.32, 0.36), rough=0.3, emit=(0.16, 0.17, 0.2), emit_strength=1.0)
+notif = mat("M_Notif", color=(0.3, 0.32, 0.36), rough=0.3, emit=(0.05, 0.055, 0.065), emit_strength=1.0)
 notif_ink = mat("M_NotifInk", color=(0.9, 0.9, 0.92), rough=0.5, emit=(0.5, 0.5, 0.52), emit_strength=1.0)
 phone_body = mat("M_PhoneBody", color=(0.05, 0.05, 0.06), rough=0.3, metal=0.6)
 laptop = mat("M_Laptop", color=(0.55, 0.56, 0.58), rough=0.3, metal=1.0)
@@ -31,6 +32,15 @@ sheet_ink = mat("M_SheetInk", color=(0.05, 0.25, 0.12), rough=0.5)
 grid = mat("M_SheetGrid", color=(0.55, 0.6, 0.58), rough=0.5)
 paper = mat("M_Paper", color=(0.9, 0.88, 0.84), rough=0.85)
 print_ = mat("M_Print", color=(0.12, 0.09, 0.08), rough=0.7, emit=(0.6, 0.15, 0.1), emit_strength=0.0)
+
+
+
+def turn(ob, center, euler):
+    """kit.box bakes its location into the mesh (origin at the world origin): move the origin back to the box's centre
+    before turning it, or it swings round the room."""
+    ob.data.transform(Matrix.Translation(-Vector(center))); ob.location = center; ob.rotation_euler = euler
+    return ob
+
 
 W, D, H = 3.2, 5.5, 2.7
 # shell
@@ -56,7 +66,7 @@ while z > z0 + 0.02:
     for k, (a, b) in enumerate(((x0 + 0.02, -1.0), (-1.0, x1 - 0.02))):
         if k == 0 and z < 1.15: continue   # the left blind is raised to here: an open gap of city
         ob = box(f"Slat{n}_{k}", ((a + b) / 2, 0.05, z), (b - a, 0.05, 0.003), slat, uv=0)
-        ob.rotation_euler = (R(-22), 0, 0)
+        turn(ob, ((a + b) / 2, 0.05, z), (R(-22), 0, 0))
     z -= 0.042; n += 1
 box("BlindRail0", ((x0 + 0.02 - 1.0) / 2, 0.05, 1.13), (abs(-1.0 - x0), 0.05, 0.012), slat, uv=0)
 
@@ -80,10 +90,8 @@ box("CounterTop", (0.9, cy, 0.92), (3.3, 0.72, 0.04), stone, uv=0.8, bevel=0.003
 model("metal_stool_01", (0.2, cy + 0.6, 0), rot_z=R(15), name="Stool0")
 model("metal_stool_01", (1.0, cy + 0.6, 0), rot_z=R(-10), name="Stool1")
 # on the counter: the phone (face up), a takeout box, the lanyard, a glass, the laptop (p_keep's BANKROLL sheet)
-ph = box("Prop_Phone", (0.18, cy - 0.12, 0.945), (0.075, 0.155, 0.008), phone_body, uv=0, bevel=0.006)
-ph.rotation_euler = (0, 0, R(-14))
-scr = box("PhoneScreen", (0.18, cy - 0.12, 0.9495), (0.068, 0.146, 0.001), phone_glass, uv=0)
-scr.rotation_euler = (0, 0, R(-14))
+ph = turn(box("Prop_Phone", (0.18, cy - 0.12, 0.945), (0.075, 0.155, 0.008), phone_body, uv=0, bevel=0.006), (0.18, cy - 0.12, 0.945), (0, 0, R(-14)))
+scr = turn(box("PhoneScreen", (0.18, cy - 0.12, 0.9495), (0.068, 0.146, 0.001), phone_glass, uv=0), (0.18, cy - 0.12, 0.9495), (0, 0, R(-14)))
 # the lock screen when it lights up (Business shows it on the buzz): a notification from Slick
 nb = bpy.data.objects.new("PhoneNotif", None); bpy.context.collection.objects.link(nb)
 nb.location = (0.18, cy - 0.12, 0.9502); nb.rotation_euler = (0, 0, R(-14))
@@ -99,15 +107,14 @@ box("Lanyard", (0.45, cy - 0.05, 0.942), (0.06, 0.09, 0.004), mat("M_Lanyard", c
 cyl("Glass", (0.62, cy + 0.12, 1.0), 0.035, 0.12, glass, uv=0)
 lx, ly = 1.25, cy + 0.02
 box("LaptopBase", (lx, ly, 0.948), (0.32, 0.22, 0.014), laptop, uv=0, bevel=0.004)
-lid = box("Prop_Laptop", (lx, ly + 0.11 + 0.01, 1.05), (0.32, 0.006, 0.21), laptop, uv=0, bevel=0.003)
-lid.rotation_euler = (R(-18), 0, 0)
-face = box("LaptopScreen", (lx, ly + 0.11 - 0.004, 1.05), (0.3, 0.001, 0.19), sheet, uv=0)
-face.rotation_euler = (R(-18), 0, 0)
-t = text("BankrollTitle", "BANKROLL", (lx - 0.13, ly + 0.11 - 0.012, 1.125), 0.022, sheet_ink, extrude=0.0003, bevel=0, rot=(R(90 - 18), 0, 0), align="LEFT")
+lid = turn(box("Prop_Laptop", (lx, ly + 0.11 + 0.01, 1.05), (0.32, 0.006, 0.21), laptop, uv=0, bevel=0.003), (lx, ly + 0.11 + 0.01, 1.05), (R(-18), 0, 0))
+face = turn(box("LaptopScreen", (lx, ly + 0.11 - 0.004, 1.05), (0.3, 0.001, 0.19), sheet, uv=0), (lx, ly + 0.11 - 0.004, 1.05), (R(-18), 0, 0))
+t = text("BankrollTitle", "BANKROLL", (lx - 0.13, ly + 0.11 - 0.006 + 0.075 * math.tan(R(18)), 1.125), 0.022, sheet_ink, extrude=0.0003, bevel=0, rot=(R(90 - 18), 0, 0), align="LEFT")
+text("BankrollRow", "Jan 12     Savings              $2,000", (lx - 0.13, ly + 0.11 - 0.006 + 0.034 * math.tan(R(18)), 1.084), 0.011, sheet_ink, extrude=0.0003, bevel=0, rot=(R(90 - 18), 0, 0), align="LEFT")
 for r in range(6):   # the sheet's grid
     zz = 1.1 - r * 0.026
-    g = box(f"Row{r}", (lx, ly + 0.11 - 0.006 + (1.05 - zz) * math.tan(R(18)), zz), (0.28, 0.0008, 0.0012), grid, uv=0)
-    g.rotation_euler = (R(-18), 0, 0)
+    gc = (lx, ly + 0.11 - 0.006 + (zz - 1.05) * math.tan(R(18)), zz)
+    turn(box(f"Row{r}", gc, (0.28, 0.0008, 0.0012), grid, uv=0), gc, (R(-18), 0, 0))
 
 # the living side: sofa facing the window, coffee table, a lamp on a side table, a plant, a box never unpacked
 model("sofa_02", (-2.0, 3.6, 0), rot_z=R(180), name="Sofa")
@@ -128,10 +135,14 @@ mark("L_city", (-0.4, -2.2, 3.4))
 mark("L_fill", (1.0, -1.5, 1.2))
 mark("L_strip", (0.4, D - 0.45, 1.5))
 mark("L_lamp", (-2.95, 4.5, 1.0))
-mark("L_phone", (0.18, cy - 0.12, 1.02))
+mark("L_phone", (0.2, cy - 0.38, 1.22))   # the phone's glow, up on his face (not on the phone itself)
 mark("AIM_hero", (0.25, cy - 0.5, 1.25))   # the city spot through the blinds aims here (Sets.Dress)
 # people and cameras
 mark("MARK_you", (0.25, cy - 0.62, 0), 0)
+mark("CAM_phone", (0.1, cy - 0.33, 1.2))   # p_offer: down onto the lock screen
+mark("AIM_phone", (0.18, cy - 0.1, 0.95))
+mark("CAM_laptop", (lx - 0.12, ly - 0.42, 1.28))   # p_keep: over his shoulder onto the BANKROLL sheet
+mark("AIM_laptop", (lx, ly + 0.1, 1.06))
 mark("CAM_ext", (-2.7, 5.1, 1.9), 0)
 mark("CAM_wide", (2.0, 4.3, 1.6), 0)
 

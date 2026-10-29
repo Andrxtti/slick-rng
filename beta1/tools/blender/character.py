@@ -156,6 +156,12 @@ def build():
         material_for(ob, mname, mh)
         ob.name = mname
     if SPEC.get("mask"): add_mask(base, SPEC["mask"], manifest)
+    if SPEC.get("hair_cards") and bpy.data.objects.get("hair"):   # strands over the MakeHuman hair (tools/blender/hair.py)
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import hair
+        hair.build(bpy.data.objects["hair"], rig, os.path.join(OUT, "tex"), SPEC["hair_cards"], log, SPEC.get("colors", {}).get("hair"))
+        manifest["materials"]["haircards"] = {"diffuse": "tex/haircards_diffuse.png"}
+        if "hair" in manifest["colors"]: manifest["colors"]["haircards"] = manifest["colors"]["hair"]
     json.dump(manifest, open(os.path.join(OUT, "manifest.json"), "w"), indent=1)
     return base, rig
 

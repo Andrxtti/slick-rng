@@ -17,7 +17,7 @@ namespace Dream.EditorTools
     public static class Render
     {
         public static string OutDir => @"C:\Dev\Builds\Beta1\Film";
-        public const int Width = 1920, Height = 1080, Fps = 30;
+        public const int Width = 2560, Height = 1440, Fps = 30;   // supersampled: published films are scaled down (lanczos) from here
         const float Limit = 240f;
 
         static readonly Queue<string> queue = new Queue<string>();

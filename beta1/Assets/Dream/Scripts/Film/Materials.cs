@@ -12,7 +12,7 @@ namespace Dream.Film
     public static class Materials
     {
         static readonly Dictionary<string, float> Smooth = new Dictionary<string, float>
-        { ["skin"] = 0.42f, ["eyes"] = 0.93f, ["teeth"] = 0.55f, ["tongue"] = 0.6f, ["hair"] = 0.38f, ["brows"] = 0.2f, ["lashes"] = 0.2f };
+        { ["skin"] = 0.46f, ["eyes"] = 0.95f, ["teeth"] = 0.42f, ["tongue"] = 0.5f, ["hair"] = 0.38f, ["haircards"] = 0.42f, ["brows"] = 0.2f, ["lashes"] = 0.2f };
 
         public static Material Make(string dir, string part, Dictionary<string, object> man)
         {
@@ -31,16 +31,21 @@ namespace Dream.Film
                 m.EnableKeyword("_NORMALMAP"); m.SetFloat("_BumpScale", 1f);
             }
 #endif
+            if (part == "teeth") tint *= 0.72f;   // teeth and tongue sit in the mouth's shadow: they must never glow
+            if (part == "tongue") tint *= 0.6f;
             m.SetColor("_BaseColor", tint);
+#if UNITY_EDITOR
+            if (part == "skin" && m.HasProperty("_PoreMap")) m.SetTexture("_PoreMap", AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Dream/FilmData/Tex/pores_n.png"));
+#endif
             m.SetFloat("_Smoothness", Smooth.TryGetValue(part, out var sm) ? sm : 0.18f);
             m.SetFloat("_Metallic", 0f);
-            bool clip = part == "hair" || part == "brows" || part == "lashes" || part == "eyes";
+            bool clip = part == "hair" || part == "haircards" || part == "brows" || part == "lashes" || part == "eyes";
             if (clip)
             {
-                m.SetFloat("_AlphaClip", 1); m.SetFloat("_Cutoff", part == "hair" ? 0.35f : 0.25f); m.EnableKeyword("_ALPHATEST_ON");
+                m.SetFloat("_AlphaClip", 1); m.SetFloat("_Cutoff", part == "hair" ? 0.35f : part == "haircards" ? 0.4f : 0.25f); m.EnableKeyword("_ALPHATEST_ON");
                 m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
             }
-            if (part == "hair" || part == "brows" || part == "lashes") m.SetFloat("_Cull", 0);   // two-sided cards
+            if (part == "hair" || part == "haircards" || part == "brows" || part == "lashes") m.SetFloat("_Cull", 0);   // two-sided cards
             if (part != "eyes" && part != "teeth")   // skin and cloth don't mirror the room (a bright window turned faces chrome)
             { m.SetFloat("_EnvironmentReflections", 0); m.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF"); }
             return m;

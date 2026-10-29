@@ -67,7 +67,7 @@ namespace Dream.Film
             Business.Before(sc.id, l.n, set, actors);
             shot = set == null ? null : Shot.Make(l.shot, l.subject, l.who, set, actors, sc);
             if (shot != null) { shot.Apply(cam, dof, 0f); LightFor(shot, l.shot); }
-            cue?.WriteLine($"{l.n}	{Time.time:0.00}	{l.shot} {l.subject}	{l.who}: {l.text}	{(shot != null ? $"cam {shot.to} focus {shot.focus}" : "")}"); cue?.Flush();
+            cue?.WriteLine($"{l.n}	{Time.time:0.00}	{l.shot} {l.subject}	{l.who}: {l.text.Replace("\n", " / ")}	{(shot != null ? $"cam {shot.to} focus {shot.focus}" : "")}"); cue?.Flush();
             AudioClip clip = string.IsNullOrEmpty(l.voice) ? null : Data.Load<AudioClip>($"Voice/{l.voice}.wav");
             foreach (var d in sc.directions)   // sounds the stage directions call for
             {
@@ -144,7 +144,7 @@ namespace Dream.Film
             var wb = p.Add<WhiteBalance>(); wb.temperature.Override(4f);
             var smh = p.Add<ShadowsMidtonesHighlights>(); smh.shadows.Override(new Vector4(0.92f, 0.95f, 1.08f, 0f)); smh.highlights.Override(new Vector4(1.06f, 1.0f, 0.92f, 0f));
             var vig = p.Add<Vignette>(); vig.intensity.Override(0.28f); vig.smoothness.Override(0.45f);
-            var grain = p.Add<FilmGrain>(); grain.type.Override(FilmGrainLookup.Thin2); grain.intensity.Override(0.22f);
+            var grain = p.Add<FilmGrain>(); grain.type.Override(FilmGrainLookup.Thin2); grain.intensity.Override(0.16f);
             p.Add<ChromaticAberration>().intensity.Override(0.04f);
             dof = p.Add<DepthOfField>(); dof.mode.Override(DepthOfFieldMode.Bokeh); dof.focusDistance.Override(2f);
             dof.focalLength.Override(50f); dof.aperture.Override(2.4f); dof.bladeCount.Override(7);

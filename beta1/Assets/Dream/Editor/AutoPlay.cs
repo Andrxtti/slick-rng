@@ -1,6 +1,7 @@
 // The test driver: plays the game start to finish in Play mode with no hands on the mouse, taking one branch of the
-// job choice. Hands get the solver's best answer; films are skipped once they start; at the hub it enters the Classic
-// when it can, otherwise the biggest event it can afford, and sleeps when nothing is playable today.
+// job choice (on the phone). Hands get the solver's best answer; films are skipped once they start; texts are tapped
+// through; at the hub it enters the Classic when it can, then the nightly, the Global Rush and the freeroll, and sleeps
+// when nothing is playable today.
 //   remote: auto quit | auto keep   -> Logs/auto_<branch>.txt and screenshots Logs/<branch>_choice.png, _hub.png, _end.png
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +18,7 @@ namespace Dream.EditorTools
     public static class AutoPlay
     {
         static string branch; static bool lose, broke, cut; static double next; static int steps; static StreamWriter log; static readonly HashSet<string> shot = new HashSet<string>();
-        static string lastHub;
+        static string lastHub, lastText;
 
         static AutoPlay()
         {
@@ -57,13 +58,24 @@ namespace Dream.EditorTools
             if (films != null) { films.Skip(); return; }
             var f = Flow.I; if (f == null || f.S == null) { Find("Begin")?.onClick.Invoke(); return; }
             if (Table.Waiting || Has("Coaching by Confirmed Fire")) { Table.AutoStep((lose && f.S.events < 7) || (broke && f.S.debt <= 0 && f.S.events < 3)); return; }   // a spot, or its grade panel (lose: the worst answers for the first games)
-            if (Has("Decision time."))
+            if (Phone.I != null)   // the phone: take the branch when the decision is up, otherwise tap through the texts
             {
-                Shot("choice");
-                if (shot.Contains("choice_wait")) { W($"choice: {branch}"); Find(branch == "keep" ? "Keep the job" : "Quit. Today.")?.onClick.Invoke(); }
-                else shot.Add("choice_wait");   // one tick for the screenshot
-                return;
+                var pick = Find(branch == "keep" ? "Keep the job" : "Quit. Text Lou");
+                if (pick != null)
+                {
+                    Shot("phone_choice");
+                    if (shot.Contains("choice_wait")) { W($"choice on the phone: {branch}"); pick.onClick.Invoke(); }
+                    else shot.Add("choice_wait");   // one tick for the screenshot
+                    return;
+                }
+                var texts = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Where(t => t.transform.parent != null && t.transform.parent.name == "Bubble").Select(t => t.text).ToList();
+                var said = string.Join(" | ", texts); if (said != lastText) { W("  phone: " + said); lastText = said; }
+                if (Has("BRO. YOU QUIT") || Has("Smart. A paycheck")) Shot("phone_" + branch);
+                if (Has("TEN THOUSAND")) Shot("david");
+                Find("Dim")?.onClick.Invoke(); return;
             }
+            var choice = Find("Play poker. For real.") ?? Find("Take Slick's stake");   // the diner question; rock bottom
+            if (choice != null) { Shot(choice.name == "Button" && Has("Rock bottom") ? "broke" : "diner_choice"); W("  choose: " + choice.GetComponentInChildren<TMPro.TMP_Text>().text); choice.onClick.Invoke(); return; }
             if (Find("Send feedback") != null)
             {
                 Shot("end");
@@ -80,20 +92,21 @@ namespace Dream.EditorTools
                 if (res != null) W($"  result: {res}");
                 cont.onClick.Invoke(); return;
             }
+            if (Has("tap to continue") && Find("Screen") != null) { Find("Screen").onClick.Invoke(); return; }   // a narrator card
             if (Has("BISCAYNE CARD ROOM"))
             {
                 if (broke && !cut && Find("nightly") != null) { cut = true; f.S.br = 70; f.S.Write(); W("  (test: bankroll cut to $70)"); f.Hub(); return; }   // on a day you can play
                 Shot("hub");
                 var texts = Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Select(t => t.text).ToList();
                 string date = texts.FirstOrDefault(t => t.Contains(", ") && (t.StartsWith("Mon") || t.StartsWith("Tue") || t.StartsWith("Wed") || t.StartsWith("Thu") || t.StartsWith("Fri") || t.StartsWith("Sat") || t.StartsWith("Sun")));
-                string why = texts.FirstOrDefault(t => t.StartsWith("Live games") || t.StartsWith("Your live game") || t.StartsWith("One live game"));
+                string why = string.Join("; ", texts.Where(t => t.StartsWith("Live games") || t.StartsWith("Your live game") || t.StartsWith("One live game") || t.StartsWith("No online") || t.StartsWith("A live day") || t.StartsWith("Two online")).Distinct());
                 string note = texts.FirstOrDefault(t => t.StartsWith("Payday"));
-                string line = $"hub {date} | ${f.S.br:0} | {f.Rep} | {why ?? "can play"}{(note != null ? " | " + note : "")}";
+                string line = $"hub {date} | ${f.S.br:0} | {f.Rep} | {(why == "" ? "can play" : why)}{(note != null ? " | " + note : "")}";
                 if (line != lastHub) { W(line); lastHub = line; }
                 // three smaller games first, so the calendar rules (one live game a day, weekends with the job) get played
-                var order = f.S.events < 4 ? new[] { "nightly", "c12", "deep", "classic" } : new[] { "classic", "deep", "nightly", "c12" };
+                var order = new[] { "classic2", "classic", "nightly", "glob55", "freeroll" };
                 foreach (var id in order) { var b = Find(id); if (b != null) { W($"  play {id} (${f.S.br:0} before buy-in)"); b.onClick.Invoke(); return; } }
-                var sleep = Find("Sleep"); if (sleep != null) { sleep.onClick.Invoke(); return; }
+                var sleep = Find("Sleep") ?? Find("Call it a night"); if (sleep != null) { sleep.onClick.Invoke(); return; }
                 Stop("hub with nothing to do");
                 return;
             }

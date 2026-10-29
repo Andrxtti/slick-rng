@@ -140,8 +140,8 @@ namespace Dream.Game
             Ui.At(Ui.Num(s, Ui.Money(S.br), 104, Ui.Ink, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.79f, 0.94f, 0.87f);
             Ui.At(Ui.Label(s, "BANKROLL  ·  " + Rep.ToUpperInvariant(), 24, Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.765f, 0.94f, 0.79f);
             // goal
-            var bar = Ui.At(Ui.Tile(s, "GoalBar", Ui.Card, 999), 0.06f, 0.728f, 0.94f, 0.742f);
-            var fill = Ui.Tile(bar, "Fill", Ui.Gold, 999); fill.anchorMax = new Vector2(Mathf.Clamp01((float)(S.br / Goal)), 1);
+            var bar = Ui.At(Ui.Tile(s, "GoalBar", Ui.Card, 10), 0.06f, 0.728f, 0.94f, 0.742f);
+            var fill = Ui.Tile(bar, "Fill", Ui.Gold, 10); fill.anchorMax = new Vector2(Mathf.Clamp01((float)(S.br / Goal)), 1);
             Ui.At(Ui.Label(s, "Goal: win the Biscayne Classic, or build your bankroll to $10,000", 26, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.69f, 0.94f, 0.72f);
             if (note != null) Ui.At(Ui.Label(s, note, 30, Ui.Aqua, TextAnchor.MiddleLeft), 0.06f, 0.645f, 0.94f, 0.685f);
             float y = 0.63f; var today = Today().ToList();

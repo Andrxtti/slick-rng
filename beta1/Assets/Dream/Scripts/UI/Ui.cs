@@ -22,8 +22,18 @@ namespace Dream.UI
             if (fonts.TryGetValue(file, out var f)) return f;
             var src = Resources.Load<Font>("Fonts/" + file);
             f = src == null ? TMP_Settings.defaultFontAsset : TMP_FontAsset.CreateFontAsset(src, 90, 9, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 1024, 1024);
-            f.name = file; fonts[file] = f; return f;
+            f.name = file; fonts[file] = f;
+            // symbols the brand fonts don't draw (★ ✓ suits) fall back to DejaVu; Gloock falls back to Inter first
+            if (src != null && file != "DejaVuSans-Bold")
+            {
+                f.fallbackFontAssetTable = new List<TMP_FontAsset>();
+                if (file.StartsWith("Gloock")) f.fallbackFontAssetTable.Add(Font("Inter-Regular"));
+                f.fallbackFontAssetTable.Add(Font("DejaVuSans-Bold"));
+            }
+            return f;
         }
+        // emoji have no font on the web: the grade icons get plain glyphs
+        public static string Icon(string icon) => icon == "👍" ? "✓✓" : icon;
         public static TMP_FontAsset Body => Font("Inter-Regular"); public static TMP_FontAsset Semi => Font("Inter-SemiBold");
         public static TMP_FontAsset Heavy => Font("Inter-Bold"); public static TMP_FontAsset Display => Font("Gloock-Regular");
         public static TMP_FontAsset Mono => Font("IBMPlexMono-Regular"); public static TMP_FontAsset MonoBold => Font("IBMPlexMono-Bold");
@@ -110,7 +120,7 @@ namespace Dream.UI
             t.text = text; t.fontSize = size; t.color = color; t.alignment = Align(align); t.raycastTarget = false;
             if (style == FontStyle.Italic || style == FontStyle.BoldAndItalic) t.fontStyle = FontStyles.Italic;
             t.textWrappingMode = TextWrappingModes.Normal; t.overflowMode = TextOverflowModes.Overflow;
-            if (face == Face.Body && text.Length > 1 && text.Length < 40 && text == text.ToUpperInvariant() && text.IndexOfAny("ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray()) >= 0)
+            if (face == Face.Body && size <= 30 && text.Length > 1 && text.Length < 40 && text == text.ToUpperInvariant() && text.IndexOfAny("ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray()) >= 0)
                 t.characterSpacing = 8;   // caps labels breathe
             if (face == Face.Display) t.characterSpacing = -1;
             if (face == Face.Body && size <= 36) t.lineSpacing = 6;
@@ -130,7 +140,7 @@ namespace Dream.UI
         public static Button Button(Transform parent, string text, Action onClick, Color bg, Color fg, int size = 46)
         {
             var go = new GameObject("Button", typeof(RectTransform), typeof(Image), typeof(Button)); go.transform.SetParent(parent, false);
-            Rounded(go.GetComponent<Image>(), 999).color = bg;   // a pill
+            Rounded(go.GetComponent<Image>(), 34).color = bg;   // soft corners (a 9-slice bigger than the button stretches into an ellipse)
             var b = go.GetComponent<Button>(); b.onClick.AddListener(() => onClick());
             var cb = b.colors; cb.highlightedColor = new Color(1, 1, 1, 0.92f); cb.pressedColor = new Color(0.8f, 0.8f, 0.8f); b.colors = cb;
             Label(go.transform, text, size, fg, TextAnchor.MiddleCenter, FontStyle.Bold);

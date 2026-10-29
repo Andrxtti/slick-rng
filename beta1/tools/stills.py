@@ -8,7 +8,8 @@ FILM = r"C:\Dev\Builds\Beta1\Film"
 sid = sys.argv[1]
 off = float(sys.argv[sys.argv.index("--offset") + 1]) if "--offset" in sys.argv else 1.2
 cues = [l.rstrip("\n").split("\t") for l in open(os.path.join(ROOT, "Logs", f"film_{sid}.txt"), encoding="utf-8") if l.strip()]
-out = os.path.join(FILM, f"{sid}_stills"); os.makedirs(out, exist_ok=True)
+cues = [c for c in cues if c[0].isdigit() and len(c) > 2]   # a card's second line is not a cue
+out =os.path.join(FILM, f"{sid}_stills"); os.makedirs(out, exist_ok=True)
 tiles = []
 for k, (n, t, shot, text, *_) in enumerate(cues):
     p = os.path.join(out, f"{int(n):02d}.png")

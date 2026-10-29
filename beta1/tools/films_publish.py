@@ -22,7 +22,7 @@ for src, dst in jobs:
     if src.endswith("_720p.mp4"):
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-c", "copy", "-movflags", "+faststart", dst], check=True)
     else:
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-vf", "scale=1280:720", "-c:v", "libx264", "-profile:v", "main", "-crf", "25",
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-vf", "scale=1280:720:flags=lanczos", "-c:v", "libx264", "-profile:v", "main", "-crf", "25",
                         "-preset", "slow", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "112k", "-movflags", "+faststart", dst], check=True)
     total += os.path.getsize(dst); print(f"{os.path.basename(dst):20} {os.path.getsize(dst) / 1e6:5.1f} MB")
 print(f"films: {total / 1e6:.1f} MB")

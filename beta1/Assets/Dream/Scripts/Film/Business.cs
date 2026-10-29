@@ -32,7 +32,7 @@ namespace Dream.Film
             IEnumerator Run(Transform phone, Transform screen)
             {
                 var r = screen != null ? screen.GetComponent<Renderer>() : null; var m = r != null ? r.material : null;
-                if (m != null) foreach (var prop in new[] { "emissiveFactor", "_EmissionColor" }) if (m.HasProperty(prop)) m.SetColor(prop, new Color(0.22f, 0.3f, 0.5f));   // the lock screen wakes
+                if (m != null) foreach (var prop in new[] { "emissiveFactor", "_EmissionColor" }) if (m.HasProperty(prop)) m.SetColor(prop, new Color(0.02f, 0.03f, 0.06f));   // the lock screen wakes, dim: the notification is what reads
                 var p0 = phone.localPosition; var q0 = phone.localRotation;
                 for (int pulse = 0; pulse < 3; pulse++)
                 {

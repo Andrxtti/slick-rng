@@ -77,7 +77,7 @@ The beat: a stranger who has been where you are hands you a door. Slick says alm
 {he slides a red envelope along the counter; the chrome catches the neon}
 
 1. CARD [card] (insert envelope; idle): He slides a red envelope across the counter.
-2. STRANGER [slick] (insert envelope; talk): The Biscayne Championship. Saturday, noon. Two-fifty seat. It's paid.
+2. STRANGER [slick] (cu slick; talk): The Biscayne Championship. Saturday, noon. Two-fifty seat. It's paid.
 3. YOU [you] (cu you; talk): Why would you give that to a stranger?
 4. STRANGER [slick] (push slick; talk): Because I sat on that stool once. Somebody bought my pie too.
 5. STRANGER [slick] (cu slick; point > nod): Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips.
@@ -85,7 +85,7 @@ The beat: a stranger who has been where you are hands you a door. Slick says alm
 7. SLICK [slick] (ecu slick; idle): People call me Slick.
 {the bell over the door rings; his stool is empty}
 8. CARD [card] (wide; idle): He drops cash for both checks and is gone before the bell over the door stops ringing. / Inside the envelope: a seat card, and one line in pen.
-9. CARD [card] (insert envelope; idle): “People insist on calling it luck…”
+9. CARD [card] (ecu you; think): “People insist on calling it luck…”
 
 ## p_seat — The first seat
 place: cardroom · time: Saturday, 11:40 AM · cast: gnomey, you
@@ -143,7 +143,7 @@ come next, on the phone, in the game.
 {the phone buzzes on the counter}
 
 1. CARD [card] (wide; idle): Monday night. Your phone buzzes on the counter.
-2. CARD [card] (insert phone; idle; 2.5s): -
+2. CARD [card] (cam phone; idle; 3s): -
 3. CARD [card] (push you; think; 2.5s): -
 
 ## p_quit — Sent
@@ -156,7 +156,7 @@ Plays after you text Lou.
 place: home · time: Monday, 11:24 PM · cast: you
 Plays when you keep the job.
 
-1. CARD [card] (insert laptop; idle): You keep the lanyard. / But tonight you open a new spreadsheet and name it BANKROLL.
+1. CARD [card] (cam laptop; idle): You keep the lanyard. / But tonight you open a new spreadsheet and name it BANKROLL.
 2. CARD [card] (cu you; think): $2,000 lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream.
 
 ## c1 — The Grind
@@ -168,7 +168,7 @@ The beat: the room, the people, the goal.
 2. MILES [gnomey] (two; point): Back again? Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven.
 3. TOMMY [tommy] (cu tommy; point): Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast.
 4. MUSTICH [mustich] (cu mustich; laugh): Cute hoodie. Did it come with the free seat?
-5. CARD [card] (ots mustich; idle): Mustich. Dad's money, a solver subscription, and a smile you want to wipe off. / He's been circling the Biscayne Classic all year.
+5. CARD [card] (ecu mustich; idle): Mustich. Dad's money, a solver subscription, and a smile you want to wipe off. / He's been circling the Biscayne Classic all year.
 6. CARD [card] (wide; idle): Goal: win the Biscayne Classic, or build your bankroll to $10,000.
 
 ## classic_day1 — Bags and tags

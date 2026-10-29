@@ -18,11 +18,11 @@
    "n": 2,
    "who": "card",
    "name": "CARD",
-   "shot": "insert",
+   "shot": "cam",
    "subject": "phone",
    "act": "idle",
    "next": "",
-   "hold": 2.5,
+   "hold": 3.0,
    "text": "",
    "voice": ""
   },

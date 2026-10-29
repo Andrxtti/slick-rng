@@ -26,7 +26,7 @@ namespace Dream.UI
             ["Lou"] = ("Lou (work)", new Color(0.6f, 0.65f, 0.7f)), ["Mustich"] = ("Mustich", new Color(0.75f, 0.52f, 0.99f)),
         };
 
-        RectTransform device, content, footer; TextMeshProUGUI title, avatarInitial, field, hint; Image avatar;
+        RectTransform device, content, footer, view; TextMeshProUGUI title, avatarInitial, field, hint; Image avatar;
         string thread; float y; bool tapped;
 
         public static Phone Open()
@@ -41,7 +41,7 @@ namespace Dream.UI
 
         void Build(Transform root)
         {
-            var dim = Ui.Panel(root, "Dim", new Color(0, 0, 0, 0.92f));
+            var dim = Ui.Panel(root, "Dim", Color.black);
             dim.gameObject.AddComponent<Button>().onClick.AddListener(() => tapped = true);
             device = Ui.Tile(dim, "Device", Bg, 0);
             var fit = device.gameObject.AddComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent; fit.aspectRatio = 1080f / 1920f;
@@ -60,7 +60,8 @@ namespace Dream.UI
             title = Ui.At(Ui.Label(head, "", 26, Color.white), 0.2f, 0.04f, 0.8f, 0.4f);
             Ui.At(Ui.Panel(head, "Rule", Line), 0, 0, 1, 0.012f);
             // the conversation, laid out top-down from under the header
-            var view = Ui.At(Ui.Box(device, "View"), 0.04f, 0.13f, 0.96f, 0.85f);
+            view = Ui.At(Ui.Box(device, "View"), 0.04f, 0.13f, 0.96f, 0.85f);
+            view.gameObject.AddComponent<RectMask2D>();   // the conversation scrolls under the header, not over it
             content = Ui.Box(view, "Content"); content.anchorMin = new Vector2(0, 1); content.anchorMax = new Vector2(1, 1); content.pivot = new Vector2(0.5f, 1);
             content.offsetMin = content.offsetMax = Vector2.zero;
             // the input field, or the reply chips when there's a choice
@@ -71,12 +72,20 @@ namespace Dream.UI
 
         void Field()
         {
-            Ui.Clear(footer); footer.anchorMax = new Vector2(0.96f, 0.125f);
-            var bar = Ui.At(Ui.Tile(footer, "Field", new Color(1, 1, 1, 0.07f), 999), 0, 0.22f, 0.86f, 0.74f);
+            Ui.Clear(footer); footer.anchorMax = new Vector2(0.96f, 0.125f); Fit(0.13f);
+            var bar = Ui.At(Ui.Tile(footer, "Field", new Color(1, 1, 1, 0.07f), 40), 0, 0.22f, 0.86f, 0.74f);
             field = Ui.At(Ui.Label(bar, "Text Message", 32, Meta, TextAnchor.MiddleLeft), 0.07f, 0, 0.93f, 1);
             var send = Ui.At(Ui.Tile(footer, "Send", Me, 999), 0.89f, 0.25f, 1f, 0.71f);
             send.gameObject.AddComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
             Ui.Label(send, "↑", 40, Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+        }
+
+        // the conversation fills from under the header down to y (0..1 of the phone), scrolled to its last message
+        void Fit(float bottom)
+        {
+            view.anchorMin = new Vector2(0.04f, bottom); view.offsetMin = view.offsetMax = Vector2.zero;
+            Canvas.ForceUpdateCanvases();
+            float over = y - view.rect.height; content.anchoredPosition = new Vector2(0, Mathf.Max(0, over));
         }
 
         void Thread(string who)
@@ -174,16 +183,17 @@ namespace Dream.UI
         public void Choose(string heading, List<string> options, List<string> hints, Action<int> pick)
         {
             Ui.Clear(footer); hint.text = ""; field = null;
-            var f = (RectTransform)footer; f.anchorMax = new Vector2(0.96f, 0.13f + 0.125f * options.Count + (heading != null ? 0.05f : 0));
+            float topY = 0.03f + 0.1f * options.Count + (heading != null ? 0.045f : 0);
+            footer.anchorMax = new Vector2(0.96f, topY); Fit(topY + 0.01f);   // the conversation moves up out of the way
             float step = 1f / (options.Count + (heading != null ? 0.45f : 0));
             float top = 1;
             if (heading != null) { Ui.At(Ui.Label(footer, heading.ToUpperInvariant(), 28, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 1 - step * 0.45f, 1, 1); top -= step * 0.45f; }
             for (int i = 0; i < options.Count; i++)
             {
-                int k = i; float y1 = top - i * step, y0 = y1 - step * 0.9f;
+                int k = i; float y1 = top - i * step, y0 = y1 - step * 0.95f;
                 var b = Ui.Button(footer, options[i], () => { field = null; Field(); pick(k); }, i == 0 ? Me : new Color(1, 1, 1, 0.1f), Color.white, 34);
-                Ui.At(b, 0.02f, y0 + step * 0.3f, 0.98f, y1);
-                if (i < hints.Count) Ui.At(Ui.Label(footer, hints[i], 24, Meta), 0, y0, 1, y0 + step * 0.3f);
+                Ui.At(b, 0.02f, y0 + step * 0.38f, 0.98f, y1);
+                if (i < hints.Count) Ui.At(Ui.Label(footer, hints[i], 22, Meta, TextAnchor.UpperCenter), 0, y0, 1, y0 + step * 0.34f);
             }
         }
 

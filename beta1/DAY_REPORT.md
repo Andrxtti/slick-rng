@@ -1,0 +1,68 @@
+# The Dream — Test Beta 1.0 day report (2026-10-29, afternoon)
+
+Claude Code on Steven's PC, working `unity/docs/DAY2.md` while Steven is at work. The cloud session reviews stills,
+writes Chapter 2 on (`unity/docs/STORY.md`) and publishes web builds; notes come in through `C:\Dev\Beta1Assets\INBOX.md`.
+Stills for this report: `C:\Dev\Builds\day2\`.
+
+## To-do (ordered; model · effort)
+**Priority 1: Steven's Prologue and Chapter 1, in his words**
+1. Script: stage Steven's Prologue and Chapter 1 as film in `story/SCRIPT.md` (old `dream/story.js` and the Unity
+   game's `Story.cs` overrides) · Opus · high · done
+2. The apartment set (`tools/blender/home.py`): Miami studio at night, the counter, the phone, city through the blinds · Opus · high · done
+3. Phone texts: Messages-style screen (bubbles, typing dots, timestamps, sender, reply chips for the job decision) · Opus · high · done
+4. Yarn: the diner question, Monday, the offer at home, quit/keep, the Classic's two days, final tables, firstwin,
+   badbeat, lesson1, broke with its choices, David, Slick's Circuit text · Opus · high · done
+5. Chapter 1's events and calendar as Steven's game ran them (Winn Nightly $110, CF $55 Global Rush online, Classic
+   Day 1/Day 2, Comeback Freeroll; live and online slots) · Sonnet · medium · done
+6. Voice and render every film; captions drawn by the game; contact sheets reviewed · Sonnet · low
+7. Play it through both branches with the test driver; `build-web` · Haiku · low
+
+**Priority 2: brand fonts** · Opus · medium
+8. TextMeshPro with Gloock / Inter / IBM Plex Mono, a type scale, rounded cards and pills · started with priority 1
+9. The table and grade panel in the new type; check every screen at phone size
+
+**Priority 3: best graphics** · Opus · high
+10. Films: supersampled renders (1440p → 1080p), SSAO, high-res shadows, bokeh, restrained grain
+11. Phones: the FSR/post fix (Batch C 12), sensible shadows, compressed textures
+
+**Priority 4 and Batches A–C** (characters, cutscenes, live game): fresh list after priority 3.
+
+## Calls I made (Steven is away)
+- **Films never carry words now.** Narrator cards and subtitles are drawn by the game over the video (Gloock for the
+  narrator, Inter for subtitles), from a small `<film>.json` written at render time. Why: Steven's narration has
+  numbers that depend on your game ("You finished 14th on Saturday and took home $612"), the brand fonts stay sharp at
+  any size, and held upright the words sit in the black under the picture instead of over faces.
+- **The diner question is asked.** Steven's p_diner has a choice ("Play poker. For real." / "Doesn't matter now."). The
+  film stops on Slick's question, the game asks it, then plays the matching answer and the rest of the scene
+  (`p_diner`, `p_diner_yes`/`p_diner_no`, `p_diner2`). The answer is saved as `$honest`, as in the old game.
+- **Who wins the Classic when you don't:** the old game drew from Mustich, Tommy, Slick and the legends. The legends
+  aren't built, so it's Mustich (always, if he beat you at the final table; else one time in five), Tommy (about one in
+  eight) or Slick (the rest, with his own line from Steven's list).
+- **Lesson 1** uses Steven's written lines (the old game's fallback), not the hand-that-cost-you version: a film can't
+  voice a hand that changes every game.
+- **Left out, as not listed in DAY2:** the after-event "walk away" scenes, `derek_job`, `broke_told`/`slick_back`. The
+  results screen covers the walk away for now.
+- **Removed from the films:** `needle`, `classic`, `classic_win`, `classic_lose`, `goal`. They were my lines from last
+  night; Steven's `trentbeat` and the three Classic endings replace them, and the chapter now ends on Slick's text from
+  Steven's Chapter 2 opener ("You've outgrown Biscayne...") before the end card.
+
+## Rhythm fixes to Steven's lines
+None so far. Steven's words are as written, including "Spacepad" in lesson 1 (the drill screen isn't in this beta) and
+"Nightly turbo kicks off at seven" in c1 (the Winn Nightly is no longer a turbo, as in his Unity game).
+
+## Log
+### Priority 1 done: Steven's Prologue and Chapter 1 (11:35)
+- **Flow, played by the test driver on both branches** (`Logs/auto_keep.txt`, `auto_quit.txt`): reel → p_office →
+  p_diner → the question ("Play poker. For real.") → p_diner_yes → p_diner2 → p_seat → the Biscayne Championship (Tommy's
+  final-table films) → p_after → **p_offer at home: the phone buzzes, Slick's three texts, "Decision time." on the
+  phone** → quit (you text Lou "Lou. Redo it yourself.", p_quit, Slick ×2, David) or keep (p_keep's BANKROLL sheet,
+  Slick's "Smart.") → c1 → hub → events → Mustich's text after a cooler, firstwin, David's TEN THOUSAND, Slick's Circuit
+  text → end card. Stills: `day2/home_sheet.jpg`, `offer_phone.png`, `phone_keep.png`, `phone_quit.png`, `keep_hub.png`.
+- **Calendar and events** as his Unity game: Winn Nightly $110 (live), CF $55 Global Rush (online), the Classic on the
+  last Saturday of the month (Day 1 bags 40; Day 2 on Sunday pays the 212-player pool), the Comeback Freeroll under $400.
+- **Web build** rebuilt: 14.9 MB engine payload (+1.1 MB for fonts and TextMeshPro), 0 errors, 29 films + captions
+  (40 MB streamed). It now builds with a phone pipeline (`URP_Mobile`: Linear upscaling instead of FSR, no MSAA, small
+  shadows) and switches back to the film pipeline after.
+- **Not good yet:** the phone body in p_offer is a plain slab; insert shots on the diner counter blow out under the key
+  light; a perfect player who wins the free Local ($7,000) and quits ($5,000) is past the $10,000 goal after one more
+  event (Steven's economy from the old game; I left it). Characters are still last night's faces (priority 4).

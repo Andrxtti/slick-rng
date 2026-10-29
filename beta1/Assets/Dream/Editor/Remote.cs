@@ -43,6 +43,12 @@ namespace Dream.EditorTools
                 Log("tap: no button " + label);
             };
             Extra["erase"] = _ => PlayerPrefs.DeleteAll();
+            Extra["shader"] = n =>   // compile messages of a shader, e.g. "shader Dream/Skin"
+            {
+                var sh = Shader.Find(n); if (sh == null) { Log("shader: none " + n); return; }
+                foreach (var m in ShaderUtil.GetShaderMessages(sh)) Log($"shader {n}: {m.severity} {m.message} line {m.line} {m.messageDetails}");
+                Log($"shader {n}: supported {sh.isSupported}, passes {sh.passCount}");
+            };
             // TextMeshPro's shaders and settings (from the uGUI package), needed once for the brand fonts
             Extra["tmp-essentials"] = _ => AssetDatabase.ImportPackage("Packages/com.unity.ugui/Package Resources/TMP Essential Resources.unitypackage", false);
         }

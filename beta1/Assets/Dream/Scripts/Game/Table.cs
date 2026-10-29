@@ -70,7 +70,7 @@ namespace Dream.Game
                 float x = 0.5f + Mathf.Cos(a) * 0.43f, y = 0.5f + Mathf.Sin(a) * 0.41f;
                 Seat(table, sp.seats[i], i == hero, x, y);
             }
-            Ui.At(Ui.Label(table, $"pot {Bb(sp.pot)} bb", 34, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, 0.48f, 0.7f, 0.56f);
+            Ui.At(Ui.Num(table, $"pot {Bb(sp.pot)} bb", 34, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, 0.48f, 0.7f, 0.56f);
             Ui.At(Ui.Label(table, sp.cat, 26, new Color(1, 1, 1, 0.6f)), 0.25f, 0.42f, 0.75f, 0.48f);
 
             // your cards
@@ -117,9 +117,9 @@ namespace Dream.Game
             var L = Lib.Labels[r.lab]; var col = Hex(L.c);
             var panel = Ui.At(Ui.Panel(s, "Grade", Ui.Card), 0.04f, 0.04f, 0.96f, 0.3f);
             panel.GetComponent<Image>().sprite = Rounded(); panel.GetComponent<Image>().type = Image.Type.Sliced;
-            Ui.At(Ui.Label(panel, $"{L.icon}  {L.n}", 64, col, TextAnchor.MiddleLeft, FontStyle.Bold), 0.05f, 0.72f, 0.7f, 0.95f);
+            Ui.At(Ui.Title(panel, $"{Ui.Icon(L.icon)}  {L.n}", 68, col, TextAnchor.MiddleLeft), 0.05f, 0.72f, 0.7f, 0.95f);
             int dl = r.after - r.before;
-            Ui.At(Ui.Label(panel, (dl >= 0 ? "+" : "") + dl, 52, dl >= 0 ? Ui.Aqua : Ui.Neon, TextAnchor.MiddleRight, FontStyle.Bold), 0.6f, 0.72f, 0.95f, 0.95f);
+            Ui.At(Ui.Num(panel, (dl >= 0 ? "+" : "") + dl, 52, dl >= 0 ? Ui.Aqua : Ui.Neon, TextAnchor.MiddleRight, FontStyle.Bold), 0.6f, 0.72f, 0.95f, 0.95f);
             Ui.At(Ui.Label(panel, L.line, 30, Ui.Ink, TextAnchor.UpperLeft), 0.05f, 0.5f, 0.95f, 0.7f);
             var sp = r.spot;
             string often = $" ({Math.Round(sp.strat[r.bestIdx] * 100)}% of the time)";
@@ -156,12 +156,12 @@ namespace Dream.Game
             box.GetComponent<Image>().sprite = Rounded(); box.GetComponent<Image>().type = Image.Type.Sliced;
             var fg = you ? Ui.Night : seat.folded ? Ui.Dim : Ui.Ink;
             Ui.At(Ui.Label(box, you ? "YOU · " + seat.pos : seat.pos, 24, fg, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.5f, 1, 0.95f);
-            Ui.At(Ui.Label(box, seat.stack - seat.put <= 0.01 ? "all in" : Bb(seat.stack - seat.put) + " bb", 24, fg), 0, 0.05f, 1, 0.5f);
+            Ui.At(Ui.Num(box, seat.stack - seat.put <= 0.01 ? "all in" : Bb(seat.stack - seat.put) + " bb", 24, fg), 0, 0.05f, 1, 0.5f);
             if (!string.IsNullOrEmpty(seat.act) || seat.put > 0)
             {
                 // the action already carries its size ("Jam 7.9", "Raise 2.3"); otherwise the amount in (blinds), or both
                 string act = seat.act ?? "", bet = act.Any(char.IsDigit) || act.StartsWith("Fold") ? act : (act + (seat.put > 0 ? " " + Bb(seat.put) : "")).Trim();
-                Ui.At(Ui.Label(table, bet, 22, Ui.Gold), x - 0.12f + (0.5f - x) * 0.35f, y - 0.03f + (0.5f - y) * 0.45f, x + 0.12f + (0.5f - x) * 0.35f, y + 0.03f + (0.5f - y) * 0.45f);
+                Ui.At(Ui.Num(table, bet, 22, Ui.Gold), x - 0.12f + (0.5f - x) * 0.35f, y - 0.03f + (0.5f - y) * 0.45f, x + 0.12f + (0.5f - x) * 0.35f, y + 0.03f + (0.5f - y) * 0.45f);
             }
             if (seat.pos == "BTN")   // the dealer button: toward the middle, to one side of the bet
             {
