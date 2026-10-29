@@ -35,13 +35,18 @@ Do these first, in this order. The batches further down are the detail for 3–5
    - **A beautiful phone-text presentation**: Messages-style bubbles, typing dots, timestamps, the sender's name. It must
      look premium, not like a debug panel. The job decision is asked there.
    - Yarn Spinner runs the logic.
-2. **The whole story, written properly** · Opus · high. Write `beta1/story/STORY.md`:
-   - Every chapter from the Prologue to Legacy, as a prestige-drama script: scene list, beats, real dialogue with
+   **The Prologue and Chapter 1 are Steven's own script. Use his words.** Stage them as film: shots, blocking, acting,
+   pacing. Don't rewrite the dialogue, apart from tiny fixes for spoken rhythm, which you list in DAY_REPORT.md.
+2. **Chapters 2 to Legacy: the cloud Claude session writes them** (Steven, 10:24: "after chapter 1 that i wrote so far,
+   you can take over and make an advanced story with advanced conversation, movie scenes etc"). It lands as
+   `unity/docs/STORY.md` on the `unity` branch. You don't write story today: merge it when it lands, and build nothing
+   from it until Steven has read it. What follows is the brief that session is writing to, kept here for reference.
+   Planned contents of `unity/docs/STORY.md`:
+   - Chapters 2 to Legacy, as a prestige-drama script: scene list, beats, real dialogue with
      subtext, each character's voice, recurring threads (Lou, David, Mustich, Tommy, Gnomey, Nick, Bio, Slick's lessons
      and his past), and the turns.
    - Keep the bible (BETA1.md §3), the names, the chapter goals and the 2:13 AM diner.
-   - Chapter 1 gets full shootable dialogue now. The later chapters get full scene-by-scene scripts that are ready to
-     voice later.
+   - Full scene-by-scene scripts that are ready to voice, picking up from where Steven's Chapter 1 ends.
    - The old `dream/script.md` and `Story.cs` are the floor, not the ceiling.
    - **Steven (10:23): the legends are near-bosses through the chapters, and every one of the 27 appears somewhere in the
      story.**
