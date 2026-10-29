@@ -34,8 +34,8 @@ Handheld drift on every shot (tiny, slow), a push-in on the turning line of each
 
 ## 4. Sets
 
-Ten sets. Surfaces and props from Quixel Megascans (free with a Unity account) and free Asset Store packs; custom
-pieces in Blender. Lighting is baked (lightmaps + light probes) with one or two real-time lights per set for the faces.
+Ten sets. Surfaces, HDRIs and props from Poly Haven and ambientCG (both CC0) and free Asset Store packs (Megascans
+stopped being free after 2024); custom pieces in Blender. Lighting is baked (lightmaps + light probes) with one or two real-time lights per set for the faces.
 Each set is dressed once, lit once, then only cameras change.
 
 | id | set | hero light | accent | props that sell it |
