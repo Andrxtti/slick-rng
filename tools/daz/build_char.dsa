@@ -1,0 +1,122 @@
+// Build one cast member in Daz Studio from a spec file, render review shots, and (optionally) send it to Unity.
+// Run through the PC worker like the probes: job json { "script": "build_char.dsa", "secs": 2400, "args": { "spec": "chars/slick.json" } }
+// The spec (paths relative to the Genesis 9 content folder, People/Genesis 9/):
+//   name      file stem for renders and the Unity asset
+//   preset    a character preset to start from (e.g. "Characters/Fabrice for Genesis 9.duf"), or null for the plain base
+//   morphs    { morphName: value } set on the figure after the preset (Base Masculine, proportions, character blends)
+//   skin      a skin MAT preset applied to the figure, or null to keep the preset's
+//   wear      [ { file, mat, morphs } ] hair, beard, clothes; each fitted to the figure, then its material preset
+//   shots     ["front", "34", "body"] review renders -> renders/<name>_<shot>.png
+//   export    false, or { root, folder, filename, morphs[] } -> the Daz to Unity bridge, non-interactive
+var DIR = new DzFileInfo(getScriptFileName()).path();
+function readText(p) { var f = new DzFile(p); if (!f.exists()) return ""; f.open(DzFile.ReadOnly); var t = f.read(); f.close(); return t; }
+var CFG = JSON.parse(readText(DIR + "/run.cfg.json"));
+var LOG = [];
+function log(s) { LOG.push(String(s)); var f = new DzFile(CFG.log); f.open(DzFile.WriteOnly | DzFile.Truncate); f.write(LOG.join("\n")); f.close(); }
+function finish() { var f = new DzFile(CFG.done); f.open(DzFile.WriteOnly); f.write("done"); f.close(); }
+
+var LIB = "C:/Users/Public/Documents/My DAZ 3D Library/People/Genesis 9/";
+var cm = App.getContentMgr(), rm = App.getRenderMgr();
+
+function nodeSet() { var s = {}; for (var i = 0; i < Scene.getNumNodes(); i++) s[Scene.getNode(i).name] = Scene.getNode(i); return s; }
+function newNodes(before) { var out = [], now = nodeSet(); for (var k in now) if (!before[k]) out.push(now[k]); return out; }
+function rootFigures() { var out = []; for (var i = 0; i < Scene.getNumNodes(); i++) { var n = Scene.getNode(i); if (n.inherits("DzFigure") && !n.getNodeParent()) out.push(n); } return out; }
+function selectOnly(n) { Scene.selectAllNodes(false); n.select(true); Scene.setPrimarySelection(n); }
+function open(path, merge) { var full = LIB + path; if (!new DzFile(full).exists()) { log("  MISSING " + path); return false; } var ok = cm.openFile(full, merge); if (!ok) log("  open failed " + path); return ok; }
+function setMorphs(node, morphs) {
+  var obj = node.getObject(), n = 0;
+  for (var name in morphs) {
+    var mod = obj ? obj.findModifier(name) : null;
+    if (!mod || !mod.getValueControl()) { log("  no morph " + name + " on " + node.getLabel()); continue; }
+    mod.getValueControl().setValue(morphs[name]); n++;
+  }
+  return n;
+}
+function propByLabel(el, label) {
+  var p = el.findProperty ? el.findProperty(label) : null; if (p) return p;
+  for (var i = 0; i < el.getNumProperties(); i++) if (el.getProperty(i).getLabel() == label) return el.getProperty(i);
+  return null;
+}
+function setupRenderer(maxSecs) {
+  var r = rm.findRenderer("DzIrayRenderer"); if (r) rm.setActiveRenderer(r);
+  var els = rm.getRenderElementObjects ? rm.getRenderElementObjects() : [];
+  for (var e = 0; e < els.length; e++) {
+    var el = els[e]; if (!el || !el.getNumProperties) continue;
+    var ms = propByLabel(el, "Max Samples"), mt = propByLabel(el, "Max Time (secs)");
+    if (ms) ms.setValue(600); if (mt) mt.setValue(maxSecs);
+  }
+}
+var CAM = null;
+function camera(focal) {
+  if (!CAM) { CAM = new DzBasicCamera(); CAM.setName("cfCam"); CAM.setLabel("cfCam"); Scene.addNode(CAM); }
+  var fl = propByLabel(CAM, "Focal Length"); if (fl) fl.setValue(focal);
+  return CAM;
+}
+function render(fig, file, kind) {
+  var head = fig.findBone("head"), bb = fig.getWSBoundingBox(), p = head ? head.getWSPos() : new DzVec3(0, bb.max.y - 15, 0);
+  var cam, at, from;
+  if (kind == "body") { cam = camera(50); var mid = (bb.max.y + bb.min.y) / 2; at = new DzVec3(0, mid, 0); from = new DzVec3(0, mid + 10, 430); }
+  else {
+    cam = camera(85); var a = (kind == "34" ? 35 : 0) * Math.PI / 180, d = 110;
+    at = new DzVec3(p.x, p.y + 9, p.z + 3); from = new DzVec3(p.x + d * Math.sin(a), p.y + 11, p.z + 3 + d * Math.cos(a));
+  }
+  cam.setWSPos(from); cam.aimAt(at);
+  MainWindow.getViewportMgr().getActiveViewport().get3DViewport().setCamera(cam);
+  var ro = rm.getRenderOptions();
+  ro.renderImgToId = DzRenderOptions.DirectToFile; ro.renderImgFilename = file;
+  ro.isAspectConstrained = false; ro.imageSize = kind == "body" ? new Size(600, 1000) : new Size(640, 800);
+  var t0 = new Date().getTime(); var ok = rm.doRender(ro);
+  log("  render " + kind + " ok=" + ok + " exists=" + new DzFile(file).exists() + " " + Math.round((new Date().getTime() - t0) / 1000) + "s");
+}
+function exportUnity(fig, ex) {
+  var ua = MainWindow.getActionMgr().findAction("DzUnityAction");
+  if (!ua) { log("  Daz to Unity bridge not found"); return; }
+  selectOnly(fig);
+  if (ua.resetToDefaults) ua.resetToDefaults();
+  ua.nNonInteractiveMode = 1;
+  ua.sAssetType = "SkeletalMesh";
+  ua.sRootFolder = ex.root;
+  ua.sExportFolder = ex.folder;
+  ua.sExportFilename = ex.filename;
+  if (ex.morphs && ex.morphs.length) ua.aMorphList = ex.morphs;
+  if (ex.install !== undefined) ua.InstallUnityFiles = ex.install;
+  var t0 = new Date().getTime(); ua.executeAction();
+  log("  exported to " + ex.root + "/" + ex.folder + " (" + Math.round((new Date().getTime() - t0) / 1000) + "s); fbx exists=" + new DzFile(ex.root + "/" + ex.folder + "/" + ex.filename + ".fbx").exists());
+}
+
+try {
+  log("Daz Studio " + App.versionString);
+  var SPEC = JSON.parse(readText(DIR + "/" + CFG.args.spec));
+  log("building " + SPEC.name);
+  Scene.clear();
+  open("Genesis 9.duf", false);
+  var fig = rootFigures()[0]; if (!fig) throw "Genesis 9 did not load";
+  selectOnly(fig);
+  if (SPEC.preset) {
+    open(SPEC.preset, true);
+    var figs = rootFigures();
+    if (figs.length > 1) { Scene.removeNode(fig); fig = rootFigures()[0]; }   // a preset that brought its own figure
+    selectOnly(fig); log("  preset " + SPEC.preset);
+  }
+  log("  morphs set: " + setMorphs(fig, SPEC.morphs || {}));
+  if (SPEC.skin) { selectOnly(fig); open(SPEC.skin, true); log("  skin " + SPEC.skin); }
+  var wear = SPEC.wear || [];
+  for (var w = 0; w < wear.length; w++) {
+    selectOnly(fig); var before = nodeSet();
+    if (!open(wear[w].file, true)) continue;
+    var added = newNodes(before), item = null;
+    for (var a = 0; a < added.length; a++) if (added[a].inherits("DzFigure") || added[a].getObject()) { item = added[a]; break; }
+    log("  wear " + wear[w].file + " -> " + (item ? item.getLabel() : "nothing new"));
+    if (!item) continue;
+    if (wear[w].morphs) log("    morphs set: " + setMorphs(item, wear[w].morphs));
+    if (wear[w].mat) { selectOnly(item); open(wear[w].mat, true); log("    mat " + wear[w].mat); }
+  }
+  selectOnly(fig);
+  var bb = fig.getWSBoundingBox(); log("  height " + Math.round(bb.max.y - bb.min.y) + " cm");
+  new DzDir(DIR).mkdir("renders");
+  setupRenderer(SPEC.renderSecs || 90);
+  var shots = SPEC.shots || ["front", "34", "body"];
+  for (var s = 0; s < shots.length; s++) render(fig, DIR + "/renders/" + SPEC.name + "_" + shots[s] + ".png", shots[s]);
+  if (SPEC.export) exportUnity(fig, SPEC.export);
+} catch (e) { log("ERROR " + e + (e.lineNumber ? " line " + e.lineNumber : "")); }
+finish();

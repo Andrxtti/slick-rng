@@ -13,7 +13,7 @@ var LIB = "C:/Users/Public/Documents/My DAZ 3D Library/People/Genesis 9/";
 var OUTDIR = DIR + "/renders";
 var cm = App.getContentMgr(), rm = App.getRenderMgr();
 
-function figures() { var out = []; for (var i = 0; i < Scene.getNumNodes(); i++) { var n = Scene.getNode(i); if (n.inherits("DzFigure") && !n.getParent()) out.push(n); } return out; }
+function figures() { var out = []; for (var i = 0; i < Scene.getNumNodes(); i++) { var n = Scene.getNode(i); if (n.inherits("DzFigure") && !n.getNodeParent()) out.push(n); } return out; }
 function morphValues(fig) {
   var obj = fig.getObject(), out = {};
   for (var m = 0; obj && m < obj.getNumModifiers(); m++) {
