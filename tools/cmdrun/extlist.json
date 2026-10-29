@@ -1,0 +1,1 @@
+{ "cmds": ["\"C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe\" -c extension list > C:\\Dev\\cfp-worker\\tmp\\ext_list.txt 2>&1"] }
