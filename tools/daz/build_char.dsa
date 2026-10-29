@@ -58,7 +58,8 @@ function render(fig, file, kind) {
   if (kind == "body") { cam = camera(50); var mid = (bb.max.y + bb.min.y) / 2; at = new DzVec3(0, mid, 0); from = new DzVec3(0, mid + 10, 430); }
   else {
     cam = camera(85); var a = (kind == "34" ? 35 : 0) * Math.PI / 180, d = 110;
-    at = new DzVec3(p.x, p.y + 9, p.z + 3); from = new DzVec3(p.x + d * Math.sin(a), p.y + 11, p.z + 3 + d * Math.cos(a));
+    // the head joint sits ~3 cm below the nose (measured on probe 3); aim just under it so the eyes land on the upper third
+    at = new DzVec3(p.x, p.y + 1, p.z + 3); from = new DzVec3(p.x + d * Math.sin(a), p.y + 3, p.z + 3 + d * Math.cos(a));
   }
   cam.setWSPos(from); cam.aimAt(at);
   MainWindow.getViewportMgr().getActiveViewport().get3DViewport().setCamera(cam);
@@ -88,8 +89,8 @@ try {
   log("Daz Studio " + App.versionString);
   var SPEC = JSON.parse(readText(DIR + "/" + CFG.args.spec));
   log("building " + SPEC.name);
-  Scene.clear();
-  open("Genesis 9.duf", false);
+  Scene.clear(); log("  scene cleared");
+  open("Genesis 9.duf", true);   // clear() then merge: merge=false asks "save changes?" on a modified scene and hangs headless
   var fig = rootFigures()[0]; if (!fig) throw "Genesis 9 did not load";
   selectOnly(fig);
   if (SPEC.preset) {
