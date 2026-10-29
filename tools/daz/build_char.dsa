@@ -108,6 +108,9 @@ try {
     for (var a = 0; a < added.length; a++) if (added[a].inherits("DzFigure") || added[a].getObject()) { item = added[a]; break; }
     log("  wear " + wear[w].file + " -> " + (item ? item.getLabel() : "nothing new"));
     if (!item) continue;
+    var io = item.getObject(), dials = [];   // the item's own shaping dials (length, volume...), for the next spec
+    for (var m = 0; io && m < io.getNumModifiers(); m++) { var md = io.getModifier(m), vc = md.getValueControl ? md.getValueControl() : null; if (vc && md.inherits("DzMorph") && vc.getPath().indexOf("/Hidden") != 0) dials.push(md.name + "=" + vc.getValue().toFixed(2)); }
+    log("    dials: " + dials.slice(0, 60).join(", "));
     if (wear[w].morphs) log("    morphs set: " + setMorphs(item, wear[w].morphs));
     if (wear[w].mat) { selectOnly(item); open(wear[w].mat, true); log("    mat " + wear[w].mat); }
   }

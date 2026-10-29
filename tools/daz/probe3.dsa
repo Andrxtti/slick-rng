@@ -104,5 +104,13 @@ try {
     shot(fig, OUTDIR + "/" + nm + "_front.png", 0);
     shot(fig, OUTDIR + "/" + nm + "_34.png", 35);
   }
+  // the other three base skin tones on the same face (skin 01 is base_masc above)
+  for (var sk = 2; sk <= 4; sk++) {
+    log("== skin0" + sk);
+    var f2 = loadFigure(null); if (!f2) continue;
+    setMorph(f2, "BaseMasculine_head_bs_Head", 1); setMorph(f2, "BaseMasculine_body_bs_Body", 1);
+    cm.openFile(LIB + "Materials/Daz Originals/Base Materials/G9 Masculine Skin 0" + sk + " MAT.duf", true);
+    shot(f2, OUTDIR + "/skin0" + sk + "_front.png", 0);
+  }
 } catch (e) { log("ERROR " + e + (e.lineNumber ? " line " + e.lineNumber : "")); }
 finish();
