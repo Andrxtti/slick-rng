@@ -4,12 +4,17 @@ Source: the Confirmed Fire logo (docs/icons/slick-badge.jpg, slick-dwi.jpg): a y
 tousled hair, zip jacket, the 8-bit "deal with it" sunglasses. Slick is that figure made human and aged into the
 stranger at the diner.
 
+Steven, Oct 28: Slick is East Asian, in the cool, sharp-dressed street-racing-villain mould (his comparison: Johnny Tran
+in The Fast and the Furious). He is modelled on poker player Eric Chang, "SlickRic". Type and attitude only: no
+likeness of Eric or of any actor.
+
 ## Brief
 
 **Slick** · the stranger from the diner, later the mentor · 34 · lean, 5'11", a player's stillness
-- Face: oval, slightly long; high cheekbones; straight nose; a mouth that rests almost smiling on one side. Light
-  olive skin with warm undertone, a little tired under the eyes (he lives at 2 AM). Dark brown eyes, heavy upper lids.
-  Hair: black, thick, pushed back and falling forward, a bit long over the ears and collar; short stubble, nothing shaped.
+- Face: East Asian. Lean and sharp: defined jaw, high cheekbones, straight nose, a mouth that rests almost smiling on
+  one side. Light-to-medium warm skin, a little tired under the eyes (he lives at 2 AM). Dark brown almond eyes, calm
+  heavy lids; the look is cool, never loud. Hair: black, thick, styled up and back with some height at the front, sides
+  short and neat (not shaved). Clean-shaven or the lightest stubble; at most a thin, sharp line on the chin.
 - The glasses are the signature: thin black rectangular frames, lenses dark enough to hide the eyes in daylight.
   Indoors at night he wears them pushed up or hooked on the collar; at the table they go on. The 8-bit version appears
   only in UI and the logo, never on the 3D character.
@@ -20,6 +25,9 @@ stranger at the diner.
   Never raises his voice; the push-in is the camera doing his emphasis.
 
 ## Daz Studio dial sheet (Genesis 9 Starter Essentials, free content only)
+
+Oct 28 note: the free Genesis 9 content has no East Asian male face, no men's hair but an undercut, and no
+stubble. Slick's real build is the MetaHuman route (Unreal); the Daz build below proved the pipeline only.
 
 Load: Genesis 9 (Masculine base). Set everything from zero.
 
