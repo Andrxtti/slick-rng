@@ -47,6 +47,23 @@ namespace Dream.Film
                 m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
             }
             if (part == "hair" || part == "haircards" || part == "brows" || part == "lashes") m.SetFloat("_Cull", 0);   // two-sided cards
+            if (part == "glasses")   // frames: glossy acetate, or metal wire
+            {
+                m.SetFloat("_Smoothness", 0.82f);
+                if (e != null && e.TryGetValue("metal", out var mt)) m.SetFloat("_Metallic", System.Convert.ToSingle(mt) * 0.6f);   // full metal mirrors a dark room as black
+                return m;
+            }
+            if (part == "lenses")   // see-through glass, tinted where the brief says so
+            {
+                float a = e != null && e.TryGetValue("alpha", out var al) ? System.Convert.ToSingle(al) : 0.15f;
+                m.SetFloat("_Surface", 1); m.SetFloat("_Blend", 0); m.SetFloat("_ZWrite", 0); m.SetFloat("_Cull", 0);
+                m.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha); m.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT"); m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                m.SetColor("_BaseColor", new Color(tint.r, tint.g, tint.b, a)); m.SetFloat("_Smoothness", 0.9f);
+                m.SetOverrideTag("RenderType", "Transparent");
+                foreach (var pass in new[] { "ShadowCaster", "DepthOnly", "DepthNormals" }) m.SetShaderPassEnabled(pass, false);   // no shadow or SSAO over the eyes
+                return m;
+            }
             if (part != "eyes" && part != "teeth")   // skin and cloth don't mirror the room (a bright window turned faces chrome)
             { m.SetFloat("_EnvironmentReflections", 0); m.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF"); }
             return m;

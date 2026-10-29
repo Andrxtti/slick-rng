@@ -56,5 +56,6 @@
  "hair_cards": {
   "style": "crop",
   "seed": 765
- }
+ },
+ "glasses": {"style": "wire"}
 }

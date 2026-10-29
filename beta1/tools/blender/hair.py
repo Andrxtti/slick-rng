@@ -13,7 +13,7 @@ from mathutils.bvhtree import BVHTree
 STYLES = {
     # flow: where hair goes from the hairline; length (m); lift (m); count; jitter (radians of randomness)
     "back":    {"flow": "back", "length": 0.075, "lift": 0.003, "count": 1700, "jitter": 0.1},    # Slick, Tommy, David
-    "crop":    {"flow": "back", "length": 0.03, "lift": 0.003, "count": 2200, "jitter": 0.5},     # Mustich, Lou
+    "crop":    {"flow": "back", "length": 0.026, "lift": 0.002, "count": 2600, "jitter": 0.25},   # Mustich, Lou
     "fringe":  {"flow": "fringe", "length": 0.07, "lift": 0.004, "count": 1700, "jitter": 0.22},  # Bio
     "tousled": {"flow": "up", "length": 0.05, "lift": 0.007, "count": 1900, "jitter": 0.7},       # Nick
     "side":    {"flow": "side", "length": 0.06, "lift": 0.004, "count": 1700, "jitter": 0.2},     # the player's default

@@ -54,7 +54,7 @@
    "n": 5,
    "who": "card",
    "name": "CARD",
-   "shot": "ecu",
+   "shot": "push",
    "subject": "mustich",
    "act": "idle",
    "next": "",

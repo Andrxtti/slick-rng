@@ -69,5 +69,6 @@
  "hair_cards": {
   "style": "crop",
   "seed": 549
- }
+ },
+ "paint": {"cloth_male_elegantsuit01": [{"x": [0, 0.028], "z": [1.2, 1.45], "front": true, "color": [0.55, 0.04, 0.05]}, {"x": [0, 0.06], "z": [1.33, 1.5], "front": true, "color": [0.92, 0.92, 0.94]}, {"color": [0.16, 0.17, 0.2]}]}
 }

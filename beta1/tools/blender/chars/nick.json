@@ -7,5 +7,6 @@
  "clothes": ["male_casualsuit06", "shoes02"],
  "beard": {"density": 0.8, "color": [0.05, 0.04, 0.035], "reach": 0.5},
  "colors": {"hair": [0.08, 0.065, 0.055], "brows": [0.1, 0.08, 0.07], "skin": [0.97, 0.86, 0.76], "cloth_male_casualsuit06": [0.08, 0.08, 0.09]},
- "hair_cards": {"style": "tousled", "seed": 421}
+ "hair_cards": {"style": "tousled", "seed": 421},
+ "glasses": {"style": "clear"}
 }

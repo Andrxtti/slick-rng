@@ -6,5 +6,6 @@
  "skin": "young_caucasian_male", "eye_color": "blue", "eyebrows": "eyebrow002", "eyelashes": "eyelashes01", "hair": "short02",
  "clothes": ["male_casualsuit01", "shoes01"],
  "colors": {"hair": [0.5, 0.38, 0.27], "brows": [0.5, 0.38, 0.28], "skin": [1.0, 0.9, 0.86], "cloth_male_casualsuit01": [0.55, 0.55, 0.58]},
- "hair_cards": {"style": "back", "seed": 520}
+ "hair_cards": {"style": "back", "seed": 520},
+ "paint": {"cloth_male_casualsuit01": [{"x": [0, 0.025], "z": [1.05, 1.45], "front": true, "color": [0.08, 0.1, 0.25]}, {"z": [0.95, 1.7], "color": [0.72, 0.8, 0.92]}, {"color": [0.2, 0.2, 0.22]}]}
 }

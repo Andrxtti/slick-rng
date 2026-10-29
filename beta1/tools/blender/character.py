@@ -155,6 +155,11 @@ def build():
             mh = os.path.join(MPFB_USER, "eyes", "materials", SPEC.get("eye_color", "brown") + ".mhmat")
         material_for(ob, mname, mh)
         ob.name = mname
+    for cname, rules in SPEC.get("paint", {}).items():   # garment colours by body region (paint_cloth)
+        ob = bpy.data.objects.get(cname); e = manifest["materials"].get(cname, {})
+        if ob is not None and "diffuse" in e:
+            paint_cloth(ob, os.path.join(OUT, e["diffuse"]), rules)
+            manifest["colors"][cname] = [1.0, 1.0, 1.0]   # the colours are in the texture now
     if SPEC.get("mask"): add_mask(base, SPEC["mask"], manifest)
     if SPEC.get("hair_cards") and bpy.data.objects.get("hair"):   # strands over the MakeHuman hair (tools/blender/hair.py)
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -162,8 +167,51 @@ def build():
         hair.build(bpy.data.objects["hair"], rig, os.path.join(OUT, "tex"), SPEC["hair_cards"], log, SPEC.get("colors", {}).get("hair"))
         manifest["materials"]["haircards"] = {"diffuse": "tex/haircards_diffuse.png"}
         if "hair" in manifest["colors"]: manifest["colors"]["haircards"] = manifest["colors"]["hair"]
+    if SPEC.get("glasses") and bpy.data.objects.get("eyes"):   # frames and lenses (tools/blender/glasses.py)
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import glasses
+        g = SPEC["glasses"]; st = glasses.STYLES[g.get("style", "wire")]
+        glasses.build(bpy.data.objects["eyes"], rig, g, log)
+        manifest["materials"]["glasses"] = {"metal": st["metal"]}; manifest["materials"]["lenses"] = {"alpha": st["tint"][3]}
+        manifest["colors"]["glasses"] = list(st["frame"]); manifest["colors"]["lenses"] = list(st["tint"][:3])
     json.dump(manifest, open(os.path.join(OUT, "manifest.json"), "w"), indent=1)
     return base, rig
+
+
+def paint_cloth(ob, img_path, rules):
+    """Repaint a garment's texture by where its polygons sit on the body (DAY2 A4: Lou's red tie, David's shirt and tie,
+    Gnomey's striped jersey, the tee under Slick's jacket). Each rule: a colour, optional box (x: |x| range, z: height
+    range, front: only polygons facing forward) and optional horizontal stripes (period in metres, second colour). The
+    texture's own shading (folds, seams) is kept: the new colour multiplies its brightness."""
+    import numpy as np
+    from mathutils import Vector
+    im = bpy.data.images.load(img_path); W, H = im.size
+    px = np.array(im.pixels[:], dtype=np.float32).reshape(H, W, 4)
+    lum = (px[..., :3] @ np.array([0.3, 0.59, 0.11], np.float32))
+    shade = np.clip(lum / max(1e-3, float(np.percentile(lum, 80))), 0.3, 1.25)[..., None]
+    me = ob.data; mw = ob.matrix_world; uv = me.uv_layers.active.data
+    vs = [mw @ v.co for v in me.vertices]
+    out = px.copy()
+    for poly in me.polygons:
+        c = sum((vs[i] for i in poly.vertices), Vector()) / len(poly.vertices)
+        n = (mw.to_3x3() @ poly.normal).normalized()
+        col = None
+        for r in rules:
+            if "x" in r and not (r["x"][0] <= abs(c.x) <= r["x"][1]): continue
+            if "z" in r and not (r["z"][0] <= c.z <= r["z"][1]): continue
+            if r.get("front") and n.y > -0.3: continue
+            col = r["color"]
+            if "stripes" in r and int(c.z / r["stripes"]) % 2: col = r["color2"]
+            break
+        if col is None: continue
+        us = [uv[li].uv for li in poly.loop_indices]
+        x0, x1 = int(min(u.x for u in us) * W), int(max(u.x for u in us) * W) + 1
+        y0, y1 = int(min(u.y for u in us) * H), int(max(u.y for u in us) * H) + 1
+        if x1 - x0 > W // 6: continue   # across a seam
+        ys, xs = slice(max(0, y0), min(H, y1)), slice(max(0, x0), min(W, x1))
+        out[ys, xs, :3] = np.array(col, np.float32) * shade[ys, xs]
+    im.pixels[:] = out.ravel(); im.filepath_raw = img_path; im.file_format = "PNG"; im.save()
+    log("cloth painted", ob.name, len(rules), "rules")
 
 
 def paint_beard(base, img_path, b):
