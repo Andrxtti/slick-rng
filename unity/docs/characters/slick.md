@@ -4,16 +4,17 @@ Source: the Confirmed Fire logo (docs/icons/slick-badge.jpg, slick-dwi.jpg): a y
 tousled hair, zip jacket, the 8-bit "deal with it" sunglasses. Slick is that figure made human and aged into the
 stranger at the diner.
 
-Steven, Oct 28: Slick is East Asian, in the cool, sharp-dressed street-racing-villain mould (his comparison: Johnny Tran
-in The Fast and the Furious). He is modelled on poker player Eric Chang, "SlickRic". Type and attitude only: no
-likeness of Eric or of any actor.
+Steven, Oct 28: Slick is East Asian, and the comparison is facial: the face type of Johnny Tran in The Fast and the
+Furious. He is modelled on poker player Eric Chang, "SlickRic". We build the face type (the features below), not a
+copy of the actor's or Eric's actual face.
 
 ## Brief
 
 **Slick** · the stranger from the diner, later the mentor · 34 · lean, 5'11", a player's stillness
-- Face: East Asian. Lean and sharp: defined jaw, high cheekbones, straight nose, a mouth that rests almost smiling on
-  one side. Light-to-medium warm skin, a little tired under the eyes (he lives at 2 AM). Dark brown almond eyes, calm
-  heavy lids; the look is cool, never loud. Hair: black, thick, styled up and back with some height at the front, sides
+- Face: East Asian, lean and angular with no softness: a strong, squared jaw and defined chin; high, prominent
+  cheekbones with a slight hollow under them; narrow, intense dark-brown eyes under straight, low brows; a straight
+  nose; a firm, full mouth that rests almost smiling on one side. Light-to-medium warm skin, a little tired under the
+  eyes (he lives at 2 AM). The face does the menace; he never has to. Hair: black, thick, styled up and back with some height at the front, sides
   short and neat (not shaved). Clean-shaven or the lightest stubble; at most a thin, sharp line on the chin.
 - The glasses are the signature: thin black rectangular frames, lenses dark enough to hide the eyes in daylight.
   Indoors at night he wears them pushed up or hooked on the collar; at the table they go on. The 8-bit version appears
