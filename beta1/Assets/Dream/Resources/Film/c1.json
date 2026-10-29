@@ -1,0 +1,97 @@
+{
+ "id": "c1",
+ "title": "The Grind",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Chapter 1. The Grind.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "gnomey",
+   "name": "GNOMEY",
+   "shot": "two",
+   "subject": "",
+   "act": "point",
+   "next": "",
+   "text": "You came back. Most don't. One-two has a seat. Midnight Rush starts at twelve.",
+   "voice": "c1_02"
+  },
+  {
+   "n": 3,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "cu",
+   "subject": "tommy",
+   "act": "talk",
+   "next": "",
+   "text": "Told you, kid. Mayor of this room. I see everything.",
+   "voice": "c1_03"
+  },
+  {
+   "n": 4,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "laugh",
+   "next": "",
+   "text": "Ah, the free-seat lad. Lovely hoodie. Did it come with the seat?",
+   "voice": "c1_04"
+  },
+  {
+   "n": 5,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "ots",
+   "subject": "mustich",
+   "act": "lean",
+   "next": "",
+   "text": "I've had my name on the Classic list for a year. Don't get attached to it.",
+   "voice": "c1_05"
+  },
+  {
+   "n": 6,
+   "who": "you",
+   "name": "YOU",
+   "shot": "push",
+   "subject": "you",
+   "act": "idle",
+   "next": "",
+   "text": "Ten thousand. Or the Classic. Whichever comes first.",
+   "voice": "c1_06"
+  },
+  {
+   "n": 7,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Goal: win the Biscayne Classic, or build a $10,000 bankroll.",
+   "voice": ""
+  }
+ ],
+ "directions": [
+  {
+   "after": 0,
+   "text": "sodium light, the list board squeaks, the palms outside going black"
+  }
+ ],
+ "place": "cardroom",
+ "time": "Tuesday, 7:02 PM",
+ "cast": [
+  "gnomey",
+  "tommy",
+  "mustich",
+  "you"
+ ]
+}

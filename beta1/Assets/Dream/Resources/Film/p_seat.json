@@ -1,0 +1,86 @@
+{
+ "id": "p_seat",
+ "title": "The first seat",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Biscayne Card Room. Saturday, noon.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "gnomey",
+   "name": "GNOMEY",
+   "shot": "two",
+   "subject": "",
+   "act": "point",
+   "next": "",
+   "text": "Seat card. Table nine, seat four. Phones off the felt. Welcome to Biscayne.",
+   "voice": "p_seat_02"
+  },
+  {
+   "n": 3,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "cu",
+   "subject": "tommy",
+   "act": "lean",
+   "next": "",
+   "text": "New face. You're the kid with the free seat. Word gets around a small room, kid.",
+   "voice": "p_seat_03"
+  },
+  {
+   "n": 4,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "ots",
+   "subject": "tommy",
+   "act": "talk",
+   "next": "",
+   "text": "Thirty-five years at these tables. Here's free advice: this room eats dreamers for breakfast.",
+   "voice": "p_seat_04"
+  },
+  {
+   "n": 5,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "talk",
+   "next": "",
+   "text": "Then I'll try to be lunch.",
+   "voice": "p_seat_05"
+  },
+  {
+   "n": 6,
+   "who": "dealer",
+   "name": "DEALER",
+   "shot": "insert",
+   "subject": "cards",
+   "act": "idle",
+   "next": "",
+   "text": "Shuffle up and deal.",
+   "voice": "p_seat_06"
+  }
+ ],
+ "directions": [
+  {
+   "after": 0,
+   "text": "the clatter of chips like rain on a tin roof, a floor call far off, a cash game laughing"
+  }
+ ],
+ "place": "cardroom",
+ "time": "Saturday, 11:58 AM",
+ "cast": [
+  "gnomey",
+  "tommy",
+  "you",
+  "dealer"
+ ]
+}

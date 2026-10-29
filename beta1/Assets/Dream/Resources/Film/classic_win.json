@@ -1,0 +1,70 @@
+{
+ "id": "classic_win",
+ "title": "Gold at Biscayne",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "wide",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "The last card hits the felt.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "mustich",
+   "name": "MUSTICH",
+   "shot": "cu",
+   "subject": "mustich",
+   "act": "shrug",
+   "next": "",
+   "text": "Well. Dad says the Classic's a rounding error anyway.",
+   "voice": "classic_win_02"
+  },
+  {
+   "n": 3,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "cu",
+   "subject": "tommy",
+   "act": "clap",
+   "next": "",
+   "text": "Don't listen to him, kid. You earned it. Every chip.",
+   "voice": "classic_win_03"
+  },
+  {
+   "n": 4,
+   "who": "gnomey",
+   "name": "GNOMEY",
+   "shot": "two",
+   "subject": "",
+   "act": "point",
+   "next": "",
+   "text": "Your name goes on the board by the cage. Permanent marker.",
+   "voice": "classic_win_04"
+  },
+  {
+   "n": 5,
+   "who": "you",
+   "name": "YOU",
+   "shot": "push",
+   "subject": "you",
+   "act": "fist",
+   "next": "",
+   "text": "Permanent.",
+   "voice": "classic_win_05"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "Saturday, 11:47 PM",
+ "cast": [
+  "mustich",
+  "tommy",
+  "gnomey",
+  "you"
+ ]
+}

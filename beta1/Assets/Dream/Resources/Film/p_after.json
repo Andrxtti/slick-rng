@@ -1,0 +1,57 @@
+{
+ "id": "p_after",
+ "title": "Monday again",
+ "lines": [
+  {
+   "n": 1,
+   "who": "lou",
+   "name": "NATSO",
+   "shot": "ots",
+   "subject": "lou",
+   "act": "point",
+   "next": "",
+   "text": "Henderson numbers. Where are they?",
+   "voice": "p_after_01"
+  },
+  {
+   "n": 2,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "text": "I played eleven hours on Saturday. I made decisions that mattered. And now this.",
+   "voice": "p_after_02"
+  },
+  {
+   "n": 3,
+   "who": "lou",
+   "name": "NATSO",
+   "shot": "cu",
+   "subject": "lou",
+   "act": "lean",
+   "next": "",
+   "text": "Hello? Weekend's over, champ.",
+   "voice": "p_after_03"
+  },
+  {
+   "n": 4,
+   "who": "you",
+   "name": "YOU",
+   "shot": "push",
+   "subject": "you",
+   "act": "idle",
+   "next": "",
+   "text": "Weekend's over.",
+   "voice": "p_after_04"
+  }
+ ],
+ "directions": [],
+ "place": "office",
+ "time": "Monday, 9:04 AM",
+ "cast": [
+  "lou",
+  "you"
+ ]
+}

@@ -1,0 +1,68 @@
+{
+ "id": "lesson1",
+ "title": "Fold the junk",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Lucky Seven. 1:40 AM.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "two",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Tell me the hand.",
+   "voice": "lesson1_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "sad",
+   "next": "",
+   "text": "King-jack, early position. Raised, got three-bet, called. Flopped a jack. He had kings.",
+   "voice": "lesson1_03"
+  },
+  {
+   "n": 4,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "push",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "text": "Then the flop didn't beat you. The first decision did. Everything after that was a story you told yourself.",
+   "voice": "lesson1_04"
+  },
+  {
+   "n": 5,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "point",
+   "next": "nod",
+   "text": "Fold the junk. It isn't advice. It's arithmetic.",
+   "voice": "lesson1_05"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "1:40 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

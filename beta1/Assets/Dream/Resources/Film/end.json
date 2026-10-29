@@ -1,0 +1,18 @@
+{
+ "id": "end",
+ "title": "End card",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Beta 1.0. Chapter 2: The Circuit, coming soon.",
+   "voice": ""
+  }
+ ],
+ "directions": []
+}

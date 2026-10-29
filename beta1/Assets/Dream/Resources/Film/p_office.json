@@ -1,0 +1,99 @@
+{
+ "id": "p_office",
+ "title": "Floor 34",
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "ext",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "Brickell, Miami. Floor 34. 6:47 PM.",
+   "voice": ""
+  },
+  {
+   "n": 2,
+   "who": "lou",
+   "name": "NATSO",
+   "shot": "ots",
+   "subject": "lou",
+   "act": "point",
+   "next": "",
+   "text": "The Henderson deck. All of it again. On my desk by eight.",
+   "voice": "p_office_02"
+  },
+  {
+   "n": 3,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "talk",
+   "next": "",
+   "text": "You signed off on it Friday.",
+   "voice": "p_office_03"
+  },
+  {
+   "n": 4,
+   "who": "lou",
+   "name": "NATSO",
+   "shot": "cu",
+   "subject": "lou",
+   "act": "lean",
+   "next": "",
+   "text": "And tonight I'm un-signing. Partners liked the model, by the way. I told them it was my idea.",
+   "voice": "p_office_04"
+  },
+  {
+   "n": 5,
+   "who": "lou",
+   "name": "NATSO",
+   "shot": "two",
+   "subject": "",
+   "act": "nod",
+   "next": "idle",
+   "text": "Team player. That's what I love about you.",
+   "voice": "p_office_05"
+  },
+  {
+   "n": 6,
+   "who": "you",
+   "name": "YOU",
+   "shot": "push",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "text": "Nine years old, I watched a man push every chip he had into the middle with nothing. He never showed. The whole room went quiet.",
+   "voice": "p_office_06"
+  },
+  {
+   "n": 7,
+   "who": "you",
+   "name": "YOU",
+   "shot": "ecu",
+   "subject": "you",
+   "act": "think",
+   "next": "",
+   "text": "Somewhere along the way I traded that for a lanyard.",
+   "voice": "p_office_07"
+  }
+ ],
+ "directions": [
+  {
+   "after": 0,
+   "text": "sunset through the glass, cleaners' vacuum far off, the air handler hum"
+  },
+  {
+   "after": 5,
+   "text": "Lou leaves frame; the motion-sensor lights click off down the floor, one bank at a time"
+  }
+ ],
+ "place": "office",
+ "time": "Monday, 6:47 PM",
+ "cast": [
+  "lou",
+  "you"
+ ]
+}

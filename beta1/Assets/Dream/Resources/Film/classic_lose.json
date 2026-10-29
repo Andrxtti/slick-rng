@@ -1,0 +1,46 @@
+{
+ "id": "classic_lose",
+ "title": "Out of the Classic",
+ "lines": [
+  {
+   "n": 1,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "two",
+   "subject": "",
+   "act": "lean",
+   "next": "",
+   "text": "Happens to all of us, kid. Thirty years it's happened to me.",
+   "voice": "classic_lose_01"
+  },
+  {
+   "n": 2,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "sad",
+   "next": "",
+   "text": "Doesn't make it feel better.",
+   "voice": "classic_lose_02"
+  },
+  {
+   "n": 3,
+   "who": "tommy",
+   "name": "TOMMY",
+   "shot": "cu",
+   "subject": "tommy",
+   "act": "talk",
+   "next": "",
+   "text": "No. But the list is up again next month.",
+   "voice": "classic_lose_03"
+  }
+ ],
+ "directions": [],
+ "place": "cardroom",
+ "time": "night",
+ "cast": [
+  "tommy",
+  "you"
+ ]
+}

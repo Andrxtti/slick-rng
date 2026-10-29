@@ -1,0 +1,57 @@
+{
+ "id": "goal",
+ "title": "Ten thousand",
+ "lines": [
+  {
+   "n": 1,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "two",
+   "subject": "",
+   "act": "idle",
+   "next": "",
+   "text": "You're not staring at the pie anymore.",
+   "voice": "goal_01"
+  },
+  {
+   "n": 2,
+   "who": "you",
+   "name": "YOU",
+   "shot": "cu",
+   "subject": "you",
+   "act": "talk",
+   "next": "",
+   "text": "I did it. Biscayne's done.",
+   "voice": "goal_02"
+  },
+  {
+   "n": 3,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "cu",
+   "subject": "slick",
+   "act": "talk",
+   "next": "",
+   "text": "Biscayne was the classroom. The Circuit is the exam. Bigger rooms. Better players. Rings.",
+   "voice": "goal_03"
+  },
+  {
+   "n": 4,
+   "who": "slick",
+   "name": "SLICK",
+   "shot": "push",
+   "subject": "slick",
+   "act": "nod",
+   "next": "",
+   "text": "People will call it luck. Let them.",
+   "voice": "goal_04"
+  }
+ ],
+ "directions": [],
+ "place": "diner",
+ "time": "2:13 AM",
+ "cast": [
+  "slick",
+  "you"
+ ]
+}

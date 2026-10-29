@@ -1,0 +1,62 @@
+[
+ {
+  "who": "slick",
+  "name": "SLICK",
+  "text": "People call me Slick.",
+  "voice": "sting_01"
+ },
+ {
+  "who": "slick",
+  "name": "SLICK",
+  "text": "Fold the junk. It isn't advice. It's arithmetic.",
+  "voice": "sting_02"
+ },
+ {
+  "who": "slick",
+  "name": "SLICK",
+  "text": "Near the money, play the money.",
+  "voice": "sting_03"
+ },
+ {
+  "who": "bio",
+  "name": "BIO",
+  "text": "Kid. Stop looking at me. Look at your cards.",
+  "voice": "sting_04"
+ },
+ {
+  "who": "bio",
+  "name": "BIO",
+  "text": "Fourteen bracelets. Come take them.",
+  "voice": "sting_05"
+ },
+ {
+  "who": "nick",
+  "name": "NICK",
+  "text": "Welcome back to the feature table. Forty thousand people are watching you blink.",
+  "voice": "sting_06"
+ },
+ {
+  "who": "mustich",
+  "name": "MUSTICH",
+  "text": "Your table or mine, I'll see you at the end of it.",
+  "voice": "sting_07"
+ },
+ {
+  "who": "tommy",
+  "name": "TOMMY",
+  "text": "This room eats dreamers for breakfast.",
+  "voice": "sting_08"
+ },
+ {
+  "who": "david",
+  "name": "DAVID",
+  "text": "BRO. YOU'RE ON THE STREAM.",
+  "voice": "sting_09"
+ },
+ {
+  "who": "you",
+  "name": "YOU",
+  "text": "People insist on calling it luck.",
+  "voice": "sting_10"
+ }
+]
