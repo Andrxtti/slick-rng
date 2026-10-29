@@ -284,3 +284,10 @@ morning, all tables 70bb and under, 3-bet pots mostly below 25bb) is not re-solv
 - Procedure fixed before the result: one fresh solve of m6-d80 (job 0lib3-p4-m6-d80, same model and target
   2,027,540) replaces pass 1 for that table only; whatever it gives is used. If m6-d80 still fails the gate, the
   table is investigated and nothing ships. The outlier stays archived (bfull_p1/m6-d80.json).
+- Re-solve 0lib3-p4-m6-d80: 2,055,360 iters (target 2,027,540), model stamp OK, 370 nodes; mean max-action
+  difference 0.10 / 0.09 to passes 2 / 3 (outlier was 0.23). Merged as bfull_p1b (= pass 1 with this table
+  replaced). Gate: **PASS**, every table <= 2.36% flagged (m6-d80 1.85%). GW agreement 78.9% (4.6: 78.5%); by depth
+  25bb 83.7 (84.0), 100bb 77.3 (76.7), 40bb 69.8 (64.8), 60bb 71.8 (73.2). Gains in 4- and 5-bet nodes (+4.5 to +7.9,
+  the cold-player sized 4-bet); two 100bb nodes facing an early open lost 4-5 points (ours slightly narrower than GW,
+  as in 4.6). Page test PASS (pt_docs.py updated for the 4.6 launch flow; it passes on 4.6 and 4.7).
+- **Shipped as Beta 4.7** (main ca200ce, Oct 29 02:17 UTC).
