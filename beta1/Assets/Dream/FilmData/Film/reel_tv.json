@@ -1,0 +1,36 @@
+{
+ "id": "reel_tv",
+ "title": "reel",
+ "place": "reel_tv",
+ "time": "",
+ "cast": [
+  "nick"
+ ],
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "cam",
+   "subject": "hero",
+   "act": "idle",
+   "next": "",
+   "text": "",
+   "voice": "",
+   "hold": 1.5
+  },
+  {
+   "n": 2,
+   "who": "nick",
+   "name": "NICK",
+   "shot": "cu",
+   "subject": "nick",
+   "act": "talk",
+   "next": "",
+   "text": "",
+   "voice": "sting_06",
+   "hold": 0
+  }
+ ],
+ "directions": []
+}

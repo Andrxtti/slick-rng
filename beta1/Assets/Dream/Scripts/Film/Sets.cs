@@ -77,8 +77,25 @@ namespace Dream.Film
                 ["L_window"] = new Lamp(new Color(0.45f, 0.6f, 1f), 3f, 9f),
                 ["L_cage"] = new Lamp(new Color(1f, 0.85f, 0.6f), 1.5f, 4f),
             },
-            ambient = new Color(0.12f, 0.095f, 0.07f), fog = new Color(0.12f, 0.09f, 0.05f), fogDensity = 0.015f, key = 0.7f, exposure = 0.25f,
+            ambient = new Color(0.12f, 0.095f, 0.07f), fog = new Color(0.12f, 0.09f, 0.05f), fogDensity = 0.012f, key = 1.1f, exposure = 0.75f,
         };
+
+        static Look Reel(Color key, Color rim, float exposure = 0f) => new Look
+        {
+            lamps = { ["L_key"] = new Lamp(key, 6f, 6f, 45, true, Vector3.zero), ["L_rim"] = new Lamp(rim, 5f, 6f), ["L_spot"] = new Lamp(new Color(1f, 0.8f, 0.5f), 6f, 4f, 50, true, Vector3.down) },
+            ambient = new Color(0.02f, 0.02f, 0.025f), fogDensity = 0f, key = 1.2f, exposure = exposure,
+        };
+        static readonly bool reels = InitReels();
+        static bool InitReels()
+        {
+            Looks["reel_casino"] = Reel(new Color(1f, 0.8f, 0.45f), new Color(0.7f, 0.35f, 1f));
+            Looks["reel_vegas"] = Reel(new Color(1f, 0.98f, 0.94f), new Color(1f, 0.85f, 0.6f), 0.2f);
+            Looks["reel_tv"] = Reel(new Color(1f, 0.96f, 0.9f), new Color(0.4f, 0.7f, 1f));
+            Looks["reel_titan"] = Reel(new Color(0.85f, 0.92f, 1f), new Color(0.3f, 0.5f, 1f), 0.2f);
+            Looks["reel_main"] = Reel(new Color(1f, 0.92f, 0.8f), new Color(1f, 0.85f, 0.6f));
+            Looks["reel_hall"] = Reel(new Color(1f, 0.82f, 0.5f), new Color(1f, 0.8f, 0.45f));
+            return true;
+        }
 
         public static GameObject Load(string place)
         {
@@ -116,7 +133,12 @@ namespace Dream.Film
                         t.rotation = Quaternion.LookRotation((who.position + Vector3.up * 0.8f - t.position).normalized);
                     }
                     l.color = p.c; l.intensity = p.i; l.range = p.range;
-                    if (p.angle > 0) { l.spotAngle = p.angle; l.innerSpotAngle = p.angle * 0.5f; t.rotation = Quaternion.LookRotation(p.aim == default ? Vector3.down : p.aim); }
+                    if (p.angle > 0)
+                    {
+                        l.spotAngle = p.angle; l.innerSpotAngle = p.angle * 0.5f;
+                        var hero = Find(set, "AIM_hero");   // a vignette's key looks at its hero prop
+                        t.rotation = p.aim == default && hero != null ? Quaternion.LookRotation(hero.position - t.position) : Quaternion.LookRotation(p.aim == default ? Vector3.down : p.aim);
+                    }
                     l.shadows = p.shadow ? LightShadows.Soft : LightShadows.None;
                     l.shadowBias = 0.02f; l.shadowNormalBias = 0.3f;
                 }
@@ -125,6 +147,14 @@ namespace Dream.Film
             foreach (var mf in set.GetComponentsInChildren<MeshFilter>())
                 if (mf.sharedMesh != null && !mf.name.StartsWith("Glass") && !mf.name.StartsWith("Window") && !mf.name.StartsWith("Door"))
                     mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
+            // glTF emissive strength doesn't survive the import: give glowing surfaces (neon, lamps, screens) HDR again
+            foreach (var r in set.GetComponentsInChildren<Renderer>())
+                foreach (var m in r.sharedMaterials)
+                {
+                    if (m == null) continue;
+                    foreach (var prop in new[] { "emissiveFactor", "_EmissionColor" })
+                        if (m.HasProperty(prop)) { var e = m.GetColor(prop); if (e.maxColorComponent > 0.05f && e.maxColorComponent <= 1.01f) m.SetColor(prop, e * 6f); }
+                }
             // glTF glass comes in as "blend" alpha; keep it, but make it reflect like glass
             foreach (var r in set.GetComponentsInChildren<Renderer>())
                 foreach (var m in r.sharedMaterials)

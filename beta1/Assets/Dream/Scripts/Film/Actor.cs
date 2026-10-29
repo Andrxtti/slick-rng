@@ -6,6 +6,7 @@ namespace Dream.Film
     // Until a character has a built body (Cast), a grey stand-in holds the place so shots can be framed.
     public class Actor : MonoBehaviour
     {
+        public const int Layer = 1;   // TransparentFX: actors' collision bodies
         public string Who;
         public bool Seated;
         public Transform Head;   // the head bone when there is a body
@@ -22,6 +23,9 @@ namespace Dream.Film
             bool seated = mark.position.y - mark.root.position.y > 0.3f;   // the set's floor is at its root
             var a = Cast.Dress(who, go, seated);
             a.Who = who; a.Seated = seated;
+            // a body the camera can bump into (Shot.Clear); over-the-shoulder shots ignore this layer
+            var cc = go.AddComponent<CapsuleCollider>(); cc.radius = 0.22f; cc.height = seated ? 1.3f : 1.8f; cc.center = Vector3.up * (cc.height / 2);
+            go.layer = Layer;
             return a;
         }
 

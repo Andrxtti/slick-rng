@@ -1,0 +1,37 @@
+{
+ "id": "reel_main",
+ "title": "reel",
+ "place": "reel_main",
+ "time": "",
+ "cast": [
+  "bio",
+  "you"
+ ],
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "cam",
+   "subject": "hero",
+   "act": "idle",
+   "next": "",
+   "text": "",
+   "voice": "",
+   "hold": 2.5
+  },
+  {
+   "n": 2,
+   "who": "bio",
+   "name": "BIO",
+   "shot": "ecu",
+   "subject": "bio",
+   "act": "idle",
+   "next": "",
+   "text": "",
+   "voice": "sting_04",
+   "hold": 4
+  }
+ ],
+ "directions": []
+}

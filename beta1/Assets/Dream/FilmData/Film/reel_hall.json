@@ -1,0 +1,22 @@
+{
+ "id": "reel_hall",
+ "title": "reel",
+ "place": "reel_hall",
+ "time": "",
+ "cast": [],
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "cam",
+   "subject": "hero",
+   "act": "idle",
+   "next": "",
+   "text": "",
+   "voice": "",
+   "hold": 6.5
+  }
+ ],
+ "directions": []
+}

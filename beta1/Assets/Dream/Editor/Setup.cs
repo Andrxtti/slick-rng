@@ -28,7 +28,13 @@ namespace Dream.EditorTools
             asset.msaaSampleCount = 4;
             // Forward+: no per-object light cap (the diner alone has a dozen practicals plus the film key and fill)
             var rd = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(Dir + "/URP_Renderer.asset");
-            if (rd != null) { rd.renderingMode = RenderingMode.ForwardPlus; EditorUtility.SetDirty(rd); }
+            if (rd != null)
+            {
+                rd.renderingMode = RenderingMode.ForwardPlus;
+                // a renderer made by code has no post-processing resources, so bloom, DOF and tonemapping never ran
+                rd.postProcessData = AssetDatabase.LoadAssetAtPath<PostProcessData>("Packages/com.unity.render-pipelines.universal/Runtime/Data/PostProcessData.asset");
+                EditorUtility.SetDirty(rd);
+            }
             var so = new SerializedObject(asset);
             foreach (var (k, v) in new[] { ("m_MainLightShadowmapResolution", 4096), ("m_AdditionalLightsShadowmapResolution", 4096), ("m_ShadowCascadeCount", 4), ("m_SoftShadowQuality", 3) })
             { var pr = so.FindProperty(k); if (pr != null) pr.intValue = v; }

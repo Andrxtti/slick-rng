@@ -1,0 +1,22 @@
+{
+ "id": "reel_titan",
+ "title": "reel",
+ "place": "reel_titan",
+ "time": "",
+ "cast": [],
+ "lines": [
+  {
+   "n": 1,
+   "who": "card",
+   "name": "CARD",
+   "shot": "cam",
+   "subject": "hero",
+   "act": "idle",
+   "next": "",
+   "text": "",
+   "voice": "",
+   "hold": 4.5
+  }
+ ],
+ "directions": []
+}

@@ -64,6 +64,15 @@ namespace Dream.Film
                     s.aim = mid + up * 0.55f; s.focus = mid;   // the window, with the sign above it in frame
                     break;
                 }
+                case "cam":   // a vignette's own camera: CAM_<subject> looking at AIM_<subject>, a slow push in
+                {
+                    var c = Sets.Find(set, "CAM_" + subject); var a = Sets.Find(set, "AIM_" + subject);
+                    if (c == null || a == null) goto default;
+                    s.mm = 50; s.fstop = 2.0f; s.shake = 0.5f;
+                    s.from = c.position; s.to = Vector3.Lerp(c.position, a.position, 0.18f);
+                    s.aim = a.position; s.focus = a.position;
+                    return s;
+                }
                 case "insert":
                 {
                     var p = FindProp(set, subject) ?? FindProp(set, "envelope");
@@ -83,30 +92,30 @@ namespace Dream.Film
                     break;
                 }
             }
-            if (S != null && kind != "ext" && kind != "wide") s.Clear(S.Eyes);
+            if (S != null && kind != "ext" && kind != "wide") s.Clear(S.Eyes, kind == "ots" ? ~(1 << Actor.Layer) : ~0);
             return s;
         }
 
         // If something solid sits between the camera and the face, swing around the subject (keeping distance and
         // height) until the line of sight is clear.
-        void Clear(Vector3 subject)
+        void Clear(Vector3 subject, int mask)
         {
-            if (!Blocked(subject, to)) return;
+            if (!Blocked(subject, to, mask)) return;
             for (int step = 1; step <= 8; step++)
                 foreach (var sign in new[] { 1f, -1f })
                 {
                     var rot = Quaternion.AngleAxis(sign * step * 12f, Vector3.up);
                     Vector3 nt = subject + rot * (to - subject), nf = subject + rot * (from - subject);
-                    if (Blocked(subject, nt)) continue;
+                    if (Blocked(subject, nt, mask)) continue;
                     to = nt; from = nf;
                     return;
                 }
         }
 
-        static bool Blocked(Vector3 subject, Vector3 cam)
+        static bool Blocked(Vector3 subject, Vector3 cam, int mask)
         {
             var d = cam - subject; float len = d.magnitude;
-            return Physics.SphereCast(subject + d / len * 0.25f, 0.05f, d / len, out _, Mathf.Max(0, len - 0.25f));
+            return Physics.SphereCast(subject + d / len * 0.25f, 0.05f, d / len, out _, Mathf.Max(0, len - 0.25f), mask);
         }
 
         static Transform FindProp(GameObject set, string what)

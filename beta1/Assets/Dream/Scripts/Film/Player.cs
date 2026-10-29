@@ -66,8 +66,8 @@ namespace Dream.Film
             AudioClip clip = string.IsNullOrEmpty(l.voice) ? null : Data.Load<AudioClip>($"Voice/{l.voice}.wav");
             foreach (var d in sc.directions)   // sounds the stage directions call for
                 if (d.after == l.n - 1 && d.text.Contains("bell")) sfx.PlayOneShot(Data.Load<AudioClip>("Sfx/bell.wav"), 0.7f);
-            float len = clip != null ? clip.length + Beat : CardHold;
-            if (l.who == "card") { caption.text = l.text; StartCoroutine(FadeCaption(len)); }
+            float len = l.hold > 0 ? Mathf.Max(l.hold, clip != null ? clip.length + Beat : 0) : clip != null ? clip.length + Beat : CardHold;
+            if (l.who == "card" && !string.IsNullOrEmpty(l.text)) { caption.text = l.text; StartCoroutine(FadeCaption(len)); }
             if (actors.TryGetValue(l.who, out var speaker))
             {
                 speaker.Act(l.act, l.next, len);
@@ -113,10 +113,12 @@ namespace Dream.Film
             cam = new GameObject("FilmCamera").AddComponent<Camera>(); cam.tag = "MainCamera";
             cam.usePhysicalProperties = true; cam.sensorSize = new Vector2(36f, 20.25f); cam.gateFit = Camera.GateFitMode.Horizontal;
             cam.nearClipPlane = 0.05f; cam.farClipPlane = 200f; cam.allowHDR = true; cam.allowMSAA = true;
-            cam.clearFlags = CameraClearFlags.Skybox;
+            bool sky = Sets.Current?.sky != null;
+            cam.clearFlags = sky ? CameraClearFlags.Skybox : CameraClearFlags.SolidColor; cam.backgroundColor = Color.black;
             var data = cam.GetUniversalAdditionalCameraData();
             data.renderPostProcessing = true; data.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
             data.antialiasingQuality = AntialiasingQuality.High; data.stopNaN = true;
+            data.requiresDepthTexture = true;   // Bokeh depth of field reads the depth texture
             cam.gameObject.AddComponent<AudioListener>();
             voice = gameObject.AddComponent<AudioSource>(); voice.spatialBlend = 0;
             sfx = gameObject.AddComponent<AudioSource>(); sfx.spatialBlend = 0;

@@ -10,6 +10,7 @@ namespace Dream.Film
     {
         public int n;
         public string who, name, shot, subject, act, next, text, voice;
+        public float hold;   // seconds for a silent shot (the reel); 0 = the voice length, or a card's hold
     }
 
     [Serializable]
