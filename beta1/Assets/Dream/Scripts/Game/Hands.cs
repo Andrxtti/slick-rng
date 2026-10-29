@@ -103,7 +103,7 @@ namespace Dream.Game
         public List<string> path;
         public string Label(int i) => opts != null && i < opts.Count ? opts[i] : acts[i];
     }
-    public class Decision { public int j, pts; public bool ok; public string tier, lab, stage, mine, best; public int before, after; public double? loss; public Spot spot; }
+    public class Decision { public int j, pts, bestIdx; public bool ok; public string tier, lab, stage, mine, best; public int before, after; public double? loss; public Spot spot; }
 
     public class Run
     {
@@ -262,7 +262,7 @@ namespace Dream.Game
             string tier = L.tier; bool ok = tier != "bad"; int pts = L.score - (tier == "bad" ? 60 : 0);
             int before = run.stack; run.stack = Math.Max(0, Math.Min(200, run.stack + L.life));
             run.combo = ok && tier != "close" ? run.combo + 1 : 0; run.bestCombo = Math.Max(run.bestCombo, run.combo);
-            var r = new Decision { j = j, pts = pts, ok = ok, tier = tier, lab = g.lab, stage = run.Stage, before = before, after = run.stack, loss = g.loss, spot = sp, mine = sp.Label(j), best = sp.Label(g.bestIdx) };
+            var r = new Decision { j = j, pts = pts, ok = ok, tier = tier, lab = g.lab, stage = run.Stage, before = before, after = run.stack, loss = g.loss, spot = sp, mine = sp.Label(j), best = sp.Label(g.bestIdx), bestIdx = g.bestIdx };
             run.total += pts; run.results.Add(r);
             if (run.stack <= 0) run.bust = true;
             return r;

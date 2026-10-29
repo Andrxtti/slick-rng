@@ -47,7 +47,7 @@ namespace Dream.Film
                 },
                 ambient = new Color(0.035f, 0.03f, 0.035f),
                 sky = "Assets/Dream/FilmSets/diner/sky.hdr", skyExposure = 0.08f, skyTint = new Color(0.55f, 0.6f, 1f), skyRotation = 90,
-                exposure = 0.2f, temperature = 0f, contrast = 14f, saturation = 4f,
+                exposure = 0.55f, temperature = 0f, contrast = 14f, saturation = 4f,
             },
         };
 
@@ -63,7 +63,7 @@ namespace Dream.Film
                     ["L_desklamp"] = new Lamp(Tungsten, 0.45f, 2.0f),
                     ["L_exit"] = new Lamp(new Color(0.3f, 1f, 0.45f), 0.5f, 3f),
                 },
-                ambient = new Color(0.16f, 0.13f, 0.15f), key = 0.35f, exposure = -0.35f,
+                ambient = new Color(0.16f, 0.13f, 0.15f), key = 0.35f, exposure = 0.1f,
                 fog = new Color(0.5f, 0.35f, 0.35f), fogDensity = 0.004f,
                 sky = "Assets/Dream/FilmSets/office/sky.hdr", skyExposure = 0.5f, skyTint = new Color(1f, 0.7f, 0.66f), skyRotation = 0,
             };
@@ -77,7 +77,7 @@ namespace Dream.Film
                 ["L_window"] = new Lamp(new Color(0.45f, 0.6f, 1f), 3f, 9f),
                 ["L_cage"] = new Lamp(new Color(1f, 0.85f, 0.6f), 1.5f, 4f),
             },
-            ambient = new Color(0.12f, 0.095f, 0.07f), fog = new Color(0.12f, 0.09f, 0.05f), fogDensity = 0.012f, key = 1.1f, exposure = 0.75f,
+            ambient = new Color(0.22f, 0.17f, 0.12f), fog = new Color(0.12f, 0.09f, 0.05f), fogDensity = 0.01f, key = 1.3f, exposure = 1.5f,
         };
 
         static Look Reel(Color key, Color rim, float exposure = 0f) => new Look

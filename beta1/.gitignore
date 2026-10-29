@@ -42,3 +42,5 @@ sysinfo.txt
 # Mixamo clips copied from the old project (Mixamo terms: use in projects, no raw redistribution)
 /Assets/Dream/FilmAnim/
 /Assets/Dream/FilmAnim.meta
+/Assets/StreamingAssets/Films/
+/Assets/StreamingAssets/Films.meta

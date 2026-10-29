@@ -54,6 +54,7 @@ namespace Dream.EditorTools
             AssetDatabase.SaveAssets();
             TestScene();
             FilmScene();
+            MainScene();
             Debug.Log("[Dream] setup done");
         }
 
@@ -65,6 +66,19 @@ namespace Dream.EditorTools
             var s = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             new GameObject("Film").AddComponent<Dream.Film.Player>();
             EditorSceneManager.SaveScene(s, path);
+        }
+
+        // The game: one scene, everything built in code by Dream.Game.Flow. First in the build.
+        static void MainScene()
+        {
+            const string path = "Assets/Dream/Scenes/Main.unity";
+            if (!File.Exists(path))
+            {
+                var s = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                new GameObject("Dream").AddComponent<Dream.Game.Flow>();
+                EditorSceneManager.SaveScene(s, path);
+            }
+            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(path, true) };
         }
 
         // A lit test scene: floor, sphere, warm key, cool rim, a slowly orbiting camera.

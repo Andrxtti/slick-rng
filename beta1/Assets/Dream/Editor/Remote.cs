@@ -27,7 +27,23 @@ namespace Dream.EditorTools
             { "status", () => Log($"status: playing {EditorApplication.isPlaying} compiling {EditorApplication.isCompiling} scene {UnityEngine.SceneManagement.SceneManager.GetActiveScene().path}") },
         };
 
-        static Remote() { EditorApplication.update += Poll; }
+        static Remote()
+        {
+            EditorApplication.update += Poll;
+            // the game, driven for checks: open Main and play; screenshot the Game view; press a button by its label
+            Extra["main"] = _ => { UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Dream/Scenes/Main.unity"); EditorApplication.isPlaying = true; };
+            Extra["shot"] = n => ScreenCapture.CaptureScreenshot(Path.Combine(Dir, (string.IsNullOrEmpty(n) ? "shot" : n) + ".png"));
+            Extra["tap"] = label =>
+            {
+                foreach (var b in UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None))
+                {
+                    var t = b.GetComponentInChildren<UnityEngine.UI.Text>();
+                    if ((t != null && t.text.StartsWith(label, StringComparison.OrdinalIgnoreCase)) || b.name == label) { b.onClick.Invoke(); return; }
+                }
+                Log("tap: no button " + label);
+            };
+            Extra["erase"] = _ => PlayerPrefs.DeleteAll();
+        }
 
         public static void Log(string m)
         {
