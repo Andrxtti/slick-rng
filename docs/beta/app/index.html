@@ -48,6 +48,18 @@
       matchWebGLToCanvasSize: true,
       showBanner: function (msg, type) { if (type === "error") { note.textContent = msg; note.className = "err"; load.style.display = "flex"; } else console.warn(msg); },
     };
+    // sound (Steven, 14:26): play unless the phone's volume is down. iOS 17+ lets a web game ignore the silent
+    // switch with audioSession "playback" (volume buttons still rule); older iPhones need a looping silent <audio>
+    // started from a tap. (Unity resumes its own audio on the first tap; the test run logged "Audio context resumed".)
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+    var silentOn = false, game = null;
+    function wakeAudio() {
+      try {
+        if (!navigator.audioSession && !silentOn) { silentOn = true; var a = document.createElement("audio"); a.src = "data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA=="; a.loop = true; a.setAttribute("playsinline", ""); a.play().catch(function () { silentOn = false; }); }
+      } catch (e) {}
+    }
+    ["touchstart", "touchend", "pointerup", "click", "keydown"].forEach(function (t) { document.addEventListener(t, wakeAudio, true); });
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) wakeAudio(); });
     if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(function () {});
     // a pinch or double-tap zoom on iPhone would fight the game's own gestures
     document.addEventListener("gesturestart", function (e) { e.preventDefault(); }, { passive: false });
@@ -55,7 +67,7 @@
     script.src = "Build/TheDream-Beta1-Web.loader.js";
     script.onload = function () {
       createUnityInstance(canvas, config, function (p) { fill.style.width = (100 * p) + "%"; })
-        .then(function () { load.style.display = "none"; })
+        .then(function (u) { game = u; window.unityInstance = u; load.style.display = "none"; wakeAudio(); })
         .catch(function (m) { note.textContent = String(m); note.className = "err"; });
     };
     script.onerror = function () { note.textContent = "Couldn't load the game files. Check your connection and reload."; note.className = "err"; };
