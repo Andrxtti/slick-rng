@@ -17,6 +17,7 @@ namespace Dream.Film
             if (!string.IsNullOrEmpty(subject)) actors.TryGetValue(subject, out S);
             if (S == null) actors.TryGetValue(speaker, out S);
             foreach (var kv in actors) { if (S == null) S = kv.Value; else if (kv.Value != S && O == null) O = kv.Value; }
+            if (S != null && S.Who != "you" && actors.TryGetValue("you", out var y)) O = y;   // in a crowd, people talk to you
             var s = new Shot { seed = Random.value * 100f };
             Vector3 up = Vector3.up;
             Vector3 mid = S != null && O != null ? (S.Eyes + O.Eyes) * 0.5f : S != null ? S.Eyes : set.transform.position + up * 1.5f;

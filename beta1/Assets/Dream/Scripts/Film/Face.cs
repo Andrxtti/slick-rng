@@ -37,6 +37,8 @@ namespace Dream.Film
 
         public void Look(Vector3 target) { look = target; hasLook = true; }
         public void Nod() { nodT = 0; }
+        float mood, moodTo;   // +1 laughing / pleased, -1 low
+        public void Mood(float m) { moodTo = m; }
 
         public void Speak(AudioClip clip)
         {
@@ -85,7 +87,10 @@ namespace Dream.Film
             spread = Mathf.Lerp(spread, s, 1 - Mathf.Exp(-dt * 18f));
             round = Mathf.Lerp(round, r, 1 - Mathf.Exp(-dt * 14f));
             Set("mouth-open", open * 0.3f); Set("mouth-retraction", spread * 0.35f); Set("mouth-pursing", round * 0.35f);
-            Set("mouth-corner-puller", rest * (1 - open));
+            mood = Mathf.MoveTowards(mood, moodTo, dt * 2f);
+            Set("mouth-corner-puller", Mathf.Max(rest, mood) * (1 - open * 0.5f));
+            Set("mouth-depression", Mathf.Max(0, -mood) * 0.5f);
+            Set("eye-left-slit", Mathf.Max(0, mood) * 0.4f); Set("eye-right-slit", Mathf.Max(0, mood) * 0.4f);
             float brow = speaking ? Mathf.Clamp01(open * 1.4f - 0.25f) * 0.35f : 0;
             Set("eyebrows-left-inner-up", brow); Set("eyebrows-right-inner-up", brow);
 

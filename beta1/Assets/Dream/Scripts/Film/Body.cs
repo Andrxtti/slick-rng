@@ -35,7 +35,7 @@ namespace Dream.Film
         {
             ["idle"] = "Sitting Idle", ["talk"] = "Sitting Talking", ["lean"] = "Sitting Talking", ["point"] = "Sitting Talking",
             ["nod"] = "Sitting Idle", ["shrug"] = "Sitting Talking", ["think"] = "Sitting Idle", ["sad"] = "Sitting Idle",
-            ["laugh"] = "Sitting Clap", ["clap"] = "Sitting Clap", ["fist"] = "Sitting Clap",
+            ["laugh"] = "Sitting Talking", ["clap"] = "Sitting Clap", ["fist"] = "Sitting Talking",
         };
         static readonly Dictionary<string, string> Stand = new Dictionary<string, string>
         {
@@ -98,6 +98,7 @@ namespace Dream.Film
             if (!string.IsNullOrEmpty(next) && map.TryGetValue(next, out var nx)) { nextClip = nx; nextAt = Time.time + length * 0.6f; }
             else { nextClip = Seated ? "Sitting Idle" : "Breathing Idle"; nextAt = Time.time + length + 0.2f; }
             if (clip == "nod") face?.Nod();
+            face?.Mood(clip == "laugh" || clip == "fist" ? 1f : clip == "sad" ? -1f : 0f);
         }
 
         public override void Say(AudioClip clip) { face?.Speak(clip); }

@@ -69,6 +69,17 @@ namespace Dream.Film
             };
         }
 
+        static readonly Look CardRoom = Looks["cardroom"] = new Look
+        {
+            lamps =
+            {
+                ["L_table"] = new Lamp(new Color(1f, 0.74f, 0.4f), 7f, 5f, 130, true, Vector3.down),   // sodium over each felt
+                ["L_window"] = new Lamp(new Color(0.45f, 0.6f, 1f), 3f, 9f),
+                ["L_cage"] = new Lamp(new Color(1f, 0.85f, 0.6f), 1.5f, 4f),
+            },
+            ambient = new Color(0.12f, 0.095f, 0.07f), fog = new Color(0.12f, 0.09f, 0.05f), fogDensity = 0.015f, key = 0.7f, exposure = 0.25f,
+        };
+
         public static GameObject Load(string place)
         {
 #if UNITY_EDITOR
