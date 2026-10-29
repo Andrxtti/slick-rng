@@ -1,0 +1,1 @@
+{ "cmds": ["where claude", "claude --version", "where node", "node --version", "where git", "git --version", "dir %USERPROFILE%\\.claude /b", "dir %USERPROFILE%\\.local\\bin /b", "dir C:\\Dev /b", "dir \"C:\\Program Files\\Unity\\Hub\\Editor\" /b", "where winget"] }

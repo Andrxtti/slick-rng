@@ -1,0 +1,12 @@
+{
+ "cmds": [
+  "winget install --id Git.Git -e --silent --accept-source-agreements --accept-package-agreements",
+  "winget install --id Anthropic.ClaudeCode -e --silent --accept-source-agreements --accept-package-agreements",
+  "winget install --id Python.Python.3.12 -e --silent --accept-source-agreements --accept-package-agreements",
+  "winget install --id Gyan.FFmpeg -e --silent --accept-source-agreements --accept-package-agreements",
+  "winget list --id Git.Git -e",
+  "winget list --id Anthropic.ClaudeCode -e",
+  "winget list --id Python.Python.3.12 -e",
+  "winget list --id Gyan.FFmpeg -e"
+ ]
+}
