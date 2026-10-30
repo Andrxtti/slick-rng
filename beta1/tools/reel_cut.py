@@ -67,7 +67,7 @@ for i, (kind, src, start, dur, sting, soff) in enumerate(CUT):
     parts.append(p)
     if sting: stings.append((os.path.join(VOICE, sting + ".wav"), t + soff))
     if kind == "card":   # the narrator reads the title card (tools/voice.py makes these clips)
-        nar = os.path.join(ROOT, "Assets", "Dream", "Resources", "Voice", "Lines", narrator_key(src) + ".wav")
+        nar = os.path.join(ROOT, "Voice", "Lines", narrator_key(src) + ".wav")
         if os.path.exists(nar): stings.append((nar, t + 0.35))
     cuts.append(t)
     t += dur

@@ -504,3 +504,11 @@ fill and rim; AgX; 85 mm at f/2.8 focused on the eyes. **`C:\Dev\Builds\day2\rea
   ~65%, Double Stack 8.3% / 1.5%, Main 8.8% / 1.8%; $2/$5 -$8 / -$221 / +$775 a session. So a 70% player full-time (about five
   ring entries a stop) expects two rings in about five stops (~9 months of game time); with the day job (three a stop) longer.
   Side effect said plainly: ring events are slightly +EV even at 55%. Chapter 1 is untouched (the offset only touches rings).
+
+### Batch 1, step 6: Test Beta 1.1.4
+- First build: Build/ 31.2 MB, over the 25 MB budget. Chapter 2's voices (in Resources, quality 1) were 14 MB of sound.
+  Fixes: the voice lines now stream (masters in `beta1/Voice/Lines`, 112 MP3s at 48 kbps mono in `StreamingAssets/Voice`,
+  3.8 MB, preloaded in the background from the title; a line whose clip hasn't arrived reads silently); an import rule
+  for what stays in Resources/Voice (quality 0.35, mono); the four table plates crunch-compressed (no visible banding).
+  **Build/ 17.2 MB** (1.1.3 was 22.5), 0 errors. Chromium smoke test at 430x932: boots, "voices preloaded: 112 of 112",
+  hidden 15 s and back, the reel resumes.

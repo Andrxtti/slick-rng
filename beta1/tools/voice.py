@@ -60,7 +60,8 @@ def colour(src, dst, pitch, gravel, warmth, trailer=False):
 
 
 # ------------------------------------------------------------ lines outside the films
-LINES = os.path.join(ROOT, "Assets", "Dream", "Resources", "Voice", "Lines")   # in the build: the game plays these
+LINES = os.path.join(ROOT, "Voice", "Lines")   # the masters (outside Assets); the game streams MP3s of them (publish_lines)
+STREAM = os.path.join(ROOT, "Assets", "StreamingAssets", "Voice")   # Milestone B: out of the first download (25 MB budget)
 YARN = os.path.join(ROOT, "Assets", "Dream", "Resources", "Story")
 
 
@@ -154,7 +155,21 @@ def main():
             done[L["voice"]] = L["text"]
             print(f"  {L['voice']:16} {L['who']:8} {L['text'][:60]}")
     json.dump(done, open(log_path, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    publish_lines()
     print("ok")
+
+
+def publish_lines():
+    """every master in LINES as a 48 kbps mono MP3 in StreamingAssets/Voice, and index.json (the keys) for the preloader"""
+    os.makedirs(STREAM, exist_ok=True); keys = []
+    for fn in sorted(f for f in os.listdir(LINES) if f.endswith(".wav")):
+        k = fn[:-4]; keys.append(k); src = os.path.join(LINES, fn); dst = os.path.join(STREAM, k + ".mp3")
+        if os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src): continue
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", src, "-ac", "1", "-b:a", "48k", dst], check=True)
+    for f in os.listdir(STREAM):   # clips whose line is gone
+        if f.endswith(".mp3") and f[:-4] not in keys: os.remove(os.path.join(STREAM, f))
+    json.dump({"keys": keys}, open(os.path.join(STREAM, "index.json"), "w", encoding="utf-8"))
+    print(f"voice lines: {len(keys)} streamed MP3s in StreamingAssets/Voice")
 
 
 if __name__ == "__main__":
