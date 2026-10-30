@@ -21,9 +21,11 @@ exec(compile(open(os.path.join(HERE, "diner.py"), encoding="utf-8").read(), "din
 sc = bpy.context.scene
 
 # Slick at his mark, facing the counter (+y)
+CHAR = os.environ.get("CHAR", "slick")   # H2: any cast member at Slick's stool mark (FilmCast/<char>)
+HAIR = {"slick": ("back", 0.9, 0.25), "mustich": ("curls", 0.18, 1.0)}.get(CHAR, ("back", 0.6, 0.4))   # style, melanin, redness
 mk = bpy.data.objects["MARK_slick"]
 before = set(bpy.data.objects)
-bpy.ops.import_scene.fbx(filepath=os.path.join(ROOT, "Assets", "Dream", "FilmCast", "slick", "slick.fbx"))
+bpy.ops.import_scene.fbx(filepath=os.path.join(ROOT, "Assets", "Dream", "FilmCast", CHAR, CHAR + ".fbx"))
 new = [o for o in bpy.data.objects if o not in before]
 root = next(o for o in new if o.parent is None)
 root.location = (mk.location.x, mk.location.y - 0.1, 0); root.rotation_euler = (root.rotation_euler.x, 0, R(180))
@@ -46,19 +48,19 @@ if rig is not None:
 top = max((o.matrix_world @ Vector(c)).z for o in meshes for c in o.bound_box)
 eye = Vector((mk.location.x, mk.location.y - 0.1 + 0.09, top - 0.2))   # the eyes: 20 cm under the top of the hair, 9 cm forward
 import json
-COLORS = json.load(open(os.path.join(ROOT, "Assets", "Dream", "FilmCast", "slick", "manifest.json"), encoding="utf-8"))["colors"]
+COLORS = json.load(open(os.path.join(ROOT, "Assets", "Dream", "FilmCast", CHAR, "manifest.json"), encoding="utf-8"))["colors"]
 
-TEX = os.path.join(ROOT, "Assets", "Dream", "FilmCast", "slick", "tex")
+TEX = os.path.join(ROOT, "Assets", "Dream", "FilmCast", CHAR, "tex")
 def img(name):
     p = os.path.join(TEX, name); return bpy.data.images.load(p, check_existing=True) if os.path.exists(p) else None
-MAN = json.load(open(os.path.join(ROOT, "Assets", "Dream", "FilmCast", "slick", "manifest.json"), encoding="utf-8"))
+MAN = json.load(open(os.path.join(ROOT, "Assets", "Dream", "FilmCast", CHAR, "manifest.json"), encoding="utf-8"))
 def rebuild(m, part):
     """the material as Unity's Materials.cs builds it from the manifest: diffuse x colour, normal map, alpha for strands"""
     spec = MAN["materials"].get(part, {}); col = MAN["colors"].get(part)
     m.use_nodes = True; nt = m.node_tree; nt.nodes.clear()
     out = nt.nodes.new("ShaderNodeOutputMaterial"); p = nt.nodes.new("ShaderNodeBsdfPrincipled"); nt.links.new(p.outputs[0], out.inputs[0])
     if spec.get("diffuse"):
-        t = nt.nodes.new("ShaderNodeTexImage"); t.image = bpy.data.images.load(os.path.join(ROOT, "Assets", "Dream", "FilmCast", "slick", spec["diffuse"]), check_existing=True)
+        t = nt.nodes.new("ShaderNodeTexImage"); t.image = bpy.data.images.load(os.path.join(ROOT, "Assets", "Dream", "FilmCast", CHAR, spec["diffuse"]), check_existing=True)
         c = t.outputs["Color"]
         if col:
             mix = nt.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"; mix.blend_type = "MULTIPLY"; mix.inputs["Factor"].default_value = 1.0
@@ -68,11 +70,16 @@ def rebuild(m, part):
             nt.links.new(t.outputs["Alpha"], p.inputs["Alpha"]); m.blend_method = "HASHED" if hasattr(m, "blend_method") else None
     elif col: p.inputs["Base Color"].default_value = (*col[:3], 1.0)
     if spec.get("normalmap"):
-        tn = nt.nodes.new("ShaderNodeTexImage"); tn.image = bpy.data.images.load(os.path.join(ROOT, "Assets", "Dream", "FilmCast", "slick", spec["normalmap"]), check_existing=True)
+        tn = nt.nodes.new("ShaderNodeTexImage"); tn.image = bpy.data.images.load(os.path.join(ROOT, "Assets", "Dream", "FilmCast", CHAR, spec["normalmap"]), check_existing=True)
         tn.image.colorspace_settings.name = "Non-Color"; nm = nt.nodes.new("ShaderNodeNormalMap"); nt.links.new(tn.outputs["Color"], nm.inputs["Color"]); nt.links.new(nm.outputs["Normal"], p.inputs["Normal"])
     p.inputs["Roughness"].default_value = {"eyes": 0.05, "teeth": 0.3, "hair": 0.45, "haircards": 0.42}.get(part, 0.7)
     if "metal" in spec: p.inputs["Metallic"].default_value = spec["metal"]
-    if part == "lenses": p.inputs["Alpha"].default_value = 1 - spec.get("alpha", 0.85); p.inputs["Roughness"].default_value = 0.02
+    if part == "lenses":   # real glass, not an alpha card (Eevee drew the alpha as opaque white)
+        p.inputs["Transmission Weight"].default_value = 1.0; p.inputs["IOR"].default_value = 1.5; p.inputs["Roughness"].default_value = 0.02
+        p.inputs["Base Color"].default_value = (0.95, 0.97, 1.0, 1)
+    if part in ("hair", "haircards", "brows", "lashes", "lenses"):
+        try: m.surface_render_method = "DITHERED"
+        except Exception: pass
     if part == "eyes": p.inputs["Coat Weight"].default_value = 1.0; p.inputs["Coat Roughness"].default_value = 0.02
     if part == "skin":   # the H1 skin: random-walk subsurface, roughness varied, fine pore bump
         p.subsurface_method = "RANDOM_WALK"; p.inputs["Subsurface Weight"].default_value = 1.0
@@ -98,7 +105,7 @@ if "--strands" in sys.argv:
     shell = next(o for o in meshes if o.data.materials and any(m and m.name.lower().startswith("hair") and "cards" not in m.name.lower() for m in o.data.materials))
     for o in meshes:
         if o.data.materials and any(m and "haircards" in m.name.lower() for m in o.data.materials): o.hide_render = True
-    strands.grow(shell, "back", melanin=0.9, count=int(os.environ.get("STRANDS", "60000")))
+    strands.grow(shell, HAIR[0], melanin=HAIR[1], redness=HAIR[2], count=int(os.environ.get("STRANDS", "60000")))
     OUT_TAG = "_strands"
 else:
     OUT_TAG = ""
@@ -143,6 +150,6 @@ for eng in (["eevee", "cycles"] if mode == "both" else [mode]):
         except Exception: pass
     else:
         sc.render.engine = "CYCLES"; sc.cycles.samples = 64; sc.cycles.use_denoising = True; sc.cycles.denoiser = "OPENIMAGEDENOISE"
-    sc.render.filepath = os.path.join(OUT, f"slick_{'mcu' if mcu else 'ecu'}_{eng}{OUT_TAG}.png")
+    sc.render.filepath = os.path.join(OUT, f"{CHAR}_{'mcu' if mcu else 'ecu'}_{eng}{OUT_TAG}.png")
     t0 = time.time(); bpy.ops.render.render(write_still=True)
     print(f"[h1] {eng}: {time.time() - t0:.1f} s per frame -> {sc.render.filepath}", flush=True)

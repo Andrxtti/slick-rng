@@ -11,10 +11,11 @@ from mathutils.bvhtree import BVHTree
 STYLES = {   # length (m), lift (m), jitter (radians), as hair.py (a strand is finer, so more of them)
     "back": {"flow": "back", "length": 0.09, "lift": 0.0025, "jitter": 0.12},
     "crop": {"flow": "back", "length": 0.03, "lift": 0.0015, "jitter": 0.35},
+    "curls": {"flow": "back", "length": 0.05, "lift": 0.004, "jitter": 0.6, "curl_r": 0.0035, "curl_turns": 2.5},   # Mustich
 }
 
 
-def grow(shell, style="back", melanin=0.9, count=60000, seed=5, segs=8, radius=0.00005):
+def grow(shell, style="back", melanin=0.9, count=60000, seed=5, segs=8, radius=0.00005, redness=0.25):
     st = STYLES[style]; rng = np.random.default_rng(seed)
     deps = bpy.context.evaluated_depsgraph_get(); sh = shell.evaluated_get(deps); me = sh.to_mesh()
     bm = bmesh.new(); bm.from_mesh(me); bm.normal_update(); bmesh.ops.triangulate(bm, faces=bm.faces[:])
@@ -47,6 +48,16 @@ def grow(shell, style="back", melanin=0.9, count=60000, seed=5, segs=8, radius=0
             if hit[0] is not None: p, n = hit[0], hit[1].normalized()
             pos[i, s] = p + n * (lift * (0.3 + s / segs))
             p = p + flow(p, n) * (L / segs)
+    if st.get("curl_r"):   # curls: each strand spirals around its own path, a random phase each, tighter toward the tip
+        segs2 = segs * 3; fine = np.zeros((count, segs2 + 1, 3), np.float32); k = np.linspace(0, 1, segs2 + 1)
+        for i in range(count):
+            path = np.array([np.interp(k * segs, np.arange(segs + 1), pos[i, :, j]) for j in range(3)]).T
+            t = np.gradient(path, axis=0); t /= np.linalg.norm(t, axis=1, keepdims=True) + 1e-9
+            up = np.array([0, 0, 1.0]); a1 = np.cross(t, up); a1 /= np.linalg.norm(a1, axis=1, keepdims=True) + 1e-9; a2 = np.cross(t, a1)
+            ph = rng.uniform(0, 2 * np.pi) + k * st["curl_turns"] * 2 * np.pi * rng.uniform(0.8, 1.2)
+            r = st["curl_r"] * rng.uniform(0.7, 1.3) * np.minimum(1, k * 4)[:, None]
+            fine[i] = path + r * (np.cos(ph)[:, None] * a1 + np.sin(ph)[:, None] * a2)
+        pos = fine; segs = segs2
     bm.free(); sh.to_mesh_clear()
 
     cv = bpy.data.hair_curves.new("strands"); cv.add_curves([segs + 1] * count)
@@ -58,7 +69,7 @@ def grow(shell, style="back", melanin=0.9, count=60000, seed=5, segs=8, radius=0
     ob.matrix_world = shell.matrix_world.copy()
     m = bpy.data.materials.new("strands"); m.use_nodes = True; nt = m.node_tree; nt.nodes.clear()
     out = nt.nodes.new("ShaderNodeOutputMaterial"); hb = nt.nodes.new("ShaderNodeBsdfHairPrincipled")
-    hb.parametrization = "MELANIN"; hb.inputs["Melanin"].default_value = melanin; hb.inputs["Melanin Redness"].default_value = 0.25
+    hb.parametrization = "MELANIN"; hb.inputs["Melanin"].default_value = melanin; hb.inputs["Melanin Redness"].default_value = redness
     hb.inputs["Roughness"].default_value = 0.28; hb.inputs["Radial Roughness"].default_value = 0.4; hb.inputs["Coat"].default_value = 0.1
     nt.links.new(hb.outputs[0], out.inputs[0]); cv.materials.append(m)
     # the shell under it: matte and dark, a scalp that never shows through as skin

@@ -564,3 +564,10 @@ Principled Hair BSDF (melanin 0.9); the cards hidden, the shell matte and dark u
   `strands.py` lifts strands up to 3.5x on the crown. Cycles MCU, 90k strands, 124 s/frame:
   `C:\Dev\Builds\day2\real_slick_mcu_posed.png`. The pose and the hair now read right at MCU size; the face doesn't yet.
 - Next on track H: Mustich's hair as strands with curl (the "clay curls" note), then the stills of the cast in place.
+
+### Track H, H2 step 4: Mustich's curls as strands ("clay curls")
+`strands.py` style "curls": each strand spirals around its own path (2.5 turns, a random phase), ginger (melanin 0.18,
+redness 1.0); `h1_test.py` takes `CHAR=<cast id>`; the lenses are real glass (transmission) instead of an alpha card that
+Eevee drew opaque white. `C:\Dev\Builds\day2\real_mustich_curls.png`: Unity film | Eevee | Cycles 60k curls, 237 s/frame.
+The curls read as fine curly hair now, not clay; at ECU in Cycles they're soft and frizzy rather than defined ringlets
+(next: fewer, thicker clumped curls). The face is still the CG face, as for Slick.
