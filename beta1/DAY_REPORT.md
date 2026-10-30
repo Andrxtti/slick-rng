@@ -610,3 +610,11 @@ Plan (each step committed): 1 data (Sonnet Â· medium), 2 calendar + flow (Opus Â
   (MCU 42 s, tall 740x1600 62 s); shipped as `StreamingAssets/Home/you_{portrait,landscape}.jpg` (40 / 34 KB). In portrait the
   closet shows you between the tabs and a two-column list (`C:\Dev\Builds\day2\closet_you_430x932.png`). Not good yet: the
   picture wears the character's built shirt, not the closet's choice; per-item layers (outfit, glasses, chain, hat) are next.
+- Track H, closet outfits (`tools/blender/closet.py`): your character built in the nearest MakeHuman garment for each item,
+  repainted whole where the item asks (which also paints out the stock tees' MakeHuman logo), rendered in the studio tall and
+  wide (~3 min an outfit). The closet shows the picture of what you're wearing and falls back to the default portrait.
+  Mapping (nearest garment; several items share one in a different colour): tee = casualsuit06 painted black; office = 01;
+  hoodie = 02 grey; quarter-zip = 03; cardigan = 03 tan; jersey = 04 red; bomber = 05 black; leather = 05 brown; vest, blazer,
+  suit, tux = elegantsuit01 (tan, navy, as is, black). **Done so far: the tee only.** The batch for the other eleven was
+  stopped by Claude Code because the PC ran low on memory; I haven't restarted it (`python beta1/tools/blender/closet.py
+  office hoodie polo cardigan jersey bomber leather vest blazer suit tux` when there's room).

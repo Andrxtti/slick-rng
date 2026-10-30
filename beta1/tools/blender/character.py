@@ -12,7 +12,7 @@ argv = sys.argv[sys.argv.index("--") + 1:]
 SPEC = json.load(open(argv[0], encoding="utf-8"))
 NAME = SPEC["name"]
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-OUT = os.path.join(ROOT, "Assets", "Dream", "FilmCast", NAME)   # generated, gitignored
+OUT = os.environ.get("CHAR_OUT") or os.path.join(ROOT, "Assets", "Dream", "FilmCast", NAME)   # generated, gitignored (CHAR_OUT: build elsewhere, e.g. closet variants)
 MPFB_SYS = os.path.join(os.environ["APPDATA"], "Blender Foundation", "Blender", "5.2", "extensions", "blender_org", "mpfb", "data")
 MPFB_USER = os.path.join(os.environ["APPDATA"], "Blender Foundation", "Blender", "5.2", "extensions", ".user", "blender_org", "mpfb", "data")
 

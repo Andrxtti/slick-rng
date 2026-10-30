@@ -104,8 +104,9 @@ namespace Dream.Game
             req.SendWebRequest().completed += _ =>
             {
                 if (req.result == UnityWebRequest.Result.Success) { var t = DownloadHandlerTexture.GetContent(req); stills[file] = t; Show(t); }
+                else if (name.StartsWith("you_")) { req.Dispose(); req = null; if (img != null) Backdrop(s, "you"); return; }   // no picture of this outfit yet: you as built
                 else Debug.LogWarning("[Dream] home still: " + req.error);
-                req.Dispose();
+                req?.Dispose();
             };
         }
         static void Shade(RectTransform s, float y0, float y1, float a) => Ui.At(Ui.Panel(s, "Shade", new Color(0.02f, 0.02f, 0.04f, a)), 0, y0, 1, y1);
@@ -251,7 +252,7 @@ namespace Dream.Game
         {
             var s = Screen(Ui.Night); Canvas.ForceUpdateCanvases();
             bool wide = s.rect.width > s.rect.height;
-            Backdrop(s, "you");   // you, rendered (track H: a Cycles portrait; outfit layers next)
+            Backdrop(s, "you_" + Worn("outfit"));   // you in what you're wearing (tools/blender/closet.py; Cycles portraits)
             if (wide) Shade(s, 0, 1, 0.74f); else { Shade(s, 0, 0.56f, 0.82f); Shade(s, 0.83f, 1, 0.7f); }   // portrait: you show between the tabs and the list
             Ui.At(Ui.Label(s, "CLOSET", 26, Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.94f, 0.5f, 0.975f);
             Ui.At(Ui.Label(s, string.Join("  ·  ", new[] { "outfit", "eyes", "head", "chain" }.Select(WornItem).Where(i => i.id != "none").Select(i => i.name)), 22, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.9f, 0.94f, 0.94f);
