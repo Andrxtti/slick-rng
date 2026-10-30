@@ -88,7 +88,7 @@ namespace Dream.Game
         static string DateStr(int d) => Date(d).ToString("dddd, MMMM d", System.Globalization.CultureInfo.InvariantCulture);
         public string Rep => S.step == "ch3" || S.step == "end4" ? (S.bracelets >= 1 ? "Bracelet Winner" : "Summer Grinder") : S.step == "ch2" || S.step == "end" ? (S.rings >= 2 ? "Two-time Ring Winner" : S.rings == 1 ? "Ring Winner" : "Circuit Grinder") : S.roomTitle ? "Biscayne Champion" : S.job == "quit" ? "Full-time Dreamer" : "Moonlighter";   // old Career.Rep, Chapter 1
         // Steven, 14:54: every build is "Test Beta 1.1.x", x bumped per build, until he says 2.0
-        public const string Version = "1.1.4";
+        public const string Version = "1.1.5";
         public const string FeedbackUrl = "https://github.com/Andrxtti/slick-rng/issues/new?title=The%20Dream%20Test%20Beta%20" + Version + "%20feedback";
 
         // ------------------------------------------------------------ the calendar (old Calendar.cs, Chapter 1)

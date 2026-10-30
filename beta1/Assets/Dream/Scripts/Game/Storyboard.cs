@@ -86,7 +86,7 @@ namespace Dream.Game
                 else
                 {
                     var box = Ui.At(Ui.Tile(card, "Line", new Color(0.05f, 0.05f, 0.07f, 0.88f), 32), 0.05f, wide ? 0.08f : 0.1f, 0.95f, wide ? 0.42f : 0.36f);
-                    var pic = Ui.At(Ui.Box(box, "Pic"), 0.03f, 0.12f, 0.03f, 0.88f);
+                    var pic = Ui.At(Ui.Box(box, "Pic"), 0.03f, 0.2f, 0.03f, 0.8f);   // a square as tall as 60% of the card, from its left edge
                     pic.pivot = new Vector2(0, 0.5f);   // grows rightwards from the card's left edge
                     pic.gameObject.AddComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
                     if (Portraits.Contains(line.who))
@@ -100,7 +100,7 @@ namespace Dream.Game
                         string ini = new string((line.name ?? "?").Split(' ').Where(w => w.Length > 0 && char.IsLetter(w[0])).Select(w => w[0]).Take(2).ToArray());
                         Ui.Label(av, ini.ToUpperInvariant(), 44, Ui.Ink, TextAnchor.MiddleCenter, FontStyle.Bold);
                     }
-                    float x0 = wide ? 0.2f : 0.3f;
+                    float x0 = wide ? 0.2f : 0.36f;   // the words start clear of the portrait
                     Ui.At(Ui.Label(box, (line.name ?? "").ToUpperInvariant() + (text ? "  ·  TEXT" : ""), 24, Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), x0, 0.72f, 0.97f, 0.92f);
                     Ui.At(Ui.Label(box, line.text, wide ? 34 : 36, Ui.Ink, TextAnchor.UpperLeft), x0, 0.08f, 0.97f, 0.7f);
                 }

@@ -46,7 +46,7 @@ title: C3AfterEvent
 title: C3AfterSleep
 ---
 // the second Thursday of the Series: David's engagement party is Saturday (flying home costs you Saturday)
-<<if $seriesday >= 10 and $seriesday < 12 and not $c3_party_seen>>
+<<if $seriesday >= 9 and $seriesday <= 12 and not $c3_party_seen>>   // (a day-job week sleeps past weekdays)
     <<set $c3_party_seen to true>>
     <<film c3_party@a>>
     -> {$c3_party_1}

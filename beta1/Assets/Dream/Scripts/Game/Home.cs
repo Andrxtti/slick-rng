@@ -202,6 +202,8 @@ namespace Dream.Game
             }
             // today's games
             Ui.At(Ui.Label(p, "TONIGHT", 22, Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0, 0.665f, 1, 0.7f);
+            if (S.day < S.awayUntil)   // Chapter 3: flown home for David's engagement party
+                Ui.At(Ui.Label(p, $"Home in Miami for David and Katie's party. Back in Vegas on {DateStr(S.awayUntil)}.", 24, Ui.Aqua, TextAnchor.UpperLeft), 0, 0.56f, 1, 0.66f);
             float y = 0.66f; float h = wide ? 0.16f : 0.12f;
             foreach (var ev in Today())
             {

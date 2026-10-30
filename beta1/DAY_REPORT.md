@@ -574,3 +574,32 @@ The curls read as fine curly hair now, not clay; at ECU in Cycles they're soft a
 - Step 4b: clumped curls (strands in the same 6 mm cell share a curl's phase and rate). At the ECU framing (f/2.8, focus on
   the eyes) the crown is soft and the change barely shows, so I stopped iterating the curls here; defined ringlets need a
   closer, sharper hair shot to judge. Next on track H: the closet preview (a rendered picture of you), which needs no new head.
+
+## Chapter 3, the Summer -> Test Beta 1.1.5 (INBOX 2026-10-30, after 1.1.4 went live)
+Plan (each step committed): 1 data (Sonnet · medium), 2 calendar + flow (Opus · high), 3 Chapter3.yarn (Opus · high),
+4 balance (Opus · medium), 5 voices + checks (Sonnet · low), 6 autoplay + build (Sonnet · medium).
+- **Data**: the five tournament events of the old game's Chapter 3 ($10K Championship Satellite -> a seat in the $10K, the
+  $1,500 Millionaire Factory and $3,000 Six-Max bracelets, the $10,000 Heads-Up Championship, CF Tilt's $215 Sunday
+  Seven-Figure); the $5/$10 game stays out (tournaments only).
+- **Calendar** (my call, `Chapter3.cs`): the WCoC Summer Series, six weeks from Monday 1 June, every year: Mon satellite, Tue
+  $1,500, Wed $3,000 Six-Max, Thu satellite, Fri $1,500, Sat $10K Heads-Up, Sun $1,500 (+ CF Tilt online); the day job gets
+  both weekend days during the Series. Between Series, home grind. Goal: a gold bracelet.
+- **Story** (`Chapter3.yarn`, storyboards; c3 already opens the chapter at the end of Chapter 2): c3_gg your first Six-Max;
+  c3_bubble then lesson3 your first bracelet bubble (finished just outside the money); c3_chance your first $10K Heads-Up loss;
+  c3_steak from the Series' second week; c3_party on the second Thursday (Steven's choice: fly home -> `<<away 3>>`, you miss
+  that weekend's live events, the Spacepad says so; stay -> David's lowercase); c3_parm from the third week; bracelet1 at the
+  first bracelet, then c3_hello (Bio), then Chapter 4's opening (c4_truth, c4) and the end card "Chapter 4 · The Tour —
+  coming in the next build". The script's "(if you fly home)" notes are stripped from the words; a storyboard can now play a
+  single line (`c3_party@L3`).
+- **Saves**: a 1.1.4 save that finished Chapter 2 continues into Chapter 3; the final step is now `end4`.
+- **Balance** (`sim` at Chapter 3, `C:\Dev\Builds\day2\c_balance_ch3_events.txt`): without help a ~70% player won 0.3–1.7% of
+  bracelet entries. Bracelet offset 0.10: 70% wins 3–5% per entry (full-time ~30 entries a Series -> ~70% chance of a bracelet
+  in the first Series; with the day job ~12 -> ~40%); 55% ~0.6% (luck).
+- **Voices**: Chapter 3's storyboards (and c4_truth, c4) with eight new legend voices, picked without listening (placeholders).
+  Erik Seikick's "..." is silence by design: lines with nothing to say are no longer voiced (it made an empty clip that broke
+  decoding in the browser).
+- **Checks**: keep autoplay -> Chapter 4 end card day 166 (c3_chance, c3_steak, c3_parm, bracelet1, c3_hello, c4_truth, c4);
+  quit autoplay -> end card day 148 (a bracelet on the Series' second day). The party tested by hand (test menu): the scene,
+  Steven's two options, fly home -> the Spacepad's empty weekend with its line. The test menu's "Chapter 3" starts it fresh.
+- **Build: Test Beta 1.1.5**, Build/ 17.3 MB, 0 errors; Chromium: boots, saves survive a reload and a wiped IndexedDB.
+- Not good yet: the Summer's scenes are storyboards over a plain backdrop (no Vegas still yet); legends are initials.

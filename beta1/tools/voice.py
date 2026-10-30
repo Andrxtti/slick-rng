@@ -143,6 +143,7 @@ def main():
         for L in data if isinstance(data, list) else data["lines"]:
             if L.get("voice") and L.get("text"): lines.append(L)   # reel shots reuse sting voices without text
     lines += yarn_lines() + reel_cards() + storyboard_lines()
+    lines = [L for L in lines if any(ch.isalnum() for ch in L["text"])]   # "..." (a silence) has nothing to say
     todo = [L for L in lines if force or L["who"] in redo or done.get(L["voice"]) != L["text"] or not os.path.exists(os.path.join(L.get("_out", OUT), L["voice"] + ".wav"))]
     print(f"{len(lines)} lines, {len(todo)} to voice")
     tmp = os.path.join(PIPER, "tmp"); os.makedirs(tmp, exist_ok=True)
