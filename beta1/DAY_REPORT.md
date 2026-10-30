@@ -549,3 +549,12 @@ Principled Hair BSDF (melanin 0.9); the cards hidden, the shell matte and dark u
   helmet. Cycles with strands is faster than with cards (179 s vs 321 s: the alpha-cut cards were the expensive part).
 - Not good yet: the top of the head is out of frame in this ECU (check a wider shot next); the left ear blows out under the
   key in Cycles; the face is still the MakeHuman face (skin texture and eyes are the next H2 steps).
+
+### Track H, H2 step 2: a wider look (`h1_test.py -- cycles --strands --mcu`, 124 s/frame)
+`C:\Dev\Builds\day2\real_slick_mcu_strands.png`, with an eye light (catchlights) and a more frontal key. Plainly, from the MCU:
+- the strands give a true slicked-back silhouette, but lie thin and flat on top (needs more density/volume on the crown);
+- the face is still MakeHuman's smooth CG face, the ear still pale; the body is in the import's A-pose (a still needs a pose);
+  the jacket's texture shows its pattern oddly at this size.
+- Conclusion for track H: strands are worth adopting for Cycles stills and inserts now; photoreal faces need a better head
+  (a detailed skin texture, modelled eyes, ideally the consenting cast from their reference photos), which is Steven's call
+  on tools and licences (see the 1.1.4 notes). Until then the next H steps are posing the stills and the hair's crown.

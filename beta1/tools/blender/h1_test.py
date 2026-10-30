@@ -103,7 +103,7 @@ for o in [o for o in bpy.data.objects if o.name.startswith("L_pendant")]:
     light(o.name + "_l", "POINT", o.location, 60, (1.0, 0.75, 0.5), 0.08)
 light("Neon", "AREA", bpy.data.objects["L_neon_out"].location, 120, (1.0, 0.1, 0.12), 3.0, aim=eye)
 front = Vector((0, 1, 0))   # Slick faces +y, toward the counter and the camera
-light("Key", "AREA", eye + Vector((0.7, 0.9, 0.35)), 22, (1.0, 0.82, 0.66), 0.6, aim=eye)
+light("Key", "AREA", eye + Vector((0.5, 1.0, 0.35)), 20, (1.0, 0.82, 0.66), 0.8, aim=eye)   # H2: more frontal (the ear blew out)
 light("Fill", "AREA", eye + Vector((-0.9, 0.8, 0.0)), 7, (0.6, 0.7, 1.0), 0.8, aim=eye)
 light("Rim", "AREA", eye + Vector((-0.4, -0.7, 0.3)), 18, (0.65, 0.75, 1.0), 0.3, aim=eye)
 w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
@@ -111,7 +111,13 @@ w.node_tree.nodes["Background"].inputs["Color"].default_value = (0.01, 0.012, 0.
 
 cam = bpy.data.cameras.new("ecu"); cam.lens = 85; cam.dof.use_dof = True; cam.dof.aperture_fstop = 2.0
 co = bpy.data.objects.new("ecu", cam); sc.collection.objects.link(co); sc.camera = co
-co.location = eye + Vector((0.18, 0.95, 0.03)); co.rotation_euler = (eye - co.location).to_track_quat("-Z", "Y").to_euler()
+mcu = "--mcu" in sys.argv   # H2: a medium close-up, the whole head and the shoulders
+co.location = eye + (Vector((0.3, 1.9, 0.0)) if mcu else Vector((0.18, 0.95, 0.03)))
+aimpt = eye + Vector((0, 0, -0.06)) if mcu else eye
+co.rotation_euler = (aimpt - co.location).to_track_quat("-Z", "Y").to_euler()
+if mcu: cam.lens = 65
+# the eye light: a dim soft source beside the lens, for catchlights (the lids shade Slick's eyes)
+light("EyeLight", "AREA", co.location + Vector((0.08, 0, 0.05)), 1.5, (1.0, 0.95, 0.9), 0.25, aim=eye)
 focus = bpy.data.objects.new("focus", None); sc.collection.objects.link(focus); focus.location = eye; cam.dof.focus_object = focus; cam.dof.aperture_fstop = 2.8
 sc.render.resolution_x, sc.render.resolution_y = 1280, 720
 sc.view_settings.view_transform = "AgX"; sc.view_settings.look = "AgX - Medium High Contrast"
@@ -123,6 +129,6 @@ for eng in (["eevee", "cycles"] if mode == "both" else [mode]):
         except Exception: pass
     else:
         sc.render.engine = "CYCLES"; sc.cycles.samples = 64; sc.cycles.use_denoising = True; sc.cycles.denoiser = "OPENIMAGEDENOISE"
-    sc.render.filepath = os.path.join(OUT, f"slick_ecu_{eng}{OUT_TAG}.png")
+    sc.render.filepath = os.path.join(OUT, f"slick_{'mcu' if mcu else 'ecu'}_{eng}{OUT_TAG}.png")
     t0 = time.time(); bpy.ops.render.render(write_still=True)
     print(f"[h1] {eng}: {time.time() - t0:.1f} s per frame -> {sc.render.filepath}", flush=True)
