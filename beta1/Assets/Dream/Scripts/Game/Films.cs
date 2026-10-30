@@ -20,7 +20,7 @@ namespace Dream.Game
     public class Films : MonoBehaviour
     {
         Queue<string> queue; Action done; VideoPlayer vp; RawImage img; RenderTexture rt; GameObject screen;
-        float started;
+        float started; RectTransform board; bool boarding;   // a storyboard playing in place of a film (Storyboard.cs)
         static Films inst;
         public static Films I => inst;
         public VideoPlayer Player => vp;
@@ -49,6 +49,7 @@ namespace Dream.Game
         {
             var c = Ui.Root("FilmScreen"); c.sortingOrder = 50; screen = c.gameObject; screen.transform.SetParent(transform);
             var bg = Ui.Panel(c.transform, "Black", Color.black);   // blocks taps to the game underneath; no skip here
+            board = bg;
             img = new GameObject("Film", typeof(RectTransform)).AddComponent<RawImage>(); img.transform.SetParent(bg, false);
             var fit = img.gameObject.AddComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent; fit.aspectRatio = 16f / 9f;
             img.raycastTarget = false;
@@ -76,6 +77,12 @@ namespace Dream.Game
                 d?.Invoke(); return;
             }
             var id = queue.Dequeue(); Played.Add(id);
+            if (Storyboard.Prefer(id))   // no film yet, or Steven edited the scene since: its storyboard
+            {
+                vp.Stop(); img.enabled = false; boarding = true;
+                StartCoroutine(Storyboard.Play(board, id, () => { boarding = false; img.enabled = true; Next(); }));
+                return;
+            }
             var sa = Application.streamingAssetsPath; var dir = (sa.Contains("://") ? sa : "file://" + sa) + "/Films/";
             vp.source = VideoSource.Url;
             vp.url = System.IO.Path.Combine(Application.streamingAssetsPath, "Films", id + ".mp4");
@@ -89,12 +96,12 @@ namespace Dream.Game
         }
         void Started(VideoPlayer p) { p.prepareCompleted -= Started; p.Play(); }
 
-        public void Skip() { if (queue == null || Time.unscaledTime - started < 0.4f) return; vp.Stop(); Next(); }
+        public void Skip() { if (boarding) { Storyboard.Skip(); return; } if (queue == null || Time.unscaledTime - started < 0.4f) return; vp.Stop(); Next(); }
 
         // the page is back (Resume): a film the browser paused plays on, and the watchdogs start counting from now
         public void Wake()
         {
-            if (queue == null || vp == null) return;
+            if (queue == null || vp == null || boarding) return;
             started = stuckSince = Time.unscaledTime; lastClock = -1;
             // the browser paused the <video> behind Unity's back, so isPlaying can't be trusted: pause and play again
             if (vp.isPrepared) { vp.Pause(); vp.Play(); }
@@ -107,6 +114,7 @@ namespace Dream.Game
         {
             // watchdogs: a film that never starts (missing, unreadable) or whose clock stops is treated as over, so the
             // story never hangs on a black screen
+            if (boarding) return;
             if (queue != null && vp != null)
             {
                 // a frame over a second long: the page was asleep (another app, tab or the lock screen). The game loop can

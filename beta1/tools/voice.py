@@ -99,6 +99,21 @@ def reel_cards():
             for t in re.findall(r'\("card", "([^"]+)"', src)]
 
 
+# storyboards that ship voiced (their clips are in the first download, so only the ones this build reaches)
+STORYBOARDS = {"c2_drive", "c2"}
+
+
+def storyboard_lines():
+    path = os.path.join(ROOT, "Assets", "Dream", "Resources", "Story", "scenes.json")
+    if not os.path.exists(path): return []
+    out = []
+    for sc in json.load(open(path, encoding="utf-8"))["scenes"]:
+        if sc["id"] not in STORYBOARDS or not sc["storyboard"]: continue
+        for L in sc["lines"]:
+            if L["who"] in CAST: out.append({"who": L["who"], "text": L["text"], "voice": key(L["who"], L["text"]), "_out": LINES})
+    return out
+
+
 def main():
     force = "--force" in sys.argv
     redo = set(sys.argv[sys.argv.index("--who") + 1].split(",")) if "--who" in sys.argv else set()   # re-voice these speakers
@@ -110,7 +125,7 @@ def main():
         data = json.load(open(os.path.join(FILM, fn), encoding="utf-8"))
         for L in data if isinstance(data, list) else data["lines"]:
             if L.get("voice") and L.get("text"): lines.append(L)   # reel shots reuse sting voices without text
-    lines += yarn_lines() + reel_cards()
+    lines += yarn_lines() + reel_cards() + storyboard_lines()
     todo = [L for L in lines if force or L["who"] in redo or done.get(L["voice"]) != L["text"] or not os.path.exists(os.path.join(L.get("_out", OUT), L["voice"] + ".wav"))]
     print(f"{len(lines)} lines, {len(todo)} to voice")
     tmp = os.path.join(PIPER, "tmp"); os.makedirs(tmp, exist_ok=True)

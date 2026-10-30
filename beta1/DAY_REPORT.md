@@ -412,3 +412,20 @@ Install: Playwright for Python 1.x (PyPI, Apache-2.0) + its Chromium, to drive t
   hat, H2) are the next step, so tonight it's a list. The car is a text card, not a film. The still reads as a clean CG room:
   the blinds are a little flat and the sofa side is dark. The old game's planner rules (mark Online/Live days every Sunday),
   rent per home tier and the Daily Grind streak aren't ported; Chapter 1's own calendar rules stand.
+
+### A3. B4 + task 6 + storyboards + the test menu
+- **B4, goal fast-forward (Sonnet · low).** With the $5,000 stake made before Friday 13 Feb, home offers "Skip to the Biscayne
+  Classic · Sat, Feb 14": every Friday on the way pays and charges as usual, the weekly beats you passed are marked played,
+  the night before still plays, then the Classic day. Checked: day 20 -> 39, $5,200 -> $7,150 (three Fridays with the job),
+  `c1_w4_eve` and the eve texts played.
+- **Task 6, the weekly beats** (committed earlier tonight): fire in order in a full bot month; Steven hasn't read them (DRAFT).
+- **Storyboards (THE BASE).** `tools/storyboard_build.py` reads `unity/docs/SCRIPT_ALL.md` from origin/unity (copy in
+  `beta1/story/SCRIPT_ALL.md`) into `Resources/Story/scenes.json` (95 KB): 99 scenes, 81 without a film -> storyboards. A scene
+  plays as a storyboard when it has no film, or when it's EDITED and its lines differ from its film's captions; those films
+  are printed as "needs re-render" (today: none; no scene is EDITED yet). `Game/Storyboard.cs` plays it on the film screen:
+  the place's still (`StreamingAssets/Sets`: office, diner, card room, home, from the films and the Cycles still), the
+  speaker's portrait (or initials for anyone without one), the name, the words, the voice when a clip exists; tap or wait.
+  Storyboard voices ship only for scenes this build reaches (c2_drive, c2: 13 lines; Chris Schillings has no voice yet).
+  Mapping the scene tree's old speaker keys: derek = Lou, rosa = Gnomey, trent = Mustich, lou = Tommy, mom = David, n = narrator.
+- **The test menu**: 5 taps on TEST BETA on the title. Bankroll -$1,000 / +$1,000 / $50 / $5,000; date -1 / +1 / +7 / Fri 13 Feb /
+  Classic day / Day 2; job keep/quit; Go home; and every scene (film or storyboard), 12 a page.

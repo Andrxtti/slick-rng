@@ -1,0 +1,4243 @@
+{
+"scenes": [
+{
+"id": "p_office",
+"title": "The 9-to-5",
+"place": "Floor 34, Brickell",
+"edited": false,
+"set": "office",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Monday. 6:47 PM. Floor 34, Brickell.\nEveryone else went home an hour ago. Out the glass, the bay is going pink."
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "The Henderson deck. Redo it. All of it. On my desk by eight."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "I sent it Friday. You signed off on it."
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "And now I'm un-signing off on it. Problem?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "quiet",
+"text": "No problem, Lou."
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "Great. Oh, and I told the partners the new model was my idea. Team player, right?"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You were fourteen the first time you saw it on TV.\nA final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The room went silent. His opponent folded. He never showed.\nHe made it look like he could see the future."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "think",
+"text": "Somewhere along the way I traded that for a lanyard."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "p_diner",
+"title": "Lucky Seven Diner",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "2:13 AM. The deck is done.\nYou are not."
+},
+{
+"who": "slick",
+"name": "Stranger",
+"mode": "",
+"text": "You're doing the thing where you stare at the pie like it owes you money."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Long day."
+},
+{
+"who": "slick",
+"name": "Stranger",
+"mode": "",
+"text": "Long life, by the look of it. What do you do?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Spreadsheets. For a guy who takes credit for them."
+},
+{
+"who": "slick",
+"name": "Stranger",
+"mode": "",
+"text": "And what did you want to do?"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He slides a red envelope across the counter."
+},
+{
+"who": "slick",
+"name": "Stranger",
+"mode": "",
+"text": "The Biscayne Championship. Saturday, noon. Two-fifty seat. It's paid."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Why would you give that to a stranger?"
+},
+{
+"who": "slick",
+"name": "Stranger",
+"mode": "",
+"text": "Because I sat on that stool once. Somebody bought my pie too."
+},
+{
+"who": "slick",
+"name": "Stranger",
+"mode": "",
+"text": "Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Who are you?"
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "People call me Slick."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He drops cash for both checks and is gone before the bell over the door stops ringing.\nInside the envelope: a seat card, and one line in pen."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "“People insist on calling it luck…”"
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "p_seat",
+"title": "The first seat",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Saturday. 11:40 AM. Biscayne Card Room, off the causeway.\nCarpet from 1994. Coffee from this morning, maybe."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Help you?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Somebody bought me a seat. The Biscayne Championship."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Free seat? Lucky you. Table nine, seat four. Cards in the air at noon."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "p_after",
+"title": "Monday again",
+"place": "Floor 34, Brickell",
+"edited": false,
+"set": "office",
+"lines": [
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "You look different. Did you finish the Henderson numbers?"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "(One line about how your Saturday went, written from your actual result.)"
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "Hello? I'm talking to you. Weekend's over, champ."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Nobody says you have to decide forever. Keep the paycheck and play around it, or walk now and bet on yourself. You can always quit later."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Seven more hours of spreadsheets. Your mind never leaves table nine."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "p_offer",
+"title": "Monday night: Slick's offer",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Monday night. Your phone buzzes on the counter."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Saw your results from Saturday. Here's my offer."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Quit Lou. I'll put $2,000 in your account tomorrow. Not a loan. Don't make me regret it."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Or keep the job and play on the side. Your call, kid. It's the biggest one you'll make."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Decision time."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "p_quit",
+"title": "Full-time",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "you",
+"name": "You",
+"mode": "text",
+"text": "Lou. Redo it yourself."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Sent. No paycheck. No plan B.\nYou have never felt lighter."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Done. $2,000 is in your account. Not a loan. Don't make me regret it."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Rent is due on the first. Never play above your roll."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "BRO. YOU QUIT YOUR JOB?? CALL ME"
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "p_keep",
+"title": "Nights and weekends",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "$1,250 lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Smart. A paycheck buys you time to learn. Never play above your roll. Text me when you win something."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "c1",
+"title": "The Grind",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe.\nTwenty tables, every one of them a classroom."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Back again? Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Cute hoodie. Did it come with the free seat?"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Biscayne Classic all year."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Goal: win the Biscayne Classic, or build your bankroll to $10,000."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "lesson1",
+"title": "A lesson: Fold the junk",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Lucky Seven. 1:40 AM. The pie is the same. You are a little poorer."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Tell me the hand that got you."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "King-jack, early position. I raised. Got three-bet. Called. Flopped a jack. Lost everything to kings."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Then the hand didn't get you. The first decision did. From early, king-jack is a fold. Everything after was a story you told yourself."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Fold the junk. That's not advice, it's arithmetic. Your misses are on the Spacepad. Drill them until the fold is boring."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "badbeat",
+"title": "Bad beat: the cards do not care",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Lucky Seven Diner. Same stool, same pie. The feeling is not the same."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "I did everything right. Every decision. And I'm out."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Then you had a good day. You just did not get paid for it."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Over one hand, the cards pay whoever they like. Over ten thousand, they pay whoever studied. Play for the ten thousand."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "text",
+"text": "Heard you got coolered. Brutal. Maybe this game just isn’t for everyone."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "He's right about one thing. It isn't for everyone."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "classic_day1",
+"title": "The Classic, Day 1",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Bags and tags. Two hundred and twelve started this morning. Forty come back tomorrow, and you're one of them."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Bag your chips, write your name on it. Day 2 is noon tomorrow. Don't be late."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Look who survived. Don't get used to it."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Day 2. Go to sleep. Don't celebrate yet."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "ft_intro",
+"title": "Final table",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "(The final table: who's waiting for you there.)"
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Final table. Dad flew in for this. Don't embarrass yourself."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Let's play."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "trentbeat",
+"title": "The Classic is yours",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "win",
+"text": "The last card hits the felt. The Biscayne Classic is yours."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Enjoy it. Dad says the Classic is a rounding error."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Your name goes on the board by the cage. Permanent marker. Congratulations."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "firstwin",
+"title": "First title",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Saw the photo. Trophy, big grin, terrible lighting. Proud of you, kid."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Left something in your locker. Every champion needs a pair."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Inside: a pair of pixelated sunglasses and a note.\n“Deal with it.”"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "If your first title is online: Slick texts instead. \"Saw the screenshot. Your name at the top of the lobby. Proud of you, kid.\"\n\"Left something for you at the Lucky Seven. Every champion needs a pair.\""
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "ft_lost",
+"title": "Heads-up, and Mustich wins it",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "(Final hand, from the real hand you played.)"
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Write it down. Some people are born for this."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Good game. I'll see you again."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "classic_mustich",
+"title": "Mustich takes the Classic",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Final hand. Mustich shoves with his dad watching from the rail. Called. An ace on the river."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The room explodes. Mustich holds the trophy over his head like he bought it."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Write it down, Florida. Some people are born for this."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "(your reaction, from how you went out)"
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Next month, kid. That trophy isn't going anywhere."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "classic_shark",
+"title": "Tommy takes the Classic",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Final hand. Tommy \"The Shark\" Maio turns over two kings and the whole rail stops breathing."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The river bricks. Thirty years at this card room, and the old man finally has his trophy."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Thirty years! You hear me? Thirty years!"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "(your reaction, from how you went out)"
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "His name goes on the board by the cage. Next month, it could be yours."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "classic_other",
+"title": "Someone else takes the Classic",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Final hand. All in, called, and the board runs clean."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The room comes to its feet. The Biscayne Classic has a new name on the board."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Somebody had to keep you humble, kid. (or the winner's own line)"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "(your reaction, from how you went out)"
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "The name goes on the board by the cage. Next month, it could be yours."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "david1",
+"title": "David texts: ten thousand",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "TEN THOUSAND?? FROM POKER?? AND YOU STILL WENT TO WORK TODAY???"
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "im just saying. lou doesnt deserve you. the felt does"
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "table_level",
+"title": "Each level: Slick's tip",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Before each level: the stage, the hands at this level, and Slick's tip with his face. At the final table, the rival's face and line."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Early levels: chips are cheap, mistakes aren't. Fold the junk and let them spew."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Bubble. The short stacks are terrified. The big stacks are licking their lips. Which one are you?"
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Final table. Every pay jump is real money. Every chip is a decision."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: CF Tilt · Level 7 · blinds 400/800 · next level 5:00. Slick's tip arrives as a text."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "table_allin",
+"title": "The all-in screen",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "ALL IN, big, in neon lime. \"Final table · all in vs Mustich\" when it's someone from the story."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Your hand and theirs. Their cards flip with a sting, and the bar shows the odds: 62% to win."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The flop. The turn. \"The river...\", a long breath, then the river."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "\"You hold!\" or \"Mustich holds.\" Pocket kings beats ace-queen. Stack 38 → 81 bb."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "If they fold to your shove: \"Mustich thinks it over. Then the cards go in the muck. They fold. The pot is yours.\""
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: the same screen, against a screen name, with no story faces."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "table_talk",
+"title": "Table talk (new, your lines)",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A speech bubble from a seat for a few seconds after a big moment. Online, it's a chat message instead."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Enjoy it. Variance is a loan. (you win a big pot)"
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Out already? Dad's going to love this. (he busts you)"
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Maybe stick to the spreadsheets."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Kid. Don't let it go to your head. Let it go to your bankroll. (you double up)"
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "That wasn't poker. That was weather. (a cooler)"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: chat lines from screen names instead: nh · sick · lol ok · ship it · gl. Mustich and Tommy only talk live."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "table_bubble",
+"title": "The bubble: hand for hand (new)",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "THE BUBBLE. 33 left · 32 paid."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "We are hand for hand! Dealers, stand up when your hand is done. Nobody leaves the table."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Thirty years, kid, and the bubble still makes my hands sweat."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Near the money, think about what the money's worth. Not the chips."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: a CF Tilt banner, HAND-FOR-HAND, and the chat: fold fold fold · pls no bubble. Slick's text is the same."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "table_itm",
+"title": "In the money (new)",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "IN THE MONEY."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "That's the bubble! Everybody left is in the money."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "ARE YOU IN THE MONEY?? SCREENSHOT IT"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: a banner, You're in the money, and the chat: gg bubble boy. David's text is the same."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "table_headsup",
+"title": "Heads-up (new)",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "HEADS-UP. Both faces, both stacks: You 61 bb · Mustich 47 bb."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Ladies and gentlemen, we are heads-up for the Biscayne Classic!"
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Final table. Dad flew in for this. Don't embarrass yourself."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: a banner, HEADS-UP vs ripriver_88, with the stacks. No announcer, no film."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "table_cooler",
+"title": "The cooler",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Cooler. Nothing you could do."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Kings into aces. All the chips go in, and you never had a chance."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "You played it right. That's all you control. People insist on calling it luck."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Bad beats are the tax on getting your money in good. Pay it and keep playing."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "after_win",
+"title": "After a win",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "One of: The last card falls and the room comes apart. [Event]. Yours.  ·  They push the whole thing across the felt. Every chip.  ·  Phones up. Dealer standing. Floor staff grinning."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "One of: YES. YES. YES.  ·  I never doubted it. Not once. (Twice.)  ·  Text Slick. Text David. Text everyone."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Kid. Don't let it go to your head. Let it go to your bankroll. (a witness at the venue; changes with who's there) (live)"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: one of: The final table window flashes gold. First of 1,104.  ·  Three in the morning, alone in the apartment, and you just beat a thousand people.  ·  The chat fills with gg and one ship it. The laptop fan is the only applause."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "after_cash",
+"title": "After a cash",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "One of: Not the trophy, but a walk to the cage. [$] from [event].  ·  The cashier counts it twice. You count it four times on the way home.  ·  Out before the end, but with money. And a plan for the next one."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "One of: Good. Next time, further.  ·  Bankroll first. Glory later.  ·  That's rent. That's the roll. That's enough."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "A cash is a cash. The trophy's next. (a witness at the venue; changes with who's there)"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: one of: A cash lands in your CF Tilt balance. You refresh it twice to be sure.  ·  Out before the end, but paid.  ·  Min-cash. You close the laptop gently, like it might change its mind."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "after_bust",
+"title": "After a bust",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "One of: Chair pushed back. Chips gone. The lights feel brighter.  ·  The long walk past tables that are still playing.  ·  No cash. No excuses. The felt doesn't care."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "One of: Review the hands. Every one.  ·  Variance. Or me. Tomorrow I'll know which.  ·  Sleep. Study. Back tomorrow."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Happens to everybody. Back tomorrow. (a witness at the venue; changes with who's there)"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: one of: You finished 214th. The table window closes by itself.  ·  Busted. The tab is gone before you can argue with it.  ·  The lobby keeps scrolling. Nobody noticed you leave."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "after_cooler",
+"title": "After a cooler",
+"place": "Biscayne Card Room",
+"edited": false,
+"set": "cardroom",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "One of: Set over set. Kings into aces. Whatever you call it, it hurt.  ·  All in good. Called by worse. The river did the rest.  ·  You did everything right and the deck said no."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "One of: ...Brutal.  ·  Right play. Wrong deck.  ·  Don't tilt. Don't tilt. Don't tilt."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Brutal. Thirty years and that one still stings. (a witness at the venue; changes with who's there)"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Online: one of: Aces into kings, in a window the size of a postcard. It still hurts full size.  ·  The hand history says you did everything right. The balance says otherwise."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c2_drive",
+"title": "The causeway",
+"place": "Tommy's Lincoln",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "5:10 AM. The causeway is empty and the bay is the colour of a nickel.\nTommy \"The Shark\" Maio is driving a 1998 Lincoln like it owes him money."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Thirty years at Biscayne. You know how many times I drove north for a game?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Once?"
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Never. Not once. Rings are for guys who think they're going somewhere."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "So why are you driving?"
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Because you asked. And because the coffee at Silver Strike is free and mine is terrible."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He doesn't say the other thing. He doesn't have to. A man doesn't iron his lucky shirt for free coffee."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c2",
+"title": "The Circuit",
+"place": "Silver Strike Casino",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Silver Strike Casino. Forty tables under a ceiling painted like a sunset, and every one of them is playing for a ring."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A man at the rail wears four on one hand. He keeps flexing it so you'll ask."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Look who it is. They've got me running the floor up here on weekends now. Table twelve, seat six. Seat open!"
+},
+{
+"who": "moneybaker",
+"name": "Chris Schillings",
+"mode": "",
+"text": "You're the kid who quit the cubicle? I was an accountant. Spreadsheets and everything."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "How did you know?"
+},
+{
+"who": "moneybaker",
+"name": "Chris Schillings",
+"mode": "",
+"text": "You hold your chips like they're receipts. Stop it. Play your game, and let them find out who you are."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Look who followed me north. New patch, see? Somebody pays me to wear their logo now. Try not to bust on the bubble."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Goal: win two Circuit rings and build a $40,000 bankroll."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c2_fatts",
+"title": "Last call at the Strike",
+"place": "Silver Strike Casino",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The casino bar at 1 AM. Keno on a television nobody watches.\nAn enormous man in a white hat is holding court with a plate of wings."
+},
+{
+"who": "armadillo",
+"name": "Armadillo Fatts",
+"mode": "",
+"text": "Sit down, partner. Everybody who sits gets a story, and nobody gets a refund."
+},
+{
+"who": "armadillo",
+"name": "Armadillo Fatts",
+"mode": "",
+"text": "Ten years back, give or take. World Championship of Cards, last two players. Kid in dark glasses shoves the river with nothing. Seven-deuce. The whole country can see it on the little camera."
+},
+{
+"who": "armadillo",
+"name": "Armadillo Fatts",
+"mode": "",
+"text": "Other fella has the winner. Thinks four minutes. Folds. Wears a mask to this day, so nobody can read him twice."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "I watched that. I was fourteen."
+},
+{
+"who": "armadillo",
+"name": "Armadillo Fatts",
+"mode": "",
+"text": "Everybody watched it. Then the kid goes on TV and says one thing. \"People insist on calling it luck.\" Cockiest sentence I ever heard."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The line in your envelope. Word for word. In pen."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "What happened to him?"
+},
+{
+"who": "armadillo",
+"name": "Armadillo Fatts",
+"mode": "",
+"text": "Same thing that happens to all of us. He went home.\nOrder the wings. They're better than the story."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c2_mouth",
+"title": "The Yapper",
+"place": "Silver Strike Casino",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The $400 Turbo Ring, final table. Mouthy Michael has been talking for six straight hours and has no plans to stop."
+},
+{
+"who": "mouth",
+"name": "Mouthy Michael",
+"mode": "",
+"text": "You're thinking. Don't think. Thinking is how they get you. You call this? You're not calling this. You're NOT calling this."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Every word is built to put a voice in your head that isn't yours.\nThen the break. Fifteen minutes. One message on your phone."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Is he talking?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "text",
+"text": "He hasn't stopped since noon."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Then he's scared. Comfortable people don't need noise. Play the cards, not the soundtrack."
+},
+{
+"who": "mouth",
+"name": "Mouthy Michael",
+"mode": "",
+"text": "...You called. Of course you called. Nice hand. NICE HAND. I'm fine. I'm totally fine."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "lesson2",
+"title": "Pressure the scared ones",
+"place": "Silver Strike Casino",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The Circuit floor at midnight. Chips being racked all around you. None of them are yours."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "You check too much."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "I didn't have anything."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Neither did they. On a dry board the raiser bets small and often, and everybody without a pair goes away. You gave them a free card and a free look at you."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "It felt like lying."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "It's not lying. It's telling them a story they already believe. Pressure the scared ones. Small bets, lots of them. It's in your misses. Go run them."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "ring1",
+"title": "First ring",
+"place": "Silver Strike Casino",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "win",
+"text": "The tournament director slides a heavy ring across the felt. It's a size too big. You put it on anyway."
+},
+{
+"who": "moneybaker",
+"name": "Chris Schillings",
+"mode": "",
+"text": "First ring. I still remember mine. Don't put it in a drawer. Wear it every day you play. Let it be heavy."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Thirty years. First time I ever drove north, and the kid takes a ring. I'm telling everyone it was my coffee."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "A RING??? LIKE A CHAMPIONSHIP RING?? LIKE THE NBA???"
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "PUTTING IT IN THE GROUP CHAT. RENAMING THE GROUP CHAT"
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "text",
+"text": "Saw your ring on Instagram!! Crazy! Quick q — do you still have the login for the Henderson drive?"
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "One ring. Now go get another one. Don't celebrate in a place that sells chips."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c2_smokes",
+"title": "Upstairs",
+"place": "Silver Strike Casino",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A private elevator. A room above the casino with one table, eight chairs, and a man holding an unlit cigarette like a conductor's baton."
+},
+{
+"who": "fargo",
+"name": "Sammy Smokes",
+"mode": "",
+"text": "The ring kid. Sit, sit. Is small game tonight. Ten thousand minimum."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Ten thousand is a quarter of everything you have.\nThe chairs are leather. The chips are clay. The room smells like money that was never worried."
+},
+{
+"who": "fargo",
+"name": "Sammy Smokes",
+"mode": "",
+"text": "Is a nice hand you have in you, I can tell. Is not my hand. But is nice."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Who's upstairs?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "text",
+"text": "Sammy Smokes. 10K minimum."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "The game you're not rolled for is always the best game in the building. That's how it gets you."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c2_smokes_sit",
+"title": "Upstairs, later",
+"place": "Silver Strike Casino",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Three hours. You play the best poker of your life and you lose six thousand dollars of it."
+},
+{
+"who": "fargo",
+"name": "Sammy Smokes",
+"mode": "",
+"text": "You play good. The money doesn't know. Money never knows. This is why we keep it far from the heart."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Is that your lesson?"
+},
+{
+"who": "fargo",
+"name": "Sammy Smokes",
+"mode": "",
+"text": "My lesson? Is that I can afford this room. Go downstairs, ring kid. Downstairs is where you get rich."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c2_cowboy",
+"title": "The Cowboy",
+"place": "Silver Strike Casino",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The Circuit's charity event. Celebrities, local news, a giant check. And at table one, in the same hat for fifty years, Colt the Cowboy."
+},
+{
+"who": "brunswick",
+"name": "Colt the Cowboy",
+"mode": "",
+"text": "Son, I was playing this game before your daddy could shuffle. Sit. Let's see if they taught you anything."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He raises with ten-deuce, shows it, and wins the pot. The table laughs. He doesn't."
+},
+{
+"who": "brunswick",
+"name": "Colt the Cowboy",
+"mode": "",
+"text": "Everybody laughs at the ten-deuce. That's why it works. You know who I taught that to? Skinny kid. Dark glasses. Calle Ocho."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "The Lucky Seven?"
+},
+{
+"who": "brunswick",
+"name": "Colt the Cowboy",
+"mode": "",
+"text": "Bought him a slice of pie there once. Night he came home. A year after the big one, and every dollar of it gone. Soaked through, and he wouldn't take off those glasses."
+},
+{
+"who": "brunswick",
+"name": "Colt the Cowboy",
+"mode": "",
+"text": "He still buying people's pie?"
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "ring2",
+"title": "The second ring",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Lucky Seven Diner. 2:13 AM. Two rings on the counter next to the pie."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Two rings and forty thousand dollars, none of it borrowed. That's a bankroll. You're not a tourist any more."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "I met Colt the Cowboy."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Everyone meets Colt eventually. He's like weather."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "He said he bought a broke kid in dark glasses a slice of pie here. The night he came home."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Slick turns his coffee cup a quarter turn. Then another. He doesn't look up."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Eat your pie. The Summer starts in June, and Vegas doesn't care who you met."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Goal complete. Chapter 3: The Summer."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c3",
+"title": "The Summer",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Every June, the WCoC Summer Series takes over Las Vegas. 112 degrees outside and 68 inside, with ten thousand people chasing the same gold."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "They hired me for the summer! Floor supervisor, rooms A through D. Six weeks, no sunlight. Seat open!"
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Every kid who ever loved this game dreams about a bracelet. This is the room where they hand them out. Don't look at the ceiling."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You look at the ceiling. Everyone does. Banners of every champion, back to the year your father was born."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "At the feature table sits a man in a black mask. Fourteen bracelets, more than anyone alive. Nobody has seen him smile. Nobody has seen most of his face."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "Kid. Stop looking at me and look at your cards."
+},
+{
+"who": "hellbent",
+"name": "Phil Hellraiser",
+"mode": "",
+"text": "Another internet kid. I'll see you at the final table. Probably not, though. Statistically, not."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Goal: win a gold bracelet."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c3_gg",
+"title": "Young Poker",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "$3,000 Six-Max. On your left, GG Negroni has been narrating everyone's hand for an hour, out loud, and he's mostly right."
+},
+{
+"who": "negrono",
+"name": "GG Negroni",
+"mode": "",
+"text": "I put you on ace-queen. Am I close? I'm close. Your shoulders went up a quarter inch when the queen came."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Maybe I have kings."
+},
+{
+"who": "negrono",
+"name": "GG Negroni",
+"mode": "",
+"text": "If you had kings you'd be bored, and you're not bored. You're doing math. Kings don't do math."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He folds. You had ace-queen."
+},
+{
+"who": "negrono",
+"name": "GG Negroni",
+"mode": "",
+"text": "See? Close. Hey, no hard feelings. Ninety percent of this game is listening. The other ten is pretending you weren't."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c3_steak",
+"title": "The players' dinner",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A steakhouse with no prices on the menu. A sponsor's table for twelve. Somebody ordered a bottle you've seen on TV."
+},
+{
+"who": "handsome",
+"name": "Gus Handsome",
+"mode": "",
+"text": "Seven-four suited. That's how I got here. Nobody believes me. That's also how I got here."
+},
+{
+"who": "escandalo",
+"name": "Antonio Escandalo",
+"mode": "",
+"text": "Pick a card. Any card. No, don't show me. Show the table."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You pick the queen of hearts. He doesn't touch the deck. It's under your steak knife."
+},
+{
+"who": "escandalo",
+"name": "Antonio Escandalo",
+"mode": "",
+"text": "Poker is the same trick. Everyone watches the hand that moves. Nobody watches the hand that doesn't."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Speaking of tricks. Event nine. First bracelet. Thought you'd want to see it up close."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He's wearing it. Of course he's wearing it."
+},
+{
+"who": "handsome",
+"name": "Gus Handsome",
+"mode": "",
+"text": "Don't let him in your head. The bracelet's real, but the guy's a rental. Have the crab."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c3_bubble",
+"title": "Two hundred and twelfth",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Two hundred and eleven players left. Two hundred get paid. You were two hundred and twelve."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The hallway outside the ballroom. Fluorescent lights. A bracelet poster with somebody else's face on it."
+},
+{
+"who": "hungar",
+"name": "Stu Hungar",
+"mode": "",
+"text": "First bubble in the big room? Kid, I've seen this hallway from every angle. Lying down, mostly."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "You're Stu Hungar."
+},
+{
+"who": "hungar",
+"name": "Stu Hungar",
+"mode": "",
+"text": "Was. Then wasn't. Then was again. They call it a comeback. It's just showing up after everyone stopped expecting you."
+},
+{
+"who": "hungar",
+"name": "Stu Hungar",
+"mode": "",
+"text": "Kid, I've seen this hand before. You haven't. Go learn why it hurts, then come back tomorrow."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "lesson3",
+"title": "What the money's worth",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "You called a shove with ace-ten on the bubble."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "text",
+"text": "I was ahead of his range."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Ahead of his range in chips. Behind in money. Near the bubble, the chips you lose are worth more than the chips you win. That's the whole of ICM."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Think about what the money's worth, not the chips. The spot's on your Spacepad. Drill it till it stops hurting."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "text",
+"text": "You could've just said \"fold\"."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Then you'd fold this one and call the next one. I'd rather you knew why."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c3_chance",
+"title": "The Mirage",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "$10,000 Heads-Up. Your opponent hasn't raised in forty minutes. He has a glass of water and all the time in the world."
+},
+{
+"who": "chance",
+"name": "Chance Cage",
+"mode": "",
+"text": "Take your time. I always do."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You bet. He calls. You bet. He calls. You bet everything."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He shows a full house he's been holding since the flop.\nHe hasn't raised in forty minutes because he hasn't needed to."
+},
+{
+"who": "chance",
+"name": "Chance Cage",
+"mode": "",
+"text": "The loudest thing at a poker table is a man who's waiting. You'll hear it next time."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c3_party",
+"title": "The engagement party",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "BRO. SATURDAY. YOU'RE COMING. KATIE SAID YES AND YOU ARE THE FIRST PERSON I TOLD AFTER MY MOM"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Saturday is the $5,000 Eight-Handed. Your best event of the summer, on paper."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "(if you fly home) YOU CAME??? YOU ACTUALLY CAME??? KATIE HE CAME"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "(if you stay) its cool. go win. All lowercase. David has never typed lowercase in his life."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c3_parm",
+"title": "Pick a game",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The mixed-game room. Eight games in rotation, and a kid in a backwards cap who has won three bracelets in five weeks."
+},
+{
+"who": "glazer",
+"name": "Nicky Parmesan",
+"mode": "",
+"text": "Pick a game. Any game. I'll still be the favourite, but it'll be fun for you."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Hold'em."
+},
+{
+"who": "glazer",
+"name": "Nicky Parmesan",
+"mode": "",
+"text": "Respect. Knowing your one game is a skill. Most people find out what it is the expensive way."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "bracelet1",
+"title": "Gold",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Heads-up for the $1,500 Opener bracelet. Across from you: Erik Seikick. Thirty years at the top of this game, and he hasn't said a word to you all night."
+},
+{
+"who": "sidle",
+"name": "Erik Seikick",
+"mode": "",
+"text": "..."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "win",
+"text": "The last card. They fasten the bracelet on your wrist, and the room is clapping before you realise it's for you.\nGold. Real gold. Your name in the book forever."
+},
+{
+"who": "sidle",
+"name": "Erik Seikick",
+"mode": "",
+"text": "You played well."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Three words. People have waited thirty years for three words from Erik Seikick."
+},
+{
+"who": "hellbent",
+"name": "Phil Hellraiser",
+"mode": "",
+"text": "Lucky. If I'd been at that final table, we'd be talking about my bracelet number eighteen."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "IS THAT REAL GOLD?? THE WHOLE GROUP CHAT SAW IT. KATIE CRIED. I CRIED. I'M STILL MAD BUT I CRIED"
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Fourteen-year-old you is screaming right now. Let him."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c3_hello",
+"title": "The sportsbook, 4 AM",
+"place": "Las Vegas, the Summer",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "4 AM. The sportsbook is empty except for highlights of a game that ended hours ago."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Someone sits two stools down. The mask hangs off one ear, and the face under it is older than you expected."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "Nice bracelet."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "You've got fourteen."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "I've got fourteen. You've got one that matters more. The first one is the only one you don't win for anybody else."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "You wait like somebody taught you to. I only know one man who teaches that."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He stands. He leaves a tip on the bar for a bartender who isn't there."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "Tell Slick I said hello."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He's gone before you can ask how he knows the name."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c4_truth",
+"title": "The Fold",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Lucky Seven Diner. 2:13 AM. You didn't text first. He was already there."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Bio says hello."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "For a long time, nothing. The pie case hums. A car goes by with its windows down, playing something sad in Spanish."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "World Championship of Cards. Last two players. I had seven-deuce and a river that missed everything, and I knew he had me beat. I could see it on him."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "So I shoved. I didn't look at the board. I looked at him. And I watched him start to doubt he was allowed to win."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Four minutes. Then the best player I ever sat with folded the best hand he ever held, and the whole world watched it on a little camera."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "The man in the dark glasses was you. And the one who folded was Bio."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "They asked me how. I said \"people insist on calling it luck\". Cockiest thing I ever said. Then I spent a year proving I could do it every night, above my roll, until the game took back every dollar."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "And Colt bought your pie."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Colt bought my pie.\nI write that line on the envelopes so somebody proves it right the long way. It wasn't luck. I read a person, and the person flinched. Everything I've taught you is so you never flinch, and so you never think one great read makes you bulletproof."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Now finish your pie. You've got cameras next week, and cameras love a flinch."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c4",
+"title": "The Tour",
+"place": "The TV table",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A soundstage in Hollywood, Florida. Three cameras, a hole-card reader, and forty thousand people watching you blink."
+},
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "Welcome back to the Let's Go! Tour feature table! Joining us tonight: the cubicle kid with a bracelet. The chat's calling it a fluke."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "People insist on calling it luck."
+},
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "OH. We have a quote. Producers, T-shirt. Now."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Under the lights everything shows. The rail can see your cards. The table can see your face."
+},
+{
+"who": "kfoxglove",
+"name": "Kristen Foxglove",
+"mode": "",
+"text": "Cameras make people do stupid things. Don't be people."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "youre on the STREAM. my mom is watching. MY MOM. SIT UP STRAIGHT"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Goal: win two Tour titles (Let's Go! Tour or One Time! Cup) and build a $750,000 bankroll."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c4_duhhz",
+"title": "Air",
+"place": "The TV table",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The river. Tom Duhhz pushes a stack worth more than your first year on Floor 34 into the middle, and smiles at the camera like it's an old friend."
+},
+{
+"who": "swan",
+"name": "Tom Duhhz",
+"mode": "",
+"text": "I have air. Do you want to find out?"
+},
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "The hole-card cam says... folks, he is not lying. He has ABSOLUTELY nothing. The question is whether our cubicle kid believes him."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Somewhere a fourteen-year-old is watching a river jam on a little camera.\nThis time you know which seat you're in."
+},
+{
+"who": "swan",
+"name": "Tom Duhhz",
+"mode": "",
+"text": "Truth is the best bluff. Nobody believes it."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "lesson4",
+"title": "People, not boards",
+"place": "The TV table",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The stream is over. The chat has moved on. The hand hasn't."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "You bluffed the one guy who never folds."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "The board was perfect for it."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Perfect for a bluff against a player who folds. He doesn't. A bluff is a bet against a person, not a board. Pick the person first."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Is that what you did to Bio?"
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "I picked the person first. Then the card. Then the moment. In that order. Ranges, not hands. People, not boards. Drill the river spots."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c4_lou",
+"title": "The sponsor",
+"place": "The TV table",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The One Time! Cup VIP lounge. Free shrimp. A banner reading \"Halvorsen & Pike: Proud Partner\".\nYou know that logo. You used to wear it on a lanyard."
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "Buddy!! There he is! I told the partners we go way back. Mentor-mentee kind of thing."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "You made me redo the Henderson deck at seven PM on a Monday, Lou."
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "And look at you now! Character building. Quick photo for LinkedIn? \"Proud to have shaped this talent.\""
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c4_ice",
+"title": "The Finnish Ice",
+"place": "The TV table",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "One Time! Cup, $25,000. Pat Finny hasn't moved in nine minutes. Not his hands. Not his eyes. Possibly not his heart."
+},
+{
+"who": "antionius",
+"name": "Pat Finny",
+"mode": "",
+"text": "Your move."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You try it. Stillness. Breath through the nose. Hands flat. The camera finds nothing to love."
+},
+{
+"who": "antionius",
+"name": "Pat Finny",
+"mode": "",
+"text": "Better. Next time, also stop blinking."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c4_race",
+"title": "Player of the Year",
+"place": "The TV table",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "Let's look at the Player of the Year race! Up top, as always, Shane Dawb. Then the Tour Machine, Alex Foxglove. Mark Holdz in third, because he played every event on Earth."
+},
+{
+"who": "martini",
+"name": "Shane Dawb",
+"mode": "",
+"text": "Another one for the cabinet. The cabinet's getting crowded. I might need a second cabinet."
+},
+{
+"who": "foxglove",
+"name": "Alex Foxglove",
+"mode": "",
+"text": "Leaderboard points are points. You want in on the race, you play the schedule. All of it."
+},
+{
+"who": "addemup",
+"name": "Mark Holdz",
+"mode": "",
+"text": "Shove."
+},
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "That was the whole interview. Mark Holdz, ladies and gentlemen. And, new on the board in fourteenth, the cubicle kid."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "tour1",
+"title": "The interview",
+"place": "The TV table",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "Champion! Fifty thousand people on the stream. How does it feel?"
+},
+{
+"who": "kfoxglove",
+"name": "Kristen Foxglove",
+"mode": "",
+"text": "Nice result. Now everyone has a file on you. Welcome to the Tour."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "tour2",
+"title": "The envelope",
+"place": "The TV table",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "win",
+"text": "Two Tour titles. Three quarters of a million dollars. A trophy shaped like a crown, which is a lot even for television."
+},
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "And somebody left this at the desk for you. Black envelope. Embossed. Very James Bond."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Inside: the Titan. Invitation only. Buy-ins from one hundred thousand dollars."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Those rooms don't have scared people in them. Bring the part of you that isn't scared either."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c5",
+"title": "High Roller",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A private terminal. A plane with your name on the manifest. A buy-in that used to be a house."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Nobody in this room is scared. That's the problem with it."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Funny. Dad stopped staking me last month. Said I needed to \"find out what it costs\". So I guess we're both self-made now."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Welcome to the club. The dues are terrible."
+},
+{
+"who": "loophole",
+"name": "Linus Loophole",
+"mode": "",
+"text": "I reviewed your last final table. Your bubble frequencies are... acceptable. Your river frequency is off by four percent."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "In there nobody's scared. Everyone knows the maths. So the edge is in the spots they don't study. Find them."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "a HOUSE. you bought in for a HOUSE. im not telling your mother"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Goal: win two Titan titles and build a $5,000,000 bankroll."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c5_money",
+"title": "A piece of you",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The hotel's top-floor bar. Bryan Dartfrog drinks sparkling water and talks about seven-figure buy-ins the way other people talk about parking."
+},
+{
+"who": "kenny",
+"name": "Bryan Dartfrog",
+"mode": "",
+"text": "The $250K is next week. You've got the skill. You don't have the roll. I'll buy half your action. Fair price."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "And if I win?"
+},
+{
+"who": "kenny",
+"name": "Bryan Dartfrog",
+"mode": "",
+"text": "Then I win half. And you win the other half, plus you got to play the biggest game on the planet like it was a one-two."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Selling action isn't weakness. Playing above your roll is. Never confuse the two."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c5_gym",
+"title": "5 AM",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "5:02 AM. The hotel gym. Someone has been on the treadmill since before you were awake."
+},
+{
+"who": "kahoon",
+"name": "Jay Cocoon",
+"mode": "",
+"text": "Five AM gym, six AM study, Titans by dinner. You up early, or up late?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Up late."
+},
+{
+"who": "kahoon",
+"name": "Jay Cocoon",
+"mode": "",
+"text": "That's the difference between us. Not talent. I've got talent too. Discipline beats talent. I've got both."
+},
+{
+"who": "kahoon",
+"name": "Jay Cocoon",
+"mode": "",
+"text": "Get on the bike. Ten minutes. Your decisions after hour eight will thank you."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c5_lab",
+"title": "The lab",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A conference room turned war room. Two laptops, a whiteboard of hand ranges, and the two most precise players alive arguing about a three percent frequency."
+},
+{
+"who": "holdz",
+"name": "Fedor Holdum",
+"mode": "",
+"text": "I studied this exact spot this morning. River, four-bet pot, ninety big blinds. You check more than you should."
+},
+{
+"who": "loophole",
+"name": "Linus Loophole",
+"mode": "",
+"text": "He checks four percent more than he should. Precision, Fedor."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "How do you two ever lose?"
+},
+{
+"who": "holdz",
+"name": "Fedor Holdum",
+"mode": "",
+"text": "We play each other."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Everyone in this building has the same tools. Some of them have the same thoughts."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "lesson5",
+"title": "The spots nobody studies",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A room where everybody knows the maths. You lost anyway."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "They all have the same solver. So where's the edge?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "text",
+"text": "There isn't one."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "There's one in every spot they don't study. Odd stacks. Four-bet pots. Limped pots with antes. The book is thin there. Be the one who read it."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "And one more spot nobody studies: the person across from you at hour eleven. The book is thinnest there."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c5_prof",
+"title": "The Professor",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The $50,000 Omaha. Four cards each, and every hand a tangle of possibilities. Isaac Maskedman is untangling them faster than you can see them."
+},
+{
+"who": "hackston",
+"name": "Isaac Maskedman",
+"mode": "",
+"text": "Interesting sizing. Incorrect, but interesting."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "What would you have bet?"
+},
+{
+"who": "hackston",
+"name": "Isaac Maskedman",
+"mode": "",
+"text": "Two-thirds pot. But I'd have known why. You bet two-thirds of something you felt. Feel less. Count more."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c5_chives",
+"title": "Genuinely",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The $250,000. You lose the biggest pot of your life to a two-outer on the river. The room goes quiet in the polite way rich rooms go quiet."
+},
+{
+"who": "chillwick",
+"name": "Stephen Chives",
+"mode": "",
+"text": "That's brutal. I'm sorry. Genuinely."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He means it. In a room full of people trying to take everything you have, someone means it."
+},
+{
+"who": "chillwick",
+"name": "Stephen Chives",
+"mode": "",
+"text": "Final table every week, they say about me. They don't mention the weeks I didn't. Good luck tomorrow. Genuinely."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "titan1",
+"title": "The Titan trophy",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "win",
+"text": "A trident-shaped trophy, a wire transfer with too many zeros, and a room full of the best players alive nodding at you."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Congrats. Honestly. Turns out you can't buy what you've got. Believe me, I asked."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Took you long enough to figure that out."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Ha. Rematch at the Main?"
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c5_score",
+"title": "Not here",
+"place": "The Titan",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "Big question from the chat: where's Bio \"The Ghost\"? Biggest buy-ins in the world, and the GOAT is missing."
+},
+{
+"who": "kfoxglove",
+"name": "Kristen Foxglove",
+"mode": "",
+"text": "Bio doesn't play the Titan. Never has."
+},
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "Why not?"
+},
+{
+"who": "kfoxglove",
+"name": "Kristen Foxglove",
+"mode": "",
+"text": "He says money isn't the score. Bracelets are. And there's only one he still cares about every year."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "titan2",
+"title": "The last flight",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Five million dollars. Two tridents. And you're back on a stool at the Lucky Seven, because some things don't change when your bank balance does."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "The Main Event. July. Eight thousand players."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "He'll be there."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "He's always there.\nSo am I, this year. I bought a ticket. First time in ten years."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "You're coming to Vegas?"
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Somebody has to buy your pie."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6",
+"title": "The Main Event",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Every July: eight thousand players, ten thousand dollars each.\nOne of them ends up on the cover of every poker magazine in the world."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Day 1. A ballroom the size of an airport. Two hundred tables, and somewhere in the noise, a seat with your name on it."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Main Event floor! They gave me the Main! Table one-eighty-eight, seat two. Seat open!"
+},
+{
+"who": "mizrockie",
+"name": "Michael Mightyrocky",
+"mode": "",
+"text": "Defending champ. If you want it, you'll have to take it from me."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "Still here, kid. So am I."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Goal: win the Main Event."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6_day1",
+"title": "Gorilla mode",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Day 1, level four. The player in seat nine has won nine titles this year, and he has decided the entire table is his personal property."
+},
+{
+"who": "lonestar",
+"name": "Jesse Lonestar",
+"mode": "",
+"text": "GORILLA. MODE."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He raises eleven hands in a row. On the twelfth you re-raise. He thinks. He folds. He grins."
+},
+{
+"who": "lonestar",
+"name": "Jesse Lonestar",
+"mode": "",
+"text": "There it is! Somebody at this table has a pulse! Nine wins this year, and the ones I remember are the ones somebody fought me for."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6_hall",
+"title": "The hallway",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Day 5. The service hallway behind the ballroom. Linen carts, a vending machine, and Mustich, sitting on the floor in a five-thousand-dollar jacket."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Bio. Of course it was Bio. He didn't even look at my cards. He looked at me like I was... furniture."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "He does that."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Dad's watching on the stream. Probably already writing the email. \"Find out what it costs.\""
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You sit down on the floor next to him. You're not friends. You're not anything. You sit anyway."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Go win it. If anyone's taking him down, I want it to be someone who knows what this hallway feels like."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6_champ",
+"title": "Take it from me",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Two tables left. The defending champion, three seats to your right, has been grinding since Day 1 without a single bad day."
+},
+{
+"who": "mizrockie",
+"name": "Michael Mightyrocky",
+"mode": "",
+"text": "You know they call me The Grinder? It's not because I'm fancy. It's because I'm still here when the fancy people go home."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The biggest pot of the tournament so far. His crown against your stack."
+},
+{
+"who": "mizrockie",
+"name": "Michael Mightyrocky",
+"mode": "bust",
+"text": "Good. Good hand. I mean it. Take it the whole way, or I'll be mad I didn't."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6_night",
+"title": "2:13 AM, Las Vegas",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The night before the final table. A 24-hour diner off Flamingo Road. Different city. Same hour."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He's already on a stool. Dark glasses. Two slices of pie."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Ten years since I set foot in this city. The pie's worse."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "If it comes down to him and me. If he shoves the river."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Then it won't be about the cards. He'll look at you the way I looked at him. He's waited ten years to put somebody in the seat he was in."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "What did you see in him that night?"
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Doubt. He didn't doubt his hand. He doubted he was allowed to win.\nDon't give him that. Whatever you decide, decide it like you're allowed."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He pays for both slices. He doesn't leave. For the first time, he stays until you do."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6_rail",
+"title": "The rail",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The final table. A stage, a wall of lights, and a rail packed three deep."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "",
+"text": "SIT UP STRAIGHT!"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Not a text. David, in person, with a sign that says \"PEOPLE INSIST ON CALLING IT LUCK\" in a handwriting you'd know anywhere."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "",
+"text": "Thirty-one years. Second time I ever left Biscayne for a game. Somebody had to come make sure you don't get cocky."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Meanwhile, at a sports bar in Brickell, a man in a Halvorsen & Pike quarter-zip tells the bartender he used to manage you."
+},
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "From the booth, live, worldwide: welcome to the final table of the WCoC Main Event."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6_final",
+"title": "The river",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Heads-up. Bio \"The Ghost\" and you. Every chip in the building is on one table."
+},
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "Folks, this is the spot. River. The Ghost moves all in. And if you're old enough... you've seen this movie before."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He's not looking at the board. He's looking at you, the way a man in dark glasses once looked at him."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "On the rail, a man in dark glasses takes them off."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You don't flinch. Whatever you do next, you decide it like you're allowed."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "champ",
+"title": "World Champion",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "win",
+"text": "Confetti. Cameras. A bracelet the size of a doorknob.\nSomewhere, a fourteen-year-old with a fuzzy TV is losing his mind."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "Good game, kid."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He takes off the mask. For the first time anyone can remember, Bio \"The Ghost\" smiles."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Then he looks past you, to the rail, and nods at a man he hasn't spoken to in ten years.\nSlick nods back."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "Now you'll find out the hard part. Everyone will be hunting you."
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "text",
+"text": "Hey buddy! Long time! Saw you on TV. Listen, about that promotion..."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You leave him on read."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "People insist on calling it luck."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Let them."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6_lost",
+"title": "Next year",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "bust",
+"text": "Second in the world. Somebody else's confetti."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "You didn't flinch. That's rarer than winning. Come back next July."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "One hand, kid. Over ten thousand, they pay whoever studied. You studied."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c6_fold",
+"title": "Not this one",
+"place": "Main Event stage",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"text": "The kid lets it go! And the Ghost... doesn't show. Of course he doesn't show."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "You thought about it. Good. Most people only think about it afterwards."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "On the rail, Slick puts his glasses back on. The match isn't over. Neither are you."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c7",
+"title": "The Hall of Legends",
+"place": "Hall of Legends",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Your picture hangs in the Hall of Legends now, next to people you used to watch on a fuzzy TV."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Stu. Colt. Chance. The Ghost. Twenty-seven legends on these walls, and a kid from Floor 34 who got told to redo the Henderson deck."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "Fourteen bracelets. That's the number. Come take it."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "There's nobody left to teach you. So teach somebody. I sat on that stool once too, remember."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "I remember."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Goal: beat every legend and pass Bio \"The Ghost\"'s fourteen bracelets."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c7_gauntlet",
+"title": "The challenges",
+"place": "Hall of Legends",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "hungar",
+"name": "Stu Hungar",
+"mode": "text",
+"text": "Kid, I've seen this hand before. Let's see if you have."
+},
+{
+"who": "brunswick",
+"name": "Colt the Cowboy",
+"mode": "text",
+"text": "Bring your ten-deuce, son. I'll bring mine."
+},
+{
+"who": "chance",
+"name": "Chance Cage",
+"mode": "text",
+"text": "Take your time. I'll be waiting."
+},
+{
+"who": "armadillo",
+"name": "Armadillo Fatts",
+"mode": "text",
+"text": "I've got a new story. It's about you. Come hear the ending."
+},
+{
+"who": "hellbent",
+"name": "Phil Hellraiser",
+"mode": "text",
+"text": "Bracelet eighteen is coming. You'll be a nice footnote."
+},
+{
+"who": "negrono",
+"name": "GG Negroni",
+"mode": "text",
+"text": "I already know your cards. Want to make it official?"
+},
+{
+"who": "sidle",
+"name": "Erik Seikick",
+"mode": "text",
+"text": "..."
+},
+{
+"who": "swan",
+"name": "Tom Duhhz",
+"mode": "text",
+"text": "I have air. Want to find out?"
+},
+{
+"who": "antionius",
+"name": "Pat Finny",
+"mode": "text",
+"text": "Your move."
+},
+{
+"who": "mizrockie",
+"name": "Michael Mightyrocky",
+"mode": "text",
+"text": "Rematch. I'm still here."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c7_rival",
+"title": "Still circling",
+"place": "Hall of Legends",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The Hall of Legends Invitational, final table. Seat five, in a jacket he paid for himself this time: Mustich."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Saw your portrait in the lobby. Very moving. They got your bad side."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Dad sold the company. No more stake, no more rail. Turns out I still want to beat you. Annoying, isn't it?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "For you? Very."
+},
+{
+"who": "mustich",
+"name": "Mustich",
+"mode": "",
+"text": "Fifteen is just a number, Florida. Somebody's going to take it off you. I'd like it to be someone you can't stand."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "He grins. The same grin from the Biscayne card room, the first night. You'd miss it if it ever went away. You'll never tell him that."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c7_wedding",
+"title": "The best man",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "A reception hall in Hialeah. Fairy lights, a DJ who plays one song too many, and David Pec in a tuxedo he's been talking about since March."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "",
+"text": "My best man is a world champion. I told everyone. Everyone. The caterers know."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "I missed your engagement party for a five-thousand-dollar event."
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "",
+"text": "And you cashed for eleven grand and sent us to Cancún. Bro. I forgave you in the airport."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You stand up to give the speech. You had cards. You put them away."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "The first person who ever believed I could do this wasn't a pro. He texted in all caps, and he was right."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c7_portrait",
+"title": "The missing frame",
+"place": "Hall of Legends",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The Hall's annual dedication. Twenty-seven frames, and one blank space on the wall that's been there for ten years. Nobody remembers why."
+},
+{
+"who": "gnomey",
+"name": "Miles \"The Snowplow\" Gnomey",
+"mode": "",
+"text": "Tournament director, Hall of Legends Invitational. Me! From the cage at Biscayne! Ladies and gentlemen, take your seats. Seats open!"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "The curator lifts a cloth from the blank space. A young man in dark glasses, ten years ago, holding the world championship trophy."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "I asked them to leave it out. I didn't want to be the champion who went broke a year later."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "You were the only one who ever made me think for four minutes. Ten years I've worn this thing because of you."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Two men shake hands under a portrait neither of them wanted to see.\nThe room doesn't know why it's clapping. It claps anyway."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c7_fifteen",
+"title": "Fifteen",
+"place": "Hall of Legends",
+"edited": false,
+"set": "",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "win",
+"text": "Fifteen bracelets. One more than the Ghost."
+},
+{
+"who": "bio",
+"name": "Bio \"The Ghost\"",
+"mode": "",
+"text": "Fifteen. I knew it'd be you the night you stopped looking at me in Vegas and looked at your cards."
+},
+{
+"who": "tommy",
+"name": "Tommy \"The Shark\" Maio",
+"mode": "text",
+"text": "Kid! They put MY name on the board at Biscayne! Classic champion! Thirty-two years! Tell Slick he owes me a coffee."
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "text",
+"text": "The partners want to name the new conference room after you!! Swing by for the ribbon cutting? Also do you have the Henderson login"
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You don't answer either text yet. There's somewhere you have to be."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "c7_end",
+"title": "2:13 AM",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Lucky Seven Diner. 2:13 AM. A kid at the counter is staring at the pie like it owes them money."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "You're doing the thing where you stare at the pie like it owes you money."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "You slide a red envelope across the counter. Inside: a seat card, and one line in pen."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "\"People insist on calling it luck.\""
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Let them."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "THE DREAM."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "broke",
+"title": "Rock bottom (full-time)",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Busted?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Every last dollar."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Here's how you climb out. Freerolls on CF Tilt every day. A real job while you rebuild. Or my money, and half your profits until it's back."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "lou_no",
+"title": "Asking for the job back",
+"place": "Floor 34, Brickell",
+"edited": false,
+"set": "office",
+"lines": [
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "Your job? We gave it to the intern. He's better at spreadsheets than you ever were."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Thirty-four floors down. The elevator has never felt slower."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Heard Lou laughed you out. Here's $500. Make it last."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "broke_n",
+"title": "Rock bottom (still at the job)",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Busted?"
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Every last dollar."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "You've still got Lou's paycheck. Freerolls on CF Tilt while it builds back. Or my money, and half your profits until it's back."
+}
+],
+"film": true,
+"storyboard": false
+},
+{
+"id": "broke_told",
+"title": "I told you so",
+"place": "Lucky Seven Diner",
+"edited": false,
+"set": "diner",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Lucky Seven Diner. 2:13 AM. Same stool. Same pie. Empty wallet. Again."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "I told you. Three times I told you."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "I know."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "You want to play above your roll, you do it without me. No stake. No seats. Nothing."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"text": "Freerolls on CF Tilt. Grind it back to ten grand. Then come find me."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "slick_back",
+"title": "Square",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Ten thousand dollars. Built back from the freerolls, one min-cash at a time."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "text",
+"text": "You were right. I didn't listen. I'm sorry."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Took you long enough. Welcome back, kid."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "Now respect the roll."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "derek_job",
+"title": "Lou texts: the poker site",
+"place": "Floor 34, Brickell",
+"edited": false,
+"set": "office",
+"lines": [
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "text",
+"text": "Saw your name on a poker site. Is THAT why the Henderson numbers were late?"
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "quit2",
+"title": "Two weeks' notice",
+"place": "Floor 34, Brickell",
+"edited": false,
+"set": "office",
+"lines": [
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Lou? I'm done. Full-time."
+},
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "You'll be back."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "No paycheck now. Three games a day, and rent is still due on the first."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "david2",
+"title": "David texts",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "25K. bro. thats a YEAR of lou's bonuses in like two months"
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "when do we call it. seriously. when"
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "david3",
+"title": "David texts",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "50 THOUSAND. I TOLD EVERYONE AT THE BAR. EVERYONE"
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "you know what slick would say. you know what I say. the dream doesnt wait"
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "david4",
+"title": "David texts",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "100K and youre still doing the henderson deck???? I cant"
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "quit. move. go full time. ill drive you to the cardroom myself"
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "quit250",
+"title": "A quarter million: decision made",
+"place": "Your apartment",
+"edited": false,
+"set": "home",
+"lines": [
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "250K. a QUARTER MILLION. if you walk into that office tomorrow I will personally come get you"
+},
+{
+"who": "david",
+"name": "David Pec",
+"mode": "text",
+"text": "im not joking. this is the sign. quit."
+},
+{
+"who": "you",
+"name": "You",
+"mode": "",
+"text": "Yeah. You're right. I'm done."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "Monday morning you leave the badge on Lou's desk with a sticky note: Redo it yourself.\nNo paycheck. Every day is yours now."
+},
+{
+"who": "slick",
+"name": "Slick",
+"mode": "text",
+"text": "About time. Rent is still due on the first. Never play above your roll."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "rehire",
+"title": "Back on Floor 34",
+"place": "Floor 34, Brickell",
+"edited": false,
+"set": "office",
+"lines": [
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"text": "Look who came crawling back. Same desk. Same Henderson deck. Smaller title."
+},
+{
+"who": "narrator",
+"name": "",
+"mode": "",
+"text": "$1,250 every Friday again. Three sessions a week for the dream."
+}
+],
+"film": false,
+"storyboard": true
+},
+{
+"id": "derek",
+"title": "Lou texts: we're hiring",
+"place": "Floor 34, Brickell",
+"edited": false,
+"set": "office",
+"lines": [
+{
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "text",
+"text": "Hey buddy!! Long time. Saw your name on a poker site. Crazy! We're hiring a Senior Associate. Coffee?"
+}
+],
+"film": false,
+"storyboard": true
+}
+]
+}

@@ -145,7 +145,8 @@ namespace Dream.Game
             var s = Screen(Ui.Night);
             Ui.At(Ui.Label(s, "CONFIRMED FIRE PRESENTS", 26, Ui.Dim), 0, 0.8f, 1, 0.83f);
             Ui.At(Ui.Title(s, "The Dream", 150, Ui.Ink), 0, 0.64f, 1, 0.8f);
-            Ui.At(Ui.Label(s, "TEST BETA " + Version, 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.6f, 1, 0.635f);
+            var ver = Ui.At(Ui.Label(s, "TEST BETA " + Version, 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, 0.6f, 0.7f, 0.635f);
+            ver.raycastTarget = true; ver.gameObject.AddComponent<Button>().onClick.AddListener(VersionTap);   // 5 taps: the test menu (DebugMenu.cs)
             Ui.At(Ui.Label(s, "Chapter 1 · The Grind", 36, Ui.Ink), 0, 0.565f, 1, 0.6f);
             Ui.At(Ui.Label(s, "Every decision is a real solver spot.\nCoaching by Confirmed Fire.", 30, Ui.Dim), 0.1f, 0.46f, 0.9f, 0.53f);
             bool can = S != null && S.step != "new";
