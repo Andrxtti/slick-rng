@@ -194,6 +194,8 @@ if "--preview" in sys.argv:
     for nm, (loc, rot) in views.items():
         co.location = loc; co.rotation_euler = rot
         sc.render.filepath = os.path.join(r"C:\Dev\Beta1Assets\preview", f"diner_{nm}.png"); bpy.ops.render.render(write_still=True)
+elif "--h1" in sys.argv:   # built for tools/blender/h1_test.py (track H): no preview, no export
+    pass
 else:
     export("diner")
     import shutil; shutil.copy(os.path.join(r"C:\Dev\Beta1Assets\polyhaven", "modern_evening_street", "modern_evening_street_2k.hdr"),

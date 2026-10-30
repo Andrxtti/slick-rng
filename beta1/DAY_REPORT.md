@@ -454,3 +454,46 @@ Install: Playwright for Python 1.x (PyPI, Apache-2.0) + its Chromium, to drive t
 - **Build: Test Beta 1.1.3**, C:\Dev\Builds\TheDream-Beta1.1-Web, Build/ 22.5 MB (first download, under 25 MB), 0 errors;
   smoke-tested in Chromium at 430x932 (boots, the reel plays, hidden 15 s and back: "film reel.mp4 resumed at 5.3s").
   `C:\Dev\Beta1Assets\BUILD_READY.txt` written; BUILD_PARTIAL_1.1.3.txt removed (superseded).
+
+## Milestone B (INBOX 05:00): Chapter 2 playable + track H -> Test Beta 1.1.4
+Plan, in order (each committed): Batch 1, Chapter 2: 1 data (Sonnet · medium), 2 engine: rings, the satellite seat,
+Chapter 2 difficulty (Opus · medium), 3 calendar + flow (Opus · high), 4 Chapter2.yarn on storyboards with Steven's choices
+(Opus · high), 5 voices (Sonnet · low), 6 autoplay keep/quit to Chapter 3's start + build 1.1.4 (Sonnet · medium).
+Batch 2, track H: H1 the test (Opus · high), then H2 where it wins.
+
+### Batch 1: Chapter 2, the Circuit
+- **Data**: the old game's six Chapter 2 events (Mega Satellite $180 -> 16 seats in the Main, $2/$5 cash, $400 Opener, $600
+  Double Stack, $1,700 Main, CF Tilt $55 Sunday Kickoff) with payouts for every field, and the three legends.
+- **Calendar** (my call, written in Chapter2.cs): the Circuit stops at Silver Strike every 8 weeks from Thursday 12 March,
+  11 days a stop (satellite, Opener x2, Double Stack x2, cash days, satellites, the Main on the second Saturday, the charity day
+  last). Between stops you grind from home (the Winn Nightly, CF Tilt). Sunday Kickoff every Sunday. With the day job, a stop
+  allows both weekend days (otherwise the Main could never be played after a Sunday ring event).
+- **Rules**: rings count (Rep: Circuit Grinder -> Ring Winner -> Two-time Ring Winner); a satellite seat pays the Main's buy-in
+  ("Your seat"); the hand engine runs at Chapter 2. Goal: 2 rings and $40,000 -> ring2 -> Chapter 3's opening (c3) -> end card
+  "Chapter 3 · The Summer — coming in the next build". A 1.1.3 save that finished Chapter 1 goes on into Chapter 2.
+- **Story** (`Chapter2.yarn`, all storyboards until filmed; Steven's words from SCRIPT_ALL.md): c2_drive + c2 right after
+  Chapter 1's end; c2_fatts the first night at the Strike; c2_mouth your first Circuit final table; ring1 your first ring;
+  lesson2 your first ring-event bust; c2_smokes after ring1 with $10,000+ during a stop (Sit down: c2_smokes_sit, -$6,000);
+  c2_cowboy on the second stop's charity day; ring2 at the goal. The two choices' options come from the script, so his edits
+  show up. Storyboards can play part of a scene (`c2_smokes@a` before the choice, `@1` the chosen answer, `@b` after).
+- **Voices**: every Chapter 2 storyboard line and choice answer; five legends on Piper speakers nobody else uses (Armadillo
+  Fatts, Mouthy Michael, Sammy Smokes, Chris Schillings, Colt the Cowboy), **picked without listening: placeholders.**
+  "hellbent" in c3 has no voice.
+- **Keep run** (perfect play, `C:\Dev\Builds\day2\b_auto_keep.txt`): end card on day 125, Two-time Ring Winner. Chapter 2's
+  films/storyboards in order: c2_drive, c2, c2_fatts, c2_mouth, ring1, c2_smokes@a, c2_smokes@1, c2_smokes_sit, c2_smokes@b,
+  ring2, c3. Not seen (a perfect player): lesson2 (no ring bust) and c2_cowboy (goal met before the second stop's charity day).
+
+### Batch 2, track H: H1, the test (Opus · high)
+`tools/blender/h1_test.py`: the diner (diner.py) + Slick's exported character, his materials rebuilt from the manifest, skin
+as Principled BSDF with random-walk subsurface, varied roughness and a pore bump; warm pendants, the reduced neon, key, cool
+fill and rim; AgX; 85 mm at f/2.8 focused on the eyes. **`C:\Dev\Builds\day2\real_slick_ecu.png`**: (c) Unity real time,
+(a) Eevee 62 s/frame, (b) Cycles 64 + OIDN 321 s/frame on this laptop.
+- Honest read: Cycles gives the skin a softer, truer falloff than Eevee or Unity, and depth of field is real. But all three
+  read as the same CG face. The limit is the asset, not the renderer: the MakeHuman base mesh and its flat skin texture, the
+  card hair (it renders light grey in Blender; the tint path needs work), eyes without a modelled cornea. At 5 min a frame,
+  Cycles films would be ~12 hours per minute of film on this laptop.
+- **Not done in H1** (it's the actual next step): real strand hair (MPFB hair to curves + Principled Hair BSDF), a refractive
+  cornea, a skin texture with real detail. H2 should start with the head, not the renderer. Suggestion for Steven: for the
+  cast who agreed, a head built from their reference photos (kept outside the repo) is what moves faces toward real;
+  legends stay original.
+- The apartment test is the Cycles home still already in the game (3.5 min/frame, A2), against the Unity home film frame.

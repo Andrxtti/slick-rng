@@ -91,7 +91,7 @@ namespace Dream.Game
                 return S.liveDay == S.day && OnlineToday >= 1 ? "A live day is one live game and one online" : null;
             }
             if (S.job == "nights" && !Weekend(S.day)) return "Live games are weekends only while you have the day job";
-            if (S.job == "nights" && S.liveWeek == WeekOf(S.day)) return "Your live game this weekend is played";
+            if (S.job == "nights" && S.liveWeek == WeekOf(S.day) && StopDay(S.day) < 0) return "Your live game this weekend is played";   // a Circuit stop: both weekend days
             if (S.liveDay == S.day) return "One live game a day";
             if (S.job != "nights" && OnlineToday >= 2) return "Two online games played: a live day is one live and one online";
             return null;
