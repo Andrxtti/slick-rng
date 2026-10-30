@@ -79,7 +79,7 @@ namespace Dream.Game
             img.raycastTarget = false; img.color = new Color(1, 1, 1, 0);
             var fit = img.gameObject.AddComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
             void Show(Texture2D t) { if (img == null) return; img.texture = t; fit.aspectRatio = (float)t.width / t.height; img.color = Color.white; }
-            if (stills.TryGetValue(file, out var have)) { Show(have); return; }
+            if (stills.TryGetValue(file, out var have) && have != null) { Show(have); return; }   // (a texture can be gone after the editor leaves play mode)
             var sa = Application.streamingAssetsPath; var url = (sa.Contains("://") ? sa : "file://" + sa) + "/Home/" + file;
             var req = UnityWebRequestTexture.GetTexture(url);
             req.SendWebRequest().completed += _ =>

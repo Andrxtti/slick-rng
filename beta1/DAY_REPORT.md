@@ -429,3 +429,25 @@ Install: Playwright for Python 1.x (PyPI, Apache-2.0) + its Chromium, to drive t
   Mapping the scene tree's old speaker keys: derek = Lou, rosa = Gnomey, trent = Mustich, lou = Tommy, mom = David, n = narrator.
 - **The test menu**: 5 taps on TEST BETA on the title. Bankroll -$1,000 / +$1,000 / $50 / $5,000; date -1 / +1 / +7 / Fri 13 Feb /
   Classic day / Day 2; job keep/quit; Go home; and every scene (film or storyboard), 12 a page.
+
+### A4. The Chapter 1 ending -> Chapter 2's opening
+- The ending as built: the Classic's Day 1 (`classic_day1` when you bag chips, Slick's "Day 2. Go to sleep." text), Day 2 (won:
+  `trentbeat`; out: `classic_mustich` / `classic_shark` / `classic_other` by who beat you), the first title, then Slick's beat
+  ("You've outgrown Biscayne. The Circuit stops at Silver Strike ...").
+- New: right after it, once, Chapter 2's opening as a storyboard, `c2_drive` (Tommy drives you north) then `c2` (Silver Strike),
+  then the end card "Chapter 2 · The Circuit — coming in the next build" (Send feedback / Keep playing Chapter 1 / Title).
+  I included `c2_drive` because it's the scene tree's lead-in to `c2`; say if you want only `c2`.
+- Keep run (perfect-play driver, `C:\Dev\Builds\day2\a5_auto_keep.txt`): reached the end card on day 41, Biscayne Champion;
+  films in order: reel, p_office, p_diner, p_diner_yes, p_diner2, p_seat, ft_intro_tommy, ft_won_tommy, p_after, p_offer,
+  p_keep, c1, badbeat, badbeat2, lesson1, c1_w2, c1_w2_a, c1_w2b, c1_w3_diner_keep, c1_w4_diner, c1_w4_eve, c1_w4_eve2,
+  classic_day1, ft_intro_mustich, trentbeat, **c2_drive, c2**.
+- Quit run (`C:\Dev\Builds\day2\a5_auto_quit.txt`): end card on day 41; films: reel, p_office, p_diner, p_diner_yes, p_diner2,
+  p_seat, ft_intro_tommy, ft_won_tommy, p_after, p_offer, p_quit, c1, firstwin, badbeat, badbeat2, lesson1, c1_w2, c1_w2_a,
+  c1_w2b, c1_w3_diner_quit, c1_w4_diner, c1_w4_eve, c1_w4_eve2, classic_day1, ft_intro_mustich, trentbeat, **c2_drive, c2**;
+  "PASS: no live/online mismatch". Its first try stopped on a blank home screen: the apartment-still cache kept a texture the
+  editor had destroyed between play sessions (editor-only; a build plays one session); the cache now reloads a dead entry.
+- Both runs use the perfect-play driver, so they test the path, not the balance (their bankrolls balloon).
+
+### A5. Rhubarb + autoplay + build
+- Rhubarb lip sync on all 98 spoken Chapter 1 film lines (task 10, committed earlier); the films were re-rendered with it.
+- Autoplay keep and quit both reach the end card (above).
