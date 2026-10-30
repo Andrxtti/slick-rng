@@ -29,6 +29,20 @@ root = next(o for o in new if o.parent is None)
 root.location = (mk.location.x, mk.location.y - 0.1, 0); root.rotation_euler = (root.rotation_euler.x, 0, R(180))
 bpy.context.view_layer.update()
 meshes = [o for o in new if o.type == "MESH"]
+# H2: a relaxed pose for the stills (the import is in an A-pose): each upper arm turns down about the body's front axis,
+# in world space, so the bones' own axes don't matter. ARM_DEG flips the sign if a test shows it going the wrong way.
+from mathutils import Matrix
+rig = next((o for o in new if o.type == "ARMATURE"), None)
+if rig is not None:
+    deg = float(os.environ.get("ARM_DEG", "-40")); front_w = Vector((0, 1, 0))   # Slick faces +y in this scene
+    for side, sgn in (("Left", 1), ("Right", -1)):
+        pb = rig.pose.bones.get(f"mixamorig:{side}Arm")
+        if pb is None: continue
+        bpy.context.view_layer.update()
+        head_w = rig.matrix_world @ pb.head
+        rot = Matrix.Translation(head_w) @ Matrix.Rotation(math.radians(deg * sgn), 4, front_w) @ Matrix.Translation(-head_w)
+        pb.matrix = rig.matrix_world.inverted() @ rot @ rig.matrix_world @ pb.matrix
+    bpy.context.view_layer.update()
 top = max((o.matrix_world @ Vector(c)).z for o in meshes for c in o.bound_box)
 eye = Vector((mk.location.x, mk.location.y - 0.1 + 0.09, top - 0.2))   # the eyes: 20 cm under the top of the hair, 9 cm forward
 import json

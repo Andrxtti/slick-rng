@@ -41,6 +41,7 @@ def grow(shell, style="back", melanin=0.9, count=60000, seed=5, segs=8, radius=0
         if r1 + r2 > 1: r1, r2 = 1 - r1, 1 - r2
         p = a + (b - a) * r1 + (c - a) * r2; n = f.normal.copy()
         L = st["length"] * rng.uniform(0.6, 1.2); lift = st["lift"] * rng.uniform(0.5, 1.5)
+        lift *= 1 + 2.5 * max(0.0, min(1.0, (p.z - (top - 0.05)) / 0.05))   # H2: volume on the crown (it lay flat)
         for s in range(segs + 1):
             hit = tree.find_nearest(p)
             if hit[0] is not None: p, n = hit[0], hit[1].normalized()

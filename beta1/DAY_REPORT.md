@@ -558,3 +558,9 @@ Principled Hair BSDF (melanin 0.9); the cards hidden, the shell matte and dark u
 - Conclusion for track H: strands are worth adopting for Cycles stills and inserts now; photoreal faces need a better head
   (a detailed skin texture, modelled eyes, ideally the consenting cast from their reference photos), which is Steven's call
   on tools and licences (see the 1.1.4 notes). Until then the next H steps are posing the stills and the hair's crown.
+
+### Track H, H2 step 3: posed, a fuller crown
+- `h1_test.py` lowers the upper arms 40° about the body's front axis in world space (the import is in an A-pose);
+  `strands.py` lifts strands up to 3.5x on the crown. Cycles MCU, 90k strands, 124 s/frame:
+  `C:\Dev\Builds\day2\real_slick_mcu_posed.png`. The pose and the hair now read right at MCU size; the face doesn't yet.
+- Next on track H: Mustich's hair as strands with curl (the "clay curls" note), then the stills of the cast in place.
