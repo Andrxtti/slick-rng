@@ -521,7 +521,7 @@ Goal: win two Titan titles and build a $5,000,000 bankroll.
 1. Narrator [n]: The hotel's top-floor bar. Bryan Dartfrog drinks sparkling water and talks about seven-figure buy-ins the way other people talk about parking.  {ext~night}
 2. Bryan Dartfrog [L:kenny]: The $250K is next week. You've got the skill. You don't have the roll. I'll buy half your action. Fair price.  {two:Talking}
 3. You [you]: And if I win?  {cu:Thinking}
-4. Bryan Dartfrog [L:kenny]: Then I win half. And you win the other half, plus you got to play the biggest game on the planet like it was a one-two.  {cu:Shrugging}
+4. Bryan Dartfrog [L:kenny]: Then I win half. And you win the other half, plus you got to play the biggest game on the planet like it was the nightly turbo.  {cu:Shrugging}
    - Choice: Sell him half. | Bryan Dartfrog [L:kenny]: Smart. Nice stack. I'll take half.
    - Choice: "I'll play what I can afford." | Bryan Dartfrog [L:kenny]: Respect. Most people learn that after the house, not before.
 5. Slick [slick] (text): Selling action isn't weakness. Playing above your roll is. Never confuse the two.
