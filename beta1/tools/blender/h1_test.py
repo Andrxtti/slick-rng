@@ -12,7 +12,7 @@ from mathutils import Vector
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 OUT = r"C:\Dev\Beta1Assets\h1"; os.makedirs(OUT, exist_ok=True)
-mode = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else "both"
+mode = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else "both"   # eevee | cycles | both [--strands]
 R = math.radians
 
 sys.argv += ["--h1"]
@@ -78,6 +78,17 @@ for o in meshes:
         if part: rebuild(m, part); done.add(m.name)
 print("[h1] materials:", sorted(done), flush=True)
 
+# H2: real strands instead of the cards ("--strands" after the engine)
+if "--strands" in sys.argv:
+    import strands
+    shell = next(o for o in meshes if o.data.materials and any(m and m.name.lower().startswith("hair") and "cards" not in m.name.lower() for m in o.data.materials))
+    for o in meshes:
+        if o.data.materials and any(m and "haircards" in m.name.lower() for m in o.data.materials): o.hide_render = True
+    strands.grow(shell, "back", melanin=0.9, count=int(os.environ.get("STRANDS", "60000")))
+    OUT_TAG = "_strands"
+else:
+    OUT_TAG = ""
+
 # the film's light, Blender units (W)
 for o in list(bpy.data.objects):
     if o.type == "LIGHT": bpy.data.objects.remove(o)
@@ -112,6 +123,6 @@ for eng in (["eevee", "cycles"] if mode == "both" else [mode]):
         except Exception: pass
     else:
         sc.render.engine = "CYCLES"; sc.cycles.samples = 64; sc.cycles.use_denoising = True; sc.cycles.denoiser = "OPENIMAGEDENOISE"
-    sc.render.filepath = os.path.join(OUT, f"slick_ecu_{eng}.png")
+    sc.render.filepath = os.path.join(OUT, f"slick_ecu_{eng}{OUT_TAG}.png")
     t0 = time.time(); bpy.ops.render.render(write_still=True)
     print(f"[h1] {eng}: {time.time() - t0:.1f} s per frame -> {sc.render.filepath}", flush=True)

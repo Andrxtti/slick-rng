@@ -540,3 +540,12 @@ fill and rim; AgX; 85 mm at f/2.8 focused on the eyes. **`C:\Dev\Builds\day2\rea
 - Keep autoplay on this code: end card on day 68 (the perfect driver left Chapter 1 with $91K, so Chapter 2 ended after its
   first night at the Strike, as the rule says).
 - **Build: Test Beta 1.1.4**, Build/ 17.3 MB, 0 errors.
+
+### Track H, H2 step 1: real strand hair (Opus · high)
+`tools/blender/strands.py`: strands grown over the hair shell along hair.py's flow (Slick: back), as Blender hair curves with
+Principled Hair BSDF (melanin 0.9); the cards hidden, the shell matte and dark underneath. `h1_test.py -- <engine> --strands`.
+`C:\Dev\Builds\day2\real_slick_strands.png`: Cycles with cards (H1) | Eevee 20k strands, 50 s | Cycles 60k strands, 179 s.
+- Reads as hair now: dark, strand-level, the rim light catching individual hairs at the sides; the cards read as a grey
+  helmet. Cycles with strands is faster than with cards (179 s vs 321 s: the alpha-cut cards were the expensive part).
+- Not good yet: the top of the head is out of frame in this ECU (check a wider shot next); the left ear blows out under the
+  key in Cycles; the face is still the MakeHuman face (skin texture and eyes are the next H2 steps).
