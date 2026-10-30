@@ -11,57 +11,67 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Monday. 6:47 PM. Floor 34, Brickell.\nEveryone else went home an hour ago. Out the glass, the bay is going pink."
+"text": "Monday. 6:47 PM. Floor 34, Brickell.\nEveryone else went home an hour ago. Out the glass, the bay is going pink.",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "The Henderson deck. Redo it. All of it. On my desk by eight."
+"text": "The Henderson deck. Redo it. All of it. On my desk by eight.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "I sent it Friday. You signed off on it."
+"text": "I sent it Friday. You signed off on it.",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "And now I'm un-signing off on it. Problem?"
+"text": "And now I'm un-signing off on it. Problem?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "quiet",
-"text": "No problem, Lou."
+"text": "No problem, Lou.",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "Great. Oh, and I told the partners the new model was my idea. Team player, right?"
+"text": "Great. Oh, and I told the partners the new model was my idea. Team player, right?",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You were fourteen the first time you saw it on TV.\nA final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing."
+"text": "You were fourteen the first time you saw it on TV.\nA final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The room went silent. His opponent folded. He never showed.\nHe made it look like he could see the future."
+"text": "The room went silent. His opponent folded. He never showed.\nHe made it look like he could see the future.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "think",
-"text": "Somewhere along the way I traded that for a lanyard."
+"text": "Somewhere along the way I traded that for a lanyard.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -76,91 +86,126 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "2:13 AM. The deck is done.\nYou are not."
+"text": "2:13 AM. The deck is done.\nYou are not.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Stranger",
 "mode": "",
-"text": "You're doing the thing where you stare at the pie like it owes you money."
+"text": "You're doing the thing where you stare at the pie like it owes you money.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Long day."
+"text": "Long day.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Stranger",
 "mode": "",
-"text": "Long life, by the look of it. What do you do?"
+"text": "Long life, by the look of it. What do you do?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Spreadsheets. For a guy who takes credit for them."
+"text": "Spreadsheets. For a guy who takes credit for them.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Stranger",
 "mode": "",
-"text": "And what did you want to do?"
+"text": "And what did you want to do?",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He slides a red envelope across the counter."
+"text": "He slides a red envelope across the counter.",
+"part": "b"
 },
 {
 "who": "slick",
 "name": "Stranger",
 "mode": "",
-"text": "The Biscayne Championship. Saturday, noon. Two-fifty seat. It's paid."
+"text": "The Biscayne Championship. Saturday, noon. Two-fifty seat. It's paid.",
+"part": "b"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Why would you give that to a stranger?"
+"text": "Why would you give that to a stranger?",
+"part": "b"
 },
 {
 "who": "slick",
 "name": "Stranger",
 "mode": "",
-"text": "Because I sat on that stool once. Somebody bought my pie too."
+"text": "Because I sat on that stool once. Somebody bought my pie too.",
+"part": "b"
 },
 {
 "who": "slick",
 "name": "Stranger",
 "mode": "",
-"text": "Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips."
+"text": "Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips.",
+"part": "b"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Who are you?"
+"text": "Who are you?",
+"part": "b"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "People call me Slick."
+"text": "People call me Slick.",
+"part": "b"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He drops cash for both checks and is gone before the bell over the door stops ringing.\nInside the envelope: a seat card, and one line in pen."
+"text": "He drops cash for both checks and is gone before the bell over the door stops ringing.\nInside the envelope: a seat card, and one line in pen.",
+"part": "b"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "“People insist on calling it luck…”"
+"text": "“People insist on calling it luck…”",
+"part": "b"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Play poker. For real.",
+"go": "",
+"who": "slick",
+"name": "Stranger",
+"mode": "",
+"say": "Ha. Everybody says that at 2 AM. Almost nobody means it."
+},
+{
+"n": 2,
+"text": "Doesn't matter now.",
+"go": "",
+"who": "slick",
+"name": "Stranger",
+"mode": "",
+"say": "It always matters. You just stopped saying it out loud."
 }
 ],
 "film": true,
@@ -177,33 +222,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Saturday. 11:40 AM. Biscayne Card Room, off the causeway.\nCarpet from 1994. Coffee from this morning, maybe."
+"text": "Saturday. 11:40 AM. Biscayne Card Room, off the causeway.\nCarpet from 1994. Coffee from this morning, maybe.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Help you?"
+"text": "Help you?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Somebody bought me a seat. The Biscayne Championship."
+"text": "Somebody bought me a seat. The Biscayne Championship.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Free seat? Lucky you. Table nine, seat four. Cards in the air at noon."
+"text": "Free seat? Lucky you. Table nine, seat four. Cards in the air at noon.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway."
+"text": "A hundred and eighteen players. Two hundred and fifty dollars a seat. You paid nothing, and your hands are shaking anyway.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -218,33 +269,39 @@
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "You look different. Did you finish the Henderson numbers?"
+"text": "You look different. Did you finish the Henderson numbers?",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "(One line about how your Saturday went, written from your actual result.)"
+"text": "(One line about how your Saturday went, written from your actual result.)",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "Hello? I'm talking to you. Weekend's over, champ."
+"text": "Hello? I'm talking to you. Weekend's over, champ.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Nobody says you have to decide forever. Keep the paycheck and play around it, or walk now and bet on yourself. You can always quit later."
+"text": "Nobody says you have to decide forever. Keep the paycheck and play around it, or walk now and bet on yourself. You can always quit later.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Seven more hours of spreadsheets. Your mind never leaves table nine."
+"text": "Seven more hours of spreadsheets. Your mind never leaves table nine.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -259,31 +316,56 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Monday night. Your phone buzzes on the counter."
+"text": "Monday night. Your phone buzzes on the counter.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Saw your results from Saturday. Here's my offer."
+"text": "Saw your results from Saturday. Here's my offer.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Quit Lou. I'll put $2,000 in your account tomorrow. Not a loan. Don't make me regret it."
+"text": "Quit Lou. I'll put $2,000 in your account tomorrow. Not a loan. Don't make me regret it.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Or keep the job and play on the side. Your call, kid. It's the biggest one you'll make."
+"text": "Or keep the job and play on the side. Your call, kid. It's the biggest one you'll make.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Decision time."
+"text": "Decision time.",
+"part": "a"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Quit. Text Lou tonight.",
+"go": "p_quit",
+"who": "",
+"name": "",
+"mode": "",
+"say": ""
+},
+{
+"n": 2,
+"text": "Keep the job. Grind nights and weekends.",
+"go": "p_keep",
+"who": "",
+"name": "",
+"mode": "",
+"say": ""
 }
 ],
 "film": true,
@@ -300,33 +382,39 @@
 "who": "you",
 "name": "You",
 "mode": "text",
-"text": "Lou. Redo it yourself."
+"text": "Lou. Redo it yourself.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Sent. No paycheck. No plan B.\nYou have never felt lighter."
+"text": "Sent. No paycheck. No plan B.\nYou have never felt lighter.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Done. $2,000 is in your account. Not a loan. Don't make me regret it."
+"text": "Done. $2,000 is in your account. Not a loan. Don't make me regret it.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Rent is due on the first. Never play above your roll."
+"text": "Rent is due on the first. Never play above your roll.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "BRO. YOU QUIT YOUR JOB?? CALL ME"
+"text": "BRO. YOU QUIT YOUR JOB?? CALL ME",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -341,21 +429,25 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL."
+"text": "You keep the lanyard.\nBut tonight you open a new spreadsheet and name it BANKROLL.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "$1,250 lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream."
+"text": "$1,250 lands every Friday. Days for Natso SweetLou. Three sessions a week for the dream.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Smart. A paycheck buys you time to learn. Never play above your roll. Text me when you win something."
+"text": "Smart. A paycheck buys you time to learn. Never play above your roll. Text me when you win something.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -370,39 +462,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe.\nTwenty tables, every one of them a classroom."
+"text": "Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe.\nTwenty tables, every one of them a classroom.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Back again? Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven."
+"text": "Back again? Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast."
+"text": "Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Cute hoodie. Did it come with the free seat?"
+"text": "Cute hoodie. Did it come with the free seat?",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Biscayne Classic all year."
+"text": "Mustich. Dad's money, a solver subscription, and a smile you want to wipe off.\nHe's been circling the Biscayne Classic all year.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Goal: win the Biscayne Classic, or build your bankroll to $10,000."
+"text": "Goal: win the Biscayne Classic, or build your bankroll to $10,000.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -417,33 +516,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Lucky Seven. 1:40 AM. The pie is the same. You are a little poorer."
+"text": "Lucky Seven. 1:40 AM. The pie is the same. You are a little poorer.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Tell me the hand that got you."
+"text": "Tell me the hand that got you.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "King-jack, early position. I raised. Got three-bet. Called. Flopped a jack. Lost everything to kings."
+"text": "King-jack, early position. I raised. Got three-bet. Called. Flopped a jack. Lost everything to kings.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Then the hand didn't get you. The first decision did. From early, king-jack is a fold. Everything after was a story you told yourself."
+"text": "Then the hand didn't get you. The first decision did. From early, king-jack is a fold. Everything after was a story you told yourself.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Fold the junk. That's not advice, it's arithmetic. Your misses are on the Spacepad. Drill them until the fold is boring."
+"text": "Fold the junk. That's not advice, it's arithmetic. Your misses are on the Spacepad. Drill them until the fold is boring.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -458,45 +563,53 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Lucky Seven Diner. Same stool, same pie. The feeling is not the same."
+"text": "Lucky Seven Diner. Same stool, same pie. The feeling is not the same.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "I did everything right. Every decision. And I'm out."
+"text": "I did everything right. Every decision. And I'm out.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Then you had a good day. You just did not get paid for it."
+"text": "Then you had a good day. You just did not get paid for it.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Over one hand, the cards pay whoever they like. Over ten thousand, they pay whoever studied. Play for the ten thousand."
+"text": "Over one hand, the cards pay whoever they like. Over ten thousand, they pay whoever studied. Play for the ten thousand.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "text",
-"text": "Heard you got coolered. Brutal. Maybe this game just isn’t for everyone."
+"text": "Heard you got coolered. Brutal. Maybe this game just isn’t for everyone.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "He's right about one thing. It isn't for everyone."
+"text": "He's right about one thing. It isn't for everyone.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list."
+"text": "Good. Make sure it is for you. I keep count of the beats, by the way. The ones who make it all have a long list.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -511,27 +624,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Bags and tags. Two hundred and twelve started this morning. Forty come back tomorrow, and you're one of them."
+"text": "Bags and tags. Two hundred and twelve started this morning. Forty come back tomorrow, and you're one of them.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Bag your chips, write your name on it. Day 2 is noon tomorrow. Don't be late."
+"text": "Bag your chips, write your name on it. Day 2 is noon tomorrow. Don't be late.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Look who survived. Don't get used to it."
+"text": "Look who survived. Don't get used to it.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Day 2. Go to sleep. Don't celebrate yet."
+"text": "Day 2. Go to sleep. Don't celebrate yet.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -546,21 +664,25 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "(The final table: who's waiting for you there.)"
+"text": "(The final table: who's waiting for you there.)",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Final table. Dad flew in for this. Don't embarrass yourself."
+"text": "Final table. Dad flew in for this. Don't embarrass yourself.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Let's play."
+"text": "Let's play.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -575,33 +697,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs."
+"text": "Final hand. Heads-up for the Biscayne Classic, and the whole card room is standing on chairs.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "win",
-"text": "The last card hits the felt. The Biscayne Classic is yours."
+"text": "The last card hits the felt. The Biscayne Classic is yours.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Enjoy it. Dad says the Classic is a rounding error."
+"text": "Enjoy it. Dad says the Classic is a rounding error.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it."
+"text": "Don't listen to him, kid. Thirty years I've been chasing that trophy. You earned it.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Your name goes on the board by the cage. Permanent marker. Congratulations."
+"text": "Your name goes on the board by the cage. Permanent marker. Congratulations.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -616,27 +744,32 @@
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Saw the photo. Trophy, big grin, terrible lighting. Proud of you, kid."
+"text": "Saw the photo. Trophy, big grin, terrible lighting. Proud of you, kid.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Left something in your locker. Every champion needs a pair."
+"text": "Left something in your locker. Every champion needs a pair.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Inside: a pair of pixelated sunglasses and a note.\n“Deal with it.”"
+"text": "Inside: a pair of pixelated sunglasses and a note.\n“Deal with it.”",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "If your first title is online: Slick texts instead. \"Saw the screenshot. Your name at the top of the lobby. Proud of you, kid.\"\n\"Left something for you at the Lucky Seven. Every champion needs a pair.\""
+"text": "If your first title is online: Slick texts instead. \"Saw the screenshot. Your name at the top of the lobby. Proud of you, kid.\"\n\"Left something for you at the Lucky Seven. Every champion needs a pair.\"",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -651,21 +784,25 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "(Final hand, from the real hand you played.)"
+"text": "(Final hand, from the real hand you played.)",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Write it down. Some people are born for this."
+"text": "Write it down. Some people are born for this.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Good game. I'll see you again."
+"text": "Good game. I'll see you again.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -680,33 +817,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Final hand. Mustich shoves with his dad watching from the rail. Called. An ace on the river."
+"text": "Final hand. Mustich shoves with his dad watching from the rail. Called. An ace on the river.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The room explodes. Mustich holds the trophy over his head like he bought it."
+"text": "The room explodes. Mustich holds the trophy over his head like he bought it.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Write it down, Florida. Some people are born for this."
+"text": "Write it down, Florida. Some people are born for this.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "(your reaction, from how you went out)"
+"text": "(your reaction, from how you went out)",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Next month, kid. That trophy isn't going anywhere."
+"text": "Next month, kid. That trophy isn't going anywhere.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -721,33 +864,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Final hand. Tommy \"The Shark\" Maio turns over two kings and the whole rail stops breathing."
+"text": "Final hand. Tommy \"The Shark\" Maio turns over two kings and the whole rail stops breathing.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The river bricks. Thirty years at this card room, and the old man finally has his trophy."
+"text": "The river bricks. Thirty years at this card room, and the old man finally has his trophy.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Thirty years! You hear me? Thirty years!"
+"text": "Thirty years! You hear me? Thirty years!",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "(your reaction, from how you went out)"
+"text": "(your reaction, from how you went out)",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "His name goes on the board by the cage. Next month, it could be yours."
+"text": "His name goes on the board by the cage. Next month, it could be yours.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -762,33 +911,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Final hand. All in, called, and the board runs clean."
+"text": "Final hand. All in, called, and the board runs clean.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The room comes to its feet. The Biscayne Classic has a new name on the board."
+"text": "The room comes to its feet. The Biscayne Classic has a new name on the board.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Somebody had to keep you humble, kid. (or the winner's own line)"
+"text": "Somebody had to keep you humble, kid. (or the winner's own line)",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "(your reaction, from how you went out)"
+"text": "(your reaction, from how you went out)",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "The name goes on the board by the cage. Next month, it could be yours."
+"text": "The name goes on the board by the cage. Next month, it could be yours.",
+"part": "a"
 }
 ],
+"options": [],
 "film": true,
 "storyboard": false
 },
@@ -803,15 +958,18 @@
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "TEN THOUSAND?? FROM POKER?? AND YOU STILL WENT TO WORK TODAY???"
+"text": "TEN THOUSAND?? FROM POKER?? AND YOU STILL WENT TO WORK TODAY???",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "im just saying. lou doesnt deserve you. the felt does"
+"text": "im just saying. lou doesnt deserve you. the felt does",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -826,33 +984,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Before each level: the stage, the hands at this level, and Slick's tip with his face. At the final table, the rival's face and line."
+"text": "Before each level: the stage, the hands at this level, and Slick's tip with his face. At the final table, the rival's face and line.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Early levels: chips are cheap, mistakes aren't. Fold the junk and let them spew."
+"text": "Early levels: chips are cheap, mistakes aren't. Fold the junk and let them spew.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Bubble. The short stacks are terrified. The big stacks are licking their lips. Which one are you?"
+"text": "Bubble. The short stacks are terrified. The big stacks are licking their lips. Which one are you?",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Final table. Every pay jump is real money. Every chip is a decision."
+"text": "Final table. Every pay jump is real money. Every chip is a decision.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: CF Tilt · Level 7 · blinds 400/800 · next level 5:00. Slick's tip arrives as a text."
+"text": "Online: CF Tilt · Level 7 · blinds 400/800 · next level 5:00. Slick's tip arrives as a text.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -867,39 +1031,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "ALL IN, big, in neon lime. \"Final table · all in vs Mustich\" when it's someone from the story."
+"text": "ALL IN, big, in neon lime. \"Final table · all in vs Mustich\" when it's someone from the story.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Your hand and theirs. Their cards flip with a sting, and the bar shows the odds: 62% to win."
+"text": "Your hand and theirs. Their cards flip with a sting, and the bar shows the odds: 62% to win.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The flop. The turn. \"The river...\", a long breath, then the river."
+"text": "The flop. The turn. \"The river...\", a long breath, then the river.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "\"You hold!\" or \"Mustich holds.\" Pocket kings beats ace-queen. Stack 38 → 81 bb."
+"text": "\"You hold!\" or \"Mustich holds.\" Pocket kings beats ace-queen. Stack 38 → 81 bb.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "If they fold to your shove: \"Mustich thinks it over. Then the cards go in the muck. They fold. The pot is yours.\""
+"text": "If they fold to your shove: \"Mustich thinks it over. Then the cards go in the muck. They fold. The pot is yours.\"",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: the same screen, against a screen name, with no story faces."
+"text": "Online: the same screen, against a screen name, with no story faces.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -914,45 +1085,53 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A speech bubble from a seat for a few seconds after a big moment. Online, it's a chat message instead."
+"text": "A speech bubble from a seat for a few seconds after a big moment. Online, it's a chat message instead.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Enjoy it. Variance is a loan. (you win a big pot)"
+"text": "Enjoy it. Variance is a loan. (you win a big pot)",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Out already? Dad's going to love this. (he busts you)"
+"text": "Out already? Dad's going to love this. (he busts you)",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Maybe stick to the spreadsheets."
+"text": "Maybe stick to the spreadsheets.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Kid. Don't let it go to your head. Let it go to your bankroll. (you double up)"
+"text": "Kid. Don't let it go to your head. Let it go to your bankroll. (you double up)",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "That wasn't poker. That was weather. (a cooler)"
+"text": "That wasn't poker. That was weather. (a cooler)",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: chat lines from screen names instead: nh · sick · lol ok · ship it · gl. Mustich and Tommy only talk live."
+"text": "Online: chat lines from screen names instead: nh · sick · lol ok · ship it · gl. Mustich and Tommy only talk live.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -967,33 +1146,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "THE BUBBLE. 33 left · 32 paid."
+"text": "THE BUBBLE. 33 left · 32 paid.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "We are hand for hand! Dealers, stand up when your hand is done. Nobody leaves the table."
+"text": "We are hand for hand! Dealers, stand up when your hand is done. Nobody leaves the table.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Thirty years, kid, and the bubble still makes my hands sweat."
+"text": "Thirty years, kid, and the bubble still makes my hands sweat.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Near the money, think about what the money's worth. Not the chips."
+"text": "Near the money, think about what the money's worth. Not the chips.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: a CF Tilt banner, HAND-FOR-HAND, and the chat: fold fold fold · pls no bubble. Slick's text is the same."
+"text": "Online: a CF Tilt banner, HAND-FOR-HAND, and the chat: fold fold fold · pls no bubble. Slick's text is the same.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1008,27 +1193,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "IN THE MONEY."
+"text": "IN THE MONEY.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "That's the bubble! Everybody left is in the money."
+"text": "That's the bubble! Everybody left is in the money.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "ARE YOU IN THE MONEY?? SCREENSHOT IT"
+"text": "ARE YOU IN THE MONEY?? SCREENSHOT IT",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: a banner, You're in the money, and the chat: gg bubble boy. David's text is the same."
+"text": "Online: a banner, You're in the money, and the chat: gg bubble boy. David's text is the same.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1043,27 +1233,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "HEADS-UP. Both faces, both stacks: You 61 bb · Mustich 47 bb."
+"text": "HEADS-UP. Both faces, both stacks: You 61 bb · Mustich 47 bb.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Ladies and gentlemen, we are heads-up for the Biscayne Classic!"
+"text": "Ladies and gentlemen, we are heads-up for the Biscayne Classic!",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Final table. Dad flew in for this. Don't embarrass yourself."
+"text": "Final table. Dad flew in for this. Don't embarrass yourself.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: a banner, HEADS-UP vs ripriver_88, with the stacks. No announcer, no film."
+"text": "Online: a banner, HEADS-UP vs ripriver_88, with the stacks. No announcer, no film.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1078,27 +1273,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Cooler. Nothing you could do."
+"text": "Cooler. Nothing you could do.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Kings into aces. All the chips go in, and you never had a chance."
+"text": "Kings into aces. All the chips go in, and you never had a chance.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "You played it right. That's all you control. People insist on calling it luck."
+"text": "You played it right. That's all you control. People insist on calling it luck.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Bad beats are the tax on getting your money in good. Pay it and keep playing."
+"text": "Bad beats are the tax on getting your money in good. Pay it and keep playing.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1113,27 +1313,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "One of: The last card falls and the room comes apart. [Event]. Yours.  ·  They push the whole thing across the felt. Every chip.  ·  Phones up. Dealer standing. Floor staff grinning."
+"text": "One of: The last card falls and the room comes apart. [Event]. Yours.  ·  They push the whole thing across the felt. Every chip.  ·  Phones up. Dealer standing. Floor staff grinning.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "One of: YES. YES. YES.  ·  I never doubted it. Not once. (Twice.)  ·  Text Slick. Text David. Text everyone."
+"text": "One of: YES. YES. YES.  ·  I never doubted it. Not once. (Twice.)  ·  Text Slick. Text David. Text everyone.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Kid. Don't let it go to your head. Let it go to your bankroll. (a witness at the venue; changes with who's there) (live)"
+"text": "Kid. Don't let it go to your head. Let it go to your bankroll. (a witness at the venue; changes with who's there) (live)",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: one of: The final table window flashes gold. First of 1,104.  ·  Three in the morning, alone in the apartment, and you just beat a thousand people.  ·  The chat fills with gg and one ship it. The laptop fan is the only applause."
+"text": "Online: one of: The final table window flashes gold. First of 1,104.  ·  Three in the morning, alone in the apartment, and you just beat a thousand people.  ·  The chat fills with gg and one ship it. The laptop fan is the only applause.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1148,27 +1353,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "One of: Not the trophy, but a walk to the cage. [$] from [event].  ·  The cashier counts it twice. You count it four times on the way home.  ·  Out before the end, but with money. And a plan for the next one."
+"text": "One of: Not the trophy, but a walk to the cage. [$] from [event].  ·  The cashier counts it twice. You count it four times on the way home.  ·  Out before the end, but with money. And a plan for the next one.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "One of: Good. Next time, further.  ·  Bankroll first. Glory later.  ·  That's rent. That's the roll. That's enough."
+"text": "One of: Good. Next time, further.  ·  Bankroll first. Glory later.  ·  That's rent. That's the roll. That's enough.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "A cash is a cash. The trophy's next. (a witness at the venue; changes with who's there)"
+"text": "A cash is a cash. The trophy's next. (a witness at the venue; changes with who's there)",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: one of: A cash lands in your CF Tilt balance. You refresh it twice to be sure.  ·  Out before the end, but paid.  ·  Min-cash. You close the laptop gently, like it might change its mind."
+"text": "Online: one of: A cash lands in your CF Tilt balance. You refresh it twice to be sure.  ·  Out before the end, but paid.  ·  Min-cash. You close the laptop gently, like it might change its mind.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1183,27 +1393,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "One of: Chair pushed back. Chips gone. The lights feel brighter.  ·  The long walk past tables that are still playing.  ·  No cash. No excuses. The felt doesn't care."
+"text": "One of: Chair pushed back. Chips gone. The lights feel brighter.  ·  The long walk past tables that are still playing.  ·  No cash. No excuses. The felt doesn't care.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "One of: Review the hands. Every one.  ·  Variance. Or me. Tomorrow I'll know which.  ·  Sleep. Study. Back tomorrow."
+"text": "One of: Review the hands. Every one.  ·  Variance. Or me. Tomorrow I'll know which.  ·  Sleep. Study. Back tomorrow.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Happens to everybody. Back tomorrow. (a witness at the venue; changes with who's there)"
+"text": "Happens to everybody. Back tomorrow. (a witness at the venue; changes with who's there)",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: one of: You finished 214th. The table window closes by itself.  ·  Busted. The tab is gone before you can argue with it.  ·  The lobby keeps scrolling. Nobody noticed you leave."
+"text": "Online: one of: You finished 214th. The table window closes by itself.  ·  Busted. The tab is gone before you can argue with it.  ·  The lobby keeps scrolling. Nobody noticed you leave.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1218,27 +1433,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "One of: Set over set. Kings into aces. Whatever you call it, it hurt.  ·  All in good. Called by worse. The river did the rest.  ·  You did everything right and the deck said no."
+"text": "One of: Set over set. Kings into aces. Whatever you call it, it hurt.  ·  All in good. Called by worse. The river did the rest.  ·  You did everything right and the deck said no.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "One of: ...Brutal.  ·  Right play. Wrong deck.  ·  Don't tilt. Don't tilt. Don't tilt."
+"text": "One of: ...Brutal.  ·  Right play. Wrong deck.  ·  Don't tilt. Don't tilt. Don't tilt.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Brutal. Thirty years and that one still stings. (a witness at the venue; changes with who's there)"
+"text": "Brutal. Thirty years and that one still stings. (a witness at the venue; changes with who's there)",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Online: one of: Aces into kings, in a window the size of a postcard. It still hurts full size.  ·  The hand history says you did everything right. The balance says otherwise."
+"text": "Online: one of: Aces into kings, in a window the size of a postcard. It still hurts full size.  ·  The hand history says you did everything right. The balance says otherwise.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1253,45 +1473,53 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "5:10 AM. The causeway is empty and the bay is the colour of a nickel.\nTommy \"The Shark\" Maio is driving a 1998 Lincoln like it owes him money."
+"text": "5:10 AM. The causeway is empty and the bay is the colour of a nickel.\nTommy \"The Shark\" Maio is driving a 1998 Lincoln like it owes him money.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Thirty years at Biscayne. You know how many times I drove north for a game?"
+"text": "Thirty years at Biscayne. You know how many times I drove north for a game?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Once?"
+"text": "Once?",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Never. Not once. Rings are for guys who think they're going somewhere."
+"text": "Never. Not once. Rings are for guys who think they're going somewhere.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "So why are you driving?"
+"text": "So why are you driving?",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Because you asked. And because the coffee at Silver Strike is free and mine is terrible."
+"text": "Because you asked. And because the coffee at Silver Strike is free and mine is terrible.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He doesn't say the other thing. He doesn't have to. A man doesn't iron his lucky shirt for free coffee."
+"text": "He doesn't say the other thing. He doesn't have to. A man doesn't iron his lucky shirt for free coffee.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1306,51 +1534,60 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Silver Strike Casino. Forty tables under a ceiling painted like a sunset, and every one of them is playing for a ring."
+"text": "Silver Strike Casino. Forty tables under a ceiling painted like a sunset, and every one of them is playing for a ring.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A man at the rail wears four on one hand. He keeps flexing it so you'll ask."
+"text": "A man at the rail wears four on one hand. He keeps flexing it so you'll ask.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Look who it is. They've got me running the floor up here on weekends now. Table twelve, seat six. Seat open!"
+"text": "Look who it is. They've got me running the floor up here on weekends now. Table twelve, seat six. Seat open!",
+"part": "a"
 },
 {
 "who": "moneybaker",
 "name": "Chris Schillings",
 "mode": "",
-"text": "You're the kid who quit the cubicle? I was an accountant. Spreadsheets and everything."
+"text": "You're the kid who quit the cubicle? I was an accountant. Spreadsheets and everything.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "How did you know?"
+"text": "How did you know?",
+"part": "a"
 },
 {
 "who": "moneybaker",
 "name": "Chris Schillings",
 "mode": "",
-"text": "You hold your chips like they're receipts. Stop it. Play your game, and let them find out who you are."
+"text": "You hold your chips like they're receipts. Stop it. Play your game, and let them find out who you are.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Look who followed me north. New patch, see? Somebody pays me to wear their logo now. Try not to bust on the bubble."
+"text": "Look who followed me north. New patch, see? Somebody pays me to wear their logo now. Try not to bust on the bubble.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Goal: win two Circuit rings and build a $40,000 bankroll."
+"text": "Goal: win two Circuit rings and build a $40,000 bankroll.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1365,57 +1602,67 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The casino bar at 1 AM. Keno on a television nobody watches.\nAn enormous man in a white hat is holding court with a plate of wings."
+"text": "The casino bar at 1 AM. Keno on a television nobody watches.\nAn enormous man in a white hat is holding court with a plate of wings.",
+"part": "a"
 },
 {
 "who": "armadillo",
 "name": "Armadillo Fatts",
 "mode": "",
-"text": "Sit down, partner. Everybody who sits gets a story, and nobody gets a refund."
+"text": "Sit down, partner. Everybody who sits gets a story, and nobody gets a refund.",
+"part": "a"
 },
 {
 "who": "armadillo",
 "name": "Armadillo Fatts",
 "mode": "",
-"text": "Ten years back, give or take. World Championship of Cards, last two players. Kid in dark glasses shoves the river with nothing. Seven-deuce. The whole country can see it on the little camera."
+"text": "Ten years back, give or take. World Championship of Cards, last two players. Kid in dark glasses shoves the river with nothing. Seven-deuce. The whole country can see it on the little camera.",
+"part": "a"
 },
 {
 "who": "armadillo",
 "name": "Armadillo Fatts",
 "mode": "",
-"text": "Other fella has the winner. Thinks four minutes. Folds. Wears a mask to this day, so nobody can read him twice."
+"text": "Other fella has the winner. Thinks four minutes. Folds. Wears a mask to this day, so nobody can read him twice.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "I watched that. I was fourteen."
+"text": "I watched that. I was fourteen.",
+"part": "a"
 },
 {
 "who": "armadillo",
 "name": "Armadillo Fatts",
 "mode": "",
-"text": "Everybody watched it. Then the kid goes on TV and says one thing. \"People insist on calling it luck.\" Cockiest sentence I ever heard."
+"text": "Everybody watched it. Then the kid goes on TV and says one thing. \"People insist on calling it luck.\" Cockiest sentence I ever heard.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The line in your envelope. Word for word. In pen."
+"text": "The line in your envelope. Word for word. In pen.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "What happened to him?"
+"text": "What happened to him?",
+"part": "a"
 },
 {
 "who": "armadillo",
 "name": "Armadillo Fatts",
 "mode": "",
-"text": "Same thing that happens to all of us. He went home.\nOrder the wings. They're better than the story."
+"text": "Same thing that happens to all of us. He went home.\nOrder the wings. They're better than the story.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1430,45 +1677,53 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The $400 Turbo Ring, final table. Mouthy Michael has been talking for six straight hours and has no plans to stop."
+"text": "The $400 Turbo Ring, final table. Mouthy Michael has been talking for six straight hours and has no plans to stop.",
+"part": "a"
 },
 {
 "who": "mouth",
 "name": "Mouthy Michael",
 "mode": "",
-"text": "You're thinking. Don't think. Thinking is how they get you. You call this? You're not calling this. You're NOT calling this."
+"text": "You're thinking. Don't think. Thinking is how they get you. You call this? You're not calling this. You're NOT calling this.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Every word is built to put a voice in your head that isn't yours.\nThen the break. Fifteen minutes. One message on your phone."
+"text": "Every word is built to put a voice in your head that isn't yours.\nThen the break. Fifteen minutes. One message on your phone.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Is he talking?"
+"text": "Is he talking?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "text",
-"text": "He hasn't stopped since noon."
+"text": "He hasn't stopped since noon.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Then he's scared. Comfortable people don't need noise. Play the cards, not the soundtrack."
+"text": "Then he's scared. Comfortable people don't need noise. Play the cards, not the soundtrack.",
+"part": "a"
 },
 {
 "who": "mouth",
 "name": "Mouthy Michael",
 "mode": "",
-"text": "...You called. Of course you called. Nice hand. NICE HAND. I'm fine. I'm totally fine."
+"text": "...You called. Of course you called. Nice hand. NICE HAND. I'm fine. I'm totally fine.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1483,39 +1738,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The Circuit floor at midnight. Chips being racked all around you. None of them are yours."
+"text": "The Circuit floor at midnight. Chips being racked all around you. None of them are yours.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "You check too much."
+"text": "You check too much.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "I didn't have anything."
+"text": "I didn't have anything.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Neither did they. On a dry board the raiser bets small and often, and everybody without a pair goes away. You gave them a free card and a free look at you."
+"text": "Neither did they. On a dry board the raiser bets small and often, and everybody without a pair goes away. You gave them a free card and a free look at you.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "It felt like lying."
+"text": "It felt like lying.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "It's not lying. It's telling them a story they already believe. Pressure the scared ones. Small bets, lots of them. It's in your misses. Go run them."
+"text": "It's not lying. It's telling them a story they already believe. Pressure the scared ones. Small bets, lots of them. It's in your misses. Go run them.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1530,45 +1792,53 @@
 "who": "narrator",
 "name": "",
 "mode": "win",
-"text": "The tournament director slides a heavy ring across the felt. It's a size too big. You put it on anyway."
+"text": "The tournament director slides a heavy ring across the felt. It's a size too big. You put it on anyway.",
+"part": "a"
 },
 {
 "who": "moneybaker",
 "name": "Chris Schillings",
 "mode": "",
-"text": "First ring. I still remember mine. Don't put it in a drawer. Wear it every day you play. Let it be heavy."
+"text": "First ring. I still remember mine. Don't put it in a drawer. Wear it every day you play. Let it be heavy.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Thirty years. First time I ever drove north, and the kid takes a ring. I'm telling everyone it was my coffee."
+"text": "Thirty years. First time I ever drove north, and the kid takes a ring. I'm telling everyone it was my coffee.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "A RING??? LIKE A CHAMPIONSHIP RING?? LIKE THE NBA???"
+"text": "A RING??? LIKE A CHAMPIONSHIP RING?? LIKE THE NBA???",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "PUTTING IT IN THE GROUP CHAT. RENAMING THE GROUP CHAT"
+"text": "PUTTING IT IN THE GROUP CHAT. RENAMING THE GROUP CHAT",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "text",
-"text": "Saw your ring on Instagram!! Crazy! Quick q — do you still have the login for the Henderson drive?"
+"text": "Saw your ring on Instagram!! Crazy! Quick q — do you still have the login for the Henderson drive?",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "One ring. Now go get another one. Don't celebrate in a place that sells chips."
+"text": "One ring. Now go get another one. Don't celebrate in a place that sells chips.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1583,43 +1853,70 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A private elevator. A room above the casino with one table, eight chairs, and a man holding an unlit cigarette like a conductor's baton."
+"text": "A private elevator. A room above the casino with one table, eight chairs, and a man holding an unlit cigarette like a conductor's baton.",
+"part": "a"
 },
 {
 "who": "fargo",
 "name": "Sammy Smokes",
 "mode": "",
-"text": "The ring kid. Sit, sit. Is small game tonight. Ten thousand minimum."
+"text": "The ring kid. Sit, sit. Is small game tonight. Ten thousand minimum.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Ten thousand is a quarter of everything you have.\nThe chairs are leather. The chips are clay. The room smells like money that was never worried."
+"text": "Ten thousand is a quarter of everything you have.\nThe chairs are leather. The chips are clay. The room smells like money that was never worried.",
+"part": "a"
 },
 {
 "who": "fargo",
 "name": "Sammy Smokes",
 "mode": "",
-"text": "Is a nice hand you have in you, I can tell. Is not my hand. But is nice."
+"text": "Is a nice hand you have in you, I can tell. Is not my hand. But is nice.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Who's upstairs?"
+"text": "Who's upstairs?",
+"part": "b"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "text",
-"text": "Sammy Smokes. 10K minimum."
+"text": "Sammy Smokes. 10K minimum.",
+"part": "b"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "The game you're not rolled for is always the best game in the building. That's how it gets you."
+"text": "The game you're not rolled for is always the best game in the building. That's how it gets you.",
+"part": "b"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Sit down.",
+"go": "c2_smokes_sit",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "You buy in for ten thousand. Sammy smiles like a man who owns the building, because he does."
+},
+{
+"n": 2,
+"text": "\"Not tonight. I'm not rolled for it.\"",
+"go": "",
+"who": "fargo",
+"name": "Sammy Smokes",
+"mode": "",
+"say": "Ha! Is smartest thing anyone says in this room all year. Come back when it's small for you."
 }
 ],
 "film": false,
@@ -1636,27 +1933,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Three hours. You play the best poker of your life and you lose six thousand dollars of it."
+"text": "Three hours. You play the best poker of your life and you lose six thousand dollars of it.",
+"part": "a"
 },
 {
 "who": "fargo",
 "name": "Sammy Smokes",
 "mode": "",
-"text": "You play good. The money doesn't know. Money never knows. This is why we keep it far from the heart."
+"text": "You play good. The money doesn't know. Money never knows. This is why we keep it far from the heart.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Is that your lesson?"
+"text": "Is that your lesson?",
+"part": "a"
 },
 {
 "who": "fargo",
 "name": "Sammy Smokes",
 "mode": "",
-"text": "My lesson? Is that I can afford this room. Go downstairs, ring kid. Downstairs is where you get rich."
+"text": "My lesson? Is that I can afford this room. Go downstairs, ring kid. Downstairs is where you get rich.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1671,43 +1973,70 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The Circuit's charity event. Celebrities, local news, a giant check. And at table one, in the same hat for fifty years, Colt the Cowboy."
+"text": "The Circuit's charity event. Celebrities, local news, a giant check. And at table one, in the same hat for fifty years, Colt the Cowboy.",
+"part": "a"
 },
 {
 "who": "brunswick",
 "name": "Colt the Cowboy",
 "mode": "",
-"text": "Son, I was playing this game before your daddy could shuffle. Sit. Let's see if they taught you anything."
+"text": "Son, I was playing this game before your daddy could shuffle. Sit. Let's see if they taught you anything.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He raises with ten-deuce, shows it, and wins the pot. The table laughs. He doesn't."
+"text": "He raises with ten-deuce, shows it, and wins the pot. The table laughs. He doesn't.",
+"part": "a"
 },
 {
 "who": "brunswick",
 "name": "Colt the Cowboy",
 "mode": "",
-"text": "Everybody laughs at the ten-deuce. That's why it works. You know who I taught that to? Skinny kid. Dark glasses. Calle Ocho."
+"text": "Everybody laughs at the ten-deuce. That's why it works. You know who I taught that to? Skinny kid. Dark glasses. Calle Ocho.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "The Lucky Seven?"
+"text": "The Lucky Seven?",
+"part": "a"
 },
 {
 "who": "brunswick",
 "name": "Colt the Cowboy",
 "mode": "",
-"text": "Bought him a slice of pie there once. Night he came home. A year after the big one, and every dollar of it gone. Soaked through, and he wouldn't take off those glasses."
+"text": "Bought him a slice of pie there once. Night he came home. A year after the big one, and every dollar of it gone. Soaked through, and he wouldn't take off those glasses.",
+"part": "a"
 },
 {
 "who": "brunswick",
 "name": "Colt the Cowboy",
 "mode": "",
-"text": "He still buying people's pie?"
+"text": "He still buying people's pie?",
+"part": "a"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "\"Every night.\"",
+"go": "",
+"who": "brunswick",
+"name": "Colt the Cowboy",
+"mode": "",
+"say": "Good. Then I got my money's worth."
+},
+{
+"n": 2,
+"text": "\"I don't know who you mean.\"",
+"go": "",
+"who": "brunswick",
+"name": "Colt the Cowboy",
+"mode": "",
+"say": "Sure you don't. Neither does he."
 }
 ],
 "film": false,
@@ -1724,51 +2053,60 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Lucky Seven Diner. 2:13 AM. Two rings on the counter next to the pie."
+"text": "Lucky Seven Diner. 2:13 AM. Two rings on the counter next to the pie.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Two rings and forty thousand dollars, none of it borrowed. That's a bankroll. You're not a tourist any more."
+"text": "Two rings and forty thousand dollars, none of it borrowed. That's a bankroll. You're not a tourist any more.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "I met Colt the Cowboy."
+"text": "I met Colt the Cowboy.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Everyone meets Colt eventually. He's like weather."
+"text": "Everyone meets Colt eventually. He's like weather.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "He said he bought a broke kid in dark glasses a slice of pie here. The night he came home."
+"text": "He said he bought a broke kid in dark glasses a slice of pie here. The night he came home.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Slick turns his coffee cup a quarter turn. Then another. He doesn't look up."
+"text": "Slick turns his coffee cup a quarter turn. Then another. He doesn't look up.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Eat your pie. The Summer starts in June, and Vegas doesn't care who you met."
+"text": "Eat your pie. The Summer starts in June, and Vegas doesn't care who you met.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Goal complete. Chapter 3: The Summer."
+"text": "Goal complete. Chapter 3: The Summer.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1783,51 +2121,60 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Every June, the WCoC Summer Series takes over Las Vegas. 112 degrees outside and 68 inside, with ten thousand people chasing the same gold."
+"text": "Every June, the WCoC Summer Series takes over Las Vegas. 112 degrees outside and 68 inside, with ten thousand people chasing the same gold.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "They hired me for the summer! Floor supervisor, rooms A through D. Six weeks, no sunlight. Seat open!"
+"text": "They hired me for the summer! Floor supervisor, rooms A through D. Six weeks, no sunlight. Seat open!",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Every kid who ever loved this game dreams about a bracelet. This is the room where they hand them out. Don't look at the ceiling."
+"text": "Every kid who ever loved this game dreams about a bracelet. This is the room where they hand them out. Don't look at the ceiling.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You look at the ceiling. Everyone does. Banners of every champion, back to the year your father was born."
+"text": "You look at the ceiling. Everyone does. Banners of every champion, back to the year your father was born.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "At the feature table sits a man in a black mask. Fourteen bracelets, more than anyone alive. Nobody has seen him smile. Nobody has seen most of his face."
+"text": "At the feature table sits a man in a black mask. Fourteen bracelets, more than anyone alive. Nobody has seen him smile. Nobody has seen most of his face.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "Kid. Stop looking at me and look at your cards."
+"text": "Kid. Stop looking at me and look at your cards.",
+"part": "a"
 },
 {
 "who": "hellbent",
 "name": "Phil Hellraiser",
 "mode": "",
-"text": "Another internet kid. I'll see you at the final table. Probably not, though. Statistically, not."
+"text": "Another internet kid. I'll see you at the final table. Probably not, though. Statistically, not.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Goal: win a gold bracelet."
+"text": "Goal: win a gold bracelet.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1842,39 +2189,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "$3,000 Six-Max. On your left, GG Negroni has been narrating everyone's hand for an hour, out loud, and he's mostly right."
+"text": "$3,000 Six-Max. On your left, GG Negroni has been narrating everyone's hand for an hour, out loud, and he's mostly right.",
+"part": "a"
 },
 {
 "who": "negrono",
 "name": "GG Negroni",
 "mode": "",
-"text": "I put you on ace-queen. Am I close? I'm close. Your shoulders went up a quarter inch when the queen came."
+"text": "I put you on ace-queen. Am I close? I'm close. Your shoulders went up a quarter inch when the queen came.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Maybe I have kings."
+"text": "Maybe I have kings.",
+"part": "a"
 },
 {
 "who": "negrono",
 "name": "GG Negroni",
 "mode": "",
-"text": "If you had kings you'd be bored, and you're not bored. You're doing math. Kings don't do math."
+"text": "If you had kings you'd be bored, and you're not bored. You're doing math. Kings don't do math.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He folds. You had ace-queen."
+"text": "He folds. You had ace-queen.",
+"part": "a"
 },
 {
 "who": "negrono",
 "name": "GG Negroni",
 "mode": "",
-"text": "See? Close. Hey, no hard feelings. Ninety percent of this game is listening. The other ten is pretending you weren't."
+"text": "See? Close. Hey, no hard feelings. Ninety percent of this game is listening. The other ten is pretending you weren't.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1889,51 +2243,60 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A steakhouse with no prices on the menu. A sponsor's table for twelve. Somebody ordered a bottle you've seen on TV."
+"text": "A steakhouse with no prices on the menu. A sponsor's table for twelve. Somebody ordered a bottle you've seen on TV.",
+"part": "a"
 },
 {
 "who": "handsome",
 "name": "Gus Handsome",
 "mode": "",
-"text": "Seven-four suited. That's how I got here. Nobody believes me. That's also how I got here."
+"text": "Seven-four suited. That's how I got here. Nobody believes me. That's also how I got here.",
+"part": "a"
 },
 {
 "who": "escandalo",
 "name": "Antonio Escandalo",
 "mode": "",
-"text": "Pick a card. Any card. No, don't show me. Show the table."
+"text": "Pick a card. Any card. No, don't show me. Show the table.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You pick the queen of hearts. He doesn't touch the deck. It's under your steak knife."
+"text": "You pick the queen of hearts. He doesn't touch the deck. It's under your steak knife.",
+"part": "a"
 },
 {
 "who": "escandalo",
 "name": "Antonio Escandalo",
 "mode": "",
-"text": "Poker is the same trick. Everyone watches the hand that moves. Nobody watches the hand that doesn't."
+"text": "Poker is the same trick. Everyone watches the hand that moves. Nobody watches the hand that doesn't.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Speaking of tricks. Event nine. First bracelet. Thought you'd want to see it up close."
+"text": "Speaking of tricks. Event nine. First bracelet. Thought you'd want to see it up close.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He's wearing it. Of course he's wearing it."
+"text": "He's wearing it. Of course he's wearing it.",
+"part": "a"
 },
 {
 "who": "handsome",
 "name": "Gus Handsome",
 "mode": "",
-"text": "Don't let him in your head. The bracelet's real, but the guy's a rental. Have the crab."
+"text": "Don't let him in your head. The bracelet's real, but the guy's a rental. Have the crab.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1948,39 +2311,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Two hundred and eleven players left. Two hundred get paid. You were two hundred and twelve."
+"text": "Two hundred and eleven players left. Two hundred get paid. You were two hundred and twelve.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The hallway outside the ballroom. Fluorescent lights. A bracelet poster with somebody else's face on it."
+"text": "The hallway outside the ballroom. Fluorescent lights. A bracelet poster with somebody else's face on it.",
+"part": "a"
 },
 {
 "who": "hungar",
 "name": "Stu Hungar",
 "mode": "",
-"text": "First bubble in the big room? Kid, I've seen this hallway from every angle. Lying down, mostly."
+"text": "First bubble in the big room? Kid, I've seen this hallway from every angle. Lying down, mostly.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "You're Stu Hungar."
+"text": "You're Stu Hungar.",
+"part": "a"
 },
 {
 "who": "hungar",
 "name": "Stu Hungar",
 "mode": "",
-"text": "Was. Then wasn't. Then was again. They call it a comeback. It's just showing up after everyone stopped expecting you."
+"text": "Was. Then wasn't. Then was again. They call it a comeback. It's just showing up after everyone stopped expecting you.",
+"part": "a"
 },
 {
 "who": "hungar",
 "name": "Stu Hungar",
 "mode": "",
-"text": "Kid, I've seen this hand before. You haven't. Go learn why it hurts, then come back tomorrow."
+"text": "Kid, I've seen this hand before. You haven't. Go learn why it hurts, then come back tomorrow.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -1995,39 +2365,46 @@
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "You called a shove with ace-ten on the bubble."
+"text": "You called a shove with ace-ten on the bubble.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "text",
-"text": "I was ahead of his range."
+"text": "I was ahead of his range.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Ahead of his range in chips. Behind in money. Near the bubble, the chips you lose are worth more than the chips you win. That's the whole of ICM."
+"text": "Ahead of his range in chips. Behind in money. Near the bubble, the chips you lose are worth more than the chips you win. That's the whole of ICM.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Think about what the money's worth, not the chips. The spot's on your Spacepad. Drill it till it stops hurting."
+"text": "Think about what the money's worth, not the chips. The spot's on your Spacepad. Drill it till it stops hurting.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "text",
-"text": "You could've just said \"fold\"."
+"text": "You could've just said \"fold\".",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Then you'd fold this one and call the next one. I'd rather you knew why."
+"text": "Then you'd fold this one and call the next one. I'd rather you knew why.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2042,33 +2419,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "$10,000 Heads-Up. Your opponent hasn't raised in forty minutes. He has a glass of water and all the time in the world."
+"text": "$10,000 Heads-Up. Your opponent hasn't raised in forty minutes. He has a glass of water and all the time in the world.",
+"part": "a"
 },
 {
 "who": "chance",
 "name": "Chance Cage",
 "mode": "",
-"text": "Take your time. I always do."
+"text": "Take your time. I always do.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You bet. He calls. You bet. He calls. You bet everything."
+"text": "You bet. He calls. You bet. He calls. You bet everything.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He shows a full house he's been holding since the flop.\nHe hasn't raised in forty minutes because he hasn't needed to."
+"text": "He shows a full house he's been holding since the flop.\nHe hasn't raised in forty minutes because he hasn't needed to.",
+"part": "a"
 },
 {
 "who": "chance",
 "name": "Chance Cage",
 "mode": "",
-"text": "The loudest thing at a poker table is a man who's waiting. You'll hear it next time."
+"text": "The loudest thing at a poker table is a man who's waiting. You'll hear it next time.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2083,25 +2466,49 @@
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "BRO. SATURDAY. YOU'RE COMING. KATIE SAID YES AND YOU ARE THE FIRST PERSON I TOLD AFTER MY MOM"
+"text": "BRO. SATURDAY. YOU'RE COMING. KATIE SAID YES AND YOU ARE THE FIRST PERSON I TOLD AFTER MY MOM",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Saturday is the $5,000 Eight-Handed. Your best event of the summer, on paper."
+"text": "Saturday is the $5,000 Eight-Handed. Your best event of the summer, on paper.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "(if you fly home) YOU CAME??? YOU ACTUALLY CAME??? KATIE HE CAME"
+"text": "(if you fly home) YOU CAME??? YOU ACTUALLY CAME??? KATIE HE CAME",
+"part": "b"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "(if you stay) its cool. go win. All lowercase. David has never typed lowercase in his life."
+"text": "(if you stay) its cool. go win. All lowercase. David has never typed lowercase in his life.",
+"part": "b"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Fly home for the party.",
+"go": "",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "You change your flight. The event will run without you. It does."
+},
+{
+"n": 2,
+"text": "\"I can't, D. It's the 5K. I'll make it up to you.\"",
+"go": "",
+"who": "david",
+"name": "David Pec",
+"mode": "",
+"say": "its cool. go win."
 }
 ],
 "film": false,
@@ -2118,27 +2525,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The mixed-game room. Eight games in rotation, and a kid in a backwards cap who has won three bracelets in five weeks."
+"text": "The mixed-game room. Eight games in rotation, and a kid in a backwards cap who has won three bracelets in five weeks.",
+"part": "a"
 },
 {
 "who": "glazer",
 "name": "Nicky Parmesan",
 "mode": "",
-"text": "Pick a game. Any game. I'll still be the favourite, but it'll be fun for you."
+"text": "Pick a game. Any game. I'll still be the favourite, but it'll be fun for you.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Hold'em."
+"text": "Hold'em.",
+"part": "a"
 },
 {
 "who": "glazer",
 "name": "Nicky Parmesan",
 "mode": "",
-"text": "Respect. Knowing your one game is a skill. Most people find out what it is the expensive way."
+"text": "Respect. Knowing your one game is a skill. Most people find out what it is the expensive way.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2153,51 +2565,60 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Heads-up for the $1,500 Opener bracelet. Across from you: Erik Seikick. Thirty years at the top of this game, and he hasn't said a word to you all night."
+"text": "Heads-up for the $1,500 Opener bracelet. Across from you: Erik Seikick. Thirty years at the top of this game, and he hasn't said a word to you all night.",
+"part": "a"
 },
 {
 "who": "sidle",
 "name": "Erik Seikick",
 "mode": "",
-"text": "..."
+"text": "...",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "win",
-"text": "The last card. They fasten the bracelet on your wrist, and the room is clapping before you realise it's for you.\nGold. Real gold. Your name in the book forever."
+"text": "The last card. They fasten the bracelet on your wrist, and the room is clapping before you realise it's for you.\nGold. Real gold. Your name in the book forever.",
+"part": "a"
 },
 {
 "who": "sidle",
 "name": "Erik Seikick",
 "mode": "",
-"text": "You played well."
+"text": "You played well.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Three words. People have waited thirty years for three words from Erik Seikick."
+"text": "Three words. People have waited thirty years for three words from Erik Seikick.",
+"part": "a"
 },
 {
 "who": "hellbent",
 "name": "Phil Hellraiser",
 "mode": "",
-"text": "Lucky. If I'd been at that final table, we'd be talking about my bracelet number eighteen."
+"text": "Lucky. If I'd been at that final table, we'd be talking about my bracelet number eighteen.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "IS THAT REAL GOLD?? THE WHOLE GROUP CHAT SAW IT. KATIE CRIED. I CRIED. I'M STILL MAD BUT I CRIED"
+"text": "IS THAT REAL GOLD?? THE WHOLE GROUP CHAT SAW IT. KATIE CRIED. I CRIED. I'M STILL MAD BUT I CRIED",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Fourteen-year-old you is screaming right now. Let him."
+"text": "Fourteen-year-old you is screaming right now. Let him.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2212,57 +2633,67 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "4 AM. The sportsbook is empty except for highlights of a game that ended hours ago."
+"text": "4 AM. The sportsbook is empty except for highlights of a game that ended hours ago.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Someone sits two stools down. The mask hangs off one ear, and the face under it is older than you expected."
+"text": "Someone sits two stools down. The mask hangs off one ear, and the face under it is older than you expected.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "Nice bracelet."
+"text": "Nice bracelet.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "You've got fourteen."
+"text": "You've got fourteen.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "I've got fourteen. You've got one that matters more. The first one is the only one you don't win for anybody else."
+"text": "I've got fourteen. You've got one that matters more. The first one is the only one you don't win for anybody else.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "You wait like somebody taught you to. I only know one man who teaches that."
+"text": "You wait like somebody taught you to. I only know one man who teaches that.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He stands. He leaves a tip on the bar for a bartender who isn't there."
+"text": "He stands. He leaves a tip on the bar for a bartender who isn't there.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "Tell Slick I said hello."
+"text": "Tell Slick I said hello.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He's gone before you can ask how he knows the name."
+"text": "He's gone before you can ask how he knows the name.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2277,69 +2708,81 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Lucky Seven Diner. 2:13 AM. You didn't text first. He was already there."
+"text": "Lucky Seven Diner. 2:13 AM. You didn't text first. He was already there.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Bio says hello."
+"text": "Bio says hello.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "For a long time, nothing. The pie case hums. A car goes by with its windows down, playing something sad in Spanish."
+"text": "For a long time, nothing. The pie case hums. A car goes by with its windows down, playing something sad in Spanish.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "World Championship of Cards. Last two players. I had seven-deuce and a river that missed everything, and I knew he had me beat. I could see it on him."
+"text": "World Championship of Cards. Last two players. I had seven-deuce and a river that missed everything, and I knew he had me beat. I could see it on him.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "So I shoved. I didn't look at the board. I looked at him. And I watched him start to doubt he was allowed to win."
+"text": "So I shoved. I didn't look at the board. I looked at him. And I watched him start to doubt he was allowed to win.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Four minutes. Then the best player I ever sat with folded the best hand he ever held, and the whole world watched it on a little camera."
+"text": "Four minutes. Then the best player I ever sat with folded the best hand he ever held, and the whole world watched it on a little camera.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "The man in the dark glasses was you. And the one who folded was Bio."
+"text": "The man in the dark glasses was you. And the one who folded was Bio.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "They asked me how. I said \"people insist on calling it luck\". Cockiest thing I ever said. Then I spent a year proving I could do it every night, above my roll, until the game took back every dollar."
+"text": "They asked me how. I said \"people insist on calling it luck\". Cockiest thing I ever said. Then I spent a year proving I could do it every night, above my roll, until the game took back every dollar.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "And Colt bought your pie."
+"text": "And Colt bought your pie.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Colt bought my pie.\nI write that line on the envelopes so somebody proves it right the long way. It wasn't luck. I read a person, and the person flinched. Everything I've taught you is so you never flinch, and so you never think one great read makes you bulletproof."
+"text": "Colt bought my pie.\nI write that line on the envelopes so somebody proves it right the long way. It wasn't luck. I read a person, and the person flinched. Everything I've taught you is so you never flinch, and so you never think one great read makes you bulletproof.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Now finish your pie. You've got cameras next week, and cameras love a flinch."
+"text": "Now finish your pie. You've got cameras next week, and cameras love a flinch.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2354,51 +2797,60 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A soundstage in Hollywood, Florida. Three cameras, a hole-card reader, and forty thousand people watching you blink."
+"text": "A soundstage in Hollywood, Florida. Three cameras, a hole-card reader, and forty thousand people watching you blink.",
+"part": "a"
 },
 {
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "Welcome back to the Let's Go! Tour feature table! Joining us tonight: the cubicle kid with a bracelet. The chat's calling it a fluke."
+"text": "Welcome back to the Let's Go! Tour feature table! Joining us tonight: the cubicle kid with a bracelet. The chat's calling it a fluke.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "People insist on calling it luck."
+"text": "People insist on calling it luck.",
+"part": "a"
 },
 {
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "OH. We have a quote. Producers, T-shirt. Now."
+"text": "OH. We have a quote. Producers, T-shirt. Now.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Under the lights everything shows. The rail can see your cards. The table can see your face."
+"text": "Under the lights everything shows. The rail can see your cards. The table can see your face.",
+"part": "a"
 },
 {
 "who": "kfoxglove",
 "name": "Kristen Foxglove",
 "mode": "",
-"text": "Cameras make people do stupid things. Don't be people."
+"text": "Cameras make people do stupid things. Don't be people.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "youre on the STREAM. my mom is watching. MY MOM. SIT UP STRAIGHT"
+"text": "youre on the STREAM. my mom is watching. MY MOM. SIT UP STRAIGHT",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Goal: win two Tour titles (Let's Go! Tour or One Time! Cup) and build a $750,000 bankroll."
+"text": "Goal: win two Tour titles (Let's Go! Tour or One Time! Cup) and build a $750,000 bankroll.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2413,33 +2865,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The river. Tom Duhhz pushes a stack worth more than your first year on Floor 34 into the middle, and smiles at the camera like it's an old friend."
+"text": "The river. Tom Duhhz pushes a stack worth more than your first year on Floor 34 into the middle, and smiles at the camera like it's an old friend.",
+"part": "a"
 },
 {
 "who": "swan",
 "name": "Tom Duhhz",
 "mode": "",
-"text": "I have air. Do you want to find out?"
+"text": "I have air. Do you want to find out?",
+"part": "a"
 },
 {
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "The hole-card cam says... folks, he is not lying. He has ABSOLUTELY nothing. The question is whether our cubicle kid believes him."
+"text": "The hole-card cam says... folks, he is not lying. He has ABSOLUTELY nothing. The question is whether our cubicle kid believes him.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Somewhere a fourteen-year-old is watching a river jam on a little camera.\nThis time you know which seat you're in."
+"text": "Somewhere a fourteen-year-old is watching a river jam on a little camera.\nThis time you know which seat you're in.",
+"part": "a"
 },
 {
 "who": "swan",
 "name": "Tom Duhhz",
 "mode": "",
-"text": "Truth is the best bluff. Nobody believes it."
+"text": "Truth is the best bluff. Nobody believes it.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2454,39 +2912,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The stream is over. The chat has moved on. The hand hasn't."
+"text": "The stream is over. The chat has moved on. The hand hasn't.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "You bluffed the one guy who never folds."
+"text": "You bluffed the one guy who never folds.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "The board was perfect for it."
+"text": "The board was perfect for it.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Perfect for a bluff against a player who folds. He doesn't. A bluff is a bet against a person, not a board. Pick the person first."
+"text": "Perfect for a bluff against a player who folds. He doesn't. A bluff is a bet against a person, not a board. Pick the person first.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Is that what you did to Bio?"
+"text": "Is that what you did to Bio?",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "I picked the person first. Then the card. Then the moment. In that order. Ranges, not hands. People, not boards. Drill the river spots."
+"text": "I picked the person first. Then the card. Then the moment. In that order. Ranges, not hands. People, not boards. Drill the river spots.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2501,25 +2966,49 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The One Time! Cup VIP lounge. Free shrimp. A banner reading \"Halvorsen & Pike: Proud Partner\".\nYou know that logo. You used to wear it on a lanyard."
+"text": "The One Time! Cup VIP lounge. Free shrimp. A banner reading \"Halvorsen & Pike: Proud Partner\".\nYou know that logo. You used to wear it on a lanyard.",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "Buddy!! There he is! I told the partners we go way back. Mentor-mentee kind of thing."
+"text": "Buddy!! There he is! I told the partners we go way back. Mentor-mentee kind of thing.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "You made me redo the Henderson deck at seven PM on a Monday, Lou."
+"text": "You made me redo the Henderson deck at seven PM on a Monday, Lou.",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "And look at you now! Character building. Quick photo for LinkedIn? \"Proud to have shaped this talent.\""
+"text": "And look at you now! Character building. Quick photo for LinkedIn? \"Proud to have shaped this talent.\"",
+"part": "a"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Take the photo.",
+"go": "",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "He posts it in four minutes. It gets eleven likes. Nine are from the partners."
+},
+{
+"n": 2,
+"text": "\"Redo it yourself, Lou.\"",
+"go": "",
+"who": "lou",
+"name": "Natso SweetLou",
+"mode": "",
+"say": "Ha! Ha. Great bit. We'll do it later."
 }
 ],
 "film": false,
@@ -2536,27 +3025,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "One Time! Cup, $25,000. Pat Finny hasn't moved in nine minutes. Not his hands. Not his eyes. Possibly not his heart."
+"text": "One Time! Cup, $25,000. Pat Finny hasn't moved in nine minutes. Not his hands. Not his eyes. Possibly not his heart.",
+"part": "a"
 },
 {
 "who": "antionius",
 "name": "Pat Finny",
 "mode": "",
-"text": "Your move."
+"text": "Your move.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You try it. Stillness. Breath through the nose. Hands flat. The camera finds nothing to love."
+"text": "You try it. Stillness. Breath through the nose. Hands flat. The camera finds nothing to love.",
+"part": "a"
 },
 {
 "who": "antionius",
 "name": "Pat Finny",
 "mode": "",
-"text": "Better. Next time, also stop blinking."
+"text": "Better. Next time, also stop blinking.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2571,33 +3065,39 @@
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "Let's look at the Player of the Year race! Up top, as always, Shane Dawb. Then the Tour Machine, Alex Foxglove. Mark Holdz in third, because he played every event on Earth."
+"text": "Let's look at the Player of the Year race! Up top, as always, Shane Dawb. Then the Tour Machine, Alex Foxglove. Mark Holdz in third, because he played every event on Earth.",
+"part": "a"
 },
 {
 "who": "martini",
 "name": "Shane Dawb",
 "mode": "",
-"text": "Another one for the cabinet. The cabinet's getting crowded. I might need a second cabinet."
+"text": "Another one for the cabinet. The cabinet's getting crowded. I might need a second cabinet.",
+"part": "a"
 },
 {
 "who": "foxglove",
 "name": "Alex Foxglove",
 "mode": "",
-"text": "Leaderboard points are points. You want in on the race, you play the schedule. All of it."
+"text": "Leaderboard points are points. You want in on the race, you play the schedule. All of it.",
+"part": "a"
 },
 {
 "who": "addemup",
 "name": "Mark Holdz",
 "mode": "",
-"text": "Shove."
+"text": "Shove.",
+"part": "a"
 },
 {
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "That was the whole interview. Mark Holdz, ladies and gentlemen. And, new on the board in fourteenth, the cubicle kid."
+"text": "That was the whole interview. Mark Holdz, ladies and gentlemen. And, new on the board in fourteenth, the cubicle kid.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2612,13 +3112,35 @@
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "Champion! Fifty thousand people on the stream. How does it feel?"
+"text": "Champion! Fifty thousand people on the stream. How does it feel?",
+"part": "a"
 },
 {
 "who": "kfoxglove",
 "name": "Kristen Foxglove",
 "mode": "",
-"text": "Nice result. Now everyone has a file on you. Welcome to the Tour."
+"text": "Nice result. Now everyone has a file on you. Welcome to the Tour.",
+"part": "b"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "\"People insist on calling it luck.\"",
+"go": "",
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"say": "THERE it is. The chat is going absolutely crazy."
+},
+{
+"n": 2,
+"text": "\"I just tried to make good decisions.\"",
+"go": "",
+"who": "nick",
+"name": "Nick \"Baby Goat\" Twogloves",
+"mode": "",
+"say": "Humble AND dangerous. Worst combination for everyone else."
 }
 ],
 "film": false,
@@ -2635,27 +3157,32 @@
 "who": "narrator",
 "name": "",
 "mode": "win",
-"text": "Two Tour titles. Three quarters of a million dollars. A trophy shaped like a crown, which is a lot even for television."
+"text": "Two Tour titles. Three quarters of a million dollars. A trophy shaped like a crown, which is a lot even for television.",
+"part": "a"
 },
 {
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "And somebody left this at the desk for you. Black envelope. Embossed. Very James Bond."
+"text": "And somebody left this at the desk for you. Black envelope. Embossed. Very James Bond.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Inside: the Titan. Invitation only. Buy-ins from one hundred thousand dollars."
+"text": "Inside: the Titan. Invitation only. Buy-ins from one hundred thousand dollars.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Those rooms don't have scared people in them. Bring the part of you that isn't scared either."
+"text": "Those rooms don't have scared people in them. Bring the part of you that isn't scared either.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2670,51 +3197,60 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A private terminal. A plane with your name on the manifest. A buy-in that used to be a house."
+"text": "A private terminal. A plane with your name on the manifest. A buy-in that used to be a house.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Nobody in this room is scared. That's the problem with it."
+"text": "Nobody in this room is scared. That's the problem with it.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Funny. Dad stopped staking me last month. Said I needed to \"find out what it costs\". So I guess we're both self-made now."
+"text": "Funny. Dad stopped staking me last month. Said I needed to \"find out what it costs\". So I guess we're both self-made now.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Welcome to the club. The dues are terrible."
+"text": "Welcome to the club. The dues are terrible.",
+"part": "a"
 },
 {
 "who": "loophole",
 "name": "Linus Loophole",
 "mode": "",
-"text": "I reviewed your last final table. Your bubble frequencies are... acceptable. Your river frequency is off by four percent."
+"text": "I reviewed your last final table. Your bubble frequencies are... acceptable. Your river frequency is off by four percent.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "In there nobody's scared. Everyone knows the maths. So the edge is in the spots they don't study. Find them."
+"text": "In there nobody's scared. Everyone knows the maths. So the edge is in the spots they don't study. Find them.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "a HOUSE. you bought in for a HOUSE. im not telling your mother"
+"text": "a HOUSE. you bought in for a HOUSE. im not telling your mother",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Goal: win two Titan titles and build a $5,000,000 bankroll."
+"text": "Goal: win two Titan titles and build a $5,000,000 bankroll.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2729,31 +3265,56 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The hotel's top-floor bar. Bryan Dartfrog drinks sparkling water and talks about seven-figure buy-ins the way other people talk about parking."
+"text": "The hotel's top-floor bar. Bryan Dartfrog drinks sparkling water and talks about seven-figure buy-ins the way other people talk about parking.",
+"part": "a"
 },
 {
 "who": "kenny",
 "name": "Bryan Dartfrog",
 "mode": "",
-"text": "The $250K is next week. You've got the skill. You don't have the roll. I'll buy half your action. Fair price."
+"text": "The $250K is next week. You've got the skill. You don't have the roll. I'll buy half your action. Fair price.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "And if I win?"
+"text": "And if I win?",
+"part": "a"
 },
 {
 "who": "kenny",
 "name": "Bryan Dartfrog",
 "mode": "",
-"text": "Then I win half. And you win the other half, plus you got to play the biggest game on the planet like it was a one-two."
+"text": "Then I win half. And you win the other half, plus you got to play the biggest game on the planet like it was a one-two.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Selling action isn't weakness. Playing above your roll is. Never confuse the two."
+"text": "Selling action isn't weakness. Playing above your roll is. Never confuse the two.",
+"part": "b"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Sell him half.",
+"go": "",
+"who": "kenny",
+"name": "Bryan Dartfrog",
+"mode": "",
+"say": "Smart. Nice stack. I'll take half."
+},
+{
+"n": 2,
+"text": "\"I'll play what I can afford.\"",
+"go": "",
+"who": "kenny",
+"name": "Bryan Dartfrog",
+"mode": "",
+"say": "Respect. Most people learn that after the house, not before."
 }
 ],
 "film": false,
@@ -2770,33 +3331,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "5:02 AM. The hotel gym. Someone has been on the treadmill since before you were awake."
+"text": "5:02 AM. The hotel gym. Someone has been on the treadmill since before you were awake.",
+"part": "a"
 },
 {
 "who": "kahoon",
 "name": "Jay Cocoon",
 "mode": "",
-"text": "Five AM gym, six AM study, Titans by dinner. You up early, or up late?"
+"text": "Five AM gym, six AM study, Titans by dinner. You up early, or up late?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Up late."
+"text": "Up late.",
+"part": "a"
 },
 {
 "who": "kahoon",
 "name": "Jay Cocoon",
 "mode": "",
-"text": "That's the difference between us. Not talent. I've got talent too. Discipline beats talent. I've got both."
+"text": "That's the difference between us. Not talent. I've got talent too. Discipline beats talent. I've got both.",
+"part": "a"
 },
 {
 "who": "kahoon",
 "name": "Jay Cocoon",
 "mode": "",
-"text": "Get on the bike. Ten minutes. Your decisions after hour eight will thank you."
+"text": "Get on the bike. Ten minutes. Your decisions after hour eight will thank you.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2811,39 +3378,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A conference room turned war room. Two laptops, a whiteboard of hand ranges, and the two most precise players alive arguing about a three percent frequency."
+"text": "A conference room turned war room. Two laptops, a whiteboard of hand ranges, and the two most precise players alive arguing about a three percent frequency.",
+"part": "a"
 },
 {
 "who": "holdz",
 "name": "Fedor Holdum",
 "mode": "",
-"text": "I studied this exact spot this morning. River, four-bet pot, ninety big blinds. You check more than you should."
+"text": "I studied this exact spot this morning. River, four-bet pot, ninety big blinds. You check more than you should.",
+"part": "a"
 },
 {
 "who": "loophole",
 "name": "Linus Loophole",
 "mode": "",
-"text": "He checks four percent more than he should. Precision, Fedor."
+"text": "He checks four percent more than he should. Precision, Fedor.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "How do you two ever lose?"
+"text": "How do you two ever lose?",
+"part": "a"
 },
 {
 "who": "holdz",
 "name": "Fedor Holdum",
 "mode": "",
-"text": "We play each other."
+"text": "We play each other.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Everyone in this building has the same tools. Some of them have the same thoughts."
+"text": "Everyone in this building has the same tools. Some of them have the same thoughts.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2858,33 +3432,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A room where everybody knows the maths. You lost anyway."
+"text": "A room where everybody knows the maths. You lost anyway.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "They all have the same solver. So where's the edge?"
+"text": "They all have the same solver. So where's the edge?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "text",
-"text": "There isn't one."
+"text": "There isn't one.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "There's one in every spot they don't study. Odd stacks. Four-bet pots. Limped pots with antes. The book is thin there. Be the one who read it."
+"text": "There's one in every spot they don't study. Odd stacks. Four-bet pots. Limped pots with antes. The book is thin there. Be the one who read it.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "And one more spot nobody studies: the person across from you at hour eleven. The book is thinnest there."
+"text": "And one more spot nobody studies: the person across from you at hour eleven. The book is thinnest there.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2899,27 +3479,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The $50,000 Omaha. Four cards each, and every hand a tangle of possibilities. Isaac Maskedman is untangling them faster than you can see them."
+"text": "The $50,000 Omaha. Four cards each, and every hand a tangle of possibilities. Isaac Maskedman is untangling them faster than you can see them.",
+"part": "a"
 },
 {
 "who": "hackston",
 "name": "Isaac Maskedman",
 "mode": "",
-"text": "Interesting sizing. Incorrect, but interesting."
+"text": "Interesting sizing. Incorrect, but interesting.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "What would you have bet?"
+"text": "What would you have bet?",
+"part": "a"
 },
 {
 "who": "hackston",
 "name": "Isaac Maskedman",
 "mode": "",
-"text": "Two-thirds pot. But I'd have known why. You bet two-thirds of something you felt. Feel less. Count more."
+"text": "Two-thirds pot. But I'd have known why. You bet two-thirds of something you felt. Feel less. Count more.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2934,27 +3519,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The $250,000. You lose the biggest pot of your life to a two-outer on the river. The room goes quiet in the polite way rich rooms go quiet."
+"text": "The $250,000. You lose the biggest pot of your life to a two-outer on the river. The room goes quiet in the polite way rich rooms go quiet.",
+"part": "a"
 },
 {
 "who": "chillwick",
 "name": "Stephen Chives",
 "mode": "",
-"text": "That's brutal. I'm sorry. Genuinely."
+"text": "That's brutal. I'm sorry. Genuinely.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He means it. In a room full of people trying to take everything you have, someone means it."
+"text": "He means it. In a room full of people trying to take everything you have, someone means it.",
+"part": "a"
 },
 {
 "who": "chillwick",
 "name": "Stephen Chives",
 "mode": "",
-"text": "Final table every week, they say about me. They don't mention the weeks I didn't. Good luck tomorrow. Genuinely."
+"text": "Final table every week, they say about me. They don't mention the weeks I didn't. Good luck tomorrow. Genuinely.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -2969,27 +3559,32 @@
 "who": "narrator",
 "name": "",
 "mode": "win",
-"text": "A trident-shaped trophy, a wire transfer with too many zeros, and a room full of the best players alive nodding at you."
+"text": "A trident-shaped trophy, a wire transfer with too many zeros, and a room full of the best players alive nodding at you.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Congrats. Honestly. Turns out you can't buy what you've got. Believe me, I asked."
+"text": "Congrats. Honestly. Turns out you can't buy what you've got. Believe me, I asked.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Took you long enough to figure that out."
+"text": "Took you long enough to figure that out.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Ha. Rematch at the Main?"
+"text": "Ha. Rematch at the Main?",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3004,27 +3599,32 @@
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "Big question from the chat: where's Bio \"The Ghost\"? Biggest buy-ins in the world, and the GOAT is missing."
+"text": "Big question from the chat: where's Bio \"The Ghost\"? Biggest buy-ins in the world, and the GOAT is missing.",
+"part": "a"
 },
 {
 "who": "kfoxglove",
 "name": "Kristen Foxglove",
 "mode": "",
-"text": "Bio doesn't play the Titan. Never has."
+"text": "Bio doesn't play the Titan. Never has.",
+"part": "a"
 },
 {
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "Why not?"
+"text": "Why not?",
+"part": "a"
 },
 {
 "who": "kfoxglove",
 "name": "Kristen Foxglove",
 "mode": "",
-"text": "He says money isn't the score. Bracelets are. And there's only one he still cares about every year."
+"text": "He says money isn't the score. Bracelets are. And there's only one he still cares about every year.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3039,39 +3639,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Five million dollars. Two tridents. And you're back on a stool at the Lucky Seven, because some things don't change when your bank balance does."
+"text": "Five million dollars. Two tridents. And you're back on a stool at the Lucky Seven, because some things don't change when your bank balance does.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "The Main Event. July. Eight thousand players."
+"text": "The Main Event. July. Eight thousand players.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "He'll be there."
+"text": "He'll be there.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "He's always there.\nSo am I, this year. I bought a ticket. First time in ten years."
+"text": "He's always there.\nSo am I, this year. I bought a ticket. First time in ten years.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "You're coming to Vegas?"
+"text": "You're coming to Vegas?",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Somebody has to buy your pie."
+"text": "Somebody has to buy your pie.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3086,39 +3693,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Every July: eight thousand players, ten thousand dollars each.\nOne of them ends up on the cover of every poker magazine in the world."
+"text": "Every July: eight thousand players, ten thousand dollars each.\nOne of them ends up on the cover of every poker magazine in the world.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Day 1. A ballroom the size of an airport. Two hundred tables, and somewhere in the noise, a seat with your name on it."
+"text": "Day 1. A ballroom the size of an airport. Two hundred tables, and somewhere in the noise, a seat with your name on it.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Main Event floor! They gave me the Main! Table one-eighty-eight, seat two. Seat open!"
+"text": "Main Event floor! They gave me the Main! Table one-eighty-eight, seat two. Seat open!",
+"part": "a"
 },
 {
 "who": "mizrockie",
 "name": "Michael Mightyrocky",
 "mode": "",
-"text": "Defending champ. If you want it, you'll have to take it from me."
+"text": "Defending champ. If you want it, you'll have to take it from me.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "Still here, kid. So am I."
+"text": "Still here, kid. So am I.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Goal: win the Main Event."
+"text": "Goal: win the Main Event.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3133,27 +3747,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Day 1, level four. The player in seat nine has won nine titles this year, and he has decided the entire table is his personal property."
+"text": "Day 1, level four. The player in seat nine has won nine titles this year, and he has decided the entire table is his personal property.",
+"part": "a"
 },
 {
 "who": "lonestar",
 "name": "Jesse Lonestar",
 "mode": "",
-"text": "GORILLA. MODE."
+"text": "GORILLA. MODE.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He raises eleven hands in a row. On the twelfth you re-raise. He thinks. He folds. He grins."
+"text": "He raises eleven hands in a row. On the twelfth you re-raise. He thinks. He folds. He grins.",
+"part": "a"
 },
 {
 "who": "lonestar",
 "name": "Jesse Lonestar",
 "mode": "",
-"text": "There it is! Somebody at this table has a pulse! Nine wins this year, and the ones I remember are the ones somebody fought me for."
+"text": "There it is! Somebody at this table has a pulse! Nine wins this year, and the ones I remember are the ones somebody fought me for.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3168,39 +3787,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Day 5. The service hallway behind the ballroom. Linen carts, a vending machine, and Mustich, sitting on the floor in a five-thousand-dollar jacket."
+"text": "Day 5. The service hallway behind the ballroom. Linen carts, a vending machine, and Mustich, sitting on the floor in a five-thousand-dollar jacket.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Bio. Of course it was Bio. He didn't even look at my cards. He looked at me like I was... furniture."
+"text": "Bio. Of course it was Bio. He didn't even look at my cards. He looked at me like I was... furniture.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "He does that."
+"text": "He does that.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Dad's watching on the stream. Probably already writing the email. \"Find out what it costs.\""
+"text": "Dad's watching on the stream. Probably already writing the email. \"Find out what it costs.\"",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You sit down on the floor next to him. You're not friends. You're not anything. You sit anyway."
+"text": "You sit down on the floor next to him. You're not friends. You're not anything. You sit anyway.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Go win it. If anyone's taking him down, I want it to be someone who knows what this hallway feels like."
+"text": "Go win it. If anyone's taking him down, I want it to be someone who knows what this hallway feels like.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3215,27 +3841,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Two tables left. The defending champion, three seats to your right, has been grinding since Day 1 without a single bad day."
+"text": "Two tables left. The defending champion, three seats to your right, has been grinding since Day 1 without a single bad day.",
+"part": "a"
 },
 {
 "who": "mizrockie",
 "name": "Michael Mightyrocky",
 "mode": "",
-"text": "You know they call me The Grinder? It's not because I'm fancy. It's because I'm still here when the fancy people go home."
+"text": "You know they call me The Grinder? It's not because I'm fancy. It's because I'm still here when the fancy people go home.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The biggest pot of the tournament so far. His crown against your stack."
+"text": "The biggest pot of the tournament so far. His crown against your stack.",
+"part": "a"
 },
 {
 "who": "mizrockie",
 "name": "Michael Mightyrocky",
 "mode": "bust",
-"text": "Good. Good hand. I mean it. Take it the whole way, or I'll be mad I didn't."
+"text": "Good. Good hand. I mean it. Take it the whole way, or I'll be mad I didn't.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3250,51 +3881,60 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The night before the final table. A 24-hour diner off Flamingo Road. Different city. Same hour."
+"text": "The night before the final table. A 24-hour diner off Flamingo Road. Different city. Same hour.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He's already on a stool. Dark glasses. Two slices of pie."
+"text": "He's already on a stool. Dark glasses. Two slices of pie.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Ten years since I set foot in this city. The pie's worse."
+"text": "Ten years since I set foot in this city. The pie's worse.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "If it comes down to him and me. If he shoves the river."
+"text": "If it comes down to him and me. If he shoves the river.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Then it won't be about the cards. He'll look at you the way I looked at him. He's waited ten years to put somebody in the seat he was in."
+"text": "Then it won't be about the cards. He'll look at you the way I looked at him. He's waited ten years to put somebody in the seat he was in.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "What did you see in him that night?"
+"text": "What did you see in him that night?",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Doubt. He didn't doubt his hand. He doubted he was allowed to win.\nDon't give him that. Whatever you decide, decide it like you're allowed."
+"text": "Doubt. He didn't doubt his hand. He doubted he was allowed to win.\nDon't give him that. Whatever you decide, decide it like you're allowed.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He pays for both slices. He doesn't leave. For the first time, he stays until you do."
+"text": "He pays for both slices. He doesn't leave. For the first time, he stays until you do.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3309,39 +3949,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The final table. A stage, a wall of lights, and a rail packed three deep."
+"text": "The final table. A stage, a wall of lights, and a rail packed three deep.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "",
-"text": "SIT UP STRAIGHT!"
+"text": "SIT UP STRAIGHT!",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Not a text. David, in person, with a sign that says \"PEOPLE INSIST ON CALLING IT LUCK\" in a handwriting you'd know anywhere."
+"text": "Not a text. David, in person, with a sign that says \"PEOPLE INSIST ON CALLING IT LUCK\" in a handwriting you'd know anywhere.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "",
-"text": "Thirty-one years. Second time I ever left Biscayne for a game. Somebody had to come make sure you don't get cocky."
+"text": "Thirty-one years. Second time I ever left Biscayne for a game. Somebody had to come make sure you don't get cocky.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Meanwhile, at a sports bar in Brickell, a man in a Halvorsen & Pike quarter-zip tells the bartender he used to manage you."
+"text": "Meanwhile, at a sports bar in Brickell, a man in a Halvorsen & Pike quarter-zip tells the bartender he used to manage you.",
+"part": "a"
 },
 {
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "From the booth, live, worldwide: welcome to the final table of the WCoC Main Event."
+"text": "From the booth, live, worldwide: welcome to the final table of the WCoC Main Event.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3356,31 +4003,56 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Heads-up. Bio \"The Ghost\" and you. Every chip in the building is on one table."
+"text": "Heads-up. Bio \"The Ghost\" and you. Every chip in the building is on one table.",
+"part": "a"
 },
 {
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "Folks, this is the spot. River. The Ghost moves all in. And if you're old enough... you've seen this movie before."
+"text": "Folks, this is the spot. River. The Ghost moves all in. And if you're old enough... you've seen this movie before.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He's not looking at the board. He's looking at you, the way a man in dark glasses once looked at him."
+"text": "He's not looking at the board. He's looking at you, the way a man in dark glasses once looked at him.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "On the rail, a man in dark glasses takes them off."
+"text": "On the rail, a man in dark glasses takes them off.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You don't flinch. Whatever you do next, you decide it like you're allowed."
+"text": "You don't flinch. Whatever you do next, you decide it like you're allowed.",
+"part": "a"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Call. → champ / c6_lost",
+"go": "",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "You call. Both hands go face up. The cards decide."
+},
+{
+"n": 2,
+"text": "Fold.",
+"go": "c6_fold",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "You fold. Not fast. Not slow. Like someone who decided."
 }
 ],
 "film": false,
@@ -3397,57 +4069,67 @@
 "who": "narrator",
 "name": "",
 "mode": "win",
-"text": "Confetti. Cameras. A bracelet the size of a doorknob.\nSomewhere, a fourteen-year-old with a fuzzy TV is losing his mind."
+"text": "Confetti. Cameras. A bracelet the size of a doorknob.\nSomewhere, a fourteen-year-old with a fuzzy TV is losing his mind.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "Good game, kid."
+"text": "Good game, kid.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He takes off the mask. For the first time anyone can remember, Bio \"The Ghost\" smiles."
+"text": "He takes off the mask. For the first time anyone can remember, Bio \"The Ghost\" smiles.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Then he looks past you, to the rail, and nods at a man he hasn't spoken to in ten years.\nSlick nods back."
+"text": "Then he looks past you, to the rail, and nods at a man he hasn't spoken to in ten years.\nSlick nods back.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "Now you'll find out the hard part. Everyone will be hunting you."
+"text": "Now you'll find out the hard part. Everyone will be hunting you.",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "text",
-"text": "Hey buddy! Long time! Saw you on TV. Listen, about that promotion..."
+"text": "Hey buddy! Long time! Saw you on TV. Listen, about that promotion...",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You leave him on read."
+"text": "You leave him on read.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "People insist on calling it luck."
+"text": "People insist on calling it luck.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Let them."
+"text": "Let them.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3462,21 +4144,25 @@
 "who": "narrator",
 "name": "",
 "mode": "bust",
-"text": "Second in the world. Somebody else's confetti."
+"text": "Second in the world. Somebody else's confetti.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "You didn't flinch. That's rarer than winning. Come back next July."
+"text": "You didn't flinch. That's rarer than winning. Come back next July.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "One hand, kid. Over ten thousand, they pay whoever studied. You studied."
+"text": "One hand, kid. Over ten thousand, they pay whoever studied. You studied.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3491,21 +4177,25 @@
 "who": "nick",
 "name": "Nick \"Baby Goat\" Twogloves",
 "mode": "",
-"text": "The kid lets it go! And the Ghost... doesn't show. Of course he doesn't show."
+"text": "The kid lets it go! And the Ghost... doesn't show. Of course he doesn't show.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "You thought about it. Good. Most people only think about it afterwards."
+"text": "You thought about it. Good. Most people only think about it afterwards.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "On the rail, Slick puts his glasses back on. The match isn't over. Neither are you."
+"text": "On the rail, Slick puts his glasses back on. The match isn't over. Neither are you.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3520,39 +4210,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Your picture hangs in the Hall of Legends now, next to people you used to watch on a fuzzy TV."
+"text": "Your picture hangs in the Hall of Legends now, next to people you used to watch on a fuzzy TV.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Stu. Colt. Chance. The Ghost. Twenty-seven legends on these walls, and a kid from Floor 34 who got told to redo the Henderson deck."
+"text": "Stu. Colt. Chance. The Ghost. Twenty-seven legends on these walls, and a kid from Floor 34 who got told to redo the Henderson deck.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "Fourteen bracelets. That's the number. Come take it."
+"text": "Fourteen bracelets. That's the number. Come take it.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "There's nobody left to teach you. So teach somebody. I sat on that stool once too, remember."
+"text": "There's nobody left to teach you. So teach somebody. I sat on that stool once too, remember.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "I remember."
+"text": "I remember.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Goal: beat every legend and pass Bio \"The Ghost\"'s fourteen bracelets."
+"text": "Goal: beat every legend and pass Bio \"The Ghost\"'s fourteen bracelets.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3567,63 +4264,74 @@
 "who": "hungar",
 "name": "Stu Hungar",
 "mode": "text",
-"text": "Kid, I've seen this hand before. Let's see if you have."
+"text": "Kid, I've seen this hand before. Let's see if you have.",
+"part": "a"
 },
 {
 "who": "brunswick",
 "name": "Colt the Cowboy",
 "mode": "text",
-"text": "Bring your ten-deuce, son. I'll bring mine."
+"text": "Bring your ten-deuce, son. I'll bring mine.",
+"part": "a"
 },
 {
 "who": "chance",
 "name": "Chance Cage",
 "mode": "text",
-"text": "Take your time. I'll be waiting."
+"text": "Take your time. I'll be waiting.",
+"part": "a"
 },
 {
 "who": "armadillo",
 "name": "Armadillo Fatts",
 "mode": "text",
-"text": "I've got a new story. It's about you. Come hear the ending."
+"text": "I've got a new story. It's about you. Come hear the ending.",
+"part": "a"
 },
 {
 "who": "hellbent",
 "name": "Phil Hellraiser",
 "mode": "text",
-"text": "Bracelet eighteen is coming. You'll be a nice footnote."
+"text": "Bracelet eighteen is coming. You'll be a nice footnote.",
+"part": "a"
 },
 {
 "who": "negrono",
 "name": "GG Negroni",
 "mode": "text",
-"text": "I already know your cards. Want to make it official?"
+"text": "I already know your cards. Want to make it official?",
+"part": "a"
 },
 {
 "who": "sidle",
 "name": "Erik Seikick",
 "mode": "text",
-"text": "..."
+"text": "...",
+"part": "a"
 },
 {
 "who": "swan",
 "name": "Tom Duhhz",
 "mode": "text",
-"text": "I have air. Want to find out?"
+"text": "I have air. Want to find out?",
+"part": "a"
 },
 {
 "who": "antionius",
 "name": "Pat Finny",
 "mode": "text",
-"text": "Your move."
+"text": "Your move.",
+"part": "a"
 },
 {
 "who": "mizrockie",
 "name": "Michael Mightyrocky",
 "mode": "text",
-"text": "Rematch. I'm still here."
+"text": "Rematch. I'm still here.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3638,39 +4346,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The Hall of Legends Invitational, final table. Seat five, in a jacket he paid for himself this time: Mustich."
+"text": "The Hall of Legends Invitational, final table. Seat five, in a jacket he paid for himself this time: Mustich.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Saw your portrait in the lobby. Very moving. They got your bad side."
+"text": "Saw your portrait in the lobby. Very moving. They got your bad side.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Dad sold the company. No more stake, no more rail. Turns out I still want to beat you. Annoying, isn't it?"
+"text": "Dad sold the company. No more stake, no more rail. Turns out I still want to beat you. Annoying, isn't it?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "For you? Very."
+"text": "For you? Very.",
+"part": "a"
 },
 {
 "who": "mustich",
 "name": "Mustich",
 "mode": "",
-"text": "Fifteen is just a number, Florida. Somebody's going to take it off you. I'd like it to be someone you can't stand."
+"text": "Fifteen is just a number, Florida. Somebody's going to take it off you. I'd like it to be someone you can't stand.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "He grins. The same grin from the Biscayne card room, the first night. You'd miss it if it ever went away. You'll never tell him that."
+"text": "He grins. The same grin from the Biscayne card room, the first night. You'd miss it if it ever went away. You'll never tell him that.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3685,39 +4400,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "A reception hall in Hialeah. Fairy lights, a DJ who plays one song too many, and David Pec in a tuxedo he's been talking about since March."
+"text": "A reception hall in Hialeah. Fairy lights, a DJ who plays one song too many, and David Pec in a tuxedo he's been talking about since March.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "",
-"text": "My best man is a world champion. I told everyone. Everyone. The caterers know."
+"text": "My best man is a world champion. I told everyone. Everyone. The caterers know.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "I missed your engagement party for a five-thousand-dollar event."
+"text": "I missed your engagement party for a five-thousand-dollar event.",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "",
-"text": "And you cashed for eleven grand and sent us to Cancún. Bro. I forgave you in the airport."
+"text": "And you cashed for eleven grand and sent us to Cancún. Bro. I forgave you in the airport.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You stand up to give the speech. You had cards. You put them away."
+"text": "You stand up to give the speech. You had cards. You put them away.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "The first person who ever believed I could do this wasn't a pro. He texted in all caps, and he was right."
+"text": "The first person who ever believed I could do this wasn't a pro. He texted in all caps, and he was right.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3732,39 +4454,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The Hall's annual dedication. Twenty-seven frames, and one blank space on the wall that's been there for ten years. Nobody remembers why."
+"text": "The Hall's annual dedication. Twenty-seven frames, and one blank space on the wall that's been there for ten years. Nobody remembers why.",
+"part": "a"
 },
 {
 "who": "gnomey",
 "name": "Miles \"The Snowplow\" Gnomey",
 "mode": "",
-"text": "Tournament director, Hall of Legends Invitational. Me! From the cage at Biscayne! Ladies and gentlemen, take your seats. Seats open!"
+"text": "Tournament director, Hall of Legends Invitational. Me! From the cage at Biscayne! Ladies and gentlemen, take your seats. Seats open!",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "The curator lifts a cloth from the blank space. A young man in dark glasses, ten years ago, holding the world championship trophy."
+"text": "The curator lifts a cloth from the blank space. A young man in dark glasses, ten years ago, holding the world championship trophy.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "I asked them to leave it out. I didn't want to be the champion who went broke a year later."
+"text": "I asked them to leave it out. I didn't want to be the champion who went broke a year later.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "You were the only one who ever made me think for four minutes. Ten years I've worn this thing because of you."
+"text": "You were the only one who ever made me think for four minutes. Ten years I've worn this thing because of you.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Two men shake hands under a portrait neither of them wanted to see.\nThe room doesn't know why it's clapping. It claps anyway."
+"text": "Two men shake hands under a portrait neither of them wanted to see.\nThe room doesn't know why it's clapping. It claps anyway.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3779,33 +4508,39 @@
 "who": "narrator",
 "name": "",
 "mode": "win",
-"text": "Fifteen bracelets. One more than the Ghost."
+"text": "Fifteen bracelets. One more than the Ghost.",
+"part": "a"
 },
 {
 "who": "bio",
 "name": "Bio \"The Ghost\"",
 "mode": "",
-"text": "Fifteen. I knew it'd be you the night you stopped looking at me in Vegas and looked at your cards."
+"text": "Fifteen. I knew it'd be you the night you stopped looking at me in Vegas and looked at your cards.",
+"part": "a"
 },
 {
 "who": "tommy",
 "name": "Tommy \"The Shark\" Maio",
 "mode": "text",
-"text": "Kid! They put MY name on the board at Biscayne! Classic champion! Thirty-two years! Tell Slick he owes me a coffee."
+"text": "Kid! They put MY name on the board at Biscayne! Classic champion! Thirty-two years! Tell Slick he owes me a coffee.",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "text",
-"text": "The partners want to name the new conference room after you!! Swing by for the ribbon cutting? Also do you have the Henderson login"
+"text": "The partners want to name the new conference room after you!! Swing by for the ribbon cutting? Also do you have the Henderson login",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You don't answer either text yet. There's somewhere you have to be."
+"text": "You don't answer either text yet. There's somewhere you have to be.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3820,39 +4555,46 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Lucky Seven Diner. 2:13 AM. A kid at the counter is staring at the pie like it owes them money."
+"text": "Lucky Seven Diner. 2:13 AM. A kid at the counter is staring at the pie like it owes them money.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "You're doing the thing where you stare at the pie like it owes you money."
+"text": "You're doing the thing where you stare at the pie like it owes you money.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "You slide a red envelope across the counter. Inside: a seat card, and one line in pen."
+"text": "You slide a red envelope across the counter. Inside: a seat card, and one line in pen.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "\"People insist on calling it luck.\""
+"text": "\"People insist on calling it luck.\"",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Let them."
+"text": "Let them.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "THE DREAM."
+"text": "THE DREAM.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3867,31 +4609,65 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."
+"text": "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Busted?"
+"text": "Busted?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Every last dollar."
+"text": "Every last dollar.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why."
+"text": "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Here's how you climb out. Freerolls on CF Tilt every day. A real job while you rebuild. Or my money, and half your profits until it's back."
+"text": "Here's how you climb out. Freerolls on CF Tilt every day. A real job while you rebuild. Or my money, and half your profits until it's back.",
+"part": "a"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Take Slick's stake",
+"go": "",
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"say": "Half your profits come back to me until it's paid. Respect the roll this time."
+},
+{
+"n": 2,
+"text": "Grind the freerolls",
+"go": "",
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"say": "Free money is the best money. Show me you can build it back from zero."
+},
+{
+"n": 3,
+"text": "Ask Lou for the job back",
+"go": "",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "Lou laughs for a full ten seconds. \"Your job? We gave it to the intern.\"\nThat night Slick sends $500: \"Make it last.\""
 }
 ],
 "film": true,
@@ -3908,21 +4684,25 @@
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "Your job? We gave it to the intern. He's better at spreadsheets than you ever were."
+"text": "Your job? We gave it to the intern. He's better at spreadsheets than you ever were.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Thirty-four floors down. The elevator has never felt slower."
+"text": "Thirty-four floors down. The elevator has never felt slower.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Heard Lou laughed you out. Here's $500. Make it last."
+"text": "Heard Lou laughed you out. Here's $500. Make it last.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -3937,31 +4717,56 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."
+"text": "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Busted?"
+"text": "Busted?",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Every last dollar."
+"text": "Every last dollar.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why."
+"text": "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "You've still got Lou's paycheck. Freerolls on CF Tilt while it builds back. Or my money, and half your profits until it's back."
+"text": "You've still got Lou's paycheck. Freerolls on CF Tilt while it builds back. Or my money, and half your profits until it's back.",
+"part": "a"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Take Slick's stake",
+"go": "",
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"say": "Half your profits come back to me until it's paid. Respect the roll this time."
+},
+{
+"n": 2,
+"text": "Grind the freerolls",
+"go": "",
+"who": "slick",
+"name": "Slick",
+"mode": "",
+"say": "Free money is the best money. Show me you can build it back from zero."
 }
 ],
 "film": true,
@@ -3978,33 +4783,39 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Lucky Seven Diner. 2:13 AM. Same stool. Same pie. Empty wallet. Again."
+"text": "Lucky Seven Diner. 2:13 AM. Same stool. Same pie. Empty wallet. Again.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "I told you. Three times I told you."
+"text": "I told you. Three times I told you.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "I know."
+"text": "I know.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "You want to play above your roll, you do it without me. No stake. No seats. Nothing."
+"text": "You want to play above your roll, you do it without me. No stake. No seats. Nothing.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "",
-"text": "Freerolls on CF Tilt. Grind it back to ten grand. Then come find me."
+"text": "Freerolls on CF Tilt. Grind it back to ten grand. Then come find me.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -4019,27 +4830,32 @@
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Ten thousand dollars. Built back from the freerolls, one min-cash at a time."
+"text": "Ten thousand dollars. Built back from the freerolls, one min-cash at a time.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "text",
-"text": "You were right. I didn't listen. I'm sorry."
+"text": "You were right. I didn't listen. I'm sorry.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Took you long enough. Welcome back, kid."
+"text": "Took you long enough. Welcome back, kid.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "Now respect the roll."
+"text": "Now respect the roll.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -4054,7 +4870,28 @@
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "text",
-"text": "Saw your name on a poker site. Is THAT why the Henderson numbers were late?"
+"text": "Saw your name on a poker site. Is THAT why the Henderson numbers were late?",
+"part": "a"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Quit. Go full-time.",
+"go": "quit2",
+"who": "",
+"name": "",
+"mode": "",
+"say": ""
+},
+{
+"n": 2,
+"text": "\"They'll be on your desk Monday.\"",
+"go": "",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "You put the phone face down. The bankroll spreadsheet is still open in the other tab."
 }
 ],
 "film": false,
@@ -4071,21 +4908,25 @@
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Lou? I'm done. Full-time."
+"text": "Lou? I'm done. Full-time.",
+"part": "a"
 },
 {
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "You'll be back."
+"text": "You'll be back.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "No paycheck now. Three games a day, and rent is still due on the first."
+"text": "No paycheck now. Three games a day, and rent is still due on the first.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -4100,15 +4941,18 @@
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "25K. bro. thats a YEAR of lou's bonuses in like two months"
+"text": "25K. bro. thats a YEAR of lou's bonuses in like two months",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "when do we call it. seriously. when"
+"text": "when do we call it. seriously. when",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -4123,15 +4967,18 @@
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "50 THOUSAND. I TOLD EVERYONE AT THE BAR. EVERYONE"
+"text": "50 THOUSAND. I TOLD EVERYONE AT THE BAR. EVERYONE",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "you know what slick would say. you know what I say. the dream doesnt wait"
+"text": "you know what slick would say. you know what I say. the dream doesnt wait",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -4146,15 +4993,18 @@
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "100K and youre still doing the henderson deck???? I cant"
+"text": "100K and youre still doing the henderson deck???? I cant",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "quit. move. go full time. ill drive you to the cardroom myself"
+"text": "quit. move. go full time. ill drive you to the cardroom myself",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -4169,33 +5019,39 @@
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "250K. a QUARTER MILLION. if you walk into that office tomorrow I will personally come get you"
+"text": "250K. a QUARTER MILLION. if you walk into that office tomorrow I will personally come get you",
+"part": "a"
 },
 {
 "who": "david",
 "name": "David Pec",
 "mode": "text",
-"text": "im not joking. this is the sign. quit."
+"text": "im not joking. this is the sign. quit.",
+"part": "a"
 },
 {
 "who": "you",
 "name": "You",
 "mode": "",
-"text": "Yeah. You're right. I'm done."
+"text": "Yeah. You're right. I'm done.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "Monday morning you leave the badge on Lou's desk with a sticky note: Redo it yourself.\nNo paycheck. Every day is yours now."
+"text": "Monday morning you leave the badge on Lou's desk with a sticky note: Redo it yourself.\nNo paycheck. Every day is yours now.",
+"part": "a"
 },
 {
 "who": "slick",
 "name": "Slick",
 "mode": "text",
-"text": "About time. Rent is still due on the first. Never play above your roll."
+"text": "About time. Rent is still due on the first. Never play above your roll.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -4210,15 +5066,18 @@
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "",
-"text": "Look who came crawling back. Same desk. Same Henderson deck. Smaller title."
+"text": "Look who came crawling back. Same desk. Same Henderson deck. Smaller title.",
+"part": "a"
 },
 {
 "who": "narrator",
 "name": "",
 "mode": "",
-"text": "$1,250 every Friday again. Three sessions a week for the dream."
+"text": "$1,250 every Friday again. Three sessions a week for the dream.",
+"part": "a"
 }
 ],
+"options": [],
 "film": false,
 "storyboard": true
 },
@@ -4233,7 +5092,28 @@
 "who": "lou",
 "name": "Natso SweetLou",
 "mode": "text",
-"text": "Hey buddy!! Long time. Saw your name on a poker site. Crazy! We're hiring a Senior Associate. Coffee?"
+"text": "Hey buddy!! Long time. Saw your name on a poker site. Crazy! We're hiring a Senior Associate. Coffee?",
+"part": "a"
+}
+],
+"options": [
+{
+"n": 1,
+"text": "Leave him on read.",
+"go": "",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "You put the phone face down and go back to studying bubble spots."
+},
+{
+"n": 2,
+"text": "\"Redo it yourself, Lou.\"",
+"go": "",
+"who": "narrator",
+"name": "",
+"mode": "",
+"say": "Three dots appear. Then disappear. Then nothing, forever."
 }
 ],
 "film": false,

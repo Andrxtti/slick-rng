@@ -27,6 +27,12 @@ CAST = {
     # the narrator: Kokoro, not Piper (tools/narrator.py, N2b: Steven 19:01, the pitch-shifted LibriTTS voice sounded
     # disguised); the Piper settings here are unused for him. No cast voice shifts more than 1 semitone (that's the effect).
     "narrator": (498, 1.0, 0.0, 0.0, 0.0),
+    # Chapter 2's legends (Milestone B): LibriTTS speakers no one else uses, picked by ear-less guess; a listen is owed
+    "armadillo": (112, 1.1, -1.0, 0.3, 0.5),   # Armadillo Fatts: big, slow, a storyteller
+    "mouth": (75, 0.85, 0.5, 0.0, 0.0),        # Mouthy Michael: fast, never stops
+    "fargo": (90, 1.05, 0.0, 0.1, 0.3),        # Sammy Smokes: unhurried, owns the building
+    "moneybaker": (100, 1.0, 0.0, 0.0, 0.1),   # Chris Schillings: the friendly accountant
+    "brunswick": (130, 1.12, -1.0, 0.4, 0.4),  # Colt the Cowboy: old, gravel, fifty years in the same hat
 }
 CAST["card"] = CAST["n"] = CAST["narrator"]   # narrator cards and Narrator [n] lines
 TRAILER = {"narrator", "card", "n"}
@@ -100,7 +106,7 @@ def reel_cards():
 
 
 # storyboards that ship voiced (their clips are in the first download, so only the ones this build reaches)
-STORYBOARDS = {"c2_drive", "c2"}
+STORYBOARDS = {"c2_drive", "c2", "c2_fatts", "c2_mouth", "lesson2", "ring1", "c2_smokes", "c2_smokes_sit", "c2_cowboy", "ring2", "c3"}
 
 
 def storyboard_lines():
@@ -109,7 +115,7 @@ def storyboard_lines():
     out = []
     for sc in json.load(open(path, encoding="utf-8"))["scenes"]:
         if sc["id"] not in STORYBOARDS or not sc["storyboard"]: continue
-        for L in sc["lines"]:
+        for L in sc["lines"] + [{"who": o["who"], "text": o["say"]} for o in sc.get("options", []) if o.get("say")]:
             if L["who"] in CAST: out.append({"who": L["who"], "text": L["text"], "voice": key(L["who"], L["text"]), "_out": LINES})
     return out
 

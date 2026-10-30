@@ -71,6 +71,9 @@ title: AfterEvent
         <<film c1_w3_diner_quit>>
     <<endif>>
 <<endif>>
+<<if $chapter == 2>>
+    <<detour C2AfterEvent>>
+<<endif>>
 <<detour CheckGoal>>
 ===
 
@@ -116,11 +119,17 @@ title: AfterSleep
     <<film c1_w4_eve2>>
 <<endif>>
 // the night can end the chapter (the Classic's day gone by) or cross the milestone (a paycheck)
+<<if $chapter == 2>>
+    <<detour C2AfterSleep>>
+<<endif>>
 <<detour CheckGoal>>
 ===
 
 title: CheckGoal
 ---
+<<if $chapter == 2>>
+    <<detour C2CheckGoal>>
+<<endif>>
 // Test Beta 1.1: Chapter 1 ends when the Biscayne Classic is over for you (out on Day 1, Day 2 played, or the day gone).
 // $5,000 before it is a milestone, with one text from Slick.
 <<if $chapter == 1 and $peak >= 5000 and not $stake_seen>>
@@ -166,4 +175,7 @@ title: ChapterEnd
 <<set $chapter to 2>>
 <<clock "1:13 AM">>
 Slick: You've outgrown Biscayne. The Circuit stops at Silver Strike every couple of months. Every event gives a ring. Check the calendar. #text
+// Chapter 2 (Milestone B): Tommy drives you north to the first stop (storyboards until they're filmed)
+<<film c2_drive>>
+<<film c2>>
 ===

@@ -39,16 +39,25 @@ def main():
         if m:
             place = m.group(3) or ""
             cur = {"id": m.group(1), "title": m.group(2), "place": place, "edited": bool(m.group(4)),
-                   "set": next((s for k, s in SETS if k in place.lower()), ""), "lines": []}
+                   "set": next((s for k, s in SETS if k in place.lower()), ""), "lines": [], "options": []}
             scenes.append(cur); continue
         if cur is None: continue
         if "EDITED" in line and line.strip().startswith("<!--"): cur["edited"] = True; continue
+        # a choice: "- Choice: option [→ scene] [| Speaker [key] (mode): response]"; lines after a choice are part "b"
+        m = re.match(r"^\s+- Choice:\s*(.+?)\s*(?:→\s*(\S+))?\s*(?:\|\s*(.+?)\s+\[([^\]]+)\](?:\s+\(([^)]*)\))?:\s*(.*?))?(?:\s+\{[^}]*\})?\s*$", line)
+        if m:
+            opt = {"n": len(cur["options"]) + 1, "text": m.group(1).strip(), "go": m.group(2) or "", "who": "", "name": "", "mode": "", "say": ""}
+            if m.group(3):
+                who = WHO.get(m.group(4).split(":")[-1], m.group(4).split(":")[-1])
+                opt.update(who=who, name="" if who == "narrator" else m.group(3), mode=m.group(5) or "", say=(m.group(6) or "").replace(" / ", "\n"))
+            cur["options"].append(opt); continue
         m = re.match(r"^\d+\.\s+(.+?)\s+\[([^\]]+)\](?:\s+\(([^)]*)\))?:\s*(.*?)(?:\s+\{[^}]*\})?\s*$", line)
         if m:
             name, key, mode, words = m.group(1), m.group(2), (m.group(3) or ""), m.group(4)
             key = key.split(":")[-1]
             who = WHO.get(key, key)
-            cur["lines"].append({"who": who, "name": "" if who == "narrator" else name, "mode": mode, "text": words.replace(" / ", "\n")})
+            cur["lines"].append({"who": who, "name": "" if who == "narrator" else name, "mode": mode, "text": words.replace(" / ", "\n"),
+                                 "part": "b" if cur["options"] else "a"})
     rerender = []
     for sc in scenes:
         film = os.path.join(FILMS, sc["id"] + ".mp4")

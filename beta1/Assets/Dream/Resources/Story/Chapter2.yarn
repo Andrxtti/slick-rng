@@ -1,0 +1,82 @@
+// Chapter 2, the Circuit (Milestone B): the scenes of unity/docs/SCRIPT_ALL.md c2_fatts .. ring2, played as storyboards
+// until they're filmed. Steven's words live in the script (Resources/Story/scenes.json); here only when each one plays.
+// The options of c2_smokes and c2_cowboy come from the script too ($c2_smokes_1 ...), so his edits show up.
+// Goal (STORY.md): win two Circuit rings and build a $40,000 bankroll.
+
+title: Chapter2Variables
+---
+<<declare $rings = 0>>
+<<declare $ft = false>>
+<<declare $ring = false>>
+<<declare $venue = "">>
+<<declare $stop = -1>>
+<<declare $stopday = -1>>
+<<declare $c2_smokes_1 = "">>
+<<declare $c2_smokes_2 = "">>
+<<declare $c2_cowboy_1 = "">>
+<<declare $c2_cowboy_2 = "">>
+<<declare $c2_fatts_seen = false>>
+<<declare $c2_mouth_seen = false>>
+<<declare $ring1_seen = false>>
+<<declare $lesson2_seen = false>>
+<<declare $smokes_seen = false>>
+<<declare $cowboy_seen = false>>
+<<declare $ring2_seen = false>>
+===
+
+title: C2AfterEvent
+---
+// the first night at the Strike: Armadillo Fatts at the bar, and the line in your envelope
+<<if $venue == "casino" and not $c2_fatts_seen>>
+    <<set $c2_fatts_seen to true>>
+    <<film c2_fatts>>
+<<endif>>
+// your first Circuit final table: Mouthy Michael talks the whole way
+<<if $ring and $ft and not $c2_mouth_seen>>
+    <<set $c2_mouth_seen to true>>
+    <<film c2_mouth>>
+<<endif>>
+<<if $ring and $won and $rings >= 1 and not $ring1_seen>>
+    <<set $ring1_seen to true>>
+    <<film ring1>>
+<<elseif $ring and $bust and not $lesson2_seen>>
+    <<set $lesson2_seen to true>>
+    <<film lesson2>>
+<<endif>>
+===
+
+title: C2AfterSleep
+---
+// a ring on your hand and ten thousand in your roll, during a stop: the game upstairs
+<<if $ring1_seen and $bankroll >= 10000 and $stop >= 0 and not $smokes_seen>>
+    <<set $smokes_seen to true>>
+    <<film c2_smokes@a>>
+    -> {$c2_smokes_1}
+        <<film c2_smokes@1>>
+        <<film c2_smokes_sit>>
+        <<money -6000 "Upstairs with Sammy Smokes">>
+    -> {$c2_smokes_2}
+        <<film c2_smokes@2>>
+    <<film c2_smokes@b>>
+<<endif>>
+// the charity day of the second stop: Colt the Cowboy, and the kid in dark glasses on Calle Ocho
+<<if $stop >= 1 and $stopday == 10 and not $cowboy_seen>>
+    <<set $cowboy_seen to true>>
+    <<film c2_cowboy@a>>
+    -> {$c2_cowboy_1}
+        <<film c2_cowboy@1>>
+    -> {$c2_cowboy_2}
+        <<film c2_cowboy@2>>
+<<endif>>
+===
+
+title: C2CheckGoal
+---
+// two rings and $40,000: the second ring at the Lucky Seven, then Chapter 3's opening
+<<if $chapter == 2 and $rings >= 2 and $bankroll >= 40000 and not $ring2_seen>>
+    <<set $ring2_seen to true>>
+    <<film ring2>>
+    <<film c3>>
+    <<set $chapter to 3>>
+<<endif>>
+===

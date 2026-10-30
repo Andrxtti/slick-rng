@@ -22,12 +22,12 @@ namespace Dream.Game
             It("outfit", "tee", "Plain black tee", "Where it all started", Start_),
             It("outfit", "office", "Clearance-rack office fit", "Where it all started", Start_),
             It("outfit", "hoodie", "The lucky hoodie", "Play your first tournament", s => s.events >= 1),
-            It("outfit", "polo", "Card-room quarter-zip", "Reach Chapter 1", s => s.step == "ch1" || s.step == "done"),
+            It("outfit", "polo", "Card-room quarter-zip", "Reach Chapter 1", s => s.step != "new" && s.step != "prologue" && s.step != "choice"),
             It("outfit", "cardigan", "Study-group cardigan", "Play 3 sessions", s => s.events >= 3),
             It("outfit", "jersey", "Lucky number 7 jersey", "Make 100 decisions", s => s.decisions >= 100),
             It("outfit", "bomber", "Black bomber jacket", "Win any tournament", s => s.titles >= 1),
             It("outfit", "vest", "Argyle sweater vest", "Peak bankroll of $10,000", s => s.peak >= 10000),
-            It("outfit", "blazer", "Circuit blazer", "Reach the Circuit", s => false),
+            It("outfit", "blazer", "Circuit blazer", "Reach the Circuit", s => s.step == "ch2" || s.step == "done" || s.step == "end"),
             It("outfit", "leather", "Worn leather jacket", "Peak bankroll of $50,000", s => s.peak >= 50000),
             It("outfit", "suit", "Tailored suit", "Win a gold bracelet", s => false),
             It("outfit", "tux", "Main Event tuxedo", "Make the Main Event final table", s => false),
@@ -40,7 +40,7 @@ namespace Dream.Game
             It("eyes", "aviator", "Gold aviators", "Win a Circuit ring", s => false),
             It("head", "none", "Nothing", "", Start_),
             It("head", "cap", "Backwards ballcap", "Play 5 sessions", s => s.events >= 5),
-            It("head", "snap", "Flat-brim snapback", "Reach Chapter 1", s => s.step == "ch1" || s.step == "done"),
+            It("head", "snap", "Flat-brim snapback", "Reach Chapter 1", s => s.step != "new" && s.step != "prologue" && s.step != "choice"),
             It("head", "bucket", "Cream bucket hat", "Play 10 sessions", s => s.events >= 10),
             It("head", "phones", "Noise-cancelling cans", "Make 100 decisions", s => s.decisions >= 100),
             It("head", "cowboy", "Texas hat", "Win a Circuit ring", s => false),
@@ -116,7 +116,7 @@ namespace Dream.Game
                 Ui.At(Ui.Button(s, "Closet", Closet, Ui.Card, Ui.Ink, 34), 0.06f, 0.075f, 0.48f, 0.135f);
                 Ui.At(Ui.Button(s, stuck ? "Sleep" : "Call it a night", Sleep, Ui.Aqua, Ui.Night, 34), 0.52f, 0.075f, 0.94f, 0.135f);
             }
-            if (S.br >= Goal && S.day < ClassicDay - 1 && !S.classicDone)   // B4: the stake is made; the Classic can come now
+            if (S.step == "ch1" && S.br >= Goal && S.day < ClassicDay - 1 && !S.classicDone)   // B4: the stake is made; the Classic can come now
                 Ui.At(Ui.Button(s, "Skip to the Biscayne Classic · Sat, Feb 14", SkipToClassic, new Color(0.95f, 0.76f, 0.35f, 0.25f), Ui.Gold, 28), 0.06f, wide ? 0.235f : 0.245f, 0.94f, wide ? 0.295f : 0.29f);
             float yb = wide ? 0.035f : 0.02f;
             Ui.At(Ui.Button(s, "Replay the reel", () => Films.Play(new[] { "reel" }, () => Hub()), new Color(1, 1, 1, 0.08f), Ui.Dim, 24), 0.06f, yb, 0.46f, yb + 0.045f);
@@ -160,14 +160,13 @@ namespace Dream.Game
             Ui.At(Ui.Label(p, "SPACEPAD", 24, Ui.Aqua, TextAnchor.MiddleLeft, FontStyle.Bold), 0, 0.955f, 0.5f, 0.99f);
             Ui.At(Ui.Label(p, DateStr(S.day), 24, Ui.Ink, TextAnchor.MiddleRight), 0.4f, 0.955f, 1, 0.99f);
             Ui.At(Ui.Num(p, Ui.Money(S.br), 64, Ui.Ink, TextAnchor.MiddleLeft, FontStyle.Bold), 0, 0.885f, 0.6f, 0.955f);
-            int left = ClassicDay - S.day;
-            Ui.At(Ui.Label(p, left > 1 ? $"{left} days to the Classic" : left == 1 ? "The Classic is tomorrow" : left == 0 ? "The Classic is today" : "The Classic is played", 24, Ui.Gold, TextAnchor.MiddleRight, FontStyle.Bold), 0.5f, 0.885f, 1, 0.955f);
+            Ui.At(Ui.Label(p, Countdown(), 24, Ui.Gold, TextAnchor.MiddleRight, FontStyle.Bold), 0.5f, 0.885f, 1, 0.955f);
             var bar = Ui.At(Ui.Tile(p, "Stake", Ui.Card, 10), 0, 0.865f, 1, 0.878f);
-            var fill = Ui.Tile(bar, "Fill", Ui.Gold, 10); fill.anchorMax = new Vector2(Mathf.Clamp01((float)(S.br / Goal)), 1);
+            var fill = Ui.Tile(bar, "Fill", Ui.Gold, 10); fill.anchorMax = new Vector2(Mathf.Clamp01(GoalFill), 1);
             int toFri = (5 - Dow(S.day) + 7) % 7;
             string money = (toFri == 0 ? "Friday: " : toFri == 1 ? "Tomorrow, Friday: " : $"Friday, in {toFri} days: ") + $"rent and living −{Ui.Money(Bills)}" + (S.job == "nights" ? $", pay +{Ui.Money(Salary)}" : "")
                 + (S.debt > 0 ? $"  ·  owed to Slick {Ui.Money(S.debt)}" : "");
-            Ui.At(Ui.Label(p, $"Stake {Ui.Money(Goal)} before the Classic  ·  " + money, 21, Ui.Dim, TextAnchor.MiddleLeft), 0, 0.825f, 1, 0.86f);
+            Ui.At(Ui.Label(p, GoalLine + "  ·  " + money, 21, Ui.Dim, TextAnchor.MiddleLeft), 0, 0.825f, 1, 0.86f);
             // the week: Monday to Sunday, today lit, what each day allows
             int monday = S.day - (Dow(S.day) + 6) % 7;
             for (int i = 0; i < 7; i++)
@@ -177,24 +176,24 @@ namespace Dream.Game
                 var fg = now ? Ui.Night : past ? Ui.Dim : Ui.Ink;
                 Ui.At(Ui.Label(cell, Date(d).ToString("ddd", System.Globalization.CultureInfo.InvariantCulture).ToUpperInvariant(), 18, fg, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.68f, 1, 0.95f);
                 Ui.At(Ui.Num(cell, Date(d).Day.ToString(), 30, fg, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.33f, 1, 0.7f);
-                string tag = d == ClassicDay ? "CLASSIC" : Dow(d) == 5 ? "RENT" : S.job == "nights" ? (Weekend(d) ? "LIVE" : "ONLINE") : "LIVE";
-                Ui.At(Ui.Label(cell, tag, 14, now ? Ui.Night : d == ClassicDay ? Ui.Gold : Dow(d) == 5 ? Ui.Neon : Ui.Aqua, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.05f, 1, 0.33f);
+                string tag = DayTag(d); bool big = tag == "CLASSIC" || tag == "MAIN" || tag == "RING";
+                Ui.At(Ui.Label(cell, tag, 14, now ? Ui.Night : big ? Ui.Gold : tag == "RENT" ? Ui.Neon : Ui.Aqua, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.05f, 1, 0.33f);
             }
             // today's games
             Ui.At(Ui.Label(p, "TONIGHT", 22, Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0, 0.665f, 1, 0.7f);
             float y = 0.66f; float h = wide ? 0.16f : 0.12f;
             foreach (var ev in Today())
             {
-                string why = CantPlay(ev); bool afford = (ev.free || S.br >= ev.buyin) && why == null;
+                string why = CantPlay(ev); bool afford = (ev.free || S.ticket == ev.id || S.br >= ev.buyin) && why == null;
                 var row = Ui.At(Ui.Tile(p, ev.id, Ui.Card, 26), 0, y - h, 1, y - 0.01f);
-                string where = ev.online ? "ONLINE · CF TILT · FROM THE SPACEPAD" : ev.id.StartsWith("classic") ? "BISCAYNE · THE CLASSIC · A DRIVE" : "BISCAYNE · LIVE · A DRIVE";
+                string where = ev.online ? "ONLINE · CF TILT · FROM THE SPACEPAD" : ev.id.StartsWith("classic") ? "BISCAYNE · THE CLASSIC · A DRIVE" : ev.venue == "casino" ? "SILVER STRIKE · THE CIRCUIT · A DRIVE" : "BISCAYNE · LIVE · A DRIVE";
                 Ui.At(Ui.Label(row, where, 17, ev.online ? Ui.Aqua : Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.04f, 0.7f, 0.75f, 0.94f);
                 Ui.At(Ui.Label(row, ev.name, 32, afford ? Ui.Ink : Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0.04f, 0.38f, 0.72f, 0.72f);
                 bool red = why != null || (!ev.free && S.br < ev.buyin);
                 Ui.At(Ui.Label(row, why ?? (!ev.free && S.br < ev.buyin ? "Not in your roll" : ev.blurb), 20, red ? Ui.Neon : Ui.Dim, TextAnchor.UpperLeft), 0.04f, 0.04f, 0.72f, 0.38f);
-                string price = ev.free ? (ev.id == "classic2" ? "Chips bagged" : "Free") : Ui.Money(ev.buyin);
+                string price = ev.free ? (ev.id == "classic2" ? "Chips bagged" : "Free") : S.ticket == ev.id ? "Your seat" : ev.kind == "cash" ? Ui.Money(ev.buyin) + " in" : Ui.Money(ev.buyin);
                 Ui.At(Ui.Num(row, price, 32, Ui.Gold, TextAnchor.MiddleRight, FontStyle.Bold), 0.68f, 0.48f, 0.96f, 0.86f);
-                Ui.At(Ui.Label(row, ev.kind == "sat" ? $"{ev.field:N0} players · {ev.seats} return" : $"{ev.field:N0} players", 19, Ui.Dim, TextAnchor.MiddleRight), 0.6f, 0.12f, 0.96f, 0.45f);
+                Ui.At(Ui.Label(row, ev.kind == "sat" ? $"{ev.field:N0} players · {ev.seats} return" : ev.kind == "cash" ? "cash game · 9-handed" : $"{ev.field:N0} players", 19, Ui.Dim, TextAnchor.MiddleRight), 0.6f, 0.12f, 0.96f, 0.45f);
                 var b = row.gameObject.AddComponent<Button>(); var id = ev.id; b.interactable = afford;
                 b.onClick.AddListener(() => { if (Lib.Event(id).online) Enter(id); else Drive(id); });
                 y -= h + 0.005f;
@@ -207,11 +206,13 @@ namespace Dream.Game
         {
             var s = Screen(Color.black);
             var ride = WornItem("ride");
-            string how = ride.id == "bus" ? "The 7 bus over the causeway. The bay is black on both sides." :
+            bool strike = Lib.Event(id).venue == "casino";   // Chapter 2: north to the Circuit
+            string how = strike ? (ride.id == "bus" ? "Two buses and a casino shuttle. The Circuit doesn't care how you got here." : $"The {ride.name.ToLowerInvariant()}, forty minutes north. The sign is visible from the highway.") :
+                         ride.id == "bus" ? "The 7 bus over the causeway. The bay is black on both sides." :
                          ride.id == "hatch" ? "The '09 hatchback coughs once, then takes the causeway like it means it." :
                          $"The {ride.name.ToLowerInvariant()} eats the causeway in four minutes.";
-            Ui.At(Ui.Label(s, "OFF THE CAUSEWAY", 26, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.06f, 0.6f, 0.94f, 0.64f);
-            Ui.At(Ui.Title(s, "Biscayne Card Room", 80, Ui.Ink), 0.06f, 0.5f, 0.94f, 0.6f);
+            Ui.At(Ui.Label(s, strike ? "NORTH ON I-95" : "OFF THE CAUSEWAY", 26, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.06f, 0.6f, 0.94f, 0.64f);
+            Ui.At(Ui.Title(s, strike ? "Silver Strike Casino" : "Biscayne Card Room", 80, Ui.Ink), 0.06f, 0.5f, 0.94f, 0.6f);
             Ui.At(Ui.Label(s, how, 32, Ui.Dim), 0.1f, 0.4f, 0.9f, 0.49f);
             bool gone = false; void Go() { if (gone) return; gone = true; Enter(id); }
             var b = s.gameObject.AddComponent<Button>(); b.onClick.AddListener(Go);

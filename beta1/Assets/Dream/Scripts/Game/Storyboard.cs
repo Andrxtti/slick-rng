@@ -16,8 +16,9 @@ namespace Dream.Game
     // (tools/storyboard_build.py, from SCRIPT_ALL.md), so a script edit shows up after a rebuild with no render.
     public static class Storyboard
     {
-        [Serializable] public class Line { public string who, name, mode, text; }
-        [Serializable] public class Scene { public string id, title, place, set; public bool edited, film, storyboard; public List<Line> lines; }
+        [Serializable] public class Line { public string who, name, mode, text, part; }
+        [Serializable] public class Option { public int n; public string text, go, who, name, mode, say; }
+        [Serializable] public class Scene { public string id, title, place, set; public bool edited, film, storyboard; public List<Line> lines; public List<Option> options; }
         [Serializable] class Book { public List<Scene> scenes; }
         static Dictionary<string, Scene> scenes;
         static readonly string[] Portraits = { "slick", "tommy", "mustich", "gnomey", "you" };
@@ -29,8 +30,20 @@ namespace Dream.Game
                 var t = Resources.Load<TextAsset>("Story/scenes");
                 scenes = t == null ? new Dictionary<string, Scene>() : JsonUtility.FromJson<Book>(t.text).scenes.ToDictionary(s => s.id);
             }
-            return scenes.TryGetValue(id, out var sc) ? sc : null;
+            if (scenes.TryGetValue(id, out var sc)) return sc;
+            // a part of a scene with a choice: "id@a" the lines before it, "id@b" after it, "id@2" option 2's answer
+            int at = id.IndexOf('@'); if (at < 0 || !scenes.TryGetValue(id.Substring(0, at), out var whole)) return null;
+            string part = id.Substring(at + 1);
+            var cut = new Scene { id = id, title = whole.title, place = whole.place, set = whole.set, edited = whole.edited, film = false, storyboard = true, options = new List<Option>() };
+            if (int.TryParse(part, out int n))
+            {
+                var o = whole.options.FirstOrDefault(x => x.n == n);
+                cut.lines = o == null || string.IsNullOrEmpty(o.say) ? new List<Line>() : new List<Line> { new Line { who = o.who, name = o.name, mode = o.mode, text = o.say, part = part } };
+            }
+            else cut.lines = whole.lines.Where(l => (l.part ?? "a") == part).ToList();
+            scenes[id] = cut; return cut;
         }
+        public static string OptionText(string id, int n) => Get(id)?.options?.FirstOrDefault(o => o.n == n)?.text ?? "";
         public static IEnumerable<Scene> All() { Get(""); return scenes.Values; }
         public static bool Prefer(string id) { var sc = Get(id); return sc != null && sc.storyboard && sc.lines.Count > 0; }
 
