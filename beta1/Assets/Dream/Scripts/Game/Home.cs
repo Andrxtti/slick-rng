@@ -116,6 +116,8 @@ namespace Dream.Game
                 Ui.At(Ui.Button(s, "Closet", Closet, Ui.Card, Ui.Ink, 34), 0.06f, 0.075f, 0.48f, 0.135f);
                 Ui.At(Ui.Button(s, stuck ? "Sleep" : "Call it a night", Sleep, Ui.Aqua, Ui.Night, 34), 0.52f, 0.075f, 0.94f, 0.135f);
             }
+            if (S.br >= Goal && S.day < ClassicDay - 1 && !S.classicDone)   // B4: the stake is made; the Classic can come now
+                Ui.At(Ui.Button(s, "Skip to the Biscayne Classic · Sat, Feb 14", SkipToClassic, new Color(0.95f, 0.76f, 0.35f, 0.25f), Ui.Gold, 28), 0.06f, wide ? 0.235f : 0.245f, 0.94f, wide ? 0.295f : 0.29f);
             float yb = wide ? 0.035f : 0.02f;
             Ui.At(Ui.Button(s, "Replay the reel", () => Films.Play(new[] { "reel" }, () => Hub()), new Color(1, 1, 1, 0.08f), Ui.Dim, 24), 0.06f, yb, 0.46f, yb + 0.045f);
             Ui.At(Ui.Button(s, "Title", Title, new Color(1, 1, 1, 0.08f), Ui.Dim, 24), 0.54f, yb, 0.94f, yb + 0.045f);
@@ -124,8 +126,27 @@ namespace Dream.Game
         // the test command "home <hub|spacepad|closet|drive>": a Chapter 1 save mid-month if none is loaded
         public void TestHome(string screen)
         {
-            if (S == null || S.step != "ch1") { S = new Save { step = "ch1", job = "nights", day = 20, br = 3190, peak = 3400, events = 6, decisions = 140, name = "Rookie" }; }
+            var w = screen.Split(' '); screen = w[0];
+            if (S == null || S.step != "ch1" || w.Length > 1) { S = new Save { step = "ch1", job = "nights", day = 20, br = 3190, peak = 3400, events = 6, decisions = 140, name = "Rookie" }; }
+            if (w.Length > 1) { S.br = S.peak = double.Parse(w[1], System.Globalization.CultureInfo.InvariantCulture); S.Write(); }
             if (screen == "spacepad") Spacepad(); else if (screen == "closet") Closet(); else if (screen == "drive") Drive("nightly"); else Hub("Payday +$1,250.  Rent and living −$600.");
+        }
+
+        // B4, the goal fast-forward: the calendar jumps to the night before the Classic and sleeps into it. Every Friday on
+        // the way pays and charges as usual; the weekly beats you passed are skipped; the night before still plays.
+        void SkipToClassic()
+        {
+            double before = S.br; int from = S.day;
+            for (int d = S.day + 1; d < ClassicDay; d++)
+                if (Dow(d) == 5) { if (S.job == "nights") S.br += Salary; S.br = Math.Max(0, S.br - Bills); }
+            foreach (var v in new[] { "$wk2", "$wk3", "$wk3d", "$wk4a" })
+            {
+                if (S.story.Any(x => x == v + "=true")) continue;
+                S.story.RemoveAll(x => x.StartsWith(v + "=")); S.story.Add(v + "=true");
+            }
+            S.day = ClassicDay - 1; S.Write();
+            Debug.Log($"[Dream] skip to the Classic: day {from} -> {S.day}, bankroll {before:0} -> {S.br:0}");
+            Sleep();
         }
 
         // ------------------------------------------------------------ the Spacepad: the planner
