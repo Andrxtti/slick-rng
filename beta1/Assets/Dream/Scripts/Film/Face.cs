@@ -40,9 +40,29 @@ namespace Dream.Film
         float mood, moodTo;   // +1 laughing / pleased, -1 low
         public void Mood(float m) { moodTo = m; }
 
+        // Rhubarb's mouth shapes (tools/lipsync.py) when the line has them: open, spread, round per Preston Blair shape
+        static readonly System.Collections.Generic.Dictionary<char, Vector3> Shapes = new System.Collections.Generic.Dictionary<char, Vector3>
+        {
+            ['A'] = new Vector3(0, 0, 0), ['B'] = new Vector3(0.22f, 0.45f, 0), ['C'] = new Vector3(0.5f, 0.45f, 0), ['D'] = new Vector3(0.9f, 0.25f, 0),
+            ['E'] = new Vector3(0.42f, 0, 0.5f), ['F'] = new Vector3(0.18f, 0, 1f), ['G'] = new Vector3(0.1f, 0.35f, 0), ['H'] = new Vector3(0.42f, 0.2f, 0), ['X'] = Vector3.zero,
+        };
+        float[] cueT; Vector3[] cueV; float clipLen;
+
         public void Speak(AudioClip clip)
         {
             if (clip == null) return;
+            cueT = null; clipLen = clip.length;
+            var mouth = Data.Load<TextAsset>($"Voice/{clip.name}.mouth.txt");
+            if (mouth != null)
+            {
+                var ts = new System.Collections.Generic.List<float>(); var vs = new System.Collections.Generic.List<Vector3>();
+                foreach (var row in mouth.text.Split('\n'))
+                {
+                    var c = row.Trim().Split('\t');
+                    if (c.Length == 2 && c[1].Length > 0 && float.TryParse(c[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var at) && Shapes.TryGetValue(c[1][0], out var v)) { ts.Add(at); vs.Add(v); }
+                }
+                if (ts.Count > 0) { cueT = ts.ToArray(); cueV = vs.ToArray(); }
+            }
             var data = new float[clip.samples * clip.channels];
             clip.GetData(data, 0);
             int n = Mathf.CeilToInt(clip.length * rate), step = Mathf.Max(1, clip.frequency * clip.channels / (int)rate);
@@ -69,7 +89,13 @@ namespace Dream.Film
 
             // mouth
             float o = 0, s = 0, r = 0;
-            if (speaking && env != null)
+            if (speaking && cueT != null)
+            {
+                float u = t - speakStart; if (u > clipLen) speaking = false;
+                int i = System.Array.BinarySearch(cueT, u); if (i < 0) i = ~i - 1;
+                if (i >= 0) { o = cueV[i].x; s = cueV[i].y; r = cueV[i].z; }
+            }
+            else if (speaking && env != null)
             {
                 int f = Mathf.FloorToInt((t - speakStart) * rate);
                 if (f >= env.Length) speaking = false;
