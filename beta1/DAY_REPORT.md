@@ -451,3 +451,6 @@ Install: Playwright for Python 1.x (PyPI, Apache-2.0) + its Chromium, to drive t
 ### A5. Rhubarb + autoplay + build
 - Rhubarb lip sync on all 98 spoken Chapter 1 film lines (task 10, committed earlier); the films were re-rendered with it.
 - Autoplay keep and quit both reach the end card (above).
+- **Build: Test Beta 1.1.3**, C:\Dev\Builds\TheDream-Beta1.1-Web, Build/ 22.5 MB (first download, under 25 MB), 0 errors;
+  smoke-tested in Chromium at 430x932 (boots, the reel plays, hidden 15 s and back: "film reel.mp4 resumed at 5.3s").
+  `C:\Dev\Beta1Assets\BUILD_READY.txt` written; BUILD_PARTIAL_1.1.3.txt removed (superseded).
