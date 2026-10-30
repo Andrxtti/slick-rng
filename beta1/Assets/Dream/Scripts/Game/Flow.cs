@@ -21,7 +21,7 @@ namespace Dream.Game
         public string job = "";               // "quit" (full-time) or "nights" (kept the day job), as in the old game
         public int day = -1, liveDay = -99, liveWeek = -99;   // calendar day (0 = Mon 5 Jan 2026); last live game day and week
         public int onlineDay = -99, onlineN, onlineWeek = -99, onlineWN;   // online games played today / this week
-        public bool reelSeen, roomTitle, day2, classicDone;   // day2: chips bagged for Day 2; classicDone: the Classic is over (Chapter 1 ends)
+        public bool reelSeen, roomTitle, day2, classicDone, c2Seen;   // c2Seen: Chapter 2's opening storyboard played (A4)   // day2: chips bagged for Day 2; classicDone: the Classic is over (Chapter 1 ends)
         public int titles, coolers;
         public List<string> story = new List<string>();   // Yarn's story variables ($job, seen flags), saved as name=value
         public int events, cashes, decisions, perfect;
@@ -409,10 +409,12 @@ namespace Dream.Game
         // ------------------------------------------------------------ the end of the beta
         public void EndCard()
         {
+            // the first time: Chapter 2's opening, as a storyboard (the drive north with Tommy, Silver Strike), then the card
+            if (!S.c2Seen) { S.c2Seen = true; S.Write(); Films.Play(new[] { "c2_drive", "c2" }, EndCard); return; }
             var s = Screen(Color.black);
             Ui.At(Ui.Label(s, "TEST BETA " + Version, 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.68f, 1, 0.71f);
-            Ui.At(Ui.Title(s, "Chapter 2: The Circuit", 84, Ui.Ink), 0.05f, 0.58f, 0.95f, 0.67f);
-            Ui.At(Ui.Label(s, "coming soon", 40, Ui.Dim), 0.05f, 0.535f, 0.95f, 0.575f);
+            Ui.At(Ui.Title(s, "Chapter 2 · The Circuit", 84, Ui.Ink), 0.05f, 0.58f, 0.95f, 0.67f);
+            Ui.At(Ui.Label(s, "coming in the next build", 40, Ui.Dim), 0.05f, 0.535f, 0.95f, 0.575f);
             Ui.At(Ui.Num(s, $"{S.name}, {Rep}  ·  {Ui.Money(S.br)}  ·  {S.events} events  ·  {S.decisions} decisions", 28, Ui.Dim), 0.05f, 0.46f, 0.95f, 0.5f);
             Ui.At(Ui.Button(s, "Send feedback", () => Application.OpenURL(FeedbackUrl), Ui.Gold, Ui.Night, 44), 0.18f, 0.3f, 0.82f, 0.36f);
             Ui.At(Ui.Button(s, "Keep playing Chapter 1", () => { S.step = "ch1"; S.Write(); Hub(); }, Ui.Card, Ui.Ink, 34), 0.18f, 0.21f, 0.82f, 0.26f);
