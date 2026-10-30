@@ -571,3 +571,6 @@ redness 1.0); `h1_test.py` takes `CHAR=<cast id>`; the lenses are real glass (tr
 Eevee drew opaque white. `C:\Dev\Builds\day2\real_mustich_curls.png`: Unity film | Eevee | Cycles 60k curls, 237 s/frame.
 The curls read as fine curly hair now, not clay; at ECU in Cycles they're soft and frizzy rather than defined ringlets
 (next: fewer, thicker clumped curls). The face is still the CG face, as for Slick.
+- Step 4b: clumped curls (strands in the same 6 mm cell share a curl's phase and rate). At the ECU framing (f/2.8, focus on
+  the eyes) the crown is soft and the change barely shows, so I stopped iterating the curls here; defined ringlets need a
+  closer, sharper hair shot to judge. Next on track H: the closet preview (a rendered picture of you), which needs no new head.

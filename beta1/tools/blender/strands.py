@@ -11,7 +11,7 @@ from mathutils.bvhtree import BVHTree
 STYLES = {   # length (m), lift (m), jitter (radians), as hair.py (a strand is finer, so more of them)
     "back": {"flow": "back", "length": 0.09, "lift": 0.0025, "jitter": 0.12},
     "crop": {"flow": "back", "length": 0.03, "lift": 0.0015, "jitter": 0.35},
-    "curls": {"flow": "back", "length": 0.05, "lift": 0.004, "jitter": 0.6, "curl_r": 0.0035, "curl_turns": 2.5},   # Mustich
+    "curls": {"flow": "back", "length": 0.05, "lift": 0.004, "jitter": 0.6, "curl_r": 0.0045, "curl_turns": 2.2, "clump": 0.006},   # Mustich
 }
 
 
@@ -54,8 +54,11 @@ def grow(shell, style="back", melanin=0.9, count=60000, seed=5, segs=8, radius=0
             path = np.array([np.interp(k * segs, np.arange(segs + 1), pos[i, :, j]) for j in range(3)]).T
             t = np.gradient(path, axis=0); t /= np.linalg.norm(t, axis=1, keepdims=True) + 1e-9
             up = np.array([0, 0, 1.0]); a1 = np.cross(t, up); a1 /= np.linalg.norm(a1, axis=1, keepdims=True) + 1e-9; a2 = np.cross(t, a1)
-            ph = rng.uniform(0, 2 * np.pi) + k * st["curl_turns"] * 2 * np.pi * rng.uniform(0.8, 1.2)
-            r = st["curl_r"] * rng.uniform(0.7, 1.3) * np.minimum(1, k * 4)[:, None]
+            # clumps: strands rooted in the same small cell share a curl's phase and turn rate, so they twist together
+            cell = tuple(np.floor(pos[i, 0] / st.get("clump", 1e-9)).astype(int)) if st.get("clump") else i
+            cr = np.random.default_rng(abs(hash(cell)) % (2 ** 32))
+            ph = cr.uniform(0, 2 * np.pi) + k * st["curl_turns"] * 2 * np.pi * cr.uniform(0.8, 1.2) + rng.normal(0, 0.15)
+            r = st["curl_r"] * cr.uniform(0.7, 1.3) * rng.uniform(0.9, 1.1) * np.minimum(1, k * 4)[:, None]
             fine[i] = path + r * (np.cos(ph)[:, None] * a1 + np.sin(ph)[:, None] * a2)
         pos = fine; segs = segs2
     bm.free(); sh.to_mesh_clear()
