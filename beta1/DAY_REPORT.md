@@ -497,3 +497,10 @@ fill and rim; AgX; 85 mm at f/2.8 focused on the eyes. **`C:\Dev\Builds\day2\rea
   cast who agreed, a head built from their reference photos (kept outside the repo) is what moves faces toward real;
   legends stay original.
 - The apartment test is the Cycles home still already in the game (3.5 min/frame, A2), against the Unity home film frame.
+- **Quit run** (`C:\Dev\Builds\day2\b_auto_quit.txt`): end card on day 124; this time lesson2 fired too (a ring-event bust).
+- **Chapter 2 balance** (`sim`, 300–400 entries per event at the event's own chapter): at first a ~70% player won only
+  0.7–1.3% of ring entries (two rings in dozens of stops) and lost $112 a $2/$5 session. Now: a ring-event placement offset of
+  0.20 (`Hands.PlaceRing`) and the $2/$5 table soft (0.6, tourists). Per entry, 70% / 55% / perfect: Opener ring 12.5% / 2.5% /
+  ~65%, Double Stack 8.3% / 1.5%, Main 8.8% / 1.8%; $2/$5 -$8 / -$221 / +$775 a session. So a 70% player full-time (about five
+  ring entries a stop) expects two rings in about five stops (~9 months of game time); with the day job (three a stop) longer.
+  Side effect said plainly: ring events are slightly +EV even at 55%. Chapter 1 is untouched (the offset only touches rings).

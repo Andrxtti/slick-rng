@@ -7846,7 +7846,8 @@
    "name": "$2/$5 No-Limit",
    "venue": "casino",
    "buyin": 500,
-   "blurb": "Deeper stacks, bigger egos."
+   "blurb": "Deeper stacks, bigger egos.",
+   "soft": 0.6
   },
   {
    "id": "ring400",

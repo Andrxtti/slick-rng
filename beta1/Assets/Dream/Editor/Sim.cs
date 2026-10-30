@@ -1,6 +1,7 @@
 // Balance by numbers: play an event many times on the real engine (Hands: deal, grade, stack, coolers, Place, payouts),
 // no UI, with a player who picks the solver's best play with probability q and another play otherwise.
 //   remote: sim <q> <n>   -> Logs/sim.txt: per Chapter 1 event, the measured accuracy, P(cash), P(win), P(bust) and mean net
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,13 +17,14 @@ namespace Dream.EditorTools
         static Sim()
         {
             Remote.Extra["place"] = a => { var p = a.Split(' ').Select(x => double.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray(); Hands.PlaceBase = p[0]; Hands.PlaceSlope = p[1]; Hands.PlaceLuck = p[2]; if (p.Length > 3) Hands.PlaceBand = p[3]; if (p.Length > 4) Hands.PlaceOnline = p[4]; Remote.Log($"place: base {p[0]} slope {p[1]} luck {p[2]} band {Hands.PlaceBand}"); };
+            Remote.Extra["placering"] = a => { Hands.PlaceRing = double.Parse(a, System.Globalization.CultureInfo.InvariantCulture); Remote.Log("placering: " + Hands.PlaceRing); };
             Remote.Extra["sim"] = a =>
             {
                 var p = a.Split(' '); double q = double.Parse(p[0], System.Globalization.CultureInfo.InvariantCulture); int n = int.Parse(p[1]);
-                var lines = new List<string>(); Lib.Load(); Hands.Chapter = 1;
+                var lines = new List<string>(); Lib.Reset(); Lib.Load(); Hands.Chapter = 1;   // the data on disk, not a cached copy
                 foreach (var ev in Lib.Events.Where(e => e.id != "local"))
                 {
-                    var rng = new System.Random(ev.id.GetHashCode() ^ (int)(q * 1000));
+                    var rng = new System.Random(ev.id.GetHashCode() ^ (int)(q * 1000)); Hands.Chapter = Math.Max(1, ev.ch);   // each event at its own chapter
                     double net = 0, accSum = 0; int cash = 0, win = 0, bust = 0, decs = 0; var nets = new List<double>();
                     for (int i = 0; i < n; i++)
                     {

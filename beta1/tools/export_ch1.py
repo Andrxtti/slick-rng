@@ -33,6 +33,7 @@ free = dict(ev["freeroll"], prizeBase=1)
 local = dict(ev["local"], prizeBase=89)   # Test Beta 1.1: the free Championship pays about $2,500 for first (was $7,000)
 # Chapter 2, the Circuit at Silver Strike (Milestone B): the old game's events as they were
 ch2 = [dict(ev[i]) for i in ("sat1700", "c25", "ring400", "ring600", "tilt55", "ring1700")]
+ch2[1]["soft"] = 0.6   # the $2/$5 game: tourists at the Strike (at 0 a 70% player lost $112 a session, at 0.3 $62; Editor/Sim.cs)
 events = [local, nightly, glob, day1, day2, free] + ch2
 fields = sorted({str(e["field"]) for e in events if "field" in e} | {"212"})
 ch = data["DR_CHAPTERS"] if "DR_CHAPTERS" in data else None
