@@ -603,3 +603,6 @@ Plan (each step committed): 1 data (Sonnet · medium), 2 calendar + flow (Opus �
   Steven's two options, fly home -> the Spacepad's empty weekend with its line. The test menu's "Chapter 3" starts it fresh.
 - **Build: Test Beta 1.1.5**, Build/ 17.3 MB, 0 errors; Chromium: boots, saves survive a reload and a wiped IndexedDB.
 - Not good yet: the Summer's scenes are storyboards over a plain backdrop (no Vegas still yet); legends are initials.
+- Track H, storyboard backdrops: Silver Strike's scenes get the reel's ring-on-neon still, the Summer's the bracelet still
+  (`StreamingAssets/Sets/{casino,vegas}_*.jpg`, 20–26 KB); speaker cards' text now clears the portrait/initials circle in
+  portrait (`C:\Dev\Builds\day2\storyboard_vegas.png`). 1.1.5 rebuilt with them (not yet published).

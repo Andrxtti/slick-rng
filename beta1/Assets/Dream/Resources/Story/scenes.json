@@ -1528,7 +1528,7 @@
 "title": "The Circuit",
 "place": "Silver Strike Casino",
 "edited": false,
-"set": "",
+"set": "casino",
 "lines": [
 {
 "who": "narrator",
@@ -1596,7 +1596,7 @@
 "title": "Last call at the Strike",
 "place": "Silver Strike Casino",
 "edited": false,
-"set": "",
+"set": "casino",
 "lines": [
 {
 "who": "narrator",
@@ -1671,7 +1671,7 @@
 "title": "The Yapper",
 "place": "Silver Strike Casino",
 "edited": false,
-"set": "",
+"set": "casino",
 "lines": [
 {
 "who": "narrator",
@@ -1732,7 +1732,7 @@
 "title": "Pressure the scared ones",
 "place": "Silver Strike Casino",
 "edited": false,
-"set": "",
+"set": "casino",
 "lines": [
 {
 "who": "narrator",
@@ -1786,7 +1786,7 @@
 "title": "First ring",
 "place": "Silver Strike Casino",
 "edited": false,
-"set": "",
+"set": "casino",
 "lines": [
 {
 "who": "narrator",
@@ -1847,7 +1847,7 @@
 "title": "Upstairs",
 "place": "Silver Strike Casino",
 "edited": false,
-"set": "",
+"set": "casino",
 "lines": [
 {
 "who": "narrator",
@@ -1927,7 +1927,7 @@
 "title": "Upstairs, later",
 "place": "Silver Strike Casino",
 "edited": false,
-"set": "",
+"set": "casino",
 "lines": [
 {
 "who": "narrator",
@@ -1967,7 +1967,7 @@
 "title": "The Cowboy",
 "place": "Silver Strike Casino",
 "edited": false,
-"set": "",
+"set": "casino",
 "lines": [
 {
 "who": "narrator",
@@ -2115,7 +2115,7 @@
 "title": "The Summer",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "narrator",
@@ -2183,7 +2183,7 @@
 "title": "Young Poker",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "narrator",
@@ -2237,7 +2237,7 @@
 "title": "The players' dinner",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "narrator",
@@ -2305,7 +2305,7 @@
 "title": "Two hundred and twelfth",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "narrator",
@@ -2359,7 +2359,7 @@
 "title": "What the money's worth",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "slick",
@@ -2413,7 +2413,7 @@
 "title": "The Mirage",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "narrator",
@@ -2519,7 +2519,7 @@
 "title": "Pick a game",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "narrator",
@@ -2559,7 +2559,7 @@
 "title": "Gold",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "narrator",
@@ -2627,7 +2627,7 @@
 "title": "The sportsbook, 4 AM",
 "place": "Las Vegas, the Summer",
 "edited": false,
-"set": "",
+"set": "vegas",
 "lines": [
 {
 "who": "narrator",

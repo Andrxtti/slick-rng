@@ -13,7 +13,8 @@ OUT = os.path.join(ROOT, "Assets", "Dream", "Resources", "Story", "scenes.json")
 COPY = os.path.join(ROOT, "story", "SCRIPT_ALL.md")
 # the scene tree's speaker keys -> this game's cast ids (voices, portraits)
 WHO = {"n": "narrator", "derek": "lou", "rosa": "gnomey", "trent": "mustich", "lou": "tommy", "host": "nick", "ghost": "bio", "mom": "david"}
-SETS = [("floor 34", "office"), ("office", "office"), ("diner", "diner"), ("card room", "cardroom"), ("apartment", "home")]
+SETS = [("floor 34", "office"), ("office", "office"), ("diner", "diner"), ("card room", "cardroom"), ("apartment", "home"),
+        ("silver strike", "casino"), ("las vegas", "vegas")]   # the Circuit's ring, the Summer's bracelet (stills from the reel's sets)
 
 
 def source():
