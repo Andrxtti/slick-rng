@@ -27,6 +27,14 @@ def source():
     return open(COPY, encoding="utf-8").read()
 
 
+# lines this build changes until the scene tree has them (each one is reported to the cloud in the INBOX)
+OVERRIDES = {
+    ("c2", "Goal: win two Circuit rings and build a $40,000 bankroll."): "Goal: win a Circuit ring or build a $15,000 bankroll.",   # Steven 12:09
+    ("ring2", "Two rings and forty thousand dollars, none of it borrowed. That's a bankroll. You're not a tourist any more."):
+        "A ring on your hand and a roll that's yours, none of it borrowed. That's a bankroll. You're not a tourist any more.",
+}
+
+
 def norm(t):
     return re.sub(r"[^a-z0-9]+", " ", t.lower()).strip()
 
@@ -56,6 +64,7 @@ def main():
             name, key, mode, words = m.group(1), m.group(2), (m.group(3) or ""), m.group(4)
             key = key.split(":")[-1]
             who = WHO.get(key, key)
+            words = OVERRIDES.get((cur["id"], words), words)
             cur["lines"].append({"who": who, "name": "" if who == "narrator" else name, "mode": mode, "text": words.replace(" / ", "\n"),
                                  "part": "b" if cur["options"] else "a"})
     rerender = []

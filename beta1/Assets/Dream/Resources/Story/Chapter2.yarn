@@ -1,7 +1,7 @@
 // Chapter 2, the Circuit (Milestone B): the scenes of unity/docs/SCRIPT_ALL.md c2_fatts .. ring2, played as storyboards
 // until they're filmed. Steven's words live in the script (Resources/Story/scenes.json); here only when each one plays.
 // The options of c2_smokes and c2_cowboy come from the script too ($c2_smokes_1 ...), so his edits show up.
-// Goal (STORY.md): win two Circuit rings and build a $40,000 bankroll.
+// Goal (Steven 12:09): a Circuit ring or a $15,000 bankroll, once you've been to the Strike.
 
 title: Chapter2Variables
 ---
@@ -72,10 +72,13 @@ title: C2AfterSleep
 
 title: C2CheckGoal
 ---
-// two rings and $40,000: the second ring at the Lucky Seven, then Chapter 3's opening
-<<if $chapter == 2 and $rings >= 2 and $bankroll >= 40000 and not $ring2_seen>>
+// a ring or $15,000 (after the first night at the Strike): the Lucky Seven if you met the Cowboy (ring2 is about him),
+// then Chapter 3's opening
+<<if $chapter == 2 and $c2_fatts_seen and ($rings >= 1 or $bankroll >= 15000) and not $ring2_seen>>
     <<set $ring2_seen to true>>
-    <<film ring2>>
+    <<if $cowboy_seen>>
+        <<film ring2>>
+    <<endif>>
     <<film c3>>
     <<set $chapter to 3>>
 <<endif>>

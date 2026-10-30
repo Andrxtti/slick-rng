@@ -154,7 +154,7 @@ namespace Dream.EditorTools
                 string line = $"hub {date} | ${f.S.br:0} | {f.Rep} | {(why == "" ? "can play" : why)}{(note != null ? " | " + note : "")}";
                 if (line != lastHub) { W(line); lastHub = line; }
                 // three smaller games first, so the calendar rules (one live game a day, weekends with the job) get played
-                var order = only == "online" ? new[] { "glob55", "freeroll" } : only == "live" ? new[] { "classic2", "classic", "nightly" } : new[] { "classic2", "classic", "ring1700", "ring600", "ring400", "sat1700", "nightly", "glob55", "tilt55", "c25", "freeroll" };
+                var order = only == "online" ? new[] { "glob55", "freeroll" } : only == "live" ? new[] { "classic2", "classic", "nightly" } : new[] { "classic2", "classic", "ring1700", "ring600", "ring400", "sat1700", "nightly", "glob55", "tilt55", "freeroll" };
                 foreach (var id in order) { var b = Find(id); if (b != null) { W($"  play {id} (${f.S.br:0} before buy-in)"); b.onClick.Invoke(); return; } }
                 sleepNext = true; Find("Back home")?.onClick.Invoke(); return;
                 return;

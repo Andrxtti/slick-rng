@@ -7840,16 +7840,6 @@
    "blurb": "Win a seat into the $1,700 Circuit Main. The bubble is brutal: everyone left gets the same prize."
   },
   {
-   "id": "c25",
-   "ch": 2,
-   "kind": "cash",
-   "name": "$2/$5 No-Limit",
-   "venue": "casino",
-   "buyin": 500,
-   "blurb": "Deeper stacks, bigger egos.",
-   "soft": 0.6
-  },
-  {
    "id": "ring400",
    "ch": 2,
    "kind": "mtt",

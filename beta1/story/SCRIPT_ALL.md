@@ -77,7 +77,7 @@ Generated. Do not hand-edit: Steven edits in the scene tree; scenes marked EDITE
 ## c1 — The Grind (Biscayne Card Room)
 
 1. Narrator [n]: Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe. / Twenty tables, every one of them a classroom.  {ext~grind}
-2. Miles "The Snowplow" Gnomey [rosa]: Back again? Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven.  {two:Pointing}
+2. Miles "The Snowplow" Gnomey [rosa]: Back again? Sign the list. The nightly turbo kicks off at seven.  {two:Pointing}
 3. Tommy "The Shark" Maio [lou]: Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast.  {ots:Talking>Head Nod Yes}
 4. Mustich [trent]: Cute hoodie. Did it come with the free seat?  {cu:Shrugging@tick}
 5. Narrator [n]: Mustich. Dad's money, a solver subscription, and a smile you want to wipe off. / He's been circling the Biscayne Classic all year.  {push:Looking Around}
@@ -544,7 +544,7 @@ Generated. Do not hand-edit: Steven edits in the scene tree; scenes marked EDITE
 1. Narrator [n]: The hotel's top-floor bar. Bryan Dartfrog drinks sparkling water and talks about seven-figure buy-ins the way other people talk about parking.  {ext~night}
 2. Bryan Dartfrog [L:kenny]: The $250K is next week. You've got the skill. You don't have the roll. I'll buy half your action. Fair price.  {two:Talking}
 3. You [you]: And if I win?  {cu:Thinking}
-4. Bryan Dartfrog [L:kenny]: Then I win half. And you win the other half, plus you got to play the biggest game on the planet like it was a one-two.  {cu:Shrugging}
+4. Bryan Dartfrog [L:kenny]: Then I win half. And you win the other half, plus you got to play the biggest game on the planet like it was the nightly turbo.  {cu:Shrugging}
     - Choice: Sell him half. | Bryan Dartfrog [L:kenny]: Smart. Nice stack. I'll take half.
     - Choice: "I'll play what I can afford." | Bryan Dartfrog [L:kenny]: Respect. Most people learn that after the house, not before.
 5. Slick [slick] (text): Selling action isn't weakness. Playing above your roll is. Never confuse the two.

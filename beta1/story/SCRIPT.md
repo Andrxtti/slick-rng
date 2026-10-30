@@ -165,7 +165,7 @@ The beat: the room, the people, the goal.
 {sodium light, the list board squeaks, the palms outside going black}
 
 1. CARD [card] (ext; idle): Biscayne Card Room, off the causeway. Carpet from 1994, palms out front, coffee from this morning, maybe. / Twenty tables, every one of them a classroom.
-2. MILES [gnomey] (two; point): Back again? Sign the list. One-two has a seat in ten. Nightly turbo kicks off at seven.
+2. MILES [gnomey] (two; point): Back again? Sign the list. The nightly turbo kicks off at seven.
 3. TOMMY [tommy] (cu tommy; point): Hey, you're the kid from Saturday. Don't get cocky. This room eats dreamers for breakfast.
 4. MUSTICH [mustich] (cu mustich; laugh): Cute hoodie. Did it come with the free seat?
 5. CARD [card] (push mustich; idle): Mustich. Dad's money, a solver subscription, and a smile you want to wipe off. / He's been circling the Biscayne Classic all year.
