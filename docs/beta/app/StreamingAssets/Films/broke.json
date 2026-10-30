@@ -2,28 +2,28 @@
     "lines": [
         {
             "t": 0.13333351910114288,
-            "len": 6.599999904632568,
+            "len": 10.922154426574707,
             "who": "card",
             "name": "CARD",
             "text": "Lucky Seven Diner, Calle Ocho. 2:13 AM. Same stool. Same pie. Empty wallet."
         },
         {
-            "t": 6.766666889190674,
-            "len": 1.0507256984710693,
+            "t": 11.066666603088379,
+            "len": 1.1935827732086182,
             "who": "slick",
             "name": "SLICK",
             "text": "Busted?"
         },
         {
-            "t": 7.833333492279053,
+            "t": 12.266666412353516,
             "len": 1.5858728885650635,
             "who": "you",
             "name": "YOU",
             "text": "Every last dollar."
         },
         {
-            "t": 9.433333396911621,
-            "len": 5.918616771697998,
+            "t": 13.866666793823242,
+            "len": 6.336258411407471,
             "who": "slick",
             "name": "SLICK",
             "text": "Good. Now you're a poker player. Everybody goes broke once. The good ones learn why."

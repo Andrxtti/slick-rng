@@ -2,28 +2,28 @@
     "lines": [
         {
             "t": 0.13333351910114288,
-            "len": 6.199999809265137,
+            "len": 8.123197555541992,
             "who": "card",
             "name": "CARD",
             "text": "Lucky Seven Diner. Same stool, same pie. The feeling is not the same."
         },
         {
-            "t": 6.366666793823242,
+            "t": 8.266666412353516,
             "len": 3.795623540878296,
             "who": "you",
             "name": "YOU",
             "text": "I did everything right. Every decision. And I'm out."
         },
         {
-            "t": 10.166666984558105,
-            "len": 3.842381000518799,
+            "t": 12.066666603088379,
+            "len": 3.712312936782837,
             "who": "slick",
             "name": "SLICK",
             "text": "Then you had a good day. You just did not get paid for it."
         },
         {
-            "t": 14.033333778381348,
-            "len": 7.793038368225098,
+            "t": 15.800000190734863,
+            "len": 7.662380695343018,
             "who": "slick",
             "name": "SLICK",
             "text": "Over one hand, the cards pay whoever they like. Over ten thousand, they pay whoever studied. Play for the ten thousand."

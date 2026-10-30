@@ -2,35 +2,35 @@
     "lines": [
         {
             "t": 0.13333351910114288,
-            "len": 6.066666603088379,
+            "len": 8.873492240905762,
             "who": "card",
             "name": "CARD",
             "text": "Lucky Seven. 1:40 AM. The pie is the same. You are a little poorer."
         },
         {
-            "t": 6.233333587646484,
-            "len": 1.9091837406158447,
+            "t": 9.033333778381348,
+            "len": 1.9446485042572021,
             "who": "slick",
             "name": "SLICK",
             "text": "Tell me the hand that got you."
         },
         {
-            "t": 8.166666984558105,
+            "t": 11.0,
             "len": 8.454081535339355,
             "who": "you",
             "name": "YOU",
             "text": "King-jack, early position. I raised. Got three-bet. Called. Flopped a jack. Lost everything to kings."
         },
         {
-            "t": 16.633333206176758,
-            "len": 9.519251823425293,
+            "t": 19.46666717529297,
+            "len": 9.624829292297363,
             "who": "slick",
             "name": "SLICK",
             "text": "Then the hand didn't get you. The first decision did. From early, king-jack is a fold. Everything after was a story you told yourself."
         },
         {
-            "t": 26.16666603088379,
-            "len": 7.723877429962158,
+            "t": 29.100000381469727,
+            "len": 7.884421348571777,
             "who": "slick",
             "name": "SLICK",
             "text": "Fold the junk. That's not advice, it's arithmetic. Your misses are on the Spacepad. Drill them until the fold is boring."

@@ -2,63 +2,63 @@
     "lines": [
         {
             "t": 0.13333351910114288,
-            "len": 4.5333333015441895,
+            "len": 3.4801135063171387,
             "who": "card",
             "name": "CARD",
             "text": "He slides a red envelope across the counter."
         },
         {
-            "t": 4.700000286102295,
-            "len": 6.1471428871154785,
+            "t": 3.633333444595337,
+            "len": 6.332993030548096,
             "who": "slick",
             "name": "STRANGER",
             "text": "The Biscayne Championship. Saturday, noon. Two-fifty seat. It's paid."
         },
         {
-            "t": 10.866666793823242,
+            "t": 9.966667175292969,
             "len": 2.1252834796905518,
             "who": "you",
             "name": "YOU",
             "text": "Why would you give that to a stranger?"
         },
         {
-            "t": 13.0,
-            "len": 3.889047622680664,
+            "t": 12.100000381469727,
+            "len": 4.153491973876953,
             "who": "slick",
             "name": "STRANGER",
             "text": "Because I sat on that stool once. Somebody bought my pie too."
         },
         {
-            "t": 16.899999618530273,
-            "len": 7.936258316040039,
+            "t": 16.266666412353516,
+            "len": 7.759296894073486,
             "who": "slick",
             "name": "STRANGER",
             "text": "Three things. Fold the junk. Pressure the scared ones. And near the money, think about what the money's worth, not the chips."
         },
         {
-            "t": 24.866666793823242,
+            "t": 24.03333282470703,
             "len": 1.2046937942504883,
             "who": "you",
             "name": "YOU",
             "text": "Who are you?"
         },
         {
-            "t": 26.100000381469727,
-            "len": 1.6704988479614258,
+            "t": 25.266666412353516,
+            "len": 1.8075509071350098,
             "who": "slick",
             "name": "SLICK",
             "text": "People call me Slick."
         },
         {
-            "t": 27.799999237060547,
-            "len": 11.0,
+            "t": 27.100000381469727,
+            "len": 10.015668869018555,
             "who": "card",
             "name": "CARD",
             "text": "He drops cash for both checks and is gone before the bell over the door stops ringing.\nInside the envelope: a seat card, and one line in pen."
         },
         {
-            "t": 38.79999923706055,
-            "len": 3.933333396911621,
+            "t": 37.13333511352539,
+            "len": 2.7007029056549072,
             "who": "card",
             "name": "CARD",
             "text": "“People insist on calling it luck…”"

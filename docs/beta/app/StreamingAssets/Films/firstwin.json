@@ -2,21 +2,21 @@
     "lines": [
         {
             "t": 0.13333351910114288,
-            "len": 4.958163261413574,
+            "len": 5.277165412902832,
             "who": "slick",
             "name": "SLICK",
             "text": "Saw the photo. Trophy, big grin, terrible lighting. Proud of you, kid."
         },
         {
-            "t": 5.100000381469727,
-            "len": 4.078072547912598,
+            "t": 5.433333396911621,
+            "len": 4.052085876464844,
             "who": "slick",
             "name": "SLICK",
             "text": "Left something in your locker. Every champion needs a pair."
         },
         {
-            "t": 9.199999809265137,
-            "len": 6.0,
+            "t": 9.5,
+            "len": 6.15770959854126,
             "who": "card",
             "name": "CARD",
             "text": "Inside: a pair of pixelated sunglasses and a note.\n“Deal with it.”"

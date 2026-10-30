@@ -1,0 +1,53 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 8.68854808807373,
+            "who": "card",
+            "name": "CARD",
+            "text": "Lucky Seven. Past midnight. The pie is the same. You are not as poor as last week."
+        },
+        {
+            "t": 8.833333969116211,
+            "len": 3.2268707752227783,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "Tell me one hand you folded this week that you wanted to play."
+        },
+        {
+            "t": 12.066666603088379,
+            "len": 6.771904468536377,
+            "who": "you",
+            "name": "YOU",
+            "text": "Ace-queen, under the gun, deep stacks. Somebody three-bet me and I folded. It was probably good."
+        },
+        {
+            "t": 18.866666793823242,
+            "len": 8.849546432495117,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "Probably? Okay. Hold on to the word. In a week you'll be sitting there with a stack you can feel, and \"probably\" will cost you the thing you built."
+        },
+        {
+            "t": 27.733333587646484,
+            "len": 8.009093284606934,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "The roll isn't your score. It's your air. Every time you play above it, you're holding your breath. Nobody wins holding their breath."
+        },
+        {
+            "t": 35.766666412353516,
+            "len": 7.39385461807251,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "And you quit the one thing that paid on time. That's allowed. It just means you're not allowed to be sloppy. Write that down too."
+        },
+        {
+            "t": 43.16666793823242,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "Goal: build your bankroll to $5,000 before the Classic. {days} days."
+        }
+    ]
+}

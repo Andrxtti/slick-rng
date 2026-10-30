@@ -2,62 +2,62 @@
     "lines": [
         {
             "t": 0.13333351910114288,
-            "len": 9.0,
+            "len": 13.463196754455566,
             "who": "card",
             "name": "CARD",
             "text": "Monday. 6:47 PM. Floor 34, Brickell.\nEveryone else went home an hour ago. Out the glass, the bay is going pink."
         },
         {
-            "t": 9.133333206176758,
+            "t": 13.600000381469727,
             "len": 4.900475978851318,
             "who": "lou",
             "name": "NATSO",
             "text": "The Henderson deck. Redo it. All of it. On my desk by eight."
         },
         {
-            "t": 14.066666603088379,
+            "t": 18.53333282470703,
             "len": 2.9708163738250732,
             "who": "you",
             "name": "YOU",
             "text": "I sent it Friday. You signed off on it."
         },
         {
-            "t": 17.066667556762695,
+            "t": 21.53333282470703,
             "len": 3.1061904430389404,
             "who": "lou",
             "name": "NATSO",
             "text": "And now I'm un-signing off on it. Problem?"
         },
         {
-            "t": 20.200000762939453,
+            "t": 24.66666603088379,
             "len": 1.6305441856384277,
             "who": "you",
             "name": "YOU",
             "text": "No problem, Lou."
         },
         {
-            "t": 21.83333396911621,
+            "t": 26.299999237060547,
             "len": 5.488956928253174,
             "who": "lou",
             "name": "NATSO",
             "text": "Great. Oh, and I told the partners the new model was my idea. Team player, right?"
         },
         {
-            "t": 27.33333396911621,
-            "len": 12.199999809265137,
+            "t": 31.799999237060547,
+            "len": 12.472267150878906,
             "who": "card",
             "name": "CARD",
             "text": "You were fourteen the first time you saw it on TV.\nA final table under hot lights. A man in dark glasses pushed every chip he had into the middle with nothing."
         },
         {
-            "t": 39.53333282470703,
-            "len": 8.600000381469727,
+            "t": 44.29999923706055,
+            "len": 9.879205703735352,
             "who": "card",
             "name": "CARD",
             "text": "The room went silent. His opponent folded. He never showed.\nHe made it look like he could see the future."
         },
         {
-            "t": 48.13333511352539,
+            "t": 54.20000076293945,
             "len": 3.30900239944458,
             "who": "you",
             "name": "YOU",

@@ -9,34 +9,34 @@
         },
         {
             "t": 4.6666669845581055,
-            "len": 7.666666507720947,
+            "len": 6.783514499664307,
             "who": "card",
             "name": "CARD",
             "text": "Final hand. Tommy “The Shark” Maio turns over two kings and the whole rail stops breathing."
         },
         {
-            "t": 12.366666793823242,
-            "len": 7.5333333015441895,
+            "t": 11.466667175292969,
+            "len": 6.546553134918213,
             "who": "card",
             "name": "CARD",
             "text": "The river bricks. Thirty years at this card room, and the old man finally has his trophy."
         },
         {
-            "t": 19.933334350585938,
-            "len": 3.430725574493408,
+            "t": 18.03333282470703,
+            "len": 3.491269826889038,
             "who": "tommy",
             "name": "TOMMY",
             "text": "Thirty years! You hear me? Thirty years!"
         },
         {
-            "t": 23.366666793823242,
+            "t": 21.53333282470703,
             "len": 4.5,
             "who": "card",
             "name": "CARD",
             "text": "{day2_you}"
         },
         {
-            "t": 27.899999618530273,
+            "t": 26.066667556762695,
             "len": 4.416757106781006,
             "who": "gnomey",
             "name": "MILES",

@@ -1,0 +1,39 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 7.994716167449951,
+            "who": "card",
+            "name": "CARD",
+            "text": "Second Monday. The room knows your name now, mostly. The coffee is the same coffee."
+        },
+        {
+            "t": 8.133333206176758,
+            "len": 10.728684425354004,
+            "who": "gnomey",
+            "name": "MILES",
+            "text": "Poster's up by the cage. Biscayne Classic, Saturday, February fourteenth. Two hundred and twelve seats, three-forty to get in. Sign-up sheet's on the clipboard."
+        },
+        {
+            "t": 18.866666793823242,
+            "len": 6.909772872924805,
+            "who": "card",
+            "name": "CARD",
+            "text": "Eleven names on it already. The twelfth, in careful handwriting, is Mustich."
+        },
+        {
+            "t": 25.799999237060547,
+            "len": 5.376847743988037,
+            "who": "mustich",
+            "name": "MUSTICH",
+            "text": "Don't look so surprised. I've been studying this room for a year. You've been studying it for a week."
+        },
+        {
+            "t": 31.200000762939453,
+            "len": 4.483560085296631,
+            "who": "mustich",
+            "name": "MUSTICH",
+            "text": "I ran your bubble hands through my solver last night. Do you want to know what it said?"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "You have {br}. The Classic is $340. You've never been more afraid, and it feels like the first honest feeling you've had in a year."
+        },
+        {
+            "t": 4.6666669845581055,
+            "len": 4.512675762176514,
+            "who": "card",
+            "name": "CARD",
+            "text": "Saturday. Biscayne. The big one."
+        }
+    ]
+}

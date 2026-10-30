@@ -1,0 +1,53 @@
+{
+    "lines": [
+        {
+            "t": 0.13333351910114288,
+            "len": 8.68854808807373,
+            "who": "card",
+            "name": "CARD",
+            "text": "Lucky Seven. Past midnight. The pie is the same. You are not as poor as last week."
+        },
+        {
+            "t": 8.833333969116211,
+            "len": 3.159977436065674,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "Tell me one hand you folded this week that you wanted to play."
+        },
+        {
+            "t": 12.0,
+            "len": 6.792131423950195,
+            "who": "you",
+            "name": "YOU",
+            "text": "Ace-queen, under the gun, deep stacks. Somebody three-bet me and I folded. It was probably good."
+        },
+        {
+            "t": 18.799999237060547,
+            "len": 8.76718807220459,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "Probably? Okay. Hold on to the word. In a week you'll be sitting there with a stack you can feel, and \"probably\" will cost you the thing you built."
+        },
+        {
+            "t": 27.600000381469727,
+            "len": 7.913945198059082,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "The roll isn't your score. It's your air. Every time you play above it, you're holding your breath. Nobody wins holding their breath."
+        },
+        {
+            "t": 35.53333282470703,
+            "len": 8.55575942993164,
+            "who": "slick",
+            "name": "SLICK",
+            "text": "And you're doing it on four hours of sleep, with a boss who thinks a bonus is a hug. That's allowed. It just has a price. Write it down."
+        },
+        {
+            "t": 44.099998474121094,
+            "len": 4.5,
+            "who": "card",
+            "name": "CARD",
+            "text": "Goal: build your bankroll to $5,000 before the Classic. {days} days."
+        }
+    ]
+}
