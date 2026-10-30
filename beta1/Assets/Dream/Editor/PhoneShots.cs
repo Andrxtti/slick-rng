@@ -16,6 +16,7 @@ namespace Dream.EditorTools
         static PhoneShots()
         {
             Remote.Extra["res"] = a => { var p = a.Split(' '); Remote.Log("res: " + SetSize(int.Parse(p[0]), int.Parse(p[1]))); };
+            Remote.Extra["home"] = a => { Flow.I.TestHome(a.Trim()); Remote.Log("home: " + a); };
             Remote.Extra["allin"] = a =>
             {
                 bool win = a.Trim() != "lose";

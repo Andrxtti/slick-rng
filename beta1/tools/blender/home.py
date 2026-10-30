@@ -146,7 +146,40 @@ mark("AIM_laptop", (lx, ly + 0.1, 1.06))
 mark("CAM_ext", (-2.7, 5.1, 1.9), 0)
 mark("CAM_wide", (2.0, 4.3, 1.6), 0)
 
-if "--preview" in sys.argv:
+if "--still" in sys.argv:   # the home screen (Milestone A2 / track H2): the apartment at night, Cycles, portrait + landscape
+    sc = bpy.context.scene; sc.render.engine = "CYCLES"; sc.cycles.samples = int(os.environ.get("SAMPLES", "160"))
+    sc.cycles.use_denoising = True; sc.view_settings.view_transform = "AgX"; sc.view_settings.look = "AgX - Medium High Contrast"
+    sc.view_settings.exposure = float(os.environ.get("EXPOSURE", "0.0"))
+    w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
+    env = w.node_tree.nodes.new("ShaderNodeTexEnvironment")
+    env.image = bpy.data.images.load(r"C:\Dev\Beta1Assets\polyhaven\modern_buildings_night\modern_buildings_night_2k.hdr")
+    w.node_tree.links.new(env.outputs["Color"], w.node_tree.nodes["Background"].inputs["Color"])
+    w.node_tree.nodes["Background"].inputs["Strength"].default_value = float(os.environ.get("SKY", "0.45"))
+    def light(name, kind, loc, energy, color, size=0.1, rot=(0, 0, 0)):
+        l = bpy.data.lights.new(name, kind); l.energy = energy; l.color = color
+        if kind == "AREA": l.size = size if isinstance(size, float) else size[0]; l.shape = "RECTANGLE" if not isinstance(size, float) else "SQUARE"
+        if kind == "AREA" and not isinstance(size, float): l.size_y = size[1]
+        if kind == "POINT": l.shadow_soft_size = size
+        o = bpy.data.objects.new(name, l); o.location = loc; o.rotation_euler = rot; sc.collection.objects.link(o); return o
+    light("Lamp", "POINT", (-2.95, 4.5, 0.95), 70, (1.0, 0.72, 0.45), 0.12)                              # the side-table lamp, warm
+    light("Strip", "AREA", (0.4, D - 0.45, 1.48), 60, (1.0, 0.8, 0.58), (2.2, 0.06))                      # under the cabinets
+    light("Screen", "AREA", (lx, ly + 0.1, 1.06), 6, (0.8, 0.88, 1.0), (0.3, 0.2), (R(90 - 18), 0, R(180)))   # the laptop's glow
+    for m in ("M_Sheet",):   # the laptop screen lit
+        nt = bpy.data.materials[m].node_tree; p = nt.nodes.get("Principled BSDF")
+        if p: p.inputs["Emission Strength"].default_value = 4.0
+    for o in bpy.data.objects:   # the ceiling pendant is off at night
+        if o.name.startswith("Pendant") or (o.parent and o.parent.name.startswith("Pendant")): o.hide_render = True
+    cam = bpy.data.cameras.new("c"); co = bpy.data.objects.new("c", cam); sc.collection.objects.link(co); sc.camera = co
+    cam.dof.use_dof = True; cam.dof.aperture_fstop = 4.0
+    out = r"C:\Dev\Beta1Assets\home"; os.makedirs(out, exist_ok=True)
+    for nm, (rx, ry), lens, loc, rot, focus in (
+            ("landscape", (1600, 740), 20, (2.5, 4.55, 1.45), (R(80), 0, R(150)), (1.25, 2.4, 1.0)),
+            ("portrait", (740, 1600), 26, (2.1, 4.7, 1.4), (R(84), 0, R(160)), (1.25, 2.4, 1.0))):
+        if len(sys.argv) > sys.argv.index("--still") + 1 and sys.argv[sys.argv.index("--still") + 1] not in (nm, "both"): continue
+        sc.render.resolution_x, sc.render.resolution_y = rx, ry; sc.render.resolution_percentage = 100
+        cam.lens = lens; co.location = loc; co.rotation_euler = rot; cam.dof.focus_distance = (Vector(focus) - Vector(loc)).length
+        sc.render.filepath = os.path.join(out, f"home_{nm}.png"); bpy.ops.render.render(write_still=True)
+elif "--preview" in sys.argv:
     sc = bpy.context.scene; sc.render.engine = "BLENDER_EEVEE"; sc.render.resolution_x, sc.render.resolution_y = 1280, 720
     w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
     env = w.node_tree.nodes.new("ShaderNodeTexEnvironment")

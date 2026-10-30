@@ -390,3 +390,25 @@ Install: Playwright for Python 1.x (PyPI, Apache-2.0) + its Chromium, to drive t
   - Checked: after a 15 s hidden + frozen page the reel resumed at 5.4 s and played on; a forced context loss reloaded and
     resumed, 3 runs of 3. Not checked: a real iPhone, and Steven's index.html page guard (my test build uses Unity's default
     page, so I couldn't see whether his guard blocks taps).
+
+### A2. B5: the apartment is home, with the Spacepad (Opus · high)
+- **Home replaces the card-room hub.** After the Prologue the game lives in your Brickell studio at night: a Cycles still
+  (`tools/blender/home.py --still`: AgX, 160 samples + denoise, the night HDRI through the blinds at 0.45, the lamp, the cabinet
+  strip, the laptop's glow, pendant off). 3.5 min per frame on this laptop. Shipped as JPEG at phone size in
+  `StreamingAssets/Home/` (portrait 596x1290 = 65 KB, landscape 1290x597 = 61 KB), loaded when the screen opens, not in
+  the first download. On it: the date, the bankroll, the rep, last night's news, and Open the Spacepad / Closet / Sleep.
+- **The Spacepad** (the planner): the bankroll, the stake bar and days to the Classic, the next Friday (rent and living, pay
+  with the day job, what's owed to Slick), this week Monday to Sunday (today lit; LIVE / ONLINE by your job's rules, RENT on
+  Friday, CLASSIC on the 14th), and tonight's games. Online games are played from it; a live game is a drive first.
+- **The drive** (a card for now, as allowed): "Biscayne Card Room, off the causeway" with a line per ride (the bus, the '09
+  hatchback, ...), 3 s or a tap, then the event.
+- **The closet**, ported from `dream/data.js` DR_ITEMS: outfit (12), glasses (7), hat (7), chain (4), ride (4), home (3), with the
+  old milestone tests mapped to this save (sessions = events, decisions, peak, titles, chapter). Items past Chapter 1 show
+  locked with their requirement. What you wear is saved (`Save.eq`). "Studio over the laundromat" is renamed "Brickell studio"
+  to match the set.
+- Stills, phone size: `C:\Dev\Builds\day2\home_{hub,spacepad,closet,drive}_{430x932,932x430}.png`; the Cycles frames
+  `home_still_cycles_*.png`.
+- **Not good yet, plainly:** the closet has no picture of you yet. The pre-rendered layers (body + outfit + glasses + chain +
+  hat, H2) are the next step, so tonight it's a list. The car is a text card, not a film. The still reads as a clean CG room:
+  the blinds are a little flat and the sofa side is dark. The old game's planner rules (mark Online/Live days every Sunday),
+  rent per home tier and the Daily Grind streak aren't ported; Chapter 1's own calendar rules stand.

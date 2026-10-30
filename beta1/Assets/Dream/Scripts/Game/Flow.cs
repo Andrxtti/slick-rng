@@ -27,6 +27,7 @@ namespace Dream.Game
         public int events, cashes, decisions, perfect;
         public string lastEv = ""; public int lastPlace; public double lastPrize; public string lastMet = "";   // for the films' {keys}
         public List<string> log = new List<string>();
+        public List<string> eq = new List<string>();   // what you wear and own, as "slot:id" (Home.cs: the closet, the ride, the home)
 
         const string Key = "dream_beta1_save";
         public static Save Load() { try { var j = PlayerPrefs.GetString(Key, ""); return string.IsNullOrEmpty(j) ? null : JsonUtility.FromJson<Save>(j); } catch { return null; } }
@@ -34,7 +35,7 @@ namespace Dream.Game
         public static void Erase() { PlayerPrefs.DeleteKey(Key); }
     }
 
-    public class Flow : MonoBehaviour
+    public partial class Flow : MonoBehaviour
     {
         public static Flow I;
         public static EventDef LastEvent;   // where the story is now: films and lines are checked against it (Moments.FilmOk)
@@ -197,45 +198,6 @@ namespace Dream.Game
             if (S.step == "choice") { story.Run("Monday", AfterStory); return; }
             if (S.step == "done") { EndCard(); return; }
             Hub();
-        }
-
-        // ------------------------------------------------------------ the hub
-        public void Hub(string note = null)
-        {
-            var s = Screen(Ui.Night);
-            Ui.At(Ui.Label(s, "BISCAYNE CARD ROOM", 28, Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.93f, 0.6f, 0.96f);
-            Ui.At(Ui.Label(s, DateStr(S.day), 28, Ui.Ink, TextAnchor.MiddleRight), 0.5f, 0.93f, 0.94f, 0.96f);
-            Ui.At(Ui.Title(s, "Chapter 1 · The Grind", 52, Ui.Ink, TextAnchor.MiddleLeft), 0.06f, 0.885f, 0.94f, 0.93f);
-            Ui.At(Ui.Num(s, Ui.Money(S.br), 104, Ui.Ink, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.79f, 0.94f, 0.87f);
-            Ui.At(Ui.Label(s, "BANKROLL  ·  " + (string.IsNullOrEmpty(S.name) ? "" : S.name.ToUpperInvariant() + "  ·  ") + Rep.ToUpperInvariant(), 24, Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.765f, 0.94f, 0.79f);
-            // goal
-            var bar = Ui.At(Ui.Tile(s, "GoalBar", Ui.Card, 10), 0.06f, 0.728f, 0.94f, 0.742f);
-            var fill = Ui.Tile(bar, "Fill", Ui.Gold, 10); fill.anchorMax = new Vector2(Mathf.Clamp01((float)(S.br / Goal)), 1);
-            int left = ClassicDay - S.day;
-            Ui.At(Ui.Label(s, $"Classic stake: build {Ui.Money(Goal)} before the Classic  ·  " + (left > 1 ? $"{left} days to go" : left == 1 ? "tomorrow" : left == 0 ? "today" : "played"), 26, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.69f, 0.94f, 0.72f);
-            if (note != null) Ui.At(Ui.Label(s, note, 30, Ui.Aqua, TextAnchor.MiddleLeft), 0.06f, 0.645f, 0.94f, 0.685f);
-            float y = 0.63f; var today = Today().ToList();
-            foreach (var ev in today)
-            {
-                string why = CantPlay(ev); bool afford = (ev.free || S.br >= ev.buyin) && why == null;
-                var row = Ui.At(Ui.Tile(s, ev.id, Ui.Card, 32), 0.06f, y - 0.1f, 0.94f, y);
-                string where = ev.online ? "ONLINE · CF TILT" : ev.id.StartsWith("classic") ? "BISCAYNE · THE CLASSIC" : "BISCAYNE · LIVE";
-                Ui.At(Ui.Label(row, where, 20, ev.online ? Ui.Aqua : Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.05f, 0.7f, 0.7f, 0.92f);
-                Ui.At(Ui.Label(row, ev.name, 38, afford ? Ui.Ink : Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0.05f, 0.4f, 0.72f, 0.72f);
-                bool red = why != null || (!ev.free && S.br < ev.buyin);
-                Ui.At(Ui.Label(row, why ?? (!ev.free && S.br < ev.buyin ? "Not in your roll" : ev.blurb), 24, red ? Ui.Neon : Ui.Dim, TextAnchor.UpperLeft), 0.05f, 0.05f, 0.72f, 0.4f);
-                string price = ev.free ? (ev.id == "classic2" ? "Chips bagged" : "Free") : Ui.Money(ev.buyin);
-                Ui.At(Ui.Num(row, price, 36, Ui.Gold, TextAnchor.MiddleRight, FontStyle.Bold), 0.68f, 0.48f, 0.95f, 0.85f);
-                Ui.At(Ui.Label(row, ev.kind == "sat" ? $"{ev.field:N0} players · {ev.seats} return" : $"{ev.field:N0} players", 22, Ui.Dim, TextAnchor.MiddleRight), 0.6f, 0.15f, 0.95f, 0.45f);
-                var b = row.gameObject.AddComponent<Button>(); var id = ev.id;
-                b.interactable = afford; b.onClick.AddListener(() => Enter(id));
-                y -= 0.112f;
-            }
-            if (LastSaturday(S.day + 1) || LastSaturday(S.day + 2) || LastSaturday(S.day + 3))
-                Ui.At(Ui.Label(s, "The Biscayne Classic is this Saturday.", 26, Ui.Gold, TextAnchor.MiddleLeft), 0.06f, y - 0.03f, 0.94f, y);
-            Ui.At(Ui.Button(s, today.All(e => CantPlay(e) != null) ? (S.job == "nights" ? "Sleep until you can play" : "Sleep") : "Call it a night", Sleep, Ui.Aqua, Ui.Night, 40), 0.15f, 0.09f, 0.85f, 0.145f);
-            Ui.At(Ui.Button(s, "Replay the reel", () => Films.Play(new[] { "reel" }, () => Hub()), new Color(1, 1, 1, 0.06f), Ui.Dim, 26), 0.06f, 0.025f, 0.46f, 0.065f);
-            Ui.At(Ui.Button(s, "Title", Title, new Color(1, 1, 1, 0.06f), Ui.Dim, 26), 0.54f, 0.025f, 0.94f, 0.065f);
         }
 
         // a Yarn choice in the game's style: the card lines on top (first small, second big, the rest small), one button

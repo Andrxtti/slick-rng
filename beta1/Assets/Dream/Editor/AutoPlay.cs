@@ -18,7 +18,7 @@ namespace Dream.EditorTools
     public static class AutoPlay
     {
         static string branch, only; static bool lose, broke, cut; static double acc = 1; static int stakeDay = -1, accSum, accN; static double next; static int steps; static StreamWriter log; static readonly HashSet<string> shot = new HashSet<string>();
-        static string lastHub, lastText;
+        static string lastHub, lastText; static bool sleepNext;
 
         static AutoPlay()
         {
@@ -135,7 +135,14 @@ namespace Dream.EditorTools
                 cont.onClick.Invoke(); return;
             }
             if (Has("tap to continue") && Find("Screen") != null) { Find("Screen").onClick.Invoke(); return; }   // a narrator card
-            if (Has("BISCAYNE CARD ROOM"))
+            if (Has("OFF THE CAUSEWAY") && Find("Screen") != null) { Find("Screen").onClick.Invoke(); return; }   // the drive to a live game
+            if (Has("HOME  ·"))   // home: the Spacepad, or bed when it had nothing left
+            {
+                Shot("home");
+                if (sleepNext) { sleepNext = false; var bed = Find("Sleep") ?? Find("Call it a night"); if (bed != null) { bed.onClick.Invoke(); return; } }
+                Find("Open the Spacepad")?.onClick.Invoke(); return;
+            }
+            if (Has("SPACEPAD"))
             {
                 if (broke && !cut && Find("nightly") != null) { cut = true; f.S.br = 70; f.S.Write(); W("  (test: bankroll cut to $70)"); f.Hub(); return; }   // on a day you can play
                 Shot("hub");
@@ -149,8 +156,7 @@ namespace Dream.EditorTools
                 // three smaller games first, so the calendar rules (one live game a day, weekends with the job) get played
                 var order = only == "online" ? new[] { "glob55", "freeroll" } : only == "live" ? new[] { "classic2", "classic", "nightly" } : new[] { "classic2", "classic", "nightly", "glob55", "freeroll" };
                 foreach (var id in order) { var b = Find(id); if (b != null) { W($"  play {id} (${f.S.br:0} before buy-in)"); b.onClick.Invoke(); return; } }
-                var sleep = Find("Sleep") ?? Find("Call it a night"); if (sleep != null) { sleep.onClick.Invoke(); return; }
-                Stop("hub with nothing to do");
+                sleepNext = true; Find("Back home")?.onClick.Invoke(); return;
                 return;
             }
             Find("Begin")?.onClick.Invoke();
