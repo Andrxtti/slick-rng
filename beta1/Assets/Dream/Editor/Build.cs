@@ -24,6 +24,11 @@ namespace Dream.EditorTools
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
             PlayerSettings.WebGL.decompressionFallback = true;
             PlayerSettings.WebGL.dataCaching = true;
+            // hotfix (Steven 11:00, iPhone: the Spacepad "crashed"): with explicitly-thrown-only exceptions a null reference
+            // aborts the whole web game; catch them, so a bug costs one screen, not the session. And stay inside what iPhone
+            // Safari will give a tab (~1 GB), growing in modest steps.
+            PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.FullWithoutStacktrace;
+            PlayerSettings.WebGL.maximumMemorySize = 1024;
             PlayerSettings.SetManagedStrippingLevel(UnityEditor.Build.NamedBuildTarget.WebGL, ManagedStrippingLevel.High);
             PlayerSettings.defaultWebScreenWidth = 540; PlayerSettings.defaultWebScreenHeight = 960;
             // phones get their own light pipeline; the films keep URP.asset (4K shadows, MSAA) in the editor

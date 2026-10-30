@@ -30,10 +30,37 @@ namespace Dream.Game
         public List<string> log = new List<string>();
         public List<string> eq = new List<string>();   // what you wear and own, as "slot:id" (Home.cs: the closet, the ride, the home)
 
+        public int rev;   // counts saves: of the copies on the device, the highest valid one is the career
+
+        // hotfix (Steven 11:01: a crash wiped his save): two copies, PlayerPrefs (IndexedDB on the web, synced
+        // asynchronously) and, on the web, localStorage (written at once). Load keeps the newest one that parses; nothing
+        // but the player's own "New career" ever deletes a career.
         const string Key = "dream_beta1_save";
-        public static Save Load() { try { var j = PlayerPrefs.GetString(Key, ""); return string.IsNullOrEmpty(j) ? null : JsonUtility.FromJson<Save>(j); } catch { return null; } }
-        public void Write() { PlayerPrefs.SetString(Key, JsonUtility.ToJson(this)); PlayerPrefs.Save(); }
-        public static void Erase() { PlayerPrefs.DeleteKey(Key); }
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("__Internal")] static extern void Dream_SaveMirror(string json);
+        [System.Runtime.InteropServices.DllImport("__Internal")] static extern string Dream_LoadMirror();
+        [System.Runtime.InteropServices.DllImport("__Internal")] static extern void Dream_EraseMirror();
+#else
+        static void Dream_SaveMirror(string json) { }
+        static string Dream_LoadMirror() => "";
+        static void Dream_EraseMirror() { }
+#endif
+        static Save Parse(string j) { try { return string.IsNullOrEmpty(j) ? null : JsonUtility.FromJson<Save>(j); } catch (Exception e) { Debug.LogWarning("[Dream] a save copy didn't parse: " + e.Message); return null; } }
+        public static Save Load()
+        {
+            var a = Parse(PlayerPrefs.GetString(Key, "")); Save b = null;
+            try { b = Parse(Dream_LoadMirror()); } catch (Exception e) { Debug.LogWarning("[Dream] save mirror: " + e.Message); }
+            var s = a == null ? b : b == null ? a : (b.rev > a.rev ? b : a);
+            if (s != null) Debug.Log($"[Dream] save loaded: rev {s.rev}, step {s.step}, day {s.day} ({(s == b && b != a ? "from the mirror" : "from PlayerPrefs")})");
+            return s;
+        }
+        public void Write()
+        {
+            rev++; var j = JsonUtility.ToJson(this);
+            PlayerPrefs.SetString(Key, j); PlayerPrefs.Save();
+            try { Dream_SaveMirror(j); } catch (Exception e) { Debug.LogWarning("[Dream] save mirror: " + e.Message); }
+        }
+        public static void Erase() { PlayerPrefs.DeleteKey(Key); PlayerPrefs.Save(); try { Dream_EraseMirror(); } catch { } }
     }
 
     public partial class Flow : MonoBehaviour

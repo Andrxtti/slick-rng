@@ -14,6 +14,25 @@ namespace Dream.Game
     // drive to Biscayne), the closet (the old game's wardrobe, data.js DR_ITEMS, unlocked by milestones), and sleep.
     public partial class Flow
     {
+        // hotfix (Steven 11:00): a screen that throws costs that screen, never the career. The error is logged (and kept for
+        // the test menu); the player lands home, or on a plain card if home itself failed. The save is never touched.
+        public static string LastError = "";
+        void Safe(string where, Action build)
+        {
+            try { build(); }
+            catch (Exception e)
+            {
+                LastError = $"{where}: {e.GetType().Name}: {e.Message}";
+                Debug.LogError("[Dream] " + LastError + "\n" + e.StackTrace);
+                if (where != "home") { Hub("That screen didn't open. Your career is saved."); return; }
+                var s = Screen(Ui.Night);
+                Ui.At(Ui.Title(s, "Something broke here.", 64, Ui.Ink), 0.08f, 0.55f, 0.92f, 0.66f);
+                Ui.At(Ui.Label(s, "Your career is saved. " + LastError, 26, Ui.Dim), 0.08f, 0.42f, 0.92f, 0.54f);
+                Ui.At(Ui.Button(s, "Open the Spacepad", Spacepad, Ui.Gold, Ui.Night, 36), 0.18f, 0.28f, 0.82f, 0.34f);
+                Ui.At(Ui.Button(s, "Title", Title, Ui.Card, Ui.Ink, 30), 0.3f, 0.19f, 0.7f, 0.24f);
+            }
+        }
+
         // ------------------------------------------------------------ the closet's items (old dream/data.js, Chapter 1 subset of tests)
         class Item { public string slot, id, name, req; public Func<Save, bool> got; }
         static bool Start_(Save s) => true;
@@ -92,7 +111,8 @@ namespace Dream.Game
         static void Shade(RectTransform s, float y0, float y1, float a) => Ui.At(Ui.Panel(s, "Shade", new Color(0.02f, 0.02f, 0.04f, a)), 0, y0, 1, y1);
 
         // ------------------------------------------------------------ home (the hub)
-        public void Hub(string note = null)
+        public void Hub(string note = null) => Safe("home", () => HubBody(note));
+        void HubBody(string note)
         {
             var s = Screen(Ui.Night); Canvas.ForceUpdateCanvases();
             bool wide = s.rect.width > s.rect.height;
@@ -150,7 +170,8 @@ namespace Dream.Game
         }
 
         // ------------------------------------------------------------ the Spacepad: the planner
-        void Spacepad()
+        void Spacepad() => Safe("the Spacepad", SpacepadBody);
+        void SpacepadBody()
         {
             var s = Screen(Ui.Night); Canvas.ForceUpdateCanvases();
             bool wide = s.rect.width > s.rect.height;
@@ -222,7 +243,8 @@ namespace Dream.Game
 
         // ------------------------------------------------------------ the closet
         string closetSlot = "outfit";
-        void Closet()
+        void Closet() => Safe("the closet", ClosetBody);
+        void ClosetBody()
         {
             var s = Screen(Ui.Night); Canvas.ForceUpdateCanvases();
             bool wide = s.rect.width > s.rect.height;
