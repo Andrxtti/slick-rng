@@ -79,7 +79,7 @@ namespace Dream.Game
             var sa = Application.streamingAssetsPath; var dir = (sa.Contains("://") ? sa : "file://" + sa) + "/Films/";
             vp.source = VideoSource.Url;
             vp.url = System.IO.Path.Combine(Application.streamingAssetsPath, "Films", id + ".mp4");
-            vp.prepareCompleted -= Started; vp.prepareCompleted += Started; vp.Prepare(); started = Time.unscaledTime; lastClock = -1; stuckSince = started;
+            vp.prepareCompleted -= Started; vp.prepareCompleted += Started; vp.Prepare(); started = Time.unscaledTime; lastClock = -1; lastFrame = Time.realtimeSinceStartup; stuckSince = started;
             var req = UnityWebRequest.Get(dir + id + ".json");   // works on the web too (no file access there)
             req.SendWebRequest().completed += _ =>
             {
@@ -91,18 +91,34 @@ namespace Dream.Game
 
         public void Skip() { if (queue == null || Time.unscaledTime - started < 0.4f) return; vp.Stop(); Next(); }
 
-        float lastClock = -1, stuckSince;
+        // the page is back (Resume): a film the browser paused plays on, and the watchdogs start counting from now
+        public void Wake()
+        {
+            if (queue == null || vp == null) return;
+            started = stuckSince = Time.unscaledTime; lastClock = -1;
+            // the browser paused the <video> behind Unity's back, so isPlaying can't be trusted: pause and play again
+            if (vp.isPrepared) { vp.Pause(); vp.Play(); }
+            else vp.Prepare();
+            Debug.Log($"[Dream] page back: film {System.IO.Path.GetFileName(vp.url)} resumed at {vp.time:0.0}s");
+        }
+
+        float lastClock = -1, stuckSince, lastFrame;
         void Update()
         {
             // watchdogs: a film that never starts (missing, unreadable) or whose clock stops is treated as over, so the
             // story never hangs on a black screen
             if (queue != null && vp != null)
             {
+                // a frame over a second long: the page was asleep (another app, tab or the lock screen). The game loop can
+                // run before the browser's "visible" event arrives, so wake the film here too, before the watchdogs look
+                if (Resume.Hidden) { stuckSince = started = Time.unscaledTime; lastFrame = Time.realtimeSinceStartup; return; }
+                float gap = Time.realtimeSinceStartup - lastFrame; lastFrame = Time.realtimeSinceStartup;
+                if (gap > 1f) { Wake(); return; }
                 if (!vp.isPrepared && Time.unscaledTime - started > 6f) { Debug.LogWarning("[Dream] film never started: " + vp.url); Next(); return; }
                 if (vp.isPrepared && Time.unscaledTime - started > 1f)
                 {
                     if (Mathf.Abs((float)vp.time - lastClock) > 0.001f) { lastClock = (float)vp.time; stuckSince = Time.unscaledTime; }
-                    else if (Time.unscaledTime - stuckSince > 4f) { Debug.LogWarning($"[Dream] film stalled at {vp.time:0.0}s: {vp.url}"); Next(); return; }
+                    else if (Time.unscaledTime - stuckSince > 4f) { Debug.LogWarning($"[Dream] film stalled at {vp.time:0.0}s (stuck {Time.unscaledTime - stuckSince:0.0}s, playing {vp.isPlaying}): {vp.url}"); Next(); return; }
                 }
             }
             if (caps == null || vp == null || !vp.isPlaying) return;

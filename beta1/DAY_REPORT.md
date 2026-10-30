@@ -362,3 +362,31 @@ yet; they are a draft**, rendered with tonight's look and narrator.
 - `Face.cs` plays Rhubarb's shapes (A closed, B teeth, C open, D wide, E round, F pucker, G f/v, H l, X rest) as open/spread/round
   on the MakeHuman mouth units; lines without cues fall back to the old loudness envelope. Mouth shapes now change per sound,
   with real closures on m/b/p (`rhubarb_mustich.png`).
+
+## Milestone A (INBOX 20:35): Chapter 1 complete -> Test Beta 1.1.3
+Install: Playwright for Python 1.x (PyPI, Apache-2.0) + its Chromium, to drive the web build at phone size (offline test tool).
+
+### A1. Task 8 + B1 + B2 + B3
+- **B1, the all-in screen (Sonnet · medium).** Cause: `CardImg` put an AspectRatioFitter (FitInParent) on a box anchored to its slot;
+  FitInParent resets anchors to the WHOLE parent, so your two cards became one full-screen card and the opponent's two stacked
+  into one. Each card now fits inside its own slot. The 3c2a2c0 layout is back (both hands side by side under YOU / opponent,
+  the equity bar, the board in a row, the result line), kit faces at normal size; landscape gets its own rows in a centred
+  column. Stills: `C:\Dev\Builds\day2\allin_fix_portrait.png` (430x932), `allin_fix_landscape.png` (932x430).
+- **B2, table bigger / buttons smaller.** Portrait: the table area 45% -> 61% of the height, buttons 10% -> 6.5% tall, "Your move"
+  gone, your cards between. Landscape: table 70% -> 75%, buttons 11% -> 8.5%. Seat text up a third (it was ~10 px at phone
+  size), the pot under the logo in portrait too, bets placed so their labels clear the pot's. Stills: `day2/table_phone_*.png`.
+- **B3, freezing after switching away (Opus · high).** Reproduced in Chromium at 430x932 (the build, the reel playing, the page
+  marked hidden + `visibilitychange`, the page frozen over CDP for 15 s, Unity's own <video> paused as iOS does): on return the
+  film's watchdog saw a clock stopped long ago and ended the film (or, with the loop still running while hidden, after 4 s);
+  Unity also believes a browser-paused video is still playing, so nothing restarted it. Fixes:
+  - `Plugins/WebGL/Resume.jslib` + `Game/Resume.cs`: the page tells the game when it is hidden/shown (visibilitychange,
+    pageshow, focus). Hidden: save. Shown: unpause audio, and if the page was hidden, `Films.Wake()`.
+  - `Films.Wake()`: pause + play the <video> (Unity's isPlaying can't be trusted after the browser paused it), and the watchdogs
+    count from now. While hidden the watchdogs don't judge the film; a frame more than a second after the last one (the loop
+    was asleep, the event may come later) also wakes it. A film that still won't play is ended by the watchdog 4 s later, so
+    no screen ever waits on a video.
+  - A lost WebGL context (iOS under memory pressure in the background) can't come back in Unity: the page reloads, and the
+    game resumes from its save (it saves on every change).
+  - Checked: after a 15 s hidden + frozen page the reel resumed at 5.4 s and played on; a forced context loss reloaded and
+    resumed, 3 runs of 3. Not checked: a real iPhone, and Steven's index.html page guard (my test build uses Unity's default
+    page, so I couldn't see whether his guard blocks taps).
