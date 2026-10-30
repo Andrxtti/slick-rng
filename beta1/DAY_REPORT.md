@@ -512,3 +512,31 @@ fill and rim; AgX; 85 mm at f/2.8 focused on the eyes. **`C:\Dev\Builds\day2\rea
   for what stays in Resources/Voice (quality 0.35, mono); the four table plates crunch-compressed (no visible banding).
   **Build/ 17.2 MB** (1.1.3 was 22.5), 0 errors. Chromium smoke test at 430x932: boots, "voices preloaded: 112 of 112",
   hidden 15 s and back, the reel resumes.
+
+### INBOX 12:10: hotfix, no cash, Chapter 2's goal -> Test Beta 1.1.4 (rebuilt)
+- **Hotfix (Opus · high)** — Steven on iPhone: opening the Spacepad on the quit path crashed to the title and the save was gone.
+  - Not reproducible in Chromium (430x932, quit path, Spacepad twice: no exception, ~59 MB JS heap). What would turn a small
+    bug into this on a phone: the web build had **exceptions "explicitly thrown only"**, so any null reference aborts the
+    whole game (in the editor it's just a log line); and memory could grow to 2 GB where iPhone Safari kills a tab far sooner.
+  - Fixes: the web build catches exceptions (full, no stack traces; Build/ still 17.3 MB) and caps memory at 1 GB; home,
+    the Spacepad and the closet catch their own errors (logged, kept in `LastError` for the test menu, the player lands home);
+    the save is **mirrored to localStorage on every write** (synchronous, unlike IndexedDB's sync) and `Save.Load` takes the
+    newest valid copy by `rev`; only "New career" erases a career (and keeps the old one aside in localStorage).
+  - Proved in Chromium on the build: the quit-path Spacepad opens; reload -> Continue (rev 2, from PlayerPrefs) -> home;
+    IndexedDB deleted + reload -> Continue (rev 2, **from the mirror**). Stills: scratch `sp/`, copied to `day2/hotfix_*.png`.
+  - For the cloud's index.html (I don't touch docs/): it renders at devicePixelRatio up to 2.5 (an iPhone canvas of ~1075x2330
+    plus URP's buffers) and primes 32 <video> elements at the start tap; both cost phone memory. Suggest dpr <= 2 (or 1.5 on
+    iPhones) and fewer primed videos. Not tested on a real iPhone.
+- **No cash games** (Steven 10:40): the $2/$5 game is out of Chapter 2 (data, calendar, driver; the cash code stays, never
+  offered; Chapter 1 had none). Its stop days became Mega Satellite days; the charity day has no live event. Gnomey's c1 line
+  ("One-two has a seat in ten") is Steven's new one; re-voiced, lip-synced, c1 re-rendered and published.
+- **Chapter 2's goal** (Steven 12:09): a ring OR $15,000, counted once you've been to the Strike (otherwise a player who left
+  Chapter 1 above $15,000 would skip the chapter). ring2 (the Lucky Seven, about Colt) plays only if you met the Cowboy;
+  then c3. The c2 narrator Goal line and ring2's "Two rings and forty thousand" line are overridden in
+  `tools/storyboard_build.py` until the scene tree has Steven's wording (listed in the INBOX for the cloud).
+- **Balance for the new goal** (`simcal2`, 200 runs from a typical Chapter 1 ending): the ring offset tuned for two rings
+  (0.20) ended the chapter in ~6–10 days at 70%. Now 0.07: 70% keep median 51 days (25–75%: 10–67), full-time 15 (7–63),
+  a ring decides it 13–19% of the time; 55% keep ~6 months. (`C:\Dev\Builds\day2\b_balance_ch2.txt`)
+- Keep autoplay on this code: end card on day 68 (the perfect driver left Chapter 1 with $91K, so Chapter 2 ended after its
+  first night at the Strike, as the rule says).
+- **Build: Test Beta 1.1.4**, Build/ 17.3 MB, 0 errors.
