@@ -251,6 +251,8 @@ namespace Dream.Game
         {
             var s = Screen(Ui.Night); Canvas.ForceUpdateCanvases();
             bool wide = s.rect.width > s.rect.height;
+            Backdrop(s, "you");   // you, rendered (track H: a Cycles portrait; outfit layers next)
+            if (wide) Shade(s, 0, 1, 0.74f); else { Shade(s, 0, 0.56f, 0.82f); Shade(s, 0.83f, 1, 0.7f); }   // portrait: you show between the tabs and the list
             Ui.At(Ui.Label(s, "CLOSET", 26, Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.06f, 0.94f, 0.5f, 0.975f);
             Ui.At(Ui.Label(s, string.Join("  ·  ", new[] { "outfit", "eyes", "head", "chain" }.Select(WornItem).Where(i => i.id != "none").Select(i => i.name)), 22, Ui.Dim, TextAnchor.MiddleLeft), 0.06f, 0.9f, 0.94f, 0.94f);
             for (int i = 0; i < Slots.Length; i++)
@@ -260,15 +262,15 @@ namespace Dream.Game
                 Ui.At(tab, 0.06f + i * 0.88f / Slots.Length + 0.004f, 0.84f, 0.06f + (i + 1) * 0.88f / Slots.Length - 0.004f, 0.885f);
             }
             var list = Items.Where(it => it.slot == closetSlot).ToList();
-            int cols = wide ? 2 : 1, perCol = Mathf.CeilToInt(list.Count / (float)cols);
-            float top = 0.83f, rowH = Mathf.Min(wide ? 0.12f : 0.065f, 0.72f / perCol);
+            int cols = 2, perCol = Mathf.CeilToInt(list.Count / (float)cols);
+            float top = wide ? 0.83f : 0.55f, rowH = Mathf.Min(wide ? 0.12f : 0.075f, (wide ? 0.72f : 0.45f) / perCol);
             for (int i = 0; i < list.Count; i++)
             {
                 var it = list[i]; bool got = it.got(S), wearing = Worn(it.slot) == it.id;
-                int c = i / perCol, r = i % perCol; float x0 = 0.06f + c * 0.45f, x1 = x0 + (cols == 1 ? 0.88f : 0.43f);
+                int c = i / perCol, r = i % perCol; float x0 = 0.06f + c * 0.45f, x1 = x0 + 0.43f;
                 var row = Ui.At(Ui.Tile(s, it.id, wearing ? new Color(0.95f, 0.76f, 0.35f, 0.18f) : Ui.Card, 20), x0, top - (r + 1) * rowH, x1, top - r * rowH - 0.006f);
-                Ui.At(Ui.Label(row, it.name, 28, got ? Ui.Ink : new Color(1, 1, 1, 0.3f), TextAnchor.MiddleLeft, FontStyle.Bold), 0.05f, 0.45f, 0.75f, 0.95f);
-                Ui.At(Ui.Label(row, got ? (wearing ? (it.slot == "home" ? "You live here" : it.slot == "ride" ? "Your ride" : "Wearing") : "Tap to wear") : "Locked · " + it.req, 20, wearing ? Ui.Gold : got ? Ui.Dim : new Color(1, 1, 1, 0.3f), TextAnchor.MiddleLeft), 0.05f, 0.05f, 0.95f, 0.45f);
+                Ui.At(Ui.Label(row, it.name, wide ? 28 : 22, got ? Ui.Ink : new Color(1, 1, 1, 0.3f), TextAnchor.MiddleLeft, FontStyle.Bold), 0.05f, 0.45f, 0.75f, 0.95f);
+                Ui.At(Ui.Label(row, got ? (wearing ? (it.slot == "home" ? "You live here" : it.slot == "ride" ? "Your ride" : "Wearing") : "Tap to wear") : "Locked · " + it.req, wide ? 20 : 16, wearing ? Ui.Gold : got ? Ui.Dim : new Color(1, 1, 1, 0.3f), TextAnchor.MiddleLeft), 0.05f, 0.05f, 0.95f, 0.45f);
                 if (got && !wearing) { var b = row.gameObject.AddComponent<Button>(); b.onClick.AddListener(() => { Wear(it); Closet(); }); }
             }
             Ui.At(Ui.Button(s, "Back home", () => Hub(), Ui.Aqua, Ui.Night, 32), 0.25f, 0.025f, 0.75f, 0.08f);

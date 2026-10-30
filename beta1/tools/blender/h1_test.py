@@ -127,6 +127,16 @@ front = Vector((0, 1, 0))   # Slick faces +y, toward the counter and the camera
 light("Key", "AREA", eye + Vector((0.5, 1.0, 0.35)), 20, (1.0, 0.82, 0.66), 0.8, aim=eye)   # H2: more frontal (the ear blew out)
 light("Fill", "AREA", eye + Vector((-0.9, 0.8, 0.0)), 7, (0.6, 0.7, 1.0), 0.8, aim=eye)
 light("Rim", "AREA", eye + Vector((-0.4, -0.7, 0.3)), 18, (0.65, 0.75, 1.0), 0.3, aim=eye)
+if "--studio" in sys.argv:   # the closet's portrait: no set, a dark seamless backdrop behind you
+    for o in bpy.data.objects:
+        if o.type == "MESH" and o not in meshes: o.hide_render = True
+    for o in list(bpy.data.objects):
+        if o.type == "LIGHT" and o.name.startswith(("L_pendant", "Neon")): o.hide_render = True
+    bd = bpy.data.objects.new("Backdrop", bpy.data.meshes.new("bd")); sc.collection.objects.link(bd)
+    import bmesh as _bm; b2 = _bm.new(); _bm.ops.create_grid(b2, x_segments=1, y_segments=1, size=4); b2.to_mesh(bd.data); b2.free()
+    bd.location = eye + Vector((0, -1.6, -0.6)); bd.rotation_euler = (math.radians(90), 0, 0)
+    bm_ = bpy.data.materials.new("bd"); bm_.use_nodes = True; bm_.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (0.03, 0.03, 0.035, 1)
+    bd.data.materials.append(bm_)
 w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
 w.node_tree.nodes["Background"].inputs["Color"].default_value = (0.01, 0.012, 0.02, 1)
 
@@ -140,7 +150,7 @@ if mcu: cam.lens = 65
 # the eye light: a dim soft source beside the lens, for catchlights (the lids shade Slick's eyes)
 light("EyeLight", "AREA", co.location + Vector((0.08, 0, 0.05)), 1.5, (1.0, 0.95, 0.9), 0.25, aim=eye)
 focus = bpy.data.objects.new("focus", None); sc.collection.objects.link(focus); focus.location = eye; cam.dof.focus_object = focus; cam.dof.aperture_fstop = 2.8
-sc.render.resolution_x, sc.render.resolution_y = 1280, 720
+sc.render.resolution_x, sc.render.resolution_y = map(int, os.environ.get("RES", "1280x720").split("x"))   # e.g. RES=740x1600 for a phone portrait
 sc.view_settings.view_transform = "AgX"; sc.view_settings.look = "AgX - Medium High Contrast"
 
 for eng in (["eevee", "cycles"] if mode == "both" else [mode]):
@@ -150,6 +160,6 @@ for eng in (["eevee", "cycles"] if mode == "both" else [mode]):
         except Exception: pass
     else:
         sc.render.engine = "CYCLES"; sc.cycles.samples = 64; sc.cycles.use_denoising = True; sc.cycles.denoiser = "OPENIMAGEDENOISE"
-    sc.render.filepath = os.path.join(OUT, f"{CHAR}_{'mcu' if mcu else 'ecu'}_{eng}{OUT_TAG}.png")
+    sc.render.filepath = os.path.join(OUT, f"{CHAR}_{'mcu' if mcu else 'ecu'}_{eng}{OUT_TAG}{'_studio' if '--studio' in sys.argv else ''}{'_tall' if sc.render.resolution_y > sc.render.resolution_x else ''}.png")
     t0 = time.time(); bpy.ops.render.render(write_still=True)
     print(f"[h1] {eng}: {time.time() - t0:.1f} s per frame -> {sc.render.filepath}", flush=True)

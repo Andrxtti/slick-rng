@@ -606,3 +606,7 @@ Plan (each step committed): 1 data (Sonnet · medium), 2 calendar + flow (Opus �
 - Track H, storyboard backdrops: Silver Strike's scenes get the reel's ring-on-neon still, the Summer's the bracelet still
   (`StreamingAssets/Sets/{casino,vegas}_*.jpg`, 20–26 KB); speaker cards' text now clears the portrait/initials circle in
   portrait (`C:\Dev\Builds\day2\storyboard_vegas.png`). 1.1.5 rebuilt with them (not yet published).
+- Track H, the closet's picture of you: `h1_test.py --studio` (no set, a dark seamless backdrop) renders you in Cycles
+  (MCU 42 s, tall 740x1600 62 s); shipped as `StreamingAssets/Home/you_{portrait,landscape}.jpg` (40 / 34 KB). In portrait the
+  closet shows you between the tabs and a two-column list (`C:\Dev\Builds\day2\closet_you_430x932.png`). Not good yet: the
+  picture wears the character's built shirt, not the closet's choice; per-item layers (outfit, glasses, chain, hat) are next.
