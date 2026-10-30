@@ -211,7 +211,8 @@ namespace Dream.Game
         // the kit's cards: a face (Table.CardFace), or the back
         static void CardImg(Transform parent, int c, float x0, float y0, float x1, float y1, bool up = true)
         {
-            var box = Ui.At(Ui.Box(parent, "C"), x0, y0, x1, y1);
+            var slot = Ui.At(Ui.Box(parent, "C"), x0, y0, x1, y1);   // FitInParent resets anchors to the whole parent, so it fits inside this slot
+            var box = Ui.Box(slot, "Fit"); Ui.Fill(box);
             box.gameObject.AddComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             box.GetComponent<AspectRatioFitter>().aspectRatio = 360f / 504f;
             if (up) { Table.CardFace(box, c, 0, 1); return; }
@@ -225,39 +226,43 @@ namespace Dream.Game
             Note("any", "all-in vs " + sd.oppName, run.ev);
             float t0 = Time.realtimeSinceStartup; bool skip = false, ended = false;
             var o = Overlay(root, new Color(0.02f, 0.02f, 0.03f, 1f), () => { if (Time.realtimeSinceStartup - t0 > 0.4f) skip = true; }, false);
+            Canvas.ForceUpdateCanvases();
+            bool wide = o.rect.width > o.rect.height * 1.2f;   // landscape: a centred column with its own rows (B1)
+            var c = wide ? Ui.At(Ui.Box(o, "Col"), 0.2f, 0, 0.8f, 1) : o;
+            float Y(float tall, float flat) => wide ? flat : tall;
             string kick = Rival(run) != null ? "FINAL TABLE · ALL IN VS " + sd.oppName.ToUpperInvariant() : run.ev.online ? "CF TILT · ALL IN" : "ALL IN";
-            Ui.At(Ui.Label(o, kick, 24, Ui.Dim, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.86f, 1, 0.89f);
-            Ui.At(Glow(Ui.Title(o, "ALL IN", 150, Lime), Lime), 0, 0.75f, 1, 0.86f);
-            var go = Ui.Button(o, "See the verdict", () => { UnityEngine.Object.Destroy(o.gameObject); done(); }, Ui.Gold, Ui.Night, 42); Ui.At(go, 0.18f, 0.06f, 0.82f, 0.12f); go.gameObject.SetActive(false);
+            Ui.At(Ui.Label(c, kick, 24, Ui.Dim, TextAnchor.MiddleCenter, FontStyle.Bold), 0, Y(0.86f, 0.935f), 1, Y(0.89f, 0.975f));
+            Ui.At(Glow(Ui.Title(c, "ALL IN", wide ? 90 : 150, Lime), Lime), 0, Y(0.75f, 0.815f), 1, Y(0.86f, 0.93f));
+            var go = Ui.Button(c, "See the verdict", () => { UnityEngine.Object.Destroy(o.gameObject); done(); }, Ui.Gold, Ui.Night, 42); Ui.At(go, 0.18f, Y(0.06f, 0.015f), 0.82f, Y(0.12f, 0.095f)); go.gameObject.SetActive(false);
             if (sd.folded)
             {
-                Ui.At(Ui.Label(o, $"{sd.oppSeat} thinks it over. Then the cards go in the muck.", 34, Ui.Ink), 0.08f, 0.55f, 0.92f, 0.65f);
-                Ui.At(Ui.Title(o, "They fold. The pot is yours.", 60, Green), 0.05f, 0.42f, 0.95f, 0.54f);
+                Ui.At(Ui.Label(c, $"{sd.oppSeat} thinks it over. Then the cards go in the muck.", 34, Ui.Ink), 0.08f, 0.55f, 0.92f, 0.65f);
+                Ui.At(Ui.Title(c, "They fold. The pot is yours.", 60, Green), 0.05f, 0.42f, 0.95f, 0.54f);
                 go.gameObject.SetActive(true); return;
             }
-            Ui.At(Ui.Label(o, "YOU", 26, Ui.Aqua, TextAnchor.MiddleCenter, FontStyle.Bold), 0.06f, 0.69f, 0.46f, 0.72f);
-            Ui.At(Ui.Label(o, sd.oppName.ToUpperInvariant(), 26, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.54f, 0.69f, 0.94f, 0.72f);
-            CardImg(o, sd.hero[0], 0.08f, 0.56f, 0.25f, 0.68f); CardImg(o, sd.hero[1], 0.27f, 0.56f, 0.44f, 0.68f);
-            Ui.At(Ui.Label(o, "vs", 30, Ui.Dim), 0.44f, 0.58f, 0.56f, 0.66f);
-            var oppBox = Ui.At(Ui.Box(o, "Opp"), 0.56f, 0.56f, 0.92f, 0.68f);
+            Ui.At(Ui.Label(c, "YOU", 26, Ui.Aqua, TextAnchor.MiddleCenter, FontStyle.Bold), 0.06f, Y(0.69f, 0.75f), 0.46f, Y(0.72f, 0.8f));
+            Ui.At(Ui.Label(c, sd.oppName.ToUpperInvariant(), 26, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.54f, Y(0.69f, 0.75f), 0.94f, Y(0.72f, 0.8f));
+            CardImg(c, sd.hero[0], 0.08f, Y(0.56f, 0.53f), 0.25f, Y(0.68f, 0.745f)); CardImg(c, sd.hero[1], 0.27f, Y(0.56f, 0.53f), 0.44f, Y(0.68f, 0.745f));
+            Ui.At(Ui.Label(c, "vs", 30, Ui.Dim), 0.44f, Y(0.58f, 0.6f), 0.56f, Y(0.66f, 0.68f));
+            var oppBox = Ui.At(Ui.Box(c, "Opp"), 0.56f, Y(0.56f, 0.53f), 0.92f, Y(0.68f, 0.745f));
             CardImg(oppBox, sd.opp[0], 0, 0, 0.47f, 1, false); CardImg(oppBox, sd.opp[1], 0.53f, 0, 1, 1, false);
             // the equity bar, when their cards turn over
-            var eq = Ui.At(Ui.Box(o, "Equity"), 0.08f, 0.5f, 0.92f, 0.545f); var eqg = eq.gameObject.AddComponent<CanvasGroup>(); eqg.alpha = 0;
+            var eq = Ui.At(Ui.Box(c, "Equity"), 0.08f, Y(0.5f, 0.44f), 0.92f, Y(0.545f, 0.515f)); var eqg = eq.gameObject.AddComponent<CanvasGroup>(); eqg.alpha = 0;
             var bar = Ui.At(Ui.Tile(eq, "Theirs", Ui.Gold, 8), 0, 0.62f, 1, 1); var mine = Ui.Tile(bar, "Mine", Ui.Aqua, 8); mine.anchorMax = new Vector2((float)sd.eq, 1);
             Ui.At(Ui.Num(eq, $"{Math.Round(sd.eq * 100)}% to win", 26, Ui.Aqua, TextAnchor.MiddleLeft, FontStyle.Bold), 0, 0, 0.6f, 0.55f);
             Ui.At(Ui.Num(eq, $"{Math.Round((1 - sd.eq) * 100)}%", 26, Ui.Gold, TextAnchor.MiddleRight, FontStyle.Bold), 0.6f, 0, 1, 0.55f);
             // the board, and the street
-            var boardBox = Ui.At(Ui.Box(o, "Board"), 0.06f, 0.33f, 0.94f, 0.46f); var slots = new List<RectTransform>();
+            var boardBox = Ui.At(Ui.Box(c, "Board"), 0.06f, Y(0.33f, 0.24f), 0.94f, Y(0.46f, 0.43f)); var slots = new List<RectTransform>();
             for (int i = 0; i < 5; i++)
             {
                 float x0 = i * 0.2f + (i >= 3 ? 0.012f * (i - 2) : 0) - 0.012f;
                 var slot = Ui.At(Ui.Box(boardBox, "S" + i), x0 + 0.01f, 0, x0 + 0.19f, 1); CardImg(slot, sd.board[i], 0, 0, 1, 1);
                 slot.gameObject.AddComponent<CanvasGroup>().alpha = 0; slots.Add(slot);
             }
-            var street = Ui.At(Ui.Label(o, "", 30, Ui.Dim, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.28f, 1, 0.32f);
-            var res = Ui.At(Ui.Box(o, "Result"), 0.05f, 0.13f, 0.95f, 0.28f); var resg = res.gameObject.AddComponent<CanvasGroup>(); resg.alpha = 0;
+            var street = Ui.At(Ui.Label(c, "", 30, Ui.Dim, TextAnchor.MiddleCenter, FontStyle.Bold), 0, Y(0.28f, 0.2f), 1, Y(0.32f, 0.24f));
+            var res = Ui.At(Ui.Box(c, "Result"), wide ? -0.2f : 0.05f, Y(0.13f, 0.1f), wide ? 1.2f : 0.95f, Y(0.28f, 0.235f)); var resg = res.gameObject.AddComponent<CanvasGroup>(); resg.alpha = 0;
             string big = sd.chop ? "Chopped. Split pot." : sd.win ? "You hold!" : Rival(run) != null ? $"{sd.oppName} holds." : "They hold.";
-            Ui.At(Ui.Title(res, big, 72, sd.chop ? Cream : sd.win ? Green : Red), 0, 0.5f, 1, 1);
+            Ui.At(Ui.Title(res, big, wide ? 54 : 72, sd.chop ? Cream : sd.win ? Green : Red), 0, 0.5f, 1, 1);
             string hh = sd.heroHand, oh = sd.oppHand;
             if (!sd.chop && hh == oh) { var k = Showdown.Kickers(sd); hh += $", {k.hero} kicker,"; oh += $", {k.opp} kicker"; }   // "Three twos, ace kicker, beats three twos, queen kicker."
             string how = sd.chop ? $"{sd.heroHand} each. Split pot." : sd.win ? $"{hh} beats {Lower(oh)}." : $"{oh.TrimEnd(',')} beats {Lower(hh.TrimEnd(','))}.";
