@@ -322,3 +322,43 @@ all month, which matches "saved by Slick's loan", but more than once. Grading un
 - The cast: no voice shifts more than 1 semitone now (Slick -1.5 -> -1, Tommy -2 -> -1, Bio -2.5 -> -1), still Piper.
 - For tomorrow: Kokoro sounds far more natural than Piper, so it's worth trying for the cast, but its American male voices
   are few (onyx, michael, fenrir, puck, adam, echo, eric, liam) for nine men. Not changed tonight.
+
+### Task 6: the month's weekly beats (CH1_WEEKS) — DRAFT
+Nine films from `unity/docs/CH1_WEEKS.md` (c1_w2 + Mustich's choice a/b + c1_w2b, c1_w3_diner_keep/quit, c1_w4_diner,
+c1_w4_eve + eve2) and the Friday/eve texts in Yarn (`Chapter1.yarn`: BeforeEvent, AfterEvent, AfterSleep; flags $wk2..$wk4b
+saved). They fire on the calendar: c1_w2 before the first live game from Mon 19 Jan; the week-3 texts on Fri 30 Jan; the
+week-3 diner after the next live game; Classic week from Mon 9 Feb; the eve on Fri 13 Feb. Checked in a real month-long bot
+run (keep): all fired once, in order (`C:\Dev\Builds\day2\balance_keep_acc70.txt`, films list). **Steven hasn't read these
+yet; they are a draft**, rendered with tonight's look and narrator.
+
+### Task 7: the film look (Opus · high) — stills in `C:\Dev\Builds\day2\look\`
+- Diner: the outside red neon 9 -> 5, the warm back light toward neutral, and per-set fill x1.6 and rim x1.7 (Sets.Look
+  `fill`/`rim`): faces now have a cool shadow side and an edge instead of one deep red (`diner_before.png` / `diner_after.png`).
+- Waxy skin: skin smoothness 0.46 -> 0.36, the wrap (terminator) 0.5 -> 0.62 and scatter 0.8 -> 1.0, so the falloff is softer
+  and the highlight smaller. Hair shell smoothness 0.38 -> 0.22.
+- Hair: Slick's cards longer, lifted 9 mm and denser (2,400), with more jitter, colour lifted a touch so it isn't a black
+  helmet; Mustich's crop has 3,200 cards with strong jitter. **Not good yet:** Slick reads shaggy rather than slicked back,
+  and Mustich's curls still read as chunky clay up close (`rhubarb_mustich.png`); real curls need strand-level curl in
+  hair.py (tomorrow, Opus · high).
+- The envelope insert: post exposure -1.5 stops on inserts, bloom 0.9 -> 0.2 on inserts (the blob was the chrome counter edge
+  blooming), framed on the envelope (it had slid off the counter edge out of frame) (`insert_before.png` / `insert_after.png`).
+  Still not perfect: the white mug in the corner glows.
+
+### Task 9: IllusionRP (G6) — not adopted
+- Licence: the Unity Companion License (not MIT/Apache/BSD, but not GPL and allowed for Unity projects; it would only touch the
+  offline film renders). Cloned to `C:\Dev\Beta1Assets\dl\illusion`, project copied to `C:\Dev\Beta1-IllusionTest` (not in the
+  repo; beta1 untouched).
+- It doesn't compile on our Unity 6000.6 / URP 17.6: 12 errors. Its InternalBridge reaches into URP internals that 17.6
+  renamed (`PostProcessPassRenderGraph`, `PostProcessMaterialLibrary`), and its UnityRHI dependency uses an editor API that is
+  now an error (`CreateAssetWithContent`). It targets Unity 6.3 / URP 17.3 exactly. The rhi error is a one-line fix; the URP
+  bridge is a port into URP's private code, and that would break again with every URP update. Downgrading means a second
+  editor (6.3) and a separate film project. Decision: **stop here** (well inside the hour); we keep our own Skin/Hair shaders.
+  Log: `C:\Dev\Beta1Assets\illusion_compile.log`.
+
+### Task 10: Rhubarb lip sync
+- The permission rule worked: `rhubarb.exe` (official 1.13.0 release, MIT, in `C:\Dev\Beta1Assets\tools\rhubarb`) ran from
+  `python beta1/tools/lipsync.py` with each line's text as the dialog hint: 98 spoken film lines, 0 errors, cues in
+  `FilmData/Voice/<id>.mouth.txt`.
+- `Face.cs` plays Rhubarb's shapes (A closed, B teeth, C open, D wide, E round, F pucker, G f/v, H l, X rest) as open/spread/round
+  on the MakeHuman mouth units; lines without cues fall back to the old loudness envelope. Mouth shapes now change per sound,
+  with real closures on m/b/p (`rhubarb_mustich.png`).
