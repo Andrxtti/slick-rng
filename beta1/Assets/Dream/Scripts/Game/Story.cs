@@ -32,6 +32,7 @@ namespace Dream.Game
             st.runner.AddCommandHandler<string>("film", st.Film);
             st.runner.AddCommandHandler<float, string>("money", st.Money);
             st.runner.AddCommandHandler<float>("stake", st.Stake);
+            st.runner.AddCommandHandler<float>("away", n => { st.F.S.awayUntil = st.F.S.day + (int)n; st.F.S.Write(); });   // flown home for n days (Chapter 3)
             st.runner.AddCommandHandler<string>("clock", t => Phone.Clock = t);   // the time on the phone's status bar
             go.SetActive(true);
             return st;
@@ -39,19 +40,20 @@ namespace Dream.Game
 
         // run a node with the game state it needs; then is called when the node (and anything it jumps to) is over
         // what just happened at the table, for the story to react to
-        public class Outcome { public string ev = "", ftEnd = "", classicEnd = ""; public bool won, bust, cooler, qualified, online, ft; }
+        public class Outcome { public string ev = "", ftEnd = "", classicEnd = ""; public bool won, bust, cooler, qualified, online, ft, bubble; }
 
         public void Run(string node, Action then, Outcome o = null)
         {
             var S = F.S; o ??= new Outcome();
             Load(S);
             vars.SetValue("$name", S.name ?? ""); vars.SetValue("$classic_done", S.classicDone); vars.SetValue("$bankroll", (float)S.br); vars.SetValue("$peak", (float)S.peak); vars.SetValue("$room_title", S.roomTitle);
-            vars.SetValue("$chapter", S.step == "prologue" || S.step == "choice" ? 0f : S.step == "ch2" || S.step == "done" ? 2f : S.step == "end" ? 3f : 1f);
+            vars.SetValue("$chapter", S.step == "prologue" || S.step == "choice" ? 0f : S.step == "ch2" || S.step == "done" ? 2f : S.step == "ch3" || S.step == "end" ? 3f : S.step == "end4" ? 4f : 1f);
             // Chapter 2: rings, the final table, the venue, where you are in a Circuit stop, and the options Steven wrote
             var ev = string.IsNullOrEmpty(o.ev) ? null : Lib.Event(o.ev);
+            vars.SetValue("$bracelets", (float)S.bracelets); vars.SetValue("$bubble", o.bubble); vars.SetValue("$seriesday", (float)Flow.SeriesDay(S.day));
             vars.SetValue("$rings", (float)S.rings); vars.SetValue("$ft", o.ft); vars.SetValue("$ring", ev != null && ev.title == "ring");
             vars.SetValue("$venue", ev?.venue ?? ""); vars.SetValue("$stop", (float)Flow.StopIndex(S.day)); vars.SetValue("$stopday", (float)Flow.StopDay(S.day));
-            foreach (var sc in new[] { "c2_smokes", "c2_cowboy" }) for (int n = 1; n <= 2; n++) vars.SetValue($"${sc}_{n}", Storyboard.OptionText(sc, n));
+            foreach (var sc in new[] { "c2_smokes", "c2_cowboy", "c3_party" }) for (int n = 1; n <= 2; n++) vars.SetValue($"${sc}_{n}", Storyboard.OptionText(sc, n));
             vars.SetValue("$day", (float)S.day); vars.SetValue("$debt", (float)S.debt); vars.SetValue("$debt_s", Ui.Money(S.debt));
             vars.SetValue("$event", o.ev); vars.SetValue("$won", o.won); vars.SetValue("$bust", o.bust); vars.SetValue("$cooler", o.cooler);
             vars.SetValue("$qualified", o.qualified); vars.SetValue("$online", o.online); vars.SetValue("$ft_end", o.ftEnd); vars.SetValue("$classic_end", o.classicEnd);
@@ -67,7 +69,8 @@ namespace Dream.Game
             if (strings.TryGetValue("$job", out var job) && !string.IsNullOrEmpty(job)) { S.job = job; if (S.step == "choice") S.step = "ch1"; }
             if (floats.TryGetValue("$chapter", out var ch))
             {
-                if (ch >= 3) S.step = "end";                              // Chapter 2's goal: on to Chapter 3's opening and the end card
+                if (ch >= 4) S.step = "end4";                             // Chapter 3's goal: Chapter 4's opening and the end card
+                else if (ch >= 3 && S.step == "ch2") S.step = "ch3";      // Chapter 2's goal: the Summer (Flow.BeginChapter3 moves the calendar)
                 else if (ch >= 2 && S.step == "ch1") S.step = "ch2";      // Chapter 1's end: the Circuit (Flow.BeginChapter2 moves the calendar)
             }
             S.Write();
@@ -76,7 +79,8 @@ namespace Dream.Game
 
         // the story variables live in the save (job, seen flags); game state comes from the game each run
         static readonly string[] Saved = { "$job", "$honest", "$david_seen", "$lesson_seen", "$badbeat_seen", "$firstwin_seen", "$stake_seen", "$wk2", "$wk3", "$wk3d", "$wk4a", "$wk4b",
-            "$c2_fatts_seen", "$c2_mouth_seen", "$ring1_seen", "$lesson2_seen", "$smokes_seen", "$cowboy_seen", "$ring2_seen" };
+            "$c2_fatts_seen", "$c2_mouth_seen", "$ring1_seen", "$lesson2_seen", "$smokes_seen", "$cowboy_seen", "$ring2_seen",
+            "$c3_gg_seen", "$c3_steak_seen", "$c3_bubble_seen", "$c3_chance_seen", "$c3_party_seen", "$party_flown", "$c3_parm_seen", "$bracelet1_seen" };
         void Load(Save S)
         {
             foreach (var kv in S.story)

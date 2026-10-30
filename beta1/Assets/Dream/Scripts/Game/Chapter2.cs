@@ -47,10 +47,11 @@ namespace Dream.Game
         }
 
         // the Spacepad's line for the chapter's goal, and its progress (0..1)
-        string GoalLine => Ch2 ? $"Win a Circuit ring or build {Ui.Money(Ch2Goal)}" : $"Stake {Ui.Money(Goal)} before the Classic";
-        float GoalFill => Ch2 ? (float)Math.Max(Math.Min(1, S.br / Ch2Goal), Math.Min(1, S.rings / (double)Ch2Rings)) : (float)Math.Min(1, S.br / Goal);
+        string GoalLine => Ch3 ? "Win a gold bracelet" : Ch2 ? $"Win a Circuit ring or build {Ui.Money(Ch2Goal)}" : $"Stake {Ui.Money(Goal)} before the Classic";
+        float GoalFill => Ch3 ? (S.bracelets >= 1 ? 1f : 0.05f) : Ch2 ? (float)Math.Max(Math.Min(1, S.br / Ch2Goal), Math.Min(1, S.rings / (double)Ch2Rings)) : (float)Math.Min(1, S.br / Goal);
         string Countdown()
         {
+            if (Ch3) return Ch3Countdown();
             if (Ch2)
             {
                 int o = StopDay(S.day);
@@ -63,6 +64,7 @@ namespace Dream.Game
         }
         string DayTag(int d)
         {
+            if (Ch3) return Ch3Tag(d);
             if (Ch2 || d >= Ch2Start)
             {
                 int o = StopDay(d);

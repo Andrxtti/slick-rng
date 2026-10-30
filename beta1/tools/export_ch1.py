@@ -34,6 +34,9 @@ local = dict(ev["local"], prizeBase=89)   # Test Beta 1.1: the free Championship
 # Chapter 2, the Circuit at Silver Strike (Milestone B): the old game's events as they were
 # (no cash games in the story, Steven 10:40: the $2/$5 game c25 is left out; the cash code stays, never offered)
 ch2 = [dict(ev[i]) for i in ("sat1700", "ring400", "ring600", "tilt55", "ring1700")]
+# Chapter 3, the Summer in Las Vegas (Test Beta 1.1.5): tournaments only (the $5/$10 game c510 stays out)
+ch3 = [dict(ev[i]) for i in ("sat10k", "b1500", "b3000", "tilt215", "b10k")]
+ch2 += ch3
 events = [local, nightly, glob, day1, day2, free] + ch2
 fields = sorted({str(e["field"]) for e in events if "field" in e} | {"212"})
 ch = data["DR_CHAPTERS"] if "DR_CHAPTERS" in data else None
@@ -46,7 +49,7 @@ out = {
     "hands": data.get("DR_HANDS"), "cashHands": data.get("DR_CASH_HANDS"),
     "goal": {"bankroll": 10000, "title": "room", "text": "Win the Biscayne Classic or build a $10,000 bankroll"},
     "start": {"bankroll": 2000},
-    "legends": [l for l in data["DR_LEGENDS"] if l.get("ch") == 2],
+    "legends": [l for l in data["DR_LEGENDS"] if l.get("ch") in (2, 3)],
 }
 # US spelling in everything the player reads (Steven, 2026-10-29: "favourite = favorite"); the old data is British
 US = {"favourite": "favorite", "colour": "color", "centre": "center", "realise": "realize", "behaviour": "behavior",

@@ -22,7 +22,7 @@ namespace Dream.Game
         public int day = -1, liveDay = -99, liveWeek = -99;   // calendar day (0 = Mon 5 Jan 2026); last live game day and week
         public int onlineDay = -99, onlineN, onlineWeek = -99, onlineWN;   // online games played today / this week
         public bool reelSeen, roomTitle, day2, classicDone, c2Seen;   // c2Seen: Chapter 2's opening storyboard played (A4)
-        public int rings; public string ticket = "";   // Chapter 2: Circuit rings won; a satellite seat (the event id it gets you into)   // day2: chips bagged for Day 2; classicDone: the Classic is over (Chapter 1 ends)
+        public int rings, bracelets, awayUntil = -1; public string ticket = "";   // Chapter 3: bracelets; awayUntil: flown home   // Chapter 2: Circuit rings won; a satellite seat (the event id it gets you into)   // day2: chips bagged for Day 2; classicDone: the Classic is over (Chapter 1 ends)
         public int titles, coolers;
         public List<string> story = new List<string>();   // Yarn's story variables ($job, seen flags), saved as name=value
         public int events, cashes, decisions, perfect;
@@ -86,7 +86,7 @@ namespace Dream.Game
         static bool Weekend(int d) { int w = Dow(d); return w == 0 || w == 6; }
         static bool LastSaturday(int d) => d == ClassicDay;   // the Classic's day in Chapter 1 (was: the last Saturday of the month)
         static string DateStr(int d) => Date(d).ToString("dddd, MMMM d", System.Globalization.CultureInfo.InvariantCulture);
-        public string Rep => S.step == "ch2" || S.step == "end" ? (S.rings >= 2 ? "Two-time Ring Winner" : S.rings == 1 ? "Ring Winner" : "Circuit Grinder") : S.roomTitle ? "Biscayne Champion" : S.job == "quit" ? "Full-time Dreamer" : "Moonlighter";   // old Career.Rep, Chapter 1
+        public string Rep => S.step == "ch3" || S.step == "end4" ? (S.bracelets >= 1 ? "Bracelet Winner" : "Summer Grinder") : S.step == "ch2" || S.step == "end" ? (S.rings >= 2 ? "Two-time Ring Winner" : S.rings == 1 ? "Ring Winner" : "Circuit Grinder") : S.roomTitle ? "Biscayne Champion" : S.job == "quit" ? "Full-time Dreamer" : "Moonlighter";   // old Career.Rep, Chapter 1
         // Steven, 14:54: every build is "Test Beta 1.1.x", x bumped per build, until he says 2.0
         public const string Version = "1.1.4";
         public const string FeedbackUrl = "https://github.com/Andrxtti/slick-rng/issues/new?title=The%20Dream%20Test%20Beta%20" + Version + "%20feedback";
@@ -97,6 +97,7 @@ namespace Dream.Game
         IEnumerable<EventDef> Today()
         {
             if (S.step == "ch2") { foreach (var e in TodayCh2()) yield return e; yield break; }
+            if (S.step == "ch3") { foreach (var e in TodayCh3()) yield return e; yield break; }
             foreach (var ev in Lib.Events.Where(e => e.ch == 1))
             {
                 if (ev.id == "classic" && (!LastSaturday(S.day) || S.day2 || S.classicDone)) continue;   // one Day 1: bagged or out, it's done
@@ -118,7 +119,7 @@ namespace Dream.Game
                 return S.liveDay == S.day && OnlineToday >= 1 ? "A live day is one live game and one online" : null;
             }
             if (S.job == "nights" && !Weekend(S.day)) return "Live games are weekends only while you have the day job";
-            if (S.job == "nights" && S.liveWeek == WeekOf(S.day) && StopDay(S.day) < 0) return "Your live game this weekend is played";   // a Circuit stop: both weekend days
+            if (S.job == "nights" && S.liveWeek == WeekOf(S.day) && StopDay(S.day) < 0 && SeriesDay(S.day) < 0) return "Your live game this weekend is played";   // a Circuit stop: both weekend days
             if (S.liveDay == S.day) return "One live game a day";
             if (S.job != "nights" && OnlineToday >= 2) return "Two online games played: a live day is one live and one online";
             return null;
@@ -177,7 +178,7 @@ namespace Dream.Game
             Ui.At(Ui.Title(s, "The Dream", 150, Ui.Ink), 0, 0.64f, 1, 0.8f);
             var ver = Ui.At(Ui.Label(s, "TEST BETA " + Version, 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.3f, 0.6f, 0.7f, 0.635f);
             ver.raycastTarget = true; ver.gameObject.AddComponent<Button>().onClick.AddListener(VersionTap);   // 5 taps: the test menu (DebugMenu.cs)
-            Ui.At(Ui.Label(s, "Chapter 1 · The Grind  ·  Chapter 2 · The Circuit", 36, Ui.Ink), 0, 0.565f, 1, 0.6f);
+            Ui.At(Ui.Label(s, "Chapters 1 to 3 · The Grind, the Circuit, the Summer", 34, Ui.Ink), 0, 0.565f, 1, 0.6f);
             Ui.At(Ui.Label(s, "Every decision is a real solver spot.\nCoaching by Confirmed Fire.", 30, Ui.Dim), 0.1f, 0.46f, 0.9f, 0.53f);
             bool can = S != null && S.step != "new";
             Ui.At(Ui.Button(s, can ? "Continue" : "Begin", () => { if (can) Resume(); else NewCareer(); }, Ui.Gold, Ui.Night, 48), 0.18f, 0.3f, 0.82f, 0.36f);
@@ -228,7 +229,8 @@ namespace Dream.Game
             if (S.step == "prologue") { Films.Play(new[] { "p_seat" }, () => Play("local")); return; }
             if (S.step == "choice") { story.Run("Monday", AfterStory); return; }
             if (S.step == "done") BeginChapter2();   // a 1.1.3 save that finished Chapter 1: on to the Circuit
-            if (S.step == "end") { EndCard(); return; }
+            if (S.step == "end") BeginChapter3();    // a 1.1.4 save that finished Chapter 2: on to the Summer
+            if (S.step == "end4") { EndCard(); return; }
             Hub();
         }
 
@@ -276,7 +278,8 @@ namespace Dream.Game
         {
             if (S.step == "ch1" && S.day < 7) { S.day = 7; S.Write(); }   // Monday night: Chapter 1 starts
             if (S.step == "ch2" && S.day < Ch2Start) BeginChapter2();   // Chapter 1 just ended: Tommy drove you north
-            if (S.step == "end") EndCard(); else Hub();
+            if (S.step == "ch3" && S.day < Ch3Start) BeginChapter3();   // Chapter 2 just ended: Las Vegas in June
+            if (S.step == "end4") EndCard(); else Hub();
         }
 
         // to the next day (old Calendar.SkipTo when nothing is left today); the day job pays every Friday on the way, and
@@ -298,7 +301,7 @@ namespace Dream.Game
                 if (!S.classicDone && S.day > ClassicDay + 1) S.classicDone = true;   // the Classic came and went
             } while (stuck && Today().All(e => CantPlay(e) != null) && S.day < 400);
             S.peak = Math.Max(S.peak, S.br); S.Write();
-            story.Run("AfterSleep", () => { if (S.step == "ch2" && S.day < Ch2Start) BeginChapter2(); if (S.step == "end") EndCard(); else Hub(news.Count > 0 ? string.Join("  ", news) : null); });
+            story.Run("AfterSleep", () => { if (S.step == "ch2" && S.day < Ch2Start) BeginChapter2(); if (S.step == "ch3" && S.day < Ch3Start) BeginChapter3(); if (S.step == "end4") EndCard(); else Hub(news.Count > 0 ? string.Join("  ", news) : null); });
         }
 
         // ------------------------------------------------------------ an event
@@ -318,7 +321,7 @@ namespace Dream.Game
             if (ev.id == "classic2") S.day2 = false;
             if (ev.id == "classic2") S.classicDone = true;
             S.Write();
-            Hands.Chapter = S.step == "prologue" ? 0 : S.step == "ch2" ? 2 : 1;
+            Hands.Chapter = S.step == "prologue" ? 0 : S.step == "ch2" ? 2 : S.step == "ch3" ? 3 : 1;
             var run = Hands.Start(ev, $"{id}|{DateTime.UtcNow.Ticks}");
             Ui.Clear(root);
             Table.Show(root, run, (bad) => Finish(run, bad));
@@ -355,6 +358,7 @@ namespace Dream.Game
             if (won) S.titles++;
             if (won && ev.title == "room") S.roomTitle = true;
             if (won && ev.title == "ring") S.rings++;
+            if (won && ev.title == "bracelet") S.bracelets++;
             if (qualified && !string.IsNullOrEmpty(ev.target) && ev.id != "classic") S.ticket = ev.target;   // the Mega Satellite: a seat in the Main
             if (ev.id == "classic2" && won) S.roomTitle = true;
             if (qualified && ev.id == "classic") S.day2 = true;
@@ -369,7 +373,8 @@ namespace Dream.Game
             if (ev.id == "local") S.step = "choice";
             S.Write();
             bool ft = run.si >= run.stages.Count - 1 && (run.Stage == "final" || !run.bust);   // you reached the final table
-            var o = new Story.Outcome { ev = ev.id, won = won, bust = bust, cooler = run.cooler != null, qualified = qualified, ftEnd = ftEnd, classicEnd = classicEnd, online = ev.online, ft = ft && ev.kind == "mtt" };
+            bool bubble = ev.kind == "mtt" && paid > 0 && place > paid && place <= paid + Math.Max(3, paid / 10);   // just outside the money
+            var o = new Story.Outcome { ev = ev.id, won = won, bust = bust, cooler = run.cooler != null, qualified = qualified, ftEnd = ftEnd, classicEnd = classicEnd, online = ev.online, ft = ft && ev.kind == "mtt", bubble = bubble };
             LastEvent = ev;
             void Res() => Results(run, place, paid, prize, qualified, () => story.Run("AfterEvent", AfterStory, o));
             string outcome = won ? "win" : run.cooler != null ? "cooler" : prize > 0 ? "cash" : "bust";
@@ -448,11 +453,11 @@ namespace Dream.Game
         {
             var s = Screen(Color.black);
             Ui.At(Ui.Label(s, "TEST BETA " + Version, 30, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0, 0.68f, 1, 0.71f);
-            Ui.At(Ui.Title(s, "Chapter 3 · The Summer", 84, Ui.Ink), 0.05f, 0.58f, 0.95f, 0.67f);
+            Ui.At(Ui.Title(s, "Chapter 4 · The Tour", 84, Ui.Ink), 0.05f, 0.58f, 0.95f, 0.67f);
             Ui.At(Ui.Label(s, "coming in the next build", 40, Ui.Dim), 0.05f, 0.535f, 0.95f, 0.575f);
             Ui.At(Ui.Num(s, $"{S.name}, {Rep}  ·  {Ui.Money(S.br)}  ·  {S.events} events  ·  {S.decisions} decisions", 28, Ui.Dim), 0.05f, 0.46f, 0.95f, 0.5f);
             Ui.At(Ui.Button(s, "Send feedback", () => Application.OpenURL(FeedbackUrl), Ui.Gold, Ui.Night, 44), 0.18f, 0.3f, 0.82f, 0.36f);
-            Ui.At(Ui.Button(s, "Keep playing Chapter 2", () => { S.step = "ch2"; S.Write(); Hub(); }, Ui.Card, Ui.Ink, 34), 0.18f, 0.21f, 0.82f, 0.26f);
+            Ui.At(Ui.Button(s, "Keep playing Chapter 3", () => { S.step = "ch3"; S.Write(); Hub(); }, Ui.Card, Ui.Ink, 34), 0.18f, 0.21f, 0.82f, 0.26f);
             Ui.At(Ui.Button(s, "Title", Title, new Color(1, 1, 1, 0.06f), Ui.Dim, 30), 0.3f, 0.12f, 0.7f, 0.17f);
             Ui.At(Ui.Label(s, "Music: “Retroracing Nightlife” by Bogart VGM (CC-BY 4.0), facebook.com/BogartVGM", 20, new Color(1, 1, 1, 0.4f)), 0.05f, 0.04f, 0.95f, 0.07f);
         }

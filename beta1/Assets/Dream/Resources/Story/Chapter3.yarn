@@ -1,0 +1,82 @@
+// Chapter 3, the Summer (Test Beta 1.1.5): the scenes of unity/docs/SCRIPT_ALL.md c3_gg .. c3_hello, played as storyboards
+// until they're filmed (c3 itself opens the chapter at the end of Chapter 2). Steven's words live in the script; here only
+// when each one plays. c3_party's options come from the script ($c3_party_1, $c3_party_2).
+// Goal (STORY.md): win a gold bracelet.
+
+title: Chapter3Variables
+---
+<<declare $bracelets = 0>>
+<<declare $bubble = false>>
+<<declare $seriesday = -1>>
+<<declare $c3_party_1 = "">>
+<<declare $c3_party_2 = "">>
+<<declare $c3_gg_seen = false>>
+<<declare $c3_steak_seen = false>>
+<<declare $c3_bubble_seen = false>>
+<<declare $c3_chance_seen = false>>
+<<declare $c3_party_seen = false>>
+<<declare $party_flown = false>>
+<<declare $c3_parm_seen = false>>
+<<declare $bracelet1_seen = false>>
+===
+
+title: C3AfterEvent
+---
+// the Six-Max: GG Negroni reads everyone out loud
+<<if $event == "b3000" and not $c3_gg_seen>>
+    <<set $c3_gg_seen to true>>
+    <<film c3_gg>>
+<<endif>>
+// the first bracelet you win: Erik Seikick's three words (the goal)
+<<if $won and ($event == "b1500" or $event == "b3000" or $event == "b10k") and not $bracelet1_seen>>
+    <<set $bracelet1_seen to true>>
+    <<film bracelet1>>
+<<elseif $bubble and ($event == "b1500" or $event == "b3000") and not $c3_bubble_seen>>
+    // the first bracelet bubble: the hallway with Stu Hungar, then Slick on ICM
+    <<set $c3_bubble_seen to true>>
+    <<film c3_bubble>>
+    <<film lesson3>>
+<<elseif $event == "b10k" and not $won and not $c3_chance_seen>>
+    // the $10,000 Heads-Up, lost: Chance Cage waits
+    <<set $c3_chance_seen to true>>
+    <<film c3_chance>>
+<<endif>>
+===
+
+title: C3AfterSleep
+---
+// the second Thursday of the Series: David's engagement party is Saturday (flying home costs you Saturday)
+<<if $seriesday >= 10 and $seriesday < 12 and not $c3_party_seen>>
+    <<set $c3_party_seen to true>>
+    <<film c3_party@a>>
+    -> {$c3_party_1}
+        <<set $party_flown to true>>
+        <<film c3_party@1>>
+        <<away 3>>
+        <<film c3_party@L3>>
+    -> {$c3_party_2}
+        <<film c3_party@2>>
+        <<film c3_party@L4>>
+<<endif>>
+// the second week: Mustich's first bracelet, at the players' dinner
+<<if $seriesday >= 8 and not $c3_steak_seen>>
+    <<set $c3_steak_seen to true>>
+    <<film c3_steak>>
+<<endif>>
+// the third week: the mixed-game room
+<<if $seriesday >= 14 and not $c3_parm_seen>>
+    <<set $c3_parm_seen to true>>
+    <<film c3_parm>>
+<<endif>>
+===
+
+title: C3CheckGoal
+---
+// a gold bracelet: the sportsbook at 4 AM with Bio, then Chapter 4's opening
+<<if $chapter == 3 and $bracelets >= 1>>
+    <<film c3_hello>>
+    <<film c4_truth>>
+    <<film c4>>
+    <<set $chapter to 4>>
+<<endif>>
+===

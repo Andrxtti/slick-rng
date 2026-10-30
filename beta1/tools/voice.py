@@ -33,6 +33,15 @@ CAST = {
     "fargo": (90, 1.05, 0.0, 0.1, 0.3),        # Sammy Smokes: unhurried, owns the building
     "moneybaker": (100, 1.0, 0.0, 0.0, 0.1),   # Chris Schillings: the friendly accountant
     "brunswick": (130, 1.12, -1.0, 0.4, 0.4),  # Colt the Cowboy: old, gravel, fifty years in the same hat
+    # Chapter 3's legends (Test Beta 1.1.5), the same blind picks: placeholders until someone listens
+    "hellbent": (140, 0.95, 0.0, 0.0, 0.0),    # Phil Hellraiser: quick, sure of it
+    "negrono": (150, 0.9, 0.5, 0.0, 0.1),      # GG Negroni: chatty, reads you out loud
+    "handsome": (160, 1.0, 0.0, 0.0, 0.2),     # Gus Handsome
+    "escandalo": (170, 1.05, -0.5, 0.1, 0.3),  # Antonio Escandalo: the card trick
+    "hungar": (180, 1.1, -1.0, 0.3, 0.3),      # Stu Hungar: tired, kind
+    "chance": (190, 1.15, -1.0, 0.0, 0.2),     # Chance Cage: slow, waiting
+    "glazer": (200, 0.9, 0.5, 0.0, 0.0),       # Nicky Parmesan: young, quick
+    "sidle": (210, 1.1, -0.5, 0.0, 0.2),       # Erik Seikick: three words
 }
 CAST["card"] = CAST["n"] = CAST["narrator"]   # narrator cards and Narrator [n] lines
 TRAILER = {"narrator", "card", "n"}
@@ -107,7 +116,8 @@ def reel_cards():
 
 
 # storyboards that ship voiced (their clips are in the first download, so only the ones this build reaches)
-STORYBOARDS = {"c2_drive", "c2", "c2_fatts", "c2_mouth", "lesson2", "ring1", "c2_smokes", "c2_smokes_sit", "c2_cowboy", "ring2", "c3"}
+STORYBOARDS = {"c2_drive", "c2", "c2_fatts", "c2_mouth", "lesson2", "ring1", "c2_smokes", "c2_smokes_sit", "c2_cowboy", "ring2", "c3",
+               "c3_gg", "c3_steak", "c3_bubble", "lesson3", "c3_chance", "c3_party", "c3_parm", "bracelet1", "c3_hello", "c4_truth", "c4"}
 
 
 def storyboard_lines():

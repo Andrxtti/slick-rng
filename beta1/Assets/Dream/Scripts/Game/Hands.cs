@@ -314,6 +314,7 @@ namespace Dream.Game
         // where a run that survived finishes: score (accuracy + luck + stack) against a threshold that rises with the field.
         // The old game's values (0.6, 0.04, luck 0.12) let a 70%-accuracy player win about a third of 60-player nightlies
         // and a fifth of 1,104-player online events (Editor/Sim.cs); Test Beta 1.1.4 sets them below (DAY_REPORT, task 5).
+        public static double PlaceBracelet = 0.1;   // Chapter 3: the Summer Series' bracelet events (tuned with Editor/Sim.cs)
         public static double PlaceRing = 0.07;   // Chapter 2: the Circuit's ring events are easier to win than their fields suggest (Milestone B)
         public static double PlaceBase = 0.95, PlaceSlope = 0.05, PlaceLuck = 0.3, PlaceBand = 0.4, PlaceOnline = 0.02;   // online: a slightly tougher field (0.08 starved the full-time player: Editor/SimCal.cs)
 
@@ -331,7 +332,7 @@ namespace Dream.Game
                 var ranges = new[] { new[] { 7, 9 }, new[] { 4, 6 }, new[] { 2, 3 } }; var rg = ranges[Math.Min(2, run.h * 3 / Math.Max(1, Per(run)))];
                 return Between(Math.Min(rg[0], N), Math.Min(rg[1], N));
             }
-            double winT = PlaceBase + PlaceSlope * Math.Log10(N) + 0.01 * Math.Min(6, ev.ch) + (ev.online ? PlaceOnline : 0) - (ev.title == "ring" ? PlaceRing : 0), luck = (rng.Next() - 0.5) * PlaceLuck, score = pct + luck + (run.stack - 100) / 1000.0;
+            double winT = PlaceBase + PlaceSlope * Math.Log10(N) + 0.01 * Math.Min(6, ev.ch) + (ev.online ? PlaceOnline : 0) - (ev.title == "ring" ? PlaceRing : ev.title == "bracelet" ? PlaceBracelet : 0), luck = (rng.Next() - 0.5) * PlaceLuck, score = pct + luck + (run.stack - 100) / 1000.0;
             if (score >= winT) return 1;
             if (score >= winT - 0.12 * PlaceBand) return 2;
             if (score >= winT - 0.22 * PlaceBand) return 3;

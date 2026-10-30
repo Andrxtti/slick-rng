@@ -33,6 +33,7 @@ namespace Dream.Game
             Row(0.81f, ("−1 day", () => S.day = System.Math.Max(7, S.day - 1)), ("+1 day", () => S.day++), ("+7 days", () => S.day += 7), ("Fri 13 Feb", () => S.day = ClassicDay - 1));
             Row(0.76f, ("Classic day", () => { S.day = ClassicDay; S.day2 = false; S.classicDone = false; }), ("Day 2", () => { S.day = ClassicDay + 1; S.day2 = true; }),
                 ("Chapter 2", () => { S.step = "ch2"; S.day = Ch2Start; S.classicDone = true; }),
+                ("Chapter 3", () => { S.step = "ch3"; S.day = Ch3Start; S.classicDone = true; }),
                 ("Job: " + (S.job == "nights" ? "keep" : "quit"), () => { S.job = S.job == "nights" ? "quit" : "nights"; S.story.RemoveAll(v => v.StartsWith("$job=")); S.story.Add("$job=" + S.job); }));
             Ui.At(Ui.Button(s, "Go home", () => Hub(), Ui.Gold, Ui.Night, 28), 0.05f, 0.7f, 0.48f, 0.75f);
             Ui.At(Ui.Button(s, "Title", Title, Ui.Card, Ui.Ink, 28), 0.52f, 0.7f, 0.95f, 0.75f);

@@ -207,7 +207,7 @@ namespace Dream.Game
             {
                 string why = CantPlay(ev); bool afford = (ev.free || S.ticket == ev.id || S.br >= ev.buyin) && why == null;
                 var row = Ui.At(Ui.Tile(p, ev.id, Ui.Card, 26), 0, y - h, 1, y - 0.01f);
-                string where = ev.online ? "ONLINE · CF TILT · FROM THE SPACEPAD" : ev.id.StartsWith("classic") ? "BISCAYNE · THE CLASSIC · A DRIVE" : ev.venue == "casino" ? "SILVER STRIKE · THE CIRCUIT · A DRIVE" : "BISCAYNE · LIVE · A DRIVE";
+                string where = ev.online ? "ONLINE · CF TILT · FROM THE SPACEPAD" : ev.id.StartsWith("classic") ? "BISCAYNE · THE CLASSIC · A DRIVE" : ev.venue == "vegas" ? "LAS VEGAS · THE SUMMER SERIES" : ev.venue == "casino" ? "SILVER STRIKE · THE CIRCUIT · A DRIVE" : "BISCAYNE · LIVE · A DRIVE";
                 Ui.At(Ui.Label(row, where, 17, ev.online ? Ui.Aqua : Ui.Gold, TextAnchor.MiddleLeft, FontStyle.Bold), 0.04f, 0.7f, 0.75f, 0.94f);
                 Ui.At(Ui.Label(row, ev.name, 32, afford ? Ui.Ink : Ui.Dim, TextAnchor.MiddleLeft, FontStyle.Bold), 0.04f, 0.38f, 0.72f, 0.72f);
                 bool red = why != null || (!ev.free && S.br < ev.buyin);
@@ -228,12 +228,13 @@ namespace Dream.Game
             var s = Screen(Color.black);
             var ride = WornItem("ride");
             bool strike = Lib.Event(id).venue == "casino";   // Chapter 2: north to the Circuit
-            string how = strike ? (ride.id == "bus" ? "Two buses and a casino shuttle. The Circuit doesn't care how you got here." : $"The {ride.name.ToLowerInvariant()}, forty minutes north. The sign is visible from the highway.") :
+            bool vegas = Lib.Event(id).venue == "vegas";     // Chapter 3: the convention center on the Strip
+            string how = vegas ? "A cab down the Strip at noon. Sixty-eight degrees inside, a hundred and twelve outside." : strike ? (ride.id == "bus" ? "Two buses and a casino shuttle. The Circuit doesn't care how you got here." : $"The {ride.name.ToLowerInvariant()}, forty minutes north. The sign is visible from the highway.") :
                          ride.id == "bus" ? "The 7 bus over the causeway. The bay is black on both sides." :
                          ride.id == "hatch" ? "The '09 hatchback coughs once, then takes the causeway like it means it." :
                          $"The {ride.name.ToLowerInvariant()} eats the causeway in four minutes.";
-            Ui.At(Ui.Label(s, strike ? "NORTH ON I-95" : "OFF THE CAUSEWAY", 26, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.06f, 0.6f, 0.94f, 0.64f);
-            Ui.At(Ui.Title(s, strike ? "Silver Strike Casino" : "Biscayne Card Room", 80, Ui.Ink), 0.06f, 0.5f, 0.94f, 0.6f);
+            Ui.At(Ui.Label(s, vegas ? "THE WCoC SUMMER SERIES" : strike ? "NORTH ON I-95" : "OFF THE CAUSEWAY", 26, Ui.Gold, TextAnchor.MiddleCenter, FontStyle.Bold), 0.06f, 0.6f, 0.94f, 0.64f);
+            Ui.At(Ui.Title(s, vegas ? "Las Vegas" : strike ? "Silver Strike Casino" : "Biscayne Card Room", 80, Ui.Ink), 0.06f, 0.5f, 0.94f, 0.6f);
             Ui.At(Ui.Label(s, how, 32, Ui.Dim), 0.1f, 0.4f, 0.9f, 0.49f);
             bool gone = false; void Go() { if (gone) return; gone = true; Enter(id); }
             var b = s.gameObject.AddComponent<Button>(); b.onClick.AddListener(Go);

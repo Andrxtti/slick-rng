@@ -110,7 +110,7 @@ namespace Dream.EditorTools
                 if (Has("TEN THOUSAND")) Shot("david");
                 Find("Dim")?.onClick.Invoke(); return;
             }
-            var choice = Find("Play poker. For real.") ?? Find("Take Slick's stake") ?? Find("\"Does it fold") ?? Find("Sit down.") ?? Find("\"Every night.\"");   // the diner question; rock bottom; week two (Mustich)
+            var choice = Find("Play poker. For real.") ?? Find("Take Slick's stake") ?? Find("\"Does it fold") ?? Find("Sit down.") ?? Find("\"Every night.\"") ?? Find("Fly home for the party.");   // the diner question; rock bottom; week two (Mustich)
             if (choice != null) { Shot(choice.name == "Button" && Has("Rock bottom") ? "broke" : "diner_choice"); W("  choose: " + choice.GetComponentInChildren<TMPro.TMP_Text>().text); choice.onClick.Invoke(); return; }
             if (Find("Send feedback") != null)
             {
@@ -154,7 +154,7 @@ namespace Dream.EditorTools
                 string line = $"hub {date} | ${f.S.br:0} | {f.Rep} | {(why == "" ? "can play" : why)}{(note != null ? " | " + note : "")}";
                 if (line != lastHub) { W(line); lastHub = line; }
                 // three smaller games first, so the calendar rules (one live game a day, weekends with the job) get played
-                var order = only == "online" ? new[] { "glob55", "freeroll" } : only == "live" ? new[] { "classic2", "classic", "nightly" } : new[] { "classic2", "classic", "ring1700", "ring600", "ring400", "sat1700", "nightly", "glob55", "tilt55", "freeroll" };
+                var order = only == "online" ? new[] { "glob55", "freeroll" } : only == "live" ? new[] { "classic2", "classic", "nightly" } : new[] { "classic2", "classic", "b10k", "b3000", "b1500", "sat10k", "ring1700", "ring600", "ring400", "sat1700", "nightly", "glob55", "tilt55", "tilt215", "freeroll" };
                 foreach (var id in order) { var b = Find(id); if (b != null) { W($"  play {id} (${f.S.br:0} before buy-in)"); b.onClick.Invoke(); return; } }
                 sleepNext = true; Find("Back home")?.onClick.Invoke(); return;
                 return;

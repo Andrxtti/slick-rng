@@ -17,6 +17,7 @@ namespace Dream.EditorTools
         static Sim()
         {
             Remote.Extra["place"] = a => { var p = a.Split(' ').Select(x => double.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray(); Hands.PlaceBase = p[0]; Hands.PlaceSlope = p[1]; Hands.PlaceLuck = p[2]; if (p.Length > 3) Hands.PlaceBand = p[3]; if (p.Length > 4) Hands.PlaceOnline = p[4]; Remote.Log($"place: base {p[0]} slope {p[1]} luck {p[2]} band {Hands.PlaceBand}"); };
+            Remote.Extra["placebracelet"] = a => { Hands.PlaceBracelet = double.Parse(a, System.Globalization.CultureInfo.InvariantCulture); Remote.Log("placebracelet: " + Hands.PlaceBracelet); };
             Remote.Extra["placering"] = a => { Hands.PlaceRing = double.Parse(a, System.Globalization.CultureInfo.InvariantCulture); Remote.Log("placering: " + Hands.PlaceRing); };
             Remote.Extra["sim"] = a =>
             {

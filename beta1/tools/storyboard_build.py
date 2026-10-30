@@ -65,6 +65,7 @@ def main():
             key = key.split(":")[-1]
             who = WHO.get(key, key)
             words = OVERRIDES.get((cur["id"], words), words)
+            words = re.sub(r"^\((?:if|when) [^)]*\)\s*", "", words)   # "(if you fly home) ..." is a note for Yarn, not words
             cur["lines"].append({"who": who, "name": "" if who == "narrator" else name, "mode": mode, "text": words.replace(" / ", "\n"),
                                  "part": "b" if cur["options"] else "a"})
     rerender = []

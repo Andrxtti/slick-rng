@@ -35,7 +35,9 @@ namespace Dream.Game
             int at = id.IndexOf('@'); if (at < 0 || !scenes.TryGetValue(id.Substring(0, at), out var whole)) return null;
             string part = id.Substring(at + 1);
             var cut = new Scene { id = id, title = whole.title, place = whole.place, set = whole.set, edited = whole.edited, film = false, storyboard = true, options = new List<Option>() };
-            if (int.TryParse(part, out int n))
+            if (part.StartsWith("L") && int.TryParse(part.Substring(1), out int ln))   // "id@L3": the scene's line 3 alone
+                cut.lines = ln >= 1 && ln <= whole.lines.Count ? new List<Line> { whole.lines[ln - 1] } : new List<Line>();
+            else if (int.TryParse(part, out int n))
             {
                 var o = whole.options.FirstOrDefault(x => x.n == n);
                 cut.lines = o == null || string.IsNullOrEmpty(o.say) ? new List<Line>() : new List<Line> { new Line { who = o.who, name = o.name, mode = o.mode, text = o.say, part = part } };

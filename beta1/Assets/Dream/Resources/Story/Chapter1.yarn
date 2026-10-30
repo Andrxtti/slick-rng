@@ -74,6 +74,9 @@ title: AfterEvent
 <<if $chapter == 2>>
     <<detour C2AfterEvent>>
 <<endif>>
+<<if $chapter == 3>>
+    <<detour C3AfterEvent>>
+<<endif>>
 <<detour CheckGoal>>
 ===
 
@@ -122,6 +125,9 @@ title: AfterSleep
 <<if $chapter == 2>>
     <<detour C2AfterSleep>>
 <<endif>>
+<<if $chapter == 3>>
+    <<detour C3AfterSleep>>
+<<endif>>
 <<detour CheckGoal>>
 ===
 
@@ -129,6 +135,9 @@ title: CheckGoal
 ---
 <<if $chapter == 2>>
     <<detour C2CheckGoal>>
+<<endif>>
+<<if $chapter == 3>>
+    <<detour C3CheckGoal>>
 <<endif>>
 // Test Beta 1.1: Chapter 1 ends when the Biscayne Classic is over for you (out on Day 1, Day 2 played, or the day gone).
 // $5,000 before it is a milestone, with one text from Slick.
