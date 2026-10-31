@@ -1,0 +1,2914 @@
+[
+ {
+  "fmt": "6max",
+  "depth": 10,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 285.2226000000001,
+  "mix": {
+   "fold": 0.2533,
+   "call": 0.066,
+   "raise": 0,
+   "jam": 0.6807
+  },
+  "regret": 0.0018
+ },
+ {
+  "fmt": "6max",
+  "depth": 10,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 16.946279999999945,
+  "mix": {
+   "fold": 0,
+   "call": 0.4054,
+   "raise": 0.0912,
+   "jam": 0.5035
+  },
+  "regret": 0.0611
+ },
+ {
+  "fmt": "6max",
+  "depth": 10,
+  "type": "open",
+  "nodes": 4,
+  "w": 3555.138600000004,
+  "mix": {
+   "fold": 0.7089,
+   "call": 0,
+   "raise": 0,
+   "jam": 0.2911
+  },
+  "regret": 0
+ },
+ {
+  "fmt": "6max",
+  "depth": 10,
+  "type": "vs 3-bet jam",
+  "nodes": 1,
+  "w": 0.032238637647058824,
+  "mix": {
+   "fold": 0.3749,
+   "call": 0.6256,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0381
+ },
+ {
+  "fmt": "6max",
+  "depth": 10,
+  "type": "vs jam",
+  "nodes": 52,
+  "w": 4024.0429029060206,
+  "mix": {
+   "fold": 0.8089,
+   "call": 0.1911,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0004
+ },
+ {
+  "fmt": "6max",
+  "depth": 10,
+  "type": "vs open",
+  "nodes": 1,
+  "w": 0.09592108235294117,
+  "mix": {
+   "fold": 0.4092,
+   "call": 0.3743,
+   "raise": 0,
+   "jam": 0.2163
+  },
+  "regret": 0.1308
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 359.2134000000001,
+  "mix": {
+   "fold": 0.1778,
+   "call": 0.3471,
+   "raise": 0.0001,
+   "jam": 0.4751
+  },
+  "regret": 0.0004
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 124.32575999999978,
+  "mix": {
+   "fold": 0,
+   "call": 0.5047,
+   "raise": 0.2096,
+   "jam": 0.2857
+  },
+  "regret": 0.0012
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "cold vs 3-bet",
+  "nodes": 82,
+  "w": 199.02053163529382,
+  "mix": {
+   "fold": 0.9276,
+   "call": 0.0724,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0065
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "cold vs 4-bet",
+  "nodes": 6,
+  "w": 0.2105904133333331,
+  "mix": {
+   "fold": 0.9774,
+   "call": 0.0226,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0109
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "open",
+  "nodes": 4,
+  "w": 3802.9680000000185,
+  "mix": {
+   "fold": 0.7451,
+   "call": 0,
+   "raise": 0.0869,
+   "jam": 0.168
+  },
+  "regret": 0.0003
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "squeeze",
+  "nodes": 29,
+  "w": 136.4228580000052,
+  "mix": {
+   "fold": 0.4599,
+   "call": 0.4151,
+   "raise": 0,
+   "jam": 0.1249
+  },
+  "regret": 0.0203
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "vs 3-bet jam",
+  "nodes": 55,
+  "w": 12.73502899843134,
+  "mix": {
+   "fold": 0.5841,
+   "call": 0.4023,
+   "raise": 0,
+   "jam": 0.0135
+  },
+  "regret": 0.0034
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "vs jam",
+  "nodes": 51,
+  "w": 2346.095913157021,
+  "mix": {
+   "fold": 0.8492,
+   "call": 0.1508,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0007
+ },
+ {
+  "fmt": "6max",
+  "depth": 15,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 943.1537037647275,
+  "mix": {
+   "fold": 0.6438,
+   "call": 0.2263,
+   "raise": 0.0011,
+   "jam": 0.1288
+  },
+  "regret": 0.0013
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 354.83760000000063,
+  "mix": {
+   "fold": 0.1623,
+   "call": 0.5141,
+   "raise": 0.0014,
+   "jam": 0.3222
+  },
+  "regret": 0.0002
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 181.26419999999987,
+  "mix": {
+   "fold": 0,
+   "call": 0.53,
+   "raise": 0.3234,
+   "jam": 0.1465
+  },
+  "regret": 0.0007
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "cold vs 3-bet",
+  "nodes": 97,
+  "w": 436.15387045958835,
+  "mix": {
+   "fold": 0.9381,
+   "call": 0.0617,
+   "raise": 0,
+   "jam": 0.0002
+  },
+  "regret": 0.0037
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "cold vs 4-bet",
+  "nodes": 9,
+  "w": 1.0832133458823534,
+  "mix": {
+   "fold": 0.9931,
+   "call": 0.0069,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0065
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "open",
+  "nodes": 4,
+  "w": 3783.078000000033,
+  "mix": {
+   "fold": 0.7437,
+   "call": 0,
+   "raise": 0.2131,
+   "jam": 0.0432
+  },
+  "regret": 0.0003
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "squeeze",
+  "nodes": 35,
+  "w": 372.85077960000007,
+  "mix": {
+   "fold": 0.4922,
+   "call": 0.3727,
+   "raise": 0.001,
+   "jam": 0.1342
+  },
+  "regret": 0.0161
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "vs 3-bet",
+  "nodes": 1,
+  "w": 0.08759646823529417,
+  "mix": {
+   "fold": 0.3773,
+   "call": 0.3911,
+   "raise": 0,
+   "jam": 0.2319
+  },
+  "regret": 0.0493
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "vs 3-bet jam",
+  "nodes": 63,
+  "w": 71.05349447137232,
+  "mix": {
+   "fold": 0.6236,
+   "call": 0.3552,
+   "raise": 0,
+   "jam": 0.0213
+  },
+  "regret": 0.0076
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "vs jam",
+  "nodes": 37,
+  "w": 612.0051414627725,
+  "mix": {
+   "fold": 0.8445,
+   "call": 0.1555,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0021
+ },
+ {
+  "fmt": "6max",
+  "depth": 20,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 2197.5185164706054,
+  "mix": {
+   "fold": 0.6253,
+   "call": 0.2496,
+   "raise": 0.0008,
+   "jam": 0.1242
+  },
+  "regret": 0.0008
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 313.46640000000065,
+  "mix": {
+   "fold": 0.1478,
+   "call": 0.5474,
+   "raise": 0.0751,
+   "jam": 0.2297
+  },
+  "regret": 0.0007
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 171.45180000000013,
+  "mix": {
+   "fold": 0,
+   "call": 0.5421,
+   "raise": 0.3732,
+   "jam": 0.0847
+  },
+  "regret": 0.0008
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 23.45693999999998,
+  "mix": {
+   "fold": 0.126,
+   "call": 0.6715,
+   "raise": 0.0403,
+   "jam": 0.1623
+  },
+  "regret": 0.0081
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "cold vs 3-bet",
+  "nodes": 107,
+  "w": 501.7237891913523,
+  "mix": {
+   "fold": 0.9419,
+   "call": 0.053,
+   "raise": 0,
+   "jam": 0.0051
+  },
+  "regret": 0.0045
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "cold vs 4-bet",
+  "nodes": 22,
+  "w": 3.904247603137255,
+  "mix": {
+   "fold": 0.9705,
+   "call": 0.0295,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.2163
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "open",
+  "nodes": 4,
+  "w": 3681.2412000000168,
+  "mix": {
+   "fold": 0.7243,
+   "call": 0,
+   "raise": 0.2721,
+   "jam": 0.0036
+  },
+  "regret": 0.0001
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "squeeze",
+  "nodes": 35,
+  "w": 443.27583300000146,
+  "mix": {
+   "fold": 0.5659,
+   "call": 0.3004,
+   "raise": 0.003,
+   "jam": 0.1306
+  },
+  "regret": 0.0177
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "vs 3-bet",
+  "nodes": 6,
+  "w": 2.6703557968627414,
+  "mix": {
+   "fold": 0.3759,
+   "call": 0.4368,
+   "raise": 0.0001,
+   "jam": 0.1872
+  },
+  "regret": 0.0294
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "vs 3-bet jam",
+  "nodes": 62,
+  "w": 106.85603368627636,
+  "mix": {
+   "fold": 0.6741,
+   "call": 0.3047,
+   "raise": 0,
+   "jam": 0.0212
+  },
+  "regret": 0.0064
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "vs 4-bet jam",
+  "nodes": 21,
+  "w": 0.5902796682352947,
+  "mix": {
+   "fold": 0.8093,
+   "call": 0.1907,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0339
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "vs jam",
+  "nodes": 7,
+  "w": 105.50585809411938,
+  "mix": {
+   "fold": 0.791,
+   "call": 0.209,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0039
+ },
+ {
+  "fmt": "6max",
+  "depth": 25,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 2711.7803392941173,
+  "mix": {
+   "fold": 0.6366,
+   "call": 0.2451,
+   "raise": 0.006,
+   "jam": 0.1123
+  },
+  "regret": 0.0012
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 276.4710000000005,
+  "mix": {
+   "fold": 0.1297,
+   "call": 0.6158,
+   "raise": 0.2545,
+   "jam": 0
+  },
+  "regret": 0.0026
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 175.29719999999975,
+  "mix": {
+   "fold": 0,
+   "call": 0.5666,
+   "raise": 0.4334,
+   "jam": 0
+  },
+  "regret": 0.0045
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 65.33201999999991,
+  "mix": {
+   "fold": 0.1597,
+   "call": 0.6883,
+   "raise": 0,
+   "jam": 0.152
+  },
+  "regret": 0.002
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "cold vs 3-bet",
+  "nodes": 95,
+  "w": 461.8356226470765,
+  "mix": {
+   "fold": 0.9407,
+   "call": 0.0223,
+   "raise": 0,
+   "jam": 0.037
+  },
+  "regret": 0.0121
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "cold vs 4-bet",
+  "nodes": 29,
+  "w": 13.985456638431844,
+  "mix": {
+   "fold": 0.9711,
+   "call": 0.029,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0842
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "open",
+  "nodes": 4,
+  "w": 3550.4975999999847,
+  "mix": {
+   "fold": 0.7081,
+   "call": 0,
+   "raise": 0.2919,
+   "jam": 0
+  },
+  "regret": 0.0012
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "squeeze",
+  "nodes": 35,
+  "w": 597.4876439999907,
+  "mix": {
+   "fold": 0.6292,
+   "call": 0.2479,
+   "raise": 0.0161,
+   "jam": 0.1068
+  },
+  "regret": 0.0183
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "vs 3-bet",
+  "nodes": 10,
+  "w": 30.44762399215712,
+  "mix": {
+   "fold": 0.3651,
+   "call": 0.4626,
+   "raise": 0.0025,
+   "jam": 0.1697
+  },
+  "regret": 0.044
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "vs 3-bet jam",
+  "nodes": 47,
+  "w": 86.1172273521581,
+  "mix": {
+   "fold": 0.7044,
+   "call": 0.2707,
+   "raise": 0,
+   "jam": 0.0249
+  },
+  "regret": 0.0413
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "vs 4-bet jam",
+  "nodes": 46,
+  "w": 6.888227987450999,
+  "mix": {
+   "fold": 0.7036,
+   "call": 0.2966,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.1195
+ },
+ {
+  "fmt": "6max",
+  "depth": 30,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 2837.3899109019562,
+  "mix": {
+   "fold": 0.6372,
+   "call": 0.2564,
+   "raise": 0.0442,
+   "jam": 0.0623
+  },
+  "regret": 0.003
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 259.8959999999999,
+  "mix": {
+   "fold": 0.1679,
+   "call": 0.5242,
+   "raise": 0.3079,
+   "jam": 0
+  },
+  "regret": 0.0036
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 135.7824000000002,
+  "mix": {
+   "fold": 0,
+   "call": 0.5523,
+   "raise": 0.4477,
+   "jam": 0
+  },
+  "regret": 0.0028
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 80.20974000000001,
+  "mix": {
+   "fold": 0.1603,
+   "call": 0.696,
+   "raise": 0.058,
+   "jam": 0.0858
+  },
+  "regret": 0.0105
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "cold vs 3-bet",
+  "nodes": 97,
+  "w": 468.18514023372654,
+  "mix": {
+   "fold": 0.9436,
+   "call": 0.0114,
+   "raise": 0,
+   "jam": 0.045
+  },
+  "regret": 0.0127
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "cold vs 4-bet",
+  "nodes": 26,
+  "w": 15.537988338823721,
+  "mix": {
+   "fold": 0.9778,
+   "call": 0.0222,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0348
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "open",
+  "nodes": 4,
+  "w": 3562.0338000000083,
+  "mix": {
+   "fold": 0.6996,
+   "call": 0,
+   "raise": 0.3004,
+   "jam": 0
+  },
+  "regret": 0.0001
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "squeeze",
+  "nodes": 35,
+  "w": 599.190227999995,
+  "mix": {
+   "fold": 0.6557,
+   "call": 0.2266,
+   "raise": 0.0219,
+   "jam": 0.0959
+  },
+  "regret": 0.018
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "vs 3-bet",
+  "nodes": 24,
+  "w": 50.24770850509773,
+  "mix": {
+   "fold": 0.4272,
+   "call": 0.3943,
+   "raise": 0.0002,
+   "jam": 0.1782
+  },
+  "regret": 0.0999
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "vs 3-bet jam",
+  "nodes": 45,
+  "w": 59.40461397019653,
+  "mix": {
+   "fold": 0.7626,
+   "call": 0.2146,
+   "raise": 0,
+   "jam": 0.0228
+  },
+  "regret": 0.0329
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "vs 4-bet jam",
+  "nodes": 62,
+  "w": 9.557629384313715,
+  "mix": {
+   "fold": 0.7453,
+   "call": 0.2547,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0345
+ },
+ {
+  "fmt": "6max",
+  "depth": 40,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 2830.993303764712,
+  "mix": {
+   "fold": 0.6576,
+   "call": 0.2425,
+   "raise": 0.064,
+   "jam": 0.036
+  },
+  "regret": 0.0032
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 247.9619999999997,
+  "mix": {
+   "fold": 0.1836,
+   "call": 0.497,
+   "raise": 0.3194,
+   "jam": 0
+  },
+  "regret": 0.0034
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 121.70027999999998,
+  "mix": {
+   "fold": 0,
+   "call": 0.503,
+   "raise": 0.497,
+   "jam": 0
+  },
+  "regret": 0.007
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 79.3743600000001,
+  "mix": {
+   "fold": 0.2177,
+   "call": 0.6274,
+   "raise": 0.1331,
+   "jam": 0.0218
+  },
+  "regret": 0.0149
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "cold vs 3-bet",
+  "nodes": 120,
+  "w": 463.11147660785144,
+  "mix": {
+   "fold": 0.9478,
+   "call": 0.0064,
+   "raise": 0,
+   "jam": 0.0458
+  },
+  "regret": 0.0133
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "cold vs 4-bet",
+  "nodes": 27,
+  "w": 14.015491040000144,
+  "mix": {
+   "fold": 0.9807,
+   "call": 0.0193,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0344
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "open",
+  "nodes": 4,
+  "w": 3574.6308000000045,
+  "mix": {
+   "fold": 0.6985,
+   "call": 0,
+   "raise": 0.3015,
+   "jam": 0
+  },
+  "regret": 0.0002
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "squeeze",
+  "nodes": 35,
+  "w": 584.2528380000103,
+  "mix": {
+   "fold": 0.6685,
+   "call": 0.2221,
+   "raise": 0.0384,
+   "jam": 0.071
+  },
+  "regret": 0.0229
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "vs 3-bet",
+  "nodes": 35,
+  "w": 74.20392924078428,
+  "mix": {
+   "fold": 0.4311,
+   "call": 0.4129,
+   "raise": 0.0006,
+   "jam": 0.1554
+  },
+  "regret": 0.1158
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "vs 3-bet jam",
+  "nodes": 39,
+  "w": 34.79460209254872,
+  "mix": {
+   "fold": 0.7969,
+   "call": 0.1752,
+   "raise": 0,
+   "jam": 0.0279
+  },
+  "regret": 0.0637
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "vs 4-bet jam",
+  "nodes": 65,
+  "w": 10.714195411764821,
+  "mix": {
+   "fold": 0.7602,
+   "call": 0.2399,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0663
+ },
+ {
+  "fmt": "6max",
+  "depth": 50,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 2861.9522955294756,
+  "mix": {
+   "fold": 0.6696,
+   "call": 0.236,
+   "raise": 0.0774,
+   "jam": 0.017
+  },
+  "regret": 0.0036
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 244.24919999999946,
+  "mix": {
+   "fold": 0.203,
+   "call": 0.4578,
+   "raise": 0.3392,
+   "jam": 0
+  },
+  "regret": 0.0041
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 111.52986000000007,
+  "mix": {
+   "fold": 0,
+   "call": 0.4838,
+   "raise": 0.5162,
+   "jam": 0
+  },
+  "regret": 0.0017
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 84.06840000000021,
+  "mix": {
+   "fold": 0.2352,
+   "call": 0.6074,
+   "raise": 0.1573,
+   "jam": 0
+  },
+  "regret": 0.0025
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "cold vs 3-bet",
+  "nodes": 93,
+  "w": 463.9169761035306,
+  "mix": {
+   "fold": 0.9448,
+   "call": 0.0101,
+   "raise": 0.0001,
+   "jam": 0.045
+  },
+  "regret": 0.0335
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "cold vs 4-bet",
+  "nodes": 37,
+  "w": 12.911226221960554,
+  "mix": {
+   "fold": 0.9565,
+   "call": 0.0442,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.6504
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "open",
+  "nodes": 4,
+  "w": 3597.305399999991,
+  "mix": {
+   "fold": 0.6998,
+   "call": 0,
+   "raise": 0.3002,
+   "jam": 0
+  },
+  "regret": 0.0002
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "squeeze",
+  "nodes": 35,
+  "w": 648.2562059999968,
+  "mix": {
+   "fold": 0.6695,
+   "call": 0.2363,
+   "raise": 0.0941,
+   "jam": 0
+  },
+  "regret": 0.0071
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "vs 3-bet",
+  "nodes": 51,
+  "w": 103.369391839218,
+  "mix": {
+   "fold": 0.4112,
+   "call": 0.4531,
+   "raise": 0.001,
+   "jam": 0.1347
+  },
+  "regret": 0.0614
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "vs 4-bet jam",
+  "nodes": 83,
+  "w": 11.228598200784223,
+  "mix": {
+   "fold": 0.7475,
+   "call": 0.2526,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.1332
+ },
+ {
+  "fmt": "6max",
+  "depth": 60,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 2778.500971294147,
+  "mix": {
+   "fold": 0.6569,
+   "call": 0.2463,
+   "raise": 0.0968,
+   "jam": 0
+  },
+  "regret": 0.0029
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 272.0952,
+  "mix": {
+   "fold": 0.1801,
+   "call": 0.5707,
+   "raise": 0.2492,
+   "jam": 0
+  },
+  "regret": 0.0059
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 158.58959999999973,
+  "mix": {
+   "fold": 0,
+   "call": 0.5128,
+   "raise": 0.4872,
+   "jam": 0
+  },
+  "regret": 0.0028
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 65.06682000000002,
+  "mix": {
+   "fold": 0.34,
+   "call": 0.4924,
+   "raise": 0.1676,
+   "jam": 0
+  },
+  "regret": 0.0053
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "cold vs 3-bet",
+  "nodes": 87,
+  "w": 541.8506544744938,
+  "mix": {
+   "fold": 0.9461,
+   "call": 0.0048,
+   "raise": 0.0491,
+   "jam": 0
+  },
+  "regret": 0.0415
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "cold vs 4-bet",
+  "nodes": 30,
+  "w": 20.20015672941125,
+  "mix": {
+   "fold": 0.9986,
+   "call": 0.0006,
+   "raise": 0,
+   "jam": 0.0008
+  },
+  "regret": 0.0207
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "open",
+  "nodes": 4,
+  "w": 3651.008399999978,
+  "mix": {
+   "fold": 0.7103,
+   "call": 0,
+   "raise": 0.2897,
+   "jam": 0
+  },
+  "regret": 0.0002
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "squeeze",
+  "nodes": 35,
+  "w": 472.10360340000346,
+  "mix": {
+   "fold": 0.6643,
+   "call": 0.2296,
+   "raise": 0.1061,
+   "jam": 0
+  },
+  "regret": 0.023
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "vs 3-bet",
+  "nodes": 43,
+  "w": 107.14858268235338,
+  "mix": {
+   "fold": 0.4239,
+   "call": 0.4376,
+   "raise": 0.1385,
+   "jam": 0
+  },
+  "regret": 0.0323
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "vs 4-bet",
+  "nodes": 71,
+  "w": 14.81874931529401,
+  "mix": {
+   "fold": 0.5327,
+   "call": 0.3153,
+   "raise": 0,
+   "jam": 0.1518
+  },
+  "regret": 0.2708
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "vs 4-bet jam",
+  "nodes": 36,
+  "w": 0.6864881945098023,
+  "mix": {
+   "fold": 0.5083,
+   "call": 0.4919,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.4979
+ },
+ {
+  "fmt": "6max",
+  "depth": 80,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 2773.0504983529095,
+  "mix": {
+   "fold": 0.6708,
+   "call": 0.2144,
+   "raise": 0.1148,
+   "jam": 0
+  },
+  "regret": 0.0023
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 260.82419999999996,
+  "mix": {
+   "fold": 0.1961,
+   "call": 0.5928,
+   "raise": 0.2111,
+   "jam": 0
+  },
+  "regret": 0.0084
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 155.1419999999999,
+  "mix": {
+   "fold": 0,
+   "call": 0.484,
+   "raise": 0.516,
+   "jam": 0
+  },
+  "regret": 0.0094
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 54.55164000000003,
+  "mix": {
+   "fold": 0.3319,
+   "call": 0.5185,
+   "raise": 0.1496,
+   "jam": 0
+  },
+  "regret": 0.0068
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "cold vs 3-bet",
+  "nodes": 87,
+  "w": 538.5637458070432,
+  "mix": {
+   "fold": 0.9491,
+   "call": 0.0049,
+   "raise": 0.0461,
+   "jam": 0
+  },
+  "regret": 0.0393
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "cold vs 4-bet",
+  "nodes": 31,
+  "w": 18.690511038431143,
+  "mix": {
+   "fold": 0.9984,
+   "call": 0.0007,
+   "raise": 0,
+   "jam": 0.0008
+  },
+  "regret": 0.027
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "open",
+  "nodes": 4,
+  "w": 3631.913999999992,
+  "mix": {
+   "fold": 0.7054,
+   "call": 0,
+   "raise": 0.2946,
+   "jam": 0
+  },
+  "regret": 0.0003
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "squeeze",
+  "nodes": 35,
+  "w": 496.5551760000136,
+  "mix": {
+   "fold": 0.667,
+   "call": 0.2286,
+   "raise": 0.1043,
+   "jam": 0
+  },
+  "regret": 0.0234
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "vs 3-bet",
+  "nodes": 46,
+  "w": 109.00580777725364,
+  "mix": {
+   "fold": 0.4716,
+   "call": 0.3973,
+   "raise": 0.1311,
+   "jam": 0
+  },
+  "regret": 0.0435
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "vs 4-bet",
+  "nodes": 74,
+  "w": 14.282126327058895,
+  "mix": {
+   "fold": 0.5476,
+   "call": 0.3067,
+   "raise": 0,
+   "jam": 0.1456
+  },
+  "regret": 0.4474
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "vs 4-bet jam",
+  "nodes": 35,
+  "w": 0.5836035780392159,
+  "mix": {
+   "fold": 0.5335,
+   "call": 0.467,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 1.0082
+ },
+ {
+  "fmt": "6max",
+  "depth": 100,
+  "type": "vs open",
+  "nodes": 15,
+  "w": 2801.2090030588265,
+  "mix": {
+   "fold": 0.672,
+   "call": 0.2163,
+   "raise": 0.1117,
+   "jam": 0
+  },
+  "regret": 0.0029
+ },
+ {
+  "fmt": "8max",
+  "depth": 10,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 200.889,
+  "mix": {
+   "fold": 0.2522,
+   "call": 0.0649,
+   "raise": 0,
+   "jam": 0.6829
+  },
+  "regret": 0.0005
+ },
+ {
+  "fmt": "8max",
+  "depth": 10,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 12.68318999999997,
+  "mix": {
+   "fold": 0,
+   "call": 0.419,
+   "raise": 0.0867,
+   "jam": 0.4941
+  },
+  "regret": 0.0121
+ },
+ {
+  "fmt": "8max",
+  "depth": 10,
+  "type": "open",
+  "nodes": 6,
+  "w": 4841.889000000023,
+  "mix": {
+   "fold": 0.7681,
+   "call": 0,
+   "raise": 0.0007,
+   "jam": 0.2312
+  },
+  "regret": 0.0002
+ },
+ {
+  "fmt": "8max",
+  "depth": 10,
+  "type": "squeeze",
+  "nodes": 1,
+  "w": 0.47881860000000015,
+  "mix": {
+   "fold": 0,
+   "call": 0.9061,
+   "raise": 0,
+   "jam": 0.0939
+  },
+  "regret": 0.0758
+ },
+ {
+  "fmt": "8max",
+  "depth": 10,
+  "type": "vs 3-bet jam",
+  "nodes": 1,
+  "w": 0.01540198588235294,
+  "mix": {
+   "fold": 0.44,
+   "call": 0.56,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0046
+ },
+ {
+  "fmt": "8max",
+  "depth": 10,
+  "type": "vs jam",
+  "nodes": 155,
+  "w": 5470.243993231515,
+  "mix": {
+   "fold": 0.8604,
+   "call": 0.1396,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.002
+ },
+ {
+  "fmt": "8max",
+  "depth": 10,
+  "type": "vs open",
+  "nodes": 12,
+  "w": 20.233921578039066,
+  "mix": {
+   "fold": 0.8028,
+   "call": 0.1227,
+   "raise": 0,
+   "jam": 0.0745
+  },
+  "regret": 0.0375
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 267.8520000000001,
+  "mix": {
+   "fold": 0.1866,
+   "call": 0.35,
+   "raise": 0.0001,
+   "jam": 0.4632
+  },
+  "regret": 0.001
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 94.41119999999997,
+  "mix": {
+   "fold": 0,
+   "call": 0.511,
+   "raise": 0.1962,
+   "jam": 0.2927
+  },
+  "regret": 0.0059
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "cold vs 3-bet",
+  "nodes": 259,
+  "w": 381.36297269726185,
+  "mix": {
+   "fold": 0.9426,
+   "call": 0.056,
+   "raise": 0,
+   "jam": 0.0014
+  },
+  "regret": 0.0683
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "cold vs 4-bet",
+  "nodes": 5,
+  "w": 0.24609948941176393,
+  "mix": {
+   "fold": 0.9898,
+   "call": 0.0102,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0513
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "open",
+  "nodes": 6,
+  "w": 5234.119799999963,
+  "mix": {
+   "fold": 0.7973,
+   "call": 0,
+   "raise": 0.0869,
+   "jam": 0.1158
+  },
+  "regret": 0.0004
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "squeeze",
+  "nodes": 76,
+  "w": 276.597633000009,
+  "mix": {
+   "fold": 0.5556,
+   "call": 0.3454,
+   "raise": 0,
+   "jam": 0.099
+  },
+  "regret": 0.0309
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "vs 3-bet",
+  "nodes": 2,
+  "w": 0.15733078196078423,
+  "mix": {
+   "fold": 0.4231,
+   "call": 0.3262,
+   "raise": 0,
+   "jam": 0.2506
+  },
+  "regret": 0.1473
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "vs 3-bet jam",
+  "nodes": 133,
+  "w": 16.984654278431268,
+  "mix": {
+   "fold": 0.5815,
+   "call": 0.4019,
+   "raise": 0,
+   "jam": 0.0166
+  },
+  "regret": 0.0109
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "vs jam",
+  "nodes": 139,
+  "w": 2617.141597482101,
+  "mix": {
+   "fold": 0.8826,
+   "call": 0.1174,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0047
+ },
+ {
+  "fmt": "8max",
+  "depth": 15,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 1685.761051294138,
+  "mix": {
+   "fold": 0.721,
+   "call": 0.1807,
+   "raise": 0.0022,
+   "jam": 0.096
+  },
+  "regret": 0.0022
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 256.4483999999993,
+  "mix": {
+   "fold": 0.1639,
+   "call": 0.515,
+   "raise": 0.0022,
+   "jam": 0.3188
+  },
+  "regret": 0.0012
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 132.33479999999957,
+  "mix": {
+   "fold": 0,
+   "call": 0.5382,
+   "raise": 0.3245,
+   "jam": 0.1373
+  },
+  "regret": 0.0022
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 0.2084472000000006,
+  "mix": {
+   "fold": 0.1038,
+   "call": 0.6788,
+   "raise": 0,
+   "jam": 0.2174
+  },
+  "regret": 0.0695
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "cold vs 3-bet",
+  "nodes": 328,
+  "w": 697.9645986493973,
+  "mix": {
+   "fold": 0.9511,
+   "call": 0.047,
+   "raise": 0,
+   "jam": 0.0019
+  },
+  "regret": 0.0505
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "cold vs 4-bet",
+  "nodes": 13,
+  "w": 1.182341763921568,
+  "mix": {
+   "fold": 0.9866,
+   "call": 0.0134,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0419
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "open",
+  "nodes": 6,
+  "w": 5119.818599999969,
+  "mix": {
+   "fold": 0.7911,
+   "call": 0,
+   "raise": 0.1865,
+   "jam": 0.0224
+  },
+  "regret": 0.0004
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "squeeze",
+  "nodes": 114,
+  "w": 663.7391124000308,
+  "mix": {
+   "fold": 0.6142,
+   "call": 0.2819,
+   "raise": 0.0048,
+   "jam": 0.0991
+  },
+  "regret": 0.0442
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "vs 3-bet",
+  "nodes": 6,
+  "w": 0.8104572462745104,
+  "mix": {
+   "fold": 0.3314,
+   "call": 0.4844,
+   "raise": 0,
+   "jam": 0.1842
+  },
+  "regret": 0.0891
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "vs 3-bet jam",
+  "nodes": 149,
+  "w": 70.53920784862729,
+  "mix": {
+   "fold": 0.6335,
+   "call": 0.3467,
+   "raise": 0,
+   "jam": 0.0198
+  },
+  "regret": 0.0169
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "vs 4-bet jam",
+  "nodes": 1,
+  "w": 0.006773025882352941,
+  "mix": {
+   "fold": 0.3406,
+   "call": 0.66,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.124
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "vs jam",
+  "nodes": 65,
+  "w": 448.1166308156923,
+  "mix": {
+   "fold": 0.8553,
+   "call": 0.1447,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0137
+ },
+ {
+  "fmt": "8max",
+  "depth": 20,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 3261.7735469803497,
+  "mix": {
+   "fold": 0.7073,
+   "call": 0.1987,
+   "raise": 0.0025,
+   "jam": 0.0915
+  },
+  "regret": 0.0019
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 217.8617999999995,
+  "mix": {
+   "fold": 0.1507,
+   "call": 0.5521,
+   "raise": 0.0791,
+   "jam": 0.2181
+  },
+  "regret": 0.0044
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 120.49361999999995,
+  "mix": {
+   "fold": 0,
+   "call": 0.5501,
+   "raise": 0.3677,
+   "jam": 0.0822
+  },
+  "regret": 0.0019
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 18.365099999999998,
+  "mix": {
+   "fold": 0.1422,
+   "call": 0.6608,
+   "raise": 0.039,
+   "jam": 0.1578
+  },
+  "regret": 0.0142
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "cold vs 3-bet",
+  "nodes": 340,
+  "w": 724.7122190478914,
+  "mix": {
+   "fold": 0.9524,
+   "call": 0.0381,
+   "raise": 0,
+   "jam": 0.0095
+  },
+  "regret": 0.0507
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "cold vs 4-bet",
+  "nodes": 37,
+  "w": 5.102311981960737,
+  "mix": {
+   "fold": 0.9419,
+   "call": 0.0581,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 1.4352
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "open",
+  "nodes": 6,
+  "w": 4934.311199999888,
+  "mix": {
+   "fold": 0.7757,
+   "call": 0,
+   "raise": 0.2223,
+   "jam": 0.002
+  },
+  "regret": 0.0002
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "squeeze",
+  "nodes": 125,
+  "w": 760.1138532000052,
+  "mix": {
+   "fold": 0.6755,
+   "call": 0.2231,
+   "raise": 0.0077,
+   "jam": 0.0937
+  },
+  "regret": 0.0497
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "vs 3-bet",
+  "nodes": 17,
+  "w": 6.647028796862738,
+  "mix": {
+   "fold": 0.3363,
+   "call": 0.4881,
+   "raise": 0.001,
+   "jam": 0.1745
+  },
+  "regret": 0.0419
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "vs 3-bet jam",
+  "nodes": 141,
+  "w": 89.52878800392072,
+  "mix": {
+   "fold": 0.6844,
+   "call": 0.2961,
+   "raise": 0,
+   "jam": 0.0195
+  },
+  "regret": 0.0172
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "vs 4-bet jam",
+  "nodes": 27,
+  "w": 0.5579787811764686,
+  "mix": {
+   "fold": 0.7757,
+   "call": 0.2243,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.107
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "vs jam",
+  "nodes": 5,
+  "w": 67.2758022000009,
+  "mix": {
+   "fold": 0.7963,
+   "call": 0.2037,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0066
+ },
+ {
+  "fmt": "8max",
+  "depth": 25,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 3727.275206666621,
+  "mix": {
+   "fold": 0.7177,
+   "call": 0.1941,
+   "raise": 0.0106,
+   "jam": 0.0777
+  },
+  "regret": 0.0024
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 187.49639999999968,
+  "mix": {
+   "fold": 0.1317,
+   "call": 0.6136,
+   "raise": 0.2547,
+   "jam": 0
+  },
+  "regret": 0.0009
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 115.29570000000034,
+  "mix": {
+   "fold": 0,
+   "call": 0.5624,
+   "raise": 0.4376,
+   "jam": 0
+  },
+  "regret": 0.0021
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 47.21886000000012,
+  "mix": {
+   "fold": 0.1695,
+   "call": 0.6841,
+   "raise": 0.0012,
+   "jam": 0.1452
+  },
+  "regret": 0.0093
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "cold vs 3-bet",
+  "nodes": 232,
+  "w": 721.7231378792776,
+  "mix": {
+   "fold": 0.9539,
+   "call": 0.0108,
+   "raise": 0,
+   "jam": 0.0353
+  },
+  "regret": 0.0117
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "cold vs 4-bet",
+  "nodes": 95,
+  "w": 30.336771221961058,
+  "mix": {
+   "fold": 0.9785,
+   "call": 0.0215,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.3699
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "open",
+  "nodes": 6,
+  "w": 4784.870999999918,
+  "mix": {
+   "fold": 0.7617,
+   "call": 0,
+   "raise": 0.2383,
+   "jam": 0
+  },
+  "regret": 0
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "squeeze",
+  "nodes": 126,
+  "w": 909.6271158000358,
+  "mix": {
+   "fold": 0.7058,
+   "call": 0.1974,
+   "raise": 0.0259,
+   "jam": 0.0709
+  },
+  "regret": 0.0297
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "vs 3-bet",
+  "nodes": 42,
+  "w": 37.99598787999978,
+  "mix": {
+   "fold": 0.3453,
+   "call": 0.4671,
+   "raise": 0.0003,
+   "jam": 0.1872
+  },
+  "regret": 0.0189
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "vs 3-bet jam",
+  "nodes": 63,
+  "w": 61.40631220784412,
+  "mix": {
+   "fold": 0.7112,
+   "call": 0.261,
+   "raise": 0,
+   "jam": 0.0278
+  },
+  "regret": 0.0211
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "vs 4-bet jam",
+  "nodes": 129,
+  "w": 8.471135213333328,
+  "mix": {
+   "fold": 0.7143,
+   "call": 0.2857,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0279
+ },
+ {
+  "fmt": "8max",
+  "depth": 30,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 3819.4583554510177,
+  "mix": {
+   "fold": 0.7171,
+   "call": 0.2005,
+   "raise": 0.0466,
+   "jam": 0.0358
+  },
+  "regret": 0.0017
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 172.51260000000005,
+  "mix": {
+   "fold": 0.1827,
+   "call": 0.5046,
+   "raise": 0.3127,
+   "jam": 0
+  },
+  "regret": 0.0014
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 86.68062000000008,
+  "mix": {
+   "fold": 0,
+   "call": 0.541,
+   "raise": 0.459,
+   "jam": 0
+  },
+  "regret": 0.0012
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 53.96819999999986,
+  "mix": {
+   "fold": 0.1659,
+   "call": 0.6881,
+   "raise": 0.0712,
+   "jam": 0.0748
+  },
+  "regret": 0.0051
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "cold vs 3-bet",
+  "nodes": 238,
+  "w": 746.8581754431088,
+  "mix": {
+   "fold": 0.9566,
+   "call": 0.0056,
+   "raise": 0,
+   "jam": 0.0379
+  },
+  "regret": 0.0174
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "cold vs 4-bet",
+  "nodes": 88,
+  "w": 29.65488832705934,
+  "mix": {
+   "fold": 0.9791,
+   "call": 0.0209,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.396
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "open",
+  "nodes": 6,
+  "w": 4792.826999999983,
+  "mix": {
+   "fold": 0.759,
+   "call": 0,
+   "raise": 0.241,
+   "jam": 0
+  },
+  "regret": 0.0002
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "squeeze",
+  "nodes": 126,
+  "w": 876.4226172000023,
+  "mix": {
+   "fold": 0.7219,
+   "call": 0.1864,
+   "raise": 0.0354,
+   "jam": 0.0563
+  },
+  "regret": 0.034
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "vs 3-bet",
+  "nodes": 77,
+  "w": 56.55844379607844,
+  "mix": {
+   "fold": 0.4341,
+   "call": 0.3803,
+   "raise": 0.0008,
+   "jam": 0.1848
+  },
+  "regret": 0.0395
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "vs 3-bet jam",
+  "nodes": 57,
+  "w": 40.74394733098069,
+  "mix": {
+   "fold": 0.7697,
+   "call": 0.2068,
+   "raise": 0,
+   "jam": 0.0235
+  },
+  "regret": 0.0289
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "vs 4-bet jam",
+  "nodes": 148,
+  "w": 10.482350347450941,
+  "mix": {
+   "fold": 0.7411,
+   "call": 0.2589,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0369
+ },
+ {
+  "fmt": "8max",
+  "depth": 40,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 3839.168247607797,
+  "mix": {
+   "fold": 0.7347,
+   "call": 0.1852,
+   "raise": 0.0603,
+   "jam": 0.0199
+  },
+  "regret": 0.0018
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 167.3411999999997,
+  "mix": {
+   "fold": 0.1915,
+   "call": 0.4969,
+   "raise": 0.3116,
+   "jam": 0
+  },
+  "regret": 0.0021
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 83.11368000000024,
+  "mix": {
+   "fold": 0,
+   "call": 0.5169,
+   "raise": 0.4831,
+   "jam": 0
+  },
+  "regret": 0.0041
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 51.96593999999998,
+  "mix": {
+   "fold": 0.2246,
+   "call": 0.6239,
+   "raise": 0.1332,
+   "jam": 0.0184
+  },
+  "regret": 0.0045
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "cold vs 3-bet",
+  "nodes": 257,
+  "w": 754.6614859318182,
+  "mix": {
+   "fold": 0.9589,
+   "call": 0.0033,
+   "raise": 0,
+   "jam": 0.0378
+  },
+  "regret": 0.0603
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "cold vs 4-bet",
+  "nodes": 87,
+  "w": 29.486849661176496,
+  "mix": {
+   "fold": 0.9803,
+   "call": 0.0197,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 1.133
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "open",
+  "nodes": 6,
+  "w": 4830.750599999965,
+  "mix": {
+   "fold": 0.7601,
+   "call": 0,
+   "raise": 0.2399,
+   "jam": 0
+  },
+  "regret": 0.0001
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "squeeze",
+  "nodes": 126,
+  "w": 847.8591185999632,
+  "mix": {
+   "fold": 0.729,
+   "call": 0.1836,
+   "raise": 0.0442,
+   "jam": 0.0432
+  },
+  "regret": 0.0925
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "vs 3-bet",
+  "nodes": 84,
+  "w": 72.31558434117689,
+  "mix": {
+   "fold": 0.4232,
+   "call": 0.4121,
+   "raise": 0.0009,
+   "jam": 0.1637
+  },
+  "regret": 0.073
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "vs 3-bet jam",
+  "nodes": 53,
+  "w": 22.858588287842956,
+  "mix": {
+   "fold": 0.7996,
+   "call": 0.1702,
+   "raise": 0,
+   "jam": 0.0301
+  },
+  "regret": 0.0875
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "vs 4-bet jam",
+  "nodes": 153,
+  "w": 11.475303591372422,
+  "mix": {
+   "fold": 0.7644,
+   "call": 0.2356,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.0563
+ },
+ {
+  "fmt": "8max",
+  "depth": 50,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 3831.7136247059125,
+  "mix": {
+   "fold": 0.7424,
+   "call": 0.1778,
+   "raise": 0.0705,
+   "jam": 0.0094
+  },
+  "regret": 0.0026
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 171.31919999999982,
+  "mix": {
+   "fold": 0.2098,
+   "call": 0.4715,
+   "raise": 0.3187,
+   "jam": 0
+  },
+  "regret": 0.0016
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 79.2152400000002,
+  "mix": {
+   "fold": 0,
+   "call": 0.465,
+   "raise": 0.535,
+   "jam": 0
+  },
+  "regret": 0.0014
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 56.18262000000001,
+  "mix": {
+   "fold": 0.2411,
+   "call": 0.6101,
+   "raise": 0.1487,
+   "jam": 0
+  },
+  "regret": 0.0122
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "cold vs 3-bet",
+  "nodes": 233,
+  "w": 766.9976169144949,
+  "mix": {
+   "fold": 0.9583,
+   "call": 0.0054,
+   "raise": 0,
+   "jam": 0.0363
+  },
+  "regret": 0.0758
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "cold vs 4-bet",
+  "nodes": 94,
+  "w": 28.744875105097346,
+  "mix": {
+   "fold": 0.9821,
+   "call": 0.0179,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 2.1618
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "open",
+  "nodes": 6,
+  "w": 4859.789999999985,
+  "mix": {
+   "fold": 0.7622,
+   "call": 0,
+   "raise": 0.2378,
+   "jam": 0
+  },
+  "regret": 0
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "squeeze",
+  "nodes": 126,
+  "w": 918.1481243999815,
+  "mix": {
+   "fold": 0.727,
+   "call": 0.1957,
+   "raise": 0.0774,
+   "jam": 0
+  },
+  "regret": 0.0239
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "vs 3-bet",
+  "nodes": 96,
+  "w": 93.58196690117526,
+  "mix": {
+   "fold": 0.4053,
+   "call": 0.4542,
+   "raise": 0.0011,
+   "jam": 0.1394
+  },
+  "regret": 0.0704
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "vs 4-bet jam",
+  "nodes": 165,
+  "w": 11.895218652549035,
+  "mix": {
+   "fold": 0.7691,
+   "call": 0.2309,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.077
+ },
+ {
+  "fmt": "8max",
+  "depth": 60,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 3714.0815107450735,
+  "mix": {
+   "fold": 0.7345,
+   "call": 0.1838,
+   "raise": 0.0817,
+   "jam": 0
+  },
+  "regret": 0.0021
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 192.27000000000038,
+  "mix": {
+   "fold": 0.1906,
+   "call": 0.5898,
+   "raise": 0.2196,
+   "jam": 0
+  },
+  "regret": 0.0009
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 114.16859999999956,
+  "mix": {
+   "fold": 0,
+   "call": 0.5136,
+   "raise": 0.4864,
+   "jam": 0
+  },
+  "regret": 0.0007
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 41.30490000000005,
+  "mix": {
+   "fold": 0.3491,
+   "call": 0.4969,
+   "raise": 0.154,
+   "jam": 0
+  },
+  "regret": 0.0024
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "cold vs 3-bet",
+  "nodes": 221,
+  "w": 852.5378084666958,
+  "mix": {
+   "fold": 0.9599,
+   "call": 0.0031,
+   "raise": 0.0369,
+   "jam": 0
+  },
+  "regret": 0.0043
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "cold vs 4-bet",
+  "nodes": 90,
+  "w": 36.38209317098077,
+  "mix": {
+   "fold": 0.9999,
+   "call": 0,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.001
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "open",
+  "nodes": 6,
+  "w": 4999.550400000054,
+  "mix": {
+   "fold": 0.7732,
+   "call": 0,
+   "raise": 0.2268,
+   "jam": 0
+  },
+  "regret": 0.0001
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "squeeze",
+  "nodes": 122,
+  "w": 677.4240954000345,
+  "mix": {
+   "fold": 0.7213,
+   "call": 0.1935,
+   "raise": 0.0852,
+   "jam": 0
+  },
+  "regret": 0.0163
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "vs 3-bet",
+  "nodes": 90,
+  "w": 98.87548257960744,
+  "mix": {
+   "fold": 0.4142,
+   "call": 0.4486,
+   "raise": 0.1372,
+   "jam": 0
+  },
+  "regret": 0.0167
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "vs 4-bet",
+  "nodes": 157,
+  "w": 14.96320827372547,
+  "mix": {
+   "fold": 0.556,
+   "call": 0.2993,
+   "raise": 0,
+   "jam": 0.1447
+  },
+  "regret": 0.0782
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "vs 4-bet jam",
+  "nodes": 29,
+  "w": 0.37402796313725506,
+  "mix": {
+   "fold": 0.4464,
+   "call": 0.5536,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.2261
+ },
+ {
+  "fmt": "8max",
+  "depth": 80,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 3691.8820404705666,
+  "mix": {
+   "fold": 0.7428,
+   "call": 0.1612,
+   "raise": 0.096,
+   "jam": 0
+  },
+  "regret": 0.0014
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "BvB open",
+  "nodes": 1,
+  "w": 181.92719999999997,
+  "mix": {
+   "fold": 0.1992,
+   "call": 0.5752,
+   "raise": 0.2256,
+   "jam": 0
+  },
+  "regret": 0.0039
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "BvB vs limp",
+  "nodes": 1,
+  "w": 105.25788000000024,
+  "mix": {
+   "fold": 0,
+   "call": 0.4981,
+   "raise": 0.5019,
+   "jam": 0
+  },
+  "regret": 0.0023
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "BvB vs open",
+  "nodes": 1,
+  "w": 40.628640000000004,
+  "mix": {
+   "fold": 0.3435,
+   "call": 0.5092,
+   "raise": 0.1473,
+   "jam": 0
+  },
+  "regret": 0.0114
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "cold vs 3-bet",
+  "nodes": 227,
+  "w": 851.0818357168445,
+  "mix": {
+   "fold": 0.9613,
+   "call": 0.003,
+   "raise": 0.0357,
+   "jam": 0
+  },
+  "regret": 0.0043
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "cold vs 4-bet",
+  "nodes": 90,
+  "w": 35.288752876081446,
+  "mix": {
+   "fold": 0.9999,
+   "call": 0,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.001
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "open",
+  "nodes": 6,
+  "w": 4959.372600000111,
+  "mix": {
+   "fold": 0.7694,
+   "call": 0,
+   "raise": 0.2306,
+   "jam": 0
+  },
+  "regret": 0.0001
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "squeeze",
+  "nodes": 126,
+  "w": 700.3924044000225,
+  "mix": {
+   "fold": 0.7246,
+   "call": 0.1911,
+   "raise": 0.0843,
+   "jam": 0
+  },
+  "regret": 0.02
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "vs 3-bet",
+  "nodes": 90,
+  "w": 99.42657620156908,
+  "mix": {
+   "fold": 0.4641,
+   "call": 0.4009,
+   "raise": 0.1349,
+   "jam": 0
+  },
+  "regret": 0.0164
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "vs 4-bet",
+  "nodes": 158,
+  "w": 14.251836782744995,
+  "mix": {
+   "fold": 0.5669,
+   "call": 0.2936,
+   "raise": 0,
+   "jam": 0.1395
+  },
+  "regret": 0.0817
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "vs 4-bet jam",
+  "nodes": 30,
+  "w": 0.33206618509803937,
+  "mix": {
+   "fold": 0.4727,
+   "call": 0.5273,
+   "raise": 0,
+   "jam": 0
+  },
+  "regret": 0.2086
+ },
+ {
+  "fmt": "8max",
+  "depth": 100,
+  "type": "vs open",
+  "nodes": 28,
+  "w": 3730.5784523921834,
+  "mix": {
+   "fold": 0.7445,
+   "call": 0.1621,
+   "raise": 0.0934,
+   "jam": 0
+  },
+  "regret": 0.0015
+ }
+]
