@@ -112,7 +112,8 @@ class PF2 extends E.PreflopSolver {
     let type;
     if (level === 0 || aggr < 0) type = 'sb_bb_limp';
     else if (level === 1) type = oop === sb && ip === bb ? 'sb_bb_open' : (ip === aggr && ip <= 2 ? 'bb_utg' : 'bb_btn');
-    else type = 'bb3b_btn';
+    else if (level === 2) type = 'bb3b_btn';
+    else return false;   // 4-bet pots: no solved row yet, the formula
     const rows = REALTAB[type]; if (!rows || !rows.length) return false;
     const behind = Math.min(this.cfg.stacks[p] - nd.put[p], this.cfg.stacks[o] - nd.put[o]), spr = behind / Math.max(nd.pot, 1e-9);
     let i = 0; while (i < rows.length - 1 && rows[i + 1].spr < spr) i++;
