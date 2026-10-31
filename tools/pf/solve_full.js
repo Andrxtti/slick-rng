@@ -15,7 +15,8 @@ for (let k = 0; k < SECS / 30 || (TARGET > 0 && s.iters < TARGET && Date.now() -
 s.evalPass(EVS * 1000);
 const nodes = [];
 const b64 = (u8) => Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength).toString('base64');
-function walk(id, reach, path, prob) {
+const RARE_DEPTH = +(process.env.RARE_DEPTH ?? 2);   // P3: how many decisions past a rare action still get exported (0 = the old cut)
+function walk(id, reach, path, prob, slack = 0) {   // slack: decisions exported below MINP on this line (P3: the replies to a rare action stay in the library)
   const nd = s.nodes[id]; if (nd.kind !== 'act') return;
   const q = nd.player, na = nd.actions.length, strat = []; let den = 0;
   for (let c = 0; c < NC; c++) { strat.push(s.avg(id, c)); den += SIZE[c] * reach[q][c]; }
@@ -29,8 +30,9 @@ function walk(id, reach, path, prob) {
   nodes.push({ p: path.join('|'), h: q, a: nd.actions.map((x) => x.k), to: nd.actions.map((x) => x.to || 0), lab: nd.actions.map((x) => label(nd, x, cfg)), prob: +prob.toPrecision(4), s: b64(S8), r: b64(R8), e: b64(new Uint8Array(E16.buffer)) });
   for (let a = 0; a < na; a++) {
     let num = 0; for (let c = 0; c < NC; c++) num += SIZE[c] * reach[q][c] * strat[c][a];
-    const pa = num / den, p2 = prob * pa; if (p2 < MINP) continue;
-    walk(nd.children[a], reach.map((r, p) => (p === q ? Float64Array.from(r, (x, c) => x * strat[c][a]) : r)), path.concat([nd.actions[a].k]), p2);
+    const pa = num / den, p2 = prob * pa, rare = p2 < MINP;
+    if (rare && slack >= RARE_DEPTH) continue;   // was: every line below MINP cut (the 25bb small-3-bet subtree went missing that way)
+    walk(nd.children[a], reach.map((r, p) => (p === q ? Float64Array.from(r, (x, c) => x * strat[c][a]) : r)), path.concat([nd.actions[a].k]), p2, rare ? slack + 1 : 0);
   }
 }
 walk(0, Array.from({ length: nP }, () => new Float64Array(NC).fill(1)), [], 1);
