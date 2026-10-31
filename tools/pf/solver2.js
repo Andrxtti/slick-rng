@@ -85,7 +85,44 @@ if (process.env.PLAYSET) PLAY.set(E.PLAY169);   // the multiway model keeps its 
   const pr = process.env.PLAYREAL || 'none';   // only an explicit PLAYREAL loads a table (calibration showed no gain; see MULTIWAY_NOTES Oct 28)
   for (let l = 1; l <= 3; l++) E.REAL_MULT[l].fill(1);
   if (pr !== 'none') { const dd = JSON.parse(fs0.readFileSync(pr, 'utf8')); for (let l = 1; l <= 3; l++) { const t = dd['l' + l]; if (t) for (let i = 0; i < 169; i++) E.REAL_MULT[l][i] = t[i] || 1; } } }
+// SOLVER_PLAN P2: REALTAB=<p2/real_table.json> values heads-up flop leaves with the realization measured by our own
+// postflop solves (P1) instead of the fitted formula: share = R_me[c]*eq / (R_me[c]*eq + R_opp[o]*(1-eq)), with R per pot
+// type, position and hand class, interpolated by SPR between the solved depths. Off (the formula) without REALTAB, in ICM,
+// and in pots the table doesn't cover. See tools/pf/SOLVER_FIX.md.
+const REALTAB = (() => {
+  const f = process.env.REALTAB; if (!f) return null;
+  const T = JSON.parse(require('fs').readFileSync(f, 'utf8')), byType = {};
+  for (const e of Object.values(T)) {
+    const arr = (side) => { const r = new Float64Array(169); for (let c = 0; c < 169; c++) r[c] = side.R[E.CLASS_NAMES[c]] ?? side.mean ?? 1; return r; };
+    if (e.oop.mean == null || e.ip.mean == null) continue;
+    (byType[e.type] = byType[e.type] || []).push({ spr: e.spr, oop: arr(e.oop), ip: arr(e.ip) });
+  }
+  for (const k in byType) byType[k].sort((a, b) => a.spr - b.spr);
+  return byType;
+})();
 class PF2 extends E.PreflopSolver {
+  // P2: the measured realization for a heads-up flop leaf, or false when the table doesn't cover this pot
+  realTab(nd, p, o, out) {
+    const n = this.n, sb = n - 2, bb = n - 1, order = this.cfg.postOrder || [sb, bb, ...[...Array(n - 2).keys()]];
+    const rank = (i) => order.indexOf(i), oop = rank(p) < rank(o) ? p : o, ip = oop === p ? o : p;
+    const level = nd.level || 0, aggr = nd.aggr ?? nd.agg ?? -1;
+    let type;
+    if (level === 0 || aggr < 0) type = 'sb_bb_limp';
+    else if (level === 1) type = oop === sb && ip === bb ? 'sb_bb_open' : (ip === aggr && ip <= 2 ? 'bb_utg' : 'bb_btn');
+    else type = 'bb3b_btn';
+    const rows = REALTAB[type]; if (!rows || !rows.length) return false;
+    const behind = Math.min(this.cfg.stacks[p] - nd.put[p], this.cfg.stacks[o] - nd.put[o]), spr = behind / Math.max(nd.pot, 1e-9);
+    let i = 0; while (i < rows.length - 1 && rows[i + 1].spr < spr) i++;
+    const A = rows[i], B = rows[Math.min(i + 1, rows.length - 1)], t = B === A || spr <= A.spr ? 0 : Math.min(1, (spr - A.spr) / (B.spr - A.spr));
+    const Rme = p === oop ? 'oop' : 'ip', Rop = p === oop ? 'ip' : 'oop', oc = this.cls[o], NC = this.NC;
+    const Ro = A[Rop][oc] + (B[Rop][oc] - A[Rop][oc]) * t;
+    for (let c = 0; c < NC; c++) {
+      const eq = this.EQ[c * NC + oc], Rm = A[Rme][c] + (B[Rme][c] - A[Rme][c]) * t;
+      const a = Math.max(0, Rm) * eq, b = Math.max(0, Ro) * (1 - eq), share = a + b > 0 ? a / (a + b) : 0.5;
+      out[c] = (nd.pot * share - nd.put[p]) * this.cw[c];
+    }
+    return true;
+  }
   constructor(cfg) {
     const ex = {}; for (const [k, e] of [['playSpan', 'PSPAN'], ['pairSpan', 'PAIRSPAN'], ['ioSpan', 'IOSPAN'], ['pRe', 'PRE'], ['aggRe', 'AGGRE']]) if (process.env[e] !== undefined) ex[k] = +process.env[e];
     cfg = { rLow: MODEL.rLow, gammaK: MODEL.gammaK, gRe: MODEL.gRe, playPos: MODEL.pPos, playNeg: MODEL.pNeg, implied: MODEL.io, aggRe: MODEL.aggRe, ...ex, ...cfg }; super(cfg);
@@ -122,6 +159,7 @@ class PF2 extends E.PreflopSolver {
   // heads-up: how often the rest goes in depends on the matchup. Close matchups get it in; a dominated hand mostly
   // gives up on the flop (losing only the pot), so the stack-off share scales with 2*min(eq, 1-eq). Zero-sum by symmetry.
   termVec2(nd, p, o, out) {
+    if (REALTAB && nd.kind === 'flop' && !(this.cfg.payoff && this.cfg.payoff.type === 'icm') && this.realTab(nd, p, o, out)) return;   // P2: solved realization
     super.termVec2(nd, p, o, out);
     if (nd.kind !== 'flop' || !nd.twin || !(nd.pAll > 0)) return;
     const tmp = this._twv2 || (this._twv2 = new Float64Array(this.NC)); super.termVec2(nd.twin, p, o, tmp);
