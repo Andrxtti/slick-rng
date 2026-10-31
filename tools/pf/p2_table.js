@@ -6,7 +6,7 @@
 // then to the position's mean. SPR comes from p1/index.json. P2 step 2 makes the preflop solver read this table.
 const fs = require('fs'), path = require('path');
 const E = require('../../app/engine.js');
-const NAMES = E.CLASS_NAMES, NC = 169, MIN_N = 400;
+const NAMES = E.CLASS_NAMES, NC = 169, MIN_N = 120;
 const dir = path.join(__dirname, 'p1', 'out'), index = JSON.parse(fs.readFileSync(path.join(__dirname, 'p1', 'index.json'), 'utf8'));
 const acc = {};   // key type|depth -> [OOP, IP] -> class -> {ev, eqpot, n}
 for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.json'))) {
