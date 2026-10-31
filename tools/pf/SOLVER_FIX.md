@@ -42,3 +42,6 @@ Nothing here goes into docs/ until Steven approves the report.
   MINP 1e-4, and the solver 3-bets there 0.07%, so the opener's reply was never written. Fixed: `RARE_DEPTH` (default 2)
   exports two decisions past a rare action (RARE_DEPTH=0 is the old cut). Strategies that deep in rare lines converge less.
 - Still to decide with evidence (P1/P4): a min-raise next to the 2.x open, a second 3-bet size, the 25bb small 4-bet.
+- Limp rule: `SBLIMP` env in solver2.js ('all' default = shipped tree, 'none', or depths '10,15' each +-2.5bb) gates the SB
+  complete. Open-limps were already impossible. Limp-reshove (SB complete, BB raise, SB jam) follows automatically where
+  the complete exists. Set from Steven's GTO Wizard read per depth before P4.

@@ -12,6 +12,9 @@ if (process.env.PLAYSET) E.PLAY169.set(E.buildPlay({ ...E.PLAY_DEFAULT, ...JSON.
 
 const OPEN = (eff) => (eff >= 50 ? 2.3 : eff >= 35 ? 2.2 : eff >= 25 ? 2.1 : 2.0);
 const SB_OPEN = (eff) => (eff >= 75 ? 4.0 : eff >= 28 ? 3.5 : eff >= 18 ? 3.0 : 2.5);   // solved BvB sizes (8-max ChipEV, 12.5% ante)
+// SOLVER_PLAN limps (Steven 19:59): no open-limps; the SB completes only at depths where his GTO Wizard check shows SB limping.
+// SBLIMP='all' (default: the shipped tree), 'none', or a list of depths in bb ('10,15,20'), each covering +-2.5bb.
+const SB_LIMP = ((v) => v === 'all' ? () => true : v === 'none' ? () => false : ((L) => (eff) => L.some((d) => Math.abs(eff - d) <= 2.5))(v.split(',').map(Number)))(process.env.SBLIMP || 'all');
 const ISO = (eff) => (eff >= 30 ? 3.5 : 3.0);           // BB raise over an SB complete
 const JAM_CAP = { 1: 25, 2: 50, 3: +(process.env.JAMCAP4 || 70) };   // 4-bet jams only at 70bb or less, as in the app engine: GTO Wizard 4-bets small at 100bb (jams ~5% of 4-bets) and jams at 40-60bb
 // 3-bet size as a multiple of the open, by effective stack: the course's short-stack anchors (2.75x in position / 3.0x
@@ -269,7 +272,7 @@ class PF2 extends E.PreflopSolver {
           if (live2 > 0 && s.level < 3) o.push({ k: 'allin', to: st[p], L: s.level + 1 });
           return o;
         }
-        if (s.level === 0) { if (name === 'SB' && live(s) === 2) o.push({ k: 'call' }); }   // SB completes vs BB only
+        if (s.level === 0) { if (name === 'SB' && live(s) === 2 && SB_LIMP(eff)) o.push({ k: 'call' }); }   // SB completes vs BB only
         else if (s.level === 1) { if (callers < 2 || name === 'BB') o.push({ k: 'call' }); }
         else if (inVol) o.push({ k: 'call' });
       } else o.push({ k: 'check' });
