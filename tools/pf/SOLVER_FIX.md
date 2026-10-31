@@ -45,3 +45,13 @@ Nothing here goes into docs/ until Steven approves the report.
 - Limp rule: `SBLIMP` env in solver2.js ('all' default = shipped tree, 'none', or depths '10,15' each +-2.5bb) gates the SB
   complete. Open-limps were already impossible. Limp-reshove (SB complete, BB raise, SB jam) follows automatically where
   the complete exists. Set from Steven's GTO Wizard read per depth before P4.
+
+## P2 pilot 1 (Oct 31, 8-max 40/25bb, one pass each, 900 s): formula vs table v1
+- 40bb BB vs BTN 2.2x: fold/call/3-bet/jam 10/74/5/11 -> 32/43/13/11. BB vs UTG 3-bet 0.03% -> 8.6%. 4 of the 5 40bb
+  regression checks pass (the small 4-bet still never appears: BTN vs BB 3-bet 48 fold / 23 call / 29 jam).
+- 25bb BB vs BTN 2.1x: 0/79/0/21 -> 41/33/3/23. But 72o still calls (-0.81 vs fold -1.00).
+- Red flag: SB never folds BvB (40bb 17% -> 0%, 25bb 15% -> 0%). Cause: P1's ranges came from the library, so the hands it
+  folds were never measured, and the table gave them the side's mean realization (SB limp 0.94; measured trash like K2o is
+  0.15-0.18). Fix: P1 v2 with every class at a 1% floor weight and 400k samples/flop so each class gets ~400 samples
+  (first set kept in p1/out_v1). Also: AA hits the fit cap (R 4) because a pot-share leaf can't pay more than the pot,
+  while the solve stacks off; a structural limit of the leaf, small in practice (the pAll stack-off term is gone with REALTAB).

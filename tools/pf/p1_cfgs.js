@@ -38,7 +38,10 @@ function ranges(D, pot) {
   const inv = put[pot.oop];
   return { r, pot: +(put[pot.oop] + put[pot.ip] + (pot.oop !== 6 && pot.ip !== 6 ? 0.5 : 0) + 1).toFixed(2), behind: +(D.stacks[0] - inv).toFixed(2) };
 }
-const str = (r) => r.map((w, c) => [NAMES[c], w]).filter(([, w]) => w > 0.004).map(([h, w]) => `${h}:${w.toFixed(3)}`).join(',');
+// every class at a floor weight (P1_FLOOR, default 0.01) so the hands the library folds get measured too: P2 needs their
+// realization, and the range mean overvalued them (first P1 set: SB never folded BvB at 40bb)
+const FLOOR = +(process.env.P1_FLOOR ?? 0.01);
+const str = (r) => r.map((w, c) => [NAMES[c], Math.max(w, FLOOR)]).filter(([, w]) => w > 0.004).map(([h, w]) => `${h}:${w.toFixed(3)}`).join(',');
 const combos = (r) => r.reduce((t, w, c) => t + w * SIZE[c], 0);
 
 let n = 0; const index = [];
