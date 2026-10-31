@@ -20,6 +20,26 @@ for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.json'))) {
     }
   });
 }
+// fixed point: R_c <- R_c * measured / predicted, where predicted = pot * mean over the opponent's range of
+// R_c*eq / (R_c*eq + R_o*(1-eq)) (the leaf solver2.js realTab values); classes under MIN_N keep the side's mean
+const IDX = Object.fromEntries(NAMES.map((h, i) => [h, i])), EQ = E.EQ169;
+const SIZE = new Array(NC).fill(0); for (let i = 0; i < E.NUM_COMBOS; i++) SIZE[E.CLASS_OF[i]]++;
+const parse = (s) => { const w = new Array(NC).fill(0); for (const t of s.split(',')) { const [h, x] = t.split(':'); w[IDX[h]] = +x * SIZE[IDX[h]]; } return w; };
+function fit(key, A, out) {
+  const [type, d] = key.split('|'), cfg = JSON.parse(fs.readFileSync(path.join(__dirname, 'p1', 'cfgs', `${type}-d${d}-00.json`), 'utf8'));
+  const W = [parse(cfg.ranges[0]), parse(cfg.ranges[1])], pot = cfg.pot;
+  const Rv = out.map((o) => Float64Array.from(NAMES, (h) => o.R[h] ?? o.mean ?? 1));
+  for (let it = 0; it < 60; it++) for (let pi = 0; pi < 2; pi++) {
+    const op = 1 - pi;
+    for (const [h, a] of Object.entries(A[pi])) {
+      if (a.n < MIN_N || !(out[pi].R[h] > 0)) continue;
+      const c = IDX[h], meas = a.ev / a.n; let s = 0, ws = 0;
+      for (let o = 0; o < NC; o++) { const w = W[op][o]; if (!(w > 0)) continue; const eq = EQ[c * NC + o], x = Rv[pi][c] * eq, y = Rv[op][o] * (1 - eq); s += w * (x + y > 0 ? x / (x + y) : 0.5); ws += w; }
+      const pred = pot * s / ws; if (pred > 1e-6 && meas > 0) Rv[pi][c] = Math.min(4, Math.max(0.05, Rv[pi][c] * Math.pow(meas / pred, 0.7)));
+    }
+  }
+  out.forEach((o, pi) => { for (const h of Object.keys(o.R)) o.R[h] = +Rv[pi][IDX[h]].toFixed(4); });
+}
 const table = {}, md = ['# P2 realization table (from P1 heads-up postflop solves)', '',
   'Realization = postflop result / (equity x pot), by pot type, depth and position; mean over classes weighted by samples.', '',
   '| pot type | bb | SPR | flops done | OOP realization | IP realization | classes measured (OOP/IP) |', '|---|---|---|---|---|---|---|'];
@@ -30,6 +50,7 @@ for (const [key, A] of Object.entries(acc).sort()) {
     for (const [h, a] of Object.entries(P)) if (a.n >= MIN_N && a.eqpot > 0) { R[h] = +(a.ev / a.eqpot).toFixed(4); sw += a.eqpot; se += a.ev; }
     return { R, mean: sw ? +(se / sw).toFixed(4) : null, measured: Object.keys(R).length, flops: Math.max(0, ...Object.values(P).map((a) => a.flops)) };
   });
+  fit(key, A, out);   // refine R so the pairwise leaf formula reproduces each class's measured result
   table[key] = { type, depth: +d, spr: ix.spr, pot: ix.pot, oop: out[0], ip: out[1] };
   md.push(`| ${type} | ${d} | ${ix.spr} | ${out[0].flops} | ${out[0].mean} | ${out[1].mean} | ${out[0].measured}/${out[1].measured} |`);
 }
