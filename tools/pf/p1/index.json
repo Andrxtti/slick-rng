@@ -1,0 +1,272 @@
+[
+ {
+  "id": "bb_btn",
+  "d": 10,
+  "skip": "line not in the tree"
+ },
+ {
+  "id": "bb_utg",
+  "d": 10,
+  "skip": "ranges too thin (1171/3 combos)"
+ },
+ {
+  "id": "sb_bb_limp",
+  "d": 10,
+  "pot": 3,
+  "behind": 9,
+  "spr": 3,
+  "combos": [
+   86,
+   556
+  ]
+ },
+ {
+  "id": "sb_bb_open",
+  "d": 10,
+  "skip": "line not in the tree"
+ },
+ {
+  "id": "bb3b_btn",
+  "d": 10,
+  "skip": "line not in the tree"
+ },
+ {
+  "id": "bb_btn",
+  "d": 15,
+  "pot": 5.5,
+  "behind": 13,
+  "spr": 2.36,
+  "combos": [
+   1038,
+   118
+  ]
+ },
+ {
+  "id": "bb_utg",
+  "d": 15,
+  "pot": 5.5,
+  "behind": 13,
+  "spr": 2.36,
+  "combos": [
+   1150,
+   108
+  ]
+ },
+ {
+  "id": "sb_bb_limp",
+  "d": 15,
+  "pot": 3,
+  "behind": 14,
+  "spr": 4.67,
+  "combos": [
+   464,
+   678
+  ]
+ },
+ {
+  "id": "sb_bb_open",
+  "d": 15,
+  "skip": "line not in the tree"
+ },
+ {
+  "id": "bb3b_btn",
+  "d": 15,
+  "skip": "line not in the tree"
+ },
+ {
+  "id": "bb_btn",
+  "d": 20,
+  "pot": 5.5,
+  "behind": 18,
+  "spr": 3.27,
+  "combos": [
+   998,
+   349
+  ]
+ },
+ {
+  "id": "bb_utg",
+  "d": 20,
+  "pot": 5.5,
+  "behind": 18,
+  "spr": 3.27,
+  "combos": [
+   1093,
+   203
+  ]
+ },
+ {
+  "id": "sb_bb_limp",
+  "d": 20,
+  "pot": 3,
+  "behind": 19,
+  "spr": 6.33,
+  "combos": [
+   683,
+   714
+  ]
+ },
+ {
+  "id": "sb_bb_open",
+  "d": 20,
+  "skip": "ranges too thin (3/900 combos)"
+ },
+ {
+  "id": "bb3b_btn",
+  "d": 20,
+  "skip": "line not in the tree"
+ },
+ {
+  "id": "bb_btn",
+  "d": 25,
+  "pot": 5.7,
+  "behind": 22.9,
+  "spr": 4.02,
+  "combos": [
+   1048,
+   513
+  ]
+ },
+ {
+  "id": "bb_utg",
+  "d": 25,
+  "pot": 5.7,
+  "behind": 22.9,
+  "spr": 4.02,
+  "combos": [
+   895,
+   220
+  ]
+ },
+ {
+  "id": "sb_bb_limp",
+  "d": 25,
+  "pot": 3,
+  "behind": 24,
+  "spr": 8,
+  "combos": [
+   732,
+   729
+  ]
+ },
+ {
+  "id": "sb_bb_open",
+  "d": 25,
+  "pot": 7,
+  "behind": 22,
+  "spr": 3.14,
+  "combos": [
+   105,
+   876
+  ]
+ },
+ {
+  "id": "bb3b_btn",
+  "d": 25,
+  "skip": "line not in the tree"
+ },
+ {
+  "id": "bb_btn",
+  "d": 30,
+  "pot": 5.7,
+  "behind": 27.9,
+  "spr": 4.89,
+  "combos": [
+   1043,
+   585
+  ]
+ },
+ {
+  "id": "bb_utg",
+  "d": 30,
+  "pot": 5.7,
+  "behind": 27.9,
+  "spr": 4.89,
+  "combos": [
+   848,
+   234
+  ]
+ },
+ {
+  "id": "sb_bb_limp",
+  "d": 30,
+  "pot": 3,
+  "behind": 29,
+  "spr": 9.67,
+  "combos": [
+   814,
+   746
+  ]
+ },
+ {
+  "id": "sb_bb_open",
+  "d": 30,
+  "pot": 8,
+  "behind": 26.5,
+  "spr": 3.31,
+  "combos": [
+   338,
+   907
+  ]
+ },
+ {
+  "id": "bb3b_btn",
+  "d": 30,
+  "skip": "ranges too thin (6/242 combos)"
+ },
+ {
+  "id": "bb_btn",
+  "d": 40,
+  "pot": 5.9,
+  "behind": 37.8,
+  "spr": 6.41,
+  "combos": [
+   987,
+   621
+  ]
+ },
+ {
+  "id": "bb_utg",
+  "d": 40,
+  "pot": 5.9,
+  "behind": 37.8,
+  "spr": 6.41,
+  "combos": [
+   631,
+   232
+  ]
+ },
+ {
+  "id": "sb_bb_limp",
+  "d": 40,
+  "pot": 3,
+  "behind": 39,
+  "spr": 13,
+  "combos": [
+   669,
+   717
+  ]
+ },
+ {
+  "id": "sb_bb_open",
+  "d": 40,
+  "pot": 8,
+  "behind": 36.5,
+  "spr": 4.56,
+  "combos": [
+   415,
+   912
+  ]
+ },
+ {
+  "id": "bb3b_btn",
+  "d": 40,
+  "pot": 16.7,
+  "behind": 32.4,
+  "spr": 1.94,
+  "combos": [
+   68,
+   260
+  ]
+ }
+]
