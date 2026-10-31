@@ -1,0 +1,30 @@
+// Probe: Daz version, content folders, does Genesis 9 load, its morph list, is the Unity bridge installed.
+// Paths come from run.cfg.json (written next to this script by solve_full.js).
+var DIR = new DzFileInfo(getScriptFileName()).path();
+function readText(p) { var f = new DzFile(p); if (!f.exists()) return ""; f.open(DzFile.ReadOnly); var t = f.read(); f.close(); return t; }
+var CFG = JSON.parse(readText(DIR + "/run.cfg.json"));
+var LOG = [];
+function log(s) { LOG.push(String(s)); var f = new DzFile(CFG.log); f.open(DzFile.WriteOnly | DzFile.Truncate); f.write(LOG.join("\n")); f.close(); }
+function finish() { var f = new DzFile(CFG.done); f.open(DzFile.WriteOnly); f.write("done"); f.close(); }
+try {
+  log("Daz Studio " + App.versionString);
+  var cm = App.getContentMgr(), dirs = [];
+  for (var i = 0; i < cm.getNumContentDirectories(); i++) dirs.push(cm.getContentDirectoryPath(i));
+  log("content dirs: " + dirs.join(" ; "));
+  var g9 = cm.findFile("People/Genesis 9/Genesis 9.duf") || cm.findFile("People/Genesis 8 Male/Genesis 8 Basic Male.duf") || cm.findFile("People/Genesis 8 Male/Genesis 8.1 Basic Male.duf") || cm.findFile("People/Genesis 8 Male/Genesis 8 Male.duf");
+  log("base figure file: " + g9);
+  if (g9) {
+    cm.openFile(g9, false);
+    var fig = Scene.getPrimarySelection() || Scene.findNodeByLabel("Genesis 9");
+    log("figure: " + (fig ? fig.getLabel() + " / " + fig.className() : "none"));
+    if (fig) {
+      var obj = fig.getObject(), names = [];
+      for (var m = 0; obj && m < obj.getNumModifiers(); m++) { var mod = obj.getModifier(m); if (mod.inherits("DzMorph")) { var vc = mod.getValueControl(); names.push(mod.name + " | " + (vc ? vc.getLabel() + " | " + vc.getPath() : "")); } }
+      log("morphs " + names.length + ":\n" + names.join("\n"));
+    }
+  }
+  var am = MainWindow.getActionMgr(), hits = [];
+  for (var a = 0; a < am.getNumActions(); a++) { var act = am.getAction(a); if (/unity/i.test(act.text + " " + act.className())) hits.push(act.className() + " | " + act.text); }
+  log("unity actions: " + (hits.length ? hits.join(" ; ") : "none"));
+} catch (e) { log("ERROR " + e); }
+finish();

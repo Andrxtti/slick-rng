@@ -1,0 +1,11 @@
+{ "cmds": [
+  "tasklist /FI \"IMAGENAME eq claude.exe\" /FO CSV /NH",
+  "tasklist /FI \"IMAGENAME eq Unity.exe\" /FO CSV /NH",
+  "tasklist /FI \"IMAGENAME eq blender.exe\" /FO CSV /NH",
+  "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng branch --show-current&& git -C C:\\Dev\\slick-rng log -3 --oneline&& git -C C:\\Dev\\slick-rng status --short",
+  "dir C:\\Dev\\slick-rng /b",
+  "dir %USERPROFILE%\\.claude\\projects /b /o-d",
+  "powercfg /getactivescheme",
+  "powercfg /q SCHEME_CURRENT SUB_SLEEP STANDBYIDLE",
+  "powercfg /q SCHEME_CURRENT SUB_BUTTONS LIDACTION"
+] }

@@ -1,0 +1,288 @@
+{
+ "_about": "How each built-in closet item is worn in 3D. Outfits are UMA wardrobe recipes (asset = recipe name; until the art is in, the first installed recipe whose name contains a 'match' word is used). Jewellery, glasses and hats are built in code (kind proc) unless listed here. Brand packs use the same fields in their brand.json; see unity/BRAND_KIT.md.",
+ "outfit:office": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "shirt",
+   "formal",
+   "button"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:slacks",
+   "Feet:dress shoes"
+  ]
+ },
+ "outfit:tee": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "tshirt",
+   "tee"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:cardigan": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "cardigan",
+   "sweater"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:jersey": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "jersey",
+   "tshirt"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:denim": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "denim",
+   "jacket"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:track": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "track",
+   "jacket",
+   "zip"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:vest": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "vest",
+   "sweater"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:slacks",
+   "Feet:dress shoes"
+  ]
+ },
+ "outfit:varsity": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "varsity",
+   "jacket"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:leather": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "leather",
+   "jacket"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:fleece": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "fleece",
+   "sweater"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:hoodie": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "hoodie",
+   "sweater"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:polo": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "polo",
+   "zip",
+   "shirt"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:bomber": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "bomber",
+   "jacket"
+  ],
+  "dyeable": true,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:blazer": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "blazer",
+   "jacket",
+   "suit"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:slacks",
+   "Feet:dress shoes"
+  ]
+ },
+ "outfit:suit": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "suit",
+   "blazer"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:slacks",
+   "Feet:dress shoes"
+  ]
+ },
+ "outfit:designer": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "suit",
+   "blazer"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:slacks",
+   "Feet:dress shoes"
+  ]
+ },
+ "outfit:tux": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "tux",
+   "suit"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:slacks",
+   "Feet:dress shoes"
+  ]
+ },
+ "outfit:vampire": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "cape",
+   "coat",
+   "suit"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:slacks",
+   "Feet:dress shoes"
+  ]
+ },
+ "outfit:flannel": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "flannel",
+   "shirt"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ },
+ "outfit:ugly": {
+  "kind": "uma",
+  "asset": "",
+  "umaSlot": "Chest",
+  "match": [
+   "sweater",
+   "christmas"
+  ],
+  "dyeable": false,
+  "with": [
+   "Legs:jeans",
+   "Feet:sneakers"
+  ]
+ }
+}

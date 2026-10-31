@@ -1,0 +1,28 @@
+# Unity project folders, if a full project is ever kept here
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+UserSettings/
+MemoryCaptures/
+*.csproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.apk
+*.aab
+
+# UMA 3 comes from the Asset Store (1.4 GB): import it in Unity, not through git
+Assets/UMA/
+Assets/UMA.meta
+# made by Dream > Set up 3D characters, points at UMA assets
+Assets/Dream/Resources/Dream/UMARefs.asset
+Assets/Dream/Resources/Dream/UMARefs.asset.meta

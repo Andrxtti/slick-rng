@@ -1,0 +1,302 @@
+[
+{
+"id": "0lib3-p1-m6-d10",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d10.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2082560",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d10"
+},
+{
+"id": "0lib3-p1-m6-d100",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d100.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2047760",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d100"
+},
+{
+"id": "0lib3-p1-m6-d15",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d15.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "1789140",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d15"
+},
+{
+"id": "0lib3-p1-m6-d20",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d20.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "1431760",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d20"
+},
+{
+"id": "0lib3-p1-m6-d25",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d25.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "1413480",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d25"
+},
+{
+"id": "0lib3-p1-m6-d30",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d30.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2081660",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d30"
+},
+{
+"id": "0lib3-p1-m6-d40",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d40.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2151600",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d40"
+},
+{
+"id": "0lib3-p1-m6-d50",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d50.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2161000",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d50"
+},
+{
+"id": "0lib3-p1-m6-d60",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d60.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2016900",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d60"
+},
+{
+"id": "0lib3-p1-m6-d80",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d80.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2027540",
+"MAXSECS": "7200"
+},
+"pass": 1,
+"table": "m6-d80"
+},
+{
+"id": "0lib3-p2-m6-d10",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d10.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2082560",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d10"
+},
+{
+"id": "0lib3-p2-m6-d100",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d100.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2047760",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d100"
+},
+{
+"id": "0lib3-p2-m6-d15",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d15.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "1789140",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d15"
+},
+{
+"id": "0lib3-p2-m6-d20",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d20.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "1431760",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d20"
+},
+{
+"id": "0lib3-p2-m6-d25",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d25.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "1413480",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d25"
+},
+{
+"id": "0lib3-p2-m6-d30",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d30.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2081660",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d30"
+},
+{
+"id": "0lib3-p2-m6-d40",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d40.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2151600",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d40"
+},
+{
+"id": "0lib3-p2-m6-d50",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d50.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2161000",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d50"
+},
+{
+"id": "0lib3-p2-m6-d60",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d60.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2016900",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d60"
+},
+{
+"id": "0lib3-p2-m6-d80",
+"cwd": "tools/pf",
+"cfg": "cfgs_full/m6-d80.json",
+"secs": 300,
+"evs": 60,
+"env": {
+"AGGRE": "1",
+"PLAYREAL": "none",
+"TARGET_ITERS": "2027540",
+"MAXSECS": "7200"
+},
+"pass": 2,
+"table": "m6-d80"
+}
+]

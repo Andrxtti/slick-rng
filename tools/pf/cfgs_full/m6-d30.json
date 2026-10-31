@@ -1,0 +1,1 @@
+{"gid": "chart", "unit": "bb", "cfg": {"names": ["UTG", "HJ", "CO", "BTN", "SB", "BB"], "stacks": [30, 30, 30, 30, 30, 29], "posts": [0, 0, 0, 0, 0.5, 1], "ante": 1, "sizes": {"open": 2, "b3": 6, "b4": 14, "b5": 30}, "hu": false, "payoff": {"type": "chips"}, "postOrder": [4, 5, 0, 1, 2, 3], "allowLimps": true, "leave1": true, "game": "nlh"}}

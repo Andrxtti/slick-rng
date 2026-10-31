@@ -1,0 +1,1 @@
+{ "cmds": ["set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git clone -b unity https://github.com/Andrxtti/slick-rng C:\\Dev\\slick-rng", "set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& git -C C:\\Dev\\slick-rng log -1 --oneline", "dir C:\\Dev\\slick-rng /b", "set PATH=%USERPROFILE%\\AppData\\Local\\Microsoft\\WinGet\\Links;%PATH%&& claude --version"] }

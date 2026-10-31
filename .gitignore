@@ -1,2 +1,8 @@
 target/
 tools/plo_features.bin
+
+# hand-by-hand transcription of paid course charts: local reference only, never published
+tools/pf/mw_charts.js
+tools/pf/cloud_build.log
+tools/pf/.claim_cloud/
+tools/pf/old_full_oct28/

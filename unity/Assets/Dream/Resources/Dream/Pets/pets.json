@@ -1,0 +1,79 @@
+{
+ "cat": {
+  "name": "Mochi",
+  "kind": "cat",
+  "leg": 0.2,
+  "len": 0.3,
+  "height": 0.47050000000000003,
+  "bed": true,
+  "colors": {
+   "fur": "#d9822b",
+   "fur2": "#f4e9d8",
+   "fur3": "#a4561b",
+   "nose": "#e8879a",
+   "inner": "#f2a7b3",
+   "eye": "#0c0c0e",
+   "iris": "#c6d64a",
+   "hi": "#ffffff"
+  }
+ },
+ "pup": {
+  "name": "Biscuit",
+  "kind": "dog",
+  "leg": 0.33,
+  "len": 0.4,
+  "height": 0.7088000000000001,
+  "bed": false,
+  "colors": {
+   "fur": "#b8834f",
+   "fur2": "#f2ebe0",
+   "fur3": "#6b4426",
+   "nose": "#151315",
+   "eye": "#0c0b0c",
+   "hi": "#ffffff",
+   "tongue": "#e0707e",
+   "collar": "#c8323a",
+   "tag": "#e3b94f"
+  }
+ },
+ "frenchie": {
+  "name": "Tank",
+  "kind": "dog",
+  "leg": 0.17,
+  "len": 0.25,
+  "height": 0.5388,
+  "bed": false,
+  "colors": {
+   "fur": "#c9a27a",
+   "fur2": "#efe4d4",
+   "fur3": "#2b2421",
+   "nose": "#141214",
+   "inner": "#d9a0a0",
+   "eye": "#0c0b0c",
+   "hi": "#ffffff",
+   "tongue": "#e0707e",
+   "collar": "#2f6fd0",
+   "tag": "#dfe3ea"
+  }
+ },
+ "doberman": {
+  "name": "Duke",
+  "kind": "dog",
+  "leg": 0.52,
+  "len": 0.52,
+  "height": 1.0199,
+  "bed": false,
+  "colors": {
+   "fur": "#1b191d",
+   "fur2": "#a35e2c",
+   "fur3": "#a35e2c",
+   "nose": "#0e0d0f",
+   "inner": "#3a2a2a",
+   "eye": "#0c0b0c",
+   "hi": "#ffffff",
+   "tongue": "#d86a78",
+   "collar": "#c9a03e",
+   "tag": "#e3b94f"
+  }
+ }
+}

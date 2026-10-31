@@ -1,0 +1,1 @@
+{ "cmds": ["set PATH=C:\\Program Files\\Git\\cmd;%PATH%&& set GIT_TERMINAL_PROMPT=0&& git -C C:\\Dev\\slick-rng push -u origin beta1"] }

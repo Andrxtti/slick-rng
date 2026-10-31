@@ -1,0 +1,15 @@
+<!-- Keep what the game looks up by name at runtime, so IL2CPP's code stripping can't remove it on phones:
+     the font fallbacks (card suits, colour emoji) and the event system for the new Input System. -->
+<linker>
+  <assembly fullname="UnityEngine.TextCoreTextEngineModule" preserve="all" ignoreIfMissing="1"/>
+  <assembly fullname="UnityEngine.TextCoreFontEngineModule" preserve="all" ignoreIfMissing="1"/>
+  <assembly fullname="UnityEngine.UIElementsModule" ignoreIfMissing="1">
+    <type fullname="UnityEngine.UIElements.FontDefinition" preserve="all"/>
+  </assembly>
+  <assembly fullname="UnityEngine.UI" ignoreIfMissing="1">
+    <type fullname="UnityEngine.EventSystems.EventSystem" preserve="all"/>
+  </assembly>
+  <assembly fullname="Unity.InputSystem" ignoreIfMissing="1">
+    <type fullname="UnityEngine.InputSystem.UI.InputSystemUIInputModule" preserve="all"/>
+  </assembly>
+</linker>

@@ -1,0 +1,36 @@
+{
+ "w": 2048,
+ "h": 1152,
+ "layers": [
+  {
+   "name": "sky",
+   "y": 0,
+   "h": 1152,
+   "speed": 0.0,
+   "tile": false
+  },
+  {
+   "name": "city",
+   "y": 259,
+   "h": 732,
+   "speed": 0.03,
+   "tile": false
+  },
+  {
+   "name": "road",
+   "y": 562,
+   "h": 590,
+   "speed": 1.0,
+   "tile": true
+  },
+  {
+   "name": "palms",
+   "y": 228,
+   "h": 924,
+   "speed": 1.75,
+   "tile": true
+  }
+ ],
+ "laneY": 1032,
+ "roadTop": 921
+}
